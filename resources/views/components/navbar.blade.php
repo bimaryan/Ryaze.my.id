@@ -103,11 +103,9 @@
 
             @php
                 $dashboardUrl = match (Auth::user()->role ?? '') {
-                    'superadmin' => url('superadmin/dashboard'),
-                    'admin_joki' => url('admin/joki/dashboard'),
-                    'admin_hosting' => url('admin/hosting/dashboard'),
-                    'user_joki' => url('user/joki/dashboard'),
-                    'user_hosting' => url('user/hosting/dashboard'),
+                    'superadmin' => route('superadmin.dashboard'),
+                    'admin_joki' => route('admin_joki.dashboard'),
+                    'user_joki' => route('user_joki.dashboard'),
                     default => url('/'),
                 };
             @endphp
@@ -127,8 +125,8 @@
 
                 @if (in_array(Auth::user()->role, ['superadmin', 'admin_joki']))
                     <li>
-                        <a href="#"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
+                        <a href="{{ route('admin_joki.orders') }}"
+                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('admin_joki.orders') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
                             <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-code-branch me-2"></i>
                                 Kelola Pesanan Joki</span>
                         </a>
@@ -163,17 +161,24 @@
 
                 @if (Auth::user()->role === 'user_joki')
                     <li>
-                        <a href="{{ route('user_joki.dashboard') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
+                        <a href="{{ route('user_joki.create') }}"
+                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_joki.create') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
+                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-cart-plus me-2"></i> Pesan
+                                Joki Baru</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('user_joki.progress') }}"
+                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_joki.progress') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
                             <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-laptop-code me-2"></i>
                                 Progres Joki Saya</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('user_joki.create') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-cart-plus me-2"></i> Pesan
-                                Joki Baru</span>
+                        <a href="{{ route('user_joki.riwayat') }}"
+                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_joki.riwayat') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
+                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-history me-2"></i>
+                                Riwayat Joki Saya</span>
                         </a>
                     </li>
                 @endif
@@ -190,8 +195,7 @@
                         <a href="#"
                             class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
                             <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-brands fa-github me-2"></i>
-                                Deploy
-                                Proyek Baru</span>
+                                Deploy Proyek Baru</span>
                         </a>
                     </li>
                 @endif

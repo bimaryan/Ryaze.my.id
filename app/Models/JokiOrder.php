@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JokiOrder extends Model
 {
@@ -29,27 +30,34 @@ class JokiOrder extends Model
         'deadline' => 'date',
     ];
 
-    /**
-     * Relasi ke User (sebagai Klien yang memesan)
-     */
     public function client(): BelongsTo
     {
         return $this->belongsTo(User::class, 'client_id');
     }
 
-    /**
-     * Relasi ke User (sebagai Admin/Developer yang mengerjakan)
-     */
     public function worker(): BelongsTo
     {
         return $this->belongsTo(User::class, 'worker_id');
     }
 
-    /**
-     * Relasi ke JokiService (Layanan apa yang dipilih)
-     */
     public function service(): BelongsTo
     {
         return $this->belongsTo(JokiService::class, 'service_id');
+    }
+
+    // RELASI BARU
+    public function payments(): HasMany
+    {
+        return $this->hasMany(JokiPayment::class, 'order_id');
+    }
+
+    public function milestones(): HasMany
+    {
+        return $this->hasMany(JokiMilestone::class, 'order_id');
+    }
+
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(JokiRevision::class, 'order_id');
     }
 }

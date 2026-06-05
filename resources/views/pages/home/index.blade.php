@@ -40,7 +40,17 @@
                 <!-- Auth Buttons -->
                 <div class="flex items-center gap-4">
                     @auth
-                        <a href="{{ url('/dashboard') }}"
+                        @php
+                            $dashboardUrl = match (Auth::user()->role ?? '') {
+                                'superadmin' => route('superadmin.dashboard'),
+                                'admin_joki' => route('admin_joki.dashboard'),
+                                'admin_hosting' => route('admin_hosting.dashboard'),
+                                'user_joki' => route('user_joki.dashboard'),
+                                'user_hosting' => route('user_hosting.dashboard'),
+                                default => url('/'),
+                            };
+                        @endphp
+                        <a href="{{ $dashboardUrl }}"
                             class="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 rounded-lg shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5">
                             Masuk Dashboard
                         </a>

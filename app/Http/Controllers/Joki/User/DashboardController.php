@@ -4,27 +4,22 @@ namespace App\Http\Controllers\Joki\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\JokiOrder;
+use App\Models\JokiPayment;
 use App\Models\JokiService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-
-        // Hanya ambil orderan milik klien ini saja
-        $activeOrders = JokiOrder::where('client_id', $user->id)
-            ->whereIn('status', ['pending', 'progress', 'review'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('pages.joki.user.index', compact('activeOrders'));
+        return view('pages.joki.user.index');
     }
 
     public function detail($id)
     {
-        $order = JokiOrder::with(['worker', 'service'])
+        // Eager load semua relasi baru agar datanya bisa diakses di blade
+        $order = JokiOrder::with(['worker', 'service', 'milestones', 'payments', 'revisions'])
             ->where('client_id', Auth::id())
             ->findOrFail($id);
 
@@ -55,5 +50,50 @@ class DashboardController extends Controller
         JokiOrder::create($validated);
 
         return redirect()->route('user_joki.dashboard')->with('success', 'Pesanan berhasil dibuat!');
+    }
+
+    public function uploadPaymentProof(Request $request, $payment_id)
+    {
+        $request->validate([
+            'proof_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Pastikan payment ini milik orderan si user yang login
+        $payment = JokiPayment::whereHas('order', function ($query) {
+            $query->where('client_id', Auth::id());
+        })->findOrFail($payment_id);
+
+        // Upload file ke storage/app/public/payments
+        $path = $request->file('proof_image')->store('payments', 'public');
+
+        $payment->update([
+            'proof_image' => $path,
+            'status' => 'pending_verification', // Ubah status agar admin mengecek
+        ]);
+
+        return back()->with('success', 'Bukti pembayaran berhasil diunggah! Menunggu verifikasi admin.');
+    }
+
+    /**
+     * FUNGSI USER: Mengajukan Revisi
+     */
+    public function requestRevision(Request $request, $order_id)
+    {
+        $request->validate([
+            'revision_note' => 'required|string|min:10',
+        ]);
+
+        $order = JokiOrder::where('client_id', Auth::id())->findOrFail($order_id);
+
+        // Buat data revisi baru
+        $order->revisions()->create([
+            'revision_note' => $request->revision_note,
+            'status' => 'pending',
+        ]);
+
+        // Ubah status order menjadi review
+        $order->update(['status' => 'review']);
+
+        return back()->with('success', 'Permintaan revisi berhasil dikirim ke developer!');
     }
 }
