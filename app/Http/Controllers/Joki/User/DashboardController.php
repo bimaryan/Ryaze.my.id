@@ -7,6 +7,7 @@ use App\Models\JokiOrder;
 use App\Models\JokiPayment;
 use App\Models\JokiService;
 use Illuminate\Http\Request;
+use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -16,8 +17,13 @@ class DashboardController extends Controller
         return view('pages.joki.user.index');
     }
 
-    public function detail($id)
+    public function detail($hashed_id)
     {
+        $decoded = Hashids::decode($hashed_id);
+        if (count($decoded) === 0) {
+            abort(404);
+        }
+        $id = $decoded[0];
         // Eager load semua relasi baru agar datanya bisa diakses di blade
         $order = JokiOrder::with(['worker', 'service', 'milestones', 'payments', 'revisions'])
             ->where('client_id', Auth::id())

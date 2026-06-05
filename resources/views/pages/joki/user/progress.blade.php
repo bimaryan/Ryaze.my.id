@@ -65,7 +65,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
-                                        <a href="{{ route('user_joki.detail', $order->id) }}"
+                                        <a href="{{ route('user_joki.detail', $order->hashid) }}"
                                             class="inline-block text-xs border border-indigo-200 text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 font-semibold shadow-sm">
                                             Detail
                                         </a>

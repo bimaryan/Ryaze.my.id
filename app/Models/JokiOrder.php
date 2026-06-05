@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Vinkla\Hashids\Facades\Hashids;
 
 class JokiOrder extends Model
 {
@@ -29,6 +30,11 @@ class JokiOrder extends Model
         'price' => 'integer',
         'deadline' => 'date',
     ];
+
+    public function getHashidAttribute()
+    {
+        return Hashids::encode($this->id);
+    }
 
     public function client(): BelongsTo
     {
