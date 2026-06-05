@@ -9,6 +9,7 @@ use App\Http\Controllers\Joki\Admin\DashboardController as JokiAdminDashboardCon
 use App\Http\Controllers\Joki\User\DashboardController as UserJokiDashboardController;
 use App\Http\Controllers\Joki\User\ProgressController;
 use App\Http\Controllers\Joki\User\RiwayatController;
+use App\Http\Controllers\PaymentCallbackController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
