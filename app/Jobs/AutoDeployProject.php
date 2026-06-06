@@ -47,7 +47,7 @@ class AutoDeployProject implements ShouldQueue
 
             $this->executeShellCommand("git config --global --add safe.directory {$projectDir}", $deploy);
 
-            $isRepo = shell_exec("ls -d {$projectDir}/.git 2>&1");
+            $isRepo = (string) shell_exec("ls -d {$projectDir}/.git 2>&1");
 
             if (trim($isRepo) !== '' && ! str_contains($isRepo, 'No such file')) {
                 $this->appendLog($deploy, '> Directory exists and valid. Pulling changes...');
