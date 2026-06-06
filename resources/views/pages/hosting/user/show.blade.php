@@ -114,5 +114,12 @@
             </div>
 
         </div>
+        @if ($project->status == 'building')
+            <script>
+                setTimeout(function() {
+                    window.location.href = window.location.pathname + '?t=' + new Date().getTime();
+                }, 2000);
+            </script>
+        @endif
     </div>
 @endsection
