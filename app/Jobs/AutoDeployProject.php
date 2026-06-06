@@ -35,12 +35,14 @@ class AutoDeployProject implements ShouldQueue
         $this->executeShellCommand("mkdir -p {$baseDir}", $deploy);
 
         // 2. TAHAP 1: Git Clone atau Pull
-        $this->appendLog($deploy, "\n> Cloning repository from ".$this->project->repo_source.'...');
+        $this->appendLog($deploy, "\n> Cloning repository from " . $this->project->repo_source . '...');
 
         if (file_exists($projectDir)) {
-            $this->appendLog($deploy, '> Directory exists. Pulling latest changes as www-data...');
+            $this->appendLog($deploy, '> Directory exists. Configuring safe directory and pulling latest changes...');
 
-            $command = "sudo -u www-data git -C {$projectDir} pull origin {$this->project->branch} 2>&1";
+            $this->executeShellCommand("cd {$projectDir} && git config --add safe.directory {$projectDir} 2>&1", $deploy);
+
+            $command = "cd {$projectDir} && git pull origin {$this->project->branch} 2>&1";
         } else {
             $command = "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir} 2>&1";
         }
@@ -63,18 +65,30 @@ class AutoDeployProject implements ShouldQueue
 
         // LOGIKA NPM BASED (React, Node, NextJS, Vue)
         if (in_array($this->project->framework, ['react', 'node', 'nextjs', 'vue'])) {
-            $this->appendLog($deploy, '> Installing NPM dependencies (legacy mode)...');
-
-            // Tambahkan --legacy-peer-deps agar konflik versi diabaikan
+            $this->appendLog($deploy, '> Installing NPM dependencies...');
             $npmCommand = "cd {$projectDir} && /usr/bin/npm install --legacy-peer-deps 2>&1";
             $this->executeShellCommand($npmCommand, $deploy);
 
             if (in_array($this->project->framework, ['react', 'nextjs', 'vue'])) {
                 $this->appendLog($deploy, '> Running build script...');
-
-                // Build script juga harus pakai path npm yang benar
                 $buildCommand = "cd {$projectDir} && /usr/bin/npm run build 2>&1";
                 $this->executeShellCommand($buildCommand, $deploy);
+
+                // --- BAGIAN BARU: HANDLE BUILD/DIST ---
+                $this->appendLog($deploy, '> Organizing build output...');
+
+                // Jika pakai Vite (dist) atau React (build)
+                $outputDir = '';
+                if (is_dir("{$projectDir}/dist")) {
+                    $outputDir = "{$projectDir}/dist";
+                } elseif (is_dir("{$projectDir}/build")) {
+                    $outputDir = "{$projectDir}/build";
+                }
+
+                if ($outputDir) {
+                    $this->executeShellCommand("cp -r {$outputDir}/* {$projectDir}/ 2>&1", $deploy);
+                    $this->appendLog($deploy, "> Files moved from {$outputDir} to root.");
+                }
             }
         }
         // LOGIKA PYTHON (Flask)
