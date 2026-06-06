@@ -90,17 +90,24 @@ class AutoDeployProject implements ShouldQueue
                 // --- BAGIAN BARU: HANDLE BUILD/DIST ---
                 $this->appendLog($deploy, '> Organizing build output...');
 
-                // Jika pakai Vite (dist) atau React (build)
                 $outputDir = '';
-                if (is_dir("{$projectDir}/dist")) {
-                    $outputDir = "{$projectDir}/dist";
-                } elseif (is_dir("{$projectDir}/build")) {
-                    $outputDir = "{$projectDir}/build";
-                }
+                if (is_dir("{$projectDir}/dist")) { $outputDir = "{$projectDir}/dist"; }
+                elseif (is_dir("{$projectDir}/build")) { $outputDir = "{$projectDir}/build"; }
 
                 if ($outputDir) {
+                    // 1. Salin semua isi ke root
                     $this->executeShellCommand("cp -r {$outputDir}/* {$projectDir}/ 2>&1", $deploy);
-                    $this->appendLog($deploy, "> Files moved from {$outputDir} to root.");
+
+                    // 2. Hapus folder build/dist agar tidak berantakan
+                    $this->executeShellCommand("rm -rf {$outputDir} 2>&1", $deploy);
+
+                    // 3. PENTING: Perbaiki ownership kembali ke www-data setelah copy
+                    // Karena file hasil copy otomatis jadi milik root
+                    $this->executeShellCommand("chown -R www-data:www-data {$projectDir} && chmod -R 755 {$projectDir} 2>&1", $deploy);
+
+                    $this->appendLog($deploy, "> Files moved, cleaned, and permissions reset to www-data.");
+                } else {
+                    $this->appendLog($deploy, "> [WARNING] Output folder (dist/build) not found!");
                 }
             }
         }
