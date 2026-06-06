@@ -154,14 +154,10 @@
 
         <div id="envModal" class="hidden fixed inset-0 z-[999] overflow-y-auto" aria-labelledby="modal-title"
             role="dialog" aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-                <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" aria-hidden="true"
-                    onclick="document.getElementById('envModal').classList.add('hidden')"></div>
-
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="flex items-start justify-center min-h-screen pt-16 px-4">
 
                 <div
-                    class="relative z-10 inline-block bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200">
+                    class="relative inline-block bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all max-w-2xl w-full border border-slate-200">
                     <form action="{{ route('user_hosting.env.update', $project->hashid) }}" method="POST">
                         @csrf
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
