@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
     Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
     Route::get('user/hosting/projects/{id}', [DashboardController::class, 'show'])->name('user_hosting.show');
+    Route::get('user/hosting/projects', [DashboardController::class, 'project'])->name('user_hosting.projects');
 
     // --- AKSI USER JOKI ---
     Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');

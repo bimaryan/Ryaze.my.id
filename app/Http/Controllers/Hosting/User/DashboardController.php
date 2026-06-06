@@ -25,6 +25,13 @@ class DashboardController extends Controller
         return view('pages.hosting.user.create');
     }
 
+    public function projects()
+    {
+        $projects = HostingProject::where('user_id', Auth::id())->latest()->get();
+
+        return view('pages.hosting.user.project', compact('projects'));
+    }
+
     // Memproses data dan memulai Deploy Otomatis
     public function store(Request $request)
     {
