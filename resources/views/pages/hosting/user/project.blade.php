@@ -3,11 +3,14 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div
+            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">Aplikasi Ter-deploy</h1>
-                <p class="text-sm text-slate-500 mt-1">Kelola semua proyek dan aplikasi yang berjalan di Ryaze.</p>
+                <h1 class="text-xl font-bold text-slate-800">Aplikasi Ter-deploy</h1>
+                <p class="text-sm text-slate-500 mt-0.5">Kelola semua proyek dan aplikasi yang berjalan di Ryaze.
+                </p>
             </div>
+
             <a href="{{ route('user_hosting.create') }}"
                 class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-plus"></i> Deploy Proyek Baru
