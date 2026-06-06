@@ -35,13 +35,12 @@ class AutoDeployProject implements ShouldQueue
         $this->executeShellCommand("mkdir -p {$baseDir}", $deploy);
 
         // 2. TAHAP 1: Git Clone atau Pull
-        $this->appendLog($deploy, "\n> Cloning repository from ".$this->project->repo_source.'...');
+        $$this->appendLog($deploy, "\n> Cloning repository from " . $this->project->repo_source . '...');
 
         if (file_exists($projectDir)) {
-            $this->appendLog($deploy, '> Directory exists. Pulling latest changes...');
+            $this->appendLog($deploy, '> Directory exists. Marking as safe and pulling latest changes...');
 
-            // Tambahkan ini agar Git mengabaikan perbedaan ownership
-            $this->executeShellCommand("git config --global --add safe.directory '*' 2>&1", $deploy);
+            $this->executeShellCommand("cd {$projectDir} && git config --add safe.directory {$projectDir} 2>&1", $deploy);
 
             $command = "cd {$projectDir} && git pull origin {$this->project->branch} 2>&1";
         } else {
