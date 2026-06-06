@@ -112,4 +112,28 @@ class DashboardController extends Controller
 
         return back()->with('success', 'Environment variables berhasil disimpan!');
     }
+
+    public function redeploy($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) {
+            abort(404);
+        }
+
+        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+
+        // Set status ke building
+        $project->update(['status' => 'building']);
+
+        // Tambahkan log baru
+        $project->deployments()->create([
+            'status' => 'queued',
+            'build_logs' => "> Memulai proses Redeploy manual...\n> Mengambil perubahan terbaru dari repository...",
+        ]);
+
+        // Jalankan Job lagi
+        AutoDeployProject::dispatch($project);
+
+        return back()->with('success', 'Redeploy berhasil dimulai! Silakan tunggu beberapa saat.');
+    }
 }

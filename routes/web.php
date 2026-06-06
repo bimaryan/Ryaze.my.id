@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('user/hosting/projects/{id}', [DashboardController::class, 'show'])->name('user_hosting.show');
     Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
     Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
+    Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
 
     // --- AKSI USER JOKI ---
     Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');

@@ -130,6 +130,15 @@
                             <span class="block text-slate-500 text-xs mb-1">Framework</span>
                             <span class="font-semibold text-slate-800 uppercase">{{ $project->framework }}</span>
                         </div>
+
+                        <form action="{{ route('user_hosting.redeploy', $project->hashid) }}" method="POST"
+                            class="mt-4">
+                            @csrf
+                            <button type="submit"
+                                class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
+                                <i class="fa-solid fa-rotate"></i> Redeploy Sekarang
+                            </button>
+                        </form>
                     </div>
                 </div>
 
