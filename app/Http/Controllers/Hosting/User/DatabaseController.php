@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\HostingDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Vinkla\Hashids\Facades\Hashids;
 
 class DatabaseController extends Controller
@@ -20,14 +19,27 @@ class DatabaseController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Validasi input manual dari user
         $request->validate([
-            'db_name' => 'required|string|alpha_dash|max:15|unique:hosting_databases,db_name',
+            'db_name' => 'required|string|alpha_dash|max:15',
+            'db_username' => 'required|string|alpha_dash|max:15',
+            'db_password' => 'required|string|min:8|max:32',
+        ], [
+            'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
+            'db_username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, strip, dan underscore.',
+            'db_password.min' => 'Password minimal 8 karakter.',
         ]);
 
+        // 2. Terapkan Prefix (ryz_{id}_) agar tidak bentrok antar user di server MySQL
         $prefix = 'ryz_'.Auth::id().'_';
         $cleanDbName = $prefix.strtolower(trim($request->db_name));
-        $dbUsername = substr($cleanDbName, 0, 16);
-        $dbPassword = Str::random(16);
+        $cleanUsername = $prefix.strtolower(trim($request->db_username));
+        $dbPassword = $request->db_password;
+
+        // 3. Cek apakah nama database ini sudah ada (karena digabung prefix)
+        if (HostingDatabase::where('db_name', $cleanDbName)->exists()) {
+            return back()->with('error', 'Nama database "'.$cleanDbName.'" sudah digunakan.');
+        }
 
         // Ambil konfigurasi dari .env
         $rootPass = env('PANEL_MYSQL_ROOT_PASSWORD');
@@ -42,14 +54,13 @@ class DatabaseController extends Controller
             $pdo = new \PDO("mysql:host={$mysqlHost};port=3306", 'root', $rootPass);
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-            // Eksekusi pembuatan Database dan User
+            // Eksekusi pembuatan Database dan User menggunakan data manual
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `$cleanDbName`");
-            $pdo->exec("CREATE USER IF NOT EXISTS '$dbUsername'@'%' IDENTIFIED BY '$dbPassword'");
-            $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$dbUsername'@'%'");
+            $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY '$dbPassword'");
+            $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$cleanUsername'@'%'");
             $pdo->exec('FLUSH PRIVILEGES');
 
         } catch (\PDOException $e) {
-            // Jika gagal terhubung atau gagal eksekusi query
             return back()->with('error', 'Gagal membuat database: '.$e->getMessage());
         }
 
@@ -57,7 +68,7 @@ class DatabaseController extends Controller
         HostingDatabase::create([
             'user_id' => Auth::id(),
             'db_name' => $cleanDbName,
-            'db_username' => $dbUsername,
+            'db_username' => $cleanUsername,
             'db_password' => $dbPassword,
             'host' => $mysqlHost,
         ]);
@@ -78,17 +89,14 @@ class DatabaseController extends Controller
         $mysqlHost = env('PANEL_MYSQL_HOST', '1Panel-mysql-KZAi');
 
         try {
-            // Login ke MySQL Server
             $pdo = new \PDO("mysql:host={$mysqlHost};port=3306", 'root', $rootPass);
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-            // Hapus Database dan User
             $pdo->exec("DROP DATABASE IF EXISTS `$database->db_name`");
             $pdo->exec("DROP USER IF EXISTS '$database->db_username'@'%'");
             $pdo->exec('FLUSH PRIVILEGES');
 
         } catch (\PDOException $e) {
-            // Tetap hapus dari list portal meskipun di server aslinya mungkin sudah tidak ada
             \Log::error('Gagal hapus DB di server MySQL: '.$e->getMessage());
         }
 
