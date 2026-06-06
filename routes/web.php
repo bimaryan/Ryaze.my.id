@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
     Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
     Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
+    Route::get('user/hosting/projects/{hashid}/logs', [DashboardController::class, 'buildLogs'])->name('user_hosting.build_logs');
     Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');
 
     Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');

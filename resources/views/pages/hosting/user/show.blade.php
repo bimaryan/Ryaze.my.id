@@ -164,18 +164,25 @@
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div id="panel-logs" class="tab-panel hidden">
             <div class="bg-slate-900 rounded-xl shadow-md border border-slate-800 overflow-hidden">
-                <div class="bg-slate-800 px-4 py-3 flex items-center gap-2 border-b border-slate-700">
-                    <div class="w-3 h-3 rounded-full bg-rose-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                    <span class="text-slate-400 text-xs font-mono ml-2">Build Log —
-                        {{ $project->deployments->first()->created_at?->diffForHumans() ?? 'Initial Build' }}</span>
+                <div class="bg-slate-800 px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b border-slate-700">
+                    <div class="flex items-center gap-2 text-slate-400 text-xs">
+                        <i class="fa-solid fa-globe"></i>
+                        <a id="website-log-link" href="https://{{ $project->ryaze_domain }}" target="_blank" class="text-indigo-400 hover:text-indigo-300 truncate">
+                            {{ $project->ryaze_domain }}
+                        </a>
+                    </div>
+                    <div class="text-slate-400 text-xs">
+                        Status build: <span id="build-log-status" class="font-semibold text-slate-200">{{ $project->status }}</span>
+                    </div>
+                    <div class="text-slate-400 text-xs ml-auto">
+                        <span id="build-log-updated">{{ $project->deployments->first()->created_at?->diffForHumans() ?? 'Initial Build' }}</span>
+                    </div>
                 </div>
                 <div class="p-4 h-[500px] overflow-y-auto font-mono text-sm" id="build-log-container">
                     @if ($project->deployments->count() > 0)
-                        <pre class="text-emerald-400 whitespace-pre-wrap leading-relaxed">{{ $project->deployments->first()->build_logs }}</pre>
+                        <pre id="build-log-text" class="text-emerald-400 whitespace-pre-wrap leading-relaxed">{{ $project->deployments->first()->build_logs }}</pre>
                         @if ($project->status == 'building')
-                            <div class="mt-2 flex items-center text-slate-400 animate-pulse">
+                            <div id="build-log-pulse" class="mt-2 flex items-center text-slate-400 animate-pulse">
                                 <span class="mr-2">></span>
                                 <span class="w-2 h-4 bg-slate-400 inline-block animate-ping"></span>
                             </div>
@@ -290,12 +297,68 @@
 
     </div>
 
-    {{-- Auto-refresh saat building --}}
-    @if ($project->status == 'building')
-        <script>
-            setTimeout(() => window.location.href = window.location.pathname + '?t=' + Date.now(), 2000);
-        </script>
-    @endif
+    <script>
+        const buildLogUrl = '{{ route("user_hosting.build_logs", $project->hashid) }}';
+        const buildLogText = document.getElementById('build-log-text');
+        const buildLogStatus = document.getElementById('build-log-status');
+        const buildLogUpdated = document.getElementById('build-log-updated');
+        const websiteLogLink = document.getElementById('website-log-link');
+        const buildLogPulse = document.getElementById('build-log-pulse');
+        let buildLogInterval = null;
+
+        function refreshBuildLogs() {
+            return fetch(buildLogUrl, {
+                headers: {
+                    'Accept': 'application/json',
+                },
+            })
+                .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+                .then(data => {
+                    if (data.build_logs !== undefined && buildLogText) {
+                        buildLogText.innerHTML = escapeHtml(data.build_logs);
+                    }
+
+                    if (buildLogStatus) {
+                        buildLogStatus.textContent = data.status || buildLogStatus.textContent;
+                    }
+
+                    if (buildLogUpdated) {
+                        buildLogUpdated.textContent = data.last_updated ? 'Updated: ' + data.last_updated : buildLogUpdated.textContent;
+                    }
+
+                    if (websiteLogLink && data.website_url) {
+                        websiteLogLink.href = data.website_url;
+                        websiteLogLink.textContent = data.website_url.replace(/^https?:\/\//, '');
+                    }
+
+                    if (data.status !== 'building' && buildLogPulse) {
+                        buildLogPulse.classList.remove('animate-pulse');
+                        buildLogPulse.style.opacity = '0';
+                    }
+
+                    if (data.status !== 'building' && buildLogInterval) {
+                        clearInterval(buildLogInterval);
+                        buildLogInterval = null;
+                    }
+                })
+                .catch(() => {
+                    // ignore polling errors silently
+                });
+        }
+
+        function startBuildLogPolling() {
+            if (buildLogInterval) {
+                return;
+            }
+            refreshBuildLogs();
+            buildLogInterval = setInterval(refreshBuildLogs, 2000);
+        }
+
+        if ('{{ $project->status }}' === 'building') {
+            startBuildLogPolling();
+        }
+
+    </script>
 
     <script>
         // ── Tab switching ──────────────────────────────────────────────────────

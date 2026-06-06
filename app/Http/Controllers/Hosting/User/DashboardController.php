@@ -19,7 +19,7 @@ class DashboardController extends Controller
         // Menghitung statistik berdasarkan data user
         $stats = [
             'active' => $projects->where('status', 'active')->count(),
-            'unpaid' => $projects->where('status', 'unpaid')->count(), // Sesuaikan dengan status database Anda
+            'unpaid' => $projects->where('status', 'unpaid')->count(),
             'tickets' => 0,
         ];
 
@@ -154,6 +154,32 @@ class DashboardController extends Controller
         AutoDeployProject::dispatch($project);
 
         return back()->with('success', 'Redeploy berhasil dimulai! Silakan tunggu beberapa saat.');
+    }
+
+    // Mengambil build log terakhir untuk polling AJAX
+    public function buildLogs($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+
+        if (empty($decoded)) {
+            return response()->json(['error' => 'Project tidak ditemukan.'], 404);
+        }
+
+        $project = HostingProject::with(['deployments' => function ($query) {
+            $query->latest();
+        }])
+            ->where('user_id', Auth::id())
+            ->findOrFail($decoded[0]);
+
+        $deployment = $project->deployments->first();
+
+        return response()->json([
+            'build_logs' => $deployment?->build_logs ?? '',
+            'status' => $project->status,
+            'deployment_status' => $deployment?->status,
+            'website_url' => 'https://'.$project->ryaze_domain,
+            'last_updated' => $deployment?->updated_at?->toDateTimeString(),
+        ]);
     }
 
     // Memproses perintah dari Web Terminal
