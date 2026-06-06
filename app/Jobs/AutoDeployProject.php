@@ -15,7 +15,7 @@ class AutoDeployProject implements ShouldQueue
 
     public $project;
 
-    public $timeout = 600;
+    public $timeout = 1200; // Sinkronkan dengan retry_after
 
     public function __construct(HostingProject $project)
     {
@@ -45,7 +45,6 @@ class AutoDeployProject implements ShouldQueue
             // ══════════════════════════════════════════════════════════════════════
             $this->appendLog($deploy, "\n> TAHAP 1: Git Clone / Pull repository...");
 
-            // Bypassing Git "dubious ownership" error
             $this->executeShellCommand("git config --global --add safe.directory {$projectDir}", $deploy);
 
             $isRepo = shell_exec("ls -d {$projectDir}/.git 2>&1");
@@ -82,13 +81,14 @@ class AutoDeployProject implements ShouldQueue
                 $this->executeShellCommand("cd {$projectDir} && composer install --no-interaction --prefer-dist --optimize-autoloader 2>&1", $deploy);
 
                 $this->appendLog($deploy, '> Configuring .env and APP_KEY...');
-                // TAKTIK BARU: Buat file .env, hapus APP_KEY lama, isi baru, lalu CHMOD 777
-                $envSetupCommand = "cd {$projectDir} && ".
-                                   'cp .env.example .env 2>/dev/null || touch .env && '.
-                                   "sed -i '/^APP_KEY=/d' .env && ".
-                                   "echo -e '\nAPP_KEY=' >> .env && ".
-                                   'php artisan key:generate 2>&1 && '.
-                                   'chmod 777 .env'; // <-- INI KUNCI UTAMANYA
+
+                // Perbaikan Syntax Alpine (Gunakan titik koma agar eksekusi tidak berhenti jika ada yang gagal)
+                $envSetupCommand = "cd {$projectDir}; ".
+                                   'cp .env.example .env 2>/dev/null || touch .env; '.
+                                   "sed -i '/^APP_KEY=/d' .env; ".
+                                   "echo '' >> .env; ".
+                                   "echo 'APP_KEY=' >> .env; ".
+                                   'php artisan key:generate 2>&1';
                 $this->executeShellCommand($envSetupCommand, $deploy);
 
                 if (file_exists("{$projectDir}/package.json")) {
@@ -119,15 +119,16 @@ class AutoDeployProject implements ShouldQueue
             }
 
             // ══════════════════════════════════════════════════════════════════════
-            // TAHAP 3: PERMISSION FIX (CHMOD 777)
+            // TAHAP 3: PERMISSION FIX
             // ══════════════════════════════════════════════════════════════════════
             $this->appendLog($deploy, "\n> TAHAP 3: Membuka Akses File (Permissions)...");
 
-            // Pastikan file .env bisa diedit lewat web dashboard
+            // Kepemilikan dikembalikan ke www-data dan file env dibuka aksesnya
+            $this->executeShellCommand("chown -R www-data:www-data {$projectDir} 2>/dev/null", $deploy);
+            $this->executeShellCommand("chmod -R 775 {$projectDir} 2>/dev/null", $deploy);
             $this->executeShellCommand("chmod 777 {$projectDir}/.env 2>/dev/null", $deploy);
 
             if ($this->project->framework == 'laravel') {
-                // Pastikan folder log dan cache Laravel tidak Error 500
                 $this->executeShellCommand("chmod -R 777 {$projectDir}/storage 2>/dev/null", $deploy);
                 $this->executeShellCommand("chmod -R 777 {$projectDir}/bootstrap/cache 2>/dev/null", $deploy);
             }
