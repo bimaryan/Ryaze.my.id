@@ -14,7 +14,6 @@ class AutoDeployProject implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $project;
-
     public $timeout = 600; // Timeout 10 menit untuk menghindari proses build yang macet
 
     /**
@@ -36,7 +35,7 @@ class AutoDeployProject implements ShouldQueue
 
         // Ambil deployment terbaru
         $deploy = $this->project->deployments()->latest()->first();
-        if (! $deploy) {
+        if (!$deploy) {
             $deploy = $this->project->deployments()->create([
                 'status' => 'building',
                 'build_logs' => "> Menyiapkan environment deployment...\n",
@@ -56,7 +55,7 @@ class AutoDeployProject implements ShouldQueue
             // Cek apakah .git sudah ada di dalam folder tersebut menggunakan bash
             $isRepo = shell_exec("ls -d {$projectDir}/.git 2>&1");
 
-            if (trim($isRepo) !== '' && ! str_contains($isRepo, 'No such file')) {
+            if (trim($isRepo) !== "" && !str_contains($isRepo, 'No such file')) {
                 // KASUS 1: Sudah ada repository Git (Pull saja)
                 $this->appendLog($deploy, '> Directory exists and valid. Pulling changes...');
                 $this->executeShellCommand("chown -R root:root {$projectDir}", $deploy);
@@ -75,17 +74,16 @@ class AutoDeployProject implements ShouldQueue
 
             $cloneResult = $this->executeShellCommand($command, $deploy);
 
-            if (! $cloneResult['success']) {
+            if (!$cloneResult['success']) {
                 $this->appendLog($deploy, "\n> [ERROR] Git Clone/Pull failed. Aborting deployment.");
                 $this->markAsFailed($deploy);
-
                 return;
             }
 
             // ══════════════════════════════════════════════════════════════════════
             // TAHAP 2: BUILD FRAMEWORK (NPM / COMPOSER / PIP)
             // ══════════════════════════════════════════════════════════════════════
-            $this->appendLog($deploy, "\n> TAHAP 2: Menjalankan Build Pipeline (".strtoupper($this->project->framework).')...');
+            $this->appendLog($deploy, "\n> TAHAP 2: Menjalankan Build Pipeline (" . strtoupper($this->project->framework) . ")...");
 
             if ($this->project->framework == 'laravel') {
 
@@ -93,11 +91,11 @@ class AutoDeployProject implements ShouldQueue
                 $this->executeShellCommand("cd {$projectDir} && composer install --no-interaction --prefer-dist --optimize-autoloader 2>&1", $deploy);
 
                 $this->appendLog($deploy, '> Configuring .env and APP_KEY...');
-                $envSetupCommand = "cd {$projectDir} && ".
-                                   'cp .env.example .env 2>/dev/null || touch .env && '.
-                                   "sed -i '/^APP_KEY=/d' .env && ".
-                                   "echo -e '\nAPP_KEY=' >> .env && ".
-                                   'php artisan key:generate 2>&1';
+                $envSetupCommand = "cd {$projectDir} && " .
+                                   "cp .env.example .env 2>/dev/null || touch .env && " .
+                                   "sed -i '/^APP_KEY=/d' .env && " .
+                                   "echo -e '\nAPP_KEY=' >> .env && " .
+                                   "php artisan key:generate 2>&1";
                 $this->executeShellCommand($envSetupCommand, $deploy);
 
                 if (file_exists("{$projectDir}/package.json")) {
@@ -156,7 +154,7 @@ class AutoDeployProject implements ShouldQueue
             $this->project->update(['status' => 'active']);
 
         } catch (\Exception $e) {
-            $this->appendLog($deploy, "\n> [FATAL ERROR] ".$e->getMessage());
+            $this->appendLog($deploy, "\n> [FATAL ERROR] " . $e->getMessage());
             $this->markAsFailed($deploy);
         }
     }
@@ -176,7 +174,7 @@ class AutoDeployProject implements ShouldQueue
         return [
             'success' => $exitCode === 0,
             'output' => $outputString,
-            'code' => $exitCode,
+            'code' => $exitCode
         ];
     }
 
@@ -186,7 +184,7 @@ class AutoDeployProject implements ShouldQueue
     private function appendLog($deploy, $text)
     {
         $currentLog = $deploy->build_logs;
-        $newLog = $currentLog."\n".$text;
+        $newLog = $currentLog . "\n" . $text;
         $deploy->update(['build_logs' => $newLog]);
     }
 
