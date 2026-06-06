@@ -50,18 +50,23 @@ class DatabaseController extends Controller
         }
 
         try {
-            // Login ke MySQL Server 1Panel menggunakan PDO PHP
             $pdo = new \PDO("mysql:host={$mysqlHost};port=3306", 'root', $rootPass);
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-            // Eksekusi pembuatan Database dan User menggunakan data manual
+            // 1. Buat Database
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `$cleanDbName`");
-            $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED WITH mysql_native_password BY '$dbPassword'");
+
+            // 2. Buat User (Tanpa plugin khusus)
+            $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY '$dbPassword'");
+
+            // 3. Grant akses
             $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$cleanUsername'@'%'");
-            $pdo->exec('FLUSH PRIVILEGES');
+
+            // 4. Flush agar user langsung dikenali
+            $pdo->exec("FLUSH PRIVILEGES");
 
         } catch (\PDOException $e) {
-            return back()->with('error', 'Gagal membuat database: '.$e->getMessage());
+            return back()->with('error', 'Gagal membuat database: ' . $e->getMessage());
         }
 
         // Simpan ke database portal Ryaze
