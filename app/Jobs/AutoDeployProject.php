@@ -45,7 +45,7 @@ class AutoDeployProject implements ShouldQueue
             $this->appendLog($deploy, '> Directory is a valid repo. Pulling latest changes...');
 
             // JURUS PENGUBAHAN OWNER (Root agar git pull bisa jalan)
-            $this->executeShellCommand("chown -R root:root {$projectDir}", $deploy);
+            $this->executeShellCommand("chown -R www-data:www-data {$projectDir}", $deploy);
 
             $command = "cd {$projectDir} && git pull origin {$this->project->branch} 2>&1";
         } else {
