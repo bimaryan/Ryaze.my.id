@@ -9,7 +9,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class AutoDeployProject implements ShouldQueue
 {
@@ -27,23 +26,16 @@ class AutoDeployProject implements ShouldQueue
         $deploy = $this->project->deployments()->latest()->first();
         $deploy->update(['status' => 'building']);
 
-        // --- KONFIGURASI PATH SERVER ---
-        // Ganti dengan path direktori tempat mas ingin menyimpan file klien di 1Panel
         $baseDir = '/www/sites/hosting_clients';
-
         $subdomain = str_replace('.ryaze.my.id', '', $this->project->ryaze_domain);
-
-        // Buat nama folder berdasarkan hash ID atau nama proyek agar unik
-        $projectDir = $baseDir . '/' . $subdomain;
+        $projectDir = $baseDir.'/'.$subdomain;
 
         // 1. Persiapan Direktori
         $this->appendLog($deploy, '> Preparing deployment directory...');
         $this->executeShellCommand("mkdir -p {$baseDir}", $deploy);
 
-        // 2. TAHAP 1: Git Clone Asli
+        // 2. TAHAP 1: Git Clone atau Pull
         $this->appendLog($deploy, "\n> Cloning repository from ".$this->project->repo_source.'...');
-
-        // Cek apakah folder sudah ada (kalau re-deploy)
         if (file_exists($projectDir)) {
             $this->appendLog($deploy, '> Directory exists. Pulling latest changes...');
             $command = "cd {$projectDir} && git pull origin {$this->project->branch} 2>&1";
@@ -57,35 +49,45 @@ class AutoDeployProject implements ShouldQueue
             $this->appendLog($deploy, "\n> [ERROR] Git Clone/Pull failed. Aborting deployment.");
             $this->markAsFailed($deploy);
 
-            return; // Hentikan proses jika clone gagal
+            return;
         }
 
-        $this->appendLog($deploy, "> Fixing file permissions...");
+        // 3. FIX PERMISSIONS (Penting agar Nginx bisa akses file)
+        $this->appendLog($deploy, '> Fixing file permissions...');
         $this->executeShellCommand("chown -R www-data:www-data {$projectDir} && chmod -R 775 {$projectDir} 2>&1", $deploy);
 
-        // 3. TAHAP 2: Setup & Install (Contoh untuk HTML/Node/React)
+        // 4. TAHAP 2: Setup & Install Framework
         $this->appendLog($deploy, "\n> Setting up ".strtoupper($this->project->framework).' environment...');
 
-        if (in_array($this->project->framework, ['react', 'node', 'nextjs'])) {
+        // LOGIKA NPM BASED (React, Node, NextJS, Vue)
+        if (in_array($this->project->framework, ['react', 'node', 'nextjs', 'vue'])) {
             $this->appendLog($deploy, '> Installing NPM dependencies...');
-            // Asumsi NPM terinstal di VPS mas
             $npmCommand = "cd {$projectDir} && npm install 2>&1";
             $this->executeShellCommand($npmCommand, $deploy);
 
-            if (in_array($this->project->framework, ['react', 'nextjs'])) {
+            if (in_array($this->project->framework, ['react', 'nextjs', 'vue'])) {
                 $this->appendLog($deploy, '> Running build script...');
                 $buildCommand = "cd {$projectDir} && npm run build 2>&1";
                 $this->executeShellCommand($buildCommand, $deploy);
             }
-        } elseif ($this->project->framework == 'html') {
+        }
+        // LOGIKA PYTHON (Flask)
+        elseif ($this->project->framework == 'python') {
+            $this->appendLog($deploy, '> Setting up Python Virtual Environment...');
+            $pyCommand = "cd {$projectDir} && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt 2>&1";
+            $this->executeShellCommand($pyCommand, $deploy);
+            $this->appendLog($deploy, '> Python dependencies installed.');
+        }
+        // LOGIKA HTML
+        elseif ($this->project->framework == 'html') {
             $this->appendLog($deploy, '> HTML project detected. No build step required.');
         }
 
-        // 4. Proses Otomatis Cloudflare DNS
+        // 5. Proses Otomatis Cloudflare DNS
         $this->appendLog($deploy, "\n> Configuring Cloudflare DNS for ".$this->project->ryaze_domain.'...');
         $this->createCloudflareDNS($deploy);
 
-        // 5. TAHAP AKHIR: Sukses
+        // 6. TAHAP AKHIR: Sukses
         $this->appendLog($deploy, "\n> [SUCCESS] Deployment Finished!\n> Application is live at: https://".$this->project->ryaze_domain);
 
         $deploy->update([
@@ -109,18 +111,13 @@ class AutoDeployProject implements ShouldQueue
         $this->project->update(['status' => 'error']);
     }
 
-    // --- FUNGSI BARU: Eksekutor Shell Command ---
     private function executeShellCommand($command, $deploy)
     {
-        // Menggunakan shell_exec untuk menjalankan perintah Linux
         $output = shell_exec($command);
-
-        // Log output aslinya ke layar terminal web
         if ($output) {
             $this->appendLog($deploy, trim($output));
         }
 
-        // Cek secara sederhana apakah ada error fatal (Ini bisa disesuaikan lagi logika errornya)
         if (strpos(strtolower($output), 'fatal:') !== false || strpos(strtolower($output), 'error:') !== false) {
             return ['success' => false, 'output' => $output];
         }
@@ -128,13 +125,11 @@ class AutoDeployProject implements ShouldQueue
         return ['success' => true, 'output' => $output];
     }
 
-    // --- FUNGSI CLOUDFLARE ---
     private function createCloudflareDNS($deploy)
     {
         $domainName = $this->project->ryaze_domain;
         $zoneId = env('CLOUDFLARE_ZONE_ID');
         $apiToken = env('CLOUDFLARE_API_TOKEN');
-
         $tunnelUrl = preg_replace('#^https?://#', '', rtrim(env('CLOUDFLARE_TUNNEL_URL'), '/'));
 
         if (! $zoneId || ! $apiToken || ! $tunnelUrl) {
