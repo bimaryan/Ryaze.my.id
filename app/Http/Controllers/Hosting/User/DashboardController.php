@@ -136,4 +136,41 @@ class DashboardController extends Controller
 
         return back()->with('success', 'Redeploy berhasil dimulai! Silakan tunggu beberapa saat.');
     }
+
+    // Memproses perintah dari Web Terminal
+    public function terminal(Request $request, $hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+
+        if (empty($decoded)) {
+            return response()->json(['error' => 'Project tidak ditemukan.'], 404);
+        }
+
+        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+
+        // Pastikan path ini sesuai dengan struktur root direktori mas
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+
+        $command = $request->input('command');
+
+        if (empty($command)) {
+            return response()->json(['output' => '', 'exit_code' => 0]);
+        }
+
+        // Susun perintah: Pindah ke folder project terlebih dahulu, baru jalankan command dari user.
+        // Tambahkan 2>&1 agar error (stderr) juga tertangkap dan ditampilkan di terminal.
+        $fullCommand = 'cd '.escapeshellarg($projectDir).' && '.$command.' 2>&1';
+
+        // Eksekusi perintah shell
+        exec($fullCommand, $outputArray, $exitCode);
+
+        // Gabungkan array output menjadi string dengan baris baru
+        $outputString = implode("\n", $outputArray);
+
+        return response()->json([
+            'output' => $outputString,
+            'exit_code' => $exitCode,
+        ]);
+    }
 }
