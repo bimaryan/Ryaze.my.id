@@ -106,6 +106,8 @@
                     'superadmin' => route('superadmin.dashboard'),
                     'admin_joki' => route('admin_joki.dashboard'),
                     'user_joki' => route('user_joki.dashboard'),
+                    'user_hosting' => route('user_hosting.dashboard'),
+                    'admin_hosting' => route('admin_hosting.dashboard'),
                     default => url('/'),
                 };
             @endphp
@@ -145,8 +147,8 @@
 
                 @if (Auth::user()->role === 'superadmin')
                     <li>
-                        <a href="#"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
+                        <a href="{{ route('superadmin.users.index') }}"
+                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('superadmin.users.index') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
                             <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-users me-2"></i> Data
                                 Pengguna</span>
                         </a>
@@ -185,17 +187,17 @@
 
                 @if (Auth::user()->role === 'user_hosting')
                     <li>
-                        <a href="#"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-terminal me-2"></i>
-                                Aplikasi Ter-deploy</span>
+                        <a href="{{ route('user_hosting.create') }}"
+                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.create') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
+                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-brands fa-github me-2"></i>
+                                Deploy Proyek Baru</span>
                         </a>
                     </li>
                     <li>
                         <a href="#"
                             class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-brands fa-github me-2"></i>
-                                Deploy Proyek Baru</span>
+                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-terminal me-2"></i>
+                                Aplikasi Ter-deploy</span>
                         </a>
                     </li>
                 @endif

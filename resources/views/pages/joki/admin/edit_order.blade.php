@@ -10,10 +10,6 @@
                         class="font-semibold text-indigo-600">{{ $order->client->name }}</span> | Layanan:
                     {{ $order->service->name }}</p>
             </div>
-            <a href="{{ route('admin_joki.orders') }}"
-                class="inline-block text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors bg-slate-100 hover:bg-indigo-50 px-4 py-2 rounded-lg">
-                &larr; Kembali ke Daftar Pesanan
-            </a>
         </div>
 
         @if (session('success'))
@@ -153,12 +149,13 @@
                                     class="mt-3 border-t border-slate-100 pt-3">
                                     @csrf
                                     @method('PUT')
-                                    <div class="flex gap-2">
+                                    <div class="flex flex-col sm:flex-row gap-2">
                                         <input type="text" name="admin_reply" value="{{ $rev->admin_reply }}"
                                             placeholder="Balasan admin..." required
-                                            class="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                            class="flex-1 w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+
                                         <select name="status"
-                                            class="w-32 px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                            class="w-full sm:w-32 flex-shrink-0 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                                             <option value="fixing" {{ $rev->status == 'fixing' ? 'selected' : '' }}>Fixing
                                             </option>
                                             <option value="resolved" {{ $rev->status == 'resolved' ? 'selected' : '' }}>
@@ -166,8 +163,11 @@
                                             <option value="rejected" {{ $rev->status == 'rejected' ? 'selected' : '' }}>
                                                 Rejected</option>
                                         </select>
+
                                         <button type="submit"
-                                            class="bg-indigo-600 text-white px-4 rounded-lg hover:bg-indigo-700 text-sm font-bold">Kirim</button>
+                                            class="w-full sm:w-auto flex-shrink-0 bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 text-sm font-bold transition-colors">
+                                            Kirim
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -176,7 +176,6 @@
                         @endforelse
                     </div>
                 </div>
-
             </div>
 
             <div class="space-y-6">

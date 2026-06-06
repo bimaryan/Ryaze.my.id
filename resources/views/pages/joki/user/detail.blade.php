@@ -12,10 +12,6 @@
                 <h1 class="text-xl font-bold text-slate-800">Detail Proyek: {{ $order->project_name }}</h1>
                 <p class="text-sm text-slate-500 mt-0.5">Pantau progres, tagihan, dan ajukan revisi di halaman ini.</p>
             </div>
-            <a href="{{ route('user_joki.dashboard') }}"
-                class="inline-block text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors bg-slate-100 hover:bg-indigo-50 px-4 py-2 rounded-lg">
-                &larr; Kembali
-            </a>
         </div>
 
         @if (session('success'))
