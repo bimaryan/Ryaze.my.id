@@ -17,11 +17,11 @@ class AutoDeployProject implements ShouldQueue
 
     public HostingProject $project;
 
-    /** Jumlah retry jika job gagal. */
+    /** Jangan retry — deploy ulang harus manual via redeploy button. */
     public int $tries = 1;
 
-    /** Timeout maksimum job (detik). Build NPM bisa lama. */
-    public int $timeout = 600;
+    /** Timeout maksimum job (detik). Build NPM + composer bisa lama. */
+    public int $timeout = 900;
 
     public function __construct(HostingProject $project)
     {
@@ -56,13 +56,17 @@ class AutoDeployProject implements ShouldQueue
             // ----------------------------------------------------------------
             $this->log($deploy, "\n> Checking repository status...");
 
+            // Tandai semua direktori sebagai safe agar git tidak complain ownership
+            $this->exec("git config --global --add safe.directory '*'", $deploy);
+
             $isRepo = is_dir("{$projectDir}/.git");
 
             if ($isRepo) {
                 $this->log($deploy, '> Repository found. Pulling latest changes...');
+                // Pastikan root punya akses untuk git pull
                 $this->exec("chown -R root:root {$projectDir}", $deploy);
                 $this->exec(
-                    "cd {$projectDir} && git fetch --all 2>&1 && git reset --hard origin/{$this->project->branch} 2>&1",
+                    "cd {$projectDir} && git fetch --all && git reset --hard origin/{$this->project->branch}",
                     $deploy,
                     true
                 );
@@ -74,7 +78,7 @@ class AutoDeployProject implements ShouldQueue
 
                 $this->log($deploy, '> Cloning repository...');
                 $this->exec(
-                    "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir} 2>&1",
+                    "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir}",
                     $deploy,
                     true
                 );
@@ -89,17 +93,13 @@ class AutoDeployProject implements ShouldQueue
             $framework = strtolower($this->project->framework);
             $this->log($deploy, "\n> Setting up " . strtoupper($framework) . ' environment...');
 
-            if (in_array($framework, ['react', 'node', 'nextjs', 'vue'])) {
-                $this->setupNodeFramework($deploy, $projectDir, $framework);
-            } elseif ($framework === 'laravel') {
-                $this->setupLaravel($deploy, $projectDir);
-            } elseif ($framework === 'python') {
-                $this->setupPython($deploy, $projectDir);
-            } elseif ($framework === 'html') {
-                $this->log($deploy, '> Static HTML project. No build step required.');
-            } else {
-                $this->log($deploy, "> [WARNING] Framework '{$framework}' tidak dikenali. Melewati build step.");
-            }
+            match ($framework) {
+                'react', 'nextjs', 'vue', 'node' => $this->setupNodeFramework($deploy, $projectDir, $framework),
+                'laravel'                          => $this->setupLaravel($deploy, $projectDir),
+                'python'                           => $this->setupPython($deploy, $projectDir),
+                'html'                             => $this->log($deploy, '> Static HTML project. No build step required.'),
+                default                            => $this->log($deploy, "> [WARNING] Framework '{$framework}' tidak dikenali. Melewati build step."),
+            };
 
             // ----------------------------------------------------------------
             // TAHAP 4: Cloudflare DNS
@@ -132,77 +132,130 @@ class AutoDeployProject implements ShouldQueue
     // FRAMEWORK HANDLERS
     // =========================================================================
 
+    /**
+     * Handler untuk React / Vue / Next.js / Node.js.
+     * Otomatis deteksi jika project adalah Laravel + Inertia.
+     */
     private function setupNodeFramework($deploy, string $projectDir, string $framework): void
     {
-        // Deteksi apakah ini project Laravel + Inertia (Vue/React frontend)
-        $isLaravel = file_exists("{$projectDir}/artisan") && file_exists("{$projectDir}/composer.json");
+        // Deteksi Laravel + Inertia (ada artisan + composer.json + package.json)
+        $isLaravelInertia = file_exists("{$projectDir}/artisan")
+            && file_exists("{$projectDir}/composer.json")
+            && file_exists("{$projectDir}/package.json");
 
-        if ($isLaravel) {
-            $this->log($deploy, '> Laravel project detected. Running composer install first...');
+        if ($isLaravelInertia) {
+            $this->log($deploy, '> Laravel+Inertia detected. Running composer install first...');
             $this->runComposerInstall($deploy, $projectDir);
-
-            // Buat .env jika belum ada
-            if (! file_exists("{$projectDir}/.env") && file_exists("{$projectDir}/.env.example")) {
-                $this->exec("cp {$projectDir}/.env.example {$projectDir}/.env", $deploy);
-                $this->exec("cd {$projectDir} && php artisan key:generate 2>&1", $deploy);
-            }
+            $this->setupLaravelEnv($deploy, $projectDir);
         }
 
         // Install NPM dependencies
         $this->log($deploy, '> Installing NPM dependencies...');
         $this->exec(
-            "cd {$projectDir} && /usr/bin/npm install --legacy-peer-deps 2>&1",
+            "cd {$projectDir} && /usr/bin/npm install --legacy-peer-deps",
             $deploy,
             true
         );
 
-        // Build (Node.js murni tidak punya build step)
+        // Build — Node.js Express murni tidak perlu build
         if (in_array($framework, ['react', 'nextjs', 'vue'])) {
             $this->log($deploy, '> Running build script...');
             $this->exec(
-                "cd {$projectDir} && /usr/bin/npm run build 2>&1",
+                "cd {$projectDir} && /usr/bin/npm run build",
                 $deploy,
                 true
             );
 
-            if ($isLaravel) {
-                // Laravel/Inertia: hasil build ada di public/build — tidak perlu dipindah
-                $this->log($deploy, '> Laravel+Inertia: build output at public/build. No move needed.');
+            if ($isLaravelInertia) {
+                // Laravel/Inertia: Vite output sudah masuk ke public/build — tidak perlu dipindah
+                $this->log($deploy, '> Laravel+Inertia: Vite output is at public/build. No file move needed.');
+                // Set ulang permission setelah build
+                $this->exec("chown -R www-data:www-data {$projectDir} && chmod -R 755 {$projectDir}", $deploy);
             } else {
-                // SPA murni: pindahkan dist/build ke root
                 $this->log($deploy, '> Organizing build output...');
                 $this->moveBuiltOutput($deploy, $projectDir);
             }
         }
     }
 
+    /**
+     * Handler untuk framework Laravel murni (tanpa Inertia/NPM build).
+     */
     private function setupLaravel($deploy, string $projectDir): void
     {
         $this->runComposerInstall($deploy, $projectDir);
+        $this->setupLaravelEnv($deploy, $projectDir);
 
-        if (! file_exists("{$projectDir}/.env") && file_exists("{$projectDir}/.env.example")) {
-            $this->exec("cp {$projectDir}/.env.example {$projectDir}/.env", $deploy);
-            $this->exec("cd {$projectDir} && php artisan key:generate 2>&1", $deploy);
+        // Jalankan artisan optimize
+        $this->exec("cd {$projectDir} && php artisan optimize", $deploy);
+
+        $this->log($deploy, '> Laravel setup complete.');
+    }
+
+    /**
+     * Setup .env dan APP_KEY untuk project Laravel.
+     * Urutan penting: copy .env dulu, baru key:generate.
+     */
+    private function setupLaravelEnv($deploy, string $projectDir): void
+    {
+        $envPath        = "{$projectDir}/.env";
+        $envExamplePath = "{$projectDir}/.env.example";
+
+        if (! file_exists($envPath)) {
+            if (file_exists($envExamplePath)) {
+                $this->log($deploy, '> Creating .env from .env.example...');
+                // Copy sebagai www-data agar permissions benar
+                $this->exec("cp {$envExamplePath} {$envPath}", $deploy, true);
+                // Pastikan file .env sudah terbaca sebelum key:generate
+                clearstatcache(true, $envPath);
+            } else {
+                $this->log($deploy, '> [WARNING] .env.example tidak ditemukan! Membuat .env kosong...');
+                file_put_contents($envPath, "APP_KEY=\nAPP_ENV=production\nAPP_DEBUG=false\n");
+            }
         }
 
-        $this->exec("cd {$projectDir} && php artisan config:cache 2>&1", $deploy);
-        $this->exec("cd {$projectDir} && php artisan route:cache 2>&1", $deploy);
-        $this->log($deploy, '> Laravel setup complete.');
+        // Generate APP_KEY — cek dulu apakah sudah ada
+        $envContent = file_get_contents($envPath) ?? '';
+        $hasKey     = preg_match('/^APP_KEY=base64:.+/m', $envContent);
+
+        if (! $hasKey) {
+            $this->log($deploy, '> Generating APP_KEY...');
+            $this->exec("cd {$projectDir} && php artisan key:generate --force", $deploy, true);
+        } else {
+            $this->log($deploy, '> APP_KEY already set. Skipping key:generate.');
+        }
+
+        // Set storage permission
+        $this->exec("chmod -R 775 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
+        $this->exec("chown -R www-data:www-data {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
+
+        $this->log($deploy, '> Laravel environment ready.');
     }
 
     private function runComposerInstall($deploy, string $projectDir): void
     {
         // Cari binary composer
-        $composer = '/usr/local/bin/composer';
-        if (! file_exists($composer)) {
-            $composer = trim(shell_exec('which composer 2>/dev/null') ?? '');
-        }
-        if (! $composer) {
-            throw new \RuntimeException('composer binary tidak ditemukan di server.');
+        $candidates = ['/usr/local/bin/composer', '/usr/bin/composer'];
+        $composer   = null;
+
+        foreach ($candidates as $path) {
+            if (file_exists($path)) {
+                $composer = $path;
+                break;
+            }
         }
 
+        if (! $composer) {
+            $composer = trim(shell_exec('which composer 2>/dev/null') ?? '');
+        }
+
+        if (! $composer) {
+            throw new \RuntimeException('composer binary tidak ditemukan di server. Install composer terlebih dahulu.');
+        }
+
+        $this->log($deploy, "> Using composer: {$composer}");
         $this->exec(
-            "cd {$projectDir} && {$composer} install --no-dev --optimize-autoloader --no-interaction 2>&1",
+            "cd {$projectDir} && {$composer} install --no-dev --optimize-autoloader --no-interaction",
             $deploy,
             true
         );
@@ -212,30 +265,21 @@ class AutoDeployProject implements ShouldQueue
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
 
-        $this->exec(
-            "cd {$projectDir} && /usr/bin/python3 -m venv venv 2>&1",
-            $deploy,
-            true
-        );
-
-        $this->exec(
-            "cd {$projectDir} && venv/bin/pip install --upgrade pip 2>&1",
-            $deploy
-        );
-
-        $this->exec(
-            "cd {$projectDir} && venv/bin/pip install -r requirements.txt 2>&1",
-            $deploy,
-            true
-        );
+        $this->exec("cd {$projectDir} && /usr/bin/python3 -m venv venv", $deploy, true);
+        $this->exec("cd {$projectDir} && venv/bin/pip install --upgrade pip", $deploy);
+        $this->exec("cd {$projectDir} && venv/bin/pip install -r requirements.txt", $deploy, true);
 
         $this->log($deploy, '> Python dependencies installed.');
     }
 
+    /**
+     * Pindahkan isi folder dist/ atau build/ ke root project.
+     * Hanya untuk SPA murni (React/Vue/Next tanpa Laravel).
+     */
     private function moveBuiltOutput($deploy, string $projectDir): void
     {
         $outputDirName = null;
-        foreach (['dist', 'build'] as $candidate) {
+        foreach (['dist', 'build', 'out'] as $candidate) {
             if (is_dir("{$projectDir}/{$candidate}")) {
                 $outputDirName = $candidate;
                 break;
@@ -243,9 +287,8 @@ class AutoDeployProject implements ShouldQueue
         }
 
         if (! $outputDirName) {
-            // Build gagal menghasilkan output — ini error, bukan warning
             throw new \RuntimeException(
-                "Build output folder (dist/build) tidak ditemukan di {$projectDir}. " .
+                "Build output folder (dist/build/out) tidak ditemukan di {$projectDir}. " .
                 "Build kemungkinan gagal — periksa log npm di atas."
             );
         }
@@ -253,11 +296,11 @@ class AutoDeployProject implements ShouldQueue
         $outputDir = "{$projectDir}/{$outputDirName}";
         $this->log($deploy, "> Output folder found: {$outputDir}");
 
-        // cp -a menyalin semua file termasuk hidden files, preserve permission
+        // cp -a: preserve semua attribute + salin hidden files via trailing slash
         $this->exec("cp -a {$outputDir}/. {$projectDir}/", $deploy, true);
         $this->exec("rm -rf {$outputDir}", $deploy);
 
-        // Validasi index.html harus ada
+        // Validasi index.html wajib ada
         if (! file_exists("{$projectDir}/index.html")) {
             throw new \RuntimeException(
                 "index.html tidak ditemukan setelah move. " .
@@ -329,32 +372,35 @@ class AutoDeployProject implements ShouldQueue
     // =========================================================================
 
     /**
-     * Jalankan shell command menggunakan exit code sebagai penentu sukses/gagal.
-     * Output tetap ditulis ke log.
+     * Jalankan shell command.
+     * Gunakan exit code ($?) sebagai penentu sukses/gagal — bukan parsing teks.
      *
      * @throws \RuntimeException jika $throwOnError = true dan exit code != 0
      */
     private function exec(string $command, $deploy, bool $throwOnError = false): string
     {
-        // Jalankan command, tangkap output + exit code
-        $fullCommand = "({$command}) 2>&1; echo \"__EXIT__:$?\"";
-        $raw = shell_exec($fullCommand) ?? '';
+        // Inject exit code capture — jangan ubah command aslinya agar exit code benar
+        $fullCommand = "({$command}) 2>&1; echo \"__EXIT_CODE__:$?\"";
+        $raw         = shell_exec($fullCommand) ?? '';
 
-        // Pisahkan output dari exit code
         $exitCode = 0;
-        if (preg_match('/\n?__EXIT__:(\d+)\s*$/', $raw, $matches)) {
+        $output   = $raw;
+
+        if (preg_match('/\n?__EXIT_CODE__:(\d+)\s*$/', $raw, $matches)) {
             $exitCode = (int) $matches[1];
-            $output   = trim(substr($raw, 0, strrpos($raw, $matches[0])));
-        } else {
-            $output = trim($raw);
+            $output   = trim(substr($raw, 0, strrpos($raw, "\n__EXIT_CODE__:{$exitCode}")));
+            if ($output === false) {
+                $output = trim(str_replace($matches[0], '', $raw));
+            }
         }
+
+        $output = trim($output);
 
         if ($output !== '') {
             $this->log($deploy, $output);
         }
 
         if ($throwOnError && $exitCode !== 0) {
-            // Ambil 3 baris terakhir sebagai ringkasan error
             $lines   = array_filter(array_map('trim', explode("\n", $output)));
             $summary = implode(' | ', array_slice(array_values($lines), -3));
             throw new \RuntimeException("Command exited with code {$exitCode}: {$summary}");
@@ -364,7 +410,8 @@ class AutoDeployProject implements ShouldQueue
     }
 
     /**
-     * Append log ke deployment. Refresh model dulu agar tidak menimpa log sebelumnya.
+     * Append teks ke build_logs.
+     * Refresh model dulu agar tidak menimpa log yang sudah ada.
      */
     private function log($deploy, string $text): void
     {
