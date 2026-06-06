@@ -24,39 +24,42 @@ class DatabaseController extends Controller
             'db_name' => 'required|string|alpha_dash|max:15|unique:hosting_databases,db_name',
         ]);
 
-        // Prefix agar nama DB dan User unik di server
         $prefix = 'ryz_'.Auth::id().'_';
         $cleanDbName = $prefix.strtolower(trim($request->db_name));
-        $dbUsername = substr($cleanDbName, 0, 16); // MySQL user max 16-32 chars tergantung versi
+        $dbUsername = substr($cleanDbName, 0, 16);
         $dbPassword = Str::random(16);
 
-        // 1. Dapatkan Password Root MySQL dari .env
+        // Ambil konfigurasi dari .env
         $rootPass = env('PANEL_MYSQL_ROOT_PASSWORD');
+        $mysqlHost = env('PANEL_MYSQL_HOST', '1Panel-mysql-KZAi');
+
         if (! $rootPass) {
             return back()->with('error', 'Konfigurasi Root MySQL belum diatur oleh Admin.');
         }
 
-        // 2. Siapkan perintah Docker untuk 1Panel-mysql-KZAi
-        $sqlCommand = "CREATE DATABASE IF NOT EXISTS \`{$cleanDbName}\`; ".
-                      "CREATE USER IF NOT EXISTS '{$dbUsername}'@'%' IDENTIFIED BY '{$dbPassword}'; ".
-                      "GRANT ALL PRIVILEGES ON \`{$cleanDbName}\`.* TO '{$dbUsername}'@'%'; ".
-                      'FLUSH PRIVILEGES;';
+        try {
+            // Login ke MySQL Server 1Panel menggunakan PDO PHP
+            $pdo = new \PDO("mysql:host={$mysqlHost};port=3306", 'root', $rootPass);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        $dockerCmd = "docker exec 1Panel-mysql-KZAi mysql -uroot -p'{$rootPass}' -e \"{$sqlCommand}\" 2>&1";
+            // Eksekusi pembuatan Database dan User
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS `$cleanDbName`");
+            $pdo->exec("CREATE USER IF NOT EXISTS '$dbUsername'@'%' IDENTIFIED BY '$dbPassword'");
+            $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$dbUsername'@'%'");
+            $pdo->exec('FLUSH PRIVILEGES');
 
-        // 3. Eksekusi ke Server Linux
-        exec($dockerCmd, $output, $exitCode);
-
-        if ($exitCode !== 0) {
-            return back()->with('error', 'Gagal membuat database di server: '.implode(' ', $output));
+        } catch (\PDOException $e) {
+            // Jika gagal terhubung atau gagal eksekusi query
+            return back()->with('error', 'Gagal membuat database: '.$e->getMessage());
         }
 
-        // 4. Simpan ke Database Portal Ryaze jika sukses
+        // Simpan ke database portal Ryaze
         HostingDatabase::create([
             'user_id' => Auth::id(),
             'db_name' => $cleanDbName,
             'db_username' => $dbUsername,
             'db_password' => $dbPassword,
+            'host' => $mysqlHost,
         ]);
 
         return back()->with('success', 'Database '.$cleanDbName.' berhasil dibuat!');
@@ -70,15 +73,24 @@ class DatabaseController extends Controller
         }
 
         $database = HostingDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
+
         $rootPass = env('PANEL_MYSQL_ROOT_PASSWORD');
+        $mysqlHost = env('PANEL_MYSQL_HOST', '1Panel-mysql-KZAi');
 
-        // Hapus DB dan User dari Docker 1Panel
-        $sqlCommand = "DROP DATABASE IF EXISTS \`{$database->db_name}\`; ".
-                      "DROP USER IF EXISTS '{$database->db_username}'@'%'; ".
-                      'FLUSH PRIVILEGES;';
+        try {
+            // Login ke MySQL Server
+            $pdo = new \PDO("mysql:host={$mysqlHost};port=3306", 'root', $rootPass);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        $dockerCmd = "docker exec 1Panel-mysql-KZAi mysql -uroot -p'{$rootPass}' -e \"{$sqlCommand}\" 2>&1";
-        exec($dockerCmd);
+            // Hapus Database dan User
+            $pdo->exec("DROP DATABASE IF EXISTS `$database->db_name`");
+            $pdo->exec("DROP USER IF EXISTS '$database->db_username'@'%'");
+            $pdo->exec('FLUSH PRIVILEGES');
+
+        } catch (\PDOException $e) {
+            // Tetap hapus dari list portal meskipun di server aslinya mungkin sudah tidak ada
+            \Log::error('Gagal hapus DB di server MySQL: '.$e->getMessage());
+        }
 
         $database->delete();
 
