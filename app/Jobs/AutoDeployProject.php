@@ -35,16 +35,29 @@ class AutoDeployProject implements ShouldQueue
         $this->executeShellCommand("mkdir -p {$baseDir}", $deploy);
 
         // 2. TAHAP 1: Git Clone atau Pull
-        $this->appendLog($deploy, "\n> Cloning repository from " . $this->project->repo_source . '...');
+        $this->appendLog($deploy, "\n> Cloning repository from ".$this->project->repo_source.'...');
+
+        // --- JURUS PENGUBAHAN OWNER ---
+        // Ubah owner ke root agar git pull tidak komplain soal ownership
+        $this->executeShellCommand("chown -R root:root {$projectDir}", $deploy);
 
         if (file_exists($projectDir)) {
-            $this->appendLog($deploy, '> Directory exists. Configuring safe directory and pulling latest changes...');
-
-            $this->executeShellCommand("cd {$projectDir} && git config --add safe.directory {$projectDir} 2>&1", $deploy);
-
+            $this->appendLog($deploy, '> Directory exists. Pulling latest changes...');
             $command = "cd {$projectDir} && git pull origin {$this->project->branch} 2>&1";
         } else {
             $command = "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir} 2>&1";
+        }
+
+        $cloneResult = $this->executeShellCommand($command, $deploy);
+
+        // Setelah git pull selesai, langsung kembalikan ke www-data agar Nginx bisa akses
+        $this->executeShellCommand("chown -R www-data:www-data {$projectDir} && chmod -R 775 {$projectDir}", $deploy);
+
+        if (! $cloneResult['success']) {
+            $this->appendLog($deploy, "\n> [ERROR] Git Clone/Pull failed. Aborting deployment.");
+            $this->markAsFailed($deploy);
+
+            return;
         }
 
         $cloneResult = $this->executeShellCommand($command, $deploy);
