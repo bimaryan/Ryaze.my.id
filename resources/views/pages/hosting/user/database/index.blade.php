@@ -151,7 +151,7 @@
                 <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2"><i
                         class="fa-solid fa-database text-indigo-500"></i> Buat Database Baru</h3>
                 <button onclick="document.getElementById('createDbModal').classList.add('hidden')"
-                    class="text-slate-400 hover:text-rose-500 transition-colors bg-white rounded-lg p-1.5 shadow-sm border border-slate-200"><i
+                    class="text-slate-400 hover:text-rose-500 transition-colors bg-white rounded-lg p-2 shadow-sm border border-slate-200"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
 
