@@ -203,52 +203,64 @@ class AutoDeployProject implements ShouldQueue
 
         // ── 1. Pastikan .env ada ──────────────────────────────────────────────
         if (! file_exists($envPath)) {
-            $source = file_exists($envExamplePath) ? $envExamplePath : null;
-            if ($source) {
+            if (file_exists($envExamplePath)) {
                 $this->log($deploy, '> Creating .env from .env.example...');
-                // Gunakan shell cp agar owner mengikuti proses yang jalan (root)
-                $this->exec("cp {$source} {$envPath} && chmod 664 {$envPath}", $deploy, true);
+                $this->exec("cp {$envExamplePath} {$envPath} && chmod 666 {$envPath}", $deploy, true);
             } else {
-                $this->log($deploy, '> [WARNING] .env.example tidak ditemukan! Membuat .env minimal...');
-                $this->exec("printf 'APP_NAME=Laravel\\nAPP_ENV=production\\nAPP_KEY=\\nAPP_DEBUG=false\\n' > {$envPath} && chmod 664 {$envPath}", $deploy, true);
+                $this->log($deploy, '> [WARNING] .env.example tidak ada. Membuat .env minimal...');
+                $this->exec(
+                    "printf 'APP_NAME=Laravel\\nAPP_ENV=production\\nAPP_KEY=\\nAPP_DEBUG=false\\nLOG_CHANNEL=stack\\n' > {$envPath} && chmod 666 {$envPath}",
+                    $deploy, true
+                );
             }
-        }
-
-        // ── 2. Selalu pastikan APP_KEY= ada sebagai placeholder ───────────────
-        // Gunakan grep + shell untuk cek & inject — hindari masalah PHP opcode cache / permission
-        $hasKeyLine = trim(shell_exec("grep -c '^APP_KEY=' {$envPath} 2>/dev/null") ?? '0');
-
-        if ((int) $hasKeyLine === 0) {
-            $this->log($deploy, '> APP_KEY line missing in .env. Injecting placeholder via shell...');
-            // echo >> lebih aman dari PHP file_put_contents saat permission mismatch
-            $this->exec("echo 'APP_KEY=' >> {$envPath}", $deploy, true);
-        }
-
-        // ── 3. Cek apakah sudah ada key yang valid ────────────────────────────
-        $hasValidKey = trim(shell_exec("grep -c '^APP_KEY=base64:' {$envPath} 2>/dev/null") ?? '0');
-
-        if ((int) $hasValidKey > 0) {
-            $this->log($deploy, '> APP_KEY already set. Skipping key:generate.');
         } else {
-            $this->log($deploy, '> Generating APP_KEY...');
-
-            // Pastikan artisan bisa tulis ke .env
+            // .env sudah ada — pastikan bisa ditulis
             $this->exec("chmod 666 {$envPath}", $deploy);
+        }
+
+        // ── 2. Normalkan APP_KEY — hapus semua variasi lama, inject bersih ───
+        // Alasan: .env bisa punya "APP_KEY =", "# APP_KEY=", BOM, spasi, dll
+        // yang menyebabkan artisan key:generate tidak bisa find & replace.
+        // Strategi: sed hapus baris apapun yang mengandung APP_KEY (case-insensitive),
+        // lalu append APP_KEY= bersih di akhir file.
+        $hasValidKey = (int) trim(shell_exec("grep -c '^APP_KEY=base64:' {$envPath} 2>/dev/null") ?? '0');
+
+        if ($hasValidKey > 0) {
+            $this->log($deploy, '> APP_KEY already valid. Skipping key:generate.');
+        } else {
+            $this->log($deploy, '> Normalizing APP_KEY in .env...');
+
+            // Hapus semua baris yang punya APP_KEY (apapun isinya) agar bersih
+            $this->exec("sed -i '/^[[:space:]]*#\?[[:space:]]*APP_KEY/d' {$envPath}", $deploy);
+
+            // Append placeholder bersih
+            $this->exec("echo 'APP_KEY=' >> {$envPath}", $deploy, true);
+
+            // Verifikasi placeholder ada sebelum key:generate
+            $placeholder = (int) trim(shell_exec("grep -c '^APP_KEY=$' {$envPath} 2>/dev/null") ?? '0');
+            if ($placeholder === 0) {
+                throw new \RuntimeException('Gagal inject APP_KEY= placeholder ke .env. Periksa permission file.');
+            }
+
+            $this->log($deploy, '> Generating APP_KEY...');
             $this->exec("cd {$projectDir} && php artisan key:generate --force", $deploy, true);
 
-            // ── 4. Verifikasi key benar-benar terset ─────────────────────────
+            // ── 3. Verifikasi final ───────────────────────────────────────────
             $keyAfter = trim(shell_exec("grep '^APP_KEY=base64:' {$envPath} 2>/dev/null") ?? '');
             if (empty($keyAfter)) {
+                // Dump isi .env untuk debug
+                $envDump = trim(shell_exec("cat {$envPath} 2>/dev/null | head -20") ?? '');
+                $this->log($deploy, "> [DEBUG] .env content (first 20 lines):\n{$envDump}");
                 throw new \RuntimeException(
-                    'key:generate dijalankan tapi APP_KEY masih kosong. ' .
-                    'Kemungkinan: artisan tidak bisa tulis ke .env, atau .env corrupt.'
+                    'key:generate selesai tapi APP_KEY masih kosong. ' .
+                    'Lihat debug dump .env di atas.'
                 );
             }
             $this->log($deploy, '> APP_KEY generated successfully.');
-
-            // Kembalikan permission .env ke 640
-            $this->exec("chmod 640 {$envPath}", $deploy);
         }
+
+        // ── 4. Set permission .env ke 640 (readable oleh www-data group) ─────
+        $this->exec("chmod 640 {$envPath} && chown root:www-data {$envPath}", $deploy);
 
         // ── 5. Storage & cache permission ────────────────────────────────────
         $this->exec("chmod -R 775 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
