@@ -56,7 +56,7 @@ class DatabaseController extends Controller
 
             // Eksekusi pembuatan Database dan User menggunakan data manual
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `$cleanDbName`");
-            $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY '$dbPassword'");
+            $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED WITH mysql_native_password BY '$dbPassword'");
             $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$cleanUsername'@'%'");
             $pdo->exec('FLUSH PRIVILEGES');
 
