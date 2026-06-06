@@ -35,15 +35,14 @@ class AutoDeployProject implements ShouldQueue
         if (! $deploy) {
             Log::error("[AutoDeploy] Tidak ada deployment record untuk project #{$this->project->id}");
             $this->project->update(['status' => 'error']);
-
             return;
         }
 
         $deploy->update(['status' => 'building', 'build_logs' => '']);
 
-        $baseDir = '/www/sites/hosting_clients';
-        $subdomain = str_replace('.ryaze.my.id', '', $this->project->ryaze_domain);
-        $projectDir = $baseDir.'/'.$subdomain;
+        $baseDir    = '/www/sites/hosting_clients';
+        $subdomain  = str_replace('.ryaze.my.id', '', $this->project->ryaze_domain);
+        $projectDir = $baseDir . '/' . $subdomain;
 
         try {
             // ----------------------------------------------------------------
@@ -89,14 +88,14 @@ class AutoDeployProject implements ShouldQueue
             // TAHAP 3: Setup Framework
             // ----------------------------------------------------------------
             $framework = strtolower($this->project->framework);
-            $this->log($deploy, "\n> Setting up ".strtoupper($framework).' environment...');
+            $this->log($deploy, "\n> Setting up " . strtoupper($framework) . ' environment...');
 
             match ($framework) {
                 'react', 'nextjs', 'vue', 'node' => $this->setupNodeFramework($deploy, $projectDir, $framework),
-                'laravel' => $this->setupLaravel($deploy, $projectDir),
-                'python' => $this->setupPython($deploy, $projectDir),
-                'html' => $this->log($deploy, '> Static HTML project. No build step required.'),
-                default => $this->log($deploy, "> [WARNING] Framework '{$framework}' tidak dikenali. Melewati build step."),
+                'laravel'                          => $this->setupLaravel($deploy, $projectDir),
+                'python'                           => $this->setupPython($deploy, $projectDir),
+                'html'                             => $this->log($deploy, '> Static HTML project. No build step required.'),
+                default                            => $this->log($deploy, "> [WARNING] Framework '{$framework}' tidak dikenali. Melewati build step."),
             };
 
             // ----------------------------------------------------------------
@@ -111,7 +110,7 @@ class AutoDeployProject implements ShouldQueue
             $this->log($deploy, "\n> [SUCCESS] Deployment finished!\n> Live at: https://{$this->project->ryaze_domain}");
 
             $deploy->update([
-                'status' => 'ready',
+                'status'      => 'ready',
                 'deployed_at' => now(),
             ]);
             $this->project->update(['status' => 'active']);
@@ -183,7 +182,7 @@ class AutoDeployProject implements ShouldQueue
      */
     private function setupLaravelEnv($deploy, string $projectDir): void
     {
-        $envPath = "{$projectDir}/.env";
+        $envPath        = "{$projectDir}/.env";
         $envExamplePath = "{$projectDir}/.env.example";
 
         // ── 1. Pastikan .env ada ──────────────────────────────────────────────
@@ -214,7 +213,7 @@ class AutoDeployProject implements ShouldQueue
             $this->exec("sed -i '/APP_KEY/d' {$envPath}", $deploy);
 
             // Generate via PHP random_bytes — tidak butuh artisan, tidak terpengaruh broken extension
-            $appKey = 'base64:'.base64_encode(random_bytes(32));
+            $appKey     = 'base64:' . base64_encode(random_bytes(32));
             $escapedKey = escapeshellarg("APP_KEY={$appKey}");
             $this->exec("echo {$escapedKey} >> {$envPath}", $deploy, true);
 
@@ -229,7 +228,8 @@ class AutoDeployProject implements ShouldQueue
         }
 
         // ── 3. Permission .env ────────────────────────────────────────────────
-        $this->exec("chmod 640 {$envPath} && chown root:www-data {$envPath}", $deploy);
+        // chown www-data agar webserver bisa baca/tulis .env (file_put_contents dari Laravel)
+        $this->exec("chown www-data:www-data {$envPath} && chmod 644 {$envPath}", $deploy);
 
         // ── 4. Storage & cache — chmod 777 agar www-data bisa tulis apapun user webserver-nya ──
         $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
@@ -278,7 +278,7 @@ class AutoDeployProject implements ShouldQueue
     private function runComposerInstall($deploy, string $projectDir): void
     {
         $candidates = ['/usr/local/bin/composer', '/usr/bin/composer'];
-        $composer = null;
+        $composer   = null;
 
         foreach ($candidates as $path) {
             if (file_exists($path)) {
@@ -336,7 +336,7 @@ class AutoDeployProject implements ShouldQueue
 
         if (! file_exists("{$projectDir}/index.html")) {
             throw new \RuntimeException(
-                'index.html tidak ditemukan setelah move. Pastikan build menghasilkan index.html.'
+                "index.html tidak ditemukan setelah move. Pastikan build menghasilkan index.html."
             );
         }
 
@@ -351,15 +351,14 @@ class AutoDeployProject implements ShouldQueue
     private function createCloudflareDNS($deploy): bool
     {
         $domainName = $this->project->ryaze_domain;
-        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
-        $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
-        $tunnelUrl = preg_replace('#^https?://#', '', rtrim(
+        $zoneId     = config('services.cloudflare.zone_id',   env('CLOUDFLARE_ZONE_ID'));
+        $apiToken   = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+        $tunnelUrl  = preg_replace('#^https?://#', '', rtrim(
             config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')), '/'
         ));
 
         if (! $zoneId || ! $apiToken || ! $tunnelUrl) {
             $this->log($deploy, '> [ERROR] Cloudflare credentials (.env) incomplete!');
-
             return false;
         }
 
@@ -371,28 +370,25 @@ class AutoDeployProject implements ShouldQueue
 
         if ($existing->successful() && count($existing->json('result', [])) > 0) {
             $this->log($deploy, '> DNS record already exists. Skipping.');
-
             return true;
         }
 
         $response = Http::withToken($apiToken)
             ->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
-                'type' => 'CNAME',
-                'name' => $domainName,
+                'type'    => 'CNAME',
+                'name'    => $domainName,
                 'content' => $tunnelUrl,
-                'ttl' => 1,
+                'ttl'     => 1,
                 'proxied' => true,
             ]);
 
         if ($response->successful()) {
             $this->log($deploy, '> DNS record created successfully!');
-
             return true;
         }
 
         $errorMessage = $response->json('errors.0.message', 'Unknown Cloudflare API Error');
         $this->log($deploy, "> [API ERROR] Cloudflare: {$errorMessage}");
-
         return false;
     }
 
@@ -403,14 +399,14 @@ class AutoDeployProject implements ShouldQueue
     private function exec(string $command, $deploy, bool $throwOnError = false): string
     {
         $fullCommand = "({$command}) 2>&1; echo \"__EXIT_CODE__:$?\"";
-        $raw = shell_exec($fullCommand) ?? '';
+        $raw         = shell_exec($fullCommand) ?? '';
 
         $exitCode = 0;
-        $output = $raw;
+        $output   = $raw;
 
         if (preg_match('/\n?__EXIT_CODE__:(\d+)\s*$/', $raw, $matches)) {
             $exitCode = (int) $matches[1];
-            $output = trim(substr($raw, 0, strrpos($raw, "\n__EXIT_CODE__:{$exitCode}")));
+            $output   = trim(substr($raw, 0, strrpos($raw, "\n__EXIT_CODE__:{$exitCode}")));
             if ($output === false) {
                 $output = trim(str_replace($matches[0], '', $raw));
             }
@@ -423,7 +419,7 @@ class AutoDeployProject implements ShouldQueue
         }
 
         if ($throwOnError && $exitCode !== 0) {
-            $lines = array_filter(array_map('trim', explode("\n", $output)));
+            $lines   = array_filter(array_map('trim', explode("\n", $output)));
             $summary = implode(' | ', array_slice(array_values($lines), -3));
             throw new \RuntimeException("Command exited with code {$exitCode}: {$summary}");
         }
@@ -435,7 +431,7 @@ class AutoDeployProject implements ShouldQueue
     {
         $deploy->refresh();
         $deploy->update([
-            'build_logs' => $deploy->build_logs."\n".$text,
+            'build_logs' => $deploy->build_logs . "\n" . $text,
         ]);
     }
 
