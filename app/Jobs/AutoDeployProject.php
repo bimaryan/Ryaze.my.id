@@ -29,10 +29,12 @@ class AutoDeployProject implements ShouldQueue
 
         // --- KONFIGURASI PATH SERVER ---
         // Ganti dengan path direktori tempat mas ingin menyimpan file klien di 1Panel
-        $baseDir = '/opt/1panel/apps/openresty/openresty/www/sites/hosting_clients';
+        $baseDir = '/www/sites/hosting_clients';
+
+        $subdomain = str_replace('.ryaze.my.id', '', $this->project->ryaze_domain);
 
         // Buat nama folder berdasarkan hash ID atau nama proyek agar unik
-        $projectDir = $baseDir.'/'.$this->project->id.'_'.$this->project->project_name;
+        $projectDir = $baseDir . '/' . $subdomain;
 
         // 1. Persiapan Direktori
         $this->appendLog($deploy, '> Preparing deployment directory...');
