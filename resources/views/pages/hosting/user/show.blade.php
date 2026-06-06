@@ -142,7 +142,7 @@
                         <div>
                             <h3 class="font-bold text-slate-800 mb-1">Environment Variables</h3>
                             <p class="text-xs text-slate-500 mb-3">Atur .env file, API keys, dan secret tokens.</p>
-                            <button onclick="document.getElementById('envModal').classList.remove('hidden')"
+                            <button type="button" onclick="document.getElementById('envModal').classList.remove('hidden')"
                                 class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded transition-colors">
                                 Kelola .env &rarr;
                             </button>
@@ -152,16 +152,16 @@
             </div>
         </div>
 
-        <div id="envModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
-            aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div id="envModal" class="hidden fixed inset-0 z-[999] overflow-y-auto" aria-labelledby="modal-title"
+            role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
                 <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" aria-hidden="true"
                     onclick="document.getElementById('envModal').classList.add('hidden')"></div>
 
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <div
-                    class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-200">
+                    class="relative z-10 inline-block bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200">
                     <form action="{{ route('user_hosting.env.update', $project->hashid) }}" method="POST">
                         @csrf
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -179,7 +179,7 @@
                                             Masukkan variabel environment dengan format <code
                                                 class="bg-slate-100 px-1 py-0.5 rounded text-rose-500">KUNCI=nilai</code>.
                                         </p>
-                                        <div class="bg-slate-900 rounded-lg p-1 border border-slate-800">
+                                        <div class="bg-slate-900 rounded-lg p-1 border border-slate-800 relative">
                                             <textarea name="env_content" rows="10"
                                                 class="w-full bg-transparent text-emerald-400 font-mono text-sm p-3 focus:outline-none focus:ring-0 border-0 resize-y"
                                                 placeholder="API_KEY=rahasia_negara&#10;DB_HOST=127.0.0.1" spellcheck="false">{{ old('env_content', $envContent) }}</textarea>
