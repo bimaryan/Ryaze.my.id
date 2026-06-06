@@ -35,7 +35,7 @@ class AutoDeployProject implements ShouldQueue
         $this->executeShellCommand("mkdir -p {$baseDir}", $deploy);
 
         // 2. TAHAP 1: Git Clone atau Pull
-        $$this->appendLog($deploy, "\n> Cloning repository from " . $this->project->repo_source . '...');
+        $this->appendLog($deploy, "\n> Cloning repository from " . $this->project->repo_source . '...');
 
         if (file_exists($projectDir)) {
             $this->appendLog($deploy, '> Directory exists. Marking as safe and pulling latest changes...');
