@@ -201,36 +201,50 @@ class AutoDeployProject implements ShouldQueue
         $envPath        = "{$projectDir}/.env";
         $envExamplePath = "{$projectDir}/.env.example";
 
+        // ── 1. Buat .env jika belum ada ──────────────────────────────────────
         if (! file_exists($envPath)) {
             if (file_exists($envExamplePath)) {
                 $this->log($deploy, '> Creating .env from .env.example...');
-                // Copy sebagai www-data agar permissions benar
                 $this->exec("cp {$envExamplePath} {$envPath}", $deploy, true);
-                // Pastikan file .env sudah terbaca sebelum key:generate
-                clearstatcache(true, $envPath);
             } else {
-                $this->log($deploy, '> [WARNING] .env.example tidak ditemukan! Membuat .env kosong...');
-                file_put_contents($envPath, "APP_KEY=\nAPP_ENV=production\nAPP_DEBUG=false\n");
+                $this->log($deploy, '> [WARNING] .env.example tidak ditemukan! Membuat .env minimal...');
+                file_put_contents($envPath, "APP_NAME=Laravel\nAPP_ENV=production\nAPP_KEY=\nAPP_DEBUG=false\n");
             }
         }
 
-        // Generate APP_KEY — cek dulu apakah sudah ada
-        $envContent = file_get_contents($envPath) ?? '';
-        $hasKey     = preg_match('/^APP_KEY=base64:.+/m', $envContent);
+        // ── 2. Pastikan baris APP_KEY= ada — key:generate WAJIB ada placeholder ──
+        clearstatcache(true, $envPath);
+        $envContent = file_get_contents($envPath) ?: '';
 
-        if (! $hasKey) {
+        if (preg_match('/^APP_KEY=base64:.+/m', $envContent)) {
+            $this->log($deploy, '> APP_KEY already set. Skipping key:generate.');
+        } else {
+            // Inject placeholder APP_KEY= jika baris tidak ada sama sekali
+            if (! preg_match('/^APP_KEY=/m', $envContent)) {
+                $this->log($deploy, '> APP_KEY line missing. Injecting placeholder...');
+                file_put_contents($envPath, $envContent . "\nAPP_KEY=\n");
+                clearstatcache(true, $envPath);
+            }
+
             $this->log($deploy, '> Generating APP_KEY...');
             $this->exec("cd {$projectDir} && php artisan key:generate --force", $deploy, true);
-        } else {
-            $this->log($deploy, '> APP_KEY already set. Skipping key:generate.');
+
+            // Verifikasi key benar-benar terset
+            clearstatcache(true, $envPath);
+            $envAfter = file_get_contents($envPath) ?: '';
+            if (! preg_match('/^APP_KEY=base64:.+/m', $envAfter)) {
+                throw new \RuntimeException('key:generate sukses tapi APP_KEY masih kosong. Periksa permission .env.');
+            }
+            $this->log($deploy, '> APP_KEY generated successfully.');
         }
 
-        // Set storage permission
+        // ── 3. Storage & cache permission ────────────────────────────────────
         $this->exec("chmod -R 775 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
         $this->exec("chown -R www-data:www-data {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
 
         $this->log($deploy, '> Laravel environment ready.');
     }
+
 
     private function runComposerInstall($deploy, string $projectDir): void
     {
