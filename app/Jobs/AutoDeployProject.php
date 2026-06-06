@@ -83,6 +83,7 @@ class AutoDeployProject implements ShouldQueue
                 );
             }
 
+            // Kembalikan ke www-data sebelum setup framework
             $this->exec("chown -R www-data:www-data {$projectDir} && chmod -R 775 {$projectDir}", $deploy);
 
             // ----------------------------------------------------------------
@@ -100,7 +101,18 @@ class AutoDeployProject implements ShouldQueue
             };
 
             // ----------------------------------------------------------------
-            // TAHAP 4: Cloudflare DNS
+            // TAHAP 4: Final Permissions Fix (Sapu Bersih Permission)
+            // ----------------------------------------------------------------
+            $this->log($deploy, "\n> Applying final permissions to all generated files...");
+            $this->exec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
+            $this->exec("chmod -R 775 {$projectDir} 2>/dev/null || true", $deploy);
+
+            if ($framework === 'laravel') {
+                $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
+            }
+
+            // ----------------------------------------------------------------
+            // TAHAP 5: Cloudflare DNS
             // ----------------------------------------------------------------
             $this->log($deploy, "\n> Configuring Cloudflare DNS for {$this->project->ryaze_domain}...");
             $this->createCloudflareDNS($deploy);
@@ -160,7 +172,6 @@ class AutoDeployProject implements ShouldQueue
             if ($isLaravelInertia) {
                 $this->log($deploy, '> Laravel+Inertia: Vite output is at public/build. No file move needed.');
                 $this->runLaravelPostSetup($deploy, $projectDir);
-                $this->exec("chown -R www-data:www-data {$projectDir} && chmod -R 755 {$projectDir}", $deploy);
             } else {
                 $this->log($deploy, '> Organizing build output...');
                 $this->moveBuiltOutput($deploy, $projectDir);
@@ -178,8 +189,6 @@ class AutoDeployProject implements ShouldQueue
 
     /**
      * Setup .env dan APP_KEY untuk project Laravel.
-     * APP_KEY di-generate via random_bytes — tidak pakai artisan key:generate
-     * karena bisa crash akibat broken PHP extension (php_gmp.dll dll).
      */
     private function setupLaravelEnv($deploy, string $projectDir): void
     {
@@ -210,15 +219,12 @@ class AutoDeployProject implements ShouldQueue
         } else {
             $this->log($deploy, '> Generating APP_KEY...');
 
-            // Hapus semua baris APP_KEY lama (apapun bentuknya)
             $this->exec("sed -i '/APP_KEY/d' {$envPath}", $deploy);
 
-            // Generate via PHP random_bytes — tidak butuh artisan, tidak terpengaruh broken extension
             $appKey = 'base64:'.base64_encode(random_bytes(32));
             $escapedKey = escapeshellarg("APP_KEY={$appKey}");
             $this->exec("echo {$escapedKey} >> {$envPath}", $deploy, true);
 
-            // Verifikasi
             $keyAfter = trim(shell_exec("grep '^APP_KEY=base64:' {$envPath} 2>/dev/null") ?? '');
             if (empty($keyAfter)) {
                 $envDump = trim(shell_exec("head -20 {$envPath} 2>/dev/null") ?? '');
@@ -229,19 +235,11 @@ class AutoDeployProject implements ShouldQueue
         }
 
         // ── 3. Permission .env ────────────────────────────────────────────────
-        // chown www-data agar webserver bisa baca/tulis .env (file_put_contents dari Laravel)
-        $this->exec("chown www-data:www-data {$envPath} && chmod 644 {$envPath}", $deploy);
-
-        // ── 4. Storage & cache — chmod 777 agar www-data bisa tulis apapun user webserver-nya ──
-        $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
-        $this->exec("chown -R www-data:www-data {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
-
-        $this->log($deploy, '> Laravel environment ready.');
+        $this->exec("chown www-data:www-data {$envPath} && chmod 666 {$envPath}", $deploy);
     }
 
     /**
      * Jalankan migrate + optimize setelah .env siap.
-     * Dipanggil dari setupLaravel dan setupNodeFramework (Inertia).
      */
     private function runLaravelPostSetup($deploy, string $projectDir): void
     {
@@ -341,8 +339,7 @@ class AutoDeployProject implements ShouldQueue
             );
         }
 
-        $this->exec("chown -R www-data:www-data {$projectDir} && chmod -R 755 {$projectDir}", $deploy);
-        $this->log($deploy, '> Build output moved and permissions reset.');
+        $this->log($deploy, '> Build output moved and ready.');
     }
 
     // =========================================================================
