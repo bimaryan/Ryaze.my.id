@@ -152,46 +152,36 @@
             </div>
         </div>
 
-        <div id="envModal" class="hidden fixed inset-0 z-[999] overflow-y-auto" aria-labelledby="modal-title"
-            role="dialog" aria-modal="true">
-            <div class="flex items-start justify-center min-h-screen pt-16 px-4">
+        <div id="envModal" class="hidden fixed inset-0 z-[999] overflow-y-auto">
+            <div class="fixed inset-0 transition-opacity"
+                onclick="document.getElementById('envModal').classList.add('hidden')"></div>
 
-                <div
-                    class="relative inline-block bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all max-w-2xl w-full border border-slate-200">
+            <div class="flex items-center justify-center min-h-screen px-4 py-8">
+                <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl border border-slate-200">
                     <form action="{{ route('user_hosting.env.update', $project->hashid) }}" method="POST">
                         @csrf
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                <div
-                                    class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-amber-100 sm:mx-0 sm:h-10 sm:w-10">
-                                    <i class="fa-solid fa-key text-amber-600"></i>
-                                </div>
-                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                    <h3 class="text-lg leading-6 font-bold text-slate-900" id="modal-title">
-                                        Editor .env
-                                    </h3>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-slate-500 mb-3">
-                                            Masukkan variabel environment dengan format <code
-                                                class="bg-slate-100 px-1 py-0.5 rounded text-rose-500">KUNCI=nilai</code>.
-                                        </p>
-                                        <div class="bg-slate-900 rounded-lg p-1 border border-slate-800 relative">
-                                            <textarea name="env_content" rows="10"
-                                                class="w-full bg-transparent text-emerald-400 font-mono text-sm p-3 focus:outline-none focus:ring-0 border-0 resize-y"
-                                                placeholder="API_KEY=rahasia_negara&#10;DB_HOST=127.0.0.1" spellcheck="false">{{ old('env_content', $envContent) }}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">Editor .env</h3>
+                            <p class="text-sm text-slate-500 mb-4">
+                                Masukkan variabel environment dengan format <code
+                                    class="bg-slate-100 px-1 py-0.5 rounded text-rose-500">KUNCI=nilai</code>.
+                            </p>
+
+                            <div class="bg-slate-900 rounded-lg p-1 border border-slate-800">
+                                <textarea name="env_content" rows="10"
+                                    class="w-full bg-transparent text-emerald-400 font-mono text-sm p-3 focus:outline-none focus:ring-0 border-0 resize-y"
+                                    placeholder="API_KEY=rahasia_negara&#10;DB_HOST=127.0.0.1" spellcheck="false">{{ old('env_content', $envContent) }}</textarea>
                             </div>
                         </div>
-                        <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-200">
-                            <button type="submit"
-                                class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm transition-colors">
-                                Simpan .env
-                            </button>
+
+                        <div class="bg-slate-50 px-6 py-4 rounded-b-xl border-t border-slate-200 flex justify-end gap-3">
                             <button type="button" onclick="document.getElementById('envModal').classList.add('hidden')"
-                                class="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                                class="px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-100 transition-colors">
                                 Batal
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+                                Simpan .env
                             </button>
                         </div>
                     </form>
