@@ -314,7 +314,10 @@
         const terminalOutput = document.getElementById('terminal-output');
         const terminalInput  = document.getElementById('terminal-input');
         const projectHashid  = '{{ $project->hashid }}';
-        const terminalUrl    = '{{ route("user_hosting.terminal", $project->hashid) }}';
+        let terminalUrl      = '{{ route("user_hosting.terminal", $project->hashid) }}';
+        if (window.location.protocol === 'https:') {
+            terminalUrl = terminalUrl.replace('http://', 'https://');
+        }
         const csrfToken      = '{{ csrf_token() }}';
 
         let commandHistory = [];
