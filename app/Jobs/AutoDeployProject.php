@@ -189,34 +189,41 @@ class AutoDeployProject implements ShouldQueue
     private function moveBuiltOutput($deploy, string $projectDir): void
     {
         // Tentukan folder output (dist atau build)
-        $outputDir = null;
-        foreach (['dist', 'build', '.next'] as $candidate) {
+        $outputDirName = null;
+        foreach (['dist', 'build'] as $candidate) {
             if (is_dir("{$projectDir}/{$candidate}")) {
-                $outputDir = "{$projectDir}/{$candidate}";
+                $outputDirName = $candidate;
                 break;
             }
         }
 
-        if (! $outputDir) {
-            $this->log($deploy, '> [WARNING] Build output folder (dist/build/.next) not found! Skipping move.');
+        if (! $outputDirName) {
+            $this->log($deploy, '> [WARNING] Build output folder (dist/build) not found! Skipping move.');
             return;
         }
 
+        $outputDir = "{$projectDir}/{$outputDirName}";
         $this->log($deploy, "> Output folder found: {$outputDir}");
 
-        // Salin semua isi (termasuk hidden files) ke project root
-        $this->exec("rsync -a {$outputDir}/ {$projectDir}/ 2>&1", $deploy, true);
+        // Salin semua isi ke project root (termasuk hidden files via dot glob)
+        // Jalankan sebagai root sehingga tidak ada permission issue saat copy
+        $this->exec("cp -a {$outputDir}/. {$projectDir}/", $deploy, true);
 
-        // Hapus folder output agar rapi
-        $this->exec("rm -rf {$outputDir} 2>&1", $deploy);
+        // Hapus folder output agar tidak berantakan
+        $this->exec("rm -rf {$outputDir}", $deploy);
 
-        // Reset ownership setelah copy (file hasil rsync milik root)
+        // Pastikan index.html ada — kalau tidak ada, deployment percuma
+        if (! file_exists("{$projectDir}/index.html")) {
+            throw new \RuntimeException("index.html tidak ditemukan di {$projectDir} setelah build. Periksa output build project.");
+        }
+
+        // Reset ownership ke www-data agar webserver bisa baca
         $this->exec(
-            "chown -R www-data:www-data {$projectDir} && chmod -R 755 {$projectDir} 2>&1",
+            "chown -R www-data:www-data {$projectDir} && chmod -R 755 {$projectDir}",
             $deploy
         );
 
-        $this->log($deploy, '> Build output moved, cleaned, and permissions reset.');
+        $this->log($deploy, '> Build output moved, cleaned, and permissions reset to www-data.');
     }
 
     // =========================================================================
@@ -283,7 +290,12 @@ class AutoDeployProject implements ShouldQueue
      */
     private function exec(string $command, $deploy, bool $throwOnError = false): string
     {
-        $output = shell_exec($command . ' 2>&1') ?? '';
+        // Pastikan stderr selalu digabung ke stdout
+        if (! str_ends_with(trim($command), '2>&1')) {
+            $command .= ' 2>&1';
+        }
+
+        $output = shell_exec($command) ?? '';
         $output = trim($output);
 
         if ($output !== '') {
@@ -292,12 +304,37 @@ class AutoDeployProject implements ShouldQueue
 
         if ($throwOnError) {
             $lower = strtolower($output);
-            $fatals = ['fatal:', 'error:', 'npm err!', 'could not read', 'permission denied'];
 
-            foreach ($fatals as $keyword) {
-                if (str_contains($lower, $keyword)) {
-                    throw new \RuntimeException("Command failed [{$command}]: {$output}");
+            // "npm warn" dan "warning" bukan error — filter dulu
+            $lines = explode("\n", $lower);
+            $errorLines = array_filter($lines, function ($line) {
+                $line = trim($line);
+                // Abaikan baris warning/hint/info
+                if (str_starts_with($line, 'npm warn')
+                    || str_starts_with($line, 'warning')
+                    || str_starts_with($line, 'browserslist:')
+                    || str_starts_with($line, 'one of your')
+                    || str_starts_with($line, 'find out more')
+                    || str_starts_with($line, 'you can control')
+                    || $line === ''
+                ) {
+                    return false;
                 }
+
+                // Tandai sebagai error hanya jika mengandung keyword fatal
+                $fatals = ['fatal:', 'error:', 'npm err!', 'could not read', 'permission denied', 'command failed'];
+                foreach ($fatals as $keyword) {
+                    if (str_contains($line, $keyword)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            });
+
+            if (! empty($errorLines)) {
+                $errorDetail = implode(' | ', array_slice(array_values($errorLines), 0, 3));
+                throw new \RuntimeException("Command failed: {$errorDetail}");
             }
         }
 
