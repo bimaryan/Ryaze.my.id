@@ -291,11 +291,11 @@
     </div>
 
     {{-- Auto-refresh saat building --}}
-    {{-- @if ($project->status == 'building')
+    @if ($project->status == 'building')
         <script>
             setTimeout(() => window.location.href = window.location.pathname + '?t=' + Date.now(), 2000);
         </script>
-    @endif --}}
+    @endif
 
     <script>
         // ── Tab switching ──────────────────────────────────────────────────────
