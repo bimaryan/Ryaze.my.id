@@ -7,7 +7,7 @@ use App\Jobs\AutoDeployProject;
 use App\Models\HostingProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Vinkla\Hashids\Facades\Hashids; // Pastikan ini ter-import
+use Vinkla\Hashids\Facades\Hashids;
 
 class DashboardController extends Controller
 {
@@ -25,6 +25,7 @@ class DashboardController extends Controller
         return view('pages.hosting.user.create');
     }
 
+    // Menampilkan daftar project
     public function projects()
     {
         $projects = HostingProject::where('user_id', Auth::id())->latest()->get();
@@ -82,7 +83,6 @@ class DashboardController extends Controller
 
         // Membaca file .env klien secara langsung dari VPS
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
-        // Pastikan path ini sesuai dengan settingan Nginx/Docker 1Panel mas
         $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
 
         $envContent = '';
@@ -93,7 +93,7 @@ class DashboardController extends Controller
         return view('pages.hosting.user.show', compact('project', 'envContent'));
     }
 
-    // Tambahkan method BARU ini di bawahnya:
+    // Memperbarui file .env
     public function updateEnv(Request $request, $hashid)
     {
         $decoded = Hashids::decode($hashid);
@@ -107,12 +107,27 @@ class DashboardController extends Controller
         $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
         $content = $request->input('env_content', '');
 
-        // Tulis isi textarea langsung ke file .env di server
-        file_put_contents($envPath, $content);
+        try {
+            // Coba paksakan write permission jika file ada
+            if (file_exists($envPath)) {
+                @chmod($envPath, 0666);
+            }
 
-        return back()->with('success', 'Environment variables berhasil disimpan!');
+            // Tulis isi textarea langsung ke file .env di server dengan peredam error (@)
+            $result = @file_put_contents($envPath, $content);
+
+            if ($result === false) {
+                // Jika web server masih ditolak Linux (Permission Denied)
+                return back()->with('error', 'Gagal menyimpan .env! Pastikan folder project memiliki permission www-data (chown).');
+            }
+
+            return back()->with('success', 'Environment variables berhasil disimpan!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage());
+        }
     }
 
+    // Memproses Redeploy
     public function redeploy($hashid)
     {
         $decoded = Hashids::decode($hashid);
@@ -122,16 +137,13 @@ class DashboardController extends Controller
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
 
-        // Set status ke building
         $project->update(['status' => 'building']);
 
-        // Tambahkan log baru
         $project->deployments()->create([
             'status' => 'queued',
             'build_logs' => "> Memulai proses Redeploy manual...\n> Mengambil perubahan terbaru dari repository...",
         ]);
 
-        // Jalankan Job lagi
         AutoDeployProject::dispatch($project);
 
         return back()->with('success', 'Redeploy berhasil dimulai! Silakan tunggu beberapa saat.');
@@ -149,23 +161,16 @@ class DashboardController extends Controller
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
 
-        // Pastikan path ini sesuai dengan struktur root direktori mas
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
-
         $command = $request->input('command');
 
         if (empty($command)) {
             return response()->json(['output' => '', 'exit_code' => 0]);
         }
 
-        // Susun perintah: Pindah ke folder project terlebih dahulu, baru jalankan command dari user.
-        // Tambahkan 2>&1 agar error (stderr) juga tertangkap dan ditampilkan di terminal.
         $fullCommand = 'cd '.escapeshellarg($projectDir).' && '.$command.' 2>&1';
 
-        // Eksekusi perintah shell
         exec($fullCommand, $outputArray, $exitCode);
-
-        // Gabungkan array output menjadi string dengan baris baru
         $outputString = implode("\n", $outputArray);
 
         return response()->json([

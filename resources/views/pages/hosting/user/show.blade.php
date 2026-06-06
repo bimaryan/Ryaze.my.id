@@ -3,11 +3,17 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
+        {{-- Alerts --}}
         @if (session('success'))
             <div
                 class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm animate-fade-in-down">
                 <i class="fa-solid fa-circle-check text-xl"></i>
                 <span class="font-medium text-sm">{{ session('success') }}</span>
+            </div>
+        @elseif (session('error'))
+            <div class="mb-4 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm animate-fade-in-down">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                <span class="font-medium text-sm">{{ session('error') }}</span>
             </div>
         @endif
 
@@ -334,7 +340,6 @@
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
-                // ANSI color basic support
                 .replace(/\u001b\[0m/g, '</span>')
                 .replace(/\u001b\[31m/g, '<span style="color:#f87171">')
                 .replace(/\u001b\[32m/g, '<span style="color:#4ade80">')
@@ -343,7 +348,7 @@
                 .replace(/\u001b\[36m/g, '<span style="color:#22d3ee">')
                 .replace(/\u001b\[37m/g, '<span style="color:#e2e8f0">')
                 .replace(/\u001b\[1m/g, '<span style="font-weight:700">')
-                .replace(/\u001b\[[0-9;]*m/g, ''); // strip sisa ANSI
+                .replace(/\u001b\[[0-9;]*m/g, '');
         }
 
         async function runCommand() {
@@ -352,12 +357,10 @@
             const cmd = terminalInput.value.trim();
             if (!cmd) return;
 
-            // History
             commandHistory.unshift(cmd);
             if (commandHistory.length > 50) commandHistory.pop();
             historyIndex = -1;
 
-            // Echo command ke terminal
             appendToTerminal(
                 `<div class="flex items-start gap-2 mb-1">` +
                 `<span class="text-indigo-400 shrink-0 select-none">~/${terminalInput.closest('.flex').querySelector('span').textContent.trim().split('/').pop()} $</span>` +
@@ -368,7 +371,6 @@
             terminalInput.value = '';
             isRunning = true;
 
-            // Loading indicator
             const loaderId = 'loader-' + Date.now();
             appendToTerminal(`<div id="${loaderId}" class="text-slate-600 animate-pulse mb-1">▌</div>`);
 
@@ -405,12 +407,10 @@
         }
 
         function clearTerminal() {
-            // Hapus semua kecuali welcome message (div pertama)
             const children = Array.from(terminalOutput.children);
             children.slice(1).forEach(c => c.remove());
         }
 
-        // Keyboard: Enter, ArrowUp/Down, Ctrl+L
         terminalInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
