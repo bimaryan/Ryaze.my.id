@@ -201,44 +201,56 @@ class AutoDeployProject implements ShouldQueue
         $envPath        = "{$projectDir}/.env";
         $envExamplePath = "{$projectDir}/.env.example";
 
-        // ── 1. Buat .env jika belum ada ──────────────────────────────────────
+        // ── 1. Pastikan .env ada ──────────────────────────────────────────────
         if (! file_exists($envPath)) {
-            if (file_exists($envExamplePath)) {
+            $source = file_exists($envExamplePath) ? $envExamplePath : null;
+            if ($source) {
                 $this->log($deploy, '> Creating .env from .env.example...');
-                $this->exec("cp {$envExamplePath} {$envPath}", $deploy, true);
+                // Gunakan shell cp agar owner mengikuti proses yang jalan (root)
+                $this->exec("cp {$source} {$envPath} && chmod 664 {$envPath}", $deploy, true);
             } else {
                 $this->log($deploy, '> [WARNING] .env.example tidak ditemukan! Membuat .env minimal...');
-                file_put_contents($envPath, "APP_NAME=Laravel\nAPP_ENV=production\nAPP_KEY=\nAPP_DEBUG=false\n");
+                $this->exec("printf 'APP_NAME=Laravel\\nAPP_ENV=production\\nAPP_KEY=\\nAPP_DEBUG=false\\n' > {$envPath} && chmod 664 {$envPath}", $deploy, true);
             }
         }
 
-        // ── 2. Pastikan baris APP_KEY= ada — key:generate WAJIB ada placeholder ──
-        clearstatcache(true, $envPath);
-        $envContent = file_get_contents($envPath) ?: '';
+        // ── 2. Selalu pastikan APP_KEY= ada sebagai placeholder ───────────────
+        // Gunakan grep + shell untuk cek & inject — hindari masalah PHP opcode cache / permission
+        $hasKeyLine = trim(shell_exec("grep -c '^APP_KEY=' {$envPath} 2>/dev/null") ?? '0');
 
-        if (preg_match('/^APP_KEY=base64:.+/m', $envContent)) {
+        if ((int) $hasKeyLine === 0) {
+            $this->log($deploy, '> APP_KEY line missing in .env. Injecting placeholder via shell...');
+            // echo >> lebih aman dari PHP file_put_contents saat permission mismatch
+            $this->exec("echo 'APP_KEY=' >> {$envPath}", $deploy, true);
+        }
+
+        // ── 3. Cek apakah sudah ada key yang valid ────────────────────────────
+        $hasValidKey = trim(shell_exec("grep -c '^APP_KEY=base64:' {$envPath} 2>/dev/null") ?? '0');
+
+        if ((int) $hasValidKey > 0) {
             $this->log($deploy, '> APP_KEY already set. Skipping key:generate.');
         } else {
-            // Inject placeholder APP_KEY= jika baris tidak ada sama sekali
-            if (! preg_match('/^APP_KEY=/m', $envContent)) {
-                $this->log($deploy, '> APP_KEY line missing. Injecting placeholder...');
-                file_put_contents($envPath, $envContent . "\nAPP_KEY=\n");
-                clearstatcache(true, $envPath);
-            }
-
             $this->log($deploy, '> Generating APP_KEY...');
+
+            // Pastikan artisan bisa tulis ke .env
+            $this->exec("chmod 666 {$envPath}", $deploy);
             $this->exec("cd {$projectDir} && php artisan key:generate --force", $deploy, true);
 
-            // Verifikasi key benar-benar terset
-            clearstatcache(true, $envPath);
-            $envAfter = file_get_contents($envPath) ?: '';
-            if (! preg_match('/^APP_KEY=base64:.+/m', $envAfter)) {
-                throw new \RuntimeException('key:generate sukses tapi APP_KEY masih kosong. Periksa permission .env.');
+            // ── 4. Verifikasi key benar-benar terset ─────────────────────────
+            $keyAfter = trim(shell_exec("grep '^APP_KEY=base64:' {$envPath} 2>/dev/null") ?? '');
+            if (empty($keyAfter)) {
+                throw new \RuntimeException(
+                    'key:generate dijalankan tapi APP_KEY masih kosong. ' .
+                    'Kemungkinan: artisan tidak bisa tulis ke .env, atau .env corrupt.'
+                );
             }
             $this->log($deploy, '> APP_KEY generated successfully.');
+
+            // Kembalikan permission .env ke 640
+            $this->exec("chmod 640 {$envPath}", $deploy);
         }
 
-        // ── 3. Storage & cache permission ────────────────────────────────────
+        // ── 5. Storage & cache permission ────────────────────────────────────
         $this->exec("chmod -R 775 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
         $this->exec("chown -R www-data:www-data {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
 
