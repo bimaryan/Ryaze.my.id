@@ -80,6 +80,36 @@ class DashboardController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($decoded[0]);
 
-        return view('pages.hosting.user.show', compact('project'));
+        // Membaca file .env klien secara langsung dari VPS
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        // Pastikan path ini sesuai dengan settingan Nginx/Docker 1Panel mas
+        $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
+
+        $envContent = '';
+        if (file_exists($envPath)) {
+            $envContent = file_get_contents($envPath);
+        }
+
+        return view('pages.hosting.user.show', compact('project', 'envContent'));
+    }
+
+    // Tambahkan method BARU ini di bawahnya:
+    public function updateEnv(Request $request, $hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) {
+            abort(404);
+        }
+
+        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+
+        $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
+        $content = $request->input('env_content', '');
+
+        // Tulis isi textarea langsung ke file .env di server
+        file_put_contents($envPath, $content);
+
+        return back()->with('success', 'Environment variables berhasil disimpan!');
     }
 }

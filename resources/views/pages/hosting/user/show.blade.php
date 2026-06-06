@@ -1,9 +1,18 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+        @if (session('success'))
+            <div
+                class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm animate-fade-in-down">
+                <i class="fa-solid fa-circle-check text-xl"></i>
+                <span class="font-medium text-sm">{{ session('success') }}</span>
+            </div>
+        @endif
+
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 border border-slate-200 rounded-xl flex items-center justify-center bg-slate-50">
                     @if ($project->framework == 'react')
@@ -32,7 +41,8 @@
                 <span
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
                     {{ $project->status == 'active' ? 'bg-emerald-100 text-emerald-700' : ($project->status == 'building' ? 'bg-amber-100 text-amber-700 animate-pulse' : 'bg-rose-100 text-rose-700') }}">
-                    <i class="fa-solid {{ $project->status == 'active' ? 'fa-check-circle' : ($project->status == 'building' ? 'fa-spinner fa-spin' : 'fa-triangle-exclamation') }} mr-1.5"></i>
+                    <i
+                        class="fa-solid {{ $project->status == 'active' ? 'fa-check-circle' : ($project->status == 'building' ? 'fa-spinner fa-spin' : 'fa-triangle-exclamation') }} mr-1.5"></i>
                     {{ $project->status }}
                 </span>
             </div>
@@ -50,10 +60,13 @@
                                 <div class="w-3 h-3 rounded-full bg-amber-400"></div>
                                 <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
                             </div>
-                            <div class="ml-2 bg-white px-3 py-1 rounded-md text-xs text-slate-500 w-full max-w-md flex items-center gap-2 border border-slate-200 shadow-sm">
-                                <i class="fa-solid fa-lock text-[10px] text-emerald-600"></i> https://{{ $project->ryaze_domain }}
+                            <div
+                                class="ml-2 bg-white px-3 py-1 rounded-md text-xs text-slate-500 w-full max-w-md flex items-center gap-2 border border-slate-200 shadow-sm">
+                                <i class="fa-solid fa-lock text-[10px] text-emerald-600"></i>
+                                https://{{ $project->ryaze_domain }}
                             </div>
-                            <a href="https://{{ $project->ryaze_domain }}" target="_blank" title="Buka di tab baru" class="ml-auto text-slate-400 hover:text-indigo-600 transition-colors">
+                            <a href="https://{{ $project->ryaze_domain }}" target="_blank" title="Buka di tab baru"
+                                class="ml-auto text-slate-400 hover:text-indigo-600 transition-colors">
                                 <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
                             </a>
                         </div>
@@ -62,7 +75,8 @@
                             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <i class="fa-solid fa-circle-notch fa-spin text-slate-300 text-3xl"></i>
                             </div>
-                            <iframe src="https://{{ $project->ryaze_domain }}" class="w-full h-full border-0 relative z-10 bg-white"></iframe>
+                            <iframe src="https://{{ $project->ryaze_domain }}"
+                                class="w-full h-full border-0 relative z-10 bg-white"></iframe>
                         </div>
                     </div>
                 @endif
@@ -121,22 +135,73 @@
 
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 bg-amber-50 text-amber-500 rounded-lg flex items-center justify-center shrink-0">
+                        <div
+                            class="w-10 h-10 bg-amber-50 text-amber-500 rounded-lg flex items-center justify-center shrink-0">
                             <i class="fa-solid fa-key"></i>
                         </div>
                         <div>
                             <h3 class="font-bold text-slate-800 mb-1">Environment Variables</h3>
                             <p class="text-xs text-slate-500 mb-3">Atur .env file, API keys, dan secret tokens.</p>
-                            <button class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded transition-colors">
+                            <button onclick="document.getElementById('envModal').classList.remove('hidden')"
+                                class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded transition-colors">
                                 Kelola .env &rarr;
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
+        <div id="envModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" aria-hidden="true"
+                    onclick="document.getElementById('envModal').classList.add('hidden')"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div
+                    class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-200">
+                    <form action="{{ route('user_hosting.env.update', $project->hashid) }}" method="POST">
+                        @csrf
+                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div
+                                    class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-amber-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <i class="fa-solid fa-key text-amber-600"></i>
+                                </div>
+                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                    <h3 class="text-lg leading-6 font-bold text-slate-900" id="modal-title">
+                                        Editor .env
+                                    </h3>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-slate-500 mb-3">
+                                            Masukkan variabel environment dengan format <code
+                                                class="bg-slate-100 px-1 py-0.5 rounded text-rose-500">KUNCI=nilai</code>.
+                                        </p>
+                                        <div class="bg-slate-900 rounded-lg p-1 border border-slate-800">
+                                            <textarea name="env_content" rows="10"
+                                                class="w-full bg-transparent text-emerald-400 font-mono text-sm p-3 focus:outline-none focus:ring-0 border-0 resize-y"
+                                                placeholder="API_KEY=rahasia_negara&#10;DB_HOST=127.0.0.1" spellcheck="false">{{ old('env_content', $envContent) }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-200">
+                            <button type="submit"
+                                class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                                Simpan .env
+                            </button>
+                            <button type="button" onclick="document.getElementById('envModal').classList.add('hidden')"
+                                class="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         @if ($project->status == 'building')
             <script>
                 setTimeout(function() {
