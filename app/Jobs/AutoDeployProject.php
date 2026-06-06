@@ -37,38 +37,31 @@ class AutoDeployProject implements ShouldQueue
         // 2. TAHAP 1: Git Clone atau Pull
         $this->appendLog($deploy, "\n> Checking repository status...");
 
-        // Cek apakah .git sudah ada di dalam folder tersebut menggunakan perintah shell
-        $checkGit = shell_exec("ls -d {$projectDir}/.git 2>&1");
+        // Cek apakah .git sudah ada di dalam folder tersebut
+        $isRepo = shell_exec("ls -d {$projectDir}/.git 2>&1");
 
-        if (trim($checkGit) !== '') {
-            // Jika ada .git, berarti ini sudah jadi repository, kita Pull
-            $this->appendLog($deploy, '> Directory is a valid repo. Pulling latest changes...');
+        if (trim($isRepo) !== '') {
+            // KASUS 1: Sudah ada repository Git (Pull saja)
+            $this->appendLog($deploy, '> Directory exists and valid. Pulling changes...');
 
-            // JURUS PENGUBAHAN OWNER (Root agar git pull bisa jalan)
-            $this->executeShellCommand("chown -R www-data:www-data {$projectDir}", $deploy);
-
+            $this->executeShellCommand("chown -R root:root {$projectDir}", $deploy);
             $command = "cd {$projectDir} && git pull origin {$this->project->branch} 2>&1";
         } else {
-            // Jika tidak ada, kita clone
-            $this->appendLog($deploy, '> Directory is empty or not a repo. Cloning...');
+            // KASUS 2: Folder sudah ada tapi bukan Git (Sisa deploy gagal / Folder sampah)
+            if (file_exists($projectDir)) {
+                $this->appendLog($deploy, '> Found existing directory but not a repo. Cleaning up...');
+                $this->executeShellCommand("rm -rf {$projectDir}", $deploy); // Hapus folder sampah
+            }
+
+            // KASUS 3: Folder belum ada (Clone baru)
+            $this->appendLog($deploy, '> Cloning fresh repository...');
             $command = "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir} 2>&1";
         }
 
         $cloneResult = $this->executeShellCommand($command, $deploy);
 
-        // Setelah git pull/clone selesai, kembalikan ke www-data agar Nginx bisa baca
+        // Setelah selesai, kembalikan hak akses ke www-data
         $this->executeShellCommand("chown -R www-data:www-data {$projectDir} && chmod -R 775 {$projectDir}", $deploy);
-
-        if (! $cloneResult['success']) {
-            $this->appendLog($deploy, "\n> [ERROR] Git Clone/Pull failed. Aborting deployment.");
-            $this->markAsFailed($deploy);
-
-            return;
-        }
-
-        // 3. FIX PERMISSIONS (Penting agar Nginx bisa akses file)
-        $this->appendLog($deploy, '> Fixing file permissions...');
-        $this->executeShellCommand("chown -R www-data:www-data {$projectDir} && chmod -R 775 {$projectDir} 2>&1", $deploy);
 
         // 4. TAHAP 2: Setup & Install Framework
         $this->appendLog($deploy, "\n> Setting up ".strtoupper($this->project->framework).' environment...');
