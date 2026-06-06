@@ -168,7 +168,13 @@ class DashboardController extends Controller
             return response()->json(['output' => '', 'exit_code' => 0]);
         }
 
-        $fullCommand = 'cd '.escapeshellarg($projectDir).' && '.$command.' 2>&1';
+        // ════════ MANTRA ANTI-BLEEDING ════════
+        // Menghapus paksa env portal dari memori shell agar artisan klien membaca dari .env mereka sendiri
+        $unsetEnv = 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
+
+        // Susun perintah dengan unset di depannya
+        $fullCommand = $unsetEnv.'cd '.escapeshellarg($projectDir).' && '.$command.' 2>&1';
+        // ══════════════════════════════════════
 
         exec($fullCommand, $outputArray, $exitCode);
         $outputString = implode("\n", $outputArray);

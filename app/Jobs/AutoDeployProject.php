@@ -403,7 +403,12 @@ class AutoDeployProject implements ShouldQueue
 
     private function exec(string $command, $deploy, bool $throwOnError = false): string
     {
-        $fullCommand = "({$command}) 2>&1; echo \"__EXIT_CODE__:$?\"";
+        // ════════ MANTRA ANTI-BLEEDING ════════
+        $unsetEnv = 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
+
+        $fullCommand = $unsetEnv."({$command}) 2>&1; echo \"__EXIT_CODE__:$?\"";
+        // ══════════════════════════════════════
+
         $raw = shell_exec($fullCommand) ?? '';
 
         $exitCode = 0;
