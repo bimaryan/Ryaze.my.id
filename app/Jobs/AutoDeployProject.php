@@ -35,32 +35,29 @@ class AutoDeployProject implements ShouldQueue
         $this->executeShellCommand("mkdir -p {$baseDir}", $deploy);
 
         // 2. TAHAP 1: Git Clone atau Pull
-        $this->appendLog($deploy, "\n> Cloning repository from ".$this->project->repo_source.'...');
+        $this->appendLog($deploy, "\n> Checking repository status...");
 
-        // --- JURUS PENGUBAHAN OWNER ---
-        // Ubah owner ke root agar git pull tidak komplain soal ownership
-        $this->executeShellCommand("chown -R root:root {$projectDir}", $deploy);
+        // Cek apakah .git sudah ada di dalam folder tersebut menggunakan perintah shell
+        $checkGit = shell_exec("ls -d {$projectDir}/.git 2>&1");
 
-        if (file_exists($projectDir)) {
-            $this->appendLog($deploy, '> Directory exists. Pulling latest changes...');
+        if (trim($checkGit) !== '') {
+            // Jika ada .git, berarti ini sudah jadi repository, kita Pull
+            $this->appendLog($deploy, '> Directory is a valid repo. Pulling latest changes...');
+
+            // JURUS PENGUBAHAN OWNER (Root agar git pull bisa jalan)
+            $this->executeShellCommand("chown -R root:root {$projectDir}", $deploy);
+
             $command = "cd {$projectDir} && git pull origin {$this->project->branch} 2>&1";
         } else {
+            // Jika tidak ada, kita clone
+            $this->appendLog($deploy, '> Directory is empty or not a repo. Cloning...');
             $command = "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir} 2>&1";
         }
 
         $cloneResult = $this->executeShellCommand($command, $deploy);
 
-        // Setelah git pull selesai, langsung kembalikan ke www-data agar Nginx bisa akses
+        // Setelah git pull/clone selesai, kembalikan ke www-data agar Nginx bisa baca
         $this->executeShellCommand("chown -R www-data:www-data {$projectDir} && chmod -R 775 {$projectDir}", $deploy);
-
-        if (! $cloneResult['success']) {
-            $this->appendLog($deploy, "\n> [ERROR] Git Clone/Pull failed. Aborting deployment.");
-            $this->markAsFailed($deploy);
-
-            return;
-        }
-
-        $cloneResult = $this->executeShellCommand($command, $deploy);
 
         if (! $cloneResult['success']) {
             $this->appendLog($deploy, "\n> [ERROR] Git Clone/Pull failed. Aborting deployment.");
@@ -91,8 +88,11 @@ class AutoDeployProject implements ShouldQueue
                 $this->appendLog($deploy, '> Organizing build output...');
 
                 $outputDir = '';
-                if (is_dir("{$projectDir}/dist")) { $outputDir = "{$projectDir}/dist"; }
-                elseif (is_dir("{$projectDir}/build")) { $outputDir = "{$projectDir}/build"; }
+                if (is_dir("{$projectDir}/dist")) {
+                    $outputDir = "{$projectDir}/dist";
+                } elseif (is_dir("{$projectDir}/build")) {
+                    $outputDir = "{$projectDir}/build";
+                }
 
                 if ($outputDir) {
                     // 1. Salin semua isi ke root
@@ -105,9 +105,9 @@ class AutoDeployProject implements ShouldQueue
                     // Karena file hasil copy otomatis jadi milik root
                     $this->executeShellCommand("chown -R www-data:www-data {$projectDir} && chmod -R 755 {$projectDir} 2>&1", $deploy);
 
-                    $this->appendLog($deploy, "> Files moved, cleaned, and permissions reset to www-data.");
+                    $this->appendLog($deploy, '> Files moved, cleaned, and permissions reset to www-data.');
                 } else {
-                    $this->appendLog($deploy, "> [WARNING] Output folder (dist/build) not found!");
+                    $this->appendLog($deploy, '> [WARNING] Output folder (dist/build) not found!');
                 }
             }
         }
