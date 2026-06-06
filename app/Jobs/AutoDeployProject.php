@@ -37,13 +37,9 @@ class AutoDeployProject implements ShouldQueue
 
         // --- PROSES OTOMATIS CLOUDFLARE DNS ---
         $this->appendLog($deploy, '> Configuring Cloudflare DNS for '.$this->project->ryaze_domain.'...');
-        $dnsSuccess = $this->createCloudflareDNS($this->project->ryaze_domain);
 
-        if ($dnsSuccess) {
-            $this->appendLog($deploy, '> DNS Record successfully propagated!');
-        } else {
-            $this->appendLog($deploy, '> [WARNING] DNS Record already exists or failed to create. Proceeding...');
-        }
+        // Kita oper variable $deploy langsung ke fungsi agar bisa menulis log error
+        $this->createCloudflareDNS($deploy);
 
         sleep(2);
         $this->appendLog($deploy, "\n> [SUCCESS] Deployment Finished!\n> Application is live at: https://".$this->project->ryaze_domain);
@@ -63,32 +59,42 @@ class AutoDeployProject implements ShouldQueue
         ]);
     }
 
-    // --- FUNGSI BARU UNTUK NEMBAK API CLOUDFLARE ---
-    private function createCloudflareDNS($domainName)
+    // --- FUNGSI CLOUDFLARE YANG SUDAH DIPERBAIKI ---
+    private function createCloudflareDNS($deploy)
     {
+        $domainName = $this->project->ryaze_domain;
         $zoneId = env('CLOUDFLARE_ZONE_ID');
         $apiToken = env('CLOUDFLARE_API_TOKEN');
-        $serverIp = env('SERVER_IP_ADDRESS');
 
-        // Jika setting di .env kosong, lewati proses ini agar tidak error
-        if (! $zoneId || ! $apiToken || ! $serverIp) {
+        // Bersihkan https:// atau garis miring jika klien tidak sengaja memasukkannya di .env
+        $tunnelUrl = preg_replace('#^https?://#', '', rtrim(env('CLOUDFLARE_TUNNEL_URL'), '/'));
+
+        if (! $zoneId || ! $apiToken || ! $tunnelUrl) {
+            $this->appendLog($deploy, '> [ERROR] Kredensial Cloudflare di .env belum lengkap!');
+
             return false;
         }
 
-        // Tembak API Cloudflare untuk membuat A Record baru
         $response = Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
-            'type' => 'A',
+            'type' => 'CNAME',
             'name' => $domainName,
-            'content' => $serverIp,
+            'content' => $tunnelUrl,
             'ttl' => 1,
             'proxied' => true,
         ]);
 
-        // Kalau sukses dibuat (HTTP 200)
         if ($response->successful()) {
-            return true;
-        }
+            $this->appendLog($deploy, '> DNS Record successfully propagated!');
 
-        return false;
+            return true;
+        } else {
+            // TANGKAP PESAN ERROR DARI CLOUDFLARE
+            $errorData = $response->json();
+            $errorMessage = $errorData['errors'][0]['message'] ?? 'Unknown Cloudflare API Error';
+
+            $this->appendLog($deploy, '> [API ERROR] Cloudflare menolak: '.$errorMessage);
+
+            return false;
+        }
     }
 }
