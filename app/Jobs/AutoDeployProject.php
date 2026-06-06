@@ -63,7 +63,8 @@ class AutoDeployProject implements ShouldQueue
 
         // LOGIKA NPM BASED (React, Node, NextJS, Vue)
         if (in_array($this->project->framework, ['react', 'node', 'nextjs', 'vue'])) {
-            $this->appendLog($deploy, '> Installing NPM dependencies...');
+            $this->appendLog($deploy, '> Installing NPM dependencies (menggunakan NPM Host)...');
+
             $npmCommand = "cd {$projectDir} && /usr/bin/npm install 2>&1";
             $this->executeShellCommand($npmCommand, $deploy);
 
