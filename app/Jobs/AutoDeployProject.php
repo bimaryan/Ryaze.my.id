@@ -60,6 +60,9 @@ class AutoDeployProject implements ShouldQueue
             return; // Hentikan proses jika clone gagal
         }
 
+        $this->appendLog($deploy, "> Fixing file permissions...");
+        $this->executeShellCommand("chown -R www-data:www-data {$projectDir} && chmod -R 775 {$projectDir} 2>&1", $deploy);
+
         // 3. TAHAP 2: Setup & Install (Contoh untuk HTML/Node/React)
         $this->appendLog($deploy, "\n> Setting up ".strtoupper($this->project->framework).' environment...');
 
