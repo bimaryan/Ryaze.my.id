@@ -62,19 +62,19 @@ class AutoDeployProject implements ShouldQueue
         // LOGIKA NPM BASED (React, Node, NextJS, Vue)
         if (in_array($this->project->framework, ['react', 'node', 'nextjs', 'vue'])) {
             $this->appendLog($deploy, '> Installing NPM dependencies...');
-            $npmCommand = "cd {$projectDir} && npm install 2>&1";
+            $npmCommand = "cd {$projectDir} && /usr/bin/npm install 2>&1";
             $this->executeShellCommand($npmCommand, $deploy);
 
             if (in_array($this->project->framework, ['react', 'nextjs', 'vue'])) {
                 $this->appendLog($deploy, '> Running build script...');
-                $buildCommand = "cd {$projectDir} && npm run build 2>&1";
+                $buildCommand = "cd {$projectDir} && /usr/bin/npm run build 2>&1";
                 $this->executeShellCommand($buildCommand, $deploy);
             }
         }
         // LOGIKA PYTHON (Flask)
         elseif ($this->project->framework == 'python') {
             $this->appendLog($deploy, '> Setting up Python Virtual Environment...');
-            $pyCommand = "cd {$projectDir} && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt 2>&1";
+            $pyCommand = "cd {$projectDir} && /usr/bin/python3 -m venv venv && source venv/bin/activate && /usr/bin/pip install -r requirements.txt 2>&1";
             $this->executeShellCommand($pyCommand, $deploy);
             $this->appendLog($deploy, '> Python dependencies installed.');
         }
