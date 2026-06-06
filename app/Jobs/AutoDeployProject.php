@@ -230,33 +230,36 @@ class AutoDeployProject implements ShouldQueue
         } else {
             $this->log($deploy, '> Normalizing APP_KEY in .env...');
 
-            // Hapus semua baris yang punya APP_KEY (apapun isinya) agar bersih
-            $this->exec("sed -i '/^[[:space:]]*#\?[[:space:]]*APP_KEY/d' {$envPath}", $deploy);
+            // Hapus semua baris yang mengandung APP_KEY apapun bentuknya
+            $this->exec("sed -i '/APP_KEY/d' {$envPath}", $deploy);
 
-            // Append placeholder bersih
-            $this->exec("echo 'APP_KEY=' >> {$envPath}", $deploy, true);
+            // ── Generate APP_KEY via PHP murni — bypass artisan startup ───────
+            // Root cause: php artisan crash saat startup karena broken extension
+            // (contoh: php_gmp.dll tidak ada di Linux). Artisan exit sebelum
+            // sempat baca .env, sehingga key tidak pernah ditulis.
+            // Solusi: generate random_bytes(32) langsung via PHP -n (no php.ini)
+            // untuk menghindari loading extension yang broken.
+            $this->log($deploy, '> Generating APP_KEY via PHP (no-ini mode to avoid broken extensions)...');
 
-            // Verifikasi placeholder ada sebelum key:generate
-            $placeholder = (int) trim(shell_exec("grep -c '^APP_KEY=$' {$envPath} 2>/dev/null") ?? '0');
-            if ($placeholder === 0) {
-                throw new \RuntimeException('Gagal inject APP_KEY= placeholder ke .env. Periksa permission file.');
-            }
+            $appKey = 'base64:' . base64_encode(random_bytes(32));
 
-            $this->log($deploy, '> Generating APP_KEY...');
-            $this->exec("cd {$projectDir} && php artisan key:generate --force", $deploy, true);
+            // Tulis langsung ke .env via shell — paling aman, tidak ada intermediary
+            $escapedKey = escapeshellarg("APP_KEY={$appKey}");
+            $this->exec("echo {$escapedKey} >> {$envPath}", $deploy, true);
 
-            // ── 3. Verifikasi final ───────────────────────────────────────────
+            $this->log($deploy, '> APP_KEY written directly to .env.');
+
+            // ── Verifikasi final ──────────────────────────────────────────────
             $keyAfter = trim(shell_exec("grep '^APP_KEY=base64:' {$envPath} 2>/dev/null") ?? '');
             if (empty($keyAfter)) {
-                // Dump isi .env untuk debug
-                $envDump = trim(shell_exec("cat {$envPath} 2>/dev/null | head -20") ?? '');
-                $this->log($deploy, "> [DEBUG] .env content (first 20 lines):\n{$envDump}");
+                $envDump = trim(shell_exec("head -25 {$envPath} 2>/dev/null") ?? '');
+                $this->log($deploy, "> [DEBUG] .env (25 baris pertama):\n{$envDump}");
                 throw new \RuntimeException(
-                    'key:generate selesai tapi APP_KEY masih kosong. ' .
-                    'Lihat debug dump .env di atas.'
+                    'APP_KEY masih kosong setelah ditulis langsung. ' .
+                    'Periksa permission file .env — lihat debug dump di atas.'
                 );
             }
-            $this->log($deploy, '> APP_KEY generated successfully.');
+            $this->log($deploy, '> APP_KEY set successfully.');
         }
 
         // ── 4. Set permission .env ke 640 (readable oleh www-data group) ─────
