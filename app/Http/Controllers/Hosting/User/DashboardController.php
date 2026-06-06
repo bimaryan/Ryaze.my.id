@@ -16,7 +16,14 @@ class DashboardController extends Controller
     {
         $projects = HostingProject::where('user_id', Auth::id())->latest()->get();
 
-        return view('pages.hosting.user.index', compact('projects'));
+        // Menghitung statistik berdasarkan data user
+        $stats = [
+            'active' => $projects->where('status', 'active')->count(),
+            'unpaid' => $projects->where('status', 'unpaid')->count(), // Sesuaikan dengan status database Anda
+            'tickets' => 0,
+        ];
+
+        return view('pages.hosting.user.index', compact('projects', 'stats'));
     }
 
     // Menampilkan form deploy baru
