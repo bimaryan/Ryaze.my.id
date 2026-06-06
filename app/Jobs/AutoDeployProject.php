@@ -63,13 +63,16 @@ class AutoDeployProject implements ShouldQueue
 
         // LOGIKA NPM BASED (React, Node, NextJS, Vue)
         if (in_array($this->project->framework, ['react', 'node', 'nextjs', 'vue'])) {
-            $this->appendLog($deploy, '> Installing NPM dependencies (menggunakan NPM Host)...');
+            $this->appendLog($deploy, '> Installing NPM dependencies (legacy mode)...');
 
-            $npmCommand = "cd {$projectDir} && /usr/bin/npm install 2>&1";
+            // Tambahkan --legacy-peer-deps agar konflik versi diabaikan
+            $npmCommand = "cd {$projectDir} && /usr/bin/npm install --legacy-peer-deps 2>&1";
             $this->executeShellCommand($npmCommand, $deploy);
 
             if (in_array($this->project->framework, ['react', 'nextjs', 'vue'])) {
                 $this->appendLog($deploy, '> Running build script...');
+
+                // Build script juga harus pakai path npm yang benar
                 $buildCommand = "cd {$projectDir} && /usr/bin/npm run build 2>&1";
                 $this->executeShellCommand($buildCommand, $deploy);
             }
