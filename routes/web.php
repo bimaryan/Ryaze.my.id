@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Hosting\Admin\DashboardController as HostingAdminDashboardController;
 use App\Http\Controllers\Hosting\User\DashboardController;
+use App\Http\Controllers\Hosting\User\DatabaseController;
 use App\Http\Controllers\Joki\Admin\DashboardController as JokiAdminDashboardController;
 use App\Http\Controllers\Joki\User\DashboardController as UserJokiDashboardController;
 use App\Http\Controllers\Joki\User\ProgressController;
@@ -36,6 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
     Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
     Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');
+
+    Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
+    Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
+    Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
 
     // --- AKSI USER JOKI ---
     Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');
