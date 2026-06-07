@@ -25,6 +25,8 @@
 
             <div class="flex items-center">
                 <div class="flex items-center ms-3 gap-5">
+
+                    {{-- Notifikasi --}}
                     <button id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification"
                         class="relative inline-flex items-center text-sm font-medium text-center text-indigo-200 hover:text-white focus:outline-none transition-colors"
                         type="button">
@@ -51,11 +53,15 @@
                         </div>
                     </div>
 
+                    {{-- Info User --}}
                     <div class="hidden md:block text-right border-l border-indigo-500 pl-5">
                         <p class="text-sm font-semibold text-white">{{ Auth::user()->name ?? 'Guest' }}</p>
                         <p class="text-xs text-indigo-200">
-                            {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : 'No Role' }}</p>
+                            {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : 'No Role' }}
+                        </p>
                     </div>
+
+                    {{-- Avatar + Dropdown --}}
                     <div>
                         <button type="button"
                             class="flex text-sm bg-indigo-800 rounded-full focus:ring-4 focus:ring-indigo-400 shadow-sm transition-transform hover:scale-105"
@@ -71,10 +77,10 @@
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-slate-100 rounded-xl shadow-xl border border-slate-100"
                         id="dropdown-user">
                         <div class="px-4 py-3 md:hidden">
-                            <p class="text-sm text-slate-900 font-bold">
-                                {{ Auth::user()->name ?? 'Guest' }}</p>
+                            <p class="text-sm text-slate-900 font-bold">{{ Auth::user()->name ?? 'Guest' }}</p>
                             <p class="text-xs font-medium text-slate-500 truncate">
-                                {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}</p>
+                                {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}
+                            </p>
                         </div>
                         <ul class="py-1" role="none">
                             <li>
@@ -89,6 +95,7 @@
                             </li>
                         </ul>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -99,130 +106,149 @@
     class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-slate-50 border-r border-slate-200 sm:translate-x-0"
     aria-label="Sidebar">
     <div class="h-full px-3 pb-4 overflow-y-auto bg-slate-50">
-        <ul class="space-y-2 font-medium">
+        <ul class="space-y-1 font-medium">
 
             @php
-                $dashboardUrl = match (Auth::user()->role ?? '') {
+                $role = Auth::user()->role ?? '';
+
+                $dashboardUrl = match ($role) {
                     'superadmin' => route('superadmin.dashboard'),
                     'admin_joki' => route('admin_joki.dashboard'),
+                    'admin_hosting' => route('admin_hosting.dashboard'),
                     'user_joki' => route('user_joki.dashboard'),
                     'user_hosting' => route('user_hosting.dashboard'),
-                    'admin_hosting' => route('admin_hosting.dashboard'),
                     default => url('/'),
                 };
+
+                $isAdmin = in_array($role, ['superadmin', 'admin_joki', 'admin_hosting']);
+                $isAdminHosting = in_array($role, ['superadmin', 'admin_hosting']);
+                $isAdminJoki = in_array($role, ['superadmin', 'admin_joki']);
+                $isUserHosting = $role === 'user_hosting';
+                $isUserJoki = $role === 'user_joki';
+                $isUser = in_array($role, ['user_joki', 'user_hosting']);
+
+                $navLink = fn($active) => 'flex items-center p-3 rounded-lg transition-all duration-200 group ' .
+                    ($active
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                        : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700');
             @endphp
 
+            {{-- Dashboard --}}
             <li>
-                <a href="{{ $dashboardUrl }}"
-                    class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->is('*dashboard*') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                    <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-border-all me-2"></i>
-                        Dashboard</span>
+                <a href="{{ $dashboardUrl }}" class="{{ $navLink(request()->is('*dashboard*')) }}">
+                    <i class="fa-solid fa-border-all me-2 ms-3"></i>
+                    <span class="whitespace-nowrap">Dashboard</span>
                 </a>
             </li>
 
-            @if (in_array(Auth::user()->role, ['superadmin', 'admin_joki', 'admin_hosting']))
-                <li class="pt-5 mt-5 space-y-2 border-t border-slate-200">
+            {{-- ══ MANAJEMEN ADMIN ══════════════════════════════════ --}}
+            @if ($isAdmin)
+                <li class="pt-4 mt-2">
                     <span class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Manajemen Admin</span>
                 </li>
 
-                @if (in_array(Auth::user()->role, ['superadmin', 'admin_joki']))
+                {{-- Admin Joki: Kelola Pesanan --}}
+                @if ($isAdminJoki)
                     <li>
                         <a href="{{ route('admin_joki.orders') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('admin_joki.orders') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-code-branch me-2"></i>
-                                Kelola Pesanan Joki</span>
+                            class="{{ $navLink(request()->routeIs('admin_joki.orders*')) }}">
+                            <i class="fa-solid fa-code-branch me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Kelola Pesanan Joki</span>
                         </a>
                     </li>
                 @endif
 
-                @if (in_array(Auth::user()->role, ['superadmin', 'admin_hosting']))
+                {{-- Admin Hosting: Kelola Project --}}
+                @if ($isAdminHosting)
                     <li>
-                        <a href="#"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-server me-2"></i> Node /
-                                Server Instances</span>
+                        <a href="{{ route('admin_hosting.dashboard') }}"
+                            class="{{ $navLink(request()->routeIs('admin_hosting.*')) }}">
+                            <i class="fa-solid fa-server me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Kelola Project Hosting</span>
                         </a>
                     </li>
                 @endif
 
-                @if (Auth::user()->role === 'superadmin')
+                {{-- Superadmin: Data Pengguna --}}
+                @if ($role === 'superadmin')
                     <li>
                         <a href="{{ route('superadmin.users.index') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('superadmin.users.index') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-users me-2"></i> Data
-                                Pengguna</span>
+                            class="{{ $navLink(request()->routeIs('superadmin.users*')) }}">
+                            <i class="fa-solid fa-users me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Data Pengguna</span>
                         </a>
                     </li>
                 @endif
             @endif
 
-            @if (in_array(Auth::user()->role, ['user_joki', 'user_hosting']))
-                <li class="pt-5 mt-5 space-y-2 border-t border-slate-200">
+            {{-- ══ LAYANAN KLIEN ════════════════════════════════════ --}}
+            @if ($isUser)
+                <li class="pt-4 mt-2">
                     <span class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Layanan Klien</span>
                 </li>
 
-                @if (Auth::user()->role === 'user_joki')
+                {{-- Menu User Joki --}}
+                @if ($isUserJoki)
                     <li>
                         <a href="{{ route('user_joki.create') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_joki.create') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-cart-plus me-2"></i> Pesan
-                                Joki Baru</span>
+                            class="{{ $navLink(request()->routeIs('user_joki.create')) }}">
+                            <i class="fa-solid fa-cart-plus me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Pesan Joki Baru</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_joki.progress') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_joki.progress') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-laptop-code me-2"></i>
-                                Progres Joki Saya</span>
+                            class="{{ $navLink(request()->routeIs('user_joki.progress')) }}">
+                            <i class="fa-solid fa-laptop-code me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Progres Joki Saya</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_joki.riwayat') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_joki.riwayat') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-history me-2"></i>
-                                Riwayat Joki Saya</span>
+                            class="{{ $navLink(request()->routeIs('user_joki.riwayat')) }}">
+                            <i class="fa-solid fa-history me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Riwayat Joki Saya</span>
                         </a>
                     </li>
                 @endif
 
-                @if (Auth::user()->role === 'user_hosting')
+                {{-- Menu User Hosting --}}
+                @if ($isUserHosting)
                     <li>
                         <a href="{{ route('user_hosting.create') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.create') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-brands fa-github me-2"></i>
-                                Deploy Proyek Baru</span>
+                            class="{{ $navLink(request()->routeIs('user_hosting.create')) }}">
+                            <i class="fa-brands fa-github me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Deploy Proyek Baru</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_hosting.projects') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-terminal me-2"></i>
-                                Aplikasi Ter-deploy</span>
+                            class="{{ $navLink(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}">
+                            <i class="fa-solid fa-terminal me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Aplikasi Ter-deploy</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_hosting.databases') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.databases') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-database me-2"></i>
-                                Database Mysql</span>
+                            class="{{ $navLink(request()->routeIs('user_hosting.databases*')) }}">
+                            <i class="fa-solid fa-database me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Database MySQL</span>
                         </a>
                     </li>
-
-                    {{-- TOMBOL MENU STORAGE BARU --}}
                     <li>
                         <a href="{{ route('user_hosting.storage') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.storage*') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
-                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-hard-drive me-2"></i>
-                                Penyimpanan / Storage</span>
+                            class="{{ $navLink(request()->routeIs('user_hosting.storage*')) }}">
+                            <i class="fa-solid fa-hard-drive me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Penyimpanan / Storage</span>
                         </a>
                     </li>
                 @endif
 
+                {{-- Riwayat Tagihan (semua user) --}}
                 <li>
-                    <a href="#"
-                        class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
-                        <span class="flex-1 ms-3 whitespace-nowrap"><i
-                                class="fa-solid fa-file-invoice-dollar me-2"></i> Riwayat Tagihan</span>
+                    <a href="#" class="{{ $navLink(false) }}">
+                        <i class="fa-solid fa-file-invoice-dollar me-2 ms-3"></i>
+                        <span class="whitespace-nowrap">Riwayat Tagihan</span>
                     </a>
                 </li>
             @endif
