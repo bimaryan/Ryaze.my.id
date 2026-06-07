@@ -27,10 +27,15 @@
 
         {{-- Tabel Layanan --}}
         <div class="mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-slate-800">Layanan Anda</h2>
-                <a href="{{ route('user_hosting.create') }}"
-                    class="text-sm text-indigo-600 font-semibold hover:underline">Tambah Project +</a>
+            <div
+                class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-wrap gap-3 justify-between items-center">
+                <h2 class="text-lg font-bold text-slate-800">Layanan Terbaru</h2>
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('user_hosting.projects') }}"
+                        class="text-sm text-slate-500 font-semibold hover:text-indigo-600 transition-colors">
+                        Lihat Semua <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+                    </a>
+                </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-600">

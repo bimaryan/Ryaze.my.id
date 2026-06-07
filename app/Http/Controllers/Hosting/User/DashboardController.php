@@ -14,14 +14,18 @@ class DashboardController extends Controller
     // Menampilkan halaman dashboard hosting klien
     public function index()
     {
-        $projects = HostingProject::where('user_id', Auth::id())->latest()->get();
+        // 1. Ambil SEMUA project untuk menghitung statistik yang akurat
+        $allProjects = HostingProject::where('user_id', Auth::id())->latest()->get();
 
-        // Menghitung statistik berdasarkan data user
+        // 2. Menghitung statistik berdasarkan KESELURUHAN data user
         $stats = [
-            'active' => $projects->where('status', 'active')->count(),
-            'unpaid' => $projects->where('status', 'unpaid')->count(),
+            'active' => $allProjects->where('status', 'active')->count(),
+            'unpaid' => $allProjects->where('status', 'unpaid')->count(),
             'tickets' => 0,
         ];
+
+        // 3. Potong (Limit) hanya ambil 5 teratas untuk ditampilkan di tabel
+        $projects = $allProjects->take(5);
 
         return view('pages.hosting.user.index', compact('projects', 'stats'));
     }
