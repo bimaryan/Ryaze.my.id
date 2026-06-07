@@ -73,6 +73,31 @@ class DashboardController extends Controller
         return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Deployment berhasil dimulai!');
     }
 
+    public function show($hashed_id)
+    {
+        $decoded = Hashids::decode($hashed_id);
+        if (empty($decoded)) abort(404);
+
+        $project = HostingProject::with(['deployments' => function ($query) {
+            $query->latest();
+        }])
+            ->where('user_id', Auth::id())
+            ->findOrFail($decoded[0]);
+
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+
+        // Membaca file .env
+        $envPath = $projectDir . "/.env";
+        $envContent = '';
+        if (file_exists($envPath)) {
+            $envContent = file_get_contents($envPath);
+        }
+
+        return view('pages.hosting.user.show', compact('project', 'envContent'));
+    }
+
+    // 2. Method API untuk navigasi folder (yang Mas kirim sebelumnya, ini sudah benar)
     public function getFiles(Request $request, $hashid)
     {
         $decoded = Hashids::decode($hashid);
@@ -80,21 +105,14 @@ class DashboardController extends Controller
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
-
-        // Root directory ASLI milik project klien
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
-
-        // Path tambahan yang di-request klien (misal: /public/assets)
         $requestPath = trim($request->input('path', ''), '/');
 
-        // Tentukan target directory yang akan discan
         $targetDir = $projectRootDir;
         if (!empty($requestPath)) {
             $targetDir = realpath($projectRootDir . '/' . $requestPath);
         }
 
-        // ════════ KEAMANAN TINGKAT TINGGI (ANTI-TRAVERSAL) ════════
-        // Pastikan target directory valid dan MURNI berada di dalam root directory klien
         if ($targetDir === false || strpos($targetDir, $projectRootDir) !== 0) {
             return response()->json(['error' => 'Akses ditolak! Anda mencoba keluar dari root direktori.'], 403);
         }
@@ -108,7 +126,7 @@ class DashboardController extends Controller
         $files = [];
 
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..') continue; // Abaikan navigasi default linux
+            if ($item === '.' || $item === '..') continue;
 
             $fullPath = $targetDir . '/' . $item;
             $isDir = is_dir($fullPath);
@@ -118,7 +136,6 @@ class DashboardController extends Controller
                 'type' => $isDir ? 'dir' : 'file',
                 'size' => $isDir ? '-' : $this->formatBytesCustom(filesize($fullPath)),
                 'modified' => date('d M Y H:i', filemtime($fullPath)),
-                // Path relatif untuk navigasi JS
                 'path' => !empty($requestPath) ? $requestPath . '/' . $item : $item
             ];
 
@@ -129,7 +146,6 @@ class DashboardController extends Controller
             }
         }
 
-        // Urutkan abjad
         usort($directories, fn($a, $b) => strcmp($a['name'], $b['name']));
         usort($files, fn($a, $b) => strcmp($a['name'], $b['name']));
 
@@ -139,7 +155,55 @@ class DashboardController extends Controller
         ]);
     }
 
-    // Helper formatter bytes
+    // 3. BARU: Method untuk membaca isi file
+    public function readFile(Request $request, $hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+
+        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        $requestPath = trim($request->input('path', ''), '/');
+        $targetFile = realpath($projectRootDir . '/' . $requestPath);
+
+        // Validasi Anti-Traversal & pastikan itu adalah file (bukan folder)
+        if ($targetFile === false || strpos($targetFile, $projectRootDir) !== 0 || is_dir($targetFile)) {
+            return response()->json(['error' => 'File tidak valid atau akses ditolak.'], 403);
+        }
+
+        return response()->json(['content' => file_get_contents($targetFile)]);
+    }
+
+    // 4. BARU: Method untuk menyimpan file yang diedit
+    public function saveFile(Request $request, $hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+
+        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        $requestPath = trim($request->input('path', ''), '/');
+        $targetFile = realpath($projectRootDir . '/' . $requestPath);
+
+        if ($targetFile === false || strpos($targetFile, $projectRootDir) !== 0 || is_dir($targetFile)) {
+            return response()->json(['error' => 'File tidak valid atau akses ditolak.'], 403);
+        }
+
+        @chmod($targetFile, 0666); // Pastikan writable
+        $result = @file_put_contents($targetFile, $request->input('content', ''));
+
+        if ($result === false) {
+            return response()->json(['error' => 'Gagal menyimpan file. Cek permission Linux.'], 500);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    // Helper
     private function formatBytesCustom($size, $precision = 2)
     {
         if ($size > 0) {
@@ -149,68 +213,6 @@ class DashboardController extends Controller
             return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
         }
         return $size . ' bytes';
-    }
-
-    // Menampilkan halaman Terminal & Log
-    public function show($hashed_id)
-    {
-        $decoded = Hashids::decode($hashed_id);
-
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::with(['deployments' => function ($query) {
-            $query->latest();
-        }])
-            ->where('user_id', Auth::id())
-            ->findOrFail($decoded[0]);
-
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
-
-        // 1. Membaca file .env
-        $envPath = $projectDir . "/.env";
-        $envContent = '';
-        if (file_exists($envPath)) {
-            $envContent = file_get_contents($envPath);
-        }
-
-        // 2. Membaca isi Root Directory
-        $projectFiles = [];
-        if (is_dir($projectDir)) {
-            $items = scandir($projectDir);
-            $directories = [];
-            $files = [];
-
-            foreach ($items as $item) {
-                // Abaikan navigasi folder linux (. dan ..) serta folder git
-                if ($item === '.' || $item === '..' || $item === '.git') continue;
-
-                $fullPath = $projectDir . '/' . $item;
-                $isDir = is_dir($fullPath);
-
-                $info = [
-                    'name' => $item,
-                    'type' => $isDir ? 'dir' : 'file',
-                    'size' => $isDir ? '-' : $this->formatBytesCustom(filesize($fullPath)),
-                    'modified' => date('d M Y H:i', filemtime($fullPath)),
-                ];
-
-                if ($isDir) {
-                    $directories[] = $info;
-                } else {
-                    $files[] = $info;
-                }
-            }
-
-            // Urutkan: Folder di atas, file di bawah, sesuai abjad
-            usort($directories, fn($a, $b) => strcmp($a['name'], $b['name']));
-            usort($files, fn($a, $b) => strcmp($a['name'], $b['name']));
-            $projectFiles = array_merge($directories, $files);
-        }
-
-        return view('pages.hosting.user.show', compact('project', 'envContent', 'projectFiles'));
     }
 
     // Memperbarui file .env

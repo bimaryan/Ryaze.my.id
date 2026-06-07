@@ -274,10 +274,10 @@
         </div>
 
         {{-- TAB: FILE MANAGER --}}
-        <div id="panel-files" class="tab-panel hidden">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-5xl">
+        <div id="panel-files" class="tab-panel hidden relative">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-5xl relative">
 
-                {{-- Header & Toolbar --}}
+                {{-- Toolbar File Manager --}}
                 <div class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <button onclick="navigateUp()"
@@ -300,8 +300,8 @@
                 </div>
 
                 {{-- Table Files --}}
-                <div class="overflow-x-auto h-[500px]">
-                    <table class="w-full text-sm text-left text-slate-600 relative">
+                <div class="overflow-x-auto h-[500px] relative">
+                    <table class="w-full text-sm text-left text-slate-600">
                         <thead
                             class="bg-white text-xs uppercase font-semibold text-slate-400 border-b border-slate-100 sticky top-0 z-10 shadow-sm">
                             <tr>
@@ -311,7 +311,6 @@
                             </tr>
                         </thead>
                         <tbody id="file-manager-body" class="divide-y divide-slate-50 font-mono text-[13px]">
-                            {{-- Baris akan diisi oleh Javascript --}}
                         </tbody>
                     </table>
 
@@ -321,6 +320,33 @@
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
                     </div>
                 </div>
+
+                {{-- MODAL CODE EDITOR (Tersembunyi secara default) --}}
+                <div id="file-editor-modal" class="hidden absolute inset-0 bg-slate-900 z-30 flex flex-col">
+                    <div
+                        class="px-4 py-3 border-b border-slate-700 bg-slate-800 flex justify-between items-center text-white">
+                        <div class="font-mono text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-file-code text-indigo-400"></i>
+                            <span id="editor-filename">filename.php</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="closeFileEditor()"
+                                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-xs transition font-semibold">Batal</button>
+                            <button onclick="saveFileEditor()"
+                                class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded text-xs transition font-semibold flex items-center gap-1.5">
+                                <i class="fa-solid fa-save"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="file-editor-textarea" spellcheck="false"
+                        class="flex-1 w-full bg-slate-900 text-emerald-400 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
+
+                    <div id="editor-loader"
+                        class="hidden absolute inset-0 bg-slate-900/80 flex items-center justify-center z-40">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -364,91 +390,6 @@
         const websiteLogLink = document.getElementById('website-log-link');
         const buildLogPulse = document.getElementById('build-log-pulse');
         let buildLogInterval = null;
-
-        let currentFolderPath = '';
-        const fileManagerUrl = '{{ route("user_hosting.files", $project->hashid) }}';
-
-        function loadFileManager(path = '') {
-            const loader = document.getElementById('file-manager-loader');
-            const tbody = document.getElementById('file-manager-body');
-            const pathDisplay = document.getElementById('current-path-display');
-
-            loader.classList.remove('hidden');
-
-            fetch(`${fileManagerUrl}?path=${encodeURIComponent(path)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        loader.classList.add('hidden');
-                        return;
-                    }
-
-                    currentFolderPath = data.current_path;
-                    pathDisplay.textContent = currentFolderPath === '' ? '(root)' : currentFolderPath;
-
-                    tbody.innerHTML = '';
-
-                    if (data.items.length === 0) {
-                        tbody.innerHTML = `
-                            <tr>
-                                <td colspan="3" class="px-6 py-10 text-center text-slate-400">
-                                    <i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50"></i><br>Folder kosong
-                                </td>
-                            </tr>`;
-                    } else {
-                        data.items.forEach(item => {
-                            const isDir = item.type === 'dir';
-                            const icon = isDir
-                                ? '<i class="fa-solid fa-folder text-amber-400 text-lg group-hover:text-amber-500 transition-colors"></i>'
-                                : '<i class="fa-regular fa-file-lines text-slate-400 text-lg"></i>';
-
-                            // Jika folder, buat bisa di-klik untuk navigasi
-                            const nameSpan = isDir
-                                ? `<a href="javascript:void(0)" onclick="loadFileManager('${item.path}')" class="font-bold text-slate-700 hover:text-indigo-600 transition-colors cursor-pointer">${item.name}</a>`
-                                : `<span class="text-slate-600">${item.name}</span>`;
-
-                            const tr = document.createElement('tr');
-                            tr.className = 'hover:bg-slate-50 transition-colors group';
-                            tr.innerHTML = `
-                                <td class="px-6 py-2.5 flex items-center gap-3">${icon} ${nameSpan}</td>
-                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.size}</td>
-                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.modified}</td>
-                            `;
-
-                            // Double click row untuk masuk folder
-                            if(isDir) {
-                                tr.ondblclick = () => loadFileManager(item.path);
-                                tr.classList.add('cursor-pointer');
-                            }
-
-                            tbody.appendChild(tr);
-                        });
-                    }
-                    loader.classList.add('hidden');
-                })
-                .catch(err => {
-                    console.error('Error loading files:', err);
-                    alert('Gagal memuat file browser.');
-                    loader.classList.add('hidden');
-                });
-        }
-
-        function navigateUp() {
-            if (currentFolderPath === '') return; // Sudah di root
-
-            // Hapus segmen terakhir dari path (misal: public/assets -> public)
-            let pathParts = currentFolderPath.split('/');
-            pathParts.pop();
-            loadFileManager(pathParts.join('/'));
-        }
-
-        // Panggil saat tab File Manager pertama kali diklik
-        document.getElementById('tab-files').addEventListener('click', () => {
-            if(document.getElementById('file-manager-body').innerHTML.trim() === '') {
-                loadFileManager();
-            }
-        });
 
         function refreshBuildLogs() {
             return fetch(buildLogUrl, {
@@ -642,6 +583,158 @@
             } else if (e.key === 'l' && e.ctrlKey) {
                 e.preventDefault();
                 clearTerminal();
+            }
+        });
+    </script>
+
+    <script>
+        // ── FILE MANAGER & EDITOR ────────────────────────────────────────────────
+        let currentFolderPath = '';
+        let currentEditingFile = '';
+
+        const fileManagerUrl = '{{ route('user_hosting.files', $project->hashid) }}';
+        const fileReadUrl = '{{ route('user_hosting.files.read', $project->hashid) }}';
+        const fileSaveUrl = '{{ route('user_hosting.files.save', $project->hashid) }}';
+
+        function loadFileManager(path = '') {
+            const loader = document.getElementById('file-manager-loader');
+            const tbody = document.getElementById('file-manager-body');
+            const pathDisplay = document.getElementById('current-path-display');
+
+            loader.classList.remove('hidden');
+
+            fetch(`${fileManagerUrl}?path=${encodeURIComponent(path)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        loader.classList.add('hidden');
+                        return;
+                    }
+
+                    currentFolderPath = data.current_path;
+                    pathDisplay.textContent = currentFolderPath === '' ? '(root)' : currentFolderPath;
+                    tbody.innerHTML = '';
+
+                    if (data.items.length === 0) {
+                        tbody.innerHTML =
+                            `<tr><td colspan="3" class="px-6 py-10 text-center text-slate-400"><i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50"></i><br>Folder kosong</td></tr>`;
+                    } else {
+                        data.items.forEach(item => {
+                            const isDir = item.type === 'dir';
+                            const icon = isDir ?
+                                '<i class="fa-solid fa-folder text-amber-400 text-lg group-hover:text-amber-500 transition-colors"></i>' :
+                                '<i class="fa-regular fa-file-lines text-slate-400 text-lg group-hover:text-indigo-400 transition-colors"></i>';
+
+                            // Beda klik: Folder untuk masuk, File untuk Edit
+                            const nameAction = isDir ?
+                                `onclick="loadFileManager('${item.path}')"` :
+                                `onclick="openFileEditor('${item.path}', '${item.name}')"`;
+
+                            const nameSpan =
+                                `<a href="javascript:void(0)" ${nameAction} class="font-semibold text-slate-600 hover:text-indigo-600 transition-colors cursor-pointer">${item.name}</a>`;
+
+                            const tr = document.createElement('tr');
+                            tr.className = 'hover:bg-slate-50 transition-colors group cursor-pointer';
+                            if (isDir) tr.ondblclick = () => loadFileManager(item.path);
+
+                            tr.innerHTML = `
+                                <td class="px-6 py-2.5 flex items-center gap-3">${icon} ${nameSpan}</td>
+                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.size}</td>
+                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.modified}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    loader.classList.add('hidden');
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal memuat file browser.');
+                    loader.classList.add('hidden');
+                });
+        }
+
+        function navigateUp() {
+            if (currentFolderPath === '') return;
+            let pathParts = currentFolderPath.split('/');
+            pathParts.pop();
+            loadFileManager(pathParts.join('/'));
+        }
+
+        // ── EDITOR FUNCTIONS ──
+        function openFileEditor(path, filename) {
+            const modal = document.getElementById('file-editor-modal');
+            const loader = document.getElementById('editor-loader');
+            const textarea = document.getElementById('file-editor-textarea');
+
+            currentEditingFile = path;
+            document.getElementById('editor-filename').textContent = filename;
+
+            modal.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            textarea.value = '';
+
+            fetch(`${fileReadUrl}?path=${encodeURIComponent(path)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        closeFileEditor();
+                    } else {
+                        textarea.value = data.content;
+                    }
+                    loader.classList.add('hidden');
+                })
+                .catch(err => {
+                    alert('Gagal membaca isi file.');
+                    closeFileEditor();
+                });
+        }
+
+        function closeFileEditor() {
+            document.getElementById('file-editor-modal').classList.add('hidden');
+            currentEditingFile = '';
+        }
+
+        function saveFileEditor() {
+            const loader = document.getElementById('editor-loader');
+            const content = document.getElementById('file-editor-textarea').value;
+
+            loader.classList.remove('hidden');
+
+            fetch(fileSaveUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: currentEditingFile,
+                        content: content
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    loader.classList.add('hidden');
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        // Beri efek visual sukses sementara pada tombol
+                        alert('Berhasil disimpan!');
+                    }
+                })
+                .catch(err => {
+                    loader.classList.add('hidden');
+                    alert('Terjadi kesalahan saat menyimpan.');
+                });
+        }
+
+        // Panggil saat tab File Manager pertama kali diklik
+        document.getElementById('tab-files').addEventListener('click', () => {
+            if (document.getElementById('file-manager-body').innerHTML.trim() === '') {
+                loadFileManager();
             }
         });
     </script>
