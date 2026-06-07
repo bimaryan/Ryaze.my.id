@@ -210,6 +210,14 @@
                             <span class="whitespace-nowrap">Riwayat Joki Saya</span>
                         </a>
                     </li>
+
+                    <li>
+                        <a href="#"
+                            class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}">
+                            <i class="fa-solid fa-file-invoice-dollar me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Riwayat Tagihan</span>
+                        </a>
+                    </li>
                 @endif
 
                 {{-- Menu User Hosting --}}
@@ -242,15 +250,15 @@
                             <span class="whitespace-nowrap">Penyimpanan / Storage</span>
                         </a>
                     </li>
-                @endif
 
-                {{-- Riwayat Tagihan (semua user) --}}
-                <li>
-                    <a href="#" class="{{ $navLink(false) }}">
-                        <i class="fa-solid fa-file-invoice-dollar me-2 ms-3"></i>
-                        <span class="whitespace-nowrap">Riwayat Tagihan</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="{{ route('user_hosting.billing') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}">
+                            <i class="fa-solid fa-file-invoice-dollar me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Riwayat Tagihan</span>
+                        </a>
+                    </li>
+                @endif
             @endif
 
         </ul>

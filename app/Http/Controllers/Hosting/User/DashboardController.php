@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hosting\User;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\AutoDeployProject;
+use App\Models\HostingBilling;
 use App\Models\HostingProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -80,7 +81,9 @@ class DashboardController extends Controller
     public function show($hashed_id)
     {
         $decoded = Hashids::decode($hashed_id);
-        if (empty($decoded)) abort(404);
+        if (empty($decoded)) {
+            abort(404);
+        }
 
         $project = HostingProject::with(['deployments' => function ($query) {
             $query->latest();
@@ -92,7 +95,7 @@ class DashboardController extends Controller
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         // Membaca file .env
-        $envPath = $projectDir . "/.env";
+        $envPath = $projectDir.'/.env';
         $envContent = '';
         if (file_exists($envPath)) {
             $envContent = file_get_contents($envPath);
@@ -105,7 +108,9 @@ class DashboardController extends Controller
     public function getFiles(Request $request, $hashid)
     {
         $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) abort(404);
+        if (empty($decoded)) {
+            abort(404);
+        }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
@@ -113,15 +118,15 @@ class DashboardController extends Controller
         $requestPath = trim($request->input('path', ''), '/');
 
         $targetDir = $projectRootDir;
-        if (!empty($requestPath)) {
-            $targetDir = realpath($projectRootDir . '/' . $requestPath);
+        if (! empty($requestPath)) {
+            $targetDir = realpath($projectRootDir.'/'.$requestPath);
         }
 
         if ($targetDir === false || strpos($targetDir, $projectRootDir) !== 0) {
             return response()->json(['error' => 'Akses ditolak! Anda mencoba keluar dari root direktori.'], 403);
         }
 
-        if (!is_dir($targetDir)) {
+        if (! is_dir($targetDir)) {
             return response()->json(['error' => 'Direktori tidak ditemukan.'], 404);
         }
 
@@ -130,9 +135,11 @@ class DashboardController extends Controller
         $files = [];
 
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..') continue;
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
 
-            $fullPath = $targetDir . '/' . $item;
+            $fullPath = $targetDir.'/'.$item;
             $isDir = is_dir($fullPath);
 
             $info = [
@@ -140,7 +147,7 @@ class DashboardController extends Controller
                 'type' => $isDir ? 'dir' : 'file',
                 'size' => $isDir ? '-' : $this->formatBytesCustom(filesize($fullPath)),
                 'modified' => date('d M Y H:i', filemtime($fullPath)),
-                'path' => !empty($requestPath) ? $requestPath . '/' . $item : $item
+                'path' => ! empty($requestPath) ? $requestPath.'/'.$item : $item,
             ];
 
             if ($isDir) {
@@ -150,12 +157,12 @@ class DashboardController extends Controller
             }
         }
 
-        usort($directories, fn($a, $b) => strcmp($a['name'], $b['name']));
-        usort($files, fn($a, $b) => strcmp($a['name'], $b['name']));
+        usort($directories, fn ($a, $b) => strcmp($a['name'], $b['name']));
+        usort($files, fn ($a, $b) => strcmp($a['name'], $b['name']));
 
         return response()->json([
             'current_path' => $requestPath,
-            'items' => array_merge($directories, $files)
+            'items' => array_merge($directories, $files),
         ]);
     }
 
@@ -163,14 +170,16 @@ class DashboardController extends Controller
     public function readFile(Request $request, $hashid)
     {
         $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) abort(404);
+        if (empty($decoded)) {
+            abort(404);
+        }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $requestPath = trim($request->input('path', ''), '/');
-        $targetFile = realpath($projectRootDir . '/' . $requestPath);
+        $targetFile = realpath($projectRootDir.'/'.$requestPath);
 
         // Validasi Anti-Traversal & pastikan itu adalah file (bukan folder)
         if ($targetFile === false || strpos($targetFile, $projectRootDir) !== 0 || is_dir($targetFile)) {
@@ -184,14 +193,16 @@ class DashboardController extends Controller
     public function saveFile(Request $request, $hashid)
     {
         $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) abort(404);
+        if (empty($decoded)) {
+            abort(404);
+        }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $requestPath = trim($request->input('path', ''), '/');
-        $targetFile = realpath($projectRootDir . '/' . $requestPath);
+        $targetFile = realpath($projectRootDir.'/'.$requestPath);
 
         if ($targetFile === false || strpos($targetFile, $projectRootDir) !== 0 || is_dir($targetFile)) {
             return response()->json(['error' => 'File tidak valid atau akses ditolak.'], 403);
@@ -213,10 +224,12 @@ class DashboardController extends Controller
         if ($size > 0) {
             $size = (int) $size;
             $base = log($size) / log(1024);
-            $suffixes = array(' bytes', ' KB', ' MB', ' GB', ' TB');
-            return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
+            $suffixes = [' bytes', ' KB', ' MB', ' GB', ' TB'];
+
+            return round(pow(1024, $base - floor($base)), $precision).$suffixes[floor($base)];
         }
-        return $size . ' bytes';
+
+        return $size.' bytes';
     }
 
     // --- 1. DOWNLOAD FILE ---
@@ -225,7 +238,10 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
         $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
 
-        if (!$targetPath || is_dir($targetPath)) abort(404);
+        if (! $targetPath || is_dir($targetPath)) {
+            abort(404);
+        }
+
         return response()->download($targetPath);
     }
 
@@ -235,17 +251,20 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
         $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
 
-        if (!$targetPath) return response()->json(['error' => 'Akses ditolak.'], 403);
+        if (! $targetPath) {
+            return response()->json(['error' => 'Akses ditolak.'], 403);
+        }
 
         try {
             if (is_dir($targetPath)) {
-                exec('rm -rf ' . escapeshellarg($targetPath)); // Eksekusi aman untuk hapus folder isi
+                exec('rm -rf '.escapeshellarg($targetPath)); // Eksekusi aman untuk hapus folder isi
             } else {
                 unlink($targetPath);
             }
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal menghapus: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Gagal menghapus: '.$e->getMessage()], 500);
         }
     }
 
@@ -255,13 +274,17 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
         $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
 
-        if (!$dirPath || !is_dir($dirPath)) return response()->json(['error' => 'Direktori tujuan tidak valid.'], 403);
+        if (! $dirPath || ! is_dir($dirPath)) {
+            return response()->json(['error' => 'Direktori tujuan tidak valid.'], 403);
+        }
 
         $type = $request->input('type'); // 'file' atau 'dir'
         $name = preg_replace('/[^a-zA-Z0-9_\.-]/', '', $request->input('name')); // Bersihkan nama file
-        $targetPath = $dirPath . '/' . $name;
+        $targetPath = $dirPath.'/'.$name;
 
-        if (file_exists($targetPath)) return response()->json(['error' => 'Nama sudah digunakan.'], 400);
+        if (file_exists($targetPath)) {
+            return response()->json(['error' => 'Nama sudah digunakan.'], 400);
+        }
 
         if ($type === 'dir') {
             mkdir($targetPath, 0755);
@@ -279,8 +302,12 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
         $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
 
-        if (!$dirPath || !is_dir($dirPath)) return response()->json(['error' => 'Direktori tujuan tidak valid.'], 403);
-        if (!$request->hasFile('file')) return response()->json(['error' => 'Tidak ada file yang diupload.'], 400);
+        if (! $dirPath || ! is_dir($dirPath)) {
+            return response()->json(['error' => 'Direktori tujuan tidak valid.'], 403);
+        }
+        if (! $request->hasFile('file')) {
+            return response()->json(['error' => 'Tidak ada file yang diupload.'], 400);
+        }
 
         $file = $request->file('file');
         $file->move($dirPath, $file->getClientOriginalName());
@@ -289,18 +316,23 @@ class DashboardController extends Controller
     }
 
     // --- HELPER UNTUK KEAMANAN (ANTI-TRAVERSAL) ---
-    private function getValidProject($hashid) {
+    private function getValidProject($hashid)
+    {
         $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) abort(404);
+        if (empty($decoded)) {
+            abort(404);
+        }
+
         return HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
     }
 
-    private function getValidTargetPath($project, $requestPath) {
+    private function getValidTargetPath($project, $requestPath)
+    {
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         // Gabungkan path
-        $fullPath = $projectRootDir . '/' . trim($requestPath, '/');
+        $fullPath = $projectRootDir.'/'.trim($requestPath, '/');
 
         // Pengecekan realpath untuk Anti-Directory Traversal
         $realTarget = realpath($fullPath);
@@ -309,11 +341,17 @@ class DashboardController extends Controller
         // Kita izinkan jika parent directory-nya valid.
         if ($realTarget === false) {
             $parentDir = realpath(dirname($fullPath));
-            if ($parentDir === false || strpos($parentDir, $projectRootDir) !== 0) return false;
+            if ($parentDir === false || strpos($parentDir, $projectRootDir) !== 0) {
+                return false;
+            }
+
             return $fullPath;
         }
 
-        if (strpos($realTarget, $projectRootDir) !== 0) return false;
+        if (strpos($realTarget, $projectRootDir) !== 0) {
+            return false;
+        }
+
         return $realTarget;
     }
 
@@ -433,5 +471,15 @@ class DashboardController extends Controller
             'output' => $outputString,
             'exit_code' => $exitCode,
         ]);
+    }
+
+    public function billingHistory()
+    {
+        // Mengambil semua tagihan milik user yang sedang login
+        $billings = HostingBilling::whereHas('project', function ($query) {
+            $query->where('user_id', Auth::id());
+        })->latest()->paginate(15);
+
+        return view('pages.hosting.user.billing', compact('billings'));
     }
 }

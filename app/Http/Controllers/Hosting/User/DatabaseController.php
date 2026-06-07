@@ -63,10 +63,10 @@ class DatabaseController extends Controller
             $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$cleanUsername'@'%'");
 
             // 4. Flush agar user langsung dikenali
-            $pdo->exec("FLUSH PRIVILEGES");
+            $pdo->exec('FLUSH PRIVILEGES');
 
         } catch (\PDOException $e) {
-            return back()->with('error', 'Gagal membuat database: ' . $e->getMessage());
+            return back()->with('error', 'Gagal membuat database: '.$e->getMessage());
         }
 
         // Simpan ke database portal Ryaze
@@ -108,5 +108,135 @@ class DatabaseController extends Controller
         $database->delete();
 
         return back()->with('success', 'Database berhasil dihapus!');
+    }
+
+    public function pmaLogin($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) {
+            abort(404);
+        }
+
+        $db = HostingDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $pmaUrl = rtrim(env('PMA_URL', ''), '/');
+
+        if (! $pmaUrl) {
+            return back()->with('error', 'URL phpMyAdmin belum dikonfigurasi di .env (PMA_URL).');
+        }
+
+        try {
+            // Step 1: GET phpMyAdmin untuk ambil token & cookie awal
+            $ch = curl_init("{$pmaUrl}/index.php");
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HEADER => true,
+                CURLOPT_FOLLOWLOCATION => false,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_COOKIEFILE => '',   // enable cookie engine
+                CURLOPT_COOKIEJAR => '',
+            ]);
+            $response1 = curl_exec($ch);
+            $info1 = curl_getinfo($ch);
+
+            // Ambil Set-Cookie dari response pertama
+            $headerSize = $info1['header_size'];
+            $headers1 = substr($response1, 0, $headerSize);
+            $body1 = substr($response1, $headerSize);
+
+            // Parse phpMyAdmin token dari form hidden input
+            $token = '';
+            if (preg_match('/name="token"\s+value="([^"]+)"/', $body1, $m)) {
+                $token = $m[1];
+            }
+            // Fallback: cari di meta atau script
+            if (! $token && preg_match('/token["\s:=]+([a-f0-9]{32})/', $body1, $m)) {
+                $token = $m[1];
+            }
+
+            // Ambil cookies dari header pertama
+            preg_match_all('/Set-Cookie:\s*([^;\r\n]+)/i', $headers1, $cookieMatches);
+            $cookies = implode('; ', $cookieMatches[1]);
+
+            // Step 2: POST login ke phpMyAdmin
+            $postData = http_build_query([
+                'pma_username' => $db->db_username,
+                'pma_password' => $db->db_password,
+                'server' => 1,
+                'target' => 'index.php',
+                'token' => $token,
+            ]);
+
+            curl_setopt_array($ch, [
+                CURLOPT_URL => "{$pmaUrl}/index.php",
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => $postData,
+                CURLOPT_HEADER => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FOLLOWLOCATION => false,
+                CURLOPT_HTTPHEADER => [
+                    "Cookie: {$cookies}",
+                    'Content-Type: application/x-www-form-urlencoded',
+                    "Referer: {$pmaUrl}/index.php",
+                ],
+            ]);
+
+            $response2 = curl_exec($ch);
+            $info2 = curl_getinfo($ch);
+            $headerSize2 = $info2['header_size'];
+            $headers2 = substr($response2, 0, $headerSize2);
+
+            curl_close($ch);
+
+            // Ambil semua cookies dari response login
+            preg_match_all('/Set-Cookie:\s*([^\r\n]+)/i', $headers2, $cookieMatches2);
+
+            // Kirim cookies ke browser dan redirect ke phpMyAdmin
+            $response = redirect("{$pmaUrl}/index.php?db={$db->db_name}");
+
+            foreach ($cookieMatches2[1] as $cookieStr) {
+                // Parse nama=nilai dan atribut
+                $parts = array_map('trim', explode(';', $cookieStr));
+                $nameVal = explode('=', array_shift($parts), 2);
+                if (count($nameVal) < 2) {
+                    continue;
+                }
+
+                [$cName, $cVal] = $nameVal;
+                $cPath = '/';
+                $cDomain = null;
+                $cSecure = false;
+                $cHttpOnly = false;
+
+                foreach ($parts as $attr) {
+                    $attrLower = strtolower($attr);
+                    if (str_starts_with($attrLower, 'path=')) {
+                        $cPath = substr($attr, 5);
+                    }
+                    if (str_starts_with($attrLower, 'domain=')) {
+                        $cDomain = substr($attr, 7);
+                    }
+                    if ($attrLower === 'secure') {
+                        $cSecure = true;
+                    }
+                    if ($attrLower === 'httponly') {
+                        $cHttpOnly = true;
+                    }
+                }
+
+                $response->withCookie(
+                    cookie($cName, $cVal, 120, $cPath, $cDomain, $cSecure, $cHttpOnly)
+                );
+            }
+
+            return $response;
+
+        } catch (\Exception $e) {
+            \Log::error('PMA auto-login gagal: '.$e->getMessage());
+
+            // Fallback: buka phpMyAdmin biasa, user login manual
+            return redirect("{$pmaUrl}/index.php")
+                ->with('error', 'Auto-login gagal, silakan login manual.');
+        }
     }
 }
