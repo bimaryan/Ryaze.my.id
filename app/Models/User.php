@@ -41,4 +41,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(JokiOrder::class, 'worker_id');
     }
+
+    public function hostingProjects()
+    {
+        return $this->hasMany(HostingProject::class, 'user_id');
+    }
 }

@@ -28,8 +28,13 @@ Route::middleware('auth')->group(function () {
     Route::get('superadmin/users', [UserController::class, 'index'])->name('superadmin.users.index');
     Route::get('superadmin/users/{id}', [UserController::class, 'show'])->name('superadmin.users.show');
 
+    // --- ADMIN HOSTING ---
     Route::get('admin/hosting/dashboard', [HostingAdminDashboardController::class, 'index'])->name('admin_hosting.dashboard');
+    Route::patch('admin/hosting/{hashid}/activate', [HostingAdminDashboardController::class, 'activateProject'])->name('admin_hosting.activate');
+    Route::patch('admin/hosting/{hashid}/suspend', [HostingAdminDashboardController::class, 'suspendProject'])->name('admin_hosting.suspend');
+    Route::delete('admin/hosting/{hashid}', [HostingAdminDashboardController::class, 'destroyProject'])->name('admin_hosting.destroy');
 
+    // --- USER HOSTING ---
     Route::get('user/hosting/dashboard', [DashboardController::class, 'index'])->name('user_hosting.dashboard');
     Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
     Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
