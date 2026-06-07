@@ -640,6 +640,12 @@
         const fileDeleteUrl = fixUrl('{{ route('user_hosting.files.delete', $project->hashid) }}');
         const fileDownloadUrl = fixUrl('{{ route('user_hosting.files.download', $project->hashid) }}');
 
+        // File yang tidak boleh disentuh klien sama sekali
+        const PROTECTED_FILES = ['.suspended', '.htaccess', '.user.ini'];
+
+        const isProtected = name => PROTECTED_FILES.includes(name);
+
+        // ── Load direktori ─────────────────────────────────────────────────────
         function loadFileManager(path = '') {
             const loader = document.getElementById('file-manager-loader');
             const tbody = document.getElementById('file-manager-body');
@@ -664,33 +670,78 @@
                     tbody.innerHTML = '';
 
                     if (!data.items.length) {
-                        tbody.innerHTML =
-                            `<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400"><i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50 block"></i>Folder kosong</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400">
+                            <i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50 block"></i>Folder kosong
+                        </td></tr>`;
                     } else {
                         data.items.forEach(item => {
                             const isDir = item.type === 'dir';
+                            const locked = !isDir && isProtected(item.name);
+
                             const icon = isDir ?
                                 '<i class="fa-solid fa-folder text-amber-400 text-lg"></i>' :
+                                locked ?
+                                '<i class="fa-solid fa-lock text-slate-300 text-lg" title="File sistem"></i>' :
                                 '<i class="fa-regular fa-file-lines text-slate-400 text-lg"></i>';
+
+                            // Klik nama: folder → navigasi, file biasa → editor, file terkunci → tidak bisa
                             const nameAction = isDir ?
                                 `onclick="loadFileManager('${item.path}')"` :
+                                locked ?
+                                `onclick="swAlert('warning','File Terlindungi','File sistem ini tidak dapat diubah.')"` :
                                 `onclick="openFileEditor('${item.path}','${item.name}')"`;
-                            const actions = isDir ?
-                                `<button onclick="deleteItem('${item.path}')" class="text-rose-400 hover:text-rose-600 px-1" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>` :
-                                `<button onclick="openFileEditor('${item.path}','${item.name}')" class="text-sky-400 hover:text-sky-600 px-1" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                                   <a href="${fileDownloadUrl}?path=${encodeURIComponent(item.path)}" target="_blank" class="text-emerald-400 hover:text-emerald-600 px-1" title="Download"><i class="fa-solid fa-download"></i></a>
-                                   <button onclick="deleteItem('${item.path}')" class="text-rose-400 hover:text-rose-600 px-1" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>`;
+
+                            // Tombol aksi
+                            let actions = '';
+                            if (locked) {
+                                // File sistem: tidak ada tombol apapun, hanya label
+                                actions =
+                                    `<span class="text-xs text-slate-300 italic select-none px-1">sistem</span>`;
+                            } else if (isDir) {
+                                // Folder: hanya hapus
+                                actions = `
+                                    <button onclick="deleteItem('${item.path}', '${item.name}')"
+                                        class="text-rose-400 hover:text-rose-600 px-1 transition-colors" title="Hapus">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>`;
+                            } else {
+                                // File biasa: edit + download + hapus
+                                actions = `
+                                    <button onclick="openFileEditor('${item.path}','${item.name}')"
+                                        class="text-sky-400 hover:text-sky-600 px-1 transition-colors" title="Edit">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <a href="${fileDownloadUrl}?path=${encodeURIComponent(item.path)}" target="_blank"
+                                        class="text-emerald-400 hover:text-emerald-600 px-1 transition-colors" title="Download">
+                                        <i class="fa-solid fa-download"></i>
+                                    </a>
+                                    <button onclick="deleteItem('${item.path}', '${item.name}')"
+                                        class="text-rose-400 hover:text-rose-600 px-1 transition-colors" title="Hapus">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>`;
+                            }
 
                             const tr = document.createElement('tr');
-                            tr.className = 'hover:bg-slate-50 transition-colors group';
+                            tr.className =
+                                `hover:bg-slate-50 transition-colors group ${locked ? 'opacity-60' : ''}`;
                             tr.innerHTML = `
-                                <td class="px-6 py-2.5 truncate max-w-0"><div class="flex items-center gap-3 min-w-0"><span class="shrink-0">${icon}</span><a href="javascript:void(0)" ${nameAction} class="font-semibold text-slate-600 hover:text-indigo-600 cursor-pointer truncate">${item.name}</a></div></td>
+                                <td class="px-6 py-2.5 truncate max-w-0">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="shrink-0">${icon}</span>
+                                        <a href="javascript:void(0)" ${nameAction}
+                                            class="font-semibold ${locked ? 'text-slate-400 cursor-not-allowed' : 'text-slate-600 hover:text-indigo-600 cursor-pointer'} truncate">
+                                            ${item.name}
+                                        </a>
+                                        ${locked ? '<span class="text-[10px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded font-mono shrink-0">protected</span>' : ''}
+                                    </div>
+                                </td>
                                 <td class="px-4 py-2.5 text-slate-400 text-xs whitespace-nowrap">${item.size}</td>
                                 <td class="px-4 py-2.5 text-slate-400 text-xs hidden sm:table-cell whitespace-nowrap">${item.modified}</td>
                                 <td class="px-4 py-2.5 text-right whitespace-nowrap">${actions}</td>`;
                             tbody.appendChild(tr);
                         });
                     }
+
                     loader.classList.add('hidden');
                 })
                 .catch(() => {
@@ -702,17 +753,26 @@
                 });
         }
 
+        // ── Navigasi naik ──────────────────────────────────────────────────────
         function navigateUp() {
             if (!currentFolderPath) return;
             loadFileManager(currentFolderPath.split('/').slice(0, -1).join('/'));
         }
 
+        // ── Buat file / folder baru ────────────────────────────────────────────
         async function promptCreateItem(type) {
             const label = type === 'dir' ? 'Folder' : 'File';
             const {
                 value: name
             } = await swInput(`Buat ${label} Baru`, `Nama ${label}...`);
             if (!name) return;
+
+            // Cegah klien buat file dengan nama protected
+            if (isProtected(name)) {
+                swAlert('error', 'Nama Tidak Diizinkan',
+                'Nama file tersebut adalah file sistem dan tidak bisa dibuat.');
+                return;
+            }
 
             fetch(fileCreateUrl, {
                 method: 'POST',
@@ -737,8 +797,15 @@
             });
         }
 
-        async function deleteItem(path) {
-            const result = await swConfirm('Hapus permanen?', `${path} akan dihapus dan tidak bisa dikembalikan.`);
+        // ── Hapus file / folder ────────────────────────────────────────────────
+        async function deleteItem(path, name) {
+            // Guard frontend — double-check nama file
+            if (isProtected(name)) {
+                swAlert('warning', 'File Terlindungi', 'File sistem ini tidak dapat dihapus.');
+                return;
+            }
+
+            const result = await swConfirm('Hapus permanen?', `"${name}" akan dihapus dan tidak bisa dikembalikan.`);
             if (!result.isConfirmed) return;
 
             fetch(fileDeleteUrl, {
@@ -762,8 +829,17 @@
             });
         }
 
+        // ── Upload file ────────────────────────────────────────────────────────
         function uploadFile(inputEl) {
             if (!inputEl.files.length) return;
+
+            const fileName = inputEl.files[0].name;
+            if (isProtected(fileName)) {
+                swAlert('error', 'Upload Ditolak', 'Nama file tersebut adalah file sistem dan tidak bisa diupload.');
+                inputEl.value = '';
+                return;
+            }
+
             const formData = new FormData();
             formData.append('file', inputEl.files[0]);
             formData.append('current_path', currentFolderPath);
@@ -794,7 +870,14 @@
                 });
         }
 
+        // ── Buka editor ────────────────────────────────────────────────────────
         function openFileEditor(path, filename) {
+            // Guard frontend
+            if (isProtected(filename)) {
+                swAlert('warning', 'File Terlindungi', 'File sistem ini tidak dapat diubah.');
+                return;
+            }
+
             const modal = document.getElementById('file-editor-modal');
             const loader = document.getElementById('editor-loader');
             const textarea = document.getElementById('file-editor-textarea');
@@ -810,7 +893,9 @@
                     if (data.error) {
                         swAlert('error', 'Gagal baca file', data.error);
                         closeFileEditor();
-                    } else textarea.value = data.content;
+                    } else {
+                        textarea.value = data.content;
+                    }
                     loader.classList.add('hidden');
                 })
                 .catch(() => {
@@ -824,7 +909,14 @@
             currentEditingFile = '';
         }
 
+        // ── Simpan file ────────────────────────────────────────────────────────
         function saveFileEditor() {
+            // Guard frontend — cek nama file yang sedang diedit
+            if (isProtected(currentEditingFile.split('/').pop())) {
+                swAlert('warning', 'File Terlindungi', 'File sistem ini tidak dapat disimpan.');
+                return;
+            }
+
             const loader = document.getElementById('editor-loader');
             const content = document.getElementById('file-editor-textarea').value;
             loader.classList.remove('hidden');
@@ -853,6 +945,7 @@
             });
         }
 
+        // ── Auto-load saat tab files dibuka pertama kali ───────────────────────
         document.getElementById('tab-files').addEventListener('click', () => {
             if (!document.getElementById('file-manager-body').innerHTML.trim()) loadFileManager();
         });

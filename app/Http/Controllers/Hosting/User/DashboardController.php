@@ -208,7 +208,12 @@ class DashboardController extends Controller
             return response()->json(['error' => 'File tidak valid atau akses ditolak.'], 403);
         }
 
-        @chmod($targetFile, 0666); // Pastikan writable
+        // ── PROTEKSI ──
+        if (in_array(basename($targetFile), $this->protectedFiles)) {
+            return response()->json(['error' => 'File sistem ini tidak dapat diubah.'], 403);
+        }
+
+        @chmod($targetFile, 0666);
         $result = @file_put_contents($targetFile, $request->input('content', ''));
 
         if ($result === false) {
@@ -255,9 +260,17 @@ class DashboardController extends Controller
             return response()->json(['error' => 'Akses ditolak.'], 403);
         }
 
+        // ── PROTEKSI FILE SISTEM ──────────────────────────────────────
+        $protectedFiles = ['.suspended', '.htaccess', '.user.ini'];
+        $basename = basename($targetPath);
+        if (in_array($basename, $protectedFiles)) {
+            return response()->json(['error' => 'File sistem ini tidak dapat dihapus.'], 403);
+        }
+        // ─────────────────────────────────────────────────────────────
+
         try {
             if (is_dir($targetPath)) {
-                exec('rm -rf '.escapeshellarg($targetPath)); // Eksekusi aman untuk hapus folder isi
+                exec('rm -rf '.escapeshellarg($targetPath));
             } else {
                 unlink($targetPath);
             }

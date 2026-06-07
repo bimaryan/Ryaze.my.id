@@ -30,9 +30,9 @@ Route::middleware('auth')->group(function () {
 
     // --- ADMIN HOSTING ---
     Route::get('admin/hosting/dashboard', [HostingAdminDashboardController::class, 'index'])->name('admin_hosting.dashboard');
-    Route::get('admin/hosting/projects/pending', [HostingAdminDashboardController::class, 'pending'])->name('admin_hosting.pending');
-    Route::get('admin/hosting/projects/deployments', [HostingAdminDashboardController::class, 'deployments'])->name('admin_hosting.deployments');
-    Route::get('admin/hosting/projects/all', [HostingAdminDashboardController::class, 'projects'])->name('admin_hosting.projects');
+    Route::get('admin/hosting/pending', [HostingAdminDashboardController::class, 'pending'])->name('admin_hosting.pending');
+    Route::get('admin/hosting/deployments', [HostingAdminDashboardController::class, 'deployments'])->name('admin_hosting.deployments');
+    Route::get('admin/hosting/projects', [HostingAdminDashboardController::class, 'projects'])->name('admin_hosting.projects');
     Route::patch('admin/hosting/{hashid}/activate', [HostingAdminDashboardController::class, 'activateProject'])->name('admin_hosting.activate');
     Route::patch('admin/hosting/{hashid}/suspend', [HostingAdminDashboardController::class, 'suspendProject'])->name('admin_hosting.suspend');
     Route::delete('admin/hosting/{hashid}', [HostingAdminDashboardController::class, 'destroyProject'])->name('admin_hosting.destroy');
