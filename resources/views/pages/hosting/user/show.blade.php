@@ -11,7 +11,8 @@
                 <span class="font-medium text-sm">{{ session('success') }}</span>
             </div>
         @elseif (session('error'))
-            <div class="mb-4 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm animate-fade-in-down">
+            <div
+                class="mb-4 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm animate-fade-in-down">
                 <i class="fa-solid fa-triangle-exclamation text-xl"></i>
                 <span class="font-medium text-sm">{{ session('error') }}</span>
             </div>
@@ -68,6 +69,10 @@
             <button onclick="switchTab('terminal')" id="tab-terminal"
                 class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-terminal mr-1.5"></i> Terminal
+            </button>
+            <button onclick="switchTab('files')" id="tab-files"
+                class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+                <i class="fa-solid fa-folder-tree mr-1.5"></i> Root Files
             </button>
             <button onclick="switchTab('env')" id="tab-env"
                 class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
@@ -140,7 +145,8 @@
                             </div>
                             <div>
                                 <span class="block text-slate-500 text-xs mb-1">Root Directory</span>
-                                <span class="font-mono text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-1 rounded block truncate">
+                                <span
+                                    class="font-mono text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-1 rounded block truncate">
                                     /www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
                                 </span>
                             </div>
@@ -164,18 +170,22 @@
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div id="panel-logs" class="tab-panel hidden">
             <div class="bg-slate-900 rounded-xl shadow-md border border-slate-800 overflow-hidden">
-                <div class="bg-slate-800 px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b border-slate-700">
+                <div
+                    class="bg-slate-800 px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b border-slate-700">
                     <div class="flex items-center gap-2 text-slate-400 text-xs">
                         <i class="fa-solid fa-globe"></i>
-                        <a id="website-log-link" href="https://{{ $project->ryaze_domain }}" target="_blank" class="text-indigo-400 hover:text-indigo-300 truncate">
+                        <a id="website-log-link" href="https://{{ $project->ryaze_domain }}" target="_blank"
+                            class="text-indigo-400 hover:text-indigo-300 truncate">
                             {{ $project->ryaze_domain }}
                         </a>
                     </div>
                     <div class="text-slate-400 text-xs">
-                        Status build: <span id="build-log-status" class="font-semibold text-slate-200">{{ $project->status }}</span>
+                        Status build: <span id="build-log-status"
+                            class="font-semibold text-slate-200">{{ $project->status }}</span>
                     </div>
                     <div class="text-slate-400 text-xs ml-auto">
-                        <span id="build-log-updated">{{ $project->deployments->first()->created_at?->diffForHumans() ?? 'Initial Build' }}</span>
+                        <span
+                            id="build-log-updated">{{ $project->deployments->first()->created_at?->diffForHumans() ?? 'Initial Build' }}</span>
                     </div>
                 </div>
                 <div class="p-4 h-[500px] overflow-y-auto font-mono text-sm" id="build-log-container">
@@ -231,9 +241,12 @@
 
                     {{-- Welcome message --}}
                     <div class="text-slate-500 mb-3 select-none border-b border-slate-800 pb-3">
-                        <span class="text-emerald-500 font-bold">ryaze</span><span class="text-slate-400"> hosting terminal</span>
+                        <span class="text-emerald-500 font-bold">ryaze</span><span class="text-slate-400"> hosting
+                            terminal</span>
                         <br>
-                        <span class="text-slate-600 text-xs">Project: <span class="text-slate-400">{{ $project->project_name }}</span> · Type a command to get started.</span>
+                        <span class="text-slate-600 text-xs">Project: <span
+                                class="text-slate-400">{{ $project->project_name }}</span> · Type a command to get
+                            started.</span>
                     </div>
                 </div>
 
@@ -244,16 +257,9 @@
                         <span class="text-slate-500">/</span>{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
                         <span class="text-slate-400 ml-1">$</span>
                     </span>
-                    <input
-                        type="text"
-                        id="terminal-input"
-                        autocomplete="off"
-                        autocorrect="off"
-                        autocapitalize="off"
-                        spellcheck="false"
-                        placeholder="ketik perintah..."
-                        class="flex-1 bg-transparent text-slate-100 font-mono text-sm ml-2 outline-none placeholder-slate-700 caret-emerald-400"
-                    >
+                    <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off"
+                        spellcheck="false" placeholder="ketik perintah..."
+                        class="flex-1 bg-transparent text-slate-100 font-mono text-sm ml-2 outline-none placeholder-slate-700 caret-emerald-400">
                     <button onclick="runCommand()"
                         class="ml-3 text-slate-500 hover:text-emerald-400 transition-colors shrink-0">
                         <i class="fa-solid fa-paper-plane text-xs"></i>
@@ -268,6 +274,60 @@
         </div>
 
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
+        {{-- TAB: ROOT FILES --}}
+        {{-- ═══════════════════════════════════════════════════════════════════ --}}
+        <div id="panel-files" class="tab-panel hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-4xl">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-folder-open text-indigo-500"></i> File Explorer
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1 font-mono">
+                            /www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-slate-600">
+                        <thead
+                            class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-3">Nama File/Folder</th>
+                                <th class="px-6 py-3">Ukuran</th>
+                                <th class="px-6 py-3">Terakhir Diubah</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-mono text-[13px]">
+                            @forelse ($projectFiles ?? [] as $file)
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-6 py-3 flex items-center gap-3">
+                                        @if ($file['type'] == 'dir')
+                                            <i class="fa-solid fa-folder text-amber-400 text-lg"></i>
+                                            <span class="font-semibold text-slate-700">{{ $file['name'] }}</span>
+                                        @else
+                                            <i class="fa-regular fa-file-lines text-slate-400 text-lg"></i>
+                                            <span class="text-slate-600">{{ $file['name'] }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-3 text-slate-500">{{ $file['size'] }}</td>
+                                    <td class="px-6 py-3 text-slate-500">{{ $file['modified'] }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-6 py-10 text-center text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i>
+                                        <p>Folder project belum tersedia atau masih kosong.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- TAB: ENV --}}
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div id="panel-env" class="tab-panel hidden">
@@ -276,7 +336,9 @@
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-key text-amber-500"></i> Environment Variables
                     </h3>
-                    <p class="text-xs text-slate-500 mt-1">Format: <code class="bg-slate-100 px-1 py-0.5 rounded text-rose-500">KUNCI=nilai</code>. Perubahan berlaku setelah redeploy.</p>
+                    <p class="text-xs text-slate-500 mt-1">Format: <code
+                            class="bg-slate-100 px-1 py-0.5 rounded text-rose-500">KUNCI=nilai</code>. Perubahan berlaku
+                        setelah redeploy.</p>
                 </div>
                 <form action="{{ route('user_hosting.env.update', $project->hashid) }}" method="POST">
                     @csrf
@@ -298,7 +360,7 @@
     </div>
 
     <script>
-        const buildLogUrl = '{{ route("user_hosting.build_logs", $project->hashid) }}';
+        const buildLogUrl = '{{ route('user_hosting.build_logs', $project->hashid) }}';
         const buildLogText = document.getElementById('build-log-text');
         const buildLogStatus = document.getElementById('build-log-status');
         const buildLogUpdated = document.getElementById('build-log-updated');
@@ -308,10 +370,10 @@
 
         function refreshBuildLogs() {
             return fetch(buildLogUrl, {
-                headers: {
-                    'Accept': 'application/json',
-                },
-            })
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                })
                 .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
                 .then(data => {
                     if (data.build_logs !== undefined && buildLogText) {
@@ -323,7 +385,8 @@
                     }
 
                     if (buildLogUpdated) {
-                        buildLogUpdated.textContent = data.last_updated ? 'Updated: ' + data.last_updated : buildLogUpdated.textContent;
+                        buildLogUpdated.textContent = data.last_updated ? 'Updated: ' + data.last_updated :
+                            buildLogUpdated.textContent;
                     }
 
                     if (websiteLogLink && data.website_url) {
@@ -357,7 +420,6 @@
         if ('{{ $project->status }}' === 'building') {
             startBuildLogPolling();
         }
-
     </script>
 
     <script>
@@ -381,17 +443,17 @@
 
         // ── Terminal ───────────────────────────────────────────────────────────
         const terminalOutput = document.getElementById('terminal-output');
-        const terminalInput  = document.getElementById('terminal-input');
-        const projectHashid  = '{{ $project->hashid }}';
-        let terminalUrl      = '{{ route("user_hosting.terminal", $project->hashid) }}';
+        const terminalInput = document.getElementById('terminal-input');
+        const projectHashid = '{{ $project->hashid }}';
+        let terminalUrl = '{{ route('user_hosting.terminal', $project->hashid) }}';
         if (window.location.protocol === 'https:') {
             terminalUrl = terminalUrl.replace('http://', 'https://');
         }
-        const csrfToken      = '{{ csrf_token() }}';
+        const csrfToken = '{{ csrf_token() }}';
 
         let commandHistory = [];
-        let historyIndex   = -1;
-        let isRunning      = false;
+        let historyIndex = -1;
+        let isRunning = false;
 
         function appendToTerminal(html) {
             terminalOutput.insertAdjacentHTML('beforeend', html);
@@ -445,7 +507,9 @@
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({ command: cmd }),
+                    body: JSON.stringify({
+                        command: cmd
+                    }),
                 });
 
                 const data = await res.json();

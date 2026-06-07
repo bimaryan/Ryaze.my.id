@@ -73,6 +73,17 @@ class DashboardController extends Controller
         return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Deployment berhasil dimulai!');
     }
 
+    private function formatBytes($size, $precision = 2)
+    {
+        if ($size > 0) {
+            $size = (int) $size;
+            $base = log($size) / log(1024);
+            $suffixes = array(' bytes', ' KB', ' MB', ' GB', ' TB');
+            return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
+        }
+        return $size . ' bytes';
+    }
+
     // Menampilkan halaman Terminal & Log
     public function show($hashed_id)
     {
@@ -88,16 +99,51 @@ class DashboardController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($decoded[0]);
 
-        // Membaca file .env klien secara langsung dari VPS
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
-        $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
+        // 1. Membaca file .env
+        $envPath = $projectDir . "/.env";
         $envContent = '';
         if (file_exists($envPath)) {
             $envContent = file_get_contents($envPath);
         }
 
-        return view('pages.hosting.user.show', compact('project', 'envContent'));
+        // 2. Membaca isi Root Directory
+        $projectFiles = [];
+        if (is_dir($projectDir)) {
+            $items = scandir($projectDir);
+            $directories = [];
+            $files = [];
+
+            foreach ($items as $item) {
+                // Abaikan navigasi folder linux (. dan ..) serta folder git
+                if ($item === '.' || $item === '..' || $item === '.git') continue;
+
+                $fullPath = $projectDir . '/' . $item;
+                $isDir = is_dir($fullPath);
+
+                $info = [
+                    'name' => $item,
+                    'type' => $isDir ? 'dir' : 'file',
+                    'size' => $isDir ? '-' : $this->formatBytes(filesize($fullPath)),
+                    'modified' => date('d M Y H:i', filemtime($fullPath)),
+                ];
+
+                if ($isDir) {
+                    $directories[] = $info;
+                } else {
+                    $files[] = $info;
+                }
+            }
+
+            // Urutkan: Folder di atas, file di bawah, sesuai abjad
+            usort($directories, fn($a, $b) => strcmp($a['name'], $b['name']));
+            usort($files, fn($a, $b) => strcmp($a['name'], $b['name']));
+            $projectFiles = array_merge($directories, $files);
+        }
+
+        return view('pages.hosting.user.show', compact('project', 'envContent', 'projectFiles'));
     }
 
     // Memperbarui file .env

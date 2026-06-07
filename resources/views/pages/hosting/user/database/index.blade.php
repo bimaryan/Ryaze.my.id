@@ -28,10 +28,10 @@
         @endif
 
         {{-- Header --}}
-        <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+        <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">Database & phpMyAdmin</h1>
-                <p class="text-sm text-slate-500 mt-1">Kelola database MySQL untuk aplikasi Anda.</p>
+                <h1 class="text-xl font-bold text-slate-800">Database & phpMyAdmin</h1>
+                <p class="text-sm text-slate-500 mt-0.5">Kelola database MySQL untuk aplikasi Anda.</p>
             </div>
             <button onclick="document.getElementById('createDbModal').classList.remove('hidden')"
                 class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 text-sm">
@@ -134,7 +134,7 @@
                 <div
                     class="col-span-full bg-white rounded-2xl border border-slate-300 p-12 text-center flex flex-col items-center justify-center h-64">
                     <div
-                        class="w-16 h-16 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center mb-4 border border-slate-100 shadow-sm">
+                        class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2x">
                         <i class="fa-solid fa-server text-3xl"></i>
                     </div>
                     <h3 class="text-lg font-bold text-slate-700 mb-1">Belum ada Database</h3>

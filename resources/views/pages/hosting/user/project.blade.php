@@ -26,10 +26,6 @@
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">Belum ada aplikasi</h3>
                     <p class="text-slate-500 mb-6 text-sm">Mulai deploy aplikasi pertamamu dari repositori GitHub.</p>
-                    <a href="{{ route('user_hosting.create') }}"
-                        class="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 font-semibold px-4 py-2 rounded-lg text-sm transition-colors">
-                        Deploy Sekarang &rarr;
-                    </a>
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
