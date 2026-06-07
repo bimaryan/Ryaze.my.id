@@ -68,27 +68,26 @@
         </div>
 
         {{-- Tab Navigation --}}
-        <div
-            class="flex flex-wrap gap-1.5 mb-6 mt-6 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm w-full sm:w-fit">
+        <div class="flex flex-wrap gap-2 mb-6 mt-6 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm w-full">
             <button onclick="switchTab('overview')" id="tab-overview"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow">
-                <i class="fa-solid fa-chart-simple"></i><span class="hidden sm:inline">Overview</span>
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow">
+                <i class="fa-solid fa-chart-simple"></i> <span>Overview</span>
             </button>
             <button onclick="switchTab('logs')" id="tab-logs"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-                <i class="fa-solid fa-scroll"></i><span class="hidden sm:inline">Build Logs</span>
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-scroll"></i> <span>Build Logs</span>
             </button>
             <button onclick="switchTab('terminal')" id="tab-terminal"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-                <i class="fa-solid fa-terminal"></i><span class="hidden sm:inline">Terminal</span>
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-terminal"></i> <span>Terminal</span>
             </button>
             <button onclick="switchTab('files')" id="tab-files"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-                <i class="fa-solid fa-folder-tree"></i><span class="hidden sm:inline">Root Files</span>
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-folder-tree"></i> <span>Root Files</span>
             </button>
             <button onclick="switchTab('env')" id="tab-env"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-                <i class="fa-solid fa-key"></i><span class="hidden sm:inline">.env</span>
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-key"></i> <span>.env</span>
             </button>
         </div>
 
