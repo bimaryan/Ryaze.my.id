@@ -24,6 +24,36 @@
             </div>
         </div>
 
+        {{-- Tips --}}
+        <div class="mt-6 bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <h3 class="font-bold text-slate-700 text-sm mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-lightbulb text-amber-400"></i> Tips Hemat Storage
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-500">
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 shrink-0"></i>
+                    <span>Folder <code class="bg-slate-100 px-1 rounded">node_modules</code> bisa sangat besar. Jalankan
+                        <code class="bg-slate-100 px-1 rounded">npm install</code> saat deploy, bukan di-commit ke
+                        Git.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 shrink-0"></i>
+                    <span>Folder <code class="bg-slate-100 px-1 rounded">vendor</code> di Laravel juga auto-generated. Cukup
+                        commit <code class="bg-slate-100 px-1 rounded">composer.json</code> saja.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 shrink-0"></i>
+                    <span>Hapus log lama di <code class="bg-slate-100 px-1 rounded">storage/logs</code> secara
+                        berkala.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 shrink-0"></i>
+                    <span>Gunakan tab <strong>Terminal</strong> untuk menjalankan <code class="bg-slate-100 px-1 rounded">rm
+                            -rf storage/logs/*.log</code>.</span>
+                </div>
+            </div>
+        </div>
+
         @php
             $barColor = $percent >= 90 ? 'bg-rose-500' : ($percent >= 70 ? 'bg-amber-500' : 'bg-indigo-500');
             $textColor = $percent >= 90 ? 'text-rose-600' : ($percent >= 70 ? 'text-amber-600' : 'text-indigo-600');
@@ -147,36 +177,6 @@
                     </table>
                 </div>
             @endif
-        </div>
-
-        {{-- Tips --}}
-        <div class="mt-6 bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <h3 class="font-bold text-slate-700 text-sm mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-lightbulb text-amber-400"></i> Tips Hemat Storage
-            </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-500">
-                <div class="flex items-start gap-2">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 shrink-0"></i>
-                    <span>Folder <code class="bg-slate-100 px-1 rounded">node_modules</code> bisa sangat besar. Jalankan
-                        <code class="bg-slate-100 px-1 rounded">npm install</code> saat deploy, bukan di-commit ke
-                        Git.</span>
-                </div>
-                <div class="flex items-start gap-2">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 shrink-0"></i>
-                    <span>Folder <code class="bg-slate-100 px-1 rounded">vendor</code> di Laravel juga auto-generated. Cukup
-                        commit <code class="bg-slate-100 px-1 rounded">composer.json</code> saja.</span>
-                </div>
-                <div class="flex items-start gap-2">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 shrink-0"></i>
-                    <span>Hapus log lama di <code class="bg-slate-100 px-1 rounded">storage/logs</code> secara
-                        berkala.</span>
-                </div>
-                <div class="flex items-start gap-2">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 shrink-0"></i>
-                    <span>Gunakan tab <strong>Terminal</strong> untuk menjalankan <code class="bg-slate-100 px-1 rounded">rm
-                            -rf storage/logs/*.log</code>.</span>
-                </div>
-            </div>
         </div>
 
     </div>
