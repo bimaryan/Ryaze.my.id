@@ -418,7 +418,7 @@
                         @csrf @method('DELETE')
                         <button type="button" onclick="confirmDelete()"
                             class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-lg transition-all">
-                            Hapus Proyek & Data Cloudflare
+                            Hapus
                         </button>
                     </form>
                 </div>
