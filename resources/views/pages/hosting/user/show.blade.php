@@ -378,7 +378,7 @@
         {{-- TAB: ENV --}}
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div id="panel-env" class="tab-panel hidden">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-3xl">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
                 <div class="px-6 py-4 border-b border-slate-100">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-key text-amber-500"></i> Environment Variables
