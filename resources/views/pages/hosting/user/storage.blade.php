@@ -4,9 +4,13 @@
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
         {{-- Header --}}
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-slate-800">Storage</h1>
-            <p class="text-sm text-slate-500 mt-1">Monitor penggunaan disk seluruh project Anda.</p>
+        <div
+            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div>
+                <h1 class="text-xl font-bold text-slate-800">Storage</h1>
+                <p class="text-sm text-slate-500 mt-0.5">Monitor penggunaan disk seluruh project Anda.
+                </p>
+            </div>
         </div>
 
         {{-- Total Usage Card --}}
@@ -21,7 +25,7 @@
                         : 'bg-indigo-50 border-indigo-200');
         @endphp
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6 mt-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <div>
                     <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Total Penggunaan</p>

@@ -4,14 +4,16 @@
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
         {{-- Back + Header --}}
-        <div class="flex items-center gap-3 mb-6">
-            <a href="{{ route('user_hosting.storage') }}"
-                class="text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded-lg p-2 shadow-sm">
-                <i class="fa-solid fa-arrow-left"></i>
-            </a>
+        <div
+            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
             <div>
+                <a href="{{ route('user_hosting.storage') }}"
+                    class="text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded-lg p-2 shadow-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
                 <h1 class="text-xl font-bold text-slate-800">{{ $project->project_name }}</h1>
-                <p class="text-xs text-slate-400 font-mono">{{ $project_dir }}</p>
+                <p class="text-sm text-slate-500 mt-0.5">{{ $project_dir }}
+                </p>
             </div>
         </div>
 
