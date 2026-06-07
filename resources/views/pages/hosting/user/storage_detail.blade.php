@@ -6,14 +6,21 @@
         {{-- Back + Header --}}
         <div
             class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div>
+            <div class="flex items-center gap-4">
+                {{-- Tombol Back --}}
                 <a href="{{ route('user_hosting.storage') }}"
-                    class="text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded-lg p-2 shadow-sm">
+                    class="shrink-0 flex items-center justify-center w-10 h-10 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-                <h1 class="text-xl font-bold text-slate-800">{{ $project->project_name }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">{{ $project_dir }}
-                </p>
+
+                {{-- Title & Path --}}
+                <div class="min-w-0"> {{-- min-w-0 penting agar teks panjang tidak merusak flexbox --}}
+                    <h1 class="text-xl font-bold text-slate-800 truncate">{{ $project->project_name }}</h1>
+                    <p
+                        class="text-xs text-slate-400 mt-0.5 font-mono truncate bg-slate-50 px-2 py-0.5 rounded border border-slate-100 mt-1">
+                        {{ $project_dir }}
+                    </p>
+                </div>
             </div>
         </div>
 
