@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('hosting_projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Pemilik proyek
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('project_name')->unique();
             $table->enum('framework', ['react', 'nextjs', 'python', 'html', 'laravel', 'node']);
-            $table->string('repo_source')->nullable(); // Link github
+            $table->string('repo_source')->nullable();
             $table->string('branch')->default('main');
-            $table->string('ryaze_domain')->unique()->nullable(); // subdomain.ryaze.my.id
+            $table->string('ryaze_domain')->unique()->nullable();
             $table->string('custom_domain')->unique()->nullable();
             $table->enum('status', ['active', 'building', 'suspended', 'error'])->default('building');
             $table->timestamps();

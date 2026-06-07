@@ -89,6 +89,9 @@
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-key"></i> <span>.env</span>
             </button>
+            <button onclick="switchTab('settings')" id="tab-settings"
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50"><i
+                    class="fa-solid fa-gears"></i> <span>Settings</span></button>
         </div>
 
         {{-- TAB: OVERVIEW --}}
@@ -381,6 +384,46 @@
             </div>
         </div>
 
+        {{-- TAB: SETTINGS --}}
+        <div id="panel-settings" class="tab-panel hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- Info Metadata --}}
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-800 mb-4">Project Metadata</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between border-b pb-2">
+                            <span class="text-slate-500">Project ID</span>
+                            <span class="font-mono text-slate-800">{{ $project->hashid }}</span>
+                        </div>
+                        <div class="flex justify-between border-b pb-2">
+                            <span class="text-slate-500">Domain</span>
+                            <span class="font-mono text-slate-800">{{ $project->ryaze_domain }}</span>
+                        </div>
+                        <div class="flex justify-between border-b pb-2">
+                            <span class="text-slate-500">Framework</span>
+                            <span class="font-mono text-slate-800 uppercase">{{ $project->framework }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Danger Zone --}}
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-rose-200">
+                    <h3 class="font-bold text-rose-600 mb-4 flex items-center gap-2"><i
+                            class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h3>
+                    <p class="text-sm text-slate-600 mb-4">Tindakan di bawah ini tidak dapat dibatalkan. Folder root dan
+                        record DNS akan terhapus secara permanen.</p>
+
+                    <form id="delete-form" action="{{ route('user_hosting.destroy', $project->hashid) }}"
+                        method="POST">
+                        @csrf @method('DELETE')
+                        <button type="button" onclick="confirmDelete()"
+                            class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-lg transition-all">
+                            Hapus Proyek & Data Cloudflare
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- SweetAlert2 --}}
@@ -410,6 +453,22 @@
                     popup: 'rounded-xl text-sm'
                 }
             });
+        }
+
+        function confirmDelete() {
+            Swal.fire({
+                title: 'Hapus Proyek Permanen?',
+                text: "Semua file server, database, akan dihapus. Ini tidak bisa kembali!",
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus Sekarang!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form').submit();
+                }
+            })
         }
 
         function swConfirm(title, text, icon = 'warning') {
@@ -770,7 +829,7 @@
             // Cegah klien buat file dengan nama protected
             if (isProtected(name)) {
                 swAlert('error', 'Nama Tidak Diizinkan',
-                'Nama file tersebut adalah file sistem dan tidak bisa dibuat.');
+                    'Nama file tersebut adalah file sistem dan tidak bisa dibuat.');
                 return;
             }
 

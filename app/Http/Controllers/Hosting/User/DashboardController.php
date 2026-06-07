@@ -8,6 +8,8 @@ use App\Models\HostingBilling;
 use App\Models\HostingProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Vinkla\Hashids\Facades\Hashids;
 
 class DashboardController extends Controller
@@ -494,5 +496,45 @@ class DashboardController extends Controller
         })->latest()->paginate(15);
 
         return view('pages.hosting.user.billing', compact('billings'));
+    }
+
+    public function deleteProject(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+
+        // 1. Hapus Record DNS Cloudflare
+        $this->deleteCloudflareDNS($project->ryaze_domain);
+
+        // 2. Hapus Folder Root
+        if (is_dir($projectDir)) {
+            exec('rm -rf '.escapeshellarg($projectDir));
+        }
+
+        // 3. Hapus Record Database
+        $projectName = $project->project_name;
+        $project->delete();
+
+        return redirect()->route('user_hosting.projects')->with('success', "Project '{$projectName}' berhasil dihapus sepenuhnya.");
+    }
+
+    private function deleteCloudflareDNS($domainName)
+    {
+        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+
+        // Cari Record ID
+        $response = Http::withToken($apiToken)
+            ->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
+                'type' => 'CNAME',
+                'name' => $domainName,
+            ]);
+
+        if ($response->successful() && ! empty($response->json('result'))) {
+            $recordId = $response->json('result.0.id');
+            // Hapus Record
+            Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records/{$recordId}");
+        }
     }
 }
