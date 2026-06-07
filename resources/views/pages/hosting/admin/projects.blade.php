@@ -1,31 +1,28 @@
 @extends('index')
+
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
-        {{-- ── 4. ADMIN HOSTING – Semua Project ───────────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center gap-4 mb-6">
             <a href="{{ route('admin_hosting.dashboard') }}"
                 class="shrink-0 w-10 h-10 flex items-center justify-center bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
-            <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                <i class="fa-solid fa-layer-group text-lg"></i>
-            </div>
             <div>
                 <h1 class="text-xl font-bold text-slate-800">Semua Project</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Daftar master seluruh layanan hosting klien.</p>
+                <p class="text-sm text-slate-500">Daftar master seluruh layanan hosting klien.</p>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-600">
                     <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
                         <tr>
-                            <th class="px-6 py-3">Project</th>
-                            <th class="px-6 py-3">Klien</th>
-                            <th class="px-6 py-3">Domain</th>
-                            <th class="px-6 py-3 text-center">Status</th>
-                            <th class="px-6 py-3 text-center">Aksi</th>
+                            <th class="px-6 py-4">Project</th>
+                            <th class="px-6 py-4">Klien</th>
+                            <th class="px-6 py-4">Domain</th>
+                            <th class="px-6 py-4 text-center">Status</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -58,8 +55,35 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center gap-2">
-                                        <form method="POST" action="{{ route('admin_hosting.destroy', $project->hashid) }}"
-                                            onsubmit="return confirm('HAPUS project ini?')">
+                                        {{-- Aktivasi --}}
+                                        @if (in_array($project->status, ['unpaid', 'suspended', 'error']))
+                                            <form method="POST"
+                                                action="{{ route('admin_hosting.activate', $project->hashid) }}"
+                                                class="admin-action-form"
+                                                data-msg="Aktifkan project {{ $project->project_name }}?">
+                                                @csrf @method('PATCH')
+                                                <button type="submit"
+                                                    class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Aktifkan</button>
+                                            </form>
+                                        @endif
+
+                                        {{-- Suspend --}}
+                                        @if ($project->status === 'active')
+                                            <form method="POST"
+                                                action="{{ route('admin_hosting.suspend', $project->hashid) }}"
+                                                class="admin-action-form"
+                                                data-msg="Suspend project {{ $project->project_name }}?">
+                                                @csrf @method('PATCH')
+                                                <button type="submit"
+                                                    class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Suspend</button>
+                                            </form>
+                                        @endif
+
+                                        {{-- Hapus --}}
+                                        <form method="POST"
+                                            action="{{ route('admin_hosting.destroy', $project->hashid) }}"
+                                            class="admin-action-form"
+                                            data-msg="Hapus PERMANEN project {{ $project->project_name }}?">
                                             @csrf @method('DELETE')
                                             <button type="submit"
                                                 class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Hapus</button>
@@ -79,4 +103,34 @@
             <div class="px-6 py-4 border-t border-slate-200">{{ $projects->links() }}</div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelectorAll('.admin-action-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Konfirmasi Tindakan',
+                    text: this.getAttribute('data-msg'),
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4f46e5',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Lanjutkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) this.submit();
+                });
+            });
+        });
+
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        @endif
+    </script>
 @endsection
