@@ -7,6 +7,7 @@ use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Hosting\Admin\DashboardController as HostingAdminDashboardController;
 use App\Http\Controllers\Hosting\User\DashboardController;
 use App\Http\Controllers\Hosting\User\DatabaseController;
+use App\Http\Controllers\Hosting\User\StorageController;
 use App\Http\Controllers\Joki\Admin\DashboardController as JokiAdminDashboardController;
 use App\Http\Controllers\Joki\User\DashboardController as UserJokiDashboardController;
 use App\Http\Controllers\Joki\User\ProgressController;
@@ -45,7 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::post('user/hosting/projects/{hashid}/files/create', [DashboardController::class, 'createItem'])->name('user_hosting.files.create');
     Route::post('user/hosting/projects/{hashid}/files/delete', [DashboardController::class, 'deleteItem'])->name('user_hosting.files.delete');
     Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
-
+    Route::get('user/hosting/storage', [StorageController::class, 'index'])->name('user_hosting.storage');
+    Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.show');
     Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
     Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
     Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');

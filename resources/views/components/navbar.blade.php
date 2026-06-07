@@ -195,7 +195,7 @@
                     </li>
                     <li>
                         <a href="{{ route('user_hosting.projects') }}"
-                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.projects') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
+                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
                             <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-terminal me-2"></i>
                                 Aplikasi Ter-deploy</span>
                         </a>
@@ -205,6 +205,15 @@
                             class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.databases') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
                             <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-database me-2"></i>
                                 Database Mysql</span>
+                        </a>
+                    </li>
+
+                    {{-- TOMBOL MENU STORAGE BARU --}}
+                    <li>
+                        <a href="{{ route('user_hosting.storage') }}"
+                            class="flex items-center p-3 rounded-lg transition-all duration-200 group {{ request()->routeIs('user_hosting.storage*') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700' }}">
+                            <span class="flex-1 ms-3 whitespace-nowrap"><i class="fa-solid fa-hard-drive me-2"></i>
+                                Penyimpanan / Storage</span>
                         </a>
                     </li>
                 @endif
