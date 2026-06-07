@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
     Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
     Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
+    Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.detail');
 
     // --- AKSI USER JOKI ---
     Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');
