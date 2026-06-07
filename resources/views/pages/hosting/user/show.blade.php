@@ -592,9 +592,16 @@
         let currentFolderPath = '';
         let currentEditingFile = '';
 
-        const fileManagerUrl = '{{ route('user_hosting.files', $project->hashid) }}';
-        const fileReadUrl = '{{ route('user_hosting.files.read', $project->hashid) }}';
-        const fileSaveUrl = '{{ route('user_hosting.files.save', $project->hashid) }}';
+        let fileManagerUrl = '{{ route('user_hosting.files', $project->hashid) }}';
+        let fileReadUrl = '{{ route('user_hosting.files.read', $project->hashid) }}';
+        let fileSaveUrl = '{{ route('user_hosting.files.save', $project->hashid) }}';
+
+        // Memaksa URL menjadi HTTPS jika web diakses via HTTPS
+        if (window.location.protocol === 'https:') {
+            fileManagerUrl = fileManagerUrl.replace(/^http:\/\//i, 'https://');
+            fileReadUrl = fileReadUrl.replace(/^http:\/\//i, 'https://');
+            fileSaveUrl = fileSaveUrl.replace(/^http:\/\//i, 'https://');
+        }
 
         function loadFileManager(path = '') {
             const loader = document.getElementById('file-manager-loader');
