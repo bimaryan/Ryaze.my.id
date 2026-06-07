@@ -33,6 +33,8 @@
                         <i class="fa-brands fa-python text-3xl text-yellow-500"></i>
                     @elseif($project->framework == 'node')
                         <i class="fa-brands fa-node text-3xl text-emerald-500"></i>
+                    @elseif($project->framework == 'vue')
+                        <i class="fa-brands fa-vuejs text-3xl text-emerald-500"></i>
                     @else
                         <i class="fa-brands fa-html5 text-3xl text-orange-500"></i>
                     @endif
@@ -58,38 +60,30 @@
 
         {{-- Tab Navigation --}}
         <div
-            class="flex gap-1 mb-6 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm
-            w-full sm:w-fit overflow-x-auto scrollbar-hide">
+            class="flex gap-1 mb-6 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm w-full sm:w-fit overflow-x-auto scrollbar-hide">
             <button onclick="switchTab('overview')" id="tab-overview"
                 class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow shrink-0">
-                <i class="fa-solid fa-chart-simple"></i>
-                <span class="hidden sm:inline">Overview</span>
+                <i class="fa-solid fa-chart-simple"></i><span class="hidden sm:inline">Overview</span>
             </button>
             <button onclick="switchTab('logs')" id="tab-logs"
                 class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0">
-                <i class="fa-solid fa-scroll"></i>
-                <span class="hidden sm:inline">Build Logs</span>
+                <i class="fa-solid fa-scroll"></i><span class="hidden sm:inline">Build Logs</span>
             </button>
             <button onclick="switchTab('terminal')" id="tab-terminal"
                 class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0">
-                <i class="fa-solid fa-terminal"></i>
-                <span class="hidden sm:inline">Terminal</span>
+                <i class="fa-solid fa-terminal"></i><span class="hidden sm:inline">Terminal</span>
             </button>
             <button onclick="switchTab('files')" id="tab-files"
                 class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0">
-                <i class="fa-solid fa-folder-tree"></i>
-                <span class="hidden sm:inline">Root Files</span>
+                <i class="fa-solid fa-folder-tree"></i><span class="hidden sm:inline">Root Files</span>
             </button>
             <button onclick="switchTab('env')" id="tab-env"
                 class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0">
-                <i class="fa-solid fa-key"></i>
-                <span class="hidden sm:inline">.env</span>
+                <i class="fa-solid fa-key"></i><span class="hidden sm:inline">.env</span>
             </button>
         </div>
 
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- TAB: OVERVIEW --}}
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div id="panel-overview" class="tab-panel">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-6">
@@ -126,7 +120,6 @@
                         </div>
                     @endif
                 </div>
-
                 <div class="space-y-4">
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <h3 class="font-bold text-slate-800 mb-4 border-b pb-2 text-sm">Detail Deployment</h3>
@@ -157,7 +150,6 @@
                                     /www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
                                 </span>
                             </div>
-
                             <form action="{{ route('user_hosting.redeploy', $project->hashid) }}" method="POST"
                                 class="mt-2">
                                 @csrf
@@ -172,9 +164,7 @@
             </div>
         </div>
 
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- TAB: BUILD LOGS --}}
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div id="panel-logs" class="tab-panel hidden">
             <div class="bg-slate-900 rounded-xl shadow-md border border-slate-800 overflow-hidden">
                 <div
@@ -187,7 +177,7 @@
                         </a>
                     </div>
                     <div class="text-slate-400 text-xs">
-                        Status build: <span id="build-log-status"
+                        Status: <span id="build-log-status"
                             class="font-semibold text-slate-200">{{ $project->status }}</span>
                     </div>
                     <div class="text-slate-400 text-xs ml-auto">
@@ -211,12 +201,9 @@
             </div>
         </div>
 
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- TAB: TERMINAL --}}
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div id="panel-terminal" class="tab-panel hidden">
             <div class="bg-slate-900 rounded-xl shadow-xl border border-slate-700 overflow-hidden">
-                {{-- Title bar --}}
                 <div class="bg-slate-800 px-4 py-3 flex items-center gap-3 border-b border-slate-700 select-none">
                     <div class="flex gap-1.5">
                         <div class="w-3 h-3 rounded-full bg-rose-500 hover:bg-rose-400 cursor-pointer transition-colors"
@@ -224,136 +211,121 @@
                         <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                         <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
                     </div>
-                    <div class="flex items-center gap-2 ml-2">
-                        <i class="fa-solid fa-terminal text-slate-400 text-xs"></i>
-                        <span class="text-slate-300 text-xs font-mono font-semibold">bash</span>
-                        <span class="text-slate-600 text-xs">—</span>
-                        <span class="text-slate-500 text-xs font-mono" id="terminal-cwd">
+                    <div class="flex items-center gap-2 ml-2 min-w-0">
+                        <i class="fa-solid fa-terminal text-slate-400 text-xs shrink-0"></i>
+                        <span class="text-slate-300 text-xs font-mono font-semibold shrink-0">bash</span>
+                        <span class="text-slate-600 text-xs shrink-0">—</span>
+                        <span class="text-slate-400 text-xs font-mono truncate" id="terminal-cwd-display">
                             /www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
                         </span>
                     </div>
-                    <div class="ml-auto flex items-center gap-2">
+                    <div class="ml-auto shrink-0">
                         <button onclick="clearTerminal()"
                             class="text-slate-500 hover:text-slate-300 text-xs transition-colors px-2 py-1 rounded hover:bg-slate-700">
-                            <i class="fa-solid fa-trash-can mr-1"></i> Clear
+                            <i class="fa-solid fa-trash-can mr-1"></i><span class="hidden sm:inline">Clear</span>
                         </button>
                     </div>
                 </div>
-
-                {{-- Terminal output --}}
                 <div id="terminal-output"
-                    class="px-4 pt-4 pb-2 font-mono text-sm text-slate-200 overflow-y-auto leading-relaxed"
-                    style="height: 420px; background: #0f1117;"
-                    onclick="document.getElementById('terminal-input').focus()">
-
-                    {{-- Welcome message --}}
-                    <div class="text-slate-500 mb-3 select-none border-b border-slate-800 pb-3">
+                    class="px-4 pt-4 pb-2 font-mono text-sm text-slate-200 overflow-y-auto leading-relaxed cursor-text"
+                    style="height:420px;background:#0f1117;" onclick="document.getElementById('terminal-input').focus()">
+                    <div id="terminal-welcome" class="text-slate-500 mb-3 select-none border-b border-slate-800 pb-3">
                         <span class="text-emerald-500 font-bold">ryaze</span><span class="text-slate-400"> hosting
-                            terminal</span>
-                        <br>
+                            terminal</span><br>
                         <span class="text-slate-600 text-xs">Project: <span
-                                class="text-slate-400">{{ $project->project_name }}</span> · Type a command to get
-                            started.</span>
+                                class="text-slate-400">{{ $project->project_name }}</span> · Ketik perintah dan tekan
+                            Enter.</span>
                     </div>
                 </div>
-
-                {{-- Input bar --}}
-                <div class="flex items-center gap-0 bg-[#0f1117] border-t border-slate-800 px-4 py-3">
-                    <span class="text-emerald-400 font-mono text-sm font-bold select-none shrink-0">
-                        <span class="text-indigo-400">~</span>
-                        <span class="text-slate-500">/</span>{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
-                        <span class="text-slate-400 ml-1">$</span>
+                <div class="flex items-center bg-[#0f1117] border-t border-slate-800 px-4 py-3 gap-2">
+                    <span id="terminal-prompt"
+                        class="text-emerald-400 font-mono text-sm font-bold select-none shrink-0 whitespace-nowrap">
+                        <span
+                            class="text-indigo-400">{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}</span><span
+                            class="text-slate-400"> $</span>
                     </span>
                     <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off"
                         spellcheck="false" placeholder="ketik perintah..."
-                        class="flex-1 bg-transparent text-slate-100 font-mono text-sm ml-2 outline-none placeholder-slate-700 caret-emerald-400">
+                        class="flex-1 bg-transparent text-slate-100 font-mono text-sm outline-none placeholder-slate-700 caret-emerald-400 min-w-0">
                     <button onclick="runCommand()"
-                        class="ml-3 text-slate-500 hover:text-emerald-400 transition-colors shrink-0">
+                        class="text-slate-500 hover:text-emerald-400 transition-colors shrink-0">
                         <i class="fa-solid fa-paper-plane text-xs"></i>
                     </button>
                 </div>
             </div>
-
             <p class="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
                 <i class="fa-solid fa-circle-info text-slate-500"></i>
-                Terminal dijalankan langsung di server dalam folder project. Gunakan dengan bijak.
+                Terminal berjalan di folder project. Mendukung <kbd
+                    class="bg-slate-200 text-slate-600 px-1 rounded text-[10px]">cd</kbd>, <kbd
+                    class="bg-slate-200 text-slate-600 px-1 rounded text-[10px]">↑↓</kbd> history, <kbd
+                    class="bg-slate-200 text-slate-600 px-1 rounded text-[10px]">Ctrl+L</kbd> clear.
             </p>
         </div>
 
         {{-- TAB: FILE MANAGER --}}
         <div id="panel-files" class="tab-panel hidden relative">
-            <div class="bg-white rounded-xl w-full shadow-sm border border-slate-200 overflow-hidden relative">
-
-                {{-- Toolbar File Manager --}}
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative">
                 <div
                     class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
                         <button onclick="navigateUp()"
-                            class="text-slate-500 hover:text-indigo-600 transition-colors bg-white px-2 py-1.5 rounded border border-slate-200 shadow-sm"
-                            title="Kembali ke atas">
+                            class="text-slate-500 hover:text-indigo-600 transition-colors bg-white px-2 py-1.5 rounded border border-slate-200 shadow-sm shrink-0"
+                            title="Kembali">
                             <i class="fa-solid fa-level-up-alt fa-flip-horizontal"></i>
                         </button>
-                        <div class="text-sm font-mono text-slate-600 bg-white px-3 py-1.5 rounded border border-slate-200">
-                            <i class="fa-solid fa-server text-slate-400 mr-1"></i> /<span id="current-path-display"
+                        <div
+                            class="text-sm font-mono text-slate-600 bg-white px-3 py-1.5 rounded border border-slate-200 truncate max-w-xs">
+                            <i class="fa-solid fa-server text-slate-400 mr-1"></i>/<span id="current-path-display"
                                 class="text-indigo-600 font-bold"></span>
                         </div>
                     </div>
-
-                    {{-- Action Buttons --}}
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 shrink-0">
                         <button onclick="promptCreateItem('file')"
                             class="text-xs bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded hover:bg-slate-50 transition-colors">
-                            <i class="fa-solid fa-file-circle-plus text-emerald-500 mr-1"></i> New File
+                            <i class="fa-solid fa-file-circle-plus text-emerald-500 mr-1"></i><span
+                                class="hidden sm:inline">New File</span>
                         </button>
                         <button onclick="promptCreateItem('dir')"
                             class="text-xs bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded hover:bg-slate-50 transition-colors">
-                            <i class="fa-solid fa-folder-plus text-amber-500 mr-1"></i> New Folder
+                            <i class="fa-solid fa-folder-plus text-amber-500 mr-1"></i><span class="hidden sm:inline">New
+                                Folder</span>
                         </button>
-
                         <label
                             class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition-colors cursor-pointer">
-                            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload
+                            <i class="fa-solid fa-cloud-arrow-up mr-1"></i><span class="hidden sm:inline">Upload</span>
                             <input type="file" id="upload-input" class="hidden" onchange="uploadFile(this)">
                         </label>
-
                         <button onclick="loadFileManager(currentFolderPath)"
-                            class="text-xs bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded hover:bg-slate-50 transition-colors">
+                            class="text-xs bg-white border border-slate-200 text-slate-600 px-2.5 py-1.5 rounded hover:bg-slate-50 transition-colors">
                             <i class="fa-solid fa-rotate-right"></i>
                         </button>
                     </div>
                 </div>
-
-                {{-- Table Files --}}
                 <div class="overflow-x-auto h-[500px] relative">
                     <table class="w-full text-sm text-left text-slate-600">
                         <thead
                             class="bg-white text-xs uppercase font-semibold text-slate-400 border-b border-slate-100 sticky top-0 z-10 shadow-sm">
                             <tr>
-                                <th class="px-6 py-3 w-3/5">Nama File / Folder</th>
+                                <th class="px-6 py-3 w-3/5">Nama</th>
                                 <th class="px-6 py-3 w-1/5">Ukuran</th>
-                                <th class="px-6 py-3 w-1/5">Terakhir Diubah</th>
+                                <th class="px-6 py-3 w-1/5 hidden sm:table-cell">Diubah</th>
                             </tr>
                         </thead>
-                        <tbody id="file-manager-body" class="divide-y divide-slate-50 font-mono text-[13px]">
-                        </tbody>
+                        <tbody id="file-manager-body" class="divide-y divide-slate-50 font-mono text-[13px]"></tbody>
                     </table>
-
-                    {{-- Loader --}}
                     <div id="file-manager-loader"
                         class="hidden absolute inset-0 bg-white/80 flex items-center justify-center z-20">
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
                     </div>
                 </div>
-
-                {{-- MODAL CODE EDITOR (Tersembunyi secara default) --}}
                 <div id="file-editor-modal" class="hidden absolute inset-0 bg-slate-900 z-30 flex flex-col">
                     <div
                         class="px-4 py-3 border-b border-slate-700 bg-slate-800 flex justify-between items-center text-white">
-                        <div class="font-mono text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-file-code text-indigo-400"></i>
-                            <span id="editor-filename">filename.php</span>
+                        <div class="font-mono text-sm flex items-center gap-2 min-w-0">
+                            <i class="fa-solid fa-file-code text-indigo-400 shrink-0"></i>
+                            <span id="editor-filename" class="truncate">filename.php</span>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 shrink-0">
                             <button onclick="closeFileEditor()"
                                 class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-xs transition font-semibold">Batal</button>
                             <button onclick="saveFileEditor()"
@@ -364,21 +336,17 @@
                     </div>
                     <textarea id="file-editor-textarea" spellcheck="false"
                         class="flex-1 w-full bg-slate-900 text-emerald-400 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
-
                     <div id="editor-loader"
                         class="hidden absolute inset-0 bg-slate-900/80 flex items-center justify-center z-40">
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- TAB: ENV --}}
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div id="panel-env" class="tab-panel hidden">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-3xl">
                 <div class="px-6 py-4 border-b border-slate-100">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-key text-amber-500"></i> Environment Variables
@@ -406,7 +374,71 @@
 
     </div>
 
+    {{-- SweetAlert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+        // ── SweetAlert2 helpers ────────────────────────────────────────────────
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (t) => {
+                t.addEventListener('mouseenter', Swal.stopTimer);
+                t.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
+
+        function swAlert(icon, title, text = '') {
+            return Swal.fire({
+                icon,
+                title,
+                text,
+                confirmButtonColor: '#4F46E5',
+                customClass: {
+                    popup: 'rounded-xl text-sm'
+                }
+            });
+        }
+
+        function swConfirm(title, text, icon = 'warning') {
+            return Swal.fire({
+                title,
+                text,
+                icon,
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Ya, lanjutkan',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-xl text-sm'
+                }
+            });
+        }
+
+        function swInput(title, inputPlaceholder) {
+            return Swal.fire({
+                title,
+                input: 'text',
+                inputPlaceholder,
+                showCancelButton: true,
+                confirmButtonColor: '#4F46E5',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-xl text-sm'
+                },
+                inputValidator: (v) => {
+                    if (!v) return 'Nama tidak boleh kosong!';
+                }
+            });
+        }
+    </script>
+
+    <script>
+        // ── Build log polling ──────────────────────────────────────────────────
         const buildLogUrl = '{{ route('user_hosting.build_logs', $project->hashid) }}';
         const buildLogText = document.getElementById('build-log-text');
         const buildLogStatus = document.getElementById('build-log-status');
@@ -415,57 +447,49 @@
         const buildLogPulse = document.getElementById('build-log-pulse');
         let buildLogInterval = null;
 
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/\u001b\[0m/g, '</span>')
+                .replace(/\u001b\[1m/g, '<span style="font-weight:700">')
+                .replace(/\u001b\[31m/g, '<span style="color:#f87171">')
+                .replace(/\u001b\[32m/g, '<span style="color:#4ade80">')
+                .replace(/\u001b\[33m/g, '<span style="color:#facc15">')
+                .replace(/\u001b\[34m/g, '<span style="color:#60a5fa">')
+                .replace(/\u001b\[36m/g, '<span style="color:#22d3ee">')
+                .replace(/\u001b\[[0-9;]*m/g, '');
+        }
+
         function refreshBuildLogs() {
-            return fetch(buildLogUrl, {
+            fetch(buildLogUrl, {
                     headers: {
-                        'Accept': 'application/json',
-                    },
+                        'Accept': 'application/json'
+                    }
                 })
-                .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+                .then(r => r.ok ? r.json() : Promise.reject())
                 .then(data => {
-                    if (data.build_logs !== undefined && buildLogText) {
-                        buildLogText.innerHTML = escapeHtml(data.build_logs);
-                    }
-
-                    if (buildLogStatus) {
-                        buildLogStatus.textContent = data.status || buildLogStatus.textContent;
-                    }
-
-                    if (buildLogUpdated) {
-                        buildLogUpdated.textContent = data.last_updated ? 'Updated: ' + data.last_updated :
-                            buildLogUpdated.textContent;
-                    }
-
+                    if (buildLogText && data.build_logs !== undefined) buildLogText.innerHTML = escapeHtml(data
+                        .build_logs);
+                    if (buildLogStatus) buildLogStatus.textContent = data.status || '';
+                    if (buildLogUpdated && data.last_updated) buildLogUpdated.textContent = 'Updated: ' + data
+                        .last_updated;
                     if (websiteLogLink && data.website_url) {
                         websiteLogLink.href = data.website_url;
                         websiteLogLink.textContent = data.website_url.replace(/^https?:\/\//, '');
                     }
-
-                    if (data.status !== 'building' && buildLogPulse) {
-                        buildLogPulse.classList.remove('animate-pulse');
-                        buildLogPulse.style.opacity = '0';
+                    if (data.status !== 'building') {
+                        if (buildLogPulse) buildLogPulse.style.opacity = '0';
+                        if (buildLogInterval) {
+                            clearInterval(buildLogInterval);
+                            buildLogInterval = null;
+                        }
                     }
-
-                    if (data.status !== 'building' && buildLogInterval) {
-                        clearInterval(buildLogInterval);
-                        buildLogInterval = null;
-                    }
-                })
-                .catch(() => {
-                    // ignore polling errors silently
-                });
-        }
-
-        function startBuildLogPolling() {
-            if (buildLogInterval) {
-                return;
-            }
-            refreshBuildLogs();
-            buildLogInterval = setInterval(refreshBuildLogs, 2000);
+                }).catch(() => {});
         }
 
         if ('{{ $project->status }}' === 'building') {
-            startBuildLogPolling();
+            refreshBuildLogs();
+            buildLogInterval = setInterval(refreshBuildLogs, 2000);
         }
     </script>
 
@@ -477,134 +501,115 @@
                 b.classList.remove('bg-indigo-600', 'text-white', 'shadow');
                 b.classList.add('text-slate-500');
             });
-
             document.getElementById('panel-' + name).classList.remove('hidden');
             const btn = document.getElementById('tab-' + name);
             btn.classList.add('bg-indigo-600', 'text-white', 'shadow');
             btn.classList.remove('text-slate-500');
-
-            if (name === 'terminal') {
-                setTimeout(() => document.getElementById('terminal-input').focus(), 100);
-            }
+            if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input').focus(), 80);
         }
+    </script>
 
+    <script>
         // ── Terminal ───────────────────────────────────────────────────────────
-        const terminalOutput = document.getElementById('terminal-output');
-        const terminalInput = document.getElementById('terminal-input');
-        const projectHashid = '{{ $project->hashid }}';
-        let terminalUrl = '{{ route('user_hosting.terminal', $project->hashid) }}';
-        if (window.location.protocol === 'https:') {
-            terminalUrl = terminalUrl.replace('http://', 'https://');
-        }
+        const termOut = document.getElementById('terminal-output');
+        const termInput = document.getElementById('terminal-input');
+        const termPrompt = document.getElementById('terminal-prompt');
+        const cwdDisplay = document.getElementById('terminal-cwd-display');
+        const termUrl = '{{ route('user_hosting.terminal', $project->hashid) }}';
         const csrfToken = '{{ csrf_token() }}';
+        const projectRoot = '/www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
+        const projectSlug = '{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
 
-        let commandHistory = [];
-        let historyIndex = -1;
-        let isRunning = false;
+        let cmdHistory = [],
+            histIdx = -1,
+            currentCwd = projectRoot,
+            running = false;
 
-        function appendToTerminal(html) {
-            terminalOutput.insertAdjacentHTML('beforeend', html);
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        function getPromptLabel(cwd) {
+            const rel = cwd.startsWith(projectRoot) ? (cwd.slice(projectRoot.length) || '') : cwd;
+            return projectSlug + rel;
         }
 
-        function escapeHtml(text) {
-            return text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/\u001b\[0m/g, '</span>')
-                .replace(/\u001b\[31m/g, '<span style="color:#f87171">')
-                .replace(/\u001b\[32m/g, '<span style="color:#4ade80">')
-                .replace(/\u001b\[33m/g, '<span style="color:#facc15">')
-                .replace(/\u001b\[34m/g, '<span style="color:#60a5fa">')
-                .replace(/\u001b\[36m/g, '<span style="color:#22d3ee">')
-                .replace(/\u001b\[37m/g, '<span style="color:#e2e8f0">')
-                .replace(/\u001b\[1m/g, '<span style="font-weight:700">')
-                .replace(/\u001b\[[0-9;]*m/g, '');
+        function updatePrompt(cwd) {
+            currentCwd = cwd;
+            cwdDisplay.textContent = cwd;
+            termPrompt.innerHTML =
+                `<span class="text-indigo-400">${getPromptLabel(cwd)}</span><span class="text-slate-400"> $</span>`;
+        }
+
+        function appendRaw(html) {
+            termOut.insertAdjacentHTML('beforeend', html);
+            termOut.scrollTop = termOut.scrollHeight;
         }
 
         async function runCommand() {
-            if (isRunning) return;
-
-            const cmd = terminalInput.value.trim();
+            if (running) return;
+            const cmd = termInput.value.trim();
             if (!cmd) return;
 
-            commandHistory.unshift(cmd);
-            if (commandHistory.length > 50) commandHistory.pop();
-            historyIndex = -1;
+            cmdHistory.unshift(cmd);
+            if (cmdHistory.length > 100) cmdHistory.pop();
+            histIdx = -1;
 
-            appendToTerminal(
-                `<div class="flex items-start gap-2 mb-1">` +
-                `<span class="text-indigo-400 shrink-0 select-none">~/${terminalInput.closest('.flex').querySelector('span').textContent.trim().split('/').pop()} $</span>` +
-                `<span class="text-slate-100 break-all">${escapeHtml(cmd)}</span>` +
-                `</div>`
+            appendRaw(
+                `<div class="flex items-start gap-2 mb-0.5">` +
+                `<span class="text-indigo-400 select-none shrink-0">${escapeHtml(getPromptLabel(currentCwd))} $</span>` +
+                `<span class="text-slate-100 break-all">${escapeHtml(cmd)}</span></div>`
             );
+            termInput.value = '';
+            running = true;
 
-            terminalInput.value = '';
-            isRunning = true;
-
-            const loaderId = 'loader-' + Date.now();
-            appendToTerminal(`<div id="${loaderId}" class="text-slate-600 animate-pulse mb-1">▌</div>`);
+            const lid = 'ld-' + Date.now();
+            appendRaw(`<div id="${lid}" class="text-slate-600 animate-pulse">▌</div>`);
 
             try {
-                const res = await fetch(terminalUrl, {
+                const res = await fetch(termUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         command: cmd
                     }),
                 });
-
                 const data = await res.json();
-                document.getElementById(loaderId)?.remove();
+                document.getElementById(lid)?.remove();
+
+                if (data.cwd && data.cwd !== currentCwd) updatePrompt(data.cwd);
 
                 if (data.error) {
-                    appendToTerminal(`<div class="text-rose-400 mb-2">${escapeHtml(data.error)}</div>`);
+                    appendRaw(`<div class="text-rose-400 mb-1">${escapeHtml(data.error)}</div>`);
                 } else if (data.output && data.output.trim() !== '') {
-                    const color = (data.exit_code !== 0) ? 'text-rose-300' : 'text-slate-200';
-                    appendToTerminal(
-                        `<pre class="${color} whitespace-pre-wrap break-all mb-2 leading-relaxed">${escapeHtml(data.output)}</pre>`
-                    );
+                    const cls = data.exit_code !== 0 ? 'text-rose-300' : 'text-slate-200';
+                    appendRaw(
+                        `<pre class="${cls} whitespace-pre-wrap break-words mb-1 leading-relaxed">${escapeHtml(data.output)}</pre>`
+                        );
                 }
-
             } catch (err) {
-                document.getElementById(loaderId)?.remove();
-                appendToTerminal(`<div class="text-rose-400 mb-2">Network error: ${err.message}</div>`);
+                document.getElementById(lid)?.remove();
+                appendRaw(`<div class="text-rose-400 mb-1">Network error: ${escapeHtml(err.message)}</div>`);
             }
-
-            isRunning = false;
-            terminalInput.focus();
+            running = false;
+            termInput.focus();
         }
 
         function clearTerminal() {
-            const children = Array.from(terminalOutput.children);
-            children.slice(1).forEach(c => c.remove());
+            Array.from(termOut.children).filter(c => c.id !== 'terminal-welcome').forEach(c => c.remove());
         }
 
-        terminalInput.addEventListener('keydown', function(e) {
+        termInput.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 runCommand();
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    terminalInput.value = commandHistory[historyIndex];
-                }
+                if (histIdx < cmdHistory.length - 1) termInput.value = cmdHistory[++histIdx];
             } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    terminalInput.value = commandHistory[historyIndex];
-                } else {
-                    historyIndex = -1;
-                    terminalInput.value = '';
-                }
-            } else if (e.key === 'l' && e.ctrlKey) {
+                histIdx > 0 ? (termInput.value = cmdHistory[--histIdx]) : (histIdx = -1, termInput.value = '');
+            } else if (e.ctrlKey && e.key === 'l') {
                 e.preventDefault();
                 clearTerminal();
             }
@@ -612,157 +617,147 @@
     </script>
 
     <script>
-        // ── FILE MANAGER & EDITOR ────────────────────────────────────────────────
+        // ── File Manager ───────────────────────────────────────────────────────
         let currentFolderPath = '';
         let currentEditingFile = '';
 
-        // 1. Deklarasi Semua URL API
-        let fileManagerUrl = '{{ route('user_hosting.files', $project->hashid) }}';
-        let fileReadUrl = '{{ route('user_hosting.files.read', $project->hashid) }}';
-        let fileSaveUrl = '{{ route('user_hosting.files.save', $project->hashid) }}';
-        let fileUploadUrl = '{{ route('user_hosting.files.upload', $project->hashid) }}';
-        let fileCreateUrl = '{{ route('user_hosting.files.create', $project->hashid) }}';
-        let fileDeleteUrl = '{{ route('user_hosting.files.delete', $project->hashid) }}';
-        let fileDownloadUrl = '{{ route('user_hosting.files.download', $project->hashid) }}';
+        const fixUrl = u => window.location.protocol === 'https:' ? u.replace(/^http:\/\//i, 'https://') : u;
 
-        // 2. Memaksa URL menjadi HTTPS jika web diakses via HTTPS (Fix Mixed Content)
-        if (window.location.protocol === 'https:') {
-            fileManagerUrl = fileManagerUrl.replace(/^http:\/\//i, 'https://');
-            fileReadUrl = fileReadUrl.replace(/^http:\/\//i, 'https://');
-            fileSaveUrl = fileSaveUrl.replace(/^http:\/\//i, 'https://');
-            fileUploadUrl = fileUploadUrl.replace(/^http:\/\//i, 'https://');
-            fileCreateUrl = fileCreateUrl.replace(/^http:\/\//i, 'https://');
-            fileDeleteUrl = fileDeleteUrl.replace(/^http:\/\//i, 'https://');
-            fileDownloadUrl = fileDownloadUrl.replace(/^http:\/\//i, 'https://');
-        }
+        const fileManagerUrl = fixUrl('{{ route('user_hosting.files', $project->hashid) }}');
+        const fileReadUrl = fixUrl('{{ route('user_hosting.files.read', $project->hashid) }}');
+        const fileSaveUrl = fixUrl('{{ route('user_hosting.files.save', $project->hashid) }}');
+        const fileUploadUrl = fixUrl('{{ route('user_hosting.files.upload', $project->hashid) }}');
+        const fileCreateUrl = fixUrl('{{ route('user_hosting.files.create', $project->hashid) }}');
+        const fileDeleteUrl = fixUrl('{{ route('user_hosting.files.delete', $project->hashid) }}');
+        const fileDownloadUrl = fixUrl('{{ route('user_hosting.files.download', $project->hashid) }}');
 
         function loadFileManager(path = '') {
             const loader = document.getElementById('file-manager-loader');
             const tbody = document.getElementById('file-manager-body');
-            const pathDisplay = document.getElementById('current-path-display');
+            const pathEl = document.getElementById('current-path-display');
 
             loader.classList.remove('hidden');
 
             fetch(`${fileManagerUrl}?path=${encodeURIComponent(path)}`)
-                .then(res => res.json())
+                .then(r => r.json())
                 .then(data => {
                     if (data.error) {
-                        alert(data.error);
+                        Toast.fire({
+                            icon: 'error',
+                            title: data.error
+                        });
                         loader.classList.add('hidden');
                         return;
                     }
 
                     currentFolderPath = data.current_path;
-                    pathDisplay.textContent = currentFolderPath === '' ? '(root)' : currentFolderPath;
+                    pathEl.textContent = currentFolderPath || '(root)';
                     tbody.innerHTML = '';
 
-                    if (data.items.length === 0) {
-                        // Jika folder kosong
+                    if (!data.items.length) {
                         tbody.innerHTML =
-                            `<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400"><i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50"></i><br>Folder kosong</td></tr>`;
+                            `<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400"><i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50 block"></i>Folder kosong</td></tr>`;
                     } else {
-                        // Jika ada isinya, render per baris
                         data.items.forEach(item => {
                             const isDir = item.type === 'dir';
                             const icon = isDir ?
-                                '<i class="fa-solid fa-folder text-amber-400 text-lg group-hover:text-amber-500 transition-colors"></i>' :
-                                '<i class="fa-regular fa-file-lines text-slate-400 text-lg group-hover:text-indigo-400 transition-colors"></i>';
-
+                                '<i class="fa-solid fa-folder text-amber-400 text-lg"></i>' :
+                                '<i class="fa-regular fa-file-lines text-slate-400 text-lg"></i>';
                             const nameAction = isDir ?
                                 `onclick="loadFileManager('${item.path}')"` :
-                                `onclick="openFileEditor('${item.path}', '${item.name}')"`;
-
-                            const nameSpan =
-                                `<a href="javascript:void(0)" ${nameAction} class="font-semibold text-slate-600 hover:text-indigo-600 transition-colors cursor-pointer">${item.name}</a>`;
-
-                            // ── TOMBOL AKSI (Edit, Download, Hapus) ──
-                            const actionButtons = isDir ?
-                                `<button onclick="deleteItem('${item.path}')" class="text-rose-500 hover:text-rose-700 mx-1" title="Delete"><i class="fa-solid fa-trash-can"></i></button>` :
-                                `<button onclick="openFileEditor('${item.path}', '${item.name}')" class="text-sky-500 hover:text-sky-700 mx-1" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                                   <a href="${fileDownloadUrl}?path=${encodeURIComponent(item.path)}" target="_blank" class="text-emerald-500 hover:text-emerald-700 mx-1" title="Download"><i class="fa-solid fa-download"></i></a>
-                                   <button onclick="deleteItem('${item.path}')" class="text-rose-500 hover:text-rose-700 mx-1" title="Delete"><i class="fa-solid fa-trash-can"></i></button>`;
+                                `onclick="openFileEditor('${item.path}','${item.name}')"`;
+                            const actions = isDir ?
+                                `<button onclick="deleteItem('${item.path}')" class="text-rose-400 hover:text-rose-600 px-1" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>` :
+                                `<button onclick="openFileEditor('${item.path}','${item.name}')" class="text-sky-400 hover:text-sky-600 px-1" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                   <a href="${fileDownloadUrl}?path=${encodeURIComponent(item.path)}" target="_blank" class="text-emerald-400 hover:text-emerald-600 px-1" title="Download"><i class="fa-solid fa-download"></i></a>
+                                   <button onclick="deleteItem('${item.path}')" class="text-rose-400 hover:text-rose-600 px-1" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>`;
 
                             const tr = document.createElement('tr');
-                            tr.className = 'hover:bg-slate-50 transition-colors group cursor-pointer';
-                            if (isDir) tr.ondblclick = () => loadFileManager(item.path);
-
+                            tr.className = 'hover:bg-slate-50 transition-colors group';
                             tr.innerHTML = `
-                                <td class="px-6 py-2.5 flex items-center gap-3">${icon} ${nameSpan}</td>
-                                <td class="px-6 py-2.5 text-slate-400 text-xs w-24">${item.size}</td>
-                                <td class="px-6 py-2.5 text-slate-400 text-xs w-32">${item.modified}</td>
-                                <td class="px-6 py-2.5 text-right w-24">${actionButtons}</td>
-                            `;
+                                <td class="px-6 py-2.5"><div class="flex items-center gap-3">${icon}<a href="javascript:void(0)" ${nameAction} class="font-semibold text-slate-600 hover:text-indigo-600 cursor-pointer">${item.name}</a></div></td>
+                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.size}</td>
+                                <td class="px-6 py-2.5 text-slate-400 text-xs hidden sm:table-cell">${item.modified}</td>
+                                <td class="px-6 py-2.5 text-right">${actions}</td>`;
                             tbody.appendChild(tr);
                         });
                     }
                     loader.classList.add('hidden');
                 })
-                .catch(err => {
-                    console.error(err);
-                    alert('Gagal memuat file browser.');
+                .catch(() => {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Gagal memuat file browser.'
+                    });
                     loader.classList.add('hidden');
                 });
         }
 
         function navigateUp() {
-            if (currentFolderPath === '') return;
-            let pathParts = currentFolderPath.split('/');
-            pathParts.pop();
-            loadFileManager(pathParts.join('/'));
+            if (!currentFolderPath) return;
+            loadFileManager(currentFolderPath.split('/').slice(0, -1).join('/'));
         }
 
-        // ── FUNGSI CREATE, DELETE, UPLOAD BARU ─────────────────────────────────
-        function promptCreateItem(type) {
-            const name = prompt(`Masukkan nama ${type === 'dir' ? 'Folder' : 'File'} baru:`);
+        async function promptCreateItem(type) {
+            const label = type === 'dir' ? 'Folder' : 'File';
+            const {
+                value: name
+            } = await swInput(`Buat ${label} Baru`, `Nama ${label}...`);
             if (!name) return;
 
             fetch(fileCreateUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({
-                        type: type,
-                        name: name,
-                        current_path: currentFolderPath
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    type,
+                    name,
+                    current_path: currentFolderPath
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) alert(data.error);
-                    else loadFileManager(currentFolderPath); // Refresh otomatis setelah berhasil
-                });
+            }).then(r => r.json()).then(data => {
+                if (data.error) swAlert('error', 'Gagal', data.error);
+                else {
+                    Toast.fire({
+                        icon: 'success',
+                        title: `${label} berhasil dibuat!`
+                    });
+                    loadFileManager(currentFolderPath);
+                }
+            });
         }
 
-        function deleteItem(path) {
-            if (!confirm(`Yakin ingin menghapus ${path} secara permanen?`)) return;
+        async function deleteItem(path) {
+            const result = await swConfirm('Hapus permanen?', `${path} akan dihapus dan tidak bisa dikembalikan.`);
+            if (!result.isConfirmed) return;
 
             fetch(fileDeleteUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({
-                        path: path
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    path
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) alert(data.error);
-                    else loadFileManager(currentFolderPath);
-                });
+            }).then(r => r.json()).then(data => {
+                if (data.error) swAlert('error', 'Gagal', data.error);
+                else {
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Berhasil dihapus!'
+                    });
+                    loadFileManager(currentFolderPath);
+                }
+            });
         }
 
-        function uploadFile(inputElement) {
-            if (!inputElement.files.length) return;
-            const file = inputElement.files[0];
+        function uploadFile(inputEl) {
+            if (!inputEl.files.length) return;
             const formData = new FormData();
-
-            formData.append('file', file);
+            formData.append('file', inputEl.files[0]);
             formData.append('current_path', currentFolderPath);
-
             document.getElementById('file-manager-loader').classList.remove('hidden');
 
             fetch(fileUploadUrl, {
@@ -772,44 +767,45 @@
                     },
                     body: formData
                 })
-                .then(res => res.json())
+                .then(r => r.json())
                 .then(data => {
-                    inputElement.value = ''; // Reset input
-                    if (data.error) alert(data.error);
-                    else loadFileManager(currentFolderPath);
+                    inputEl.value = '';
+                    if (data.error) swAlert('error', 'Upload gagal', data.error);
+                    else {
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'File berhasil diupload!'
+                        });
+                        loadFileManager(currentFolderPath);
+                    }
                 })
-                .catch(err => {
+                .catch(() => {
                     document.getElementById('file-manager-loader').classList.add('hidden');
-                    alert('Gagal mengunggah file.');
+                    swAlert('error', 'Upload gagal');
                 });
         }
 
-        // ── EDITOR FUNCTIONS ───────────────────────────────────────────────────
         function openFileEditor(path, filename) {
             const modal = document.getElementById('file-editor-modal');
             const loader = document.getElementById('editor-loader');
             const textarea = document.getElementById('file-editor-textarea');
-
             currentEditingFile = path;
             document.getElementById('editor-filename').textContent = filename;
-
             modal.classList.remove('hidden');
             loader.classList.remove('hidden');
             textarea.value = '';
 
             fetch(`${fileReadUrl}?path=${encodeURIComponent(path)}`)
-                .then(res => res.json())
+                .then(r => r.json())
                 .then(data => {
                     if (data.error) {
-                        alert(data.error);
+                        swAlert('error', 'Gagal baca file', data.error);
                         closeFileEditor();
-                    } else {
-                        textarea.value = data.content;
-                    }
+                    } else textarea.value = data.content;
                     loader.classList.add('hidden');
                 })
-                .catch(err => {
-                    alert('Gagal membaca isi file.');
+                .catch(() => {
+                    swAlert('error', 'Gagal membaca file.');
                     closeFileEditor();
                 });
         }
@@ -822,41 +818,45 @@
         function saveFileEditor() {
             const loader = document.getElementById('editor-loader');
             const content = document.getElementById('file-editor-textarea').value;
-
             loader.classList.remove('hidden');
 
             fetch(fileSaveUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        path: currentEditingFile,
-                        content: content
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    path: currentEditingFile,
+                    content
                 })
-                .then(res => res.json())
-                .then(data => {
-                    loader.classList.add('hidden');
-                    if (data.error) {
-                        alert(data.error);
-                    } else {
-                        alert('Berhasil disimpan!');
-                    }
-                })
-                .catch(err => {
-                    loader.classList.add('hidden');
-                    alert('Terjadi kesalahan saat menyimpan.');
+            }).then(r => r.json()).then(data => {
+                loader.classList.add('hidden');
+                if (data.error) swAlert('error', 'Gagal simpan', data.error);
+                else Toast.fire({
+                    icon: 'success',
+                    title: 'File berhasil disimpan!'
                 });
+            }).catch(() => {
+                loader.classList.add('hidden');
+                swAlert('error', 'Terjadi kesalahan saat menyimpan.');
+            });
         }
 
-        // Panggil saat tab File Manager pertama kali diklik
         document.getElementById('tab-files').addEventListener('click', () => {
-            if (document.getElementById('file-manager-body').innerHTML.trim() === '') {
-                loadFileManager();
-            }
+            if (!document.getElementById('file-manager-body').innerHTML.trim()) loadFileManager();
         });
     </script>
+
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none
+        }
+    </style>
 @endsection
