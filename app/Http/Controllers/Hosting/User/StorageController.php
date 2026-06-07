@@ -9,7 +9,7 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class StorageController extends Controller
 {
-    const LIMIT_BYTES = 512 * 1024 * 1024; // 512 MB
+    const LIMIT_BYTES = 1024 * 1024 * 1024; // 1 GB
 
     /**
      * Hitung ukuran folder secara rekursif via du -sb (cepat, kernel-level).
