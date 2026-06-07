@@ -162,9 +162,23 @@
                 @if ($isAdminHosting)
                     <li>
                         <a href="{{ route('admin_hosting.projects') }}"
-                            class="{{ $navLink(request()->routeIs('admin_hosting.projects', 'admin_hosting.pending', 'admin_hosting.deployments')) }}">
+                            class="{{ $navLink(request()->routeIs('admin_hosting.projects')) }}">
                             <i class="fa-solid fa-server me-2 ms-3"></i>
                             <span class="whitespace-nowrap">Kelola Project Hosting</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin_hosting.deployments') }}"
+                            class="{{ $navLink(request()->routeIs('admin_hosting.deployments')) }}">
+                            <i class="fa-solid fa-history me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Riwayat Project</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin_hosting.pending') }}"
+                            class="{{ $navLink(request()->routeIs('admin_hosting.pending')) }}">
+                            <i class="fa-solid fa-warning me-2 ms-3"></i>
+                            <span class="whitespace-nowrap">Membutuhkan Tindakan</span>
                         </a>
                     </li>
                 @endif
