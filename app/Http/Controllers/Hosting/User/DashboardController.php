@@ -215,6 +215,104 @@ class DashboardController extends Controller
         return $size . ' bytes';
     }
 
+    // --- 1. DOWNLOAD FILE ---
+    public function downloadItem(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
+
+        if (!$targetPath || is_dir($targetPath)) abort(404);
+        return response()->download($targetPath);
+    }
+
+    // --- 2. HAPUS FILE / FOLDER ---
+    public function deleteItem(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
+
+        if (!$targetPath) return response()->json(['error' => 'Akses ditolak.'], 403);
+
+        try {
+            if (is_dir($targetPath)) {
+                exec('rm -rf ' . escapeshellarg($targetPath)); // Eksekusi aman untuk hapus folder isi
+            } else {
+                unlink($targetPath);
+            }
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal menghapus: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // --- 3. BUAT FILE / FOLDER BARU ---
+    public function createItem(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
+
+        if (!$dirPath || !is_dir($dirPath)) return response()->json(['error' => 'Direktori tujuan tidak valid.'], 403);
+
+        $type = $request->input('type'); // 'file' atau 'dir'
+        $name = preg_replace('/[^a-zA-Z0-9_\.-]/', '', $request->input('name')); // Bersihkan nama file
+        $targetPath = $dirPath . '/' . $name;
+
+        if (file_exists($targetPath)) return response()->json(['error' => 'Nama sudah digunakan.'], 400);
+
+        if ($type === 'dir') {
+            mkdir($targetPath, 0755);
+        } else {
+            touch($targetPath);
+            chmod($targetPath, 0666);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    // --- 4. UPLOAD FILE ---
+    public function uploadFile(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
+
+        if (!$dirPath || !is_dir($dirPath)) return response()->json(['error' => 'Direktori tujuan tidak valid.'], 403);
+        if (!$request->hasFile('file')) return response()->json(['error' => 'Tidak ada file yang diupload.'], 400);
+
+        $file = $request->file('file');
+        $file->move($dirPath, $file->getClientOriginalName());
+
+        return response()->json(['success' => true]);
+    }
+
+    // --- HELPER UNTUK KEAMANAN (ANTI-TRAVERSAL) ---
+    private function getValidProject($hashid) {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        return HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+    }
+
+    private function getValidTargetPath($project, $requestPath) {
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        // Gabungkan path
+        $fullPath = $projectRootDir . '/' . trim($requestPath, '/');
+
+        // Pengecekan realpath untuk Anti-Directory Traversal
+        $realTarget = realpath($fullPath);
+
+        // Jika file belum ada (kasus Create File), realpath akan false.
+        // Kita izinkan jika parent directory-nya valid.
+        if ($realTarget === false) {
+            $parentDir = realpath(dirname($fullPath));
+            if ($parentDir === false || strpos($parentDir, $projectRootDir) !== 0) return false;
+            return $fullPath;
+        }
+
+        if (strpos($realTarget, $projectRootDir) !== 0) return false;
+        return $realTarget;
+    }
+
     // Memperbarui file .env
     public function updateEnv(Request $request, $hashid)
     {

@@ -57,26 +57,33 @@
         </div>
 
         {{-- Tab Navigation --}}
-        <div class="flex gap-1 mb-6 bg-white border border-slate-200 rounded-xl p-1.5 w-fit shadow-sm">
+        <div
+            class="flex gap-1 mb-6 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm
+            w-full sm:w-fit overflow-x-auto scrollbar-hide">
             <button onclick="switchTab('overview')" id="tab-overview"
-                class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow">
-                <i class="fa-solid fa-chart-simple mr-1.5"></i> Overview
+                class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow shrink-0">
+                <i class="fa-solid fa-chart-simple"></i>
+                <span class="hidden sm:inline">Overview</span>
             </button>
             <button onclick="switchTab('logs')" id="tab-logs"
-                class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-                <i class="fa-solid fa-scroll mr-1.5"></i> Build Logs
+                class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0">
+                <i class="fa-solid fa-scroll"></i>
+                <span class="hidden sm:inline">Build Logs</span>
             </button>
             <button onclick="switchTab('terminal')" id="tab-terminal"
-                class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-                <i class="fa-solid fa-terminal mr-1.5"></i> Terminal
+                class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0">
+                <i class="fa-solid fa-terminal"></i>
+                <span class="hidden sm:inline">Terminal</span>
             </button>
             <button onclick="switchTab('files')" id="tab-files"
-                class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 whitespace-nowrap">
-                <i class="fa-solid fa-folder-tree mr-1.5"></i> Root Files
+                class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0">
+                <i class="fa-solid fa-folder-tree"></i>
+                <span class="hidden sm:inline">Root Files</span>
             </button>
             <button onclick="switchTab('env')" id="tab-env"
-                class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-                <i class="fa-solid fa-key mr-1.5"></i> .env
+                class="tab-btn flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0">
+                <i class="fa-solid fa-key"></i>
+                <span class="hidden sm:inline">.env</span>
             </button>
         </div>
 
@@ -278,23 +285,40 @@
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-5xl relative">
 
                 {{-- Toolbar File Manager --}}
-                <div class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
+                <div
+                    class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
                         <button onclick="navigateUp()"
-                            class="text-slate-500 hover:text-indigo-600 transition-colors bg-white px-2 py-1 rounded border border-slate-200 shadow-sm"
+                            class="text-slate-500 hover:text-indigo-600 transition-colors bg-white px-2 py-1.5 rounded border border-slate-200 shadow-sm"
                             title="Kembali ke atas">
                             <i class="fa-solid fa-level-up-alt fa-flip-horizontal"></i>
                         </button>
-                        <div
-                            class="text-sm font-mono text-slate-600 flex items-center gap-1 bg-white px-3 py-1.5 rounded border border-slate-200 select-none">
-                            <i class="fa-solid fa-server text-slate-400 mr-1"></i>
-                            / <span id="current-path-display" class="text-indigo-600 font-bold"></span>
+                        <div class="text-sm font-mono text-slate-600 bg-white px-3 py-1.5 rounded border border-slate-200">
+                            <i class="fa-solid fa-server text-slate-400 mr-1"></i> /<span id="current-path-display"
+                                class="text-indigo-600 font-bold"></span>
                         </div>
                     </div>
-                    <div class="flex gap-2">
+
+                    {{-- Action Buttons --}}
+                    <div class="flex items-center gap-2">
+                        <button onclick="promptCreateItem('file')"
+                            class="text-xs bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-file-circle-plus text-emerald-500 mr-1"></i> New File
+                        </button>
+                        <button onclick="promptCreateItem('dir')"
+                            class="text-xs bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-folder-plus text-amber-500 mr-1"></i> New Folder
+                        </button>
+
+                        <label
+                            class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition-colors cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload
+                            <input type="file" id="upload-input" class="hidden" onchange="uploadFile(this)">
+                        </label>
+
                         <button onclick="loadFileManager(currentFolderPath)"
                             class="text-xs bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded hover:bg-slate-50 transition-colors">
-                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                            <i class="fa-solid fa-rotate-right"></i>
                         </button>
                     </div>
                 </div>
@@ -592,15 +616,24 @@
         let currentFolderPath = '';
         let currentEditingFile = '';
 
+        // 1. Deklarasi Semua URL API
         let fileManagerUrl = '{{ route('user_hosting.files', $project->hashid) }}';
         let fileReadUrl = '{{ route('user_hosting.files.read', $project->hashid) }}';
         let fileSaveUrl = '{{ route('user_hosting.files.save', $project->hashid) }}';
+        let fileUploadUrl = '{{ route('user_hosting.files.upload', $project->hashid) }}';
+        let fileCreateUrl = '{{ route('user_hosting.files.create', $project->hashid) }}';
+        let fileDeleteUrl = '{{ route('user_hosting.files.delete', $project->hashid) }}';
+        let fileDownloadUrl = '{{ route('user_hosting.files.download', $project->hashid) }}';
 
-        // Memaksa URL menjadi HTTPS jika web diakses via HTTPS
+        // 2. Memaksa URL menjadi HTTPS jika web diakses via HTTPS (Fix Mixed Content)
         if (window.location.protocol === 'https:') {
             fileManagerUrl = fileManagerUrl.replace(/^http:\/\//i, 'https://');
             fileReadUrl = fileReadUrl.replace(/^http:\/\//i, 'https://');
             fileSaveUrl = fileSaveUrl.replace(/^http:\/\//i, 'https://');
+            fileUploadUrl = fileUploadUrl.replace(/^http:\/\//i, 'https://');
+            fileCreateUrl = fileCreateUrl.replace(/^http:\/\//i, 'https://');
+            fileDeleteUrl = fileDeleteUrl.replace(/^http:\/\//i, 'https://');
+            fileDownloadUrl = fileDownloadUrl.replace(/^http:\/\//i, 'https://');
         }
 
         function loadFileManager(path = '') {
@@ -624,16 +657,17 @@
                     tbody.innerHTML = '';
 
                     if (data.items.length === 0) {
+                        // Jika folder kosong
                         tbody.innerHTML =
-                            `<tr><td colspan="3" class="px-6 py-10 text-center text-slate-400"><i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50"></i><br>Folder kosong</td></tr>`;
+                            `<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400"><i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50"></i><br>Folder kosong</td></tr>`;
                     } else {
+                        // Jika ada isinya, render per baris
                         data.items.forEach(item => {
                             const isDir = item.type === 'dir';
                             const icon = isDir ?
                                 '<i class="fa-solid fa-folder text-amber-400 text-lg group-hover:text-amber-500 transition-colors"></i>' :
                                 '<i class="fa-regular fa-file-lines text-slate-400 text-lg group-hover:text-indigo-400 transition-colors"></i>';
 
-                            // Beda klik: Folder untuk masuk, File untuk Edit
                             const nameAction = isDir ?
                                 `onclick="loadFileManager('${item.path}')"` :
                                 `onclick="openFileEditor('${item.path}', '${item.name}')"`;
@@ -641,14 +675,22 @@
                             const nameSpan =
                                 `<a href="javascript:void(0)" ${nameAction} class="font-semibold text-slate-600 hover:text-indigo-600 transition-colors cursor-pointer">${item.name}</a>`;
 
+                            // ── TOMBOL AKSI (Edit, Download, Hapus) ──
+                            const actionButtons = isDir ?
+                                `<button onclick="deleteItem('${item.path}')" class="text-rose-500 hover:text-rose-700 mx-1" title="Delete"><i class="fa-solid fa-trash-can"></i></button>` :
+                                `<button onclick="openFileEditor('${item.path}', '${item.name}')" class="text-sky-500 hover:text-sky-700 mx-1" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                   <a href="${fileDownloadUrl}?path=${encodeURIComponent(item.path)}" target="_blank" class="text-emerald-500 hover:text-emerald-700 mx-1" title="Download"><i class="fa-solid fa-download"></i></a>
+                                   <button onclick="deleteItem('${item.path}')" class="text-rose-500 hover:text-rose-700 mx-1" title="Delete"><i class="fa-solid fa-trash-can"></i></button>`;
+
                             const tr = document.createElement('tr');
                             tr.className = 'hover:bg-slate-50 transition-colors group cursor-pointer';
                             if (isDir) tr.ondblclick = () => loadFileManager(item.path);
 
                             tr.innerHTML = `
                                 <td class="px-6 py-2.5 flex items-center gap-3">${icon} ${nameSpan}</td>
-                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.size}</td>
-                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.modified}</td>
+                                <td class="px-6 py-2.5 text-slate-400 text-xs w-24">${item.size}</td>
+                                <td class="px-6 py-2.5 text-slate-400 text-xs w-32">${item.modified}</td>
+                                <td class="px-6 py-2.5 text-right w-24">${actionButtons}</td>
                             `;
                             tbody.appendChild(tr);
                         });
@@ -669,7 +711,80 @@
             loadFileManager(pathParts.join('/'));
         }
 
-        // ── EDITOR FUNCTIONS ──
+        // ── FUNGSI CREATE, DELETE, UPLOAD BARU ─────────────────────────────────
+        function promptCreateItem(type) {
+            const name = prompt(`Masukkan nama ${type === 'dir' ? 'Folder' : 'File'} baru:`);
+            if (!name) return;
+
+            fetch(fileCreateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        type: type,
+                        name: name,
+                        current_path: currentFolderPath
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) alert(data.error);
+                    else loadFileManager(currentFolderPath); // Refresh otomatis setelah berhasil
+                });
+        }
+
+        function deleteItem(path) {
+            if (!confirm(`Yakin ingin menghapus ${path} secara permanen?`)) return;
+
+            fetch(fileDeleteUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        path: path
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) alert(data.error);
+                    else loadFileManager(currentFolderPath);
+                });
+        }
+
+        function uploadFile(inputElement) {
+            if (!inputElement.files.length) return;
+            const file = inputElement.files[0];
+            const formData = new FormData();
+
+            formData.append('file', file);
+            formData.append('current_path', currentFolderPath);
+
+            document.getElementById('file-manager-loader').classList.remove('hidden');
+
+            fetch(fileUploadUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    inputElement.value = ''; // Reset input
+                    if (data.error) alert(data.error);
+                    else loadFileManager(currentFolderPath);
+                })
+                .catch(err => {
+                    document.getElementById('file-manager-loader').classList.add('hidden');
+                    alert('Gagal mengunggah file.');
+                });
+        }
+
+        // ── EDITOR FUNCTIONS ───────────────────────────────────────────────────
         function openFileEditor(path, filename) {
             const modal = document.getElementById('file-editor-modal');
             const loader = document.getElementById('editor-loader');
@@ -714,7 +829,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
@@ -728,7 +843,6 @@
                     if (data.error) {
                         alert(data.error);
                     } else {
-                        // Beri efek visual sukses sementara pada tombol
                         alert('Berhasil disimpan!');
                     }
                 })
