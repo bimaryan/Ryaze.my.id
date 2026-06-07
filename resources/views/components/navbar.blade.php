@@ -213,7 +213,7 @@
                     <a href="#"
                         class="flex items-center p-3 rounded-lg transition-all duration-200 group text-slate-600 hover:bg-indigo-100 hover:text-indigo-700">
                         <span class="flex-1 ms-3 whitespace-nowrap"><i
-                                class="fa-solid fa-file-invoice-dollar me-2"></i> Tagihan / Invoice</span>
+                                class="fa-solid fa-file-invoice-dollar me-2"></i> Riwayat Tagihan</span>
                     </a>
                 </li>
             @endif

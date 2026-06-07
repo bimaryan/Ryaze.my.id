@@ -282,7 +282,7 @@
 
         {{-- TAB: FILE MANAGER --}}
         <div id="panel-files" class="tab-panel hidden relative">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-5xl relative">
+            <div class="bg-white rounded-xl w-full shadow-sm border border-slate-200 overflow-hidden relative">
 
                 {{-- Toolbar File Manager --}}
                 <div
