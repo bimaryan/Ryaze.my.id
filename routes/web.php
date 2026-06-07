@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
     Route::get('user/hosting/projects/{hashid}/logs', [DashboardController::class, 'buildLogs'])->name('user_hosting.build_logs');
     Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');
+    Route::get('user/hosting/projects/{hashid}/files', [DashboardController::class, 'getFiles'])->name('user_hosting.files');
 
     Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
     Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');

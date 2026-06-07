@@ -73,7 +73,74 @@ class DashboardController extends Controller
         return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Deployment berhasil dimulai!');
     }
 
-    private function formatBytes($size, $precision = 2)
+    public function getFiles(Request $request, $hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+
+        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+
+        // Root directory ASLI milik project klien
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        // Path tambahan yang di-request klien (misal: /public/assets)
+        $requestPath = trim($request->input('path', ''), '/');
+
+        // Tentukan target directory yang akan discan
+        $targetDir = $projectRootDir;
+        if (!empty($requestPath)) {
+            $targetDir = realpath($projectRootDir . '/' . $requestPath);
+        }
+
+        // ════════ KEAMANAN TINGKAT TINGGI (ANTI-TRAVERSAL) ════════
+        // Pastikan target directory valid dan MURNI berada di dalam root directory klien
+        if ($targetDir === false || strpos($targetDir, $projectRootDir) !== 0) {
+            return response()->json(['error' => 'Akses ditolak! Anda mencoba keluar dari root direktori.'], 403);
+        }
+
+        if (!is_dir($targetDir)) {
+            return response()->json(['error' => 'Direktori tidak ditemukan.'], 404);
+        }
+
+        $items = scandir($targetDir);
+        $directories = [];
+        $files = [];
+
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') continue; // Abaikan navigasi default linux
+
+            $fullPath = $targetDir . '/' . $item;
+            $isDir = is_dir($fullPath);
+
+            $info = [
+                'name' => $item,
+                'type' => $isDir ? 'dir' : 'file',
+                'size' => $isDir ? '-' : $this->formatBytesCustom(filesize($fullPath)),
+                'modified' => date('d M Y H:i', filemtime($fullPath)),
+                // Path relatif untuk navigasi JS
+                'path' => !empty($requestPath) ? $requestPath . '/' . $item : $item
+            ];
+
+            if ($isDir) {
+                $directories[] = $info;
+            } else {
+                $files[] = $info;
+            }
+        }
+
+        // Urutkan abjad
+        usort($directories, fn($a, $b) => strcmp($a['name'], $b['name']));
+        usort($files, fn($a, $b) => strcmp($a['name'], $b['name']));
+
+        return response()->json([
+            'current_path' => $requestPath,
+            'items' => array_merge($directories, $files)
+        ]);
+    }
+
+    // Helper formatter bytes
+    private function formatBytesCustom($size, $precision = 2)
     {
         if ($size > 0) {
             $size = (int) $size;
@@ -126,7 +193,7 @@ class DashboardController extends Controller
                 $info = [
                     'name' => $item,
                     'type' => $isDir ? 'dir' : 'file',
-                    'size' => $isDir ? '-' : $this->formatBytes(filesize($fullPath)),
+                    'size' => $isDir ? '-' : $this->formatBytesCustom(filesize($fullPath)),
                     'modified' => date('d M Y H:i', filemtime($fullPath)),
                 ];
 

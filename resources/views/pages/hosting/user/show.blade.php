@@ -273,56 +273,53 @@
             </p>
         </div>
 
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
-        {{-- TAB: ROOT FILES --}}
-        {{-- ═══════════════════════════════════════════════════════════════════ --}}
+        {{-- TAB: FILE MANAGER --}}
         <div id="panel-files" class="tab-panel hidden">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-4xl">
-                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-folder-open text-indigo-500"></i> File Explorer
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-1 font-mono">
-                            /www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}</p>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-5xl">
+
+                {{-- Header & Toolbar --}}
+                <div class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <button onclick="navigateUp()"
+                            class="text-slate-500 hover:text-indigo-600 transition-colors bg-white px-2 py-1 rounded border border-slate-200 shadow-sm"
+                            title="Kembali ke atas">
+                            <i class="fa-solid fa-level-up-alt fa-flip-horizontal"></i>
+                        </button>
+                        <div
+                            class="text-sm font-mono text-slate-600 flex items-center gap-1 bg-white px-3 py-1.5 rounded border border-slate-200 select-none">
+                            <i class="fa-solid fa-server text-slate-400 mr-1"></i>
+                            / <span id="current-path-display" class="text-indigo-600 font-bold"></span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="loadFileManager(currentFolderPath)"
+                            class="text-xs bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
                     </div>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-600">
+                {{-- Table Files --}}
+                <div class="overflow-x-auto h-[500px]">
+                    <table class="w-full text-sm text-left text-slate-600 relative">
                         <thead
-                            class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
+                            class="bg-white text-xs uppercase font-semibold text-slate-400 border-b border-slate-100 sticky top-0 z-10 shadow-sm">
                             <tr>
-                                <th class="px-6 py-3">Nama File/Folder</th>
-                                <th class="px-6 py-3">Ukuran</th>
-                                <th class="px-6 py-3">Terakhir Diubah</th>
+                                <th class="px-6 py-3 w-3/5">Nama File / Folder</th>
+                                <th class="px-6 py-3 w-1/5">Ukuran</th>
+                                <th class="px-6 py-3 w-1/5">Terakhir Diubah</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 font-mono text-[13px]">
-                            @forelse ($projectFiles ?? [] as $file)
-                                <tr class="hover:bg-slate-50 transition-colors">
-                                    <td class="px-6 py-3 flex items-center gap-3">
-                                        @if ($file['type'] == 'dir')
-                                            <i class="fa-solid fa-folder text-amber-400 text-lg"></i>
-                                            <span class="font-semibold text-slate-700">{{ $file['name'] }}</span>
-                                        @else
-                                            <i class="fa-regular fa-file-lines text-slate-400 text-lg"></i>
-                                            <span class="text-slate-600">{{ $file['name'] }}</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-3 text-slate-500">{{ $file['size'] }}</td>
-                                    <td class="px-6 py-3 text-slate-500">{{ $file['modified'] }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="px-6 py-10 text-center text-slate-400">
-                                        <i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i>
-                                        <p>Folder project belum tersedia atau masih kosong.</p>
-                                    </td>
-                                </tr>
-                            @endforelse
+                        <tbody id="file-manager-body" class="divide-y divide-slate-50 font-mono text-[13px]">
+                            {{-- Baris akan diisi oleh Javascript --}}
                         </tbody>
                     </table>
+
+                    {{-- Loader --}}
+                    <div id="file-manager-loader"
+                        class="hidden absolute inset-0 bg-white/80 flex items-center justify-center z-20">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -367,6 +364,91 @@
         const websiteLogLink = document.getElementById('website-log-link');
         const buildLogPulse = document.getElementById('build-log-pulse');
         let buildLogInterval = null;
+
+        let currentFolderPath = '';
+        const fileManagerUrl = '{{ route("user_hosting.files", $project->hashid) }}';
+
+        function loadFileManager(path = '') {
+            const loader = document.getElementById('file-manager-loader');
+            const tbody = document.getElementById('file-manager-body');
+            const pathDisplay = document.getElementById('current-path-display');
+
+            loader.classList.remove('hidden');
+
+            fetch(`${fileManagerUrl}?path=${encodeURIComponent(path)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        loader.classList.add('hidden');
+                        return;
+                    }
+
+                    currentFolderPath = data.current_path;
+                    pathDisplay.textContent = currentFolderPath === '' ? '(root)' : currentFolderPath;
+
+                    tbody.innerHTML = '';
+
+                    if (data.items.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="3" class="px-6 py-10 text-center text-slate-400">
+                                    <i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50"></i><br>Folder kosong
+                                </td>
+                            </tr>`;
+                    } else {
+                        data.items.forEach(item => {
+                            const isDir = item.type === 'dir';
+                            const icon = isDir
+                                ? '<i class="fa-solid fa-folder text-amber-400 text-lg group-hover:text-amber-500 transition-colors"></i>'
+                                : '<i class="fa-regular fa-file-lines text-slate-400 text-lg"></i>';
+
+                            // Jika folder, buat bisa di-klik untuk navigasi
+                            const nameSpan = isDir
+                                ? `<a href="javascript:void(0)" onclick="loadFileManager('${item.path}')" class="font-bold text-slate-700 hover:text-indigo-600 transition-colors cursor-pointer">${item.name}</a>`
+                                : `<span class="text-slate-600">${item.name}</span>`;
+
+                            const tr = document.createElement('tr');
+                            tr.className = 'hover:bg-slate-50 transition-colors group';
+                            tr.innerHTML = `
+                                <td class="px-6 py-2.5 flex items-center gap-3">${icon} ${nameSpan}</td>
+                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.size}</td>
+                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.modified}</td>
+                            `;
+
+                            // Double click row untuk masuk folder
+                            if(isDir) {
+                                tr.ondblclick = () => loadFileManager(item.path);
+                                tr.classList.add('cursor-pointer');
+                            }
+
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    loader.classList.add('hidden');
+                })
+                .catch(err => {
+                    console.error('Error loading files:', err);
+                    alert('Gagal memuat file browser.');
+                    loader.classList.add('hidden');
+                });
+        }
+
+        function navigateUp() {
+            if (currentFolderPath === '') return; // Sudah di root
+
+            // Hapus segmen terakhir dari path (misal: public/assets -> public)
+            let pathParts = currentFolderPath.split('/');
+            pathParts.pop();
+            loadFileManager(pathParts.join('/'));
+        }
+
+        // Panggil saat tab File Manager pertama kali diklik
+        document.getElementById('tab-files').addEventListener('click', () => {
+            if(document.getElementById('file-manager-body').innerHTML.trim() === '') {
+                loadFileManager();
+            }
+        });
 
         function refreshBuildLogs() {
             return fetch(buildLogUrl, {
