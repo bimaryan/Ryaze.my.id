@@ -3,16 +3,20 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
+        {{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
         <div
-            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Aplikasi Ter-deploy</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Kelola semua proyek dan aplikasi yang berjalan di Ryaze.
-                </p>
+            class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-terminal text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Aplikasi Ter-deploy</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Kelola semua proyek dan aplikasi yang berjalan di Ryaze.</p>
+                </div>
             </div>
-
             <a href="{{ route('user_hosting.create') }}"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm">
+                class="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 text-sm">
                 <i class="fa-solid fa-plus"></i> Deploy Proyek Baru
             </a>
         </div>

@@ -3,13 +3,14 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
-        {{-- Header --}}
-        <div
-            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        {{-- ── 11. USER HOSTING – Storage Overview ────────────────────────── --}}
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+            <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
+                <i class="fa-solid fa-hard-drive text-lg"></i>
+            </div>
             <div>
                 <h1 class="text-xl font-bold text-slate-800">Storage</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Monitor penggunaan disk seluruh project Anda.
-                </p>
+                <p class="text-sm text-slate-500 mt-0.5">Monitor penggunaan disk seluruh project Anda.</p>
             </div>
         </div>
 

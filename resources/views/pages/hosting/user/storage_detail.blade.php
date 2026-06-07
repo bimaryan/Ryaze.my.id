@@ -3,21 +3,21 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
-        {{-- Back + Header --}}
+        {{-- ── 10. USER HOSTING – Storage Detail (per Project) ───────────── --}}
         <div
-            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div class="flex items-center gap-4">
-                {{-- Tombol Back --}}
+            class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4 min-w-0">
                 <a href="{{ route('user_hosting.storage') }}"
-                    class="shrink-0 flex items-center justify-center w-10 h-10 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50">
+                    class="shrink-0 w-10 h-10 flex items-center justify-center bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-
-                {{-- Title & Path --}}
-                <div class="min-w-0"> {{-- min-w-0 penting agar teks panjang tidak merusak flexbox --}}
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
+                    <i class="fa-solid fa-folder-open text-lg"></i>
+                </div>
+                <div class="min-w-0">
                     <h1 class="text-xl font-bold text-slate-800 truncate">{{ $project->project_name }}</h1>
                     <p
-                        class="text-xs text-slate-400 mt-0.5 font-mono truncate bg-slate-50 px-2 py-0.5 rounded border border-slate-100 mt-1">
+                        class="text-xs text-slate-400 font-mono mt-1 px-2 py-0.5 bg-slate-50 border border-slate-100 rounded inline-block truncate max-w-full">
                         {{ $project_dir }}
                     </p>
                 </div>

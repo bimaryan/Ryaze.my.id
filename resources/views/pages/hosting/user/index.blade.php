@@ -2,18 +2,17 @@
 
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
-        {{-- Header --}}
-        <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-hard-drive text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Dashboard Hosting</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">
-                        Halo, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Klien' }}</span>!
-                    </p>
-                </div>
+        {{-- ── 7. USER HOSTING – Dashboard Klien ──────────────────────────── --}}
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+            <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                <i class="fa-solid fa-hard-drive text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-800">Dashboard Hosting</h1>
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Halo, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Klien' }}</span>!
+                    Selamat datang kembali.
+                </p>
             </div>
         </div>
 

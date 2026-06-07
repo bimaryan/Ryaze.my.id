@@ -18,44 +18,53 @@
             </div>
         @endif
 
-        {{-- Header --}}
+        {{-- ── 9. USER HOSTING – Detail Project (Show) ────────────────────── --}}
         <div
-            class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+            class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 border border-slate-200 rounded-xl flex items-center justify-center bg-slate-50">
-                    @if ($project->framework == 'react')
-                        <i class="fa-brands fa-react text-3xl text-sky-500"></i>
-                    @elseif($project->framework == 'nextjs')
-                        <i class="fa-brands fa-node-js text-3xl text-slate-800"></i>
-                    @elseif($project->framework == 'laravel')
-                        <i class="fa-brands fa-laravel text-3xl text-red-500"></i>
-                    @elseif($project->framework == 'python')
-                        <i class="fa-brands fa-python text-3xl text-yellow-500"></i>
-                    @elseif($project->framework == 'node')
-                        <i class="fa-brands fa-node text-3xl text-emerald-500"></i>
-                    @elseif($project->framework == 'vue')
-                        <i class="fa-brands fa-vuejs text-3xl text-emerald-500"></i>
-                    @else
-                        <i class="fa-brands fa-html5 text-3xl text-orange-500"></i>
-                    @endif
+                {{-- Icon Framework --}}
+                <div
+                    class="shrink-0 w-12 h-12 border border-slate-200 rounded-xl flex items-center justify-center bg-slate-50">
+                    @php
+                        $fwIcon = match ($project->framework) {
+                            'react' => 'fa-brands fa-react text-sky-500',
+                            'nextjs' => 'fa-brands fa-node-js text-slate-800',
+                            'laravel' => 'fa-brands fa-laravel text-red-500',
+                            'python' => 'fa-brands fa-python text-yellow-500',
+                            'node' => 'fa-brands fa-node text-emerald-500',
+                            'vue' => 'fa-brands fa-vuejs text-emerald-500',
+                            default => 'fa-brands fa-html5 text-orange-500',
+                        };
+                    @endphp
+                    <i class="{{ $fwIcon }} text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-800">{{ $project->project_name }}</h1>
+                    <h1 class="text-xl font-bold text-slate-800">{{ $project->project_name }}</h1>
                     <a href="https://{{ $project->ryaze_domain }}" target="_blank"
                         class="text-sm font-medium text-indigo-600 hover:underline flex items-center gap-1 mt-0.5">
-                        {{ $project->ryaze_domain }} <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        {{ $project->ryaze_domain }}
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                     </a>
                 </div>
             </div>
-            <div class="text-right">
-                <span
-                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                    {{ $project->status == 'active' ? 'bg-emerald-100 text-emerald-700' : ($project->status == 'building' ? 'bg-amber-100 text-amber-700 animate-pulse' : 'bg-rose-100 text-rose-700') }}">
-                    <i
-                        class="fa-solid {{ $project->status == 'active' ? 'fa-check-circle' : ($project->status == 'building' ? 'fa-spinner fa-spin' : 'fa-triangle-exclamation') }} mr-1.5"></i>
-                    {{ $project->status }}
-                </span>
-            </div>
+            {{-- Badge Status --}}
+            @php
+                $statusClass = match ($project->status) {
+                    'active' => 'bg-emerald-100 text-emerald-700',
+                    'building' => 'bg-amber-100 text-amber-700 animate-pulse',
+                    default => 'bg-rose-100 text-rose-700',
+                };
+                $statusIcon = match ($project->status) {
+                    'active' => 'fa-circle-check',
+                    'building' => 'fa-spinner fa-spin',
+                    default => 'fa-triangle-exclamation',
+                };
+            @endphp
+            <span
+                class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide {{ $statusClass }}">
+                <i class="fa-solid {{ $statusIcon }}"></i>
+                {{ $project->status }}
+            </span>
         </div>
 
         {{-- Tab Navigation --}}
@@ -586,7 +595,7 @@
                     const cls = data.exit_code !== 0 ? 'text-rose-300' : 'text-slate-200';
                     appendRaw(
                         `<pre class="${cls} whitespace-pre-wrap break-words mb-1 leading-relaxed">${escapeHtml(data.output)}</pre>`
-                        );
+                    );
                 }
             } catch (err) {
                 document.getElementById(lid)?.remove();

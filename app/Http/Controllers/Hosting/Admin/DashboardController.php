@@ -15,7 +15,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // ── Statistik Utama ─────────────────────────────────────
         $stats = [
             'total_projects' => HostingProject::count(),
             'active_projects' => HostingProject::where('status', 'active')->count(),
@@ -23,33 +22,41 @@ class DashboardController extends Controller
             'total_databases' => HostingDatabase::count(),
             'pending_billing' => HostingBilling::where('status', 'unpaid')->count(),
             'building_now' => HostingProject::where('status', 'building')->count(),
+            'action_required' => HostingProject::whereIn('status', ['unpaid', 'error', 'suspended'])->count(),
         ];
 
-        // ── Project Menunggu Aktivasi / Perlu Perhatian ──────────
-        // "pending" = status unpaid, error, atau building > 10 menit
-        $pendingProjects = HostingProject::with(['client', 'billing', 'deployments' => fn ($q) => $q->latest()->limit(1)])
+        return view('pages.hosting.admin.index', compact('stats'));
+    }
+
+    // 2. Halaman Membutuhkan Tindakan
+    public function pending()
+    {
+        $projects = HostingProject::with(['client', 'billing', 'deployments' => fn ($q) => $q->latest()->limit(1)])
             ->whereIn('status', ['unpaid', 'error', 'suspended'])
-            ->latest()
-            ->take(10)
-            ->get();
-
-        // ── Deploy Terbaru (semua user) ───────────────────────────
-        $recentDeployments = HostingDeployment::with('project.client')
-            ->latest()
-            ->take(8)
-            ->get();
-
-        // ── Semua Project (untuk tabel lengkap) ──────────────────
-        $allProjects = HostingProject::with(['client', 'billing'])
             ->latest()
             ->paginate(15);
 
-        return view('pages.hosting.admin.index', compact(
-            'stats',
-            'pendingProjects',
-            'recentDeployments',
-            'allProjects'
-        ));
+        return view('pages.hosting.admin.pending', compact('projects'));
+    }
+
+    // 3. Halaman Deploy Terbaru
+    public function deployments()
+    {
+        $deployments = HostingDeployment::with('project.client')
+            ->latest()
+            ->paginate(20);
+
+        return view('pages.hosting.admin.deployments', compact('deployments'));
+    }
+
+    // 4. Halaman Semua Project
+    public function projects()
+    {
+        $projects = HostingProject::with(['client', 'billing'])
+            ->latest()
+            ->paginate(15);
+
+        return view('pages.hosting.admin.projects', compact('projects'));
     }
 
     /**

@@ -135,7 +135,7 @@
 
             {{-- Dashboard --}}
             <li>
-                <a href="{{ $dashboardUrl }}" class="{{ $navLink(request()->is('*dashboard*')) }}">
+                <a href="{{ $dashboardUrl }}" class="{{ $navLink(request()->routeIs('*.dashboard')) }}">
                     <i class="fa-solid fa-border-all me-2 ms-3"></i>
                     <span class="whitespace-nowrap">Dashboard</span>
                 </a>
@@ -158,11 +158,11 @@
                     </li>
                 @endif
 
-                {{-- Admin Hosting: Kelola Project --}}
+                {{-- Admin Hosting: Kelola Project (DIPERBAIKI) --}}
                 @if ($isAdminHosting)
                     <li>
-                        <a href="{{ route('admin_hosting.dashboard') }}"
-                            class="{{ $navLink(request()->routeIs('admin_hosting.*')) }}">
+                        <a href="{{ route('admin_hosting.projects') }}"
+                            class="{{ $navLink(request()->routeIs('admin_hosting.projects', 'admin_hosting.pending', 'admin_hosting.deployments')) }}">
                             <i class="fa-solid fa-server me-2 ms-3"></i>
                             <span class="whitespace-nowrap">Kelola Project Hosting</span>
                         </a>
