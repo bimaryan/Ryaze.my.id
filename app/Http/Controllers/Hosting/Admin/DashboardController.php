@@ -59,39 +59,35 @@ class DashboardController extends Controller
         return view('pages.hosting.admin.projects', compact('projects'));
     }
 
-    /**
-     * Aktifkan project (ubah status menjadi 'active').
-     */
-    public function activateProject(Request $request, $hashid)
-    {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::findOrFail($decoded[0]);
-        $project->update(['status' => 'active']);
-
-        // Tandai billing terkait sebagai paid jika ada
-        $project->billing?->update(['status' => 'paid']);
-
-        return back()->with('success', "Project '{$project->project_name}' berhasil diaktifkan.");
-    }
-
-    /**
-     * Suspend project.
-     */
     public function suspendProject(Request $request, $hashid)
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::findOrFail($decoded[0]);
+        $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
         $project->update(['status' => 'suspended']);
 
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
+
+        // Buat file marker agar Nginx 503
+        touch($filePath);
+        chmod($filePath, 0666);
+
         return back()->with('success', "Project '{$project->project_name}' telah disuspend.");
+    }
+
+    public function activateProject(Request $request, $hashid)
+    {
+        $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
+        $project->update(['status' => 'active']);
+
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
+
+        // Hapus file marker agar Nginx kembali normal
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        return back()->with('success', "Project '{$project->project_name}' berhasil diaktifkan.");
     }
 
     /**
