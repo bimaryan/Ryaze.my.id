@@ -302,13 +302,14 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto h-[500px] relative">
-                    <table class="w-full text-sm text-left text-slate-600">
+                    <table class="w-full text-sm text-left text-slate-600 table-fixed">
                         <thead
                             class="bg-white text-xs uppercase font-semibold text-slate-400 border-b border-slate-100 sticky top-0 z-10 shadow-sm">
                             <tr>
-                                <th class="px-6 py-3 w-3/5">Nama</th>
-                                <th class="px-6 py-3 w-1/5">Ukuran</th>
-                                <th class="px-6 py-3 w-1/5 hidden sm:table-cell">Diubah</th>
+                                <th class="px-6 py-3">Nama</th>
+                                <th class="px-4 py-3 w-24">Ukuran</th>
+                                <th class="px-4 py-3 hidden sm:table-cell">Diubah</th>
+                                <th class="px-4 py-3 w-28 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="file-manager-body" class="divide-y divide-slate-50 font-mono text-[13px]"></tbody>
@@ -675,10 +676,10 @@
                             const tr = document.createElement('tr');
                             tr.className = 'hover:bg-slate-50 transition-colors group';
                             tr.innerHTML = `
-                                <td class="px-6 py-2.5"><div class="flex items-center gap-3">${icon}<a href="javascript:void(0)" ${nameAction} class="font-semibold text-slate-600 hover:text-indigo-600 cursor-pointer">${item.name}</a></div></td>
-                                <td class="px-6 py-2.5 text-slate-400 text-xs">${item.size}</td>
-                                <td class="px-6 py-2.5 text-slate-400 text-xs hidden sm:table-cell">${item.modified}</td>
-                                <td class="px-6 py-2.5 text-right">${actions}</td>`;
+                                <td class="px-6 py-2.5 truncate max-w-0"><div class="flex items-center gap-3 min-w-0"><span class="shrink-0">${icon}</span><a href="javascript:void(0)" ${nameAction} class="font-semibold text-slate-600 hover:text-indigo-600 cursor-pointer truncate">${item.name}</a></div></td>
+                                <td class="px-4 py-2.5 text-slate-400 text-xs whitespace-nowrap">${item.size}</td>
+                                <td class="px-4 py-2.5 text-slate-400 text-xs hidden sm:table-cell whitespace-nowrap">${item.modified}</td>
+                                <td class="px-4 py-2.5 text-right whitespace-nowrap">${actions}</td>`;
                             tbody.appendChild(tr);
                         });
                     }
