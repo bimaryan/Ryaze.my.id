@@ -35,7 +35,7 @@
         @endphp
 
         {{-- Usage summary card --}}
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 mt-6">
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
                 <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Terpakai</p>
                 <p class="text-2xl font-bold text-slate-800">{{ $used_human }}</p>
