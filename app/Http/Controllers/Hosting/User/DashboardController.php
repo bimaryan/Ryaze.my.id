@@ -106,7 +106,7 @@ class DashboardController extends Controller
         return view('pages.hosting.user.show', compact('project', 'envContent'));
     }
 
-    // 2. Method API untuk navigasi folder (yang Mas kirim sebelumnya, ini sudah benar)
+    // 2. Method API untuk navigasi folder
     public function getFiles(Request $request, $hashid)
     {
         $decoded = Hashids::decode($hashid);

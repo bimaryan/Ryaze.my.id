@@ -158,7 +158,7 @@
                                 <span class="block text-slate-500 text-xs mb-1">Root Directory</span>
                                 <span
                                     class="font-mono text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-1 rounded block truncate">
-                                    /www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
+                                    /{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
                                 </span>
                             </div>
                             <form action="{{ route('user_hosting.redeploy', $project->hashid) }}" method="POST"
@@ -227,7 +227,7 @@
                         <span class="text-slate-300 text-xs font-mono font-semibold shrink-0">bash</span>
                         <span class="text-slate-600 text-xs shrink-0">—</span>
                         <span class="text-slate-400 text-xs font-mono truncate" id="terminal-cwd-display">
-                            /www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
+                            /{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
                         </span>
                     </div>
                     <div class="ml-auto shrink-0">
@@ -663,7 +663,8 @@
 
         function updatePrompt(cwd) {
             currentCwd = cwd;
-            cwdDisplay.textContent = cwd;
+            const relPath = cwd.startsWith(projectRoot) ? cwd.slice(projectRoot.length) : '';
+            cwdDisplay.textContent = '/' + projectSlug + relPath;
             termPrompt.innerHTML =
                 `<span class="text-indigo-400">${getPromptLabel(cwd)}</span><span class="text-slate-400"> $</span>`;
         }
