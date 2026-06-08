@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('hosting_project_id')->constrained('hosting_projects')->onDelete('cascade');
             $table->string('commit_hash')->nullable();
             $table->string('commit_message')->nullable();
-            $table->longText('build_logs')->nullable(); // Output terminal
+            $table->longText('build_logs')->nullable();
             $table->enum('status', ['queued', 'building', 'ready', 'failed'])->default('queued');
             $table->timestamp('deployed_at')->nullable();
             $table->timestamps();

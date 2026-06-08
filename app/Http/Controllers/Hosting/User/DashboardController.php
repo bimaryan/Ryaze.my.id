@@ -541,17 +541,15 @@ class DashboardController extends Controller
     public function updateSettings(Request $request, $hashid)
     {
         $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) abort(404);
+        if (empty($decoded)) {
+            abort(404);
+        }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
-        // Validasi input
-        $request->validate([
-            'php_version' => 'required|string',
-        ]);
-
+        // Ambil data checkbox
         $maintenanceMode = $request->has('maintenance_mode');
         $forceHttps = $request->has('force_https');
 
@@ -563,13 +561,13 @@ class DashboardController extends Controller
             @chmod($maintenanceFile, 0666);
         } else {
             // Hapus file penanda jika dinonaktifkan
-            if (file_exists($maintenanceFile)) @unlink($maintenanceFile);
+            if (file_exists($maintenanceFile)) {
+                @unlink($maintenanceFile);
+            }
         }
 
-        // 2. Simpan konfigurasi ke Database (Jika Mas menambahkan kolom ini di DB)
-        // Pastikan kolom php_version, maintenance_mode, dan force_https ada di tabel hosting_projects
+        // 2. Simpan konfigurasi ke Database
         $project->update([
-            'php_version' => $request->php_version,
             'maintenance_mode' => $maintenanceMode,
             'force_https' => $forceHttps,
         ]);
@@ -577,7 +575,7 @@ class DashboardController extends Controller
         // Catat di Logs
         $project->deployments()->create([
             'status' => 'ready',
-            'build_logs' => "> Pengaturan aplikasi diperbarui.\n> PHP Version: {$request->php_version}\n> Maintenance Mode: " . ($maintenanceMode ? 'ON' : 'OFF') . "\n> Force HTTPS: " . ($forceHttps ? 'ON' : 'OFF'),
+            'build_logs' => "> Pengaturan aplikasi diperbarui.\n> Maintenance Mode: ".($maintenanceMode ? 'ON' : 'OFF')."\n> Force HTTPS: ".($forceHttps ? 'ON' : 'OFF'),
         ]);
 
         return back()->with('success', 'Konfigurasi aplikasi berhasil diperbarui!');
