@@ -576,7 +576,7 @@ class DashboardController extends Controller
 
         // Catat di Logs
         $project->deployments()->create([
-            'status' => 'success',
+            'status' => 'ready',
             'build_logs' => "> Pengaturan aplikasi diperbarui.\n> PHP Version: {$request->php_version}\n> Maintenance Mode: " . ($maintenanceMode ? 'ON' : 'OFF') . "\n> Force HTTPS: " . ($forceHttps ? 'ON' : 'OFF'),
         ]);
 

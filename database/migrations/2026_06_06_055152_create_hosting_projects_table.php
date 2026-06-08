@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('status', ['active', 'building', 'suspended', 'error'])->default('building');
 
             // ─── KOLOM BARU UNTUK SETTINGS ───
-            $table->string('php_version')->default('8.3');
+            $table->string('php_version')->default('8.4.6');
             $table->boolean('maintenance_mode')->default(false);
             $table->boolean('force_https')->default(true);
 
