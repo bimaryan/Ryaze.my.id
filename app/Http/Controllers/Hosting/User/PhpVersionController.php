@@ -257,7 +257,6 @@ class PhpVersionController extends Controller
             '1Panel-Timestamp' => (string) $timestamp,
             'Content-Type' => 'application/json',
         ])->withOptions([
-            'verify' => false,  // HAPUS di production jika sudah pakai SSL valid
             'timeout' => 30,
         ])->$method($url, $data);
     }
