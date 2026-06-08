@@ -26,27 +26,25 @@ class PhpVersionController extends Controller
             return response()->json(['error' => 'Project not found'], 404);
         }
 
-        // 1. Kumpulkan semua versi dari Docker images (tag 1panel-php:x.y.z)
-        $dockerVersions = $this->getDockerPhpVersions();
-
-        // 2. Kumpulkan dari 1Panel API (jika tersedia)
+        // Ambil daftar runtime PHP dari 1Panel API
         $apiVersions = $this->getPhpVersionsFrom1PanelApi();
 
-        // 3. Gabung dan unique, lalu sorting natural
-        $allVersions = array_unique(array_merge($dockerVersions, $apiVersions));
-        sort($allVersions, SORT_NATURAL);
-
-        // Jika tidak ada satupun, fallback ke daftar versi umum (patch terbaru)
-        if (empty($allVersions)) {
-            $allVersions = $this->getFallbackPhpVersions();
+        // Jika API gagal, gunakan fallback manual (versi yang umum)
+        if (empty($apiVersions)) {
+            $apiVersions = ['8.4.6', '8.4.3', '8.3.20', '8.3.16', '8.2.28', '8.2.27', '8.2.20'];
         }
 
-        // Build response untuk frontend
+        // Urutkan dari tertinggi ke terendah
+        usort($apiVersions, version_compare);
+        $apiVersions = array_reverse($apiVersions);
+
         $versions = [];
-        foreach ($allVersions as $fullVer) {
+        foreach ($apiVersions as $fullVer) {
             $minor = implode('.', array_slice(explode('.', $fullVer), 0, 2));
-            $isRunning = $this->isContainerRunning($fullVer);
-            $isInstalled = $isRunning || $this->isImageExists($fullVer);
+            // Cek apakah versi ini sedang berjalan di 1Panel? Kita tidak perlu deteksi container karena kita hanya sync dengan API.
+            // Anggap semua versi dari API adalah "installed" (karena sudah ada runtime di 1Panel)
+            $isInstalled = true;
+            $isRunning = true; // atau cek status dari API jika ada field 'status'
 
             $versions[] = [
                 'version' => $fullVer,
@@ -55,15 +53,13 @@ class PhpVersionController extends Controller
                 'running' => $isRunning,
                 'full_version' => $fullVer,
                 'current' => ($project->php_version === $fullVer),
-                'container' => $isRunning ? $this->getContainerName($fullVer) : null,
             ];
         }
 
         return response()->json([
             'versions' => $versions,
             'project_version' => $project->php_version,
-            'active_container' => $project->php_version ? $this->getContainerName($project->php_version) : null,
-            'running_count' => collect($versions)->where('running', true)->count(),
+            'running_count' => count($versions),
         ]);
     }
 
@@ -82,27 +78,23 @@ class PhpVersionController extends Controller
         }
 
         $fullVersion = $request->version;
+        $panelUrl = rtrim(env('PANEL_URL'), '/');
+        $apiKey = env('PANEL_API_TOKEN');
 
-        // Cek apakah sudah terinstall
-        if ($this->isPhpVersionInstalled($fullVersion)) {
-            // Langsung switch saja
+        if (! $apiKey || ! $panelUrl) {
+            return response()->json([
+                'error' => 'PANEL_API_TOKEN atau PANEL_URL tidak dikonfigurasi. Silakan install PHP manual melalui 1Panel.',
+            ], 422);
+        }
+
+        // Jika versi sudah ada (dari daftar runtime), langsung switch
+        $existingVersions = $this->getPhpVersionsFrom1PanelApi();
+        if (in_array($fullVersion, $existingVersions)) {
             return $this->switchVersionInternal($project, $fullVersion);
         }
 
-        // Coba install via 1Panel API (prioritas)
-        $panelUrl = rtrim(env('PANEL_URL', 'http://localhost:4431'), '/');
-        $panelApiKey = env('PANEL_API_TOKEN');
-
-        if ($panelApiKey) {
-            $result = $this->installVia1PanelApi($project, $fullVersion, $panelUrl, $panelApiKey);
-            if ($result->getData()->success ?? false) {
-                return $result;
-            }
-            // Jika gagal, lanjut ke fallback Docker
-        }
-
-        // Fallback ke pull Docker image langsung
-        return $this->installViaDocker($project, $fullVersion);
+        // Install via 1Panel API
+        return $this->installVia1PanelApi($project, $fullVersion, $panelUrl, $apiKey);
     }
 
     /**
@@ -169,7 +161,9 @@ class PhpVersionController extends Controller
         try {
             $response = $this->call1PanelApi('get', '/api/v1/runtimes?type=php');
             if ($response->successful()) {
-                $runtimes = $response->json('data') ?? [];
+                $data = $response->json();
+                // 1Panel API biasanya mengembalikan { "code":200, "data": [...] }
+                $runtimes = $data['data'] ?? [];
                 $versions = [];
                 foreach ($runtimes as $rt) {
                     if (isset($rt['version']) && preg_match('/^\d+\.\d+\.\d+$/', $rt['version'])) {
@@ -271,6 +265,7 @@ class PhpVersionController extends Controller
                 'source' => 'appstore',
             ]);
 
+            // Cek sukses: status code 200 atau 201
             if ($response->successful()) {
                 $deployment = $project->deployments()->create([
                     'status' => 'building',
@@ -284,14 +279,17 @@ class PhpVersionController extends Controller
                     'log_url' => route('user_hosting.build_logs', $project->hashid),
                 ]);
             } else {
+                // API error
                 Log::error('1Panel API error: '.$response->status().' - '.$response->body());
 
-                return response()->json(['success' => false, 'error' => 'API 1Panel gagal'], 500);
+                return response()->json([
+                    'error' => 'Gagal membuat runtime di 1Panel. Periksa koneksi dan API Key.',
+                ], 500);
             }
         } catch (\Exception $e) {
             Log::error('1Panel API exception: '.$e->getMessage());
 
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Tidak dapat terhubung ke 1Panel API: '.$e->getMessage()], 500);
         }
     }
 
