@@ -263,7 +263,7 @@ class DashboardController extends Controller
         }
 
         // ── PROTEKSI FILE SISTEM ──────────────────────────────────────
-        $protectedFiles = ['.suspended', '.htaccess', '.user.ini'];
+        $protectedFiles = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
         $basename = basename($targetPath);
         if (in_array($basename, $protectedFiles)) {
             return response()->json(['error' => 'File sistem ini tidak dapat dihapus.'], 403);

@@ -749,7 +749,7 @@
         const fileDownloadUrl = fixUrl('{{ route('user_hosting.files.download', $project->hashid) }}');
 
         // File yang tidak boleh disentuh klien sama sekali
-        const PROTECTED_FILES = ['.suspended', '.htaccess', '.user.ini'];
+        const PROTECTED_FILES = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
 
         const isProtected = name => PROTECTED_FILES.includes(name);
 
