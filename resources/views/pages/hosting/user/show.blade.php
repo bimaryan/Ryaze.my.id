@@ -1147,41 +1147,47 @@
     </script>
 
     <script>
-    const phpVersionsUrl = '{{ route('user_hosting.php.versions', $project->hashid) }}';
-    const phpInstallUrl  = '{{ route('user_hosting.php.install', $project->hashid) }}';
-    const phpLogUrl      = fixUrl('{{ route('user_hosting.build_logs', $project->hashid) }}');
+        const phpVersionsUrl = '{{ route('user_hosting.php.versions', $project->hashid) }}';
+        const phpInstallUrl = '{{ route('user_hosting.php.install', $project->hashid) }}';
+        const phpLogUrl = fixUrl('{{ route('user_hosting.build_logs', $project->hashid) }}');
 
-    let phpPollInterval  = null;
+        let phpPollInterval = null;
 
-    async function refreshPhpVersions() {
-        const icon = document.getElementById('php-refresh-icon');
-        const grid = document.getElementById('php-versions-grid');
-        const status = document.getElementById('php-detect-status');
+        async function refreshPhpVersions() {
+            const icon = document.getElementById('php-refresh-icon');
+            const grid = document.getElementById('php-versions-grid');
+            const status = document.getElementById('php-detect-status');
 
-        icon.classList.add('fa-spin');
-        status.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mendeteksi...';
+            icon.classList.add('fa-spin');
+            status.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mendeteksi...';
 
-        try {
-            const res  = await fetch(phpVersionsUrl, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
-            const data = await res.json();
+            try {
+                const res = await fetch(phpVersionsUrl, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                const data = await res.json();
 
-            // Update current display
-            document.getElementById('php-current-display').textContent = data.project_version || '-';
-            status.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500"></i> <span class="text-emerald-600">Terdeteksi</span>`;
+                // Update current display
+                document.getElementById('php-current-display').textContent = data.project_version || '-';
+                status.innerHTML =
+                    `<i class="fa-solid fa-circle-check text-emerald-500"></i> <span class="text-emerald-600">Terdeteksi</span>`;
 
-            // Render grid
-            grid.innerHTML = '';
-            data.versions.forEach(v => {
-                const isCurrent  = v.current;
-                const isInstalled = v.installed;
+                // Render grid
+                grid.innerHTML = '';
+                data.versions.forEach(v => {
+                    const isCurrent = v.current;
+                    const isInstalled = v.installed;
 
-                const card = document.createElement('div');
-                card.className = `relative border-2 rounded-xl p-4 transition-all cursor-pointer
+                    const card = document.createElement('div');
+                    card.className = `relative border-2 rounded-xl p-4 transition-all cursor-pointer
                     ${isCurrent   ? 'border-indigo-500 bg-indigo-50'  :
                       isInstalled ? 'border-emerald-200 bg-emerald-50/40 hover:border-emerald-400' :
                                     'border-slate-200 bg-white hover:border-indigo-300'}`;
 
-                card.innerHTML = `
+                    card.innerHTML = `
                     ${isCurrent ? '<div class="absolute -top-2 left-3 bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">AKTIF</div>' : ''}
                     <div class="flex items-start justify-between mb-2">
                         <span class="font-bold text-slate-800 text-base">PHP ${v.version}</span>
@@ -1196,132 +1202,166 @@
                         ? `<span class="text-[11px] text-indigo-600 font-semibold">✓ Sedang digunakan</span>`
                         : isInstalled
                             ? `<button onclick="switchPhpVersion('${v.version}')"
-                                class="w-full text-xs font-semibold py-1.5 rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all">
-                                <i class="fa-solid fa-rotate mr-1"></i> Gunakan
-                               </button>`
+                                    class="w-full text-xs font-semibold py-1.5 rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all">
+                                    <i class="fa-solid fa-rotate mr-1"></i> Gunakan
+                                   </button>`
                             : `<button onclick="installPhpVersion('${v.version}')"
-                                class="w-full text-xs font-semibold py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all">
-                                <i class="fa-solid fa-download mr-1"></i> Install
-                               </button>`
+                                    class="w-full text-xs font-semibold py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all">
+                                    <i class="fa-solid fa-download mr-1"></i> Install
+                                   </button>`
                     }`;
 
-                grid.appendChild(card);
-            });
+                    grid.appendChild(card);
+                });
 
-        } catch (err) {
-            status.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-400"></i> <span class="text-rose-500">Gagal deteksi</span>';
-            grid.innerHTML = `<div class="col-span-4 text-center text-slate-400 text-sm py-4">
+            } catch (err) {
+                status.innerHTML =
+                    '<i class="fa-solid fa-circle-xmark text-rose-400"></i> <span class="text-rose-500">Gagal deteksi</span>';
+                grid.innerHTML = `<div class="col-span-4 text-center text-slate-400 text-sm py-4">
                 <i class="fa-solid fa-triangle-exclamation mr-1"></i> Gagal memuat versi PHP.
             </div>`;
-        } finally {
-            icon.classList.remove('fa-spin');
-        }
-    }
-
-    async function installPhpVersion(version) {
-        const result = await Swal.fire({
-            icon: 'info',
-            title: `Install PHP ${version}?`,
-            html: `PHP <strong>${version}</strong> akan didownload dan diinstall otomatis via <code>apt-get</code>.<br><br>
-                   Proses memakan waktu <strong>1-3 menit</strong>. Project akan otomatis menggunakan versi ini setelah selesai.`,
-            showCancelButton: true,
-            confirmButtonColor: '#4F46E5',
-            cancelButtonColor: '#6B7280',
-            confirmButtonText: '<i class="fa-solid fa-download mr-1"></i> Install Sekarang',
-            cancelButtonText: 'Batal',
-            customClass: { popup: 'rounded-xl text-sm' }
-        });
-
-        if (! result.isConfirmed) return;
-
-        await doPhpAction(version, 'install');
-    }
-
-    async function switchPhpVersion(version) {
-        const result = await Swal.fire({
-            icon: 'question',
-            title: `Gunakan PHP ${version}?`,
-            text: `Project akan dialihkan ke PHP ${version}. Lakukan Redeploy setelah ini agar perubahan berlaku.`,
-            showCancelButton: true,
-            confirmButtonColor: '#4F46E5',
-            cancelButtonColor: '#6B7280',
-            confirmButtonText: 'Ya, Gunakan',
-            cancelButtonText: 'Batal',
-            customClass: { popup: 'rounded-xl text-sm' }
-        });
-
-        if (! result.isConfirmed) return;
-
-        await doPhpAction(version, 'switch');
-    }
-
-    async function doPhpAction(version, mode) {
-        const progressBox = document.getElementById('php-install-progress');
-        const logBox      = document.getElementById('php-install-log');
-        const title       = document.getElementById('php-install-title');
-        const subtitle    = document.getElementById('php-install-subtitle');
-
-        progressBox.classList.remove('hidden');
-        logBox.innerHTML  = '<span class="opacity-50">Memulai proses...</span>';
-        title.textContent = mode === 'install' ? `Menginstall PHP ${version}...` : `Mengalihkan ke PHP ${version}...`;
-        subtitle.textContent = mode === 'install' ? 'Proses ini memakan waktu 1-3 menit.' : 'Sebentar saja...';
-
-        // Scroll ke progress box
-        progressBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        try {
-            const res  = await fetch(phpInstallUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
-                body: JSON.stringify({ version }),
-            });
-            const data = await res.json();
-
-            if (data.error) {
-                Toast.fire({ icon: 'error', title: data.error });
-                progressBox.classList.add('hidden');
-                return;
+            } finally {
+                icon.classList.remove('fa-spin');
             }
-
-            // Poll build log sampai selesai
-            phpPollInterval = setInterval(async () => {
-                try {
-                    const logRes  = await fetch(data.log_url, { headers: { 'Accept': 'application/json' } });
-                    const logData = await logRes.json();
-
-                    if (logData.build_logs) {
-                        logBox.textContent = logData.build_logs;
-                        logBox.scrollTop   = logBox.scrollHeight;
-                    }
-
-                    if (logData.deployment_status === 'ready' || logData.deployment_status === 'failed') {
-                        clearInterval(phpPollInterval);
-
-                        if (logData.deployment_status === 'ready') {
-                            title.innerHTML     = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> PHP ${version} berhasil!`;
-                            subtitle.textContent = 'Lakukan Redeploy untuk menerapkan perubahan.';
-                            Toast.fire({ icon: 'success', title: `PHP ${version} siap digunakan!` });
-                            refreshPhpVersions();
-                        } else {
-                            title.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i> Instalasi gagal`;
-                            subtitle.textContent = 'Periksa log di atas untuk detail error.';
-                            Toast.fire({ icon: 'error', title: `Instalasi PHP ${version} gagal.` });
-                        }
-                    }
-                } catch {}
-            }, 2000);
-
-        } catch (err) {
-            Toast.fire({ icon: 'error', title: 'Request gagal: ' + err.message });
-            progressBox.classList.add('hidden');
         }
-    }
 
-    // Auto-load saat tab settings dibuka
-    document.getElementById('tab-settings').addEventListener('click', () => {
-        refreshPhpVersions();
-    });
-</script>
+        async function installPhpVersion(version) {
+            const result = await Swal.fire({
+                icon: 'info',
+                title: `Install PHP ${version}?`,
+                html: `PHP <strong>${version}</strong> akan didownload dan diinstall otomatis via <code>apt-get</code>.<br><br>
+                   Proses memakan waktu <strong>1-3 menit</strong>. Project akan otomatis menggunakan versi ini setelah selesai.`,
+                showCancelButton: true,
+                confirmButtonColor: '#4F46E5',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: '<i class="fa-solid fa-download mr-1"></i> Install Sekarang',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-xl text-sm'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+
+            await doPhpAction(version, 'install');
+        }
+
+        async function switchPhpVersion(version) {
+            const result = await Swal.fire({
+                icon: 'question',
+                title: `Gunakan PHP ${version}?`,
+                text: `Project akan dialihkan ke PHP ${version}. Lakukan Redeploy setelah ini agar perubahan berlaku.`,
+                showCancelButton: true,
+                confirmButtonColor: '#4F46E5',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Ya, Gunakan',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-xl text-sm'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+
+            await doPhpAction(version, 'switch');
+        }
+
+        async function doPhpAction(version, mode) {
+            const progressBox = document.getElementById('php-install-progress');
+            const logBox = document.getElementById('php-install-log');
+            const title = document.getElementById('php-install-title');
+            const subtitle = document.getElementById('php-install-subtitle');
+
+            progressBox.classList.remove('hidden');
+            logBox.innerHTML = '<span class="opacity-50">Memulai proses...</span>';
+            title.textContent = mode === 'install' ? `Menginstall PHP ${version}...` :
+                `Mengalihkan ke PHP ${version}...`;
+            subtitle.textContent = mode === 'install' ? 'Proses ini memakan waktu 1-3 menit.' : 'Sebentar saja...';
+
+            // Scroll ke progress box
+            progressBox.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+
+            try {
+                const res = await fetch(phpInstallUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        version
+                    }),
+                });
+                const data = await res.json();
+
+                if (data.error) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: data.error
+                    });
+                    progressBox.classList.add('hidden');
+                    return;
+                }
+
+                // Poll build log sampai selesai
+                phpPollInterval = setInterval(async () => {
+                    try {
+                        const logRes = await fetch(data.log_url, {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const logData = await logRes.json();
+
+                        if (logData.build_logs) {
+                            logBox.textContent = logData.build_logs;
+                            logBox.scrollTop = logBox.scrollHeight;
+                        }
+
+                        if (logData.deployment_status === 'ready' || logData.deployment_status ===
+                            'failed') {
+                            clearInterval(phpPollInterval);
+
+                            if (logData.deployment_status === 'ready') {
+                                title.innerHTML =
+                                    `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> PHP ${version} berhasil!`;
+                                subtitle.textContent = 'Lakukan Redeploy untuk menerapkan perubahan.';
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: `PHP ${version} siap digunakan!`
+                                });
+                                refreshPhpVersions();
+                            } else {
+                                title.innerHTML =
+                                    `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i> Instalasi gagal`;
+                                subtitle.textContent = 'Periksa log di atas untuk detail error.';
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: `Instalasi PHP ${version} gagal.`
+                                });
+                            }
+                        }
+                    } catch {}
+                }, 2000);
+
+            } catch (err) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Request gagal: ' + err.message
+                });
+                progressBox.classList.add('hidden');
+            }
+        }
+
+        // Auto-load saat tab settings dibuka
+        document.getElementById('tab-settings').addEventListener('click', () => {
+            refreshPhpVersions();
+        });
+    </script>
 
     <style>
         .scrollbar-hide::-webkit-scrollbar {
