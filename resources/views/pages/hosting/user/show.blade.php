@@ -393,49 +393,55 @@
                     <h3 class="font-bold text-slate-800">Konfigurasi Aplikasi</h3>
                     <p class="text-xs text-slate-500">Atur parameter dasar aplikasi dan environment Anda.</p>
                 </div>
-                <div class="p-6 space-y-6">
-                    {{-- Versi PHP --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Versi PHP</label>
-                        <select class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2.5 outline-none transition-colors">
-                            <option value="8.1">PHP 8.1</option>
-                            <option value="8.2">PHP 8.2</option>
-                            <option value="8.3" selected>PHP 8.3 (Recommended)</option>
-                            <option value="8.4">PHP 8.4</option>
-                        </select>
-                        <p class="text-xs text-slate-500 mt-1.5">Pilih versi PHP yang sesuai dengan requirement <code class="bg-slate-100 px-1 py-0.5 rounded">composer.json</code> Anda.</p>
-                    </div>
 
-                    <hr class="border-slate-100">
+                <form action="{{ route('user_hosting.settings.update', $project->hashid) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
 
-                    {{-- Toggles --}}
-                    <div class="flex items-center justify-between">
+                    <div class="p-6 space-y-6">
+                        {{-- Versi PHP --}}
                         <div>
-                            <h4 class="text-sm font-semibold text-slate-700">Maintenance Mode</h4>
-                            <p class="text-xs text-slate-500 mt-0.5">Tampilkan halaman "Under Maintenance" ke pengunjung.</p>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Versi PHP</label>
+                            <select name="php_version" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2.5 outline-none transition-colors">
+                                <option value="8.1" {{ ($project->php_version ?? '') == '8.1' ? 'selected' : '' }}>PHP 8.1</option>
+                                <option value="8.2" {{ ($project->php_version ?? '') == '8.2' ? 'selected' : '' }}>PHP 8.2</option>
+                                <option value="8.3" {{ ($project->php_version ?? '8.3') == '8.3' ? 'selected' : '' }}>PHP 8.3 (Recommended)</option>
+                                <option value="8.4" {{ ($project->php_version ?? '') == '8.4' ? 'selected' : '' }}>PHP 8.4</option>
+                            </select>
+                            <p class="text-xs text-slate-500 mt-1.5">Pilih versi PHP yang sesuai dengan requirement <code class="bg-slate-100 px-1 py-0.5 rounded">composer.json</code> Anda.</p>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" value="" class="sr-only peer">
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
-                        </label>
-                    </div>
 
-                    <hr class="border-slate-100">
+                        <hr class="border-slate-100">
 
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h4 class="text-sm font-semibold text-slate-700">Force HTTPS</h4>
-                            <p class="text-xs text-slate-500 mt-0.5">Otomatis redirect semua traffic HTTP ke HTTPS.</p>
+                        {{-- Toggles --}}
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-700">Maintenance Mode</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Tampilkan halaman "Under Maintenance" ke pengunjung.</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="maintenance_mode" value="1" class="sr-only peer" {{ ($project->maintenance_mode ?? false) ? 'checked' : '' }}>
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                            </label>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" value="" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                        </label>
+
+                        <hr class="border-slate-100">
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-700">Force HTTPS</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Otomatis redirect semua traffic HTTP ke HTTPS.</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="force_https" value="1" class="sr-only peer" {{ ($project->force_https ?? true) ? 'checked' : '' }}>
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
-                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm">Simpan Perubahan</button>
-                </div>
+                    <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm">Simpan Perubahan</button>
+                    </div>
+                </form>
             </div>
 
             {{-- Danger Zone Card --}}

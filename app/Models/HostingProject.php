@@ -9,7 +9,13 @@ class HostingProject extends Model
 {
     protected $fillable = [
         'user_id', 'project_name', 'framework', 'repo_source',
-        'branch', 'ryaze_domain', 'custom_domain', 'status'
+        'branch', 'ryaze_domain', 'custom_domain', 'status',
+        'php_version', 'maintenance_mode', 'force_https',
+    ];
+
+    protected $casts = [
+        'maintenance_mode' => 'boolean',
+        'force_https' => 'boolean',
     ];
 
     // Alias Hash ID untuk URL yang elegan

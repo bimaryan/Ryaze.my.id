@@ -21,6 +21,12 @@ return new class extends Migration
             $table->string('ryaze_domain')->unique()->nullable();
             $table->string('custom_domain')->unique()->nullable();
             $table->enum('status', ['active', 'building', 'suspended', 'error'])->default('building');
+
+            // ─── KOLOM BARU UNTUK SETTINGS ───
+            $table->string('php_version')->default('8.3');
+            $table->boolean('maintenance_mode')->default(false);
+            $table->boolean('force_https')->default(true);
+
             $table->timestamps();
         });
     }
