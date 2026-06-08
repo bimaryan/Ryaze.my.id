@@ -21,46 +21,51 @@ class PhpVersionController extends Controller
      */
     public function availableVersions(Request $request, string $hashid): JsonResponse
     {
-        $project = $this->getProject($hashid);
-        if (! $project) {
-            return response()->json(['error' => 'Project not found'], 404);
+        try {
+            $project = $this->getProject($hashid);
+            if (! $project) {
+                return response()->json(['error' => 'Project not found'], 404);
+            }
+
+            // Hanya ambil dari 1Panel API
+            $apiVersions = $this->getPhpVersionsFrom1PanelApi();
+
+            // Jika API gagal, gunakan versi manual sesuai gambar
+            if (empty($apiVersions)) {
+                // Versi yang ada di screenshot 1Panel
+                $apiVersions = ['8.4.6', '8.4.3', '8.3.20', '8.3.16', '8.3.8', '8.2.28', '8.2.27', '8.2.20'];
+            }
+
+            // Urutkan descending (8.4.6 dulu)
+            usort($apiVersions, function ($a, $b) {
+                return version_compare($b, $a);
+            });
+
+            $versions = [];
+            foreach ($apiVersions as $fullVer) {
+                $minor = implode('.', array_slice(explode('.', $fullVer), 0, 2));
+                $isCurrent = ($project->php_version === $fullVer);
+
+                $versions[] = [
+                    'version' => $fullVer,
+                    'minor' => $minor,
+                    'installed' => true, // kita anggap semua tersedia di 1Panel
+                    'running' => true,
+                    'full_version' => $fullVer,
+                    'current' => $isCurrent,
+                ];
+            }
+
+            return response()->json([
+                'versions' => $versions,
+                'project_version' => $project->php_version ?? '8.4.6',
+                'running_count' => count($versions),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('availableVersions error: '.$e->getMessage());
+
+            return response()->json(['error' => 'Internal server error: '.$e->getMessage()], 500);
         }
-
-        // Ambil daftar runtime PHP dari 1Panel API
-        $apiVersions = $this->getPhpVersionsFrom1PanelApi();
-
-        // Jika API gagal, gunakan fallback manual (versi yang umum)
-        if (empty($apiVersions)) {
-            $apiVersions = ['8.4.6', '8.4.3', '8.3.20', '8.3.16', '8.2.28', '8.2.27', '8.2.20'];
-        }
-
-        // Urutkan dari tertinggi ke terendah
-        usort($apiVersions, version_compare);
-        $apiVersions = array_reverse($apiVersions);
-
-        $versions = [];
-        foreach ($apiVersions as $fullVer) {
-            $minor = implode('.', array_slice(explode('.', $fullVer), 0, 2));
-            // Cek apakah versi ini sedang berjalan di 1Panel? Kita tidak perlu deteksi container karena kita hanya sync dengan API.
-            // Anggap semua versi dari API adalah "installed" (karena sudah ada runtime di 1Panel)
-            $isInstalled = true;
-            $isRunning = true; // atau cek status dari API jika ada field 'status'
-
-            $versions[] = [
-                'version' => $fullVer,
-                'minor' => $minor,
-                'installed' => $isInstalled,
-                'running' => $isRunning,
-                'full_version' => $fullVer,
-                'current' => ($project->php_version === $fullVer),
-            ];
-        }
-
-        return response()->json([
-            'versions' => $versions,
-            'project_version' => $project->php_version,
-            'running_count' => count($versions),
-        ]);
     }
 
     /**
