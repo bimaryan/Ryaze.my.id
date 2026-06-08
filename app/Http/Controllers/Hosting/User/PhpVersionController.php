@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hosting\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\HostingProject;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -237,6 +238,10 @@ class PhpVersionController extends Controller
     /**
      * Low-level API caller untuk 1Panel dengan autentikasi yang benar
      */
+    /**
+     * Low-level API caller untuk 1Panel dengan autentikasi yang benar
+     * Serta tambahan opsi verify false untuk self-signed certificate
+     */
     private function call1PanelApi(string $method, string $endpoint, array $data = []): Response
     {
         $apiKey = env('PANEL_API_TOKEN');
@@ -245,11 +250,68 @@ class PhpVersionController extends Controller
         $url = rtrim(env('PANEL_URL'), '/').$endpoint;
 
         Log::info("Calling 1Panel API: {$method} {$url}");
+        Log::info("Timestamp: {$timestamp}, Token: {$token}");
 
+        // Tambahkan opsi verify false untuk self-signed certificate (hanya untuk development)
         return Http::withHeaders([
             '1Panel-Token' => $token,
             '1Panel-Timestamp' => (string) $timestamp,
             'Content-Type' => 'application/json',
+        ])->withOptions([
+            'verify' => false,  // HAPUS di production jika sudah pakai SSL valid
+            'timeout' => 30,
         ])->$method($url, $data);
+    }
+
+    /**
+     * Ambil daftar versi PHP dari 1Panel API (GET /api/v1/runtimes?type=php)
+     * Mengembalikan array versi, atau throws exception dengan pesan detail
+     */
+    private function fetchPhpVersionsFrom1Panel(): array
+    {
+        $apiKey = env('PANEL_API_TOKEN');
+        $panelUrl = rtrim(env('PANEL_URL'), '/');
+
+        if (! $apiKey || ! $panelUrl) {
+            Log::error('PANEL_API_TOKEN atau PANEL_URL tidak diset di .env');
+            throw new \Exception('Konfigurasi API 1Panel tidak lengkap. Periksa PANEL_API_TOKEN dan PANEL_URL di .env');
+        }
+
+        try {
+            $response = $this->call1PanelApi('get', '/api/v1/runtimes?type=php');
+
+            if (! $response->successful()) {
+                $status = $response->status();
+                $body = $response->body();
+                Log::error("1Panel API gagal: HTTP {$status} - {$body}");
+                throw new \Exception("API 1Panel merespon dengan status {$status}: {$body}");
+            }
+
+            $data = $response->json();
+            if (! isset($data['data']) || ! is_array($data['data'])) {
+                Log::error("Response API tidak memiliki field 'data': ".json_encode($data));
+                throw new \Exception('Format response API 1Panel tidak valid (missing data field)');
+            }
+
+            $runtimes = $data['data'];
+            $versions = [];
+            foreach ($runtimes as $rt) {
+                if (isset($rt['version']) && preg_match('/^\d+\.\d+\.\d+$/', $rt['version'])) {
+                    $versions[] = $rt['version'];
+                }
+            }
+
+            if (empty($versions)) {
+                Log::warning('Tidak ada versi PHP ditemukan di response API. Response: '.json_encode($runtimes));
+            }
+
+            return array_unique($versions);
+        } catch (ConnectionException $e) {
+            Log::error('Koneksi ke 1Panel gagal: '.$e->getMessage());
+            throw new \Exception("Tidak dapat terhubung ke 1Panel di {$panelUrl}. Periksa URL dan pastikan panel bisa diakses dari server ini.");
+        } catch (\Exception $e) {
+            Log::error('Exception fetchPhpVersionsFrom1Panel: '.$e->getMessage());
+            throw $e;
+        }
     }
 }
