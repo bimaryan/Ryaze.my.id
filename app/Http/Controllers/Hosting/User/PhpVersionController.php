@@ -257,6 +257,7 @@ class PhpVersionController extends Controller
             '1Panel-Timestamp' => (string) $timestamp,
             'Content-Type' => 'application/json',
         ])->withOptions([
+            'verify' => false,
             'timeout' => 30,
         ])->$method($url, $data);
     }
