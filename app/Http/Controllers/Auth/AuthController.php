@@ -7,22 +7,32 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
+    private const MAX_ATTEMPTS = 5;
+
+    private const LOCKOUT_MINUTES = 5;
+
     // Menampilkan halaman login + Generate Captcha
     public function loginindex(Request $request)
     {
-        // Bikin angka random 1 sampai 10
-        $num1 = rand(1, 10);
-        $num2 = rand(1, 10);
+        $num1 = rand(10, 99); // Perbesar range supaya susah di-brute
+        $num2 = rand(10, 99);
+        $operator = ['+', '-', '*'][rand(0, 2)]; // Variasikan operator
 
-        // Simpan jawaban di session agar tidak bisa dimanipulasi dari HTML
-        $request->session()->put('captcha_answer', $num1 + $num2);
+        $answer = match ($operator) {
+            '+' => $num1 + $num2,
+            '-' => $num1 - $num2,
+            '*' => $num1 * $num2,
+        };
 
-        // Buat string pertanyaan untuk dikirim ke View
-        $captcha_question = "$num1 + $num2 = ?";
+        $request->session()->put('captcha_answer', $answer);
+        $request->session()->put('captcha_token', Str::random(32)); // token anti-replay
+
+        $captcha_question = "$num1 $operator $num2 = ?";
 
         return view('pages.auth.login', compact('captcha_question'));
     }
@@ -36,38 +46,67 @@ class AuthController extends Controller
     // Memproses data login
     public function loginProcess(Request $request)
     {
-        // 1. Validasi Input form dasar
+        // 1. Validasi dasar
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => 'required|email|max:255',
+            'password' => 'required|string',
             'captcha' => 'required|numeric',
         ], [
             'captcha.required' => 'Captcha wajib diisi.',
             'captcha.numeric' => 'Captcha harus berupa angka.',
         ]);
 
-        // 2. Validasi Jawaban Captcha Sendiri
-        if ($request->captcha != $request->session()->get('captcha_answer')) {
+        // 2. Rate limiting berbasis IP + email (lawan fuzzing & brute force)
+        $throttleKey = Str::lower($request->input('email')).'|'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_ATTEMPTS)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
             return back()->withErrors([
-                'captcha' => 'Jawaban Captcha salah. Silakan hitung ulang!',
+                'email' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
             ])->onlyInput('email');
         }
 
-        // Hapus session captcha setelah berhasil dijawab agar lebih aman
-        $request->session()->forget('captcha_answer');
+        // 3. Validasi captcha
+        if ((int) $request->captcha !== (int) $request->session()->get('captcha_answer')) {
+            RateLimiter::hit($throttleKey, self::LOCKOUT_MINUTES * 60);
+            $request->session()->forget(['captcha_answer', 'captcha_token']);
 
-        // 3. Proses Autentikasi
+            return back()->withErrors([
+                'captcha' => 'Jawaban Captcha salah.',
+            ])->onlyInput('email');
+        }
+
+        $request->session()->forget(['captcha_answer', 'captcha_token']);
+
+        // 4. Cek apakah user di-lock di level DB (opsional: double protection)
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && $user->locked_until && now()->lessThan($user->locked_until)) {
+            $remaining = now()->diffInMinutes($user->locked_until);
+
+            return back()->withErrors([
+                'email' => "Akun terkunci sementara. Coba lagi dalam {$remaining} menit.",
+            ])->onlyInput('email');
+        }
+
+        // 5. Autentikasi
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            // Mencegah Session Fixation Attack
             $request->session()->regenerate();
 
-            // 4. Redirect spesifik berdasarkan Role
-            $role = Auth::user()->role;
+            // Reset counter & catat login sukses
+            RateLimiter::clear($throttleKey);
+            Auth::user()->update([
+                'login_attempts' => 0,
+                'locked_until' => null,
+                'last_login_ip' => $request->ip(),
+                'last_login_at' => now(),
+            ]);
 
-            return match ($role) {
+            return match (Auth::user()->role) {
                 'superadmin' => redirect()->intended('/superadmin/dashboard'),
                 'admin_joki' => redirect()->intended('/admin/joki/dashboard'),
                 'admin_hosting' => redirect()->intended('/admin/hosting/dashboard'),
@@ -77,7 +116,19 @@ class AuthController extends Controller
             };
         }
 
-        // Jika email/password salah
+        // 6. Login gagal — increment attempt di DB juga
+        RateLimiter::hit($throttleKey, self::LOCKOUT_MINUTES * 60);
+
+        if ($user) {
+            $attempts = $user->login_attempts + 1;
+            $user->update([
+                'login_attempts' => $attempts,
+                'locked_until' => $attempts >= self::MAX_ATTEMPTS
+                    ? now()->addMinutes(self::LOCKOUT_MINUTES)
+                    : null,
+            ]);
+        }
+
         return back()->withErrors([
             'email' => 'Email atau password yang Anda masukkan salah.',
         ])->onlyInput('email');

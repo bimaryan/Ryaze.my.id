@@ -17,10 +17,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
-Route::get('/register', [AuthController::class, 'registerindex'])->name('register');
-Route::post('/login', [AuthController::class, 'loginProcess'])->name('login.process');
-Route::post('/register', [AuthController::class, 'registerProcess'])->name('register.process');
+Route::middleware(['throttle:10,1'])->group(function () {
+    Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
+    Route::get('/register', [AuthController::class, 'registerindex'])->name('register');
+    Route::post('/login', [AuthController::class, 'loginProcess'])->name('login.process');
+    Route::post('/register', [AuthController::class, 'registerProcess'])->name('register.process');
+});
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
