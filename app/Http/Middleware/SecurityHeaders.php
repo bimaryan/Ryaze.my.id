@@ -23,7 +23,14 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=()');
         // Sesuaikan CSP dengan kebutuhan asset lu
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'");
+        $response->headers->set('Content-Security-Policy',
+            "default-src 'self'; ".
+            "script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com static.cloudflareinsights.com; ".
+            "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; ".
+            "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data:; ".
+            "img-src 'self' data: blob:; ".
+            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com;"
+        );
 
         return $response;
     }
