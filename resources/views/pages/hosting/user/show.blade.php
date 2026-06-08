@@ -384,45 +384,83 @@
             </div>
         </div>
 
-        {{-- TAB: SETTINGS --}}
-        <div id="panel-settings" class="tab-panel hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Info Metadata --}}
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-slate-800 mb-4">Project Metadata</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between border-b pb-2">
-                            <span class="text-slate-500">Project ID</span>
-                            <span class="font-mono text-slate-800">{{ $project->hashid }}</span>
+        {{-- TAB: SETTINGS (KOMPLEKS) --}}
+        <div id="panel-settings" class="tab-panel hidden space-y-6">
+
+            {{-- Konfigurasi Aplikasi Card --}}
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+                    <h3 class="font-bold text-slate-800">Konfigurasi Aplikasi</h3>
+                    <p class="text-xs text-slate-500">Atur parameter dasar aplikasi dan environment Anda.</p>
+                </div>
+                <div class="p-6 space-y-6">
+                    {{-- Versi PHP --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Versi PHP</label>
+                        <select class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2.5 outline-none transition-colors">
+                            <option value="8.1">PHP 8.1</option>
+                            <option value="8.2">PHP 8.2</option>
+                            <option value="8.3" selected>PHP 8.3 (Recommended)</option>
+                            <option value="8.4">PHP 8.4</option>
+                        </select>
+                        <p class="text-xs text-slate-500 mt-1.5">Pilih versi PHP yang sesuai dengan requirement <code class="bg-slate-100 px-1 py-0.5 rounded">composer.json</code> Anda.</p>
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    {{-- Toggles --}}
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-700">Maintenance Mode</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Tampilkan halaman "Under Maintenance" ke pengunjung.</p>
                         </div>
-                        <div class="flex justify-between border-b pb-2">
-                            <span class="text-slate-500">Domain</span>
-                            <span class="font-mono text-slate-800">{{ $project->ryaze_domain }}</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" value="" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                        </label>
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-700">Force HTTPS</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Otomatis redirect semua traffic HTTP ke HTTPS.</p>
                         </div>
-                        <div class="flex justify-between border-b pb-2">
-                            <span class="text-slate-500">Framework</span>
-                            <span class="font-mono text-slate-800 uppercase">{{ $project->framework }}</span>
-                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" value="" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                        </label>
                     </div>
                 </div>
-
-                {{-- Danger Zone --}}
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-rose-200">
-                    <h3 class="font-bold text-rose-600 mb-4 flex items-center gap-2"><i
-                            class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h3>
-                    <p class="text-sm text-slate-600 mb-4">Tindakan di bawah ini tidak dapat dibatalkan. Folder root dan
-                        record DNS akan terhapus secara permanen.</p>
-
-                    <form id="delete-form" action="{{ route('user_hosting.destroy', $project->hashid) }}"
-                        method="POST">
-                        @csrf @method('DELETE')
-                        <button type="button" onclick="confirmDelete()"
-                            class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-lg transition-all">
-                            Hapus
-                        </button>
-                    </form>
+                <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
+                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm">Simpan Perubahan</button>
                 </div>
             </div>
+
+            {{-- Danger Zone Card --}}
+            <div class="bg-white rounded-xl shadow-sm border border-rose-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-rose-100 bg-rose-50/50">
+                    <h3 class="font-bold text-rose-600 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-slate-600 mb-5">Tindakan di bawah ini bersifat destruktif dan tidak dapat dibatalkan. Pastikan Anda sudah mem-backup data penting sebelum melakukan penghapusan.</p>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-rose-100 rounded-lg bg-rose-50/30 gap-4">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">Hapus Proyek</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Menghapus folder root, database, dan memutus DNS Cloudflare secara permanen.</p>
+                        </div>
+                        <form id="delete-form" action="{{ route('user_hosting.destroy', $project->hashid) }}" method="POST" class="shrink-0">
+                            @csrf @method('DELETE')
+                            <button type="button" onclick="confirmDelete()" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-5 rounded-lg transition-all shadow-sm shadow-rose-200 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-trash-can"></i> Hapus Permanen
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -458,12 +496,16 @@
         function confirmDelete() {
             Swal.fire({
                 title: 'Hapus Proyek Permanen?',
-                text: "Semua file server, database, akan dihapus. Ini tidak bisa kembali!",
+                text: "Semua file server, database, dan record DNS akan dihapus. Ini tidak bisa kembali!",
                 icon: 'error',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus Sekarang!'
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus Sekarang!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-xl text-sm'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('delete-form').submit();
@@ -506,8 +548,11 @@
     </script>
 
     <script>
+        // Helper URL untuk memaksa HTTPS jika halaman diakses via HTTPS
+        const fixUrl = u => window.location.protocol === 'https:' ? u.replace(/^http:\/\//i, 'https://') : u;
+
         // ── Build log polling ──────────────────────────────────────────────────
-        const buildLogUrl = '{{ route('user_hosting.build_logs', $project->hashid) }}';
+        const buildLogUrl = fixUrl('{{ route('user_hosting.build_logs', $project->hashid) }}');
         const buildLogText = document.getElementById('build-log-text');
         const buildLogStatus = document.getElementById('build-log-status');
         const buildLogUpdated = document.getElementById('build-log-updated');
@@ -583,7 +628,7 @@
         const termInput = document.getElementById('terminal-input');
         const termPrompt = document.getElementById('terminal-prompt');
         const cwdDisplay = document.getElementById('terminal-cwd-display');
-        const termUrl = '{{ route('user_hosting.terminal', $project->hashid) }}';
+        const termUrl = fixUrl('{{ route('user_hosting.terminal', $project->hashid) }}');
         const csrfToken = '{{ csrf_token() }}';
         const projectRoot = '/www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
         const projectSlug = '{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
@@ -688,8 +733,6 @@
         // ── File Manager ───────────────────────────────────────────────────────
         let currentFolderPath = '';
         let currentEditingFile = '';
-
-        const fixUrl = u => window.location.protocol === 'https:' ? u.replace(/^http:\/\//i, 'https://') : u;
 
         const fileManagerUrl = fixUrl('{{ route('user_hosting.files', $project->hashid) }}');
         const fileReadUrl = fixUrl('{{ route('user_hosting.files.read', $project->hashid) }}');
