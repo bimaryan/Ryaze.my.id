@@ -63,6 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
     Route::delete('user/hosting/projects/{hashid}/delete', [DashboardController::class, 'deleteProject'])->name('user_hosting.destroy');
     Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
+    Route::get('user/hosting/projects/{hashid}/php/versions', [PhpVersionController::class, 'availableVersions'])->name('user_hosting.php.versions');
+Route::post('user/hosting/projects/{hashid}/php/install', [PhpVersionController::class, 'install'])->name('user_hosting.php.install');
 
     // --- AKSI USER JOKI ---
     Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');

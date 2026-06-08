@@ -384,89 +384,176 @@
             </div>
         </div>
 
-        {{-- TAB: SETTINGS (KOMPLEKS) --}}
+        {{-- TAB: SETTINGS --}}
         <div id="panel-settings" class="tab-panel hidden space-y-6">
 
-            {{-- Konfigurasi Aplikasi Card --}}
+            {{-- ── PHP Version Manager ──────────────────────────────────────────── --}}
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-brands fa-php text-indigo-500 text-lg"></i> PHP Version Manager
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Deteksi otomatis dan install versi PHP yang dibutuhkan.
+                        </p>
+                    </div>
+                    <button onclick="refreshPhpVersions()"
+                        class="text-slate-400 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-slate-100"
+                        title="Refresh">
+                        <i class="fa-solid fa-rotate-right text-sm" id="php-refresh-icon"></i>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    {{-- Status aktif --}}
+                    <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 mb-5">
+                        <div class="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
+                            <i class="fa-brands fa-php text-indigo-600"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-xs text-slate-500 font-medium">PHP Aktif Project</p>
+                            <p class="font-bold text-slate-800 text-sm" id="php-current-display">
+                                {{ $project->php_version ?? 'Mendeteksi...' }}
+                            </p>
+                        </div>
+                        <div class="ml-auto shrink-0">
+                            <span id="php-detect-status" class="text-xs text-slate-400 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-notch fa-spin"></i> Mendeteksi...
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Grid versi PHP --}}
+                    <div id="php-versions-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+                        {{-- Skeleton loading --}}
+                        @foreach (['8.1', '8.2', '8.3', '8.4'] as $v)
+                            <div class="animate-pulse border border-slate-100 rounded-xl p-4 bg-slate-50">
+                                <div class="h-4 bg-slate-200 rounded mb-2"></div>
+                                <div class="h-3 bg-slate-100 rounded w-2/3"></div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Install progress (tersembunyi sampai install dimulai) --}}
+                    <div id="php-install-progress" class="hidden">
+                        <div class="border border-indigo-200 bg-indigo-50 rounded-xl p-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <i class="fa-solid fa-circle-notch fa-spin text-indigo-500"></i>
+                                <div>
+                                    <p class="font-semibold text-indigo-800 text-sm" id="php-install-title">Menginstall
+                                        PHP...</p>
+                                    <p class="text-xs text-indigo-600" id="php-install-subtitle">Proses ini memakan waktu
+                                        1-3 menit.</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900 rounded-lg p-3 font-mono text-xs text-emerald-400 h-32 overflow-y-auto"
+                                id="php-install-log">
+                                <span class="opacity-50">Menunggu output...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-400 flex items-start gap-1.5 mt-2">
+                        <i class="fa-solid fa-circle-info mt-0.5 shrink-0"></i>
+                        Versi yang belum terinstall akan didownload otomatis via <code
+                            class="bg-slate-100 px-1 rounded">apt-get</code>.
+                        Setelah install, lakukan <strong>Redeploy</strong> agar perubahan berlaku penuh.
+                    </p>
+                </div>
+            </div>
+
+            {{-- ── Konfigurasi Aplikasi ─────────────────────────────────────────── --}}
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
                     <h3 class="font-bold text-slate-800">Konfigurasi Aplikasi</h3>
-                    <p class="text-xs text-slate-500">Atur parameter dasar aplikasi dan environment Anda.</p>
+                    <p class="text-xs text-slate-500">Atur parameter dasar environment project.</p>
                 </div>
 
                 <form action="{{ route('user_hosting.settings.update', $project->hashid) }}" method="POST">
                     @csrf
                     @method('PATCH')
 
-                    <div class="p-6 space-y-6">
-                        {{-- Versi PHP --}}
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Versi PHP</label>
-                            <select name="php_version" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2.5 outline-none transition-colors">
-                                <option value="8.1" {{ ($project->php_version ?? '') == '8.1' ? 'selected' : '' }}>PHP 8.1</option>
-                                <option value="8.2" {{ ($project->php_version ?? '') == '8.2' ? 'selected' : '' }}>PHP 8.2</option>
-                                <option value="8.3" {{ ($project->php_version ?? '8.3') == '8.3' ? 'selected' : '' }}>PHP 8.3 (Recommended)</option>
-                                <option value="8.4" {{ ($project->php_version ?? '') == '8.4' ? 'selected' : '' }}>PHP 8.4</option>
-                            </select>
-                            <p class="text-xs text-slate-500 mt-1.5">Pilih versi PHP yang sesuai dengan requirement <code class="bg-slate-100 px-1 py-0.5 rounded">composer.json</code> Anda.</p>
-                        </div>
-
-                        <hr class="border-slate-100">
-
-                        {{-- Toggles --}}
-                        <div class="flex items-center justify-between">
+                    <div class="p-6 space-y-5">
+                        {{-- Maintenance Mode --}}
+                        <div
+                            class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50/50">
                             <div>
                                 <h4 class="text-sm font-semibold text-slate-700">Maintenance Mode</h4>
-                                <p class="text-xs text-slate-500 mt-0.5">Tampilkan halaman "Under Maintenance" ke pengunjung.</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Tampilkan halaman "Under Maintenance" ke
+                                    pengunjung.</p>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="maintenance_mode" value="1" class="sr-only peer" {{ ($project->maintenance_mode ?? false) ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                <input type="checkbox" name="maintenance_mode" value="1" class="sr-only peer"
+                                    {{ $project->maintenance_mode ?? false ? 'checked' : '' }}>
+                                <div
+                                    class="w-11 h-6 bg-slate-200 rounded-full peer
+                            peer-checked:bg-amber-500
+                            after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                            after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all
+                            peer-checked:after:translate-x-full">
+                                </div>
                             </label>
                         </div>
 
-                        <hr class="border-slate-100">
-
-                        <div class="flex items-center justify-between">
+                        {{-- Force HTTPS --}}
+                        <div
+                            class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50/50">
                             <div>
                                 <h4 class="text-sm font-semibold text-slate-700">Force HTTPS</h4>
-                                <p class="text-xs text-slate-500 mt-0.5">Otomatis redirect semua traffic HTTP ke HTTPS.</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Redirect semua traffic HTTP ke HTTPS secara
+                                    otomatis.</p>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="force_https" value="1" class="sr-only peer" {{ ($project->force_https ?? true) ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                <input type="checkbox" name="force_https" value="1" class="sr-only peer"
+                                    {{ $project->force_https ?? true ? 'checked' : '' }}>
+                                <div
+                                    class="w-11 h-6 bg-slate-200 rounded-full peer
+                            peer-checked:bg-emerald-500
+                            after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                            after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all
+                            peer-checked:after:translate-x-full">
+                                </div>
                             </label>
                         </div>
                     </div>
+
                     <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm">Simpan Perubahan</button>
+                        <button type="submit"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-5 rounded-lg transition-colors shadow-sm">
+                            Simpan Perubahan
+                        </button>
                     </div>
                 </form>
             </div>
 
-            {{-- Danger Zone Card --}}
+            {{-- ── Danger Zone ──────────────────────────────────────────────────── --}}
             <div class="bg-white rounded-xl shadow-sm border border-rose-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-rose-100 bg-rose-50/50">
-                    <h3 class="font-bold text-rose-600 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h3>
+                    <h3 class="font-bold text-rose-600 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+                    </h3>
                 </div>
                 <div class="p-6">
-                    <p class="text-sm text-slate-600 mb-5">Tindakan di bawah ini bersifat destruktif dan tidak dapat dibatalkan. Pastikan Anda sudah mem-backup data penting sebelum melakukan penghapusan.</p>
-
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-rose-100 rounded-lg bg-rose-50/30 gap-4">
+                    <p class="text-sm text-slate-600 mb-5">Tindakan di bawah bersifat destruktif dan tidak dapat
+                        dibatalkan.</p>
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-rose-100 rounded-xl bg-rose-50/30 gap-4">
                         <div>
                             <h4 class="font-bold text-slate-800 text-sm">Hapus Proyek</h4>
-                            <p class="text-xs text-slate-500 mt-0.5">Menghapus folder root, database, dan memutus DNS Cloudflare secara permanen.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Menghapus folder root, DNS Cloudflare, dan semua
+                                record secara permanen.</p>
                         </div>
-                        <form id="delete-form" action="{{ route('user_hosting.destroy', $project->hashid) }}" method="POST" class="shrink-0">
+                        <form id="delete-form" action="{{ route('user_hosting.destroy', $project->hashid) }}"
+                            method="POST" class="shrink-0">
                             @csrf @method('DELETE')
-                            <button type="button" onclick="confirmDelete()" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-5 rounded-lg transition-all shadow-sm shadow-rose-200 flex items-center justify-center gap-2">
+                            <button type="button" onclick="confirmDelete()"
+                                class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-5 rounded-lg transition-all flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-trash-can"></i> Hapus Permanen
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -1058,6 +1145,183 @@
             if (!document.getElementById('file-manager-body').innerHTML.trim()) loadFileManager();
         });
     </script>
+
+    <script>
+    const phpVersionsUrl = '{{ route('user_hosting.php.versions', $project->hashid) }}';
+    const phpInstallUrl  = '{{ route('user_hosting.php.install', $project->hashid) }}';
+    const phpLogUrl      = fixUrl('{{ route('user_hosting.build_logs', $project->hashid) }}');
+
+    let phpPollInterval  = null;
+
+    async function refreshPhpVersions() {
+        const icon = document.getElementById('php-refresh-icon');
+        const grid = document.getElementById('php-versions-grid');
+        const status = document.getElementById('php-detect-status');
+
+        icon.classList.add('fa-spin');
+        status.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mendeteksi...';
+
+        try {
+            const res  = await fetch(phpVersionsUrl, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken } });
+            const data = await res.json();
+
+            // Update current display
+            document.getElementById('php-current-display').textContent = data.project_version || '-';
+            status.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500"></i> <span class="text-emerald-600">Terdeteksi</span>`;
+
+            // Render grid
+            grid.innerHTML = '';
+            data.versions.forEach(v => {
+                const isCurrent  = v.current;
+                const isInstalled = v.installed;
+
+                const card = document.createElement('div');
+                card.className = `relative border-2 rounded-xl p-4 transition-all cursor-pointer
+                    ${isCurrent   ? 'border-indigo-500 bg-indigo-50'  :
+                      isInstalled ? 'border-emerald-200 bg-emerald-50/40 hover:border-emerald-400' :
+                                    'border-slate-200 bg-white hover:border-indigo-300'}`;
+
+                card.innerHTML = `
+                    ${isCurrent ? '<div class="absolute -top-2 left-3 bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">AKTIF</div>' : ''}
+                    <div class="flex items-start justify-between mb-2">
+                        <span class="font-bold text-slate-800 text-base">PHP ${v.version}</span>
+                        ${isInstalled
+                            ? '<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>'
+                            : '<i class="fa-solid fa-cloud-arrow-down text-slate-300 text-sm"></i>'}
+                    </div>
+                    <p class="text-[11px] font-mono text-slate-400 truncate mb-3">
+                        ${v.full_version ? v.full_version.split(' ').slice(0,2).join(' ') : 'Belum terinstall'}
+                    </p>
+                    ${isCurrent
+                        ? `<span class="text-[11px] text-indigo-600 font-semibold">✓ Sedang digunakan</span>`
+                        : isInstalled
+                            ? `<button onclick="switchPhpVersion('${v.version}')"
+                                class="w-full text-xs font-semibold py-1.5 rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all">
+                                <i class="fa-solid fa-rotate mr-1"></i> Gunakan
+                               </button>`
+                            : `<button onclick="installPhpVersion('${v.version}')"
+                                class="w-full text-xs font-semibold py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all">
+                                <i class="fa-solid fa-download mr-1"></i> Install
+                               </button>`
+                    }`;
+
+                grid.appendChild(card);
+            });
+
+        } catch (err) {
+            status.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-400"></i> <span class="text-rose-500">Gagal deteksi</span>';
+            grid.innerHTML = `<div class="col-span-4 text-center text-slate-400 text-sm py-4">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Gagal memuat versi PHP.
+            </div>`;
+        } finally {
+            icon.classList.remove('fa-spin');
+        }
+    }
+
+    async function installPhpVersion(version) {
+        const result = await Swal.fire({
+            icon: 'info',
+            title: `Install PHP ${version}?`,
+            html: `PHP <strong>${version}</strong> akan didownload dan diinstall otomatis via <code>apt-get</code>.<br><br>
+                   Proses memakan waktu <strong>1-3 menit</strong>. Project akan otomatis menggunakan versi ini setelah selesai.`,
+            showCancelButton: true,
+            confirmButtonColor: '#4F46E5',
+            cancelButtonColor: '#6B7280',
+            confirmButtonText: '<i class="fa-solid fa-download mr-1"></i> Install Sekarang',
+            cancelButtonText: 'Batal',
+            customClass: { popup: 'rounded-xl text-sm' }
+        });
+
+        if (! result.isConfirmed) return;
+
+        await doPhpAction(version, 'install');
+    }
+
+    async function switchPhpVersion(version) {
+        const result = await Swal.fire({
+            icon: 'question',
+            title: `Gunakan PHP ${version}?`,
+            text: `Project akan dialihkan ke PHP ${version}. Lakukan Redeploy setelah ini agar perubahan berlaku.`,
+            showCancelButton: true,
+            confirmButtonColor: '#4F46E5',
+            cancelButtonColor: '#6B7280',
+            confirmButtonText: 'Ya, Gunakan',
+            cancelButtonText: 'Batal',
+            customClass: { popup: 'rounded-xl text-sm' }
+        });
+
+        if (! result.isConfirmed) return;
+
+        await doPhpAction(version, 'switch');
+    }
+
+    async function doPhpAction(version, mode) {
+        const progressBox = document.getElementById('php-install-progress');
+        const logBox      = document.getElementById('php-install-log');
+        const title       = document.getElementById('php-install-title');
+        const subtitle    = document.getElementById('php-install-subtitle');
+
+        progressBox.classList.remove('hidden');
+        logBox.innerHTML  = '<span class="opacity-50">Memulai proses...</span>';
+        title.textContent = mode === 'install' ? `Menginstall PHP ${version}...` : `Mengalihkan ke PHP ${version}...`;
+        subtitle.textContent = mode === 'install' ? 'Proses ini memakan waktu 1-3 menit.' : 'Sebentar saja...';
+
+        // Scroll ke progress box
+        progressBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        try {
+            const res  = await fetch(phpInstallUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                body: JSON.stringify({ version }),
+            });
+            const data = await res.json();
+
+            if (data.error) {
+                Toast.fire({ icon: 'error', title: data.error });
+                progressBox.classList.add('hidden');
+                return;
+            }
+
+            // Poll build log sampai selesai
+            phpPollInterval = setInterval(async () => {
+                try {
+                    const logRes  = await fetch(data.log_url, { headers: { 'Accept': 'application/json' } });
+                    const logData = await logRes.json();
+
+                    if (logData.build_logs) {
+                        logBox.textContent = logData.build_logs;
+                        logBox.scrollTop   = logBox.scrollHeight;
+                    }
+
+                    if (logData.deployment_status === 'ready' || logData.deployment_status === 'failed') {
+                        clearInterval(phpPollInterval);
+
+                        if (logData.deployment_status === 'ready') {
+                            title.innerHTML     = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> PHP ${version} berhasil!`;
+                            subtitle.textContent = 'Lakukan Redeploy untuk menerapkan perubahan.';
+                            Toast.fire({ icon: 'success', title: `PHP ${version} siap digunakan!` });
+                            refreshPhpVersions();
+                        } else {
+                            title.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i> Instalasi gagal`;
+                            subtitle.textContent = 'Periksa log di atas untuk detail error.';
+                            Toast.fire({ icon: 'error', title: `Instalasi PHP ${version} gagal.` });
+                        }
+                    }
+                } catch {}
+            }, 2000);
+
+        } catch (err) {
+            Toast.fire({ icon: 'error', title: 'Request gagal: ' + err.message });
+            progressBox.classList.add('hidden');
+        }
+    }
+
+    // Auto-load saat tab settings dibuka
+    document.getElementById('tab-settings').addEventListener('click', () => {
+        refreshPhpVersions();
+    });
+</script>
 
     <style>
         .scrollbar-hide::-webkit-scrollbar {
