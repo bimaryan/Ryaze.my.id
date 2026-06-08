@@ -1266,96 +1266,80 @@
             await doPhpAction(version, 'switch');
         }
 
-        async function doPhpAction(version, mode) {
-            const progressBox = document.getElementById('php-install-progress');
-            const logBox = document.getElementById('php-install-log');
-            const title = document.getElementById('php-install-title');
-            const subtitle = document.getElementById('php-install-subtitle');
+// Ganti fungsi doPhpAction dengan yang lebih baik
+async function doPhpAction(version, mode) {
+    const progressBox = document.getElementById('php-install-progress');
+    const logBox = document.getElementById('php-install-log');
+    const title = document.getElementById('php-install-title');
+    const subtitle = document.getElementById('php-install-subtitle');
 
-            progressBox.classList.remove('hidden');
-            logBox.innerHTML = '<span class="opacity-50">Memulai proses...</span>';
-            title.textContent = mode === 'install' ? `Menginstall PHP ${version}...` :
-                `Mengalihkan ke PHP ${version}...`;
-            subtitle.textContent = mode === 'install' ? 'Proses ini memakan waktu 1-3 menit.' : 'Sebentar saja...';
+    progressBox.classList.remove('hidden');
+    logBox.innerHTML = '<span class="opacity-50">Memulai proses...</span>';
+    title.textContent = mode === 'install' ? `Menginstall PHP ${version}...` : `Mengalihkan ke PHP ${version}...`;
+    subtitle.textContent = mode === 'install' ? 'Proses ini memakan waktu 1-3 menit.' : 'Sebentar saja...';
 
-            // Scroll ke progress box
-            progressBox.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
+    progressBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            try {
-                const res = await fetch(phpInstallUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        version
-                    }),
-                });
-                const data = await res.json();
+    // Pilih endpoint berdasarkan mode
+    const endpoint = mode === 'install'
+        ? `{{ route('user_hosting.php.install', $project->hashid) }}`
+        : `{{ route('user_hosting.php.switch', $project->hashid) }}`;
 
-                if (data.error) {
-                    Toast.fire({
-                        icon: 'error',
-                        title: data.error
-                    });
-                    progressBox.classList.add('hidden');
-                    return;
-                }
+    try {
+        const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ version })
+        });
+        const data = await res.json();
 
-                // Poll build log sampai selesai
-                phpPollInterval = setInterval(async () => {
-                    try {
-                        const logRes = await fetch(data.log_url, {
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        });
-                        const logData = await logRes.json();
-
-                        if (logData.build_logs) {
-                            logBox.textContent = logData.build_logs;
-                            logBox.scrollTop = logBox.scrollHeight;
-                        }
-
-                        if (logData.deployment_status === 'ready' || logData.deployment_status ===
-                            'failed') {
-                            clearInterval(phpPollInterval);
-
-                            if (logData.deployment_status === 'ready') {
-                                title.innerHTML =
-                                    `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> PHP ${version} berhasil!`;
-                                subtitle.textContent = 'Lakukan Redeploy untuk menerapkan perubahan.';
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: `PHP ${version} siap digunakan!`
-                                });
-                                refreshPhpVersions();
-                            } else {
-                                title.innerHTML =
-                                    `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i> Instalasi gagal`;
-                                subtitle.textContent = 'Periksa log di atas untuk detail error.';
-                                Toast.fire({
-                                    icon: 'error',
-                                    title: `Instalasi PHP ${version} gagal.`
-                                });
-                            }
-                        }
-                    } catch {}
-                }, 2000);
-
-            } catch (err) {
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Request gagal: ' + err.message
-                });
-                progressBox.classList.add('hidden');
-            }
+        if (data.error) {
+            Toast.fire({ icon: 'error', title: data.error });
+            progressBox.classList.add('hidden');
+            return;
         }
+
+        // Polling log dari deployment yang baru dibuat
+        if (data.deployment_id) {
+            const logUrl = `{{ route('user_hosting.build_logs', $project->hashid) }}`;
+            phpPollInterval = setInterval(async () => {
+                try {
+                    const logRes = await fetch(logUrl, { headers: { 'Accept': 'application/json' } });
+                    const logData = await logRes.json();
+                    if (logData.build_logs) {
+                        logBox.textContent = logData.build_logs;
+                        logBox.scrollTop = logBox.scrollHeight;
+                    }
+                    if (logData.deployment_status === 'ready' || logData.deployment_status === 'failed') {
+                        clearInterval(phpPollInterval);
+                        if (logData.deployment_status === 'ready') {
+                            title.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> PHP ${version} berhasil!`;
+                            subtitle.textContent = 'Lakukan Redeploy untuk menerapkan perubahan.';
+                            Toast.fire({ icon: 'success', title: `PHP ${version} siap digunakan!` });
+                            refreshPhpVersions();
+                        } else {
+                            title.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i> Operasi gagal`;
+                            subtitle.textContent = 'Periksa log di atas.';
+                            Toast.fire({ icon: 'error', title: `Gagal ${mode === 'install' ? 'install' : 'switch ke'} PHP ${version}.` });
+                        }
+                    }
+                } catch (err) {}
+            }, 2000);
+        } else {
+            // Jika tidak ada deployment_id (misal switch langsung sukses)
+            Toast.fire({ icon: 'success', title: data.message });
+            refreshPhpVersions();
+            progressBox.classList.add('hidden');
+        }
+    } catch (err) {
+        Toast.fire({ icon: 'error', title: 'Request gagal: ' + err.message });
+        progressBox.classList.add('hidden');
+    }
+}
 
         // Auto-load saat tab settings dibuka
         document.getElementById('tab-settings').addEventListener('click', () => {
