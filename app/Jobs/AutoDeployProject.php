@@ -296,7 +296,7 @@ class AutoDeployProject implements ShouldQueue
 
         $this->log($deploy, "> Using composer: {$composer}");
         $this->exec(
-            "cd {$projectDir} && {$composer} install --no-dev --optimize-autoloader --no-interaction",
+            "cd {$projectDir} && {$composer} install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs",
             $deploy,
             true
         );
