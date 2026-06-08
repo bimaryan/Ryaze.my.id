@@ -69,27 +69,27 @@
 
         {{-- Tab Navigation --}}
         <div class="flex flex-wrap gap-2 mb-6 mt-6 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm w-full">
-            <button onclick="switchTab('overview')" id="tab-overview"
+            <button data-tab="overview" id="tab-overview"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow">
                 <i class="fa-solid fa-chart-simple"></i> <span>Overview</span>
             </button>
-            <button onclick="switchTab('logs')" id="tab-logs"
+            <button data-tab="logs" id="tab-logs"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-scroll"></i> <span>Build Logs</span>
             </button>
-            <button onclick="switchTab('terminal')" id="tab-terminal"
+            <button data-tab="terminal" id="tab-terminal"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-terminal"></i> <span>Terminal</span>
             </button>
-            <button onclick="switchTab('files')" id="tab-files"
+            <button data-tab="files" id="tab-files"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-folder-tree"></i> <span>Root Files</span>
             </button>
-            <button onclick="switchTab('env')" id="tab-env"
+            <button data-tab="env" id="tab-env"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-key"></i> <span>.env</span>
             </button>
-            <button onclick="switchTab('settings')" id="tab-settings"
+            <button data-tab="settings" id="tab-settings"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50"><i
                     class="fa-solid fa-gears"></i> <span>Settings</span></button>
         </div>
@@ -483,9 +483,9 @@
     </div>
 
     {{-- SweetAlert2 --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
+    <script nonce="{{ csp_nonce() }}">
         // ── SweetAlert2 helpers ────────────────────────────────────────────────
         const Toast = Swal.mixin({
             toast: true,
@@ -565,7 +565,7 @@
         }
     </script>
 
-    <script>
+    <script nonce="{{ csp_nonce() }}">
         // Helper URL untuk memaksa HTTPS jika halaman diakses via HTTPS
         const fixUrl = u => window.location.protocol === 'https:' ? u.replace(/^http:\/\//i, 'https://') : u;
 
@@ -624,7 +624,7 @@
         }
     </script>
 
-    <script>
+    <script nonce="{{ csp_nonce() }}">
         // ── Tab switching ──────────────────────────────────────────────────────
         function switchTab(name) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
@@ -640,7 +640,7 @@
         }
     </script>
 
-    <script>
+    <script nonce="{{ csp_nonce() }}">
         // ── Terminal ───────────────────────────────────────────────────────────
         const termOut = document.getElementById('terminal-output');
         const termInput = document.getElementById('terminal-input');
@@ -748,7 +748,7 @@
         });
     </script>
 
-    <script>
+    <script nonce="{{ csp_nonce() }}">
         // ── File Manager ───────────────────────────────────────────────────────
         let currentFolderPath = '';
         let currentEditingFile = '';
@@ -1072,7 +1072,7 @@
         });
     </script>
 
-    <style>
+    <style nonce="{{ csp_nonce() }}">
         .scrollbar-hide::-webkit-scrollbar {
             display: none
         }

@@ -13,8 +13,15 @@ class SecurityHeaders
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
+        // Generate nonce sekali per request
+        $nonce = base64_encode(random_bytes(16));
+
+        // Simpan ke request agar bisa diakses di view via helper
+        $request->attributes->set('csp_nonce', $nonce);
+        app()->instance('csp_nonce', $nonce);
+
         $response = $next($request);
 
         $response->headers->set('X-Frame-Options', 'DENY');
@@ -22,13 +29,13 @@ class SecurityHeaders
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=()');
-        // Sesuaikan CSP dengan kebutuhan asset lu
         $response->headers->set('Content-Security-Policy',
             "default-src 'self'; ".
-            "script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com static.cloudflareinsights.com; ".
+            "script-src 'self' 'nonce-{$nonce}' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com static.cloudflareinsights.com; ".
             "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; ".
             "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data:; ".
             "img-src 'self' data: blob:; ".
+            "frame-src 'self' https://*.ryaze.my.id; ".
             "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com;"
         );
 
