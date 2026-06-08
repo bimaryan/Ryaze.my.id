@@ -424,14 +424,14 @@
                     </div>
 
                     {{-- Grid versi PHP --}}
+                    {{-- Ganti skeleton loading dengan 6 placeholder --}}
                     <div id="php-versions-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-                        {{-- Skeleton loading --}}
-                        @foreach (['8.1', '8.2', '8.3', '8.4'] as $v)
+                        @for ($i = 0; $i < 6; $i++)
                             <div class="animate-pulse border border-slate-100 rounded-xl p-4 bg-slate-50">
                                 <div class="h-4 bg-slate-200 rounded mb-2"></div>
                                 <div class="h-3 bg-slate-100 rounded w-2/3"></div>
                             </div>
-                        @endforeach
+                        @endfor
                     </div>
 
                     {{-- Install progress (tersembunyi sampai install dimulai) --}}
@@ -1197,7 +1197,7 @@
                     data.versions.forEach(v => {
                         const isCurrent = v.current;
                         const isInstalled = v
-                        .installed; // dari API, seharusnya true semua karena diambil dari runtime 1Panel
+                            .installed; // dari API, seharusnya true semua karena diambil dari runtime 1Panel
                         const fullVersion = v.version; // contoh: "8.4.6"
                         const minor = v.minor; // contoh: "8.4"
 
@@ -1220,13 +1220,13 @@
                         ? `<span class="text-[11px] text-indigo-600 font-semibold">✓ Sedang digunakan</span>`
                         : isInstalled
                             ? `<button onclick="switchPhpVersion('${fullVersion}')"
-                                        class="w-full text-xs font-semibold py-1.5 rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all">
-                                        <i class="fa-solid fa-rotate mr-1"></i> Gunakan
-                                       </button>`
+                                            class="w-full text-xs font-semibold py-1.5 rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all">
+                                            <i class="fa-solid fa-rotate mr-1"></i> Gunakan
+                                           </button>`
                             : `<button onclick="installPhpVersion('${fullVersion}')"
-                                        class="w-full text-xs font-semibold py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all">
-                                        <i class="fa-solid fa-download mr-1"></i> Install
-                                       </button>`
+                                            class="w-full text-xs font-semibold py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all">
+                                            <i class="fa-solid fa-download mr-1"></i> Install
+                                           </button>`
                     }`;
 
                         grid.appendChild(card);
