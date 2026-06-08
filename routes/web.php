@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.detail');
     Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
     Route::delete('user/hosting/projects/{hashid}/delete', [DashboardController::class, 'deleteProject'])->name('user_hosting.destroy');
+    Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
 
     // --- AKSI USER JOKI ---
     Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');
