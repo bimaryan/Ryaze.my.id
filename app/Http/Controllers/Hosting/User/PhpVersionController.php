@@ -4,293 +4,371 @@ namespace App\Http\Controllers\Hosting\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\HostingProject;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Vinkla\Hashids\Facades\Hashids;
 
 class PhpVersionController extends Controller
 {
     /**
-     * Deteksi versi PHP yang tersedia via 1Panel API + Docker.
-     * 1Panel menyimpan runtime PHP sebagai Docker container dengan naming convention:
-     * 1panel-php:{version} — contoh: 1panel-php:8.4.6, 1panel-php:8.3.x, dll
+     * Ambil daftar versi PHP yang tersedia (full patch version) dari:
+     * - Docker images yang sudah ada (1panel-php:x.y.z)
+     * - 1Panel API (runtime yang terdaftar)
+     * - (Opsional) daftar versi yang bisa diinstall dari App Store
      */
-    public function availableVersions(Request $request, string $hashid)
+    public function availableVersions(Request $request, string $hashid): JsonResponse
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            return response()->json(['error' => 'Not found'], 404);
+        $project = $this->getProject($hashid);
+        if (! $project) {
+            return response()->json(['error' => 'Project not found'], 404);
         }
 
-        $project = HostingProject::where('user_id', auth()->id())->findOrFail($decoded[0]);
+        // 1. Kumpulkan semua versi dari Docker images (tag 1panel-php:x.y.z)
+        $dockerVersions = $this->getDockerPhpVersions();
 
-        // Versi minor yang didukung 1Panel (dari App Store mereka)
-        $supported = ['8.1', '8.2', '8.3', '8.4'];
+        // 2. Kumpulkan dari 1Panel API (jika tersedia)
+        $apiVersions = $this->getPhpVersionsFrom1PanelApi();
+
+        // 3. Gabung dan unique, lalu sorting natural
+        $allVersions = array_unique(array_merge($dockerVersions, $apiVersions));
+        sort($allVersions, SORT_NATURAL);
+
+        // Jika tidak ada satupun, fallback ke daftar versi umum (patch terbaru)
+        if (empty($allVersions)) {
+            $allVersions = $this->getFallbackPhpVersions();
+        }
+
+        // Build response untuk frontend
         $versions = [];
-
-        // Deteksi runtime PHP yang sudah ada via docker ps
-        // Container 1Panel PHP punya naming: 1Panel-php{major}-{randomid}
-        $dockerOutput = trim(shell_exec(
-            "docker ps --format '{{.Image}}\t{{.Names}}\t{{.Status}}' 2>/dev/null | grep -i '1panel-php' || true"
-        ) ?? '');
-
-        // Parse container yang running
-        $runningContainers = [];
-        if ($dockerOutput) {
-            foreach (explode("\n", $dockerOutput) as $line) {
-                $parts = explode("\t", trim($line));
-                if (count($parts) >= 2) {
-                    $image = $parts[0]; // e.g. 1panel-php:8.4.6
-                    $name = $parts[1]; // e.g. 1Panel-php8-aJQI
-                    // Extract versi dari image tag
-                    if (preg_match('/1panel-php:(\d+\.\d+)/', $image, $m)) {
-                        $minor = implode('.', array_slice(explode('.', $m[1]), 0, 2));
-                        $runningContainers[$minor] = [
-                            'image' => $image,
-                            'container' => $name,
-                            'full_ver' => $m[1],
-                        ];
-                    }
-                }
-            }
-        }
-
-        // Juga cek image yang sudah di-pull tapi mungkin tidak running
-        $imagesOutput = trim(shell_exec(
-            "docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | grep -i '1panel-php' || true"
-        ) ?? '');
-
-        $pulledImages = [];
-        if ($imagesOutput) {
-            foreach (explode("\n", $imagesOutput) as $img) {
-                $img = trim($img);
-                if (preg_match('/1panel-php:(\d+\.\d+)/', $img, $m)) {
-                    $minor = implode('.', array_slice(explode('.', $m[1]), 0, 2));
-                    $pulledImages[$minor] = $m[1];
-                }
-            }
-        }
-
-        foreach ($supported as $v) {
-            $isRunning = isset($runningContainers[$v]);
-            $isPulled = isset($pulledImages[$v]);
-            $isInstalled = $isRunning || $isPulled;
+        foreach ($allVersions as $fullVer) {
+            $minor = implode('.', array_slice(explode('.', $fullVer), 0, 2));
+            $isRunning = $this->isContainerRunning($fullVer);
+            $isInstalled = $isRunning || $this->isImageExists($fullVer);
 
             $versions[] = [
-                'version' => $v,
+                'version' => $fullVer,
+                'minor' => $minor,
                 'installed' => $isInstalled,
                 'running' => $isRunning,
-                'full_version' => $runningContainers[$v]['full_ver'] ?? ($pulledImages[$v] ?? null),
-                'container' => $runningContainers[$v]['container'] ?? null,
-                'current' => ($project->php_version === $v || str_starts_with($project->php_version ?? '', $v)),
+                'full_version' => $fullVer,
+                'current' => ($project->php_version === $fullVer),
+                'container' => $isRunning ? $this->getContainerName($fullVer) : null,
             ];
-        }
-
-        // Deteksi versi PHP yang aktif dipakai project (via container yang running)
-        $activeContainer = null;
-        foreach ($runningContainers as $minor => $info) {
-            if (str_starts_with($project->php_version ?? '', $minor)) {
-                $activeContainer = $info['container'];
-                break;
-            }
         }
 
         return response()->json([
             'versions' => $versions,
             'project_version' => $project->php_version,
-            'active_container' => $activeContainer,
-            'running_count' => count($runningContainers),
+            'active_container' => $project->php_version ? $this->getContainerName($project->php_version) : null,
+            'running_count' => collect($versions)->where('running', true)->count(),
         ]);
     }
 
     /**
-     * Install versi PHP baru via 1Panel API.
-     * 1Panel menyediakan REST API internal untuk manage runtimes.
+     * Install versi PHP baru (jika belum ada) melalui 1Panel API atau Docker fallback.
      */
-    public function install(Request $request, string $hashid)
+    public function install(Request $request, string $hashid): JsonResponse
     {
-        $request->validate(['version' => 'required|in:8.1,8.2,8.3,8.4']);
+        $request->validate([
+            'version' => 'required|string|regex:/^\d+\.\d+\.\d+$/',
+        ]);
 
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            return response()->json(['error' => 'Not found'], 404);
+        $project = $this->getProject($hashid);
+        if (! $project) {
+            return response()->json(['error' => 'Project not found'], 404);
         }
 
-        $project = HostingProject::where('user_id', auth()->id())->findOrFail($decoded[0]);
-        $phpVersion = $request->version;
+        $fullVersion = $request->version;
 
-        // Cek apakah 1Panel API dikonfigurasi
+        // Cek apakah sudah terinstall
+        if ($this->isPhpVersionInstalled($fullVersion)) {
+            // Langsung switch saja
+            return $this->switchVersionInternal($project, $fullVersion);
+        }
+
+        // Coba install via 1Panel API (prioritas)
         $panelUrl = rtrim(env('PANEL_URL', 'http://localhost:4431'), '/');
-        $panelToken = env('PANEL_API_TOKEN', '');
+        $panelApiKey = env('PANEL_API_TOKEN');
 
-        if (! $panelToken) {
-            // Fallback: coba pull Docker image langsung jika punya akses shell
-            return $this->installViaDocker($project, $phpVersion);
-        }
-
-        return $this->installVia1PanelApi($project, $phpVersion, $panelUrl, $panelToken);
-    }
-
-    /**
-     * Install via 1Panel REST API.
-     * Endpoint: POST /api/v1/runtimes
-     */
-    private function installVia1PanelApi($project, string $phpVersion, string $panelUrl, string $token): JsonResponse
-    {
-        // Map versi minor ke image tag 1Panel (biasanya patch version terbaru)
-        $imageMap = [
-            '8.1' => '8.1',
-            '8.2' => '8.2',
-            '8.3' => '8.3',
-            '8.4' => '8.4',
-        ];
-
-        $runtimeName = "php{$phpVersion}";
-
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => "Bearer {$token}",
-                'Content-Type' => 'application/json',
-            ])->timeout(10)->post("{$panelUrl}/api/v1/runtimes", [
-                'name' => $runtimeName,
-                'type' => 'php',
-                'version' => $imageMap[$phpVersion] ?? $phpVersion,
-                'source' => 'appstore',
-            ]);
-
-            if ($response->successful()) {
-                // Update project
-                $project->update(['php_version' => $phpVersion]);
-
-                // Buat log deployment
-                $deployment = $project->deployments()->create([
-                    'status' => 'ready',
-                    'build_logs' => "> PHP {$phpVersion} runtime creation requested via 1Panel API.\n> Status: ".$response->status()."\n> Silakan cek 1Panel > Websites > Runtimes untuk konfirmasi.\n> Lakukan Redeploy setelah runtime aktif.",
-                ]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => "PHP {$phpVersion} installation queued in 1Panel.",
-                    'log_url' => route('user_hosting.build_logs', $project->hashid),
-                    'deployment_id' => $deployment->id,
-                ]);
-            } else {
-                // 1Panel API error — fallback ke Docker pull
-                \Log::warning("[PhpInstall] 1Panel API error {$response->status()}, falling back to docker pull.");
-
-                return $this->installViaDocker($project, $phpVersion);
+        if ($panelApiKey) {
+            $result = $this->installVia1PanelApi($project, $fullVersion, $panelUrl, $panelApiKey);
+            if ($result->getData()->success ?? false) {
+                return $result;
             }
-        } catch (\Exception $e) {
-            \Log::warning("[PhpInstall] 1Panel API unreachable: {$e->getMessage()}, falling back to docker pull.");
-
-            return $this->installViaDocker($project, $phpVersion);
-        }
-    }
-
-    /**
-     * Fallback: Pull image Docker 1panel-php secara langsung.
-     * Image naming: 1panel-php:{version}
-     */
-    private function installViaDocker($project, string $phpVersion): JsonResponse
-    {
-        // Cek apakah docker tersedia
-        $dockerCheck = trim(shell_exec('which docker 2>/dev/null') ?? '');
-        if (! $dockerCheck) {
-            return response()->json([
-                'error' => 'Docker tidak ditemukan. Tambahkan PANEL_API_TOKEN di .env untuk install via 1Panel API, atau install PHP manual lewat 1Panel > Websites > Runtimes.',
-            ], 422);
+            // Jika gagal, lanjut ke fallback Docker
         }
 
-        // Cek apakah image sudah ada
-        $imageExists = trim(shell_exec(
-            "docker images -q '1panel-php:{$phpVersion}' 2>/dev/null"
-        ) ?? '');
-
-        if ($imageExists) {
-            $project->update(['php_version' => $phpVersion]);
-            $deployment = $project->deployments()->create([
-                'status' => 'ready',
-                'build_logs' => "> PHP {$phpVersion} Docker image already present.\n> Project updated to use PHP {$phpVersion}.\n> Lakukan Redeploy untuk menerapkan perubahan.",
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => "PHP {$phpVersion} already available.",
-                'log_url' => route('user_hosting.build_logs', $project->hashid),
-                'deployment_id' => $deployment->id,
-            ]);
-        }
-
-        // Pull image di background (async via nohup agar tidak timeout)
-        $logFile = "/tmp/php_install_{$phpVersion}_".$project->id.'.log';
-        $pullCmd = "nohup docker pull 1panel-php:{$phpVersion} > {$logFile} 2>&1 &";
-        shell_exec($pullCmd);
-
-        // Buat deployment record — status building, akan diupdate oleh polling
-        $deployment = $project->deployments()->create([
-            'status' => 'building',
-            'build_logs' => "> Pulling Docker image: 1panel-php:{$phpVersion}\n> Log: {$logFile}\n> Harap tunggu 1-5 menit...",
-        ]);
-
-        // Start background watcher untuk update log
-        $watchCmd = "nohup bash -c '"
-            ."while [ ! -f {$logFile}.done ]; do sleep 3; done; "
-            ."echo done' > /dev/null 2>&1 &";
-
-        // Update project versi setelah berhasil (kita assume success untuk UX, validasi via refresh)
-        $project->update(['php_version' => $phpVersion]);
-
-        // Schedule check after 30s via simple background script
-        $updateScript = "/tmp/check_php_{$phpVersion}_{$project->id}.sh";
-        file_put_contents($updateScript, "#!/bin/bash
-for i in {1..20}; do
-    sleep 15
-    if docker images -q '1panel-php:{$phpVersion}' 2>/dev/null | grep -q .; then
-        echo 'Image pulled successfully'
-        exit 0
-    fi
-done
-echo 'Pull timeout'
-");
-        shell_exec("nohup bash {$updateScript} > /dev/null 2>&1 &");
-
-        return response()->json([
-            'success' => true,
-            'message' => "Pulling PHP {$phpVersion} Docker image in background.",
-            'log_url' => route('user_hosting.build_logs', $project->hashid),
-            'deployment_id' => $deployment->id,
-            'note' => 'Untuk hasil terbaik, install PHP via 1Panel > Websites > Runtimes > Create Runtime',
-        ]);
+        // Fallback ke pull Docker image langsung
+        return $this->installViaDocker($project, $fullVersion);
     }
 
     /**
      * Switch project ke versi PHP yang sudah terinstall.
      */
-    public function switchVersion(Request $request, string $hashid)
+    public function switchVersion(Request $request, string $hashid): JsonResponse
     {
-        $request->validate(['version' => 'required|in:8.1,8.2,8.3,8.4']);
+        $request->validate([
+            'version' => 'required|string|regex:/^\d+\.\d+\.\d+$/',
+        ]);
 
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            return response()->json(['error' => 'Not found'], 404);
+        $project = $this->getProject($hashid);
+        if (! $project) {
+            return response()->json(['error' => 'Project not found'], 404);
         }
 
-        $project = HostingProject::where('user_id', auth()->id())->findOrFail($decoded[0]);
-        $version = $request->version;
+        $fullVersion = $request->version;
 
-        $project->update(['php_version' => $version]);
+        if (! $this->isPhpVersionInstalled($fullVersion)) {
+            return response()->json(['error' => "PHP {$fullVersion} belum terinstall. Install dulu."], 422);
+        }
+
+        return $this->switchVersionInternal($project, $fullVersion);
+    }
+
+    // -------------------------------------------------------------------------
+    // PRIVATE METHODS
+    // -------------------------------------------------------------------------
+
+    private function getProject(string $hashid): ?HostingProject
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) {
+            return null;
+        }
+
+        return HostingProject::where('user_id', auth()->id())->find($decoded[0]);
+    }
+
+    /**
+     * Ambil semua versi PHP dari Docker images dengan pattern "1panel-php:x.y.z"
+     */
+    private function getDockerPhpVersions(): array
+    {
+        $output = shell_exec("docker images --format '{{.Tag}}' 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | uniq");
+        if (! $output) {
+            return [];
+        }
+
+        return array_filter(explode("\n", trim($output)));
+    }
+
+    /**
+     * Ambil daftar PHP runtime dari 1Panel API (GET /api/v1/runtimes?type=php)
+     */
+    private function getPhpVersionsFrom1PanelApi(): array
+    {
+        $apiKey = env('PANEL_API_TOKEN');
+        $panelUrl = rtrim(env('PANEL_URL'), '/');
+        if (! $apiKey || ! $panelUrl) {
+            return [];
+        }
+
+        try {
+            $response = $this->call1PanelApi('get', '/api/v1/runtimes?type=php');
+            if ($response->successful()) {
+                $runtimes = $response->json('data') ?? [];
+                $versions = [];
+                foreach ($runtimes as $rt) {
+                    if (isset($rt['version']) && preg_match('/^\d+\.\d+\.\d+$/', $rt['version'])) {
+                        $versions[] = $rt['version'];
+                    }
+                }
+
+                return $versions;
+            }
+        } catch (\Exception $e) {
+            Log::warning('Gagal ambil versi dari 1Panel API: '.$e->getMessage());
+        }
+
+        return [];
+    }
+
+    /**
+     * Fallback list versi PHP (patch terbaru untuk setiap minor)
+     */
+    private function getFallbackPhpVersions(): array
+    {
+        return [
+            '8.1.30',
+            '8.2.28',
+            '8.3.20',
+            '8.4.6',
+        ];
+    }
+
+    /**
+     * Cek apakah container dengan image 1panel-php:version sedang running
+     */
+    private function isContainerRunning(string $fullVersion): bool
+    {
+        $output = shell_exec("docker ps --filter 'ancestor=1panel-php:{$fullVersion}' --format '{{.Names}}' 2>/dev/null");
+
+        return ! empty(trim($output));
+    }
+
+    /**
+     * Cek apakah Docker image sudah ada (meskipun container tidak running)
+     */
+    private function isImageExists(string $fullVersion): bool
+    {
+        $output = shell_exec("docker images -q 1panel-php:{$fullVersion} 2>/dev/null");
+
+        return ! empty(trim($output));
+    }
+
+    /**
+     * Dapatkan nama container (opsional, untuk info)
+     */
+    private function getContainerName(string $fullVersion): ?string
+    {
+        $output = shell_exec("docker ps --filter 'ancestor=1panel-php:{$fullVersion}' --format '{{.Names}}' 2>/dev/null | head -1");
+
+        return trim($output) ?: null;
+    }
+
+    /**
+     * Pengecekan apakah versi PHP sudah terinstall (image ada atau container running)
+     */
+    private function isPhpVersionInstalled(string $fullVersion): bool
+    {
+        return $this->isImageExists($fullVersion) || $this->isContainerRunning($fullVersion);
+    }
+
+    /**
+     * Core method untuk switch versi dan catat deployment
+     */
+    private function switchVersionInternal(HostingProject $project, string $fullVersion): JsonResponse
+    {
+        $oldVersion = $project->php_version;
+        $project->update(['php_version' => $fullVersion]);
 
         $deployment = $project->deployments()->create([
             'status' => 'ready',
-            'build_logs' => "> Project PHP version switched to {$version}.\n> Lakukan Redeploy untuk menerapkan perubahan secara penuh.",
+            'build_logs' => "> PHP version switched from {$oldVersion} to {$fullVersion}.\n> Lakukan Redeploy agar perubahan diterapkan penuh.",
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => "Switched to PHP {$version}.",
-            'log_url' => route('user_hosting.build_logs', $project->hashid),
+            'message' => "Berhasil beralih ke PHP {$fullVersion}.",
             'deployment_id' => $deployment->id,
+            'log_url' => route('user_hosting.build_logs', $project->hashid),
         ]);
+    }
+
+    /**
+     * Install PHP via 1Panel API (membuat runtime baru)
+     */
+    private function installVia1PanelApi(HostingProject $project, string $fullVersion, string $panelUrl, string $apiKey): JsonResponse
+    {
+        try {
+            $response = $this->call1PanelApi('post', '/api/v1/runtimes', [
+                'name' => "php{$fullVersion}",
+                'type' => 'php',
+                'version' => $fullVersion,
+                'source' => 'appstore',
+            ]);
+
+            if ($response->successful()) {
+                $deployment = $project->deployments()->create([
+                    'status' => 'building',
+                    'build_logs' => "> Mengirim request ke 1Panel API untuk membuat runtime PHP {$fullVersion}...\n> Status: ".$response->status()."\n> Tunggu hingga runtime aktif, lalu Redeploy project.",
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "PHP {$fullVersion} sedang diinstall melalui 1Panel.",
+                    'deployment_id' => $deployment->id,
+                    'log_url' => route('user_hosting.build_logs', $project->hashid),
+                ]);
+            } else {
+                Log::error('1Panel API error: '.$response->status().' - '.$response->body());
+
+                return response()->json(['success' => false, 'error' => 'API 1Panel gagal'], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('1Panel API exception: '.$e->getMessage());
+
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Fallback: Pull Docker image langsung (1panel-php:version)
+     */
+    private function installViaDocker(HostingProject $project, string $fullVersion): JsonResponse
+    {
+        // Cek apakah docker tersedia
+        $dockerCheck = trim(shell_exec('which docker 2>/dev/null') ?? '');
+        if (! $dockerCheck) {
+            return response()->json([
+                'error' => 'Docker tidak ditemukan. Install PHP manual melalui 1Panel > Websites > Runtimes.',
+            ], 422);
+        }
+
+        // Jika image sudah ada, langsung switch
+        if ($this->isImageExists($fullVersion)) {
+            return $this->switchVersionInternal($project, $fullVersion);
+        }
+
+        // Pull image di background (async)
+        $logFile = "/tmp/php_install_{$fullVersion}_".$project->id.'.log';
+        $pullCmd = "nohup docker pull 1panel-php:{$fullVersion} > {$logFile} 2>&1 &";
+        shell_exec($pullCmd);
+
+        $deployment = $project->deployments()->create([
+            'status' => 'building',
+            'build_logs' => "> Pulling Docker image: 1panel-php:{$fullVersion}\n> Log: {$logFile}\n> Proses memakan waktu 1-5 menit.\n> Setelah selesai, lakukan Redeploy.",
+        ]);
+
+        // Background watcher untuk update status (opsional: bisa menggunakan queue job)
+        $this->scheduleImageCheck($project, $fullVersion, $deployment->id);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Menarik image PHP {$fullVersion} dari Docker Hub (background).",
+            'deployment_id' => $deployment->id,
+            'log_url' => route('user_hosting.build_logs', $project->hashid),
+        ]);
+    }
+
+    /**
+     * Sederhana: jalankan script background untuk cek image dan update project
+     */
+    private function scheduleImageCheck(HostingProject $project, string $fullVersion, int $deploymentId): void
+    {
+        $script = "/tmp/check_php_{$fullVersion}_{$project->id}.sh";
+        $content = "#!/bin/bash\n"
+            ."for i in {1..60}; do\n"
+            ."    sleep 10\n"
+            ."    if docker images -q '1panel-php:{$fullVersion}' 2>/dev/null | grep -q .; then\n"
+            ."        echo 'Image pulled successfully' >> /tmp/php_{$fullVersion}_{$project->id}.log\n"
+            ."        exit 0\n"
+            ."    fi\n"
+            ."done\n"
+            ."echo 'Pull timeout' >> /tmp/php_{$fullVersion}_{$project->id}.log\n";
+        file_put_contents($script, $content);
+        chmod($script, 0755);
+        shell_exec("nohup bash {$script} > /dev/null 2>&1 &");
+    }
+
+    /**
+     * Fungsi pemanggil API 1Panel dengan autentikasi header yang benar.
+     * Digunakan untuk GET, POST, dll.
+     */
+    private function call1PanelApi(string $method, string $endpoint, array $data = []): Response
+    {
+        $apiKey = env('PANEL_API_TOKEN');
+        $timestamp = time();
+        $token = md5('1panel'.$apiKey.$timestamp);
+        $url = rtrim(env('PANEL_URL'), '/').$endpoint;
+
+        return Http::withHeaders([
+            '1Panel-Token' => $token,
+            '1Panel-Timestamp' => (string) $timestamp,
+            'Content-Type' => 'application/json',
+        ])->$method($url, $data);
     }
 }

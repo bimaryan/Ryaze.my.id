@@ -1191,6 +1191,7 @@
                     ${isCurrent ? '<div class="absolute -top-2 left-3 bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">AKTIF</div>' : ''}
                     <div class="flex items-start justify-between mb-2">
                         <span class="font-bold text-slate-800 text-base">PHP ${v.version}</span>
+                        <span class="text-xs text-slate-400">${v.minor}</span>
                         ${isInstalled
                             ? '<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>'
                             : '<i class="fa-solid fa-cloud-arrow-down text-slate-300 text-sm"></i>'}
