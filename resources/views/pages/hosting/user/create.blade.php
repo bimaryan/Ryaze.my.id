@@ -52,7 +52,7 @@
                         <div
                             class="bg-slate-100 border border-t-0 border-slate-200 rounded-b-lg px-4 py-2 text-xs text-slate-500 font-medium flex items-center">
                             <i class="fa-solid fa-link mr-2"></i> Domain: <span
-                                class="text-indigo-600 ml-1">nama-proyek.ryz.my.id</span>
+                                class="text-indigo-600 ml-1">nama-proyek.ryaze.my.id</span>
                         </div>
                     </div>
 

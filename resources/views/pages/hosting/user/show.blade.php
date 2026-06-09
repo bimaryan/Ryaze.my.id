@@ -157,7 +157,7 @@
                                 <span class="block text-slate-500 text-xs mb-1">Root Directory</span>
                                 <span
                                     class="font-mono text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-1 rounded block truncate">
-                                    /{{ str_replace('.ryz.my.id', '', $project->ryaze_domain) }}
+                                    /{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
                                 </span>
                             </div>
                             <form action="{{ route('user_hosting.redeploy', $project->hashid) }}" method="POST"
@@ -227,7 +227,7 @@
                         <span class="text-slate-300 text-xs font-mono font-semibold shrink-0">bash</span>
                         <span class="text-slate-600 text-xs shrink-0">—</span>
                         <span class="text-slate-400 text-xs font-mono truncate" id="terminal-cwd-display">
-                            /{{ str_replace('.ryz.my.id', '', $project->ryaze_domain) }}
+                            /{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
                         </span>
                     </div>
                     <div class="ml-auto shrink-0">
@@ -253,7 +253,7 @@
                     <span id="terminal-prompt"
                         class="text-emerald-400 font-mono text-sm font-bold select-none shrink-0 whitespace-nowrap">
                         <span
-                            class="text-indigo-400">{{ str_replace('.ryz.my.id', '', $project->ryaze_domain) }}</span><span
+                            class="text-indigo-400">{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}</span><span
                             class="text-slate-400"> $</span>
                     </span>
                     <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off"
@@ -655,8 +655,8 @@
         const cwdDisplay = document.getElementById('terminal-cwd-display');
         const termUrl = fixUrl('{{ route('user_hosting.terminal', $project->hashid) }}');
         const csrfToken = '{{ csrf_token() }}';
-        const projectRoot = '/www/sites/hosting_clients/{{ str_replace('.ryz.my.id', '', $project->ryaze_domain) }}';
-        const projectSlug = '{{ str_replace('.ryz.my.id', '', $project->ryaze_domain) }}';
+        const projectRoot = '/www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
+        const projectSlug = '{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
 
         let cmdHistory = [],
             histIdx = -1,

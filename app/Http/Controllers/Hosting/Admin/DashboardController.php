@@ -64,7 +64,7 @@ class DashboardController extends Controller
         $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
         $project->update(['status' => 'suspended']);
 
-        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
 
         // Buat file marker agar Nginx 503
@@ -79,7 +79,7 @@ class DashboardController extends Controller
         $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
         $project->update(['status' => 'active']);
 
-        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
 
         // Hapus file marker agar Nginx kembali normal
@@ -104,7 +104,7 @@ class DashboardController extends Controller
         $projectName = $project->project_name;
 
         // Hapus folder server (opsional, sesuaikan path)
-        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         if (is_dir($projectDir)) {
             exec('rm -rf '.escapeshellarg($projectDir));
