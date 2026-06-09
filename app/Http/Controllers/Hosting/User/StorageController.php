@@ -47,7 +47,7 @@ class StorageController extends Controller
         $items = [];
 
         foreach ($projects as $project) {
-            $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+            $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
             $projectDir = "/www/sites/hosting_clients/{$subdomain}";
             $used = $this->getFolderSize($projectDir);
             $totalUsed += $used;
@@ -85,7 +85,7 @@ class StorageController extends Controller
         }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         $limit = self::LIMIT_BYTES;
 
@@ -130,7 +130,7 @@ class StorageController extends Controller
      */
     public function check(HostingProject $project): bool
     {
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         $used = $this->getFolderSize($projectDir);
 

@@ -20,8 +20,8 @@ class AuthController extends Controller
     // Menampilkan halaman login + Generate Captcha
     public function loginindex(Request $request)
     {
-        $num1 = rand(10, 99); // Perbesar range supaya susah di-brute
-        $num2 = rand(10, 99);
+        $num1 = rand(1, 10); // Perbesar range supaya susah di-brute
+        $num2 = rand(1, 10);
         $operator = ['+', '-', '*'][rand(0, 2)]; // Variasikan operator
 
         $answer = match ($operator) {

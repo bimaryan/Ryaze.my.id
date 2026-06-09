@@ -65,7 +65,7 @@ class DashboardController extends Controller
             'framework' => $request->framework,
             'repo_source' => $request->repo_source,
             'branch' => $request->branch,
-            'ryaze_domain' => $subdomain.'.ryaze.my.id',
+            'ryaze_domain' => $subdomain.'.ryz.my.id',
             'status' => 'building',
         ]);
 
@@ -93,7 +93,7 @@ class DashboardController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($decoded[0]);
 
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         // Membaca file .env
@@ -115,7 +115,7 @@ class DashboardController extends Controller
         }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
         $requestPath = trim($request->input('path', ''), '/');
 
@@ -177,7 +177,7 @@ class DashboardController extends Controller
         }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $requestPath = trim($request->input('path', ''), '/');
@@ -200,7 +200,7 @@ class DashboardController extends Controller
         }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $requestPath = trim($request->input('path', ''), '/');
@@ -343,7 +343,7 @@ class DashboardController extends Controller
 
     private function getValidTargetPath($project, $requestPath)
     {
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         // Gabungkan path
@@ -379,7 +379,7 @@ class DashboardController extends Controller
         }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
 
         $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
         $content = $request->input('env_content', '');
@@ -462,7 +462,7 @@ class DashboardController extends Controller
         }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
 
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         $command = $request->input('command');
@@ -501,7 +501,7 @@ class DashboardController extends Controller
     public function deleteProject(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         // 1. Hapus Record DNS Cloudflare
@@ -546,7 +546,7 @@ class DashboardController extends Controller
         }
 
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = str_replace('.ryz.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         // Ambil data checkbox
