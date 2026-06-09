@@ -31,12 +31,12 @@ class SecurityHeaders
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=()');
         $response->headers->set('Content-Security-Policy',
             "default-src 'self'; ".
-            "script-src 'self' 'nonce-{$nonce}' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com static.cloudflareinsights.com; ".
-            "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; ".
-            "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data:; ".
-            "img-src 'self' data: blob:; ".
+            "script-src 'self' 'nonce-{$nonce}' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com static.cloudflareinsights.com http://[::1]:5173 http://localhost:5173; ".
+            "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com http://[::1]:5173 http://localhost:5173; ".
+            "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
+            "img-src 'self' data: blob: https://ui-avatars.com; ".
             "frame-src 'self' https://*.ryaze.my.id; ".
-            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com;"
+            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com ws://[::1]:5173 ws://localhost:5173;"
         );
 
         return $response;
