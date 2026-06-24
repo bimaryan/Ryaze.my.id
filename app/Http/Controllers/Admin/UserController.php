@@ -18,8 +18,14 @@ class UserController extends Controller
     }
 
     // Fungsi untuk tombol "Ikon Mata" (Detail Profil)
-    public function show($id)
+    public function show($hashid)
     {
+        $decoded = \Vinkla\Hashids\Facades\Hashids::decode($hashid);
+        if (empty($decoded)) {
+            abort(404);
+        }
+        $id = $decoded[0];
+
         $user = User::findOrFail($id);
 
         // Opsional: Jika ingin sekalian melihat pesanan joki milik user ini

@@ -3,16 +3,14 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
-        <div
-            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg">
-                    <i class="fa-solid fa-users text-xl"></i>
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-users text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-slate-800">Data Pengguna</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Kelola dan pantau seluruh klien yang terdaftar di Ryaze Portal.
-                    </p>
+                    <h1 class="text-xl font-bold text-slate-800">Manajemen Pengguna</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Daftar semua klien dan admin di dalam sistem.</p>
                 </div>
             </div>
         </div>
@@ -64,7 +62,7 @@
                                     {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('d F Y, H:i') }}
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <a href="{{ route('superadmin.users.show', $user->id) }}"
+                                    <a href="{{ route('superadmin.users.show', $user->hashid) }}"
                                         class="inline-block text-xs border border-indigo-200 text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 font-semibold shadow-sm">
                                         Detail Profil
                                     </a>

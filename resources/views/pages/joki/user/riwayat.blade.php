@@ -2,15 +2,19 @@
 
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
-        <!-- Header -->
-        <div
-            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Riwayat Proyek</h1>
-                <p class="text-sm text-slate-500 mt-0.5">
-                    Arsip dan rekam jejak seluruh proyek Anda yang sudah selesai atau dibatalkan.
-                </p>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-history text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Riwayat Pesanan Joki</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Lihat kembali riwayat dan daftar proyek joki Anda yang sudah lalu.</p>
+                </div>
             </div>
+            <a href="{{ route('user_joki.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                &larr; Kembali
+            </a>
         </div>
 
         <div class="mt-6">

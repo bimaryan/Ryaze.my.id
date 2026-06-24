@@ -3,25 +3,17 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
-        <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-border-all text-xl"></i>
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-gauge text-lg"></i>
                 </div>
-
                 <div>
                     <h1 class="text-xl font-bold text-slate-800">Dashboard Superadmin</h1>
                     <p class="text-sm text-slate-500 mt-0.5">
-                        Selamat datang kembali, <span
-                            class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Superadmin' }}</span>! Berikut
-                        adalah ringkasan sistem hari ini.
+                        Selamat datang kembali, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Superadmin' }}</span>! Berikut adalah ringkasan sistem hari ini.
                     </p>
                 </div>
-            </div>
-
-            <div class="hidden md:block">
-                <p class="text-sm font-medium text-slate-400">Ryaze Portal / <span class="text-indigo-600">Dashboard</span>
-                </p>
             </div>
         </div>
 
@@ -125,7 +117,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">{{ $user->created_at->diffForHumans() }}</td>
                                     <td class="px-6 py-4 text-center">
-                                        <a href="{{ route('superadmin.users.show', $user->id) }}"
+                                        <a href="{{ route('superadmin.users.show', $user->hashid) }}"
                                             class="inline-block text-slate-400 hover:text-indigo-600 transition-colors"
                                             title="Detail Profil">
                                             <i class="fa-solid fa-eye"></i>

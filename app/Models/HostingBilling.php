@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class HostingBilling extends Model
 {
+    use \App\Traits\HasHashid;
+
     protected $fillable = [
         'hosting_project_id', 'plan_name', 'amount',
         'billing_cycle', 'next_due_date', 'status'

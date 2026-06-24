@@ -35,21 +35,20 @@
     @endif
 
     {{-- Header --}}
-    <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="flex items-center gap-4">
-            <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-purple-50 text-purple-600 rounded-lg">
-                <i class="fa-solid fa-database text-lg"></i>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-purple-50 text-purple-600 rounded-lg">
+                    <i class="fa-solid fa-database text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Database & phpMyAdmin</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Kelola database MySQL untuk aplikasi Anda.</p>
+                </div>
             </div>
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Database & phpMyAdmin</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Kelola database MySQL untuk aplikasi Anda.</p>
-            </div>
+            <button onclick="openCreateModal()" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                + Buat Database
+            </button>
         </div>
-        <button onclick="openCreateModal()"
-            class="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-sm transition-all flex items-center gap-2 text-sm">
-            <i class="fa-solid fa-plus"></i> Buat Database
-        </button>
-    </div>
 
     {{-- Database Cards --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

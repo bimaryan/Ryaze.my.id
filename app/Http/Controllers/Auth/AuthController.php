@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Str;
@@ -17,25 +18,10 @@ class AuthController extends Controller
 
     private const LOCKOUT_MINUTES = 5;
 
-    // Menampilkan halaman login + Generate Captcha
+    // Menampilkan halaman login
     public function loginindex(Request $request)
     {
-        $num1 = rand(1, 10); // Perbesar range supaya susah di-brute
-        $num2 = rand(1, 10);
-        $operator = ['+', '-', '*'][rand(0, 2)]; // Variasikan operator
-
-        $answer = match ($operator) {
-            '+' => $num1 + $num2,
-            '-' => $num1 - $num2,
-            '*' => $num1 * $num2,
-        };
-
-        $request->session()->put('captcha_answer', $answer);
-        $request->session()->put('captcha_token', Str::random(32)); // token anti-replay
-
-        $captcha_question = "$num1 $operator $num2 = ?";
-
-        return view('pages.auth.login', compact('captcha_question'));
+        return view('pages.auth.login');
     }
 
     // Menampilkan halaman register
@@ -51,10 +37,9 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email|max:255',
             'password' => 'required|string',
-            'captcha' => 'required|numeric',
+            'cf-turnstile-response' => 'required',
         ], [
-            'captcha.required' => 'Captcha wajib diisi.',
-            'captcha.numeric' => 'Captcha harus berupa angka.',
+            'cf-turnstile-response.required' => 'Mohon selesaikan tantangan CAPTCHA.',
         ]);
 
         // 2. Rate limiting berbasis IP + email (lawan fuzzing & brute force)
@@ -68,17 +53,13 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        // 3. Validasi captcha
-        if ((int) $request->captcha !== (int) $request->session()->get('captcha_answer')) {
+        // 3. Validasi Cloudflare Turnstile
+        if (! $this->verifyTurnstile($request->input('cf-turnstile-response'))) {
             RateLimiter::hit($throttleKey, self::LOCKOUT_MINUTES * 60);
-            $request->session()->forget(['captcha_answer', 'captcha_token']);
-
             return back()->withErrors([
-                'captcha' => 'Jawaban Captcha salah.',
+                'captcha' => 'Validasi CAPTCHA gagal. Silakan coba lagi.',
             ])->onlyInput('email');
         }
-
-        $request->session()->forget(['captcha_answer', 'captcha_token']);
 
         // 4. Cek apakah user di-lock di level DB (opsional: double protection)
         $user = User::where('email', $request->email)->first();
@@ -143,6 +124,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'role' => 'required|in:user_joki,user_hosting',
+            'cf-turnstile-response' => 'required',
             'password' => [
                 'required',
                 'confirmed',
@@ -164,7 +146,15 @@ class AuthController extends Controller
             'password.numbers' => 'Password harus mengandung setidaknya satu angka.',
             'password.symbols' => 'Password harus mengandung setidaknya satu simbol (!, @, #, dst).',
             'password.uncompromised' => 'Password ini terlalu umum dan tidak aman. Silakan gunakan password lain.',
+            'cf-turnstile-response.required' => 'Mohon selesaikan tantangan CAPTCHA.',
         ]);
+
+        // 1.5 Validasi Cloudflare Turnstile
+        if (! $this->verifyTurnstile($request->input('cf-turnstile-response'))) {
+            return back()->withErrors([
+                'captcha' => 'Validasi CAPTCHA gagal. Silakan coba lagi.',
+            ])->withInput($request->except(['password', 'password_confirmation']));
+        }
 
         // 2. Simpan User Baru ke Database
         $user = User::create([
@@ -194,5 +184,37 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login');
+    }
+
+    /**
+     * Memverifikasi token Cloudflare Turnstile
+     *
+     * @param string $token
+     * @return bool
+     */
+    private function verifyTurnstile(?string $token): bool
+    {
+        if (empty($token)) {
+            return false;
+        }
+
+        $secret = config('services.turnstile.secret_key');
+
+        if (empty($secret)) {
+            // Jika secret key belum diatur, anggap valid untuk mencegah form mati saat development
+            return true;
+        }
+
+        try {
+            $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => $secret,
+                'response' => $token,
+            ]);
+
+            $result = $response->json();
+            return isset($result['success']) && $result['success'] === true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

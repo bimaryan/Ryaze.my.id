@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class JokiPayment extends Model
 {
+    use \App\Traits\HasHashid;
+
     protected $fillable = [
         'order_id', 'invoice_number', 'payment_name', 'amount',
         'status', 'payment_method', 'snap_token', 'paid_at'

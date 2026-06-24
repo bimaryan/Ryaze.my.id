@@ -1,17 +1,21 @@
 @extends('index')
 
 @section('content')
-    <!-- SCRIPT MIDTRANS (Wajib ada agar Pop-up bisa muncul) -->
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
-
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
-        <div
-            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Detail Proyek: {{ $order->project_name }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Pantau progres, tagihan, dan ajukan revisi di halaman ini.</p>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-file-invoice text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Detail Proyek: {{ $order->project_name }}</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Pantau progres, tagihan, dan ajukan revisi di halaman ini.</p>
+                </div>
             </div>
+            <a href="{{ route('user_joki.progress') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                &larr; Kembali
+            </a>
         </div>
 
         @if (session('success'))
@@ -69,10 +73,10 @@
                 @if ($order->status == 'review' || $order->status == 'progress')
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Ajukan Revisi</h3>
-                        <form action="{{ route('user_joki.revision.store', $order->id) }}" method="POST">
+                        <form action="{{ route('user_joki.revision.store', $order->hashid) }}" method="POST">
                             @csrf
                             <textarea name="revision_note" rows="3" required placeholder="Jelaskan bagian mana yang perlu diperbaiki..."
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm mb-3"></textarea>
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm mb-3 transition-shadow"></textarea>
                             <button type="submit"
                                 class="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors w-full sm:w-auto">
                                 Kirim Permintaan Revisi
@@ -127,37 +131,13 @@
                                     <div class="text-xl font-black text-slate-900 mb-3">Rp
                                         {{ number_format($payment->amount, 0, ',', '.') }}</div>
 
-                                    <!-- TOMBOL BAYAR MIDTRANS -->
+                                    <!-- TOMBOL BAYAR PAKASIR -->
                                     @if ($payment->status == 'unpaid' || $payment->status == 'failed')
-                                        <button id="pay-button-{{ $payment->id }}"
-                                            class="mt-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-lg transition-colors shadow-md shadow-indigo-200">
+                                        <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug') }}/{{ $payment->amount }}?order_id={{ $payment->invoice_number }}"
+                                            target="_blank"
+                                            class="mt-2 block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-lg transition-colors shadow-md shadow-indigo-200">
                                             <i class="fa-solid fa-credit-card mr-1"></i> Bayar Sekarang
-                                        </button>
-
-                                        <!-- Script Pemanggilan Popup Snap -->
-                                        <script>
-                                            document.getElementById('pay-button-{{ $payment->id }}').onclick = function() {
-                                                snap.pay('{{ $payment->snap_token }}', {
-                                                    // Jika pembayaran berhasil
-                                                    onSuccess: function(result) {
-                                                        window.location.reload();
-                                                    },
-                                                    // Jika pembayaran tertunda (misal VA)
-                                                    onPending: function(result) {
-                                                        alert("Menunggu pembayaran Anda diselesaikan!");
-                                                        window.location.reload();
-                                                    },
-                                                    // Jika pembayaran gagal
-                                                    onError: function(result) {
-                                                        alert("Pembayaran gagal!");
-                                                    },
-                                                    // Jika klien menutup pop-up
-                                                    onClose: function() {
-                                                        console.log('Pop-up ditutup tanpa menyelesaikan pembayaran');
-                                                    }
-                                                });
-                                            };
-                                        </script>
+                                        </a>
                                     @else
                                         <!-- TAMPILAN JIKA LUNAS -->
                                         <p

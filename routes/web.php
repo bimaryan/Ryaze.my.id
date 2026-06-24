@@ -25,65 +25,103 @@ Route::middleware(['throttle:10,1'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    // ── PROFIL USER ───────────────────────────────────────────────
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+
+    // ── LOGOUT ───────────────────────────────────────────────────
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('superadmin/dashboard', [AdminDashboardController::class, 'index'])->name('superadmin.dashboard');
-    Route::get('superadmin/users', [UserController::class, 'index'])->name('superadmin.users.index');
-    Route::get('superadmin/users/{id}', [UserController::class, 'show'])->name('superadmin.users.show');
+    // ═══════════════════════════════════════════════════════════════
+    // SUPERADMIN ONLY
+    // ═══════════════════════════════════════════════════════════════
+    Route::middleware('role:superadmin')->group(function () {
+        Route::get('superadmin/dashboard', [AdminDashboardController::class, 'index'])->name('superadmin.dashboard');
+        Route::get('superadmin/users', [UserController::class, 'index'])->name('superadmin.users.index');
+        Route::get('superadmin/users/{hashid}', [UserController::class, 'show'])->name('superadmin.users.show');
+    });
 
-    // --- ADMIN HOSTING ---
-    Route::get('admin/hosting/dashboard', [HostingAdminDashboardController::class, 'index'])->name('admin_hosting.dashboard');
-    Route::get('admin/hosting/pending', [HostingAdminDashboardController::class, 'pending'])->name('admin_hosting.pending');
-    Route::get('admin/hosting/deployments', [HostingAdminDashboardController::class, 'deployments'])->name('admin_hosting.deployments');
-    Route::get('admin/hosting/projects', [HostingAdminDashboardController::class, 'projects'])->name('admin_hosting.projects');
-    Route::patch('admin/hosting/{hashid}/activate', [HostingAdminDashboardController::class, 'activateProject'])->name('admin_hosting.activate');
-    Route::patch('admin/hosting/{hashid}/suspend', [HostingAdminDashboardController::class, 'suspendProject'])->name('admin_hosting.suspend');
-    Route::delete('admin/hosting/{hashid}', [HostingAdminDashboardController::class, 'destroyProject'])->name('admin_hosting.destroy');
+    // ═══════════════════════════════════════════════════════════════
+    // ADMIN HOSTING (+ superadmin)
+    // ═══════════════════════════════════════════════════════════════
+    Route::middleware('role:admin_hosting,superadmin')->group(function () {
+        Route::get('admin/hosting/dashboard', [HostingAdminDashboardController::class, 'index'])->name('admin_hosting.dashboard');
+        Route::get('admin/hosting/pending', [HostingAdminDashboardController::class, 'pending'])->name('admin_hosting.pending');
+        Route::get('admin/hosting/deployments', [HostingAdminDashboardController::class, 'deployments'])->name('admin_hosting.deployments');
+        Route::get('admin/hosting/projects', [HostingAdminDashboardController::class, 'projects'])->name('admin_hosting.projects');
+        Route::patch('admin/hosting/{hashid}/activate', [HostingAdminDashboardController::class, 'activateProject'])->name('admin_hosting.activate');
+        Route::patch('admin/hosting/{hashid}/suspend', [HostingAdminDashboardController::class, 'suspendProject'])->name('admin_hosting.suspend');
+        Route::delete('admin/hosting/{hashid}', [HostingAdminDashboardController::class, 'destroyProject'])->name('admin_hosting.destroy');
+        
+        // Kelola Tagihan Hosting
+        Route::get('admin/hosting/billing', [\App\Http\Controllers\Hosting\Admin\BillingController::class, 'index'])->name('admin_hosting.billing');
+        Route::put('admin/hosting/billing/{hashid}/verify', [\App\Http\Controllers\Hosting\Admin\BillingController::class, 'verifyPayment'])->name('admin_hosting.billing.verify');
+    });
 
-    // --- USER HOSTING ---
-    Route::get('user/hosting/dashboard', [DashboardController::class, 'index'])->name('user_hosting.dashboard');
-    Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
-    Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
-    Route::get('user/hosting/projects/{id}', [DashboardController::class, 'show'])->name('user_hosting.show');
-    Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
-    Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
-    Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
-    Route::get('user/hosting/projects/{hashid}/logs', [DashboardController::class, 'buildLogs'])->name('user_hosting.build_logs');
-    Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');
-    Route::get('user/hosting/projects/{hashid}/files', [DashboardController::class, 'getFiles'])->name('user_hosting.files');
-    Route::get('user/hosting/projects/{hashid}/files/read', [DashboardController::class, 'readFile'])->name('user_hosting.files.read');
-    Route::post('user/hosting/projects/{hashid}/files/save', [DashboardController::class, 'saveFile'])->name('user_hosting.files.save');
-    Route::post('user/hosting/projects/{hashid}/files/upload', [DashboardController::class, 'uploadFile'])->name('user_hosting.files.upload');
-    Route::post('user/hosting/projects/{hashid}/files/create', [DashboardController::class, 'createItem'])->name('user_hosting.files.create');
-    Route::post('user/hosting/projects/{hashid}/files/delete', [DashboardController::class, 'deleteItem'])->name('user_hosting.files.delete');
-    Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
-    Route::get('user/hosting/storage', [StorageController::class, 'index'])->name('user_hosting.storage');
-    Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.show');
-    Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
-    Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
-    Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
-    Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.detail');
-    Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
-    Route::delete('user/hosting/projects/{hashid}/delete', [DashboardController::class, 'deleteProject'])->name('user_hosting.destroy');
-    Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
+    // ═══════════════════════════════════════════════════════════════
+    // USER HOSTING (+ admin_hosting, superadmin)
+    // ═══════════════════════════════════════════════════════════════
+    Route::middleware('role:user_hosting,admin_hosting,superadmin')->group(function () {
+        Route::get('user/hosting/dashboard', [DashboardController::class, 'index'])->name('user_hosting.dashboard');
+        Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
+        Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
+        Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
+        Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
+        Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
+        Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
+        Route::get('user/hosting/projects/{hashid}/logs', [DashboardController::class, 'buildLogs'])->name('user_hosting.build_logs');
+        Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');
+        Route::get('user/hosting/projects/{hashid}/files', [DashboardController::class, 'getFiles'])->name('user_hosting.files');
+        Route::get('user/hosting/projects/{hashid}/files/read', [DashboardController::class, 'readFile'])->name('user_hosting.files.read');
+        Route::post('user/hosting/projects/{hashid}/files/save', [DashboardController::class, 'saveFile'])->name('user_hosting.files.save');
+        Route::post('user/hosting/projects/{hashid}/files/upload', [DashboardController::class, 'uploadFile'])->name('user_hosting.files.upload');
+        Route::post('user/hosting/projects/{hashid}/files/create', [DashboardController::class, 'createItem'])->name('user_hosting.files.create');
+        Route::post('user/hosting/projects/{hashid}/files/delete', [DashboardController::class, 'deleteItem'])->name('user_hosting.files.delete');
+        Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
+        Route::get('user/hosting/storage', [StorageController::class, 'index'])->name('user_hosting.storage');
+        Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.show');
+        Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
+        Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
+        Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
+        Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.detail');
+        Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
+        Route::delete('user/hosting/projects/{hashid}/delete', [DashboardController::class, 'deleteProject'])->name('user_hosting.destroy');
+        Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
+    });
 
-    // --- AKSI USER JOKI ---
-    Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');
-    Route::get('user/joki/create', [UserJokiDashboardController::class, 'create'])->name('user_joki.create');
-    Route::post('user/joki/store', [UserJokiDashboardController::class, 'store'])->name('user_joki.store');
-    Route::get('user/joki/progress', [ProgressController::class, 'index'])->name('user_joki.progress');
-    Route::get('user/joki/riwayat', [RiwayatController::class, 'index'])->name('user_joki.riwayat');
-    Route::get('user/joki/detail/{id}', [UserJokiDashboardController::class, 'detail'])->name('user_joki.detail');
-    Route::post('user/joki/orders/payment/{payment_id}/proof', [UserJokiDashboardController::class, 'uploadPaymentProof'])->name('user_joki.payment.proof');
-    Route::post('user/joki/orders/{order_id}/revision', [UserJokiDashboardController::class, 'requestRevision'])->name('user_joki.revision.store');
+    // ═══════════════════════════════════════════════════════════════
+    // USER JOKI (+ admin_joki, superadmin)
+    // ═══════════════════════════════════════════════════════════════
+    Route::middleware('role:user_joki,admin_joki,superadmin')->group(function () {
+        Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');
+        Route::get('user/joki/create', [UserJokiDashboardController::class, 'create'])->name('user_joki.create');
+        Route::post('user/joki/store', [UserJokiDashboardController::class, 'store'])->name('user_joki.store');
+        Route::get('user/joki/progress', [ProgressController::class, 'index'])->name('user_joki.progress');
+        Route::get('user/joki/riwayat', [RiwayatController::class, 'index'])->name('user_joki.riwayat');
+        Route::get('user/joki/detail/{hashid}', [UserJokiDashboardController::class, 'detail'])->name('user_joki.detail');
+        Route::post('user/joki/orders/payment/{hashid}/proof', [UserJokiDashboardController::class, 'uploadPaymentProof'])->name('user_joki.payment.proof');
+        Route::post('user/joki/orders/{hashid}/revision', [UserJokiDashboardController::class, 'requestRevision'])->name('user_joki.revision.store');
+        Route::get('user/joki/billing', [UserJokiDashboardController::class, 'billingHistory'])->name('user_joki.billing');
+    });
 
-    // --- AKSI ADMIN JOKI ---
-    Route::get('admin/joki/dashboard', [JokiAdminDashboardController::class, 'index'])->name('admin_joki.dashboard');
-    Route::get('admin/joki/orders', [JokiAdminDashboardController::class, 'manageOrders'])->name('admin_joki.orders');
-    Route::get('admin/joki/orders/{id}/edit', [JokiAdminDashboardController::class, 'editOrder'])->name('admin_joki.orders.edit');
-    Route::put('admin/joki/orders/{id}', [JokiAdminDashboardController::class, 'updateOrder'])->name('admin_joki.orders.update');
-    Route::post('admin/joki/orders/{id}/milestone', [JokiAdminDashboardController::class, 'storeMilestone'])->name('admin_joki.milestone.store');
-    Route::post('admin/joki/orders/{id}/payment', [JokiAdminDashboardController::class, 'storePayment'])->name('admin_joki.payment.store');
-    Route::put('admin/joki/payments/{payment_id}/verify', [JokiAdminDashboardController::class, 'verifyPayment'])->name('admin_joki.payment.verify');
-    Route::put('admin/joki/revisions/{revision_id}/reply', [JokiAdminDashboardController::class, 'replyRevision'])->name('admin_joki.revision.reply');
+    // ═══════════════════════════════════════════════════════════════
+    // ADMIN JOKI (+ superadmin)
+    // ═══════════════════════════════════════════════════════════════
+    Route::middleware('role:admin_joki,superadmin')->group(function () {
+        Route::get('admin/joki/dashboard', [JokiAdminDashboardController::class, 'index'])->name('admin_joki.dashboard');
+        Route::get('admin/joki/orders', [JokiAdminDashboardController::class, 'manageOrders'])->name('admin_joki.orders');
+        Route::get('admin/joki/orders/{hashid}/edit', [JokiAdminDashboardController::class, 'editOrder'])->name('admin_joki.orders.edit');
+        Route::put('admin/joki/orders/{hashid}', [JokiAdminDashboardController::class, 'updateOrder'])->name('admin_joki.orders.update');
+        Route::post('admin/joki/orders/{hashid}/milestone', [JokiAdminDashboardController::class, 'storeMilestone'])->name('admin_joki.milestone.store');
+        Route::post('admin/joki/orders/{hashid}/payment', [JokiAdminDashboardController::class, 'storePayment'])->name('admin_joki.payment.store');
+        Route::put('admin/joki/payments/{hashid}/verify', [JokiAdminDashboardController::class, 'verifyPayment'])->name('admin_joki.payment.verify');
+        Route::put('admin/joki/revisions/{hashid}/reply', [JokiAdminDashboardController::class, 'replyRevision'])->name('admin_joki.revision.reply');
+        
+        // Manajemen Layanan Joki
+        Route::resource('admin/joki/services', \App\Http\Controllers\Joki\Admin\ServiceController::class)->names('admin_joki.services');
+        
+        // Rekap Keuangan Joki
+        Route::get('admin/joki/finance', [JokiAdminDashboardController::class, 'financeReport'])->name('admin_joki.finance');
+    });
 });
+

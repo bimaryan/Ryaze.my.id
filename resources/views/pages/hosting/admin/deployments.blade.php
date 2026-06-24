@@ -4,18 +4,19 @@
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
         {{-- ── 2. ADMIN HOSTING – Riwayat Deployment ──────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
-            <a href="{{ route('admin_hosting.dashboard') }}"
-                class="shrink-0 w-10 h-10 flex items-center justify-center bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors">
-                <i class="fa-solid fa-arrow-left"></i>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
+                    <i class="fa-solid fa-rocket text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Riwayat Deployment</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Pantau status build dan log dari seluruh project klien.</p>
+                </div>
+            </div>
+            <a href="{{ route('admin_hosting.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                &larr; Kembali
             </a>
-            <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                <i class="fa-solid fa-clock-rotate-left text-lg"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Riwayat Deployment</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Pantau status build dan log dari seluruh project klien.</p>
-            </div>
         </div>
 
         {{-- Tabel Riwayat Deploy --}}

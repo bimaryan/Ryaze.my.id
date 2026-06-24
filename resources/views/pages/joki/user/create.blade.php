@@ -2,19 +2,24 @@
 
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
-        <!-- Header -->
-        <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Pesan Proyek Baru</h1>
-                <p class="text-sm text-slate-500 mt-0.5">
-                    Isi detail proyek Anda, saya akan segera meninjau untuk menentukan estimasi biaya dan waktu pengerjaan.
-                </p>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-plus text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Buat Pesanan Joki</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Isi detail proyek Anda, saya akan segera meninjau untuk menentukan estimasi biaya dan waktu pengerjaan.</p>
+                </div>
             </div>
+            <a href="{{ route('user_joki.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                &larr; Kembali
+            </a>
         </div>
 
         <!-- Form Section -->
         <div class="mt-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <form action="{{ route('user_joki.store') }}" method="POST" class="p-8 space-y-6">
                     @csrf
 
@@ -23,7 +28,7 @@
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Layanan</label>
                             <select name="service_id" id="service_select" required
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
                                 <option value="" disabled selected>-- Pilih Jenis Layanan --</option>
                                 @foreach (\App\Models\JokiService::where('is_active', true)->get() as $service)
                                     <!-- Tambahkan atribut data-price di sini -->
@@ -43,7 +48,7 @@
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Deadline Pengerjaan</label>
                             <input type="date" name="deadline" required
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
                         </div>
                     </div>
 
@@ -52,12 +57,12 @@
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Nama Proyek</label>
                             <input type="text" name="project_name" required placeholder="Contoh: Web Portofolio..."
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Tech Stack (Opsional)</label>
                             <input type="text" name="tech_stack" placeholder="Contoh: Laravel, React, Vue..."
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
                         </div>
                     </div>
 
@@ -66,13 +71,13 @@
                         <label class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Kebutuhan Detail</label>
                         <textarea name="description" rows="5" required
                             placeholder="Jelaskan secara rinci fitur apa saja yang diinginkan, jumlah halaman, dsb..."
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"></textarea>
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow"></textarea>
                     </div>
 
                     <!-- Footer Action -->
                     <div class="flex justify-end pt-4 border-t border-slate-100">
                         <button type="submit"
-                            class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all hover:-translate-y-0.5">
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
                             Kirim Pesanan
                         </button>
                     </div>

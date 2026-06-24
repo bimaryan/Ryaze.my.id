@@ -4,14 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 use Vinkla\Hashids\Facades\Hashids;
 
 class HostingDatabase extends Model
 {
+    use \App\Traits\HasHashid;
+
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'hashid', 'db_name', 'db_username', 'db_password', 'host', 'port'
+        'user_id', 'hashid', 'db_name', 'db_username', 'db_password', 'host', 'port',
     ];
 
     protected static function boot()
@@ -22,8 +25,23 @@ class HostingDatabase extends Model
         });
     }
 
+    /**
+     * Dekripsi password database saat diakses.
+     * Fallback ke plain text jika nilai belum dienkripsi (data lama).
+     */
+    public function getDbPasswordAttribute($value): string
+    {
+        try {
+            return Crypt::decryptString($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            // Data lama yang belum dienkripsi — return as-is
+            return $value;
+        }
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 }
+

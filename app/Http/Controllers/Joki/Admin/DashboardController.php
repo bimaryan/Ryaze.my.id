@@ -8,8 +8,6 @@ use App\Models\JokiPayment;
 use App\Models\JokiRevision;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Midtrans\Config;
-use Midtrans\Snap;
 
 class DashboardController extends Controller
 {
@@ -47,15 +45,23 @@ class DashboardController extends Controller
         return view('pages.joki.admin.orders', compact('orders'));
     }
 
-    public function editOrder($id)
+    public function editOrder($hashid)
     {
+        $decoded = \Vinkla\Hashids\Facades\Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $id = $decoded[0];
+
         $order = JokiOrder::with(['client', 'service'])->findOrFail($id);
 
         return view('pages.joki.admin.edit_order', compact('order'));
     }
 
-    public function updateOrder(Request $request, $id)
+    public function updateOrder(Request $request, $hashid)
     {
+        $decoded = \Vinkla\Hashids\Facades\Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $id = $decoded[0];
+
         $order = JokiOrder::findOrFail($id);
 
         $validated = $request->validate([
@@ -76,8 +82,12 @@ class DashboardController extends Controller
         return redirect()->route('admin_joki.orders')->with('success', 'Data pesanan berhasil diperbarui!');
     }
 
-    public function storeMilestone(Request $request, $id)
+    public function storeMilestone(Request $request, $hashid)
     {
+        $decoded = \Vinkla\Hashids\Facades\Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $id = $decoded[0];
+
         $order = JokiOrder::findOrFail($id);
 
         $validated = $request->validate([
@@ -95,8 +105,12 @@ class DashboardController extends Controller
     /**
      * FUNGSI ADMIN: Membuat Tagihan (Invoice/DP/Pelunasan)
      */
-    public function storePayment(Request $request, $id)
+    public function storePayment(Request $request, $hashid)
     {
+        $decoded = \Vinkla\Hashids\Facades\Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $id = $decoded[0];
+
         $order = JokiOrder::with('client')->findOrFail($id);
 
         $validated = $request->validate([
@@ -106,44 +120,27 @@ class DashboardController extends Controller
 
         $invoiceNumber = 'INV-'.strtoupper(uniqid());
 
-        // Konfigurasi Midtrans
-        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
-
-        // Parameter Kiriman ke Midtrans
-        $params = [
-            'transaction_details' => [
-                'order_id' => $invoiceNumber,
-                'gross_amount' => $validated['amount'],
-            ],
-            'customer_details' => [
-                'first_name' => $order->client->name,
-                'email' => $order->client->email,
-            ],
-        ];
-
-        // Dapatkan Snap Token dari Midtrans
-        $snapToken = Snap::getSnapToken($params);
-
-        // Simpan ke Database
+        // Simpan Tagihan ke Database
         $order->payments()->create([
             'invoice_number' => $invoiceNumber,
             'payment_name' => $validated['payment_name'],
             'amount' => $validated['amount'],
             'status' => 'unpaid',
-            'snap_token' => $snapToken, // Simpan tokennya
+            'snap_token' => null, // Tidak dibutuhkan untuk Pakasir
         ]);
 
-        return back()->with('success', 'Tagihan Midtrans berhasil dibuat!');
+        return back()->with('success', 'Tagihan berhasil dibuat!');
     }
 
     /**
      * FUNGSI ADMIN: Verifikasi Bukti Pembayaran
      */
-    public function verifyPayment(Request $request, $payment_id)
+    public function verifyPayment(Request $request, $hashid)
     {
+        $decoded = \Vinkla\Hashids\Facades\Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $payment_id = $decoded[0];
+
         $payment = JokiPayment::findOrFail($payment_id);
 
         $request->validate([
@@ -161,8 +158,12 @@ class DashboardController extends Controller
     /**
      * FUNGSI ADMIN: Merespon Request Revisi dari Klien
      */
-    public function replyRevision(Request $request, $revision_id)
+    public function replyRevision(Request $request, $hashid)
     {
+        $decoded = \Vinkla\Hashids\Facades\Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $revision_id = $decoded[0];
+
         $revision = JokiRevision::findOrFail($revision_id);
 
         $request->validate([
@@ -176,5 +177,18 @@ class DashboardController extends Controller
         ]);
 
         return back()->with('success', 'Tanggapan revisi berhasil dikirim!');
+    }
+
+    public function financeReport()
+    {
+        // Ambil semua payment yang berstatus paid / verified
+        $payments = \App\Models\JokiPayment::with(['order.client', 'order.service'])
+            ->whereIn('status', ['paid', 'verified'])
+            ->orderBy('paid_at', 'desc')
+            ->get();
+            
+        $totalRevenue = $payments->sum('amount');
+        
+        return view('pages.joki.admin.finance', compact('payments', 'totalRevenue'));
     }
 }

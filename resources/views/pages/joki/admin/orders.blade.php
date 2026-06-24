@@ -3,17 +3,21 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
         <!-- Header -->
-        <div
-            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Kelola Pesanan Joki</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Pantau dan perbarui status pengerjaan proyek klien di sini.</p>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-clipboard-list text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Daftar Pesanan Masuk</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Kelola dan pantau semua pesanan joki dari klien.</p>
+                </div>
             </div>
         </div>
 
         <div class="mt-6">
             <!-- Tabel Pesanan -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-slate-600">
                         <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
@@ -63,7 +67,7 @@
                                         {{ \Carbon\Carbon::parse($order->deadline)->format('d M Y') }}
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <a href="{{ route('admin_joki.orders.edit', $order->id) }}"
+                                        <a href="{{ route('admin_joki.orders.edit', $order->hashid) }}"
                                             class="inline-block text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
                                             Update Data
                                         </a>

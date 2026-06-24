@@ -3,12 +3,19 @@
 @section('content')
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
-        <div
-            class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Profil Klien: {{ $user->name }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Lihat informasi detail dan riwayat pesanan klien.</p>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-user text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Profil Klien: {{ $user->name }}</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Lihat informasi detail dan riwayat pesanan klien.</p>
+                </div>
             </div>
+            <a href="{{ route('superadmin.users.index') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                &larr; Kembali
+            </a>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
@@ -73,7 +80,7 @@
                                         <p class="text-xs text-slate-500">Order ID: {{ $order->order_number }} | Harga: Rp
                                             {{ number_format($order->price ?? 0, 0, ',', '.') }}</p>
                                     </div>
-                                    <a href="{{ route('admin_joki.orders.edit', $order->id) }}"
+                                    <a href="{{ route('admin_joki.orders.edit', $order->hashid) }}"
                                         class="inline-block text-xs border border-indigo-200 text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 font-semibold shadow-sm">
                                         Kelola Proyek
                                     </a>

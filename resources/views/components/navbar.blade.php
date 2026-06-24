@@ -84,10 +84,16 @@
                         </div>
                         <ul class="py-1" role="none">
                             <li>
+                                <a href="{{ route('profile.edit') }}"
+                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                    <i class="fa-solid fa-user me-2 text-indigo-500"></i> Profil Saya
+                                </a>
+                            </li>
+                            <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit"
-                                        class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-slate-50"
+                                        class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-slate-50 border-t border-slate-100"
                                         role="menuitem">
                                         <i class="fa-solid fa-right-from-bracket me-2"></i> Keluar
                                     </button>
@@ -127,78 +133,112 @@
                 $isUserJoki = $role === 'user_joki';
                 $isUser = in_array($role, ['user_joki', 'user_hosting']);
 
-                $navLink = fn($active) => 'flex items-center p-3 rounded-lg transition-all duration-200 group ' .
+                $navLink = fn($active) => 'flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group text-sm font-medium ' .
                     ($active
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-                        : 'text-slate-600 hover:bg-indigo-100 hover:text-indigo-700');
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200/50'
+                        : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700');
+
+                $iconClass = fn($active) => 'w-6 text-center text-lg transition-transform group-hover:scale-110 ' .
+                    ($active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600');
             @endphp
 
             {{-- Dashboard --}}
             <li>
                 <a href="{{ $dashboardUrl }}" class="{{ $navLink(request()->routeIs('*.dashboard')) }}">
-                    <i class="fa-solid fa-border-all me-2 ms-3"></i>
-                    <span class="whitespace-nowrap">Dashboard</span>
+                    <i class="fa-solid fa-border-all {{ $iconClass(request()->routeIs('*.dashboard')) }}"></i>
+                    <span class="ms-3 whitespace-nowrap">Dashboard</span>
                 </a>
             </li>
 
-            {{-- ══ MANAJEMEN ADMIN ══════════════════════════════════ --}}
-            @if ($isAdmin)
-                <li class="pt-4 mt-2">
-                    <span class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Manajemen Admin</span>
+            {{-- ══ SISTEM UTAMA (SUPERADMIN) ══════════════════════════════════ --}}
+            @if ($role === 'superadmin')
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sistem Utama</span>
                 </li>
 
-                {{-- Admin Joki: Kelola Pesanan --}}
-                @if ($isAdminJoki)
-                    <li>
-                        <a href="{{ route('admin_joki.orders') }}"
-                            class="{{ $navLink(request()->routeIs('admin_joki.orders*')) }}">
-                            <i class="fa-solid fa-code-branch me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Kelola Pesanan Joki</span>
-                        </a>
-                    </li>
-                @endif
-
-                {{-- Admin Hosting: Kelola Project (DIPERBAIKI) --}}
-                @if ($isAdminHosting)
-                    <li>
-                        <a href="{{ route('admin_hosting.projects') }}"
-                            class="{{ $navLink(request()->routeIs('admin_hosting.projects')) }}">
-                            <i class="fa-solid fa-server me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Kelola Project Hosting</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin_hosting.deployments') }}"
-                            class="{{ $navLink(request()->routeIs('admin_hosting.deployments')) }}">
-                            <i class="fa-solid fa-history me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Riwayat Project</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin_hosting.pending') }}"
-                            class="{{ $navLink(request()->routeIs('admin_hosting.pending')) }}">
-                            <i class="fa-solid fa-warning me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Membutuhkan Tindakan</span>
-                        </a>
-                    </li>
-                @endif
-
-                {{-- Superadmin: Data Pengguna --}}
-                @if ($role === 'superadmin')
-                    <li>
-                        <a href="{{ route('superadmin.users.index') }}"
-                            class="{{ $navLink(request()->routeIs('superadmin.users*')) }}">
-                            <i class="fa-solid fa-users me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Data Pengguna</span>
-                        </a>
-                    </li>
-                @endif
+                <li>
+                    <a href="{{ route('superadmin.users.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.users*')) }}">
+                        <i class="fa-solid fa-users {{ $iconClass(request()->routeIs('superadmin.users*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Data Pengguna</span>
+                    </a>
+                </li>
             @endif
+
+            {{-- ══ MANAJEMEN JOKI ══════════════════════════════════ --}}
+            @if ($isAdminJoki)
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        {{ $role === 'superadmin' ? 'Manajemen Joki' : 'Manajemen Admin' }}
+                    </span>
+                </li>
+
+                <li>
+                    <a href="{{ route('admin_joki.orders') }}"
+                        class="{{ $navLink(request()->routeIs('admin_joki.orders*')) }}">
+                        <i class="fa-solid fa-code-branch {{ $iconClass(request()->routeIs('admin_joki.orders*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Kelola Pesanan Joki</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin_joki.services.index') }}"
+                        class="{{ $navLink(request()->routeIs('admin_joki.services*')) }}">
+                        <i class="fa-solid fa-list {{ $iconClass(request()->routeIs('admin_joki.services*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Manajemen Layanan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin_joki.finance') }}"
+                        class="{{ $navLink(request()->routeIs('admin_joki.finance')) }}">
+                        <i class="fa-solid fa-wallet {{ $iconClass(request()->routeIs('admin_joki.finance')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Keuangan Joki</span>
+                    </a>
+                </li>
+            @endif
+
+            {{-- ══ MANAJEMEN HOSTING ══════════════════════════════════ --}}
+            @if ($isAdminHosting)
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        {{ $role === 'superadmin' ? 'Manajemen Hosting' : 'Manajemen Admin' }}
+                    </span>
+                </li>
+
+                <li>
+                    <a href="{{ route('admin_hosting.projects') }}"
+                        class="{{ $navLink(request()->routeIs('admin_hosting.projects')) }}">
+                        <i class="fa-solid fa-server {{ $iconClass(request()->routeIs('admin_hosting.projects')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Kelola Project Hosting</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin_hosting.deployments') }}"
+                        class="{{ $navLink(request()->routeIs('admin_hosting.deployments')) }}">
+                        <i class="fa-solid fa-history {{ $iconClass(request()->routeIs('admin_hosting.deployments')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Riwayat Project</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin_hosting.pending') }}"
+                        class="{{ $navLink(request()->routeIs('admin_hosting.pending')) }}">
+                        <i class="fa-solid fa-warning {{ $iconClass(request()->routeIs('admin_hosting.pending')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Membutuhkan Tindakan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin_hosting.billing') }}"
+                        class="{{ $navLink(request()->routeIs('admin_hosting.billing')) }}">
+                        <i class="fa-solid fa-file-invoice-dollar {{ $iconClass(request()->routeIs('admin_hosting.billing')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Kelola Tagihan</span>
+                    </a>
+                </li>
+            @endif
+
 
             {{-- ══ LAYANAN KLIEN ════════════════════════════════════ --}}
             @if ($isUser)
-                <li class="pt-4 mt-2">
-                    <span class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Layanan Klien</span>
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Layanan Klien</span>
                 </li>
 
                 {{-- Menu User Joki --}}
@@ -206,30 +246,30 @@
                     <li>
                         <a href="{{ route('user_joki.create') }}"
                             class="{{ $navLink(request()->routeIs('user_joki.create')) }}">
-                            <i class="fa-solid fa-cart-plus me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Pesan Joki Baru</span>
+                            <i class="fa-solid fa-cart-plus {{ $iconClass(request()->routeIs('user_joki.create')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Pesan Joki Baru</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_joki.progress') }}"
                             class="{{ $navLink(request()->routeIs('user_joki.progress')) }}">
-                            <i class="fa-solid fa-laptop-code me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Progres Joki Saya</span>
+                            <i class="fa-solid fa-laptop-code {{ $iconClass(request()->routeIs('user_joki.progress')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Progres Joki Saya</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_joki.riwayat') }}"
                             class="{{ $navLink(request()->routeIs('user_joki.riwayat')) }}">
-                            <i class="fa-solid fa-history me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Riwayat Joki Saya</span>
+                            <i class="fa-solid fa-history {{ $iconClass(request()->routeIs('user_joki.riwayat')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Riwayat Joki Saya</span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="#"
-                            class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}">
-                            <i class="fa-solid fa-file-invoice-dollar me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Riwayat Tagihan</span>
+                        <a href="{{ route('user_joki.billing') }}"
+                            class="{{ $navLink(request()->routeIs('user_joki.billing')) }}">
+                            <i class="fa-solid fa-file-invoice-dollar {{ $iconClass(request()->routeIs('user_joki.billing')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Riwayat Tagihan</span>
                         </a>
                     </li>
                 @endif
@@ -239,37 +279,37 @@
                     <li>
                         <a href="{{ route('user_hosting.create') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.create')) }}">
-                            <i class="fa-brands fa-github me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Deploy Proyek Baru</span>
+                            <i class="fa-brands fa-github {{ $iconClass(request()->routeIs('user_hosting.create')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Deploy Proyek Baru</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_hosting.projects') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}">
-                            <i class="fa-solid fa-terminal me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Aplikasi Ter-deploy</span>
+                            <i class="fa-solid fa-terminal {{ $iconClass(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Aplikasi Ter-deploy</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_hosting.databases') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.databases*')) }}">
-                            <i class="fa-solid fa-database me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Database MySQL</span>
+                            <i class="fa-solid fa-database {{ $iconClass(request()->routeIs('user_hosting.databases*')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Database MySQL</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('user_hosting.storage') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.storage*')) }}">
-                            <i class="fa-solid fa-hard-drive me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Penyimpanan / Storage</span>
+                            <i class="fa-solid fa-hard-drive {{ $iconClass(request()->routeIs('user_hosting.storage*')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Penyimpanan / Storage</span>
                         </a>
                     </li>
 
                     <li>
                         <a href="{{ route('user_hosting.billing') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}">
-                            <i class="fa-solid fa-file-invoice-dollar me-2 ms-3"></i>
-                            <span class="whitespace-nowrap">Riwayat Tagihan</span>
+                            <i class="fa-solid fa-file-invoice-dollar {{ $iconClass(request()->routeIs('user_hosting.billing')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Riwayat Tagihan</span>
                         </a>
                     </li>
                 @endif

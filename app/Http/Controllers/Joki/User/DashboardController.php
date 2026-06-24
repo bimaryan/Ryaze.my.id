@@ -58,8 +58,12 @@ class DashboardController extends Controller
         return redirect()->route('user_joki.dashboard')->with('success', 'Pesanan berhasil dibuat!');
     }
 
-    public function uploadPaymentProof(Request $request, $payment_id)
+    public function uploadPaymentProof(Request $request, $hashid)
     {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $payment_id = $decoded[0];
+
         $request->validate([
             'proof_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -83,8 +87,12 @@ class DashboardController extends Controller
     /**
      * FUNGSI USER: Mengajukan Revisi
      */
-    public function requestRevision(Request $request, $order_id)
+    public function requestRevision(Request $request, $hashid)
     {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $order_id = $decoded[0];
+
         $request->validate([
             'revision_note' => 'required|string|min:10',
         ]);
@@ -101,5 +109,14 @@ class DashboardController extends Controller
         $order->update(['status' => 'review']);
 
         return back()->with('success', 'Permintaan revisi berhasil dikirim ke developer!');
+    }
+
+    public function billingHistory()
+    {
+        $payments = JokiPayment::whereHas('order', function ($query) {
+            $query->where('client_id', Auth::id());
+        })->with('order')->orderBy('created_at', 'desc')->get();
+
+        return view('pages.joki.user.billing', compact('payments'));
     }
 }

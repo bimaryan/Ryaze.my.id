@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HostingDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Vinkla\Hashids\Facades\Hashids;
 
 class DatabaseController extends Controller
@@ -42,8 +43,8 @@ class DatabaseController extends Controller
         }
 
         // Ambil konfigurasi dari .env
-        $rootPass = env('PANEL_MYSQL_ROOT_PASSWORD');
-        $mysqlHost = env('PANEL_MYSQL_HOST', '1Panel-mysql-KZAi');
+        $rootPass = config('services.panel_mysql.root_password');
+        $mysqlHost = config('services.panel_mysql.host');
 
         if (! $rootPass) {
             return back()->with('error', 'Konfigurasi Root MySQL belum diatur oleh Admin.');
@@ -56,8 +57,9 @@ class DatabaseController extends Controller
             // 1. Buat Database
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `$cleanDbName`");
 
-            // 2. Buat User (Tanpa plugin khusus)
-            $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY '$dbPassword'");
+            // 2. Buat User — GUNAKAN PDO::quote() untuk mencegah SQL Injection pada password!
+            $quotedPassword = $pdo->quote($dbPassword);
+            $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY $quotedPassword");
 
             // 3. Grant akses
             $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$cleanUsername'@'%'");
@@ -69,12 +71,12 @@ class DatabaseController extends Controller
             return back()->with('error', 'Gagal membuat database: '.$e->getMessage());
         }
 
-        // Simpan ke database portal Ryaze
+        // Simpan ke database portal Ryaze — encrypt password!
         HostingDatabase::create([
             'user_id' => Auth::id(),
             'db_name' => $cleanDbName,
             'db_username' => $cleanUsername,
-            'db_password' => $dbPassword,
+            'db_password' => Crypt::encryptString($dbPassword),
             'host' => $mysqlHost,
         ]);
 
@@ -118,7 +120,7 @@ class DatabaseController extends Controller
         }
 
         $db = HostingDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
-        $pmaUrl = rtrim(env('PMA_URL', ''), '/');
+        $pmaUrl = rtrim(config('services.pma.url', ''), '/');
 
         if (! $pmaUrl) {
             return back()->with('error', 'URL phpMyAdmin belum dikonfigurasi di .env (PMA_URL).');

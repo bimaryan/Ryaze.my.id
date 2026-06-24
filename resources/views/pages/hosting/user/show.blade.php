@@ -19,11 +19,9 @@
         @endif
 
         {{-- ── Header Project ────────────────────────────────────────────────── --}}
-        <div
-            class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
-                <div
-                    class="shrink-0 w-12 h-12 border border-slate-200 rounded-xl flex items-center justify-center bg-slate-50">
+                <div class="shrink-0 w-12 h-12 border border-slate-200 rounded-lg flex items-center justify-center bg-white shadow-sm">
                     @php
                         $fwIcon = match ($project->framework) {
                             'react' => 'fa-brands fa-react text-sky-500',
@@ -40,29 +38,36 @@
                 <div>
                     <h1 class="text-xl font-bold text-slate-800">{{ $project->project_name }}</h1>
                     <a href="https://{{ $project->ryaze_domain }}" target="_blank"
-                        class="text-sm font-medium text-indigo-600 hover:underline flex items-center gap-1 mt-0.5">
+                        class="text-sm font-medium text-indigo-600 hover:underline flex items-center gap-1 mt-1">
                         {{ $project->ryaze_domain }}
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                     </a>
                 </div>
             </div>
-            @php
-                $statusClass = match ($project->status) {
-                    'active' => 'bg-emerald-100 text-emerald-700',
-                    'building' => 'bg-amber-100 text-amber-700 animate-pulse',
-                    default => 'bg-rose-100 text-rose-700',
-                };
-                $statusIcon = match ($project->status) {
-                    'active' => 'fa-circle-check',
-                    'building' => 'fa-spinner fa-spin',
-                    default => 'fa-triangle-exclamation',
-                };
-            @endphp
-            <span
-                class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide {{ $statusClass }}">
-                <i class="fa-solid {{ $statusIcon }}"></i>
-                {{ $project->status }}
-            </span>
+            <div class="flex items-center gap-3">
+                @php
+                    $statusClass = match ($project->status) {
+                        'active' => 'bg-emerald-100 text-emerald-700',
+                        'building' => 'bg-amber-100 text-amber-700 animate-pulse',
+                        'unpaid' => 'bg-rose-100 text-rose-700 font-bold',
+                        default => 'bg-rose-100 text-rose-700',
+                    };
+                    $statusIcon = match ($project->status) {
+                        'active' => 'fa-circle-check',
+                        'building' => 'fa-spinner fa-spin',
+                        'unpaid' => 'fa-file-invoice-dollar',
+                        default => 'fa-triangle-exclamation',
+                    };
+                @endphp
+                <span
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide {{ $statusClass }}">
+                    <i class="fa-solid {{ $statusIcon }}"></i>
+                    {{ $project->status }}
+                </span>
+                <a href="{{ route('user_hosting.projects') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </div>
         </div>
 
         {{-- Tab Navigation --}}
@@ -122,6 +127,25 @@
                                 <iframe src="https://{{ $project->ryaze_domain }}"
                                     class="w-full h-full border-0 relative z-10 bg-white"></iframe>
                             </div>
+                        </div>
+                    @elseif ($project->status == 'unpaid')
+                        @php
+                            $unpaidPayment = $project->payments->where('status', 'unpaid')->first();
+                        @endphp
+                        <div class="bg-white rounded-xl border border-rose-200 p-10 text-center shadow-sm">
+                            <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-file-invoice-dollar text-rose-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-2">Menunggu Pembayaran</h3>
+                            <p class="text-slate-500 mb-6 text-sm max-w-md mx-auto">Tagihan hosting Anda belum dibayar. Deployment akan otomatis dimulai setelah Anda menyelesaikan pembayaran.</p>
+                            @if($unpaidPayment)
+                                <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug', 'ryaze') }}/{{ $unpaidPayment->amount }}?order_id={{ $unpaidPayment->invoice_number }}" target="_blank"
+                                    class="inline-flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md shadow-rose-200">
+                                    <i class="fa-solid fa-credit-card"></i> Bayar Rp {{ number_format($unpaidPayment->amount, 0, ',', '.') }}
+                                </a>
+                            @else
+                                <p class="text-xs text-rose-500">Invoice tidak ditemukan. Harap hubungi Admin.</p>
+                            @endif
                         </div>
                     @else
                         <div class="bg-white rounded-xl border border-slate-200 p-12 text-center">
@@ -192,7 +216,7 @@
                     </div>
                     <div class="text-slate-400 text-xs ml-auto">
                         <span
-                            id="build-log-updated">{{ $project->deployments->first()->created_at?->diffForHumans() ?? 'Initial Build' }}</span>
+                            id="build-log-updated">{{ $project->deployments->first()?->created_at?->diffForHumans() ?? 'Initial Build' }}</span>
                     </div>
                 </div>
                 <div class="p-4 h-[500px] overflow-y-auto font-mono text-sm" id="build-log-container">

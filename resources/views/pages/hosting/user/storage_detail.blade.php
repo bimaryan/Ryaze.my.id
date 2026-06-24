@@ -4,24 +4,21 @@
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
         {{-- ── 10. USER HOSTING – Storage Detail (per Project) ───────────── --}}
-        <div
-            class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4 min-w-0">
-                <a href="{{ route('user_hosting.storage') }}"
-                    class="shrink-0 w-10 h-10 flex items-center justify-center bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </a>
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-folder-open text-lg"></i>
                 </div>
                 <div class="min-w-0">
                     <h1 class="text-xl font-bold text-slate-800 truncate">{{ $project->project_name }}</h1>
-                    <p
-                        class="text-xs text-slate-400 font-mono mt-1 px-2 py-0.5 bg-slate-50 border border-slate-100 rounded inline-block truncate max-w-full">
+                    <p class="text-xs text-slate-400 font-mono mt-1 px-2 py-0.5 bg-slate-50 border border-slate-100 rounded inline-block truncate max-w-full">
                         {{ $project_dir }}
                     </p>
                 </div>
             </div>
+            <a href="{{ route('user_hosting.storage') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                &larr; Kembali
+            </a>
         </div>
 
         {{-- Tips --}}

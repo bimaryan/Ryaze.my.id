@@ -4,22 +4,26 @@
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
         {{-- ── 6. USER HOSTING – Deploy Proyek Baru ───────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
-            <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                <i class="fa-brands fa-github text-lg"></i>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
+                    <i class="fa-solid fa-plus text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">Deploy Proyek Baru</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Impor repository Git Anda dan biarkan sistem kami melakukan sisanya.</p>
+                </div>
             </div>
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Deploy Proyek Baru</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Impor repository Git Anda dan biarkan sistem kami melakukan sisanya.
-                </p>
-            </div>
+            <a href="{{ route('user_hosting.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                &larr; Kembali
+            </a>
         </div>
 
         <div class="mx-auto mt-6">
             <form action="{{ route('user_hosting.store') }}" method="POST" class="space-y-6">
                 @csrf
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <i class="fa-brands fa-github text-xl"></i> Sumber Repository
                     </h3>
@@ -41,7 +45,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Konfigurasi Proyek</h3>
 
                     <div class="mb-5">

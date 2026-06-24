@@ -4,21 +4,19 @@
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
 
         {{-- ── 1. ADMIN HOSTING – Dashboard Manajemen ────────────────────── --}}
-        <div
-            class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
+                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-server text-lg"></i>
                 </div>
                 <div>
                     <h1 class="text-xl font-bold text-slate-800">Manajemen Hosting</h1>
                     <p class="text-sm text-slate-500 mt-0.5">
-                        Halo Admin <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? '' }}</span>.
-                        Berikut status server hari ini.
+                        Halo Admin <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? '' }}</span>. Berikut status server hari ini.
                     </p>
                 </div>
             </div>
-            <span class="text-xs text-slate-400 sm:text-right shrink-0">{{ now()->format('d M Y, H:i') }} WIB</span>
+            <span class="text-sm text-slate-400 sm:text-right shrink-0">{{ now()->format('d M Y, H:i') }} WIB</span>
         </div>
 
         {{-- ══ FLASH MESSAGE ══════════════════════════════════════════ --}}

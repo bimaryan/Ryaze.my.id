@@ -9,6 +9,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body class="bg-slate-50 font-sans antialiased text-slate-900">
@@ -45,14 +46,8 @@
                             placeholder="••••••••">
                     </div>
 
-                    <div class="bg-slate-100 p-4 rounded-lg border border-slate-200">
-                        <label for="captcha" class="block text-sm font-medium text-slate-700 mb-2">
-                            Buktikan Anda bukan robot. Berapa hasil dari: <span
-                                class="text-lg font-bold text-indigo-600 ml-1">{{ $captcha_question }}</span>
-                        </label>
-                        <input type="number" name="captcha" id="captcha"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('captcha') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
-                            placeholder="Masukkan jawaban">
+                    <div class="flex justify-center">
+                        <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}"></div>
                     </div>
 
                     <div class="flex items-center">

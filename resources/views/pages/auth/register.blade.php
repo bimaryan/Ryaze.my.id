@@ -9,6 +9,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body class="bg-slate-50 font-sans antialiased text-slate-900">
@@ -82,6 +83,10 @@
                                     Hosting</span>
                             </label>
                         </div>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}"></div>
                     </div>
 
                     <button type="submit"

@@ -14,6 +14,8 @@ use Illuminate\Notifications\Notifiable;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+    use \App\Traits\HasHashid;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 

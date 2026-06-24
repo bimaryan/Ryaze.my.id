@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class HostingDeployment extends Model
 {
+    use \App\Traits\HasHashid;
+
     protected $fillable = [
         'hosting_project_id', 'commit_hash', 'commit_message',
         'build_logs', 'status', 'deployed_at'

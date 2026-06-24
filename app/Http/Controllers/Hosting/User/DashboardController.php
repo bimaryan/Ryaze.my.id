@@ -14,6 +14,61 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class DashboardController extends Controller
 {
+    /**
+     * File sistem yang tidak boleh dimodifikasi/dihapus oleh user.
+     */
+    private array $protectedFiles = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
+
+    /**
+     * Ekstensi file yang diblokir dari upload (mencegah web shell).
+     */
+    private array $blockedExtensions = [
+        'php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'php8', 'phps', 'phar',
+        'cgi', 'pl', 'py', 'pyc', 'sh', 'bash', 'bat', 'cmd', 'com', 'exe',
+        'asp', 'aspx', 'jsp', 'jspx', 'war', 'ear',
+    ];
+
+    /**
+     * Command prefix yang diizinkan di web terminal.
+     */
+    private array $allowedCommands = [
+        'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date',
+        'php', 'composer', 'npm', 'npx', 'node', 'python3', 'pip', 'pip3',
+        'mkdir', 'touch', 'cp', 'mv', 'rm',
+    ];
+
+    /**
+     * Pola berbahaya yang diblokir di terminal (regex).
+     */
+    private array $blockedPatterns = [
+        '/\.\.\//',                    // directory traversal
+        '/\/etc\//',                   // system config access
+        '/\/root\//',                  // root home
+        '/\/var\/(?!www)/',            // /var (kecuali /var/www)
+        '/\/proc\//',                  // proc filesystem
+        '/\bsudo\b/',                  // privilege escalation
+        '/\bsu\s/',                    // switch user
+        '/\bchmod\s+777\s+\//',        // chmod 777 /
+        '/\brm\s+-rf\s+\/(?!\S)/',     // rm -rf /
+        '/\bwget\b/',                  // download executables
+        '/\bcurl\b.*\|.*\bsh\b/',      // curl pipe to shell
+        '/\bnc\b|\bnetcat\b/',         // reverse shell
+        '/\beval\b/',                  // eval execution
+        '/\$\(/',                      // command substitution
+        '/`[^`]+`/',                   // backtick execution
+        '/\bexport\b/',               // env manipulation
+        '/\benv\b/',                  // env variables dump
+        '/\bpasswd\b/',               // password file
+        '/\bshadow\b/',               // shadow file
+        '/\bcrontab\b/',              // cron manipulation
+        '/\bkill\b/',                 // process kill
+        '/\bkillall\b/',              // kill all processes
+        '/\breboot\b/',               // system reboot
+        '/\bshutdown\b/',             // system shutdown
+        '/\bmysql\b/',                // direct mysql access
+        '/\bsqlite3\b/',              // direct sqlite access
+        '/\bpsql\b/',                 // direct postgres access
+    ];
     // Menampilkan halaman dashboard hosting klien
     public function index()
     {
@@ -66,18 +121,17 @@ class DashboardController extends Controller
             'repo_source' => $request->repo_source,
             'branch' => $request->branch,
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
-            'status' => 'building',
+            'status' => 'unpaid',
         ]);
 
-        $project->deployments()->create([
-            'status' => 'queued',
-            'build_logs' => "> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil repository dari ".$request->repo_source."\n> Branch: ".$request->branch."\n> Menyiapkan environment ".strtoupper($request->framework).'...',
+        // Buat tagihan pertama (Rp 15.000)
+        $project->payments()->create([
+            'invoice_number' => 'HST-INV-'.strtoupper(uniqid()),
+            'amount' => 15000,
+            'status' => 'unpaid',
         ]);
 
-        // EKSEKUSI JOB OTOMATIS DISINI
-        AutoDeployProject::dispatch($project);
-
-        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Deployment berhasil dimulai!');
+        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat. Silakan selesaikan pembayaran untuk memulai deployment!');
     }
 
     public function show($hashed_id)
@@ -311,21 +365,37 @@ class DashboardController extends Controller
         return response()->json(['success' => true]);
     }
 
-    // --- 4. UPLOAD FILE ---
+    // --- 4. UPLOAD FILE --- (HARDENED)
     public function uploadFile(Request $request, $hashid)
     {
+        $request->validate([
+            'file' => 'required|file|max:10240', // Max 10MB
+        ]);
+
         $project = $this->getValidProject($hashid);
         $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
 
         if (! $dirPath || ! is_dir($dirPath)) {
             return response()->json(['error' => 'Direktori tujuan tidak valid.'], 403);
         }
-        if (! $request->hasFile('file')) {
-            return response()->json(['error' => 'Tidak ada file yang diupload.'], 400);
-        }
 
         $file = $request->file('file');
-        $file->move($dirPath, $file->getClientOriginalName());
+
+        // ════════ SECURITY: Block ekstensi berbahaya ════════
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (in_array($extension, $this->blockedExtensions, true)) {
+            return response()->json(['error' => "Tipe file '.{$extension}' tidak diizinkan demi keamanan server."], 403);
+        }
+
+        // Double-check MIME type untuk PHP files yang disamarkan
+        $mimeType = $file->getMimeType();
+        if (str_contains($mimeType, 'php') || str_contains($mimeType, 'x-httpd')) {
+            return response()->json(['error' => 'Tipe MIME file tidak diizinkan.'], 403);
+        }
+
+        // Sanitize filename (hapus karakter aneh)
+        $safeName = preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $file->getClientOriginalName());
+        $file->move($dirPath, $safeName);
 
         return response()->json(['success' => true]);
     }
@@ -452,7 +522,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    // Memproses perintah dari Web Terminal
+    // Memproses perintah dari Web Terminal (HARDENED)
     public function terminal(Request $request, $hashid)
     {
         $decoded = Hashids::decode($hashid);
@@ -465,17 +535,49 @@ class DashboardController extends Controller
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
 
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
-        $command = $request->input('command');
+        $command = trim($request->input('command', ''));
 
         if (empty($command)) {
             return response()->json(['output' => '', 'exit_code' => 0]);
         }
 
+        // ════════ SECURITY: Command Whitelist ════════
+        $firstWord = explode(' ', $command)[0];
+
+        // Izinkan 'php artisan ...' sebagai satu command prefix
+        if ($firstWord === 'php' && str_starts_with($command, 'php artisan')) {
+            // allowed
+        } elseif (! in_array($firstWord, $this->allowedCommands, true)) {
+            return response()->json([
+                'output' => "⛔ Command '{$firstWord}' tidak diizinkan.\nCommand yang diizinkan: ".implode(', ', $this->allowedCommands),
+                'exit_code' => 1,
+            ]);
+        }
+
+        // ════════ SECURITY: Dangerous Pattern Blacklist ════════
+        foreach ($this->blockedPatterns as $pattern) {
+            if (preg_match($pattern, $command)) {
+                Log::warning('[TERMINAL_BLOCKED] User '.Auth::id()." attempted: {$command}");
+
+                return response()->json([
+                    'output' => '⛔ Command mengandung pola berbahaya dan diblokir demi keamanan server.',
+                    'exit_code' => 1,
+                ]);
+            }
+        }
+
+        // ════════ SECURITY: Block chained/piped commands ════════
+        if (preg_match('/[;&|]/', $command) && ! str_starts_with($command, 'php artisan')) {
+            return response()->json([
+                'output' => '⛔ Chaining command (;, &&, ||, |) tidak diizinkan.',
+                'exit_code' => 1,
+            ]);
+        }
+        // ══════════════════════════════════════════════════════════
+
         // ════════ MANTRA ANTI-BLEEDING ════════
-        // Menghapus paksa env portal dari memori shell agar artisan klien membaca dari .env mereka sendiri
         $unsetEnv = 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
 
-        // Susun perintah dengan unset di depannya
         $fullCommand = $unsetEnv.'cd '.escapeshellarg($projectDir).' && '.$command.' 2>&1';
         // ══════════════════════════════════════
 
@@ -521,8 +623,8 @@ class DashboardController extends Controller
 
     private function deleteCloudflareDNS($domainName)
     {
-        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
-        $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+        $zoneId = config('services.cloudflare.zone_id');
+        $apiToken = config('services.cloudflare.api_token');
 
         // Cari Record ID
         $response = Http::withToken($apiToken)
