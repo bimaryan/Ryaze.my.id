@@ -27,6 +27,9 @@
                 <div class="flex items-center ms-3 gap-5">
 
                     {{-- Notifikasi --}}
+                    @php
+                        $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]);
+                    @endphp
                     <button id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification"
                         class="relative inline-flex items-center text-sm font-medium text-center text-indigo-200 hover:text-white focus:outline-none transition-colors"
                         type="button">
@@ -35,21 +38,40 @@
                             <path
                                 d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z" />
                         </svg>
+                        @if($unreadNotifications->count() > 0)
                         <div
                             class="absolute block w-5 h-5 bg-emerald-500 border-2 border-indigo-700 rounded-full -top-1 start-3">
-                            <p class="text-white text-xs font-bold">0</p>
+                            <p class="text-white text-[10px] leading-tight font-bold">{{ $unreadNotifications->count() > 9 ? '9+' : $unreadNotifications->count() }}</p>
                         </div>
+                        @endif
                     </button>
 
                     <div id="dropdownNotification"
-                        class="z-20 hidden max-w-sm bg-white divide-y divide-slate-100 rounded-lg shadow-xl"
+                        class="z-20 hidden w-80 max-w-sm bg-white divide-y divide-slate-100 rounded-lg shadow-xl"
                         aria-labelledby="dropdownNotificationButton">
-                        <div
-                            class="block px-4 py-3 font-semibold text-center text-slate-700 rounded-t-lg bg-slate-50 border-b border-slate-100">
-                            Notifikasi Terbaru
+                        <div class="flex items-center justify-between px-4 py-3 font-semibold text-slate-700 rounded-t-lg bg-slate-50 border-b border-slate-100">
+                            <span>Notifikasi Terbaru</span>
+                            @if($unreadNotifications->count() > 0)
+                            <form action="{{ route('notifications.markAllRead') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-800">Tandai Dibaca</button>
+                            </form>
+                            @endif
                         </div>
-                        <div class="divide-y divide-slate-100">
-                            <p class="px-6 py-4 text-sm text-slate-500 text-center">Belum ada notifikasi baru.</p>
+                        <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+                            @forelse($unreadNotifications as $notification)
+                                <a href="#" onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();" class="flex px-4 py-3 hover:bg-slate-50">
+                                    <div class="w-full pl-3">
+                                        <div class="text-slate-600 text-sm mb-1.5">{{ $notification->data['message'] ?? 'Notifikasi baru' }}</div>
+                                        <div class="text-xs text-slate-500">{{ $notification->created_at->diffForHumans() }}</div>
+                                    </div>
+                                </a>
+                                <form id="mark-read-{{ $notification->id }}" action="{{ route('notifications.markRead', $notification->id) }}" method="POST" class="hidden">
+                                    @csrf
+                                </form>
+                            @empty
+                                <p class="px-6 py-4 text-sm text-slate-500 text-center">Belum ada notifikasi baru.</p>
+                            @endforelse
                         </div>
                     </div>
 

@@ -77,7 +77,12 @@ class DashboardController extends Controller
             $order->worker_id = Auth::id();
         }
 
+        $oldStatus = $order->status;
         $order->update($validated);
+
+        if ($oldStatus != $order->status) {
+            $order->client->notify(new \App\Notifications\SystemNotification('Status pesanan Joki Anda (' . $order->order_number . ') telah diubah menjadi: ' . strtoupper($order->status), 'info'));
+        }
 
         return redirect()->route('admin_joki.orders')->with('success', 'Data pesanan berhasil diperbarui!');
     }

@@ -53,7 +53,16 @@ class DashboardController extends Controller
         $validated['order_number'] = 'JOKI-'.time();
         $validated['status'] = 'pending';
 
-        JokiOrder::create($validated);
+        $order = JokiOrder::create($validated);
+
+        // Notifikasi ke User
+        \Illuminate\Support\Facades\Auth::user()->notify(new \App\Notifications\SystemNotification('Pesanan Joki ' . $order->order_number . ' berhasil dibuat. Kami akan segera menghubungi Anda.', 'success'));
+
+        // Notifikasi ke Admin Joki (Jika ada user dengan role admin_joki)
+        $adminJoki = \App\Models\User::where('role', 'admin_joki')->first();
+        if ($adminJoki) {
+            $adminJoki->notify(new \App\Notifications\SystemNotification('Pesanan Joki Baru: ' . $order->order_number . ' dari ' . \Illuminate\Support\Facades\Auth::user()->name, 'info'));
+        }
 
         return redirect()->route('user_joki.dashboard')->with('success', 'Pesanan berhasil dibuat!');
     }

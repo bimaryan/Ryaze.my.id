@@ -49,6 +49,10 @@ class PaymentCallbackController extends Controller
                                 'next_due_date' => now()->addMonth(),
                                 'status' => 'active'
                             ]);
+
+                            if ($project->user) {
+                                $project->user->notify(new \App\Notifications\SystemNotification('Pembayaran hosting Anda ('.$payment->invoice_number.') berhasil dikonfirmasi. Layanan sedang disiapkan.', 'success'));
+                            }
                         }
                     }
                 } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
@@ -69,6 +73,10 @@ class PaymentCallbackController extends Controller
                         'payment_method' => 'Pakasir',
                         'paid_at' => now(),
                     ]);
+
+                    if ($payment->order && $payment->order->client) {
+                        $payment->order->client->notify(new \App\Notifications\SystemNotification('Pembayaran joki Anda ('.$payment->invoice_number.') telah kami terima. Admin segera memprosesnya.', 'success'));
+                    }
                 } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
                     $payment->update(['status' => 'failed']);
                 }

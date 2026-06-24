@@ -125,11 +125,14 @@ class DashboardController extends Controller
         ]);
 
         // Buat tagihan pertama (Rp 15.000)
-        $project->payments()->create([
+        $payment = $project->payments()->create([
             'invoice_number' => 'HST-INV-'.strtoupper(uniqid()),
             'amount' => 15000,
             'status' => 'unpaid',
         ]);
+
+        // Notifikasi ke User
+        \Illuminate\Support\Facades\Auth::user()->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat. Silakan selesaikan tagihan ' . $payment->invoice_number . ' agar kami bisa memproses deployment.', 'info'));
 
         return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat. Silakan selesaikan pembayaran untuk memulai deployment!');
     }

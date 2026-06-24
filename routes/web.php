@@ -39,6 +39,9 @@ Route::middleware('auth')->group(function () {
     // ── LOGOUT ───────────────────────────────────────────────────
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+    Route::post('/notifications/{id}/mark-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markRead');
+
     // ═══════════════════════════════════════════════════════════════
     // SUPERADMIN ONLY
     // ═══════════════════════════════════════════════════════════════
