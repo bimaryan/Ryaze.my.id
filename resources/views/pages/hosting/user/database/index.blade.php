@@ -8,7 +8,7 @@
 
     {{-- Flash via SweetAlert --}}
     @if (session('success'))
-    <script>
+    <script nonce="{{ app('csp_nonce') }}">
         document.addEventListener('DOMContentLoaded', () => Swal.fire({
             icon: 'success', title: 'Berhasil!',
             text: '{{ addslashes(session('success')) }}',
@@ -16,7 +16,7 @@
         }));
     </script>
     @elseif (session('error'))
-    <script>
+    <script nonce="{{ app('csp_nonce') }}">
         document.addEventListener('DOMContentLoaded', () => Swal.fire({
             icon: 'error', title: 'Gagal!',
             text: '{{ addslashes(session('error')) }}',
@@ -25,7 +25,7 @@
     </script>
     @endif
     @if ($errors->any())
-    <script>
+    <script nonce="{{ app('csp_nonce') }}">
         document.addEventListener('DOMContentLoaded', () => Swal.fire({
             icon: 'error', title: 'Validasi Gagal',
             html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
@@ -45,7 +45,7 @@
                     <p class="text-sm text-slate-500 mt-0.5">Kelola database MySQL untuk aplikasi Anda.</p>
                 </div>
             </div>
-            <button onclick="openCreateModal()" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+            <button id="btn-open-create-modal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 + Buat Database
             </button>
         </div>
@@ -78,8 +78,7 @@
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Host & Port</span>
                         <code class="text-sm font-mono text-slate-700">{{ $db->host }}:{{ $db->port ?? 3306 }}</code>
                     </div>
-                    <button onclick="copyToClipboard('{{ $db->host }}:{{ $db->port ?? 3306 }}')"
-                        class="text-slate-300 hover:text-indigo-500 p-1.5 rounded transition-colors" title="Copy">
+                    <button class="text-slate-300 hover:text-indigo-500 p-1.5 rounded transition-colors btn-copy" data-copy="{{ $db->host }}:{{ $db->port ?? 3306 }}" title="Copy">
                         <i class="fa-regular fa-copy text-sm"></i>
                     </button>
                 </div>
@@ -89,8 +88,7 @@
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Username</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="user-{{ $db->hashid }}">{{ $db->db_username }}</code>
-                        <button onclick="copyToClipboard('{{ $db->db_username }}')"
-                            class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -100,10 +98,10 @@
                             id="pass-{{ $db->hashid }}"
                             class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full">
                         <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white">
-                            <button onclick="togglePass('pass-{{ $db->hashid }}', this)" class="text-slate-300 hover:text-slate-600 p-1 rounded">
+                            <button class="text-slate-300 hover:text-slate-600 p-1 rounded btn-toggle-pass" data-target="pass-{{ $db->hashid }}">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
-                            <button onclick="copyToClipboard('{{ $db->db_password }}')" class="text-slate-300 hover:text-indigo-600 p-1 rounded">
+                            <button class="text-slate-300 hover:text-indigo-600 p-1 rounded btn-copy" data-copy="{{ $db->db_password }}">
                                 <i class="fa-regular fa-copy"></i>
                             </button>
                         </div>
@@ -154,7 +152,7 @@
             <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
                 <i class="fa-solid fa-database text-indigo-500"></i> Buat Database Baru
             </h3>
-            <button onclick="closeCreateModal()"
+            <button class="btn-close-modal"
                 class="text-slate-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -195,7 +193,7 @@
             <div>
                 <div class="flex items-center justify-between mb-1.5">
                     <label class="text-sm font-semibold text-slate-700">Password <span class="text-rose-500">*</span></label>
-                    <button type="button" onclick="generatePassword()" class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                    <button type="button" id="btn-generate-password" class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
                     </button>
                 </div>
@@ -203,8 +201,7 @@
                     <input type="text" name="db_password" id="modalPassword" required minlength="8" maxlength="32"
                         placeholder="Masukkan password kuat"
                         class="w-full rounded-xl border border-slate-300 px-3 py-2.5 pr-10 text-sm font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
-                    <button type="button" onclick="copyModalPassword()"
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-indigo-600" title="Copy">
+                    <button type="button" id="btn-copy-modal-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-indigo-600" title="Copy">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
@@ -215,7 +212,7 @@
 
             {{-- Footer --}}
             <div class="pt-2 flex justify-end gap-3 border-t border-slate-100">
-                <button type="button" onclick="closeCreateModal()"
+                <button type="button" class="btn-close-modal"
                     class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors">
                     Batal
                 </button>
@@ -234,7 +231,7 @@
     @method('DELETE')
 </form>
 
-<script>
+<script nonce="{{ app('csp_nonce') }}">
     // ── Modal ──────────────────────────────────────────────────────────────────
     function openCreateModal() {
         document.getElementById('createDbModal').classList.remove('hidden');
@@ -309,5 +306,45 @@
             hotToast('Password disalin!', 'success');
         });
     }
+    // ── CSP Compliant Event Listeners ──────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        // Create Modal Open
+        const btnOpenModal = document.getElementById('btn-open-create-modal');
+        if (btnOpenModal) btnOpenModal.addEventListener('click', openCreateModal);
+
+        // Create Modal Close
+        document.querySelectorAll('.btn-close-modal').forEach(btn => {
+            btn.addEventListener('click', closeCreateModal);
+        });
+
+        // Delete DB
+        document.querySelectorAll('.btn-delete-db').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                confirmDelete(e.currentTarget.getAttribute('data-action'));
+            });
+        });
+
+        // Copy
+        document.querySelectorAll('.btn-copy').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                copyToClipboard(e.currentTarget.getAttribute('data-copy'));
+            });
+        });
+
+        // Toggle Password
+        document.querySelectorAll('.btn-toggle-pass').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                togglePass(e.currentTarget.getAttribute('data-target'), e.currentTarget);
+            });
+        });
+
+        // Generate Password
+        const btnGenPass = document.getElementById('btn-generate-password');
+        if (btnGenPass) btnGenPass.addEventListener('click', generatePassword);
+
+        // Copy Modal Password
+        const btnCopyModalPass = document.getElementById('btn-copy-modal-password');
+        if (btnCopyModalPass) btnCopyModalPass.addEventListener('click', copyModalPassword);
+    });
 </script>
 @endsection
