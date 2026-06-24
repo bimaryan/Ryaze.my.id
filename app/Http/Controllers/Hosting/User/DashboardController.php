@@ -269,8 +269,18 @@ class DashboardController extends Controller
             return response()->json(['error' => 'File sistem ini tidak dapat diubah.'], 403);
         }
 
+        $newContent = $request->input('content', '');
+        $oldSize = file_exists($targetFile) ? filesize($targetFile) : 0;
+        $newSize = strlen($newContent);
+        
+        if ($newSize > $oldSize) {
+            if (!$this->checkDiskQuota($project, $newSize - $oldSize)) {
+                return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda sudah habis.'], 403);
+            }
+        }
+
         @chmod($targetFile, 0666);
-        $result = @file_put_contents($targetFile, $request->input('content', ''));
+        $result = @file_put_contents($targetFile, $newContent);
 
         if ($result === false) {
             return response()->json(['error' => 'Gagal menyimpan file. Cek permission Linux.'], 500);
@@ -355,6 +365,10 @@ class DashboardController extends Controller
             return response()->json(['error' => 'Nama sudah digunakan.'], 400);
         }
 
+        if (!$this->checkDiskQuota($project, 0)) {
+            return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda sudah habis.'], 403);
+        }
+
         if ($type === 'dir') {
             mkdir($targetPath, 0755);
         } else {
@@ -380,6 +394,10 @@ class DashboardController extends Controller
         }
 
         $file = $request->file('file');
+
+        if (!$this->checkDiskQuota($project, $file->getSize())) {
+            return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda tidak cukup untuk mengupload file ini.'], 403);
+        }
 
         // ════════ SECURITY: Block ekstensi berbahaya ════════
         $extension = strtolower($file->getClientOriginalExtension());
@@ -681,5 +699,33 @@ class DashboardController extends Controller
         ]);
 
         return back()->with('success', 'Konfigurasi aplikasi berhasil diperbarui!');
+    }
+
+    private function checkDiskQuota($project, $additionalBytes = 0)
+    {
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        
+        if (!$projectRootDir || !is_dir($projectRootDir)) {
+            return true;
+        }
+
+        $output = shell_exec("du -sb " . escapeshellarg($projectRootDir) . " 2>/dev/null");
+        $currentBytes = 0;
+        if ($output) {
+            $parts = explode("\t", trim($output));
+            if (isset($parts[0])) {
+                $currentBytes = (int) $parts[0];
+            }
+        }
+
+        $totalBytes = $currentBytes + $additionalBytes;
+        $limitBytes = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
+
+        if ($totalBytes > $limitBytes) {
+            return false;
+        }
+        
+        return true;
     }
 }

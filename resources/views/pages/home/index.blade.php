@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ryaze - Premium Web Solutions & Deployment</title>
+    <title>Ryaze Portal - Hosting & Joki Terbaik</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Ryaze Portal menawarkan layanan web hosting instan dan joki tugas IT terpercaya. Proses serba otomatis, aman, dan harga terjangkau.">
+    <meta name="keywords" content="hosting murah, joki tugas IT, web hosting otomatis, Ryaze, panel hosting, joki koding">
+    <meta name="author" content="Ryaze">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:title" content="Ryaze Portal - Hosting & Joki IT Terpercaya">
+    <meta property="og:description" content="Layanan hosting instan & joki coding profesional dengan sistem otomatis.">
+    <meta property="og:image" content="{{ asset('assets/ryaze-og-image.jpg') }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url('/') }}">
+    <meta property="twitter:title" content="Ryaze Portal - Hosting & Joki IT Terpercaya">
+    <meta property="twitter:description" content="Layanan hosting instan & joki coding profesional dengan sistem otomatis.">
+    <meta property="twitter:image" content="{{ asset('assets/ryaze-og-image.jpg') }}">
 
     <!-- Vite Config -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
