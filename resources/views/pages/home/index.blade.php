@@ -1,40 +1,140 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ryaze - Portofolio, Joki Code & Jasa Deploy Web</title>
+    <title>Ryaze - Premium Web Solutions & Deployment</title>
 
     <!-- Vite Config -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fafafa;
+        }
+        h1, h2, h3, h4, h5, h6, .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        /* Glassmorphism Navbar */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Mesh Gradient Background */
+        .mesh-bg {
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0) 0, transparent 50%);
+            position: relative;
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(99, 102, 241, 0.4); }
+        .blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: rgba(236, 72, 153, 0.3); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 50%; width: 400px; height: 400px; background: rgba(56, 189, 248, 0.4); animation-delay: -2s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* Glowing Button */
+        .btn-glow {
+            position: relative;
+            z-index: 1;
+        }
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background: inherit;
+            filter: blur(12px);
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        .btn-glow:hover::before {
+            opacity: 1;
+            filter: blur(16px);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(135deg, #4f46e5 0%, #db2777 100%);
+        }
+
+        /* Premium Card Hover */
+        .card-premium {
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-premium:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        /* Image Zoom */
+        .img-zoom-container {
+            overflow: hidden;
+        }
+        .img-zoom {
+            transition: transform 0.7s ease;
+        }
+        .group:hover .img-zoom {
+            transform: scale(1.08);
+        }
+    </style>
 </head>
 
-<body class="font-sans antialiased text-slate-900 bg-slate-50">
+<body class="text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
 
     <!-- NAVBAR -->
-    <nav
-        class="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 transition-all duration-300">
+    <nav class="fixed top-0 z-50 w-full glass-nav transition-all duration-300 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
-                <a href="{{ url('/') }}" class="flex items-center gap-2 group">
-                    <div class="bg-indigo-600 text-white rounded-lg p-2 transition-transform group-hover:rotate-12">
-                        <i class="fa-solid fa-code text-lg"></i>
+                <a href="{{ url('/') }}" class="flex items-center gap-3 group">
+                    <div class="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl p-2.5 shadow-lg shadow-indigo-200 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
+                        <i class="fa-solid fa-code text-xl"></i>
                     </div>
-                    <span class="text-2xl font-extrabold tracking-tight text-slate-800">Ryaze<span
-                            class="text-indigo-600">.</span></span>
+                    <span class="text-2xl font-outfit font-black tracking-tight text-slate-900">Ryaze<span class="text-indigo-600">.</span></span>
                 </a>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-8 font-medium text-slate-600">
-                    <a href="#about" class="hover:text-indigo-600 transition-colors">Tentang Saya</a>
-                    <a href="#services" class="hover:text-indigo-600 transition-colors">Layanan</a>
-                    <a href="#portfolio" class="hover:text-indigo-600 transition-colors">Portofolio</a>
+                    <a href="#about" class="hover:text-indigo-600 transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all hover:after:w-full">Tentang</a>
+                    <a href="#services" class="hover:text-indigo-600 transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all hover:after:w-full">Layanan</a>
+                    <a href="#portfolio" class="hover:text-indigo-600 transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all hover:after:w-full">Portofolio</a>
                 </div>
 
                 <!-- Auth Buttons -->
@@ -50,18 +150,15 @@
                                 default => url('/'),
                             };
                         @endphp
-                        <a href="{{ $dashboardUrl }}"
-                            class="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 rounded-lg shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5">
-                            Masuk Dashboard
+                        <a href="{{ $dashboardUrl }}" class="btn-glow text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5">
+                            Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}"
-                            class="text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors hidden sm:block">
+                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors hidden sm:block">
                             Masuk
                         </a>
-                        <a href="{{ route('register') }}"
-                            class="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 rounded-lg shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5">
-                            Daftar Sekarang
+                        <a href="{{ route('register') }}" class="btn-glow text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5">
+                            Daftar Gratis
                         </a>
                     @endauth
                 </div>
@@ -70,112 +167,117 @@
     </nav>
 
     <!-- HERO SECTION -->
-    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <!-- Background Decoration -->
-        <div
-            class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-100 via-slate-50 to-slate-50">
-        </div>
+    <section class="mesh-bg relative pt-36 pb-24 lg:pt-48 lg:pb-40 min-h-[90vh] flex items-center">
+        <!-- Floating Blobs -->
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
-            <span
-                class="inline-block py-1 px-3 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-semibold mb-6">
-                🚀 Fullstack Developer & Deployment Specialist
-            </span>
-            <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-8">
-                Bikin & Online-kan Web-mu <br class="hidden md:block" />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">Tanpa
-                    Pusing.</span>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center z-10" data-aos="fade-up" data-aos-duration="1000">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-white/50 text-indigo-700 text-sm font-bold mb-8 shadow-sm">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                </span>
+                Fullstack Developer & Deployment Specialist
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl lg:text-[5rem] font-black leading-tight tracking-tight mb-6">
+                Wujudkan Website Impian <br class="hidden md:block" />
+                <span class="text-gradient">Tanpa Hambatan.</span>
             </h1>
-            <p class="mt-4 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-                Halo, saya Bima Ryan! Butuh bantuan bikin website dari nol (Jasa Joki) atau sekadar bingung cara
-                <i>deploy/hosting</i> project (React, Laravel, Flask, dll) ke internet? Biar saya yang urus semuanya.
+            
+            <p class="mt-6 text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+                Dari pembuatan *code* hingga mengudara di internet. Kami melayani Jasa Joki Tugas Akhir, Web Custom, hingga platform Hosting canggih untuk developer.
             </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#services"
-                    class="px-8 py-4 text-lg font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all hover:-translate-y-1">
-                    Lihat Layanan
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-5">
+                <a href="#services" class="btn-glow px-8 py-4 text-lg font-bold rounded-full text-white bg-slate-900 hover:bg-black shadow-xl transition-transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                    Mulai Sekarang <i class="fa-solid fa-arrow-right"></i>
                 </a>
-                <a href="#portfolio"
-                    class="px-8 py-4 text-lg font-bold rounded-xl text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all">
-                    Lihat Portofolio
+                <a href="#portfolio" class="px-8 py-4 text-lg font-bold rounded-full text-slate-700 bg-white/80 backdrop-blur-sm border border-slate-200 hover:bg-white hover:border-slate-300 hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                    Lihat Karya <i class="fa-solid fa-play text-indigo-500"></i>
                 </a>
+            </div>
+            
+            <!-- Tech Stack Marquee (Static Preview) -->
+            <div class="mt-20 pt-10 border-t border-slate-200/60 max-w-4xl mx-auto">
+                <p class="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-6">Dipercaya dengan Teknologi Terbaik</p>
+                <div class="flex flex-wrap justify-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                    <i class="fa-brands fa-laravel text-4xl hover:text-[#FF2D20] transition-colors"></i>
+                    <i class="fa-brands fa-react text-4xl hover:text-[#61DAFB] transition-colors"></i>
+                    <i class="fa-brands fa-node-js text-4xl hover:text-[#339933] transition-colors"></i>
+                    <i class="fa-brands fa-python text-4xl hover:text-[#3776AB] transition-colors"></i>
+                    <i class="fa-brands fa-vuejs text-4xl hover:text-[#4FC08D] transition-colors"></i>
+                    <i class="fa-brands fa-aws text-4xl hover:text-[#232F3E] transition-colors"></i>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- ABOUT SECTION -->
-    <section id="about" class="py-24 bg-slate-50 border-t border-slate-100">
+    <section id="about" class="py-24 bg-white relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-                <!-- Foto/Ilustrasi -->
-                <div class="w-full lg:w-1/2 flex justify-center lg:justify-end">
-                    <div class="relative">
-                        <!-- Aksen kotak di belakang foto -->
-                        <div
-                            class="absolute inset-0 bg-indigo-600 rounded-3xl rotate-3 translate-x-4 translate-y-4 opacity-20">
+            <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+                
+                <!-- Avatar / Photo -->
+                <div class="w-full lg:w-1/2 flex justify-center" data-aos="fade-right">
+                    <div class="relative group">
+                        <!-- Decorative Elements -->
+                        <div class="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-[2rem] opacity-20 group-hover:opacity-40 blur-xl transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 bg-gradient-to-tr from-indigo-600 to-fuchsia-500 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-transform duration-500"></div>
+                        
+                        <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=600&background=1e293b&color=fff&bold=true" 
+                             alt="Bima Ryan Alfarizi" 
+                             class="relative rounded-[2rem] shadow-2xl w-80 lg:w-[400px] border-8 border-white object-cover aspect-square transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02]">
+                             
+                        <!-- Floating Badge -->
+                        <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 animate-bounce">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                    <i class="fa-solid fa-check-double"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-500 font-bold uppercase">Experience</p>
+                                    <p class="text-lg font-black text-slate-900">3+ Years</p>
+                                </div>
+                            </div>
                         </div>
-                        <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=500&background=4f46e5&color=fff&bold=true"
-                            alt="Bima Ryan Alfarizi"
-                            class="relative rounded-3xl shadow-xl w-72 md:w-96 border-4 border-white object-cover aspect-square">
                     </div>
                 </div>
 
-                <!-- Teks Biografi -->
-                <div class="w-full lg:w-1/2 text-center lg:text-left">
-                    <span
-                        class="inline-block py-1 px-3 rounded-full bg-slate-200 text-slate-700 text-sm font-semibold mb-4">
-                        Tentang Saya
-                    </span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Mengenal Lebih Dekat</h2>
-                    <p class="text-lg text-slate-600 mb-4 leading-relaxed">
-                        Perkenalkan, saya <strong>Bima Ryan Alfarizi</strong>. Saat ini saya adalah mahasiswa semester 6
-                        program studi D4 Rekayasa Perangkat Lunak di Politeknik Negeri Indramayu (POLINDRA).
+                <!-- Text Content -->
+                <div class="w-full lg:w-1/2" data-aos="fade-left">
+                    <h2 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Tentang Kreator</h2>
+                    <h3 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Halo, kenali saya lebih dekat!</h3>
+                    
+                    <p class="text-lg text-slate-600 mb-6 leading-relaxed">
+                        Saya <strong>Bima Ryan Alfarizi</strong>, mahasiswa D4 Rekayasa Perangkat Lunak di Politeknik Negeri Indramayu (POLINDRA). Saya terobsesi dengan menciptakan antarmuka digital yang memukau dan arsitektur backend yang kokoh.
                     </p>
+                    
                     <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                        Saya memiliki minat dan spesialisasi yang kuat dalam <em>Web Development</em> dan <em>Game
-                            Development</em>. Dengan pengalaman mengerjakan berbagai proyek <em>Fullstack</em>, saya
-                        siap membantu mewujudkan website impian Anda sekaligus memastikannya online dengan infrastruktur
-                        server yang andal.
+                        Keahlian saya mencakup Web Development dan Game Development. Misi saya adalah membantu klien mengubah ide rumit menjadi produk digital yang mulus dan siap pakai.
                     </p>
 
-                    <!-- Tech Stack / Skills -->
-                    <div class="flex flex-wrap justify-center lg:justify-start gap-3">
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-brands fa-laravel text-red-500 mr-2 text-lg"></i> Laravel
-                        </span>
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-brands fa-react text-blue-500 mr-2 text-lg"></i> Reactjs
-                        </span>
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-brands fa-php text-purple-500 mr-2 text-lg"></i> PHP
-                        </span>
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-brands fa-js text-yellow-500 mr-2 text-lg"></i> JS
-                        </span>
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-brands fa-python text-green-500 mr-2 text-lg"></i> Python
-                        </span>
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-brands fa-linux text-black-500 mr-2 text-lg"></i> Linux
-                        </span>
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-brands fa-css3-alt text-sky-500 mr-2 text-lg"></i> Tailwind CSS
-                        </span>
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-solid fa-database text-indigo-500 mr-2 text-lg"></i> MySQL / Postgre
-                        </span>
-                        <span
-                            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 shadow-sm">
-                            <i class="fa-brands fa-unity text-slate-800 mr-2 text-lg"></i> Unity & C#
-                        </span>
+                    <!-- Modern Skill Badges -->
+                    <div class="flex flex-wrap gap-3">
+                        @php
+                            $skills = [
+                                ['name' => 'Laravel', 'icon' => 'fa-brands fa-laravel text-red-500'],
+                                ['name' => 'React', 'icon' => 'fa-brands fa-react text-sky-400'],
+                                ['name' => 'Python', 'icon' => 'fa-brands fa-python text-yellow-500'],
+                                ['name' => 'Node.js', 'icon' => 'fa-brands fa-node-js text-green-600'],
+                                ['name' => 'Tailwind', 'icon' => 'fa-brands fa-css3-alt text-teal-400'],
+                                ['name' => 'Linux/VPS', 'icon' => 'fa-brands fa-linux text-slate-800'],
+                                ['name' => 'Unity 3D', 'icon' => 'fa-brands fa-unity text-slate-700'],
+                            ];
+                        @endphp
+
+                        @foreach($skills as $skill)
+                            <div class="px-5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-700 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-indigo-300 transition-all cursor-default flex items-center gap-2">
+                                <i class="{{ $skill['icon'] }} text-lg"></i> {{ $skill['name'] }}
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -183,222 +285,229 @@
     </section>
 
     <!-- SERVICES SECTION -->
-    <section id="services" class="py-24 bg-white border-t border-slate-100">
+    <section id="services" class="py-24 bg-[#f8fafc] relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Layanan Utama Kami</h2>
-                <p class="text-lg text-slate-500">Satu platform untuk semua kebutuhan pengembangan digital Anda.</p>
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Layanan Kami</h2>
+                <h3 class="text-4xl md:text-5xl font-black text-slate-900">Solusi Digital Lengkap</h3>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
 
-                <!-- Service 1: Jasa Joki Code -->
-                <div
-                    class="group bg-slate-50 rounded-3xl p-8 md:p-10 border border-slate-200 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100 transition-all duration-300">
-                    <div
-                        class="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-laptop-code text-3xl text-indigo-600"></i>
+                <!-- Service 1: Joki Code -->
+                <div class="card-premium rounded-3xl p-10 relative overflow-hidden group" data-aos="fade-up" data-aos-delay="100">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-3xl -mr-20 -mt-20 transition-all group-hover:bg-indigo-100"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-indigo-200 text-white group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                            <i class="fa-solid fa-code text-2xl"></i>
+                        </div>
+                        
+                        <h3 class="text-2xl font-black text-slate-900 mb-4 font-outfit">Jasa Web Development</h3>
+                        <p class="text-slate-600 mb-8 text-lg leading-relaxed">
+                            Bantuan pembuatan Website Custom, Sistem Informasi, ERP, hingga penyelesaian Tugas Akhir / Skripsi IT Anda dengan kode yang bersih dan terstruktur.
+                        </p>
+                        
+                        <ul class="space-y-4 mb-10 text-slate-700 font-medium">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-lg"></i> 
+                                <span>Pengerjaan cepat & profesional</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-lg"></i> 
+                                <span>Tech stack modern (Laravel, React, Vue)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-lg"></i> 
+                                <span>Free revisi & konsultasi desain arsitektur</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="{{ route('register') }}" class="inline-flex items-center font-bold text-indigo-600 hover:text-indigo-800 text-lg group/link">
+                            Mulai Konsultasi <i class="fa-solid fa-arrow-right ml-2 transition-transform group-hover/link:translate-x-2"></i>
+                        </a>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Jasa Pembuatan Web (Joki Code)</h3>
-                    <p class="text-slate-600 mb-8 leading-relaxed">
-                        Pusing mikirin kodingan tugas akhir atau butuh website bisnis yang kompleks? Serahkan pada saya.
-                        Dibuat menggunakan tech stack modern (Laravel, React, dsb) yang aman dan responsif.
-                    </p>
-                    <ul class="space-y-3 mb-8 text-slate-600 font-medium">
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-indigo-500"></i> Tugas
-                            Akhir & Skripsi</li>
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-indigo-500"></i> Sistem
-                            Informasi (ERP, SIAKAD, POS)</li>
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-indigo-500"></i> Custom Web
-                            Application</li>
-                    </ul>
-                    <a href="{{ route('register') }}"
-                        class="inline-flex items-center justify-center w-full py-3 px-4 font-semibold text-indigo-600 bg-indigo-50 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                        Pesan Jasa Joki <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
                 </div>
 
-                <!-- Service 2: Developer App Hosting -->
-                <div
-                    class="group bg-slate-50 rounded-3xl p-8 md:p-10 border border-slate-200 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100 transition-all duration-300">
-                    <div
-                        class="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-terminal text-3xl text-emerald-500"></i>
+                <!-- Service 2: Hosting -->
+                <div class="card-premium rounded-3xl p-10 relative overflow-hidden group" data-aos="fade-up" data-aos-delay="200">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -mr-20 -mt-20 transition-all group-hover:bg-emerald-100"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-emerald-200 text-white group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                            <i class="fa-solid fa-server text-2xl"></i>
+                        </div>
+                        
+                        <h3 class="text-2xl font-black text-slate-900 mb-4 font-outfit">Developer Cloud Hosting</h3>
+                        <p class="text-slate-600 mb-8 text-lg leading-relaxed">
+                            Deploy aplikasi Node.js, Next.js, React, hingga Python Flask di infrastruktur kami semudah klik tombol. Berbasis kontrol panel modern.
+                        </p>
+                        
+                        <ul class="space-y-4 mb-10 text-slate-700 font-medium">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-emerald-500 mt-1 text-lg"></i> 
+                                <span>Auto-Deploy dari GitHub / GitLab</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-emerald-500 mt-1 text-lg"></i> 
+                                <span>Akses Web-Terminal & File Manager</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-emerald-500 mt-1 text-lg"></i> 
+                                <span>Support PM2, Composer, NPM, & SSL Gratis</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="{{ route('register') }}" class="inline-flex items-center font-bold text-emerald-600 hover:text-emerald-800 text-lg group/link">
+                            Deploy Aplikasi <i class="fa-solid fa-arrow-right ml-2 transition-transform group-hover/link:translate-x-2"></i>
+                        </a>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Developer App Hosting</h3>
-                    <p class="text-slate-600 mb-8 leading-relaxed">
-                        Bukan sekadar shared hosting biasa. Deploy project Node.js, React, Vue, Next.js, hingga Python
-                        (FastAPI/Flask) langsung dari GitHub atau terminal web interaktif.
-                    </p>
-                    <ul class="space-y-3 mb-8 text-slate-600 font-medium">
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Git
-                            Clone & Auto Deploy CI/CD</li>
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Akses
-                            Terminal Web / SSH</li>
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Support
-                            PM2, NPM, & Python Env</li>
-                    </ul>
-                    <a href="{{ route('register') }}"
-                        class="inline-flex items-center justify-center w-full py-3 px-4 font-semibold text-emerald-600 bg-emerald-50 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                        Mulai Deploy Project <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
                 </div>
 
             </div>
         </div>
     </section>
 
-    <!-- PORTFOLIO SECTION (Sudah terisi dengan data CV sebelumnya) -->
-    <section id="portfolio" class="py-24 bg-slate-50 border-t border-slate-100">
+    <!-- PORTFOLIO SECTION -->
+    <section id="portfolio" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            <div class="text-center mb-16">
-                <span
-                    class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-sm font-semibold mb-4 border border-indigo-100">
-                    Hasil Karya
-                </span>
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Portofolio Proyek</h2>
-                <p class="text-lg text-slate-500">Beberapa sistem dan karya yang telah berhasil saya kembangkan.</p>
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Portofolio</h2>
+                <h3 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Mahakarya Terbaru</h3>
             </div>
 
-            <!-- Grid Portofolio -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-                <!-- Proyek 1: Sistem Lab Kesehatan -->
-                <div
-                    class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-indigo-100 transition-all duration-300 group">
-                    <div class="h-48 bg-slate-200 overflow-hidden relative flex items-center justify-center">
-                        <i
-                            class="fa-solid fa-microscope text-6xl text-indigo-200 group-hover:scale-110 transition-transform duration-500"></i>
-                        <div class="absolute inset-0 bg-indigo-900/10 group-hover:bg-transparent transition-colors">
+                <!-- Portofolio Item 1 -->
+                <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="100">
+                    <div class="img-zoom-container h-60 bg-slate-100 relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <span class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Lihat Detail →</span>
+                        </div>
+                        <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative">
+                            <i class="fa-solid fa-microscope text-7xl text-white/20 absolute"></i>
+                            <div class="w-full h-full bg-gradient-to-br from-indigo-500/30 to-purple-600/30"></div>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            <span class="text-xs font-bold px-2 py-1 bg-red-50 text-red-600 rounded">Laravel</span>
-                            <span class="text-xs font-bold px-2 py-1 bg-sky-50 text-sky-600 rounded">Tailwind</span>
-                            <span class="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded">VPS</span>
+                    <div class="p-8 border border-t-0 border-slate-100 bg-white rounded-b-3xl">
+                        <div class="flex gap-2 mb-4">
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Laravel</span>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Tailwind</span>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Sistem Peminjaman Lab Kesehatan</h3>
-                        <p class="text-slate-600 text-sm mb-5 line-clamp-3">
-                            Proyek Kampus Merdeka: Mengembangkan UI responsif, mengelola data peminjaman & jadwal
-                            pengguna, hingga deployment ke VPS/Cloud.
-                        </p>
-                        <a href="#"
-                            class="inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-indigo-700">
-                            Lihat Detail <i class="fa-solid fa-arrow-right-long ml-2"></i>
-                        </a>
+                        <h4 class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-indigo-600 transition-colors">Sistem Peminjaman Lab Kesehatan</h4>
+                        <p class="text-slate-500 line-clamp-2">Aplikasi manajemen jadwal & inventaris untuk Universitas ternama.</p>
                     </div>
                 </div>
 
-                <!-- Proyek 2: Penyewaan Kost dan Mobil -->
-                <div
-                    class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-indigo-100 transition-all duration-300 group">
-                    <div class="h-48 bg-slate-200 overflow-hidden relative flex items-center justify-center">
-                        <i
-                            class="fa-solid fa-house-car text-6xl text-blue-200 group-hover:scale-110 transition-transform duration-500"></i>
-                        <div class="absolute inset-0 bg-blue-900/10 group-hover:bg-transparent transition-colors">
+                <!-- Portofolio Item 2 -->
+                <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="200">
+                    <div class="img-zoom-container h-60 bg-slate-100 relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <span class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Lihat Detail →</span>
+                        </div>
+                        <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative">
+                            <i class="fa-solid fa-car text-7xl text-white/20 absolute"></i>
+                            <div class="w-full h-full bg-gradient-to-br from-blue-500/30 to-sky-600/30"></div>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            <span
-                                class="text-xs font-bold px-2 py-1 bg-indigo-50 text-indigo-600 rounded">Fullstack</span>
-                            <span
-                                class="text-xs font-bold px-2 py-1 bg-emerald-50 text-emerald-600 rounded">Midtrans</span>
+                    <div class="p-8 border border-t-0 border-slate-100 bg-white rounded-b-3xl">
+                        <div class="flex gap-2 mb-4">
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">React</span>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Midtrans API</span>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Web Penyewaan Kost & Mobil</h3>
-                        <p class="text-slate-600 text-sm mb-5 line-clamp-3">
-                            Pembuatan halaman listing dan pemesanan yang dilengkapi autentikasi Role-Based Access, serta
-                            integrasi payment gateway (Midtrans/Xendit).
-                        </p>
-                        <a href="#"
-                            class="inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-indigo-700">
-                            Lihat Detail <i class="fa-solid fa-arrow-right-long ml-2"></i>
-                        </a>
+                        <h4 class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-blue-600 transition-colors">Web Penyewaan Kost & Mobil</h4>
+                        <p class="text-slate-500 line-clamp-2">Platform booking modern dengan integrasi payment gateway otomatis.</p>
                     </div>
                 </div>
 
-                <!-- Proyek 3: Game Bajaj Jek -->
-                <div
-                    class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-indigo-100 transition-all duration-300 group">
-                    <div class="h-48 bg-slate-200 overflow-hidden relative flex items-center justify-center">
-                        <i
-                            class="fa-solid fa-gamepad text-6xl text-slate-300 group-hover:scale-110 transition-transform duration-500"></i>
-                        <div class="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors">
+                <!-- Portofolio Item 3 -->
+                <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="300">
+                    <div class="img-zoom-container h-60 bg-slate-100 relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <span class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Lihat Detail →</span>
+                        </div>
+                        <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative">
+                            <i class="fa-solid fa-gamepad text-7xl text-white/20 absolute"></i>
+                            <div class="w-full h-full bg-gradient-to-br from-emerald-500/30 to-teal-600/30"></div>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            <span class="text-xs font-bold px-2 py-1 bg-slate-800 text-white rounded">Unity</span>
-                            <span class="text-xs font-bold px-2 py-1 bg-purple-50 text-purple-600 rounded">C#</span>
-                            <span class="text-xs font-bold px-2 py-1 bg-orange-50 text-orange-600 rounded">UI/UX</span>
+                    <div class="p-8 border border-t-0 border-slate-100 bg-white rounded-b-3xl">
+                        <div class="flex gap-2 mb-4">
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Unity 3D</span>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">C#</span>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Game Bajaj Jek (3D/2D)</h3>
-                        <p class="text-slate-600 text-sm mb-5 line-clamp-3">
-                            Merancang game menggunakan Unity & C#. Membuat sistem navigasi, AI penumpang, serta
-                            mengintegrasikan aset dan UI yang responsif.
-                        </p>
-                        <a href="#"
-                            class="inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-indigo-700">
-                            Lihat Detail <i class="fa-solid fa-arrow-right-long ml-2"></i>
-                        </a>
+                        <h4 class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-emerald-600 transition-colors">Game "Bajaj Jek"</h4>
+                        <p class="text-slate-500 line-clamp-2">Simulasi mengemudi bajaj interaktif dengan AI lalu lintas cerdas.</p>
                     </div>
                 </div>
 
             </div>
 
-            <div class="text-center mt-12">
-                <a href="https://github.com/bimaryan" target="_blank"
-                    class="inline-flex items-center justify-center px-6 py-3 font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-colors">
-                    Lihat Proyek di Github <i class="fa-brands fa-github ml-2"></i>
+            <div class="text-center mt-16" data-aos="fade-up">
+                <a href="https://github.com/bimaryan" target="_blank" class="inline-flex items-center justify-center px-8 py-4 font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-full hover:border-indigo-500 hover:text-indigo-600 transition-all">
+                    Jelajahi GitHub Saya <i class="fa-brands fa-github ml-3 text-xl"></i>
                 </a>
             </div>
-
         </div>
     </section>
 
     <!-- CALL TO ACTION -->
-    <section class="py-20 bg-indigo-600">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Siap untuk memulai proyek & deploy aplikasi
-                Anda?</h2>
-            <p class="text-indigo-100 text-lg mb-10">
-                Bergabunglah dengan puluhan klien dan developer lainnya. Buat akun sekarang untuk pesan Jasa Joki atau
-                Deploy Web App Anda di server kami.
+    <section class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-slate-900"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-purple-900 opacity-80"></div>
+        
+        <!-- Animated Background Pattern -->
+        <div class="absolute inset-0" style="background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10" data-aos="zoom-in">
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 font-outfit tracking-tight">Siap Memulai Proyek Anda?</h2>
+            <p class="text-indigo-200 text-xl mb-12 font-medium max-w-2xl mx-auto">
+                Bergabunglah dengan platform kami hari ini. Pesan jasa pembuatan web atau kelola hosting aplikasi Anda dalam satu dashboard canggih.
             </p>
-            <a href="{{ route('register') }}"
-                class="inline-block px-8 py-4 text-lg font-bold rounded-xl text-indigo-700 bg-white shadow-lg hover:bg-slate-50 transition-transform hover:-translate-y-1">
-                Buat Akun Gratis
+            <a href="{{ route('register') }}" class="btn-glow inline-block px-10 py-5 text-xl font-black rounded-full text-indigo-900 bg-white shadow-2xl hover:scale-105 transition-transform duration-300">
+                Buat Akun Gratis Sekarang
             </a>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-900 pt-16 pb-8 border-t border-slate-800">
+    <footer class="bg-slate-950 pt-20 pb-10 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center gap-2 mb-4 md:mb-0">
-                    <div class="bg-indigo-600 text-white rounded p-1.5">
-                        <i class="fa-solid fa-code text-sm"></i>
+                <div class="flex items-center gap-3 mb-6 md:mb-0">
+                    <div class="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-lg p-2">
+                        <i class="fa-solid fa-code"></i>
                     </div>
-                    <span class="text-xl font-bold text-white">Ryaze Portal</span>
+                    <span class="text-2xl font-black font-outfit text-white">Ryaze<span class="text-indigo-500">.</span></span>
                 </div>
-                <div class="flex gap-6 text-slate-400">
-                    <a href="https://github.com/bimaryan" target="_blank"
-                        class="hover:text-white transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
-                    <a href="#" class="hover:text-white transition-colors"><i
-                            class="fa-brands fa-instagram text-xl"></i></a>
-                    <a href="#" class="hover:text-white transition-colors"><i
-                            class="fa-brands fa-linkedin text-xl"></i></a>
+                <div class="flex gap-6">
+                    <a href="https://github.com/bimaryan" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition-all">
+                        <i class="fa-brands fa-github text-lg"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-pink-600 hover:text-white transition-all">
+                        <i class="fa-brands fa-instagram text-lg"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all">
+                        <i class="fa-brands fa-linkedin text-lg"></i>
+                    </a>
                 </div>
             </div>
-            <div class="mt-8 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
-                &copy; {{ date('Y') }} Ryaze Portal. All rights reserved. Built with Laravel & Tailwind CSS.
+            <div class="mt-12 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 font-medium">
+                <p>&copy; {{ date('Y') }} Ryaze Portal. All rights reserved.</p>
+                <p>Designed with <i class="fa-solid fa-heart text-rose-500 mx-1"></i> by Bima Ryan</p>
             </div>
         </div>
     </footer>
 
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            offset: 100,
+            duration: 800,
+            easing: 'ease-out-cubic',
+        });
+    </script>
 </body>
-
 </html>
