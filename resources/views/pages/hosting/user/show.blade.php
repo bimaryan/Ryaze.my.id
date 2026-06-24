@@ -462,6 +462,23 @@
                                 </div>
                             </label>
                         </div>
+                        <div
+                            class="flex items-center justify-between p-4 rounded-xl border border-rose-100 bg-rose-50/50">
+                            <div>
+                                <h4 class="text-sm font-semibold text-rose-700">DDoS Protection (Rate Limit)</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Aktifkan limitasi koneksi ketat jika website Anda sedang diserang.</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                <input type="checkbox" name="is_under_attack" value="1" class="sr-only peer"
+                                    {{ $project->is_under_attack ?? false ? 'checked' : '' }}>
+                                <div
+                                    class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-rose-600
+                                    after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                                    after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all
+                                    peer-checked:after:translate-x-full">
+                                </div>
+                            </label>
+                        </div>
                     </div>
                     <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
                         <button type="submit"

@@ -677,6 +677,7 @@ class DashboardController extends Controller
         // Ambil data checkbox
         $maintenanceMode = $request->has('maintenance_mode');
         $forceHttps = $request->has('force_https');
+        $underAttack = $request->has('is_under_attack');
 
         // 1. Terapkan Maintenance Mode (Membuat file .maintenance untuk dibaca Nginx)
         $maintenanceFile = "{$projectDir}/.maintenance";
@@ -691,16 +692,28 @@ class DashboardController extends Controller
             }
         }
 
+        // 1.5. Terapkan Rate Limit / Under Attack Mode (Membuat file .rate_limit untuk dibaca Nginx)
+        $rateLimitFile = "{$projectDir}/.rate_limit";
+        if ($underAttack) {
+            touch($rateLimitFile);
+            @chmod($rateLimitFile, 0666);
+        } else {
+            if (file_exists($rateLimitFile)) {
+                @unlink($rateLimitFile);
+            }
+        }
+
         // 2. Simpan konfigurasi ke Database
         $project->update([
             'maintenance_mode' => $maintenanceMode,
             'force_https' => $forceHttps,
+            'is_under_attack' => $underAttack,
         ]);
 
         // Catat di Logs
         $project->deployments()->create([
             'status' => 'ready',
-            'build_logs' => "> Pengaturan aplikasi diperbarui.\n> Maintenance Mode: ".($maintenanceMode ? 'ON' : 'OFF')."\n> Force HTTPS: ".($forceHttps ? 'ON' : 'OFF'),
+            'build_logs' => "> Pengaturan aplikasi diperbarui.\n> Maintenance Mode: ".($maintenanceMode ? 'ON' : 'OFF')."\n> Force HTTPS: ".($forceHttps ? 'ON' : 'OFF')."\n> Under Attack Mode: ".($underAttack ? 'ON' : 'OFF'),
         ]);
 
         return back()->with('success', 'Konfigurasi aplikasi berhasil diperbarui!');
