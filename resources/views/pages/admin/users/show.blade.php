@@ -23,22 +23,22 @@
             <div class="lg:col-span-1 space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
 
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="flex items-center gap-4 mb-5">
-                            <div
-                                class="w-16 h-16 shrink-0 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-black text-3xl shadow-inner">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                        <div class="flex items-center gap-4 min-w-0">
+                            <div class="w-16 h-16 shrink-0 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-black text-3xl shadow-inner">
                                 {{ substr($user->name, 0, 1) }}
                             </div>
 
-                            <div>
-                                <h2 class="text-lg font-bold text-slate-800 leading-tight">{{ $user->name }}</h2>
-                                <p class="text-sm text-slate-500 mt-0.5">{{ $user->email }}</p>
+                            <div class="min-w-0">
+                                <h2 class="text-lg font-bold text-slate-800 leading-tight truncate">{{ $user->name }}</h2>
+                                <p class="text-sm text-slate-500 mt-0.5 truncate">{{ $user->email }}</p>
                             </div>
                         </div>
 
-                        <div
-                            class="inline-block px-2 py-1 bg-slate-100 text-slate-700 rounded-full text-[11px] tracking-wide font-bold uppercase border border-slate-200">
-                            {{ str_replace('_', ' ', $user->role ?? 'User') }}
+                        <div class="shrink-0 self-start sm:self-auto">
+                            <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-[11px] tracking-wide font-bold uppercase border border-slate-200">
+                                {{ str_replace('_', ' ', $user->role ?? 'User') }}
+                            </span>
                         </div>
                     </div>
 
