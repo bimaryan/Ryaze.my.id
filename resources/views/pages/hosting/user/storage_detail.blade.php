@@ -124,19 +124,13 @@
                 </div>
             @else
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm table-fixed">
-                        <colgroup>
-                            <col>
-                            <col style="width:100px">
-                            <col style="width:200px">
-                            <col style="width:80px">
-                        </colgroup>
+                    <table class="w-full text-sm">
                         <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-400 border-b border-slate-100">
                             <tr>
-                                <th class="px-6 py-3 text-left">Nama</th>
-                                <th class="px-4 py-3 text-right">Ukuran</th>
-                                <th class="px-6 py-3 text-left hidden sm:table-cell">Proporsi</th>
-                                <th class="px-4 py-3 text-right hidden sm:table-cell">%</th>
+                                <th class="px-6 py-3 text-left w-full sm:w-auto">Nama</th>
+                                <th class="px-4 py-3 text-right whitespace-nowrap">Ukuran</th>
+                                <th class="px-6 py-3 text-left hidden sm:table-cell sm:w-[200px]">Proporsi</th>
+                                <th class="px-4 py-3 text-right hidden sm:table-cell sm:w-[80px]">%</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">

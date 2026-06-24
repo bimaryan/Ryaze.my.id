@@ -326,6 +326,13 @@
                             <span class="ms-3 whitespace-nowrap">Penyimpanan / Storage</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('user_hosting.docs') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.docs*')) }}">
+                            <i class="fa-solid fa-book {{ $iconClass(request()->routeIs('user_hosting.docs*')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Dokumentasi</span>
+                        </a>
+                    </li>
 
                     <li>
                         <a href="{{ route('user_hosting.billing') }}"

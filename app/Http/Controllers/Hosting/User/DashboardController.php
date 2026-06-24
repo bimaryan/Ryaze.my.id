@@ -102,6 +102,12 @@ class DashboardController extends Controller
         return view('pages.hosting.user.project', compact('projects'));
     }
 
+    // Menampilkan halaman dokumentasi
+    public function docs()
+    {
+        return view('pages.hosting.user.docs');
+    }
+
     // Memproses data dan memulai Deploy Otomatis
     public function store(Request $request)
     {
