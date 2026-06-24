@@ -70,10 +70,20 @@
 
         {{-- Usage summary card --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 mt-6">
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Terpakai</p>
-                <p class="text-2xl font-bold text-slate-800">{{ $used_human }}</p>
-                <p class="text-xs text-slate-400 mt-1">dari {{ $limit_human }}</p>
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
+                <div>
+                    <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Terpakai</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $used_human }}</p>
+                    <p class="text-xs text-slate-400 mt-1">dari {{ $limit_human }}</p>
+                </div>
+                @if (($project->storage_limit_mb ?? 1024) < 2048)
+                    <form action="{{ route('user_hosting.storage.upgrade', $project->hashid) }}" method="POST" class="mt-4">
+                        @csrf
+                        <button type="submit" class="w-full inline-flex justify-center items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-2 rounded-lg text-xs font-semibold transition">
+                            <i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade 2GB (Rp 50.000)
+                        </button>
+                    </form>
+                @endif
             </div>
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
                 <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Tersedia</p>

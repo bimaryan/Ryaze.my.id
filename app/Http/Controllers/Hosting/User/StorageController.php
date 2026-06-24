@@ -9,8 +9,6 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class StorageController extends Controller
 {
-    const LIMIT_BYTES = 512 * 1024 * 1024; // 512 MB
-
     /**
      * Hitung ukuran folder secara rekursif via du -sb (cepat, kernel-level).
      */
@@ -41,9 +39,9 @@ class StorageController extends Controller
     public function index()
     {
         $projects = HostingProject::where('user_id', Auth::id())->latest()->get();
-        $limit = self::LIMIT_BYTES;
 
         $totalUsed = 0;
+        $totalLimit = 0;
         $items = [];
 
         foreach ($projects as $project) {
@@ -51,6 +49,9 @@ class StorageController extends Controller
             $projectDir = "/www/sites/hosting_clients/{$subdomain}";
             $used = $this->getFolderSize($projectDir);
             $totalUsed += $used;
+
+            $limit = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
+            $totalLimit += $limit;
 
             $items[] = [
                 'project' => $project,
@@ -68,9 +69,9 @@ class StorageController extends Controller
             'items' => $items,
             'total_used' => $totalUsed,
             'total_human' => $this->formatBytes($totalUsed),
-            'limit_bytes' => $limit,
-            'limit_human' => $this->formatBytes($limit),
-            'percent' => $limit > 0 ? min(100, round(($totalUsed / $limit) * 100, 1)) : 0,
+            'limit_bytes' => $totalLimit,
+            'limit_human' => $this->formatBytes($totalLimit),
+            'percent' => $totalLimit > 0 ? min(100, round(($totalUsed / $totalLimit) * 100, 1)) : 0,
         ]);
     }
 
@@ -87,7 +88,7 @@ class StorageController extends Controller
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
-        $limit = self::LIMIT_BYTES;
+        $limit = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
 
         $totalUsed = $this->getFolderSize($projectDir);
 
@@ -125,6 +126,41 @@ class StorageController extends Controller
     }
 
     /**
+     * Endpoint untuk membeli upgrade storage 2GB.
+     */
+    public function upgrade($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+
+        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+
+        if (($project->storage_limit_mb ?? 1024) >= 2048) {
+            return back()->with('error', 'Project ini sudah memiliki kapasitas maksimal (2GB).');
+        }
+
+        // Cek jika sudah ada invoice upgrade unpaid
+        $existing = \App\Models\HostingPayment::where('hosting_project_id', $project->id)
+            ->where('invoice_number', 'like', 'HST-UPG-%')
+            ->where('status', 'unpaid')
+            ->first();
+
+        if ($existing) {
+            return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Silakan lunasi tagihan upgrade storage Anda.');
+        }
+
+        $payment = $project->payments()->create([
+            'invoice_number' => 'HST-UPG-'. strtoupper(uniqid()),
+            'amount' => 50000,
+            'status' => 'unpaid',
+        ]);
+
+        Auth::user()->notify(new \App\Notifications\SystemNotification('Tagihan upgrade storage 2GB berhasil dibuat: ' . $payment->invoice_number, 'info'));
+
+        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Tagihan upgrade storage berhasil dibuat. Silakan bayar tagihan tersebut.');
+    }
+
+    /**
      * API endpoint — cek apakah project masih dalam batas storage.
      * Dipanggil dari AutoDeployProject sebelum clone/pull.
      */
@@ -134,6 +170,8 @@ class StorageController extends Controller
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         $used = $this->getFolderSize($projectDir);
 
-        return $used < self::LIMIT_BYTES;
+        $limit = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
+
+        return $used < $limit;
     }
 }

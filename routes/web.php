@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
         Route::get('user/hosting/storage', [StorageController::class, 'index'])->name('user_hosting.storage');
         Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.show');
+        Route::post('user/hosting/storage/{hashid}/upgrade', [StorageController::class, 'upgrade'])->name('user_hosting.storage.upgrade');
         Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
         Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
         Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');

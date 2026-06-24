@@ -158,7 +158,7 @@
         {{-- Info --}}
         <p class="text-xs text-slate-400 mt-4 flex items-center gap-1.5">
             <i class="fa-solid fa-circle-info text-slate-300"></i>
-            Limit storage per akun: <strong>512 MB</strong>. Data diperbarui setiap kali halaman dimuat.
+            Limit storage gabungan: <strong>{{ $limit_human }}</strong>. Data diperbarui setiap kali halaman dimuat.
         </p>
 
     </div>
