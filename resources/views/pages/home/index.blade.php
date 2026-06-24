@@ -509,5 +509,6 @@
             easing: 'ease-out-cubic',
         });
     </script>
+    @include('components.hot-toast')
 </body>
 </html>

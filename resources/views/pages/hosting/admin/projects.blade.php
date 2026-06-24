@@ -110,19 +110,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.querySelectorAll('.admin-action-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Konfirmasi Tindakan',
-                    text: this.getAttribute('data-msg'),
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#4f46e5',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Lanjutkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) this.submit();
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.admin-action-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Konfirmasi Tindakan',
+                        text: this.getAttribute('data-msg'),
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#4f46e5',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Lanjutkan!'
+                    }).then((result) => {
+                        if (result.isConfirmed) this.submit();
+                    });
                 });
             });
         });

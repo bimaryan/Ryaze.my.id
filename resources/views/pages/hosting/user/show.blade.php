@@ -509,19 +509,7 @@
 
     {{-- ── SCRIPT 1: SweetAlert helpers ─────────────────────────────────────── --}}
     <script nonce="{{ csp_nonce() }}">
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (t) => {
-                t.addEventListener('mouseenter', Swal.stopTimer);
-                t.addEventListener('mouseleave', Swal.resumeTimer);
-            }
-        });
-
-        function swAlert(icon, title, text = '') {
+                function swAlert(icon, title, text = '') {
             return Swal.fire({
                 icon,
                 title,
@@ -822,10 +810,7 @@
                 .then(r => r.json())
                 .then(data => {
                     if (data.error) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: data.error
-                        });
+                        hotToast(data.error, 'error');
                         loader.classList.add('hidden');
                         return;
                     }
@@ -905,10 +890,7 @@
                     loader.classList.add('hidden');
                 })
                 .catch(() => {
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Gagal memuat file browser.'
-                    });
+                    hotToast('Gagal memuat file browser.', 'error');
                     loader.classList.add('hidden');
                 });
         }
@@ -977,10 +959,7 @@
             }).then(r => r.json()).then(data => {
                 if (data.error) swAlert('error', 'Gagal', data.error);
                 else {
-                    Toast.fire({
-                        icon: 'success',
-                        title: `${label} berhasil dibuat!`
-                    });
+                    hotToast(`${label} berhasil dibuat!`, 'success');
                     loadFileManager(currentFolderPath);
                 }
             });
@@ -1007,10 +986,7 @@
             }).then(r => r.json()).then(data => {
                 if (data.error) swAlert('error', 'Gagal', data.error);
                 else {
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Berhasil dihapus!'
-                    });
+                    hotToast('Berhasil dihapus!', 'success');
                     loadFileManager(currentFolderPath);
                 }
             });
@@ -1041,10 +1017,7 @@
                 inputEl.value = '';
                 if (data.error) swAlert('error', 'Upload gagal', data.error);
                 else {
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'File berhasil diupload!'
-                    });
+                    hotToast('File berhasil diupload!', 'success');
                     loadFileManager(currentFolderPath);
                 }
             }).catch(() => {
@@ -1114,10 +1087,7 @@
             }).then(r => r.json()).then(data => {
                 loader.classList.add('hidden');
                 if (data.error) swAlert('error', 'Gagal simpan', data.error);
-                else Toast.fire({
-                    icon: 'success',
-                    title: 'File berhasil disimpan!'
-                });
+                else hotToast('File berhasil disimpan!', 'success');
             }).catch(() => {
                 loader.classList.add('hidden');
                 swAlert('error', 'Terjadi kesalahan saat menyimpan.');

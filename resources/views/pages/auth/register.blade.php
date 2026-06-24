@@ -105,27 +105,7 @@
         </div>
     </div>
 
-    @if ($errors->any())
-        <script>
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 4000, // Toast akan hilang dalam 4 detik
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-
-            Toast.fire({
-                icon: 'warning',
-                title: '{{ $errors->first() }}'
-            });
-        </script>
-    @endif
-
+    @include('components.hot-toast')
 </body>
 
 </html>

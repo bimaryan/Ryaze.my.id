@@ -271,17 +271,11 @@
     }
 
     // ── Copy to clipboard dengan Toast ────────────────────────────────────────
-    const Toast = Swal.mixin({
-        toast: true, position: 'top-end', showConfirmButton: false,
-        timer: 2000, timerProgressBar: true,
-        customClass: { popup: 'rounded-xl text-sm' }
-    });
-
-    function copyToClipboard(text) {
+        function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
-            Toast.fire({ icon: 'success', title: 'Berhasil disalin!' });
+            hotToast('Berhasil disalin!', 'success');
         }).catch(() => {
-            Toast.fire({ icon: 'error', title: 'Gagal menyalin' });
+            hotToast('Gagal menyalin', 'error');
         });
     }
 
@@ -304,15 +298,15 @@
         let pass = '';
         for (let i = 0; i < 16; i++) pass += chars[Math.floor(Math.random() * chars.length)];
         document.getElementById('modalPassword').value = pass;
-        Toast.fire({ icon: 'success', title: 'Password di-generate!' });
+        hotToast('Password di-generate!', 'success');
     }
 
     // ── Copy password di modal ─────────────────────────────────────────────────
     function copyModalPassword() {
         const pass = document.getElementById('modalPassword').value;
-        if (!pass) { Toast.fire({ icon: 'warning', title: 'Password masih kosong' }); return; }
+        if (!pass) { hotToast('Password masih kosong', 'warning'); return; }
         navigator.clipboard.writeText(pass).then(() => {
-            Toast.fire({ icon: 'success', title: 'Password disalin!' });
+            hotToast('Password disalin!', 'success');
         });
     }
 </script>
