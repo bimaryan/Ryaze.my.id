@@ -154,16 +154,7 @@ class DashboardController extends Controller
 
     public function show($hashed_id)
     {
-        $decoded = Hashids::decode($hashed_id);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::with(['deployments' => function ($query) {
-            $query->latest();
-        }])
-            ->where('user_id', Auth::id())
-            ->findOrFail($decoded[0]);
+        $project = $this->getValidProject($hashed_id, true);
 
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
@@ -181,12 +172,7 @@ class DashboardController extends Controller
     // 2. Method API untuk navigasi folder
     public function getFiles(Request $request, $hashid)
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $project = $this->getValidProject($hashid);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
         $requestPath = trim($request->input('path', ''), '/');
@@ -266,12 +252,7 @@ class DashboardController extends Controller
     // 4. BARU: Method untuk menyimpan file yang diedit
     public function saveFile(Request $request, $hashid)
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $project = $this->getValidProject($hashid);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
@@ -436,14 +417,26 @@ class DashboardController extends Controller
     }
 
     // --- HELPER UNTUK KEAMANAN (ANTI-TRAVERSAL) ---
-    private function getValidProject($hashid)
+    private function getValidProject($hashid, $withDeployments = false)
     {
         $decoded = Hashids::decode($hashid);
         if (empty($decoded)) {
-            abort(404);
+            abort(404, 'Project tidak ditemukan.');
         }
 
-        return HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $query = HostingProject::query();
+        
+        if ($withDeployments) {
+            $query->with(['deployments' => function ($q) {
+                $q->latest();
+            }]);
+        }
+
+        if (!in_array(Auth::user()->role, ['superadmin', 'admin_hosting'])) {
+            $query->where('user_id', Auth::id());
+        }
+
+        return $query->findOrFail($decoded[0]);
     }
 
     private function getValidTargetPath($project, $requestPath)
@@ -478,12 +471,7 @@ class DashboardController extends Controller
     // Memperbarui file .env
     public function updateEnv(Request $request, $hashid)
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $project = $this->getValidProject($hashid);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
 
         $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
@@ -512,12 +500,7 @@ class DashboardController extends Controller
     // Memproses Redeploy
     public function redeploy($hashid)
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $project = $this->getValidProject($hashid);
 
         $project->update(['status' => 'building']);
 
@@ -534,17 +517,11 @@ class DashboardController extends Controller
     // Mengambil build log terakhir untuk polling AJAX
     public function buildLogs($hashid)
     {
-        $decoded = Hashids::decode($hashid);
-
-        if (empty($decoded)) {
+        try {
+            $project = $this->getValidProject($hashid, true);
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Project tidak ditemukan.'], 404);
         }
-
-        $project = HostingProject::with(['deployments' => function ($query) {
-            $query->latest();
-        }])
-            ->where('user_id', Auth::id())
-            ->findOrFail($decoded[0]);
 
         $deployment = $project->deployments->first();
 
@@ -560,13 +537,11 @@ class DashboardController extends Controller
     // Memproses perintah dari Web Terminal (HARDENED)
     public function terminal(Request $request, $hashid)
     {
-        $decoded = Hashids::decode($hashid);
-
-        if (empty($decoded)) {
+        try {
+            $project = $this->getValidProject($hashid);
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Project tidak ditemukan.'], 404);
         }
-
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
 
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
@@ -679,12 +654,7 @@ class DashboardController extends Controller
 
     public function updateSettings(Request $request, $hashid)
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $project = $this->getValidProject($hashid);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 

@@ -59,6 +59,10 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center gap-2">
+                                        {{-- Kelola Detail --}}
+                                        <a href="{{ route('user_hosting.show', $project->hashid) }}"
+                                            class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Kelola</a>
+
                                         {{-- Aktivasi --}}
                                         @if (in_array($project->status, ['unpaid', 'suspended', 'error']))
                                             <form method="POST"
