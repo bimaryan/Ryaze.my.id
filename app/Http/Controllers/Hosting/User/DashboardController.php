@@ -68,6 +68,15 @@ class DashboardController extends Controller
         '/\bmysql\b/',                // direct mysql access
         '/\bsqlite3\b/',              // direct sqlite access
         '/\bpsql\b/',                 // direct postgres access
+        '/\bphp\s+-r\b/',             // php inline code execution
+        '/\bpython3\s+-c\b/',         // python inline code execution
+        '/\bnode\s+-e\b/',            // node inline code execution
+        '/\btinker\b/',               // php artisan tinker (interactive)
+        '/\bssh\b/',                  // ssh connections
+        '/\bftp\b/',                  // ftp connections
+        '/\bscp\b/',                  // scp file transfer
+        '/\brsync\b/',                // rsync file transfer
+        '/\bgit\s+clone\b/',          // git clone
     ];
     // Menampilkan halaman dashboard hosting klien
     public function index()
@@ -592,10 +601,10 @@ class DashboardController extends Controller
             }
         }
 
-        // ════════ SECURITY: Block chained/piped commands ════════
-        if (preg_match('/[;&|]/', $command) && ! str_starts_with($command, 'php artisan')) {
+        // ════════ SECURITY: Block chained/piped & redirection commands ════════
+        if (preg_match('/[;&|><]/', $command)) {
             return response()->json([
-                'output' => '⛔ Chaining command (;, &&, ||, |) tidak diizinkan.',
+                'output' => '⛔ Chaining command (;, &&, ||, |) dan Redirection (>, <) tidak diizinkan.',
                 'exit_code' => 1,
             ]);
         }
