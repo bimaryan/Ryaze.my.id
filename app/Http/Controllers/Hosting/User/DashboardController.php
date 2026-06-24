@@ -121,20 +121,20 @@ class DashboardController extends Controller
             'repo_source' => $request->repo_source,
             'branch' => $request->branch,
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
-            'status' => 'unpaid',
+            'status' => 'building',
         ]);
 
-        // Buat tagihan pertama (Rp 15.000)
-        $payment = $project->payments()->create([
-            'invoice_number' => 'HST-INV-'.strtoupper(uniqid()),
-            'amount' => 15000,
-            'status' => 'unpaid',
+        $project->deployments()->create([
+            'status' => 'queued',
+            'build_logs' => "> Memulai proses Deploy awal...\n> Mengambil repository...",
         ]);
+
+        AutoDeployProject::dispatch($project);
 
         // Notifikasi ke User
-        \Illuminate\Support\Facades\Auth::user()->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat. Silakan selesaikan tagihan ' . $payment->invoice_number . ' agar kami bisa memproses deployment.', 'info'));
+        \Illuminate\Support\Facades\Auth::user()->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat dan proses deployment telah dimulai.', 'info'));
 
-        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat. Silakan selesaikan pembayaran untuk memulai deployment!');
+        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat dan sedang dalam proses deployment!');
     }
 
     public function show($hashed_id)
