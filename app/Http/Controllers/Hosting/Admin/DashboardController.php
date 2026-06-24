@@ -103,6 +103,9 @@ class DashboardController extends Controller
         $project = HostingProject::findOrFail($decoded[0]);
         $projectName = $project->project_name;
 
+        // Hapus Record DNS Cloudflare
+        $this->deleteCloudflareDNS($project->ryaze_domain);
+
         // Hapus folder server (opsional, sesuaikan path)
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
@@ -113,5 +116,26 @@ class DashboardController extends Controller
         $project->delete();
 
         return back()->with('success', "Project '{$projectName}' berhasil dihapus.");
+    }
+
+    private function deleteCloudflareDNS($domainName)
+    {
+        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+
+        if (!$zoneId || !$apiToken) return;
+
+        // Cari Record ID
+        $response = \Illuminate\Support\Facades\Http::withToken($apiToken)
+            ->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
+                'type' => 'CNAME',
+                'name' => $domainName,
+            ]);
+
+        if ($response->successful() && ! empty($response->json('result'))) {
+            $recordId = $response->json('result.0.id');
+            // Hapus Record
+            \Illuminate\Support\Facades\Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records/{$recordId}");
+        }
     }
 }
