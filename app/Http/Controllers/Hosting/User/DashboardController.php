@@ -17,7 +17,7 @@ class DashboardController extends Controller
     /**
      * File sistem yang tidak boleh dimodifikasi/dihapus oleh user.
      */
-    private array $protectedFiles = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
+    private array $protectedFiles = ['.suspended', '.htaccess', '.user.ini', '.maintenance', '.rate_limit'];
 
     /**
      * Ekstensi file yang diblokir dari upload (mencegah web shell).
@@ -336,9 +336,8 @@ class DashboardController extends Controller
         }
 
         // ── PROTEKSI FILE SISTEM ──────────────────────────────────────
-        $protectedFiles = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
         $basename = basename($targetPath);
-        if (in_array($basename, $protectedFiles)) {
+        if (in_array($basename, $this->protectedFiles)) {
             return response()->json(['error' => 'File sistem ini tidak dapat dihapus.'], 403);
         }
         // ─────────────────────────────────────────────────────────────
@@ -689,7 +688,7 @@ class DashboardController extends Controller
         $maintenanceFile = "{$projectDir}/.maintenance";
         if ($maintenanceMode) {
             // Buat file penanda
-            touch($maintenanceFile);
+            file_put_contents($maintenanceFile, "MAINTENANCE MODE ACTIVE\nFile ini digunakan oleh server Nginx sebagai penanda bahwa Maintenance Mode sedang aktif. Tolong jangan dihapus manual.");
             @chmod($maintenanceFile, 0666);
         } else {
             // Hapus file penanda jika dinonaktifkan
@@ -701,7 +700,7 @@ class DashboardController extends Controller
         // 1.5. Terapkan Rate Limit / Under Attack Mode (Membuat file .rate_limit untuk dibaca Nginx)
         $rateLimitFile = "{$projectDir}/.rate_limit";
         if ($underAttack) {
-            touch($rateLimitFile);
+            file_put_contents($rateLimitFile, "UNDER ATTACK MODE ACTIVE\nFile ini digunakan oleh server Nginx sebagai penanda bahwa perlindungan Rate Limiting sedang aktif. Tolong jangan dihapus manual.");
             @chmod($rateLimitFile, 0666);
         } else {
             if (file_exists($rateLimitFile)) {
