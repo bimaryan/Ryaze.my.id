@@ -330,8 +330,13 @@ class AutoDeployProject implements ShouldQueue
         }
 
         $this->exec("cd {$projectDir} && {$pipPath} install --upgrade pip", $deploy);
-        $this->exec("cd {$projectDir} && {$pipPath} install -r requirements.txt", $deploy, true);
-        $this->log($deploy, '> Python dependencies installed.');
+        
+        if (file_exists("{$projectDir}/requirements.txt")) {
+            $this->exec("cd {$projectDir} && {$pipPath} install -r requirements.txt", $deploy, true);
+            $this->log($deploy, '> Python dependencies installed dari requirements.txt.');
+        } else {
+            $this->log($deploy, '> [WARNING] requirements.txt tidak ditemukan. Melewati instalasi dependencies.');
+        }
     }
 
     private function moveBuiltOutput($deploy, string $projectDir): void
