@@ -306,30 +306,23 @@ class AutoDeployProject implements ShouldQueue
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
 
-        $candidates = ['/usr/bin/python3', '/usr/local/bin/python3', '/usr/bin/python'];
-        $python = null;
-
-        foreach ($candidates as $path) {
-            if (file_exists($path)) {
-                $python = $path;
-                break;
-            }
-        }
-
-        if (! $python) {
-            $python = trim(shell_exec('which python3 2>/dev/null') ?? '');
-        }
-        if (! $python) {
-            $python = trim(shell_exec('which python 2>/dev/null') ?? '');
-        }
-
-        if (! $python) {
-            throw new \RuntimeException('Python binary tidak ditemukan di server.');
+        // Deteksi command python yang tersedia
+        $python = 'python3';
+        $check = shell_exec("python3 --version 2>&1") ?? '';
+        if (stripos($check, 'Python') === false) {
+            $python = 'python';
         }
 
         $this->exec("cd {$projectDir} && {$python} -m venv venv", $deploy, true);
-        $this->exec("cd {$projectDir} && venv/bin/pip install --upgrade pip", $deploy);
-        $this->exec("cd {$projectDir} && venv/bin/pip install -r requirements.txt", $deploy, true);
+
+        // Deteksi path pip (Linux/Mac menggunakan bin/, Windows menggunakan Scripts/)
+        $pipPath = "venv/bin/pip";
+        if (file_exists("{$projectDir}/venv/Scripts/pip") || file_exists("{$projectDir}/venv/Scripts/pip.exe") || file_exists("{$projectDir}/venv/Scripts")) {
+            $pipPath = "venv/Scripts/pip";
+        }
+
+        $this->exec("cd {$projectDir} && {$pipPath} install --upgrade pip", $deploy);
+        $this->exec("cd {$projectDir} && {$pipPath} install -r requirements.txt", $deploy, true);
         $this->log($deploy, '> Python dependencies installed.');
     }
 
