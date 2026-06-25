@@ -313,7 +313,11 @@ class AutoDeployProject implements ShouldQueue
             $python = 'python';
             $check2 = trim(shell_exec("python -c \"print('OK')\" 2>/dev/null") ?? '');
             if ($check2 !== 'OK') {
-                throw new \RuntimeException('Python (atau python3) tidak terinstall di server/environment ini.');
+                $python = 'py';
+                $check3 = trim(shell_exec("py -c \"print('OK')\" 2>/dev/null") ?? '');
+                if ($check3 !== 'OK') {
+                    throw new \RuntimeException('Python (atau python3 / py) tidak terinstall di server/environment ini.');
+                }
             }
         }
 
