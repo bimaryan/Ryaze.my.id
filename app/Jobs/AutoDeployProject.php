@@ -306,11 +306,15 @@ class AutoDeployProject implements ShouldQueue
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
 
-        // Deteksi command python yang tersedia
+        // Deteksi command python yang tersedia secara akurat
         $python = 'python3';
-        $check = shell_exec("python3 --version 2>&1") ?? '';
-        if (stripos($check, 'Python') === false) {
+        $check = trim(shell_exec("python3 -c \"print('OK')\" 2>/dev/null") ?? '');
+        if ($check !== 'OK') {
             $python = 'python';
+            $check2 = trim(shell_exec("python -c \"print('OK')\" 2>/dev/null") ?? '');
+            if ($check2 !== 'OK') {
+                throw new \RuntimeException('Python (atau python3) tidak terinstall di server/environment ini.');
+            }
         }
 
         $this->exec("cd {$projectDir} && {$python} -m venv venv", $deploy, true);
