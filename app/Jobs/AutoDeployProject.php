@@ -395,8 +395,10 @@ if (\$method !== 'GET' && \$method !== 'HEAD') {
 \$response = @file_get_contents(\$url, false, \$context);
 
 if (\$response === false) {
-    http_response_code(502);
-    echo "Ryaze Gateway Error: App is unreachable (Port {\$port}).";
+    http_response_code(200); // Set to 200 so Cloudflare doesn't hide it
+    \$error = error_get_last();
+    echo "Ryaze Gateway Error: App is unreachable (Port {\$port}).<br>";
+    echo "PHP Error: " . (\$error['message'] ?? 'Unknown error');
     exit;
 }
 
