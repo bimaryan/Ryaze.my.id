@@ -343,28 +343,47 @@ class AutoDeployProject implements ShouldQueue
         // --- MANAJEMEN PROSES & REVERSE PROXY ---
         $this->log($deploy, "\n> Configuring Python Background Process & Reverse Proxy...");
 
-        $port = 9000 + $this->project->id;
+        $sockFile = "{$projectDir}/uvicorn.sock";
         $pidFile = "{$projectDir}/.python.pid";
 
         // Kill existing process if running
         $this->exec("if [ -f {$pidFile} ]; then kill -9 $(cat {$pidFile}) 2>/dev/null || true; fi", $deploy);
+        $this->exec("rm -f {$sockFile}", $deploy);
 
-        // Start Uvicorn in background
-        $this->log($deploy, "> Starting Uvicorn on port {$port}...");
-        $startCmd = "cd {$projectDir} && nohup {$uvicornPath} main:app --host 127.0.0.1 --port {$port} > storage_fastapi.log 2>&1 & echo $! > {$pidFile}";
+        // Start Uvicorn in background via UNIX Socket
+        $this->log($deploy, "> Starting Uvicorn on UNIX Socket...");
+        $startCmd = "cd {$projectDir} && nohup {$uvicornPath} main:app --uds {$sockFile} > storage_fastapi.log 2>&1 & echo $! > {$pidFile}";
         $this->exec($startCmd, $deploy);
+        
+        // Wait briefly for Uvicorn to create the socket, then make it writable for PHP-FPM
+        $this->exec("sleep 2 && chmod 777 {$sockFile} 2>/dev/null || true", $deploy);
 
-        // Generate PHP Reverse Proxy
+        // Generate PHP Reverse Proxy using UNIX Socket
         $proxyCode = <<<PHP
 <?php
 /**
  * Auto-generated PHP Reverse Proxy by Ryaze
- * Forwards requests to the underlying Python application.
+ * Forwards requests to the underlying Python application via UNIX Socket.
+ * This bypasses Docker network isolation!
  */
-\$port = {$port};
+
+\$sockFile = __DIR__ . '/uvicorn.sock';
 \$method = \$_SERVER['REQUEST_METHOD'] ?? 'GET';
 \$uri = \$_SERVER['REQUEST_URI'] ?? '/';
-\$url = "http://127.0.0.1:{\$port}" . \$uri;
+\$url = "http://localhost" . \$uri;
+
+if (!file_exists(\$sockFile)) {
+    http_response_code(502);
+    echo "Ryaze Gateway Error: Uvicorn socket not found. App might still be starting or crashed.";
+    exit;
+}
+
+\$ch = curl_init();
+curl_setopt(\$ch, CURLOPT_UNIX_SOCKET_PATH, \$sockFile);
+curl_setopt(\$ch, CURLOPT_URL, \$url);
+curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt(\$ch, CURLOPT_HEADER, true);
+curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$method);
 
 // Forward headers
 \$headers = [];
@@ -375,48 +394,46 @@ if (function_exists('getallheaders')) {
         }
     }
 }
-\$headers[] = "Host: 127.0.0.1:{\$port}";
+\$headers[] = "Host: localhost";
 \$headers[] = "Connection: close";
-
-\$options = [
-    'http' => [
-        'method' => \$method,
-        'header' => implode("\\r\\n", \$headers),
-        'ignore_errors' => true,
-        'timeout' => 30
-    ]
-];
+curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$headers);
 
 if (\$method !== 'GET' && \$method !== 'HEAD') {
-    \$options['http']['content'] = file_get_contents('php://input');
+    \$input = file_get_contents('php://input');
+    curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$input);
 }
 
-\$context = stream_context_create(\$options);
-\$response = @file_get_contents(\$url, false, \$context);
+\$response = curl_exec(\$ch);
 
 if (\$response === false) {
-    http_response_code(200); // Set to 200 so Cloudflare doesn't hide it
-    \$error = error_get_last();
-    echo "Ryaze Gateway Error: App is unreachable (Port {\$port}).<br>";
-    echo "PHP Error: " . (\$error['message'] ?? 'Unknown error');
+    http_response_code(502);
+    echo "Ryaze Gateway Error: Failed to connect to Uvicorn via socket.<br>";
+    echo "cURL Error: " . curl_error(\$ch);
     exit;
 }
 
+\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
+\$responseHeaders = substr(\$response, 0, \$headerSize);
+\$body = substr(\$response, \$headerSize);
+\$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
+
+curl_close(\$ch);
+http_response_code(\$httpCode);
+
 // Forward Response Headers
-if (isset(\$http_response_header)) {
-    foreach (\$http_response_header as \$header) {
-        if (stripos(\$header, 'Transfer-Encoding') === false && stripos(\$header, 'Connection') === false) {
-            header(\$header);
-        }
+\$headersArray = explode("\\r\\n", \$responseHeaders);
+foreach (\$headersArray as \$header) {
+    if (trim(\$header) && stripos(\$header, 'Transfer-Encoding') === false && stripos(\$header, 'Connection') === false) {
+        header(\$header);
     }
 }
 
-echo \$response;
+echo \$body;
 PHP;
 
         file_put_contents("{$projectDir}/index.php", $proxyCode);
         $this->exec("chown www-data:www-data {$projectDir}/index.php && chmod 644 {$projectDir}/index.php 2>/dev/null || true", $deploy);
-        $this->log($deploy, "> Reverse Proxy created at index.php (Target: port {$port}).");
+        $this->log($deploy, "> Reverse Proxy created at index.php (Target: UNIX Socket).");
     }
 
     private function moveBuiltOutput($deploy, string $projectDir): void
