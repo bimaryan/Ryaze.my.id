@@ -361,66 +361,55 @@ class AutoDeployProject implements ShouldQueue
  * Auto-generated PHP Reverse Proxy by Ryaze
  * Forwards requests to the underlying Python application.
  */
-
-if (!function_exists('getallheaders')) {
-    function getallheaders() {
-        \$headers = [];
-        foreach (\$_SERVER as \$name => \$value) {
-            if (substr(\$name, 0, 5) == 'HTTP_') {
-                \$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr(\$name, 5)))))] = \$value;
-            }
-        }
-        return \$headers;
-    }
-}
-
 \$port = {$port};
-\$url = "http://127.0.0.1:{\$port}" . \$_SERVER['REQUEST_URI'];
+\$method = \$_SERVER['REQUEST_METHOD'] ?? 'GET';
+\$uri = \$_SERVER['REQUEST_URI'] ?? '/';
+\$url = "http://127.0.0.1:{\$port}" . \$uri;
 
-\$ch = curl_init();
-curl_setopt(\$ch, CURLOPT_URL, \$url);
-curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt(\$ch, CURLOPT_HEADER, true);
-curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$_SERVER['REQUEST_METHOD']);
-
+// Forward headers
 \$headers = [];
-foreach (getallheaders() as \$name => \$value) {
-    if (strtolower(\$name) === 'host') {
-        \$headers[] = "Host: 127.0.0.1:{\$port}";
-    } else {
-        \$headers[] = "\$name: \$value";
+if (function_exists('getallheaders')) {
+    foreach (getallheaders() as \$k => \$v) {
+        if (strtolower(\$k) !== 'host') {
+            \$headers[] = "\$k: \$v";
+        }
     }
 }
-curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$headers);
+\$headers[] = "Host: 127.0.0.1:{\$port}";
+\$headers[] = "Connection: close";
 
-if (\$_SERVER['REQUEST_METHOD'] !== 'GET' && \$_SERVER['REQUEST_METHOD'] !== 'HEAD') {
-    \$input = file_get_contents('php://input');
-    curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$input);
+\$options = [
+    'http' => [
+        'method' => \$method,
+        'header' => implode("\\r\\n", \$headers),
+        'ignore_errors' => true,
+        'timeout' => 30
+    ]
+];
+
+if (\$method !== 'GET' && \$method !== 'HEAD') {
+    \$options['http']['content'] = file_get_contents('php://input');
 }
 
-\$response = curl_exec(\$ch);
-if (curl_errno(\$ch)) {
+\$context = stream_context_create(\$options);
+\$response = @file_get_contents(\$url, false, \$context);
+
+if (\$response === false) {
     http_response_code(502);
-    echo "Ryaze Gateway Error: App is starting or unreachable. " . curl_error(\$ch);
-    curl_close(\$ch);
+    echo "Ryaze Gateway Error: App is unreachable (Port {\$port}).";
     exit;
 }
 
-\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
-\$responseHeaders = substr(\$response, 0, \$headerSize);
-\$body = substr(\$response, \$headerSize);
-\$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
-
-curl_close(\$ch);
-http_response_code(\$httpCode);
-
-\$headersArray = explode("\\r\\n", \$responseHeaders);
-foreach (\$headersArray as \$header) {
-    if (trim(\$header) && stripos(\$header, 'Transfer-Encoding') === false) {
-        header(\$header);
+// Forward Response Headers
+if (isset(\$http_response_header)) {
+    foreach (\$http_response_header as \$header) {
+        if (stripos(\$header, 'Transfer-Encoding') === false && stripos(\$header, 'Connection') === false) {
+            header(\$header);
+        }
     }
 }
-echo \$body;
+
+echo \$response;
 PHP;
 
         file_put_contents("{$projectDir}/index.php", $proxyCode);
