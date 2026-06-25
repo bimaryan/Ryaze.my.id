@@ -323,11 +323,13 @@ class AutoDeployProject implements ShouldQueue
 
         $this->exec("cd {$projectDir} && {$python} -m venv venv", $deploy, true);
 
-        // Deteksi path pip (Linux/Mac menggunakan bin/, Windows menggunakan Scripts/)
-        $pipPath = "venv/bin/pip";
-        if (file_exists("{$projectDir}/venv/Scripts/pip") || file_exists("{$projectDir}/venv/Scripts/pip.exe") || file_exists("{$projectDir}/venv/Scripts")) {
-            $pipPath = "venv/Scripts/pip";
+        // Deteksi path pip/uvicorn (Linux/Mac menggunakan bin/, Windows menggunakan Scripts/)
+        $binDir = "venv/bin";
+        if (is_dir("{$projectDir}/venv/Scripts")) {
+            $binDir = "venv/Scripts";
         }
+        $pipPath = "{$binDir}/pip";
+        $uvicornPath = "{$binDir}/uvicorn";
 
         $this->exec("cd {$projectDir} && {$pipPath} install --upgrade pip", $deploy);
         
@@ -337,6 +339,93 @@ class AutoDeployProject implements ShouldQueue
         } else {
             $this->log($deploy, '> [WARNING] requirements.txt tidak ditemukan. Melewati instalasi dependencies.');
         }
+
+        // --- MANAJEMEN PROSES & REVERSE PROXY ---
+        $this->log($deploy, "\n> Configuring Python Background Process & Reverse Proxy...");
+
+        $port = 9000 + $this->project->id;
+        $pidFile = "{$projectDir}/.python.pid";
+
+        // Kill existing process if running
+        $this->exec("if [ -f {$pidFile} ]; then kill -9 $(cat {$pidFile}) 2>/dev/null || true; fi", $deploy);
+
+        // Start Uvicorn in background
+        $this->log($deploy, "> Starting Uvicorn on port {$port}...");
+        $startCmd = "cd {$projectDir} && nohup {$uvicornPath} main:app --host 127.0.0.1 --port {$port} > storage_fastapi.log 2>&1 & echo $! > {$pidFile}";
+        $this->exec($startCmd, $deploy);
+
+        // Generate PHP Reverse Proxy
+        $proxyCode = <<<PHP
+<?php
+/**
+ * Auto-generated PHP Reverse Proxy by Ryaze
+ * Forwards requests to the underlying Python application.
+ */
+
+if (!function_exists('getallheaders')) {
+    function getallheaders() {
+        \$headers = [];
+        foreach (\$_SERVER as \$name => \$value) {
+            if (substr(\$name, 0, 5) == 'HTTP_') {
+                \$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr(\$name, 5)))))] = \$value;
+            }
+        }
+        return \$headers;
+    }
+}
+
+\$port = {$port};
+\$url = "http://127.0.0.1:{\$port}" . \$_SERVER['REQUEST_URI'];
+
+\$ch = curl_init();
+curl_setopt(\$ch, CURLOPT_URL, \$url);
+curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt(\$ch, CURLOPT_HEADER, true);
+curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$_SERVER['REQUEST_METHOD']);
+
+\$headers = [];
+foreach (getallheaders() as \$name => \$value) {
+    if (strtolower(\$name) === 'host') {
+        \$headers[] = "Host: 127.0.0.1:{\$port}";
+    } else {
+        \$headers[] = "\$name: \$value";
+    }
+}
+curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$headers);
+
+if (\$_SERVER['REQUEST_METHOD'] !== 'GET' && \$_SERVER['REQUEST_METHOD'] !== 'HEAD') {
+    \$input = file_get_contents('php://input');
+    curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$input);
+}
+
+\$response = curl_exec(\$ch);
+if (curl_errno(\$ch)) {
+    http_response_code(502);
+    echo "Ryaze Gateway Error: App is starting or unreachable. " . curl_error(\$ch);
+    curl_close(\$ch);
+    exit;
+}
+
+\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
+\$responseHeaders = substr(\$response, 0, \$headerSize);
+\$body = substr(\$response, \$headerSize);
+\$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
+
+curl_close(\$ch);
+http_response_code(\$httpCode);
+
+\$headersArray = explode("\\r\\n", \$responseHeaders);
+foreach (\$headersArray as \$header) {
+    if (trim(\$header) && stripos(\$header, 'Transfer-Encoding') === false) {
+        header(\$header);
+    }
+}
+echo \$body;
+PHP;
+
+        file_put_contents("{$projectDir}/index.php", $proxyCode);
+        $this->exec("chown www-data:www-data {$projectDir}/index.php && chmod 644 {$projectDir}/index.php 2>/dev/null || true", $deploy);
+        $this->log($deploy, "> Reverse Proxy created at index.php (Target: port {$port}).");
     }
 
     private function moveBuiltOutput($deploy, string $projectDir): void
