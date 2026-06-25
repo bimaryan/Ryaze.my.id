@@ -34,7 +34,7 @@ class DashboardController extends Controller
     private array $allowedCommands = [
         'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date',
         'php', 'composer', 'npm', 'npx', 'node', 'python3', 'pip', 'pip3',
-        'mkdir', 'touch', 'cp', 'mv', 'rm', 'git',
+        'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl',
     ];
 
     /**
