@@ -305,7 +305,29 @@ class AutoDeployProject implements ShouldQueue
     private function setupPython($deploy, string $projectDir): void
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
-        $this->exec("cd {$projectDir} && /usr/bin/python3 -m venv venv", $deploy, true);
+
+        $candidates = ['/usr/bin/python3', '/usr/local/bin/python3', '/usr/bin/python'];
+        $python = null;
+
+        foreach ($candidates as $path) {
+            if (file_exists($path)) {
+                $python = $path;
+                break;
+            }
+        }
+
+        if (! $python) {
+            $python = trim(shell_exec('which python3 2>/dev/null') ?? '');
+        }
+        if (! $python) {
+            $python = trim(shell_exec('which python 2>/dev/null') ?? '');
+        }
+
+        if (! $python) {
+            throw new \RuntimeException('Python binary tidak ditemukan di server.');
+        }
+
+        $this->exec("cd {$projectDir} && {$python} -m venv venv", $deploy, true);
         $this->exec("cd {$projectDir} && venv/bin/pip install --upgrade pip", $deploy);
         $this->exec("cd {$projectDir} && venv/bin/pip install -r requirements.txt", $deploy, true);
         $this->log($deploy, '> Python dependencies installed.');
