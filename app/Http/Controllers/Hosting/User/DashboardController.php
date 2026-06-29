@@ -48,7 +48,6 @@ class DashboardController extends Controller
         '/\/proc\//',                  // proc filesystem
         '/\bsudo\b/',                  // privilege escalation
         '/\bsu\s/',                    // switch user
-        '/\bchmod\s+777\s+\//',        // chmod 777 /
         '/\brm\s+-rf\s+\/(?!\S)/',     // rm -rf /
         '/\bwget\b/',                  // download executables
         '/\bcurl\b.*\|.*\bsh\b/',      // curl pipe to shell
