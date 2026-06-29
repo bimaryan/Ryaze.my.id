@@ -75,7 +75,6 @@ class DashboardController extends Controller
         '/\bftp\b/',                  // ftp connections
         '/\bscp\b/',                  // scp file transfer
         '/\brsync\b/',                // rsync file transfer
-        '/\bgit\s+clone\b/',          // git clone
     ];
     // Menampilkan halaman dashboard hosting klien
     public function index()
