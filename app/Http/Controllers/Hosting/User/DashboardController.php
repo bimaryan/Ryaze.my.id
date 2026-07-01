@@ -163,6 +163,7 @@ class DashboardController extends Controller
             'framework'    => $framework,
             'repo_source'  => $repoSource,
             'branch'       => $branch,
+            'source_type'  => $sourceType,
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
             'status'       => 'building',
         ]);

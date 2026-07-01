@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecurityHeaders
@@ -21,6 +22,9 @@ class SecurityHeaders
         // Simpan ke request agar bisa diakses di view via helper
         $request->attributes->set('csp_nonce', $nonce);
         app()->instance('csp_nonce', $nonce);
+
+        // Beritahu Vite agar inject nonce ke HMR inline scripts (dev mode)
+        Vite::useCspNonce($nonce);
 
         $response = $next($request);
 

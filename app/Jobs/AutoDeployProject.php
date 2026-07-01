@@ -53,34 +53,65 @@ class AutoDeployProject implements ShouldQueue
             $this->exec("mkdir -p {$baseDir}", $deploy);
 
             // ----------------------------------------------------------------
-            // TAHAP 2: Git Clone atau Pull
+            // TAHAP 2: Sumber File — Git Clone/Pull atau Template
             // ----------------------------------------------------------------
-            $this->log($deploy, "\n> Checking repository status...");
+            $isTemplate = ($this->project->source_type === 'template');
 
-            $this->exec("git config --global --add safe.directory '*'", $deploy);
+            if ($isTemplate) {
+                // ── MODE TEMPLATE ────────────────────────────────────────────
+                $isFirstDeploy = !is_dir($projectDir) || !file_exists("{$projectDir}/index.php") && !file_exists("{$projectDir}/index.html") && !is_dir("{$projectDir}/src") && !is_dir("{$projectDir}/public");
 
-            $isRepo = is_dir("{$projectDir}/.git");
+                if (!is_dir($projectDir) || (!is_dir("{$projectDir}/.git") && $this->isDirEmpty($projectDir))) {
+                    // Belum ada file sama sekali → clone template
+                    $this->log($deploy, "\n> Source: Starter Template");
+                    $this->log($deploy, '> Cloning template repository...');
 
-            if ($isRepo) {
-                $this->log($deploy, '> Repository found. Pulling latest changes...');
-                $this->exec("chown -R root:root {$projectDir}", $deploy);
-                $this->exec(
-                    "cd {$projectDir} && git fetch --all && git reset --hard origin/{$this->project->branch}",
-                    $deploy,
-                    true
-                );
-            } else {
-                if (is_dir($projectDir)) {
-                    $this->log($deploy, '> Found stale directory (not a git repo). Cleaning up...');
-                    $this->exec("rm -rf {$projectDir}", $deploy);
+                    if (is_dir($projectDir)) {
+                        $this->exec("rm -rf {$projectDir}", $deploy);
+                    }
+
+                    $this->exec(
+                        "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir}",
+                        $deploy,
+                        true
+                    );
+
+                    // Hapus .git agar user bisa edit bebas, tidak terikat ke repo template
+                    $this->log($deploy, '> Removing .git directory (template mode — not a tracked repo)...');
+                    $this->exec("rm -rf {$projectDir}/.git", $deploy);
+                } else {
+                    // Sudah ada file (deploy kedua dst.) → skip clone/pull, langsung build
+                    $this->log($deploy, "\n> Source: Starter Template (existing files detected — skipping clone)");
+                    $this->log($deploy, '> User files preserved. Proceeding to build step...');
                 }
+            } else {
+                // ── MODE REPOSITORY ──────────────────────────────────────────
+                $this->log($deploy, "\n> Checking repository status...");
+                $this->exec("git config --global --add safe.directory '*'", $deploy);
 
-                $this->log($deploy, '> Cloning repository...');
-                $this->exec(
-                    "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir}",
-                    $deploy,
-                    true
-                );
+                $isRepo = is_dir("{$projectDir}/.git");
+
+                if ($isRepo) {
+                    $this->log($deploy, '> Repository found. Pulling latest changes...');
+                    $this->exec("chown -R root:root {$projectDir}", $deploy);
+                    $this->exec(
+                        "cd {$projectDir} && git fetch --all && git reset --hard origin/{$this->project->branch}",
+                        $deploy,
+                        true
+                    );
+                } else {
+                    if (is_dir($projectDir)) {
+                        $this->log($deploy, '> Found stale directory (not a git repo). Cleaning up...');
+                        $this->exec("rm -rf {$projectDir}", $deploy);
+                    }
+
+                    $this->log($deploy, '> Cloning repository...');
+                    $this->exec(
+                        "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir}",
+                        $deploy,
+                        true
+                    );
+                }
             }
 
             // Kembalikan ke www-data sebelum setup framework
@@ -573,5 +604,17 @@ PHP;
     {
         $deploy->update(['status' => 'failed']);
         $this->project->update(['status' => 'error']);
+    }
+
+    /**
+     * Cek apakah direktori kosong (tidak ada file/folder selain . dan ..)
+     */
+    private function isDirEmpty(string $dir): bool
+    {
+        if (!is_dir($dir)) {
+            return true;
+        }
+        $items = array_diff(scandir($dir), ['.', '..']);
+        return empty($items);
     }
 }

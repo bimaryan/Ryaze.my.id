@@ -11,7 +11,7 @@ class HostingProject extends Model
 
     protected $fillable = [
         'user_id', 'project_name', 'framework', 'repo_source',
-        'branch', 'ryaze_domain', 'custom_domain', 'status', 'maintenance_mode', 'force_https', 'storage_limit_mb', 'is_under_attack',
+        'branch', 'source_type', 'ryaze_domain', 'custom_domain', 'status', 'maintenance_mode', 'force_https', 'storage_limit_mb', 'is_under_attack',
     ];
 
     protected $casts = [
