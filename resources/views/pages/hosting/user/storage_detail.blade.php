@@ -74,6 +74,7 @@
                     <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Terpakai</p>
                     <p class="text-2xl font-bold text-slate-800">{{ $used_human }}</p>
                     <p class="text-xs text-slate-400 mt-1">dari {{ $limit_human }}</p>
+                </div>
             </div>
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
                 <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Tersedia</p>
