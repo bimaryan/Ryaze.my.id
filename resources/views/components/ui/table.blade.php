@@ -1,12 +1,10 @@
-<div
-    class="glass-panel rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] {{ $attributes->get('class') }}">
+<div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm {{ $attributes->get('class') }}">
     @if (isset($header))
         {{ $header }}
     @endif
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left text-slate-600">
-            <thead
-                class="bg-white/40 text-xs uppercase font-semibold text-slate-500 border-b border-white/40 backdrop-blur-sm">
+            <thead class="bg-slate-50/80 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
                 <tr>
                     {{ $head }}
                 </tr>

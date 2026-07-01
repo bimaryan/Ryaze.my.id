@@ -2,13 +2,18 @@
 
 <div
     class="p-4 bg-white rounded-lg shadow-sm flex items-center justify-between border border-slate-200 mb-6">
-    <div>
-        <p class="text-lg font-semibold text-indigo-600">{{ $title }}</p>
-        @if (isset($subtitle))
-            <div class="mt-0.5">
-                {{ $subtitle }}
-            </div>
+    <div class="flex items-center gap-4">
+        @if (isset($iconSlot))
+            {{ $iconSlot }}
         @endif
+        <div>
+            <p class="text-lg font-semibold text-indigo-600">{{ $title }}</p>
+            @if (isset($subtitle))
+                <div class="mt-0.5">
+                    {{ $subtitle }}
+                </div>
+            @endif
+        </div>
     </div>
 
     <div class="flex items-center gap-3">
