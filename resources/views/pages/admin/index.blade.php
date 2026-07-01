@@ -95,7 +95,7 @@
                 </div>
 
                 <!-- Databases -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-orange-200 hover:-translate-y-1 relative overflow-hidden">
+                <a href="{{ route('admin_hosting.databases') }}" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-orange-200 hover:-translate-y-1 relative overflow-hidden block">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
                     <div class="relative z-10 flex justify-between items-start">
                         <div>
@@ -106,10 +106,10 @@
                             <i class="fa-solid fa-database text-xl"></i>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Storage -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-teal-200 hover:-translate-y-1 relative overflow-hidden">
+                <a href="{{ route('admin_hosting.storage') }}" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-teal-200 hover:-translate-y-1 relative overflow-hidden block">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-teal-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
                     <div class="relative z-10 flex justify-between items-start">
                         <div>
@@ -123,7 +123,7 @@
                             <i class="fa-solid fa-hard-drive text-xl"></i>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Detailed Revenue Section -->

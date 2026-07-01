@@ -59,6 +59,26 @@ class DashboardController extends Controller
         return view('pages.hosting.admin.projects', compact('projects'));
     }
 
+    // 5. Halaman Semua Database
+    public function databases()
+    {
+        $databases = HostingDatabase::with('user')
+            ->latest()
+            ->paginate(15);
+
+        return view('pages.hosting.admin.databases', compact('databases'));
+    }
+
+    // 6. Halaman Storage (Penyimpanan Proyek)
+    public function storage()
+    {
+        $projects = HostingProject::with('client')
+            ->orderBy('storage_limit_mb', 'desc')
+            ->paginate(15);
+
+        return view('pages.hosting.admin.storage', compact('projects'));
+    }
+
     public function suspendProject(Request $request, $hashid)
     {
         $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
