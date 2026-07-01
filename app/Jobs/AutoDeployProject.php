@@ -115,7 +115,9 @@ class AutoDeployProject implements ShouldQueue
             // TAHAP 5: Cloudflare DNS
             // ----------------------------------------------------------------
             $this->log($deploy, "\n> Configuring Cloudflare DNS for {$this->project->ryaze_domain}...");
-            $this->createCloudflareDNS($deploy);
+            if (!$this->createCloudflareDNS($deploy)) {
+                throw new \RuntimeException('Gagal mengkonfigurasi Cloudflare DNS. Periksa API Token atau pengaturan Zone ID.');
+            }
 
             // ----------------------------------------------------------------
             // SELESAI
