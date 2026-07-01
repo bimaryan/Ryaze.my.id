@@ -1,9 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-
-        {{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
+    <x-ui.page-layout>
+{{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
         {{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
         <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
@@ -102,5 +101,5 @@
                 </div>
             @endif
         </div>
-    </div>
+    </x-ui.page-layout>
 @endsection

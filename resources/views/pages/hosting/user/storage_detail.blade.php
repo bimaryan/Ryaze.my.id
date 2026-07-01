@@ -1,9 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-
-        {{-- ── 10. USER HOSTING – Storage Detail (per Project) ───────────── --}}
+    <x-ui.page-layout>
+{{-- ── 10. USER HOSTING – Storage Detail (per Project) ───────────── --}}
         <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4 min-w-0">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
@@ -131,9 +130,7 @@
                                 <th class="px-4 py-3 text-right whitespace-nowrap">Ukuran</th>
                                 <th class="px-6 py-3 text-left hidden sm:table-cell sm:w-[200px]">Proporsi</th>
                                 <th class="px-4 py-3 text-right hidden sm:table-cell sm:w-[80px]">%</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
+                                </x-slot:head>
                             @foreach ($breakdown as $item)
                                 @php
                                     $bc =
@@ -180,5 +177,5 @@
             @endif
         </div>
 
-    </div>
+    </x-ui.page-layout>
 @endsection

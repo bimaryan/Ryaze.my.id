@@ -1,9 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-
-        {{-- ── 2. ADMIN HOSTING – Riwayat Deployment ──────────────────────── --}}
+    <x-ui.page-layout>
+{{-- ── 2. ADMIN HOSTING – Riwayat Deployment ──────────────────────── --}}
         <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
@@ -29,9 +28,7 @@
                             <th class="px-6 py-4">Klien & Info Commit</th>
                             <th class="px-6 py-4">Waktu</th>
                             <th class="px-6 py-4 text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
+                            </x-slot:head>
                         @forelse ($deployments as $deploy)
                             <tr class="hover:bg-slate-50 transition-colors">
 
@@ -99,5 +96,5 @@
                 </div>
             @endif
         </div>
-    </div>
+    </x-ui.page-layout>
 @endsection

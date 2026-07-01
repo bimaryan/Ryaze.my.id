@@ -1,9 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-
-        {{-- ── 6. USER HOSTING – Deploy Proyek Baru ───────────────────────── --}}
+    <x-ui.page-layout>
+{{-- ── 6. USER HOSTING – Deploy Proyek Baru ───────────────────────── --}}
         <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
@@ -133,5 +132,5 @@
                 </div>
             </form>
         </div>
-    </div>
+    </x-ui.page-layout>
 @endsection
