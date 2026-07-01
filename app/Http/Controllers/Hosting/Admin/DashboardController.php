@@ -65,8 +65,9 @@ class DashboardController extends Controller
         $databases = HostingDatabase::with('user')
             ->latest()
             ->paginate(15);
+        $users = User::orderBy('name')->get();
 
-        return view('pages.hosting.admin.databases', compact('databases'));
+        return view('pages.hosting.admin.databases', compact('databases', 'users'));
     }
 
     // 6. Halaman Storage (Penyimpanan Proyek)
@@ -77,6 +78,96 @@ class DashboardController extends Controller
             ->paginate(15);
 
         return view('pages.hosting.admin.storage', compact('projects'));
+    }
+
+    public function updateStorage(Request $request, $hashid)
+    {
+        $request->validate([
+            'storage_limit_mb' => 'required|integer|min:100',
+        ]);
+
+        $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
+        $project->update(['storage_limit_mb' => $request->storage_limit_mb]);
+
+        return back()->with('success', "Limit penyimpanan proyek '{$project->project_name}' berhasil diperbarui.");
+    }
+
+    public function storeDatabase(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'db_name' => 'required|string|alpha_dash|max:15',
+            'db_username' => 'required|string|alpha_dash|max:15',
+            'db_password' => 'required|string|min:8|max:32',
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+        
+        $prefix = 'ryz_'.$user->id.'_';
+        $cleanDbName = $prefix.strtolower(trim($request->db_name));
+        $cleanUsername = $prefix.strtolower(trim($request->db_username));
+        $dbPassword = $request->db_password;
+
+        if (HostingDatabase::where('db_name', $cleanDbName)->exists()) {
+            return back()->with('error', 'Nama database "'.$cleanDbName.'" sudah digunakan.');
+        }
+
+        $rootPass = config('services.panel_mysql.root_password');
+        $mysqlHost = config('services.panel_mysql.host');
+
+        if (! $rootPass) {
+            return back()->with('error', 'Konfigurasi Root MySQL belum diatur oleh Admin.');
+        }
+
+        try {
+            $pdo = new \PDO("mysql:host={$mysqlHost};port=3306", 'root', $rootPass);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS `$cleanDbName`");
+            $quotedPassword = $pdo->quote($dbPassword);
+            $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY $quotedPassword");
+            $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$cleanUsername'@'%'");
+            $pdo->exec('FLUSH PRIVILEGES');
+        } catch (\PDOException $e) {
+            return back()->with('error', 'Gagal membuat database: '.$e->getMessage());
+        }
+
+        HostingDatabase::create([
+            'user_id' => $user->id,
+            'db_name' => $cleanDbName,
+            'db_username' => $cleanUsername,
+            'db_password' => \Illuminate\Support\Facades\Crypt::encryptString($dbPassword),
+            'host' => $mysqlHost,
+        ]);
+
+        return back()->with('success', 'Database '.$cleanDbName.' berhasil dibuat untuk klien!');
+    }
+
+    public function destroyDatabase($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+
+        $database = HostingDatabase::findOrFail($decoded[0]);
+
+        $rootPass = config('services.panel_mysql.root_password');
+        $mysqlHost = config('services.panel_mysql.host', '1Panel-mysql-KZAi');
+
+        if ($rootPass) {
+            try {
+                $pdo = new \PDO("mysql:host={$mysqlHost};port=3306", 'root', $rootPass);
+                $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+                $pdo->exec("DROP DATABASE IF EXISTS `$database->db_name`");
+                $pdo->exec("DROP USER IF EXISTS '$database->db_username'@'%'");
+                $pdo->exec('FLUSH PRIVILEGES');
+            } catch (\PDOException $e) {
+                \Log::error('Gagal hapus DB di server MySQL: '.$e->getMessage());
+            }
+        }
+
+        $database->delete();
+        return back()->with('success', 'Database berhasil dihapus!');
     }
 
     public function suspendProject(Request $request, $hashid)

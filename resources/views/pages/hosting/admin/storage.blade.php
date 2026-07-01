@@ -1,7 +1,7 @@
 @extends('index')
 
 @section('content')
-<div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+<div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
     <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div class="flex items-center gap-4">
             <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl">
@@ -60,9 +60,12 @@
                                     {{ $project->storage_limit_mb >= 1024 ? number_format($project->storage_limit_mb / 1024, 1) . ' GB' : number_format($project->storage_limit_mb) . ' MB' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-center">
-                                <a href="{{ route('admin_hosting.projects') }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                                    Detail
+                            <td class="px-6 py-4 text-center flex items-center justify-center gap-2">
+                                <button type="button" onclick="openEditStorageModal('{{ $project->hashid }}', '{{ $project->project_name }}', {{ $project->storage_limit_mb }})" class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 transition-colors tooltip" title="Ubah Limit Storage">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <a href="{{ route('admin_hosting.projects') }}" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors tooltip" title="Detail Proyek">
+                                    <i class="fa-solid fa-arrow-right"></i>
                                 </a>
                             </td>
                         </tr>
@@ -85,5 +88,45 @@
             </div>
         @endif
     </div>
+
+    <!-- Modal Edit Storage -->
+    <div id="editStorageModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative" onclick="event.stopPropagation()">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-800">Ubah Limit Storage</h3>
+                <button type="button" onclick="document.getElementById('editStorageModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form id="editStorageForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="p-6 space-y-4">
+                    <div>
+                        <p class="text-sm text-slate-600 mb-4">Ubah limit penyimpanan untuk proyek: <strong id="storageProjectName" class="text-slate-800"></strong></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Limit Storage Baru (MB)</label>
+                        <input type="number" name="storage_limit_mb" id="storageLimitInput" required min="100" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                        <p class="text-[11px] text-slate-500 mt-1">1024 MB = 1 GB. Minimal 100 MB.</p>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('editStorageModal').classList.add('hidden')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-lg shadow-sm">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<script>
+    function openEditStorageModal(hashid, projectName, currentLimit) {
+        const form = document.getElementById('editStorageForm');
+        form.action = `/admin/hosting/storage/${hashid}`;
+        document.getElementById('storageProjectName').textContent = projectName;
+        document.getElementById('storageLimitInput').value = currentLimit;
+        document.getElementById('editStorageModal').classList.remove('hidden');
+    }
+</script>
 @endsection
