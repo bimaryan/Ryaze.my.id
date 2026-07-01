@@ -28,9 +28,9 @@
                         Pilih Metode Deploy
                     </h3>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <label class="relative cursor-pointer flex-1">
+                        <label class="relative cursor-pointer flex-1 group">
                             <input type="radio" name="source_type" value="repo" id="source_repo" class="peer hidden" checked>
-                            <div class="px-5 py-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all flex items-center gap-4">
+                            <div class="h-full px-5 py-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all flex items-center gap-4">
                                 <div class="w-11 h-11 bg-slate-900 rounded-xl flex items-center justify-center shrink-0">
                                     <i class="fa-brands fa-github text-xl text-white"></i>
                                 </div>
@@ -38,21 +38,27 @@
                                     <p class="font-bold text-slate-800 text-sm">Git Repository</p>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Clone dari repo Git Anda sendiri</p>
                                 </div>
-                                <div class="ml-auto shrink-0 w-5 h-5 border-2 border-slate-300 rounded-full peer-checked:border-indigo-600 flex items-center justify-center">
+                                <div class="ml-auto shrink-0 w-5 h-5 border-2 border-slate-300 rounded-full flex items-center justify-center transition-colors group-has-[:checked]:border-indigo-600 group-has-[:checked]:bg-indigo-600">
+                                    <div class="w-2 h-2 bg-white rounded-full opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></div>
                                 </div>
                             </div>
                         </label>
-                        <label class="relative cursor-pointer flex-1">
+                        <label class="relative cursor-pointer flex-1 group">
                             <input type="radio" name="source_type" value="template" id="source_template" class="peer hidden">
-                            <div class="px-5 py-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all flex items-center gap-4">
+                            <div class="h-full px-5 py-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all flex items-center gap-4">
                                 <div class="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shrink-0">
                                     <i class="fa-solid fa-wand-magic-sparkles text-xl text-white"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-slate-800 text-sm">Gunakan Template</p>
+                                    <p class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                        Gunakan Template
+                                        <span class="bg-indigo-100 text-indigo-700 text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase">New</span>
+                                    </p>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Mulai cepat dengan starter code siap pakai</p>
                                 </div>
-                                <span class="ml-auto shrink-0 bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>
+                                <div class="ml-auto shrink-0 w-5 h-5 border-2 border-slate-300 rounded-full flex items-center justify-center transition-colors group-has-[:checked]:border-indigo-600 group-has-[:checked]:bg-indigo-600">
+                                    <div class="w-2 h-2 bg-white rounded-full opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></div>
+                                </div>
                             </div>
                         </label>
                     </div>

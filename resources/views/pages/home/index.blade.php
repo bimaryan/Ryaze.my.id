@@ -489,92 +489,36 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
                 <!-- Portofolio Item 1 -->
-                <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-500 cursor-pointer"
+                <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-500"
                     data-aos="fade-up" data-aos-delay="100">
-                    <div class="img-zoom-container h-60 bg-slate-100 relative">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                            <span
-                                class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Lihat
-                                Detail →</span>
+                    <a href="https://silk.ryaze.my.id/login" target="_blank" class="block">
+                        <div class="img-zoom-container h-60 bg-slate-100 relative">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                                <span
+                                    class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Live Preview →</span>
+                            </div>
+                            <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative">
+                                <i class="fa-solid fa-microscope text-7xl text-white/20 absolute"></i>
+                                <div class="w-full h-full bg-gradient-to-br from-indigo-500/30 to-purple-600/30"></div>
+                            </div>
                         </div>
-                        <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative">
-                            <i class="fa-solid fa-microscope text-7xl text-white/20 absolute"></i>
-                            <div class="w-full h-full bg-gradient-to-br from-indigo-500/30 to-purple-600/30"></div>
-                        </div>
-                    </div>
+                    </a>
                     <div class="p-8 border border-t-0 border-slate-100 bg-white rounded-b-3xl">
                         <div class="flex gap-2 mb-4">
-                            <span
-                                class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Laravel</span>
-                            <span
-                                class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Tailwind</span>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Laravel</span>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Tailwind</span>
                         </div>
-                        <h4
-                            class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-indigo-600 transition-colors">
-                            Sistem Peminjaman Lab Kesehatan</h4>
-                        <p class="text-slate-500 line-clamp-2">Aplikasi manajemen jadwal & inventaris untuk Universitas
-                            ternama.</p>
-                    </div>
-                </div>
-
-                <!-- Portofolio Item 2 -->
-                <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 cursor-pointer"
-                    data-aos="fade-up" data-aos-delay="200">
-                    <div class="img-zoom-container h-60 bg-slate-100 relative">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                            <span
-                                class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Lihat
-                                Detail →</span>
-                        </div>
-                        <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative">
-                            <i class="fa-solid fa-car text-7xl text-white/20 absolute"></i>
-                            <div class="w-full h-full bg-gradient-to-br from-blue-500/30 to-sky-600/30"></div>
-                        </div>
-                    </div>
-                    <div class="p-8 border border-t-0 border-slate-100 bg-white rounded-b-3xl">
-                        <div class="flex gap-2 mb-4">
-                            <span
-                                class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">React</span>
-                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Midtrans
-                                API</span>
-                        </div>
-                        <h4
-                            class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-blue-600 transition-colors">
-                            Web Penyewaan Kost & Mobil</h4>
-                        <p class="text-slate-500 line-clamp-2">Platform booking modern dengan integrasi payment gateway
-                            otomatis.</p>
-                    </div>
-                </div>
-
-                <!-- Portofolio Item 3 -->
-                <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-500 cursor-pointer"
-                    data-aos="fade-up" data-aos-delay="300">
-                    <div class="img-zoom-container h-60 bg-slate-100 relative">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                            <span
-                                class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Lihat
-                                Detail →</span>
-                        </div>
-                        <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative">
-                            <i class="fa-solid fa-gamepad text-7xl text-white/20 absolute"></i>
-                            <div class="w-full h-full bg-gradient-to-br from-emerald-500/30 to-teal-600/30"></div>
-                        </div>
-                    </div>
-                    <div class="p-8 border border-t-0 border-slate-100 bg-white rounded-b-3xl">
-                        <div class="flex gap-2 mb-4">
-                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Unity
-                                3D</span>
-                            <span
-                                class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">C#</span>
-                        </div>
-                        <h4
-                            class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-emerald-600 transition-colors">
-                            Game "Bajaj Jek"</h4>
-                        <p class="text-slate-500 line-clamp-2">Simulasi mengemudi bajaj interaktif dengan AI lalu
-                            lintas cerdas.</p>
+                        <a href="https://silk.ryaze.my.id/login" target="_blank">
+                            <h4 class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-indigo-600 transition-colors">
+                                Sistem Peminjaman Lab Kesehatan
+                            </h4>
+                        </a>
+                        <p class="text-slate-500 line-clamp-2 mb-4">Aplikasi manajemen jadwal & inventaris untuk Universitas ternama.</p>
+                        
+                        <a href="https://github.com/bimaryan/silk" target="_blank" class="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
+                            <i class="fa-brands fa-github text-lg mr-2"></i> Repository
+                        </a>
                     </div>
                 </div>
 
