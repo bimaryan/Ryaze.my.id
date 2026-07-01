@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\HostingProject;
 use App\Models\HostingPayment;
+use App\Models\HostingDatabase;
 use App\Models\JokiOrder;
 use App\Models\JokiPayment;
 use App\Models\User;
@@ -47,7 +48,11 @@ class DashboardController extends Controller
         $totalRevenueMonth = $jokiRevenueMonth + $hostingRevenueMonth;
         $totalRevenueTotal = $jokiRevenueTotal + $hostingRevenueTotal;
 
-        // 5. Ambil Data Terbaru (Recent Activities)
+        // 5. Hitung Database & Storage
+        $totalDatabases = HostingDatabase::count();
+        $totalStorageMB = HostingProject::sum('storage_limit_mb');
+
+        // 6. Ambil Data Terbaru (Recent Activities)
         $recentUsers = User::latest()->take(5)->get();
         
         $recentJokiOrders = JokiOrder::with('client', 'service')
@@ -72,6 +77,8 @@ class DashboardController extends Controller
             'hostingRevenueTotal',
             'totalRevenueMonth',
             'totalRevenueTotal',
+            'totalDatabases',
+            'totalStorageMB',
             'recentUsers',
             'recentJokiOrders',
             'recentHostingProjects'

@@ -31,7 +31,7 @@
         <div class="mt-6 space-y-6">
 
             <!-- Main KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Total Users -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-blue-200 hover:-translate-y-1 relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
@@ -63,6 +63,20 @@
                     </div>
                 </div>
 
+                <!-- Total Revenue -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-sky-200 hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-sky-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
+                    <div class="relative z-10 flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Pendapatan (Bulan Ini)</p>
+                            <h3 class="text-2xl font-bold text-slate-800 tracking-tight">Rp {{ number_format($totalRevenueMonth, 0, ',', '.') }}</h3>
+                        </div>
+                        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-sky-100 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fa-solid fa-wallet text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Hosting Projects -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-emerald-200 hover:-translate-y-1 relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
@@ -80,16 +94,33 @@
                     </div>
                 </div>
 
-                <!-- Total Revenue -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-sky-200 hover:-translate-y-1 relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-sky-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
+                <!-- Databases -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-orange-200 hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
                     <div class="relative z-10 flex justify-between items-start">
                         <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Pendapatan (Bulan Ini)</p>
-                            <h3 class="text-2xl font-bold text-slate-800 tracking-tight">Rp {{ number_format($totalRevenueMonth, 0, ',', '.') }}</h3>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Total Database</p>
+                            <h3 class="text-3xl font-bold text-slate-800">{{ number_format($totalDatabases) }}</h3>
                         </div>
-                        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-sky-100 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fa-solid fa-wallet text-xl"></i>
+                        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-orange-100 text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fa-solid fa-database text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Storage -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-teal-200 hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-teal-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
+                    <div class="relative z-10 flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Penyimpanan Teralokasi</p>
+                            <div class="flex items-baseline gap-2">
+                                <h3 class="text-3xl font-bold text-slate-800">{{ $totalStorageMB >= 1024 ? number_format($totalStorageMB / 1024, 1) : number_format($totalStorageMB) }}</h3>
+                                <span class="text-sm text-slate-400 font-medium">{{ $totalStorageMB >= 1024 ? 'GB' : 'MB' }}</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-teal-100 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fa-solid fa-hard-drive text-xl"></i>
                         </div>
                     </div>
                 </div>
