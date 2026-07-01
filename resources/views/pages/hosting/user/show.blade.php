@@ -15,6 +15,7 @@
                         'laravel' => 'fa-brands fa-laravel text-red-500',
                         'python' => 'fa-brands fa-python text-yellow-500',
                         'node' => 'fa-brands fa-node text-emerald-500',
+                        'php' => 'fa-brands fa-php text-indigo-500',
                         'vue' => 'fa-brands fa-vuejs text-emerald-500',
                         default => 'fa-brands fa-html5 text-orange-500',
                     };

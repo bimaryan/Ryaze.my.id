@@ -96,7 +96,7 @@ class AutoDeployProject implements ShouldQueue
                 'react', 'nextjs', 'vue', 'node' => $this->setupNodeFramework($deploy, $projectDir, $framework),
                 'laravel' => $this->setupLaravel($deploy, $projectDir),
                 'python' => $this->setupPython($deploy, $projectDir),
-                'html' => $this->log($deploy, '> Static HTML project. No build step required.'),
+                'html', 'php' => $this->log($deploy, "> Native/Static project ({$framework}). No build step required."),
                 default => $this->log($deploy, "> [WARNING] Framework '{$framework}' tidak dikenali. Melewati build step."),
             };
 

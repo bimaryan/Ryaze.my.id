@@ -121,7 +121,7 @@ class DashboardController extends Controller
         $request->validate([
             'repo_source' => 'required|url',
             'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-            'framework' => 'required|in:react,nextjs,python,html,laravel,node',
+            'framework' => 'required|in:react,nextjs,python,html,laravel,node,php',
             'branch' => 'required|string|max:50',
         ]);
 

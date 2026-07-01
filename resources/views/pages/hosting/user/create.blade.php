@@ -116,6 +116,15 @@
                                 </div>
                             </label>
 
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="framework" value="php" class="peer hidden">
+                                <div
+                                    class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                    <i class="fa-brands fa-php text-3xl text-indigo-500 mb-2"></i>
+                                    <p class="font-bold text-slate-700 text-sm">PHP Native</p>
+                                </div>
+                            </label>
+
                         </div>
                     </div>
                 </div>
