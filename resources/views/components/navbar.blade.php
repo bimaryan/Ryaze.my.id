@@ -105,14 +105,14 @@
                     </div>
                     <div class="divide-y divide-gray-100 max-h-80 overflow-y-auto">
                         @forelse($unreadNotifications as $notification)
-                            <a href="#" onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();" class="flex px-4 py-3 hover:bg-gray-50">
-                                <div class="w-full pl-3">
-                                    <div class="text-gray-600 text-sm mb-1.5">{{ $notification->data['message'] ?? 'New notification' }}</div>
-                                    <div class="text-xs text-gray-500">{{ $notification->created_at->diffForHumans() }}</div>
-                                </div>
-                            </a>
-                            <form id="mark-read-{{ $notification->id }}" action="{{ route('notifications.markRead', $notification->id) }}" method="POST" class="hidden">
+                            <form action="{{ route('notifications.markRead', $notification->id) }}" method="POST">
                                 @csrf
+                                <button type="submit" class="w-full text-left flex px-4 py-3 hover:bg-gray-50">
+                                    <div class="w-full pl-3">
+                                        <div class="text-gray-600 text-sm mb-1.5">{{ $notification->data['message'] ?? 'New notification' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $notification->created_at->diffForHumans() }}</div>
+                                    </div>
+                                </button>
                             </form>
                         @empty
                             <p class="px-6 py-4 text-sm text-gray-500 text-center">No new notifications.</p>
