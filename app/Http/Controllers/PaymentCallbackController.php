@@ -61,6 +61,33 @@ class PaymentCallbackController extends Controller
             } else {
                 return response()->json(['success' => false, 'message' => 'Hosting Invoice not found'], 404);
             }
+        } elseif (str_starts_with($order_id, 'HST-UPG-')) {
+            $payment = \App\Models\HostingPayment::where('invoice_number', $order_id)->first();
+            if ($payment) {
+                $statusLower = strtolower($status);
+                if (in_array($statusLower, ['completed', 'paid', 'success'])) {
+                    if ($payment->status != 'paid') {
+                        $payment->update([
+                            'status' => 'paid',
+                            'payment_method' => 'Pakasir',
+                            'paid_at' => now(),
+                        ]);
+
+                        $project = $payment->project;
+                        if ($project) {
+                            $project->update(['storage_limit_mb' => 2048]); // Upgrade to 2GB
+
+                            if ($project->user) {
+                                $project->user->notify(new \App\Notifications\SystemNotification('Pembayaran upgrade storage ('.$payment->invoice_number.') berhasil. Kapasitas project Anda sekarang 2GB.', 'success'));
+                            }
+                        }
+                    }
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                    $payment->update(['status' => 'failed']);
+                }
+            } else {
+                return response()->json(['success' => false, 'message' => 'Upgrade Invoice not found'], 404);
+            }
         } else {
             // Default ke Joki Payment
             $payment = JokiPayment::where('invoice_number', $order_id)->first();
