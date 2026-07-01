@@ -4,22 +4,8 @@
     <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
         {{-- Alerts --}}
-        @if (session('success'))
-            <div
-                class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm animate-fade-in-down">
-                <i class="fa-solid fa-circle-check text-xl"></i>
-                <span class="font-medium text-sm">{{ session('success') }}</span>
-            </div>
-        @elseif (session('error'))
-            <div
-                class="mb-4 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm animate-fade-in-down">
-                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-                <span class="font-medium text-sm">{{ session('error') }}</span>
-            </div>
-        @endif
-
         {{-- ── Header Project ────────────────────────────────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-12 h-12 border border-slate-200 rounded-lg flex items-center justify-center bg-white shadow-sm">
                     @php
@@ -103,7 +89,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-6">
                     @if ($project->status == 'active')
-                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                             <div class="bg-slate-100 px-4 py-2.5 border-b border-slate-200 flex items-center gap-3">
                                 <div class="flex gap-1.5">
                                     <div class="w-3 h-3 rounded-full bg-rose-400"></div>
@@ -155,7 +141,7 @@
                     @endif
                 </div>
                 <div class="space-y-4">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                         <h3 class="font-bold text-slate-800 mb-4 border-b pb-2 text-sm">Detail Deployment</h3>
                         <div class="space-y-4 text-sm">
                             <div>
@@ -301,7 +287,7 @@
 
         {{-- TAB: FILE MANAGER --}}
         <div id="panel-files" class="tab-panel hidden relative">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
                 <div
                     class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2 min-w-0">
@@ -389,7 +375,7 @@
 
         {{-- TAB: ENV --}}
         <div id="panel-env" class="tab-panel hidden">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-3xl">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden max-w-3xl">
                 <div class="px-6 py-4 border-b border-slate-100">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-key text-amber-500"></i> Environment Variables
@@ -417,7 +403,7 @@
 
         {{-- TAB: SETTINGS --}}
         <div id="panel-settings" class="tab-panel hidden space-y-6">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
                     <h3 class="font-bold text-slate-800">Konfigurasi Aplikasi</h3>
                     <p class="text-xs text-slate-500">Atur parameter dasar environment project.</p>
@@ -490,7 +476,7 @@
             </div>
 
             {{-- Danger Zone --}}
-            <div class="bg-white rounded-xl shadow-sm border border-rose-200 overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-rose-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-rose-100 bg-rose-50/50">
                     <h3 class="font-bold text-rose-600 flex items-center gap-2">
                         <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone

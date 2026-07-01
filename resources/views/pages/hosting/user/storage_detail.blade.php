@@ -1,10 +1,10 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
         {{-- ── 10. USER HOSTING – Storage Detail (per Project) ───────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4 min-w-0">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-folder-open text-lg"></i>
@@ -111,7 +111,7 @@
         @endif
 
         {{-- Breakdown tabel --}}
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h2 class="font-bold text-slate-800 text-sm">Breakdown Folder & File</h2>
                 <span class="text-xs text-slate-400">{{ count($breakdown) }} item</span>
@@ -125,7 +125,7 @@
             @else
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
-                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-400 border-b border-slate-100">
+                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
                             <tr>
                                 <th class="px-6 py-3 text-left w-full sm:w-auto">Nama</th>
                                 <th class="px-4 py-3 text-right whitespace-nowrap">Ukuran</th>
@@ -133,7 +133,7 @@
                                 <th class="px-4 py-3 text-right hidden sm:table-cell sm:w-[80px]">%</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-50">
+                        <tbody class="divide-y divide-slate-100">
                             @foreach ($breakdown as $item)
                                 @php
                                     $bc =

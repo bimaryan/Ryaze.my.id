@@ -1,11 +1,11 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
         {{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
         {{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-box-open text-lg"></i>
@@ -22,7 +22,7 @@
 
         <div class="mt-6">
             @if ($projects->isEmpty())
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
                     <div
                         class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                         <i class="fa-solid fa-box-open"></i>
@@ -34,7 +34,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($projects as $project)
                         <div
-                            class="bg-white rounded-xl shadow-sm border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all duration-200 flex flex-col">
+                            class="bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all duration-200 flex flex-col">
                             <div class="p-5 border-b border-slate-100 flex justify-between items-start">
                                 <div class="flex items-center gap-3">
                                     <div

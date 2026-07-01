@@ -4,26 +4,7 @@
 <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
     {{-- SweetAlert2 --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     {{-- Flash via SweetAlert --}}
-    @if (session('success'))
-    <script nonce="{{ app('csp_nonce') }}">
-        document.addEventListener('DOMContentLoaded', () => Swal.fire({
-            icon: 'success', title: 'Berhasil!',
-            text: '{{ addslashes(session('success')) }}',
-            confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
-        }));
-    </script>
-    @elseif (session('error'))
-    <script nonce="{{ app('csp_nonce') }}">
-        document.addEventListener('DOMContentLoaded', () => Swal.fire({
-            icon: 'error', title: 'Gagal!',
-            text: '{{ addslashes(session('error')) }}',
-            confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
-        }));
-    </script>
-    @endif
     @if ($errors->any())
     <script nonce="{{ app('csp_nonce') }}">
         document.addEventListener('DOMContentLoaded', () => Swal.fire({
@@ -35,7 +16,7 @@
     @endif
 
     {{-- Header --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-purple-50 text-purple-600 rounded-lg">
                     <i class="fa-solid fa-database text-lg"></i>
@@ -122,7 +103,7 @@
                         <input type="hidden" name="pma_password" value="{{ $db->db_password }}">
                         <input type="hidden" name="server" value="1">
                         <button type="submit"
-                            class="bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all text-xs font-bold py-2 px-4 rounded-lg shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            class="bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all text-xs font-bold py-2 px-4 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-database"></i>
                             Buka phpMyAdmin
                             <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>

@@ -1,10 +1,10 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
         {{-- ── 6. USER HOSTING – Deploy Proyek Baru ───────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-plus text-lg"></i>
@@ -23,7 +23,7 @@
             <form action="{{ route('user_hosting.store') }}" method="POST" class="space-y-6">
                 @csrf
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <i class="fa-brands fa-github text-xl"></i> Sumber Repository
                     </h3>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Konfigurasi Proyek</h3>
 
                     <div class="mb-5">

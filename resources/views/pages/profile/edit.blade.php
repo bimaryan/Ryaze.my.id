@@ -4,14 +4,7 @@
 <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
     {{-- Alerts --}}
-    @if (session('success'))
-        <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm animate-fade-in-down">
-            <i class="fa-solid fa-circle-check text-xl"></i>
-            <span class="font-medium text-sm">{{ session('success') }}</span>
-        </div>
-    @endif
-
-    <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div class="flex items-center gap-4">
             <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                 <i class="fa-solid fa-user text-lg"></i>
@@ -29,7 +22,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {{-- Form Data Diri --}}
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
                 <i class="fa-solid fa-id-card text-indigo-500"></i>
                 <h3 class="font-bold text-slate-800">Informasi Pribadi</h3>
@@ -63,7 +56,7 @@
         </div>
 
         {{-- Form Keamanan --}}
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
                 <i class="fa-solid fa-shield-halved text-emerald-500"></i>
                 <h3 class="font-bold text-slate-800">Keamanan Akun</h3>

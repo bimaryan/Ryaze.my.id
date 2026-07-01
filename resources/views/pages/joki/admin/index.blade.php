@@ -1,8 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                     <i class="fa-solid fa-gauge text-lg"></i>
@@ -18,26 +18,26 @@
 
         <div class="mt-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-amber-500">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-amber-500">
                     <p class="text-sm font-medium text-slate-500">Pesanan Baru (Pending)</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $pendingOrders }}</h3>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-blue-500">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-blue-500">
                     <p class="text-sm font-medium text-slate-500">Sedang Dikerjakan</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $progressOrders }}</h3>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-purple-500">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-purple-500">
                     <p class="text-sm font-medium text-slate-500">Menunggu Review Klien</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $reviewOrders }}</h3>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-emerald-500">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-emerald-500">
                     <p class="text-sm font-medium text-slate-500">Proyek Selesai (Bulan ini)</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $completedOrders }}</h3>
                 </div>
             </div>
 
             {{-- Tabel Antrean --}}
-            <div class="mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="mt-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-5 border-b border-slate-200 bg-slate-50/50">
                     <h2 class="text-lg font-bold text-slate-800">Antrean Pekerjaan Aktif</h2>
                 </div>
@@ -54,7 +54,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse ($queueOrders as $order)
-                                <tr class="hover:bg-slate-50">
+                                <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4">
                                         <div class="font-bold text-slate-800">{{ $order->client->name ?? 'Unknown' }}</div>
                                         <div class="text-xs text-slate-500 font-mono mt-0.5">{{ $order->order_number }}</div>

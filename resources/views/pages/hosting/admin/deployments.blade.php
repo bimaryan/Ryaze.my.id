@@ -1,10 +1,10 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
         {{-- ── 2. ADMIN HOSTING – Riwayat Deployment ──────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-rocket text-lg"></i>
@@ -20,7 +20,7 @@
         </div>
 
         {{-- Tabel Riwayat Deploy --}}
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-6">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-600">
                     <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">

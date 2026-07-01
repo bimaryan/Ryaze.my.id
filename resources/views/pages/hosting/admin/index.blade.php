@@ -1,10 +1,10 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
         {{-- ── 1. ADMIN HOSTING – Dashboard Manajemen ────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-server text-lg"></i>
@@ -20,13 +20,6 @@
         </div>
 
         {{-- ══ FLASH MESSAGE ══════════════════════════════════════════ --}}
-        @if (session('success'))
-            <div
-                class="mt-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm flex items-center gap-3">
-                <i class="fa-solid fa-circle-check text-emerald-500"></i>
-                {{ session('success') }}
-            </div>
-        @endif
         @if (session('error'))
             <div class="mt-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl text-sm flex items-center gap-3">
                 <i class="fa-solid fa-circle-xmark text-red-500"></i>
@@ -36,7 +29,7 @@
 
         {{-- ══ KARTU STATISTIK ════════════════════════════════════════ --}}
         <div class="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-medium text-slate-500">Total Project</p>
@@ -48,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-medium text-slate-500">Aktif</p>
@@ -61,7 +54,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-medium text-slate-500">Total Klien</p>
@@ -73,7 +66,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-medium text-slate-500">Database</p>
@@ -85,7 +78,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-medium text-slate-500">Tagihan Pending</p>
@@ -100,7 +93,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-medium text-slate-500">Sedang Build</p>
@@ -121,7 +114,7 @@
 
             {{-- Card 1: Membutuhkan Tindakan --}}
             <a href="{{ route('admin_hosting.pending') }}"
-                class="group bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-amber-300 transition-all block relative overflow-hidden">
+                class="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-amber-300 transition-all block relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <i class="fa-solid fa-triangle-exclamation text-6xl text-amber-500"></i>
                 </div>
@@ -141,7 +134,7 @@
 
             {{-- Card 2: Deploy Terbaru --}}
             <a href="{{ route('admin_hosting.deployments') }}"
-                class="group bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all block relative overflow-hidden">
+                class="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all block relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <i class="fa-solid fa-rocket text-6xl text-indigo-500"></i>
                 </div>
@@ -162,7 +155,7 @@
 
             {{-- Card 3: Semua Project --}}
             <a href="{{ route('admin_hosting.projects') }}"
-                class="group bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-emerald-300 transition-all block relative overflow-hidden">
+                class="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-emerald-300 transition-all block relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                     <i class="fa-solid fa-server text-6xl text-emerald-500"></i>
                 </div>

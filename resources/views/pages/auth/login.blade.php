@@ -8,8 +8,7 @@
     <title>LOGIN - RYAZE.MY.ID</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script nonce="{{ app('csp_nonce') ?? '' }}"></script>
 </head>
 
 <body class="bg-slate-50 font-sans antialiased text-slate-900">

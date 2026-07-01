@@ -1,9 +1,9 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                     <i class="fa-solid fa-file-invoice text-lg"></i>
@@ -18,18 +18,11 @@
             </a>
         </div>
 
-        @if (session('success'))
-            <div
-                class="p-4 mb-6 text-sm text-emerald-800 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center">
-                <i class="fa-solid fa-circle-check mr-2 text-lg"></i> {{ session('success') }}
-            </div>
-        @endif
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Kolom Kiri: Progress, Milestone, Revisi -->
             <div class="lg:col-span-2 space-y-6">
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4">Progres Keseluruhan</h3>
                     <div class="w-full bg-slate-100 rounded-full h-4 mb-3 overflow-hidden">
                         <div class="bg-indigo-600 h-4 rounded-full transition-all duration-500"
@@ -39,7 +32,7 @@
                             class="text-indigo-600 text-base">{{ $order->progress }}%</strong></p>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Target Pengerjaan (Milestone)</h3>
                     @if ($order->milestones->count() > 0)
                         <div class="space-y-4 relative border-l-2 border-slate-100 ml-3 pl-5">
@@ -71,7 +64,7 @@
                 </div>
 
                 @if ($order->status == 'review' || $order->status == 'progress')
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                         <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Ajukan Revisi</h3>
                         <form action="{{ route('user_joki.revision.store', $order->hashid) }}" method="POST">
                             @csrf
@@ -113,7 +106,7 @@
 
             <!-- Kolom Kanan: Info & Pembayaran MIDTRANS -->
             <div class="space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Tagihan Pembayaran</h3>
 
                     @if ($order->payments->count() > 0)
@@ -159,7 +152,7 @@
                     @endif
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Informasi Dasar</h3>
                     <div class="space-y-3 text-sm">
                         <div class="flex justify-between">

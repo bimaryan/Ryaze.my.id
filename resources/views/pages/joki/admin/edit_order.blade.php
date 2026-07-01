@@ -1,8 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                     <i class="fa-solid fa-pen-to-square text-lg"></i>
@@ -16,13 +16,6 @@
                 &larr; Kembali
             </a>
         </div>
-
-        @if (session('success'))
-            <div
-                class="p-4 mb-6 text-sm text-emerald-800 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center">
-                <i class="fa-solid fa-circle-check mr-2 text-lg"></i> {{ session('success') }}
-            </div>
-        @endif
 
         @if ($errors->any())
             <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700">
@@ -44,7 +37,7 @@
 
             <div class="xl:col-span-2 space-y-6">
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Update Status & Hasil Kerja</h3>
                     <form action="{{ route('admin_joki.orders.update', $order->hashid) }}" method="POST" class="space-y-4">
                         @csrf
@@ -98,7 +91,7 @@
                     </form>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Target Pengerjaan (Milestones)</h3>
 
                     <form action="{{ route('admin_joki.milestone.store', $order->hashid) }}" method="POST"
@@ -153,7 +146,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Permintaan Revisi Klien</h3>
                     <div class="space-y-4">
                         @forelse($order->revisions as $rev)
@@ -200,7 +193,7 @@
             </div>
 
             <div class="space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-3 border-b pb-2">Kebutuhan Proyek</h3>
                     <div class="text-sm text-slate-600 mb-3">
                         <span class="block font-bold text-slate-800">Nama:</span> {{ $order->project_name }}
@@ -215,7 +208,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Tagihan & Pembayaran</h3>
 
                     <form action="{{ route('admin_joki.payment.store', $order->hashid) }}" method="POST"

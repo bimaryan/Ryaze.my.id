@@ -1,10 +1,10 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
         {{-- ── 11. USER HOSTING – Storage Overview ────────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-hard-drive text-lg"></i>
@@ -31,7 +31,7 @@
                         : 'bg-indigo-50 border-indigo-200');
         @endphp
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6 mt-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6 mt-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <div>
                     <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Total Penggunaan</p>
@@ -81,7 +81,7 @@
         </div>
 
         {{-- Per-project breakdown --}}
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h2 class="font-bold text-slate-800 text-sm">Penggunaan Per Project</h2>
                 <span class="text-xs text-slate-400">{{ count($items) }} project</span>

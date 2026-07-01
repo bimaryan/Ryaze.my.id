@@ -519,8 +519,8 @@
     </footer>
 
     <!-- AOS Script -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
+    <script nonce="{{ app('csp_nonce') ?? '' }}"></script>
+    <script nonce="{{ app('csp_nonce') ?? '' }}">
         AOS.init({
             once: true,
             offset: 100,

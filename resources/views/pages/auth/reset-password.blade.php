@@ -8,9 +8,8 @@
     <title>RESET PASSWORD - RYAZE.MY.ID</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://kit.fontawesome.com/f74deb4653.js" crossorigin="anonymous"></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script nonce="{{ app('csp_nonce') ?? '' }}"></script>
+    <script nonce="{{ app('csp_nonce') ?? '' }}"></script>
 </head>
 
 <body class="bg-slate-50 font-sans antialiased text-slate-900">

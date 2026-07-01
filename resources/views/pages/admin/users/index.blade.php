@@ -1,9 +1,9 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                     <i class="fa-solid fa-users text-lg"></i>
@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-6">
             <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50">
                 <h2 class="text-lg font-bold text-slate-800">Daftar Semua Klien</h2>
             </div>
@@ -31,7 +31,7 @@
                             <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200">
+                    <tbody class="divide-y divide-slate-100">
                         @forelse($users as $user)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">

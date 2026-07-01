@@ -1,8 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center gap-4 mb-6">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 mb-6">
             <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                 <i class="fa-solid fa-book text-lg"></i>
             </div>
@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-8">
             
             <!-- Intro -->
             <div class="text-slate-600 leading-relaxed text-sm">

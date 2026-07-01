@@ -1,9 +1,9 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
         {{-- ── 7. USER HOSTING – Dashboard Klien ──────────────────────────── --}}
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-gauge text-lg"></i>
@@ -29,7 +29,7 @@
         </div>
 
         {{-- Tabel Layanan --}}
-        <div class="mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="mt-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div
                 class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-wrap gap-3 justify-between items-center">
                 <h2 class="text-lg font-bold text-slate-800">Layanan Terbaru</h2>
@@ -42,7 +42,7 @@
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-600">
-                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500">
+                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
                         <tr>
                             <th class="px-6 py-4">Domain/Project</th>
                             <th class="px-6 py-4">Framework</th>
@@ -50,7 +50,7 @@
                             <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200">
+                    <tbody class="divide-y divide-slate-100">
                         @forelse ($projects as $project)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-slate-800">

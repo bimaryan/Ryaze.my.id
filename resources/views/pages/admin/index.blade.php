@@ -1,7 +1,7 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
 
         <!-- Header -->
         <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative overflow-hidden">
@@ -187,7 +187,7 @@
                     </div>
                     <div class="overflow-x-auto flex-1">
                         <table class="w-full text-sm text-left text-slate-600">
-                            <thead class="bg-slate-50/50 text-xs uppercase font-semibold text-slate-500">
+                            <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Proyek & Klien</th>
                                     <th scope="col" class="px-6 py-3">Status</th>
@@ -196,7 +196,7 @@
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 @forelse($recentJokiOrders as $order)
-                                    <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <tr class="hover:bg-slate-50 transition-colors">
                                         <td class="px-6 py-3">
                                             <div class="font-semibold text-slate-800 truncate max-w-[150px]">{{ $order->project_name ?? 'Tanpa Nama' }}</div>
                                             <div class="text-xs text-slate-500 truncate max-w-[150px]">{{ $order->client->name ?? 'Unknown' }}</div>
@@ -241,7 +241,7 @@
                     </div>
                     <div class="overflow-x-auto flex-1">
                         <table class="w-full text-sm text-left text-slate-600">
-                            <thead class="bg-slate-50/50 text-xs uppercase font-semibold text-slate-500">
+                            <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Proyek & Klien</th>
                                     <th scope="col" class="px-6 py-3">Framework</th>
@@ -250,7 +250,7 @@
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 @forelse($recentHostingProjects as $project)
-                                    <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <tr class="hover:bg-slate-50 transition-colors">
                                         <td class="px-6 py-3">
                                             <div class="font-semibold text-slate-800 truncate max-w-[150px]">{{ $project->project_name }}</div>
                                             <div class="text-xs text-slate-500 truncate max-w-[150px]">{{ $project->client->name ?? 'Unknown' }}</div>
@@ -300,7 +300,7 @@
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-slate-600">
-                        <thead class="bg-slate-50/50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-100">
+                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
                             <tr>
                                 <th scope="col" class="px-6 py-4">Nama Klien</th>
                                 <th scope="col" class="px-6 py-4">Email</th>
@@ -311,7 +311,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($recentUsers as $user)
-                                <tr class="hover:bg-slate-50/80 transition-colors group">
+                                <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
                                         <div
                                             class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700 flex items-center justify-center font-bold text-sm uppercase shadow-sm">

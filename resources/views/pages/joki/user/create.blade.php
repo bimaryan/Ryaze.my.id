@@ -1,8 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50">
-        <div class="p-5 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                     <i class="fa-solid fa-plus text-lg"></i>
@@ -19,7 +19,7 @@
 
         <!-- Form Section -->
         <div class="mt-6">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <form action="{{ route('user_joki.store') }}" method="POST" class="p-8 space-y-6">
                     @csrf
 
@@ -87,7 +87,7 @@
     </div>
 
     <!-- Script untuk menampilkan estimasi harga -->
-    <script>
+    <script nonce="{{ app('csp_nonce') ?? '' }}">
         document.addEventListener("DOMContentLoaded", function() {
             const serviceSelect = document.getElementById('service_select');
             const priceEstimateBox = document.getElementById('price_estimate');
