@@ -55,7 +55,8 @@ class AutoDeployProject implements ShouldQueue
             // ----------------------------------------------------------------
             // TAHAP 2: Sumber File — Git Clone/Pull atau Template Scaffold
             // ----------------------------------------------------------------
-            $isTemplate = ($this->project->source_type === 'template');
+            // Fallback check: jika repo_source mulai dengan 'template:', kita anggap sebagai template
+            $isTemplate = ($this->project->source_type === 'template') || str_starts_with($this->project->repo_source, 'template:');
             if ($isTemplate) {
                 // ── MODE TEMPLATE ────────────────────────────────────────────
                 // Tidak ada git sama sekali. File dibuat langsung dari PHP.
