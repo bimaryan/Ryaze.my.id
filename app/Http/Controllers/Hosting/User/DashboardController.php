@@ -783,11 +783,16 @@ class DashboardController extends Controller
         $forceHttps = $request->has('force_https');
         $underAttack = $request->has('is_under_attack');
 
-        // 1. Terapkan Maintenance Mode (Membuat file .maintenance untuk dibaca Nginx)
-        $maintenanceFile = "{$projectDir}/.maintenance";
+        // 1. Terapkan Maintenance Mode (Membuat file maintenance.html untuk dibaca Nginx/Apache)
+        $maintenanceFile = "{$projectDir}/public/maintenance.html";
         if ($maintenanceMode) {
+            // Pastikan direktori public ada
+            if (!is_dir("{$projectDir}/public")) {
+                @mkdir("{$projectDir}/public", 0777, true);
+            }
             // Buat file penanda
-            file_put_contents($maintenanceFile, "MAINTENANCE MODE ACTIVE\nFile ini digunakan oleh server Nginx sebagai penanda bahwa Maintenance Mode sedang aktif. Tolong jangan dihapus manual.");
+            $html = "<!DOCTYPE html><html><head><title>Under Maintenance</title><style>body { font-family: sans-serif; text-align: center; padding-top: 20%; background: #0f172a; color: #fff; } h1 { font-size: 50px; } </style></head><body><h1>🛠️ Under Maintenance</h1><p>We are currently performing scheduled maintenance. We'll be back shortly.</p></body></html>";
+            @file_put_contents($maintenanceFile, $html);
             @chmod($maintenanceFile, 0666);
         } else {
             // Hapus file penanda jika dinonaktifkan

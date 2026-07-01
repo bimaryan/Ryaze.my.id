@@ -52,4 +52,14 @@ class HostingProject extends Model
     {
         return $this->hasOne(HostingBilling::class);
     }
+
+    public function domains()
+    {
+        return $this->hasMany(HostingDomain::class);
+    }
+
+    public function crons()
+    {
+        return $this->hasMany(HostingCron::class);
+    }
 }

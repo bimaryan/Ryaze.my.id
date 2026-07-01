@@ -9,6 +9,8 @@ use App\Http\Controllers\Hosting\User\DashboardController;
 use App\Http\Controllers\Hosting\User\DatabaseController;
 use App\Http\Controllers\Hosting\User\PhpVersionController;
 use App\Http\Controllers\Hosting\User\StorageController;
+use App\Http\Controllers\Hosting\User\DomainController;
+use App\Http\Controllers\Hosting\User\CronController;
 use App\Http\Controllers\Joki\Admin\DashboardController as JokiAdminDashboardController;
 use App\Http\Controllers\Joki\User\DashboardController as UserJokiDashboardController;
 use App\Http\Controllers\Joki\User\ProgressController;
@@ -105,6 +107,10 @@ Route::middleware('auth')->group(function () {
         Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
         Route::post('user/hosting/projects/{hashid}/dev/start', [DashboardController::class, 'startDevServer'])->name('user_hosting.dev.start');
         Route::post('user/hosting/projects/{hashid}/dev/stop', [DashboardController::class, 'stopDevServer'])->name('user_hosting.dev.stop');
+        Route::post('user/hosting/projects/{hashid}/domains', [DomainController::class, 'store'])->name('user_hosting.domains.store');
+        Route::delete('user/hosting/domains/{hashid}', [DomainController::class, 'destroy'])->name('user_hosting.domains.destroy');
+        Route::post('user/hosting/projects/{hashid}/crons', [CronController::class, 'store'])->name('user_hosting.crons.store');
+        Route::delete('user/hosting/crons/{hashid}', [CronController::class, 'destroy'])->name('user_hosting.crons.destroy');
         Route::get('user/hosting/docs', [DashboardController::class, 'docs'])->name('user_hosting.docs');
     });
 

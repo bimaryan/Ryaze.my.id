@@ -10,3 +10,19 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('hosting:suspend-expired')->dailyAt('00:00');
+
+// Load custom cron jobs from database
+if (\Illuminate\Support\Facades\Schema::hasTable('hosting_crons')) {
+    $crons = \App\Models\HostingCron::where('is_active', true)->get();
+    foreach ($crons as $cron) {
+        $projectPath = 'C:\\www\\sites\\hosting_clients\\' . $cron->project_id;
+        if (!file_exists($projectPath)) {
+            $projectPath = storage_path('app/hosting_clients/' . $cron->project_id);
+        }
+        
+        Schedule::exec('cd ' . escapeshellarg($projectPath) . ' && ' . $cron->command)
+            ->cron($cron->schedule_expression)
+            ->runInBackground()
+            ->appendOutputTo(storage_path('logs/cron-' . $cron->project_id . '.log'));
+    }
+}

@@ -83,6 +83,14 @@
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-gears"></i> <span>Settings</span>
             </button>
+            <button data-tab="domains" id="tab-domains"
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-globe"></i> <span>Domains</span>
+            </button>
+            <button data-tab="crons" id="tab-crons"
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-clock"></i> <span>Cron Jobs</span>
+            </button>
         </div>
 
         {{-- TAB: OVERVIEW --}}
@@ -502,6 +510,134 @@
                                 <i class="fa-solid fa-trash-can"></i> Hapus Permanen
                             </button>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- TAB: DOMAINS --}}
+        <div id="panel-domains" class="tab-panel hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-slate-800">Custom Domains</h3>
+                        <p class="text-xs text-slate-500">Tambahkan domain kustom untuk project Anda.</p>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form action="{{ route('user_hosting.domains.store', $project->hashid) }}" method="POST" class="flex gap-4">
+                        @csrf
+                        <div class="flex-1">
+                            <input type="text" name="domain_name" placeholder="example.com" required
+                                class="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
+                            Tambah Domain
+                        </button>
+                    </form>
+
+                    <div class="mt-6 border border-slate-200 rounded-xl overflow-hidden">
+                        <table class="w-full text-sm text-left text-slate-500">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Nama Domain</th>
+                                    <th scope="col" class="px-6 py-3">Status SSL</th>
+                                    <th scope="col" class="px-6 py-3">DNS Target (CNAME/A)</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($project->domains as $domain)
+                                    <tr class="bg-white border-b border-slate-100 hover:bg-slate-50">
+                                        <td class="px-6 py-4 font-semibold text-slate-800">{{ $domain->domain_name }}</td>
+                                        <td class="px-6 py-4">
+                                            @if($domain->ssl_status == 'active')
+                                                <span class="text-emerald-600 bg-emerald-100 px-2 py-1 rounded text-xs font-bold">Active</span>
+                                            @elseif($domain->ssl_status == 'pending')
+                                                <span class="text-amber-600 bg-amber-100 px-2 py-1 rounded text-xs font-bold">Pending</span>
+                                            @else
+                                                <span class="text-rose-600 bg-rose-100 px-2 py-1 rounded text-xs font-bold">Failed</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 font-mono text-xs">
+                                            {{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <form action="{{ route('user_hosting.domains.destroy', $domain->id) }}" method="POST" onsubmit="return confirm('Hapus domain ini?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-4 text-center text-slate-500">Belum ada domain kustom yang didaftarkan.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- TAB: CRON JOBS --}}
+        <div id="panel-crons" class="tab-panel hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-slate-800">Cron Jobs</h3>
+                        <p class="text-xs text-slate-500">Jadwalkan eksekusi command background.</p>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form action="{{ route('user_hosting.crons.store', $project->hashid) }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        @csrf
+                        <div class="md:col-span-1">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Command</label>
+                            <input type="text" name="command" placeholder="php artisan schedule:run" required
+                                class="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Schedule (Cron Expr)</label>
+                            <input type="text" name="schedule_expression" placeholder="* * * * *" required value="* * * * *"
+                                class="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono">
+                        </div>
+                        <div class="md:col-span-1">
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
+                                Tambah Cron
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-6 border border-slate-200 rounded-xl overflow-hidden">
+                        <table class="w-full text-sm text-left text-slate-500">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Command</th>
+                                    <th scope="col" class="px-6 py-3">Schedule</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($project->crons as $cron)
+                                    <tr class="bg-white border-b border-slate-100 hover:bg-slate-50">
+                                        <td class="px-6 py-4 font-mono text-xs text-slate-800">{{ $cron->command }}</td>
+                                        <td class="px-6 py-4 font-mono text-xs">{{ $cron->schedule_expression }}</td>
+                                        <td class="px-6 py-4 text-right">
+                                            <form action="{{ route('user_hosting.crons.destroy', $cron->id) }}" method="POST" onsubmit="return confirm('Hapus cron job ini?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-4 text-center text-slate-500">Belum ada cron job yang didaftarkan.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
