@@ -2,8 +2,9 @@
 
 @section('content')
     <x-ui.page-layout>
-{{-- ── 11. USER HOSTING – Storage Overview ────────────────────────── --}}
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        {{-- ── 11. USER HOSTING – Storage Overview ────────────────────────── --}}
+        <div
+            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-hard-drive text-lg"></i>
@@ -13,7 +14,8 @@
                     <p class="text-sm text-slate-500 mt-0.5">Monitor penggunaan disk seluruh project Anda.</p>
                 </div>
             </div>
-            <a href="{{ route('user_hosting.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+            <a href="{{ route('user_hosting.dashboard') }}"
+                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 &larr; Kembali
             </a>
         </div>

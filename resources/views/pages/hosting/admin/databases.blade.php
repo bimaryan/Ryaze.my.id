@@ -2,13 +2,11 @@
 
 @section('content')
     <x-ui.page-layout>
-        <x-ui.page-header 
-            title="Semua Database" 
-            description="Kelola semua database klien di server." 
-            icon="database" 
+        <x-ui.page-header title="Semua Database" description="Kelola semua database klien di server." icon="database"
             iconColor="orange">
             <x-slot:actions>
-                <button data-modal-target="createDbModal" data-modal-toggle="createDbModal" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-colors flex items-center gap-2">
+                <button data-modal-target="createDbModal" data-modal-toggle="createDbModal"
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i> Buat Database
                 </button>
             </x-slot:actions>
@@ -23,119 +21,138 @@
                 <th class="px-6 py-4 text-center">Dibuat Pada</th>
                 <th class="px-6 py-4 text-center">Aksi</th>
             </x-slot:head>
-                    @forelse($databases as $db)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-semibold text-slate-800">{{ $db->db_name }}</td>
-                            <td class="px-6 py-4 font-mono text-xs text-slate-600 bg-slate-50 rounded px-2">{{ $db->db_username }}</td>
-                            <td class="px-6 py-4">
-                                <span class="text-slate-700">{{ $db->host }}</span>:<span class="text-slate-500">{{ $db->port }}</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                @if($db->user)
-                                    <div class="font-medium text-slate-800">{{ $db->user->name }}</div>
-                                    <div class="text-xs text-slate-500">{{ $db->user->email }}</div>
-                                @else
-                                    <span class="text-slate-400 italic">Unknown</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-center text-slate-500">
-                                {{ $db->created_at->format('d M Y') }}
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block" id="delete-form-{{ $db->hashid }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
-                                        <i class="fa-regular fa-trash-can"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-500">
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <i class="fa-solid fa-database text-3xl text-slate-300"></i>
-                                    <p>Belum ada database yang dibuat.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-            @if($databases->hasPages())
+            @forelse($databases as $db)
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4 font-semibold text-slate-800">{{ $db->db_name }}</td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-600 bg-slate-50 rounded px-2">{{ $db->db_username }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-slate-700">{{ $db->host }}</span>:<span
+                            class="text-slate-500">{{ $db->port }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        @if ($db->user)
+                            <div class="font-medium text-slate-800">{{ $db->user->name }}</div>
+                            <div class="text-xs text-slate-500">{{ $db->user->email }}</div>
+                        @else
+                            <span class="text-slate-400 italic">Unknown</span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 text-center text-slate-500">
+                        {{ $db->created_at->format('d M Y') }}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST"
+                            class="inline-block" id="delete-form-{{ $db->hashid }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button"
+                                class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors tooltip"
+                                title="Hapus Database" data-hashid="{{ $db->hashid }}">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                        <div class="flex flex-col items-center justify-center gap-2">
+                            <i class="fa-solid fa-database text-3xl text-slate-300"></i>
+                            <p>Belum ada database yang dibuat.</p>
+                        </div>
+                    </td>
+                </tr>
+            @endforelse
+            @if ($databases->hasPages())
                 <x-slot:pagination>
                     {{ $databases->links() }}
                 </x-slot:pagination>
             @endif
         </x-ui.table>
 
-    <!-- Modal Create Database -->
-    <div id="createDbModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="modal-content-stop bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-slate-800">Buat Database Baru</h3>
-                <button type="button" data-modal-hide="createDbModal" class="text-slate-400 hover:text-slate-600">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
+        <!-- Modal Create Database -->
+        <div id="createDbModal"
+            class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+            <div class="modal-content-stop bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-slate-800">Buat Database Baru</h3>
+                    <button type="button" data-modal-hide="createDbModal" class="text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <form action="{{ route('admin_hosting.databases.store') }}" method="POST">
+                    @csrf
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Klien</label>
+                            <select name="user_id" required
+                                class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                <option value="">-- Pilih Klien --</option>
+                                @foreach ($users as $u)
+                                    <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            <p class="text-[11px] text-slate-500 mt-1">Prefix ryz_{id}_ akan ditambahkan otomatis.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Database</label>
+                            <input type="text" name="db_name" required pattern="[A-Za-z0-9\-_]+" maxlength="15"
+                                placeholder="contoh: wp_blog"
+                                class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Username Database</label>
+                            <input type="text" name="db_username" required pattern="[A-Za-z0-9\-_]+" maxlength="15"
+                                placeholder="contoh: wp_user"
+                                class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Password Database</label>
+                            <input type="text" name="db_password" required minlength="8" maxlength="32"
+                                placeholder="Masukkan password kuat"
+                                class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                        <button type="button" data-modal-hide="createDbModal"
+                            class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-2xl shadow-sm">Batal</button>
+                        <button type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-2xl shadow-sm">Buat
+                            Database</button>
+                    </div>
+                </form>
             </div>
-            <form action="{{ route('admin_hosting.databases.store') }}" method="POST">
-                @csrf
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Klien</label>
-                        <select name="user_id" required class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                            <option value="">-- Pilih Klien --</option>
-                            @foreach($users as $u)
-                                <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})</option>
-                            @endforeach
-                        </select>
-                        <p class="text-[11px] text-slate-500 mt-1">Prefix ryz_{id}_ akan ditambahkan otomatis.</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Database</label>
-                        <input type="text" name="db_name" required pattern="[A-Za-z0-9\-_]+" maxlength="15" placeholder="contoh: wp_blog" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Username Database</label>
-                        <input type="text" name="db_username" required pattern="[A-Za-z0-9\-_]+" maxlength="15" placeholder="contoh: wp_user" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Password Database</label>
-                        <input type="text" name="db_password" required minlength="8" maxlength="32" placeholder="Masukkan password kuat" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                    </div>
-                </div>
-                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                    <button type="button" data-modal-hide="createDbModal" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-2xl shadow-sm">Batal</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-2xl shadow-sm">Buat Database</button>
-                </div>
-            </form>
         </div>
-    </div>
-</div>
+        </div>
 
-<script nonce="{{ app('csp_nonce') ?? '' }}">
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.btn-delete').forEach(button => {
-            button.addEventListener('click', function() {
-                const hashid = this.dataset.hashid;
-                Swal.fire({
-                    title: 'Yakin ingin menghapus?',
-                    text: "Semua data di dalam database ini akan hilang permanen!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#94a3b8',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('delete-form-' + hashid).submit();
-                    }
+        <script nonce="{{ app('csp_nonce') ?? '' }}">
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const hashid = this.dataset.hashid;
+                        Swal.fire({
+                            title: 'Yakin ingin menghapus?',
+                            text: "Semua data di dalam database ini akan hilang permanen!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#ef4444',
+                            cancelButtonColor: '#94a3b8',
+                            confirmButtonText: 'Ya, Hapus!',
+                            cancelButtonText: 'Batal',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                document.getElementById('delete-form-' + hashid).submit();
+                            }
+                        });
+                    });
                 });
             });
-        });
-    });
-    document.querySelectorAll('.modal-content-stop').forEach(el => { el.addEventListener('click', e => e.stopPropagation()); });
-</script>
+            document.querySelectorAll('.modal-content-stop').forEach(el => {
+                el.addEventListener('click', e => e.stopPropagation());
+            });
+        </script>
     </x-ui.page-layout>
 @endsection

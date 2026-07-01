@@ -1,8 +1,8 @@
 @extends('index')
 
 @section('content')
-    <x-ui.page-layout>
-<div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                     <i class="fa-solid fa-gauge text-lg"></i>
@@ -50,7 +50,9 @@
                                 <th class="px-6 py-4">Status & Progres</th>
                                 <th class="px-6 py-4 text-center">Tenggat Waktu</th>
                                 <th class="px-6 py-4 text-center">Aksi</th>
-                                </x-slot:head>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
                             @forelse ($queueOrders as $order)
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4">
@@ -95,7 +97,10 @@
                                     <td colspan="5" class="px-6 py-10 text-center text-slate-400">Tidak ada antrean aktif saat ini.</td>
                                 </tr>
                             @endforelse
-                        </x-ui.table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </x-ui.page-layout>
+    </div>
 @endsection

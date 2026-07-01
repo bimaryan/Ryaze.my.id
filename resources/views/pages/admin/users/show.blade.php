@@ -2,7 +2,8 @@
 
 @section('content')
     <x-ui.page-layout>
-<div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div
+            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                     <i class="fa-solid fa-user text-lg"></i>
@@ -12,7 +13,8 @@
                     <p class="text-sm text-slate-500 mt-0.5">Lihat informasi detail dan riwayat pesanan klien.</p>
                 </div>
             </div>
-            <a href="{{ route('superadmin.users.index') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+            <a href="{{ route('superadmin.users.index') }}"
+                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 &larr; Kembali
             </a>
         </div>
@@ -24,7 +26,8 @@
 
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                         <div class="flex items-center gap-4 min-w-0">
-                            <div class="w-16 h-16 shrink-0 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-black text-3xl shadow-inner">
+                            <div
+                                class="w-16 h-16 shrink-0 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-black text-3xl shadow-inner">
                                 {{ substr($user->name, 0, 1) }}
                             </div>
 
@@ -35,7 +38,8 @@
                         </div>
 
                         <div class="shrink-0 self-start sm:self-auto">
-                            <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-[11px] tracking-wide font-bold uppercase border border-slate-200">
+                            <span
+                                class="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-[11px] tracking-wide font-bold uppercase border border-slate-200">
                                 {{ str_replace('_', ' ', $user->role ?? 'User') }}
                             </span>
                         </div>

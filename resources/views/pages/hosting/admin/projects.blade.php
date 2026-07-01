@@ -2,13 +2,11 @@
 
 @section('content')
     <x-ui.page-layout>
-        <x-ui.page-header 
-            title="Master Data Project" 
-            description="Kelola seluruh project hosting dari semua pengguna." 
-            icon="box-open" 
-            iconColor="emerald">
+        <x-ui.page-header title="Master Data Project" description="Kelola seluruh project hosting dari semua pengguna."
+            icon="box-open" iconColor="emerald">
             <x-slot:actions>
-                <a href="{{ route('admin_hosting.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                <a href="{{ route('admin_hosting.dashboard') }}"
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
             </x-slot:actions>
@@ -58,10 +56,8 @@
 
                             {{-- Aktivasi --}}
                             @if (in_array($project->status, ['unpaid', 'suspended', 'error']))
-                                <form method="POST"
-                                    action="{{ route('admin_hosting.activate', $project->hashid) }}"
-                                    class="admin-action-form"
-                                    data-msg="Aktifkan project {{ $project->project_name }}?">
+                                <form method="POST" action="{{ route('admin_hosting.activate', $project->hashid) }}"
+                                    class="admin-action-form" data-msg="Aktifkan project {{ $project->project_name }}?">
                                     @csrf @method('PATCH')
                                     <button type="submit"
                                         class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Aktifkan</button>
@@ -70,10 +66,8 @@
 
                             {{-- Suspend --}}
                             @if ($project->status === 'active')
-                                <form method="POST"
-                                    action="{{ route('admin_hosting.suspend', $project->hashid) }}"
-                                    class="admin-action-form"
-                                    data-msg="Suspend project {{ $project->project_name }}?">
+                                <form method="POST" action="{{ route('admin_hosting.suspend', $project->hashid) }}"
+                                    class="admin-action-form" data-msg="Suspend project {{ $project->project_name }}?">
                                     @csrf @method('PATCH')
                                     <button type="submit"
                                         class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Suspend</button>
@@ -81,10 +75,8 @@
                             @endif
 
                             {{-- Hapus --}}
-                            <form method="POST"
-                                action="{{ route('admin_hosting.destroy', $project->hashid) }}"
-                                class="admin-action-form"
-                                data-msg="Hapus PERMANEN project {{ $project->project_name }}?">
+                            <form method="POST" action="{{ route('admin_hosting.destroy', $project->hashid) }}"
+                                class="admin-action-form" data-msg="Hapus PERMANEN project {{ $project->project_name }}?">
                                 @csrf @method('DELETE')
                                 <button type="submit"
                                     class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Hapus</button>

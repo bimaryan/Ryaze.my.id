@@ -18,7 +18,8 @@
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
 
             <div class="bg-indigo-600 px-8 py-10 text-center relative">
-                <a href="{{ route('login') }}" class="absolute top-4 left-4 text-indigo-200 hover:text-white transition">
+                <a href="{{ route('login') }}"
+                    class="absolute top-4 left-4 text-indigo-200 hover:text-white transition">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
                 <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -33,7 +34,8 @@
                     @csrf
 
                     <div>
-                        <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+                        <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email
+                            Address</label>
                         <input type="email" name="email" id="email"
                             class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
                             placeholder="nama@email.com" value="{{ old('email') }}" required autofocus>
@@ -67,7 +69,7 @@
     </div>
 
     @include('components.hot-toast')
-    
+
     @if (session('status'))
         <script nonce="{{ app('csp_nonce') ?? '' }}">
             document.addEventListener('DOMContentLoaded', () => {

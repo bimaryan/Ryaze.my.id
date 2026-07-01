@@ -2,9 +2,10 @@
 
 @section('content')
     <x-ui.page-layout>
-{{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
         {{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        {{-- ── 8. USER HOSTING – Aplikasi Ter-deploy ──────────────────────── --}}
+        <div
+            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
                     <i class="fa-solid fa-box-open text-lg"></i>
@@ -14,7 +15,8 @@
                     <p class="text-sm text-slate-500 mt-0.5">Kelola semua proyek dan aplikasi yang berjalan di Ryaze.</p>
                 </div>
             </div>
-            <a href="{{ route('user_hosting.create') }}" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+            <a href="{{ route('user_hosting.create') }}"
+                class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 + Deploy Proyek Baru
             </a>
         </div>

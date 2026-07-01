@@ -1,8 +1,9 @@
 @extends('index')
 
 @section('content')
-    <x-ui.page-layout>
-{{-- Alerts --}}
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+
+        {{-- Alerts --}}
         {{-- ── Header Project ────────────────────────────────────────────────── --}}
         <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">

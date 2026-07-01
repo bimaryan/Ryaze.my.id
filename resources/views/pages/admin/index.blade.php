@@ -1,8 +1,9 @@
 @extends('index')
 
 @section('content')
-    <x-ui.page-layout>
-<!-- Header -->
+    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+
+        <!-- Header -->
         <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative overflow-hidden">
             <!-- Decorative background element -->
             <div class="absolute -right-16 -top-16 w-64 h-64 bg-indigo-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
@@ -191,7 +192,9 @@
                                     <th scope="col" class="px-6 py-3">Proyek & Klien</th>
                                     <th scope="col" class="px-6 py-3">Status</th>
                                     <th scope="col" class="px-6 py-3 text-right">Harga</th>
-                                    </x-slot:head>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
                                 @forelse($recentJokiOrders as $order)
                                     <tr class="hover:bg-slate-50 transition-colors">
                                         <td class="px-6 py-3">
@@ -222,7 +225,10 @@
                                         <td colspan="3" class="px-6 py-8 text-center text-slate-500">Belum ada pesanan joki.</td>
                                     </tr>
                                 @endforelse
-                            </x-ui.table>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
                 <!-- Recent Hosting Projects -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
@@ -240,7 +246,9 @@
                                     <th scope="col" class="px-6 py-3">Proyek & Klien</th>
                                     <th scope="col" class="px-6 py-3">Framework</th>
                                     <th scope="col" class="px-6 py-3 text-right">Status</th>
-                                    </x-slot:head>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
                                 @forelse($recentHostingProjects as $project)
                                     <tr class="hover:bg-slate-50 transition-colors">
                                         <td class="px-6 py-3">
@@ -271,7 +279,10 @@
                                         <td colspan="3" class="px-6 py-8 text-center text-slate-500">Belum ada proyek hosting.</td>
                                     </tr>
                                 @endforelse
-                            </x-ui.table>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
             </div>
 
@@ -296,7 +307,9 @@
                                 <th scope="col" class="px-6 py-4">Minat Layanan / Role</th>
                                 <th scope="col" class="px-6 py-4 text-center">Tanggal Daftar</th>
                                 <th scope="col" class="px-6 py-4 text-center">Aksi</th>
-                                </x-slot:head>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
                             @forelse($recentUsers as $user)
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
@@ -341,8 +354,11 @@
                                     </td>
                                 </tr>
                             @endforelse
-                        </x-ui.table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         </div>
-    </x-ui.page-layout>
+    </div>
 @endsection

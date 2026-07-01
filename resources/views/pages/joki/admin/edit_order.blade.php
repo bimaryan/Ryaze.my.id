@@ -2,17 +2,21 @@
 
 @section('content')
     <x-ui.page-layout>
-<div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div
+            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
                     <i class="fa-solid fa-pen-to-square text-lg"></i>
                 </div>
                 <div>
                     <h1 class="text-xl font-bold text-slate-800">Control Center: {{ $order->order_number }}</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Klien: <span class="font-semibold text-indigo-600">{{ $order->client->name }}</span> | Layanan: {{ $order->service->name }}</p>
+                    <p class="text-sm text-slate-500 mt-0.5">Klien: <span
+                            class="font-semibold text-indigo-600">{{ $order->client->name }}</span> | Layanan:
+                        {{ $order->service->name }}</p>
                 </div>
             </div>
-            <a href="{{ route('admin_joki.orders') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+            <a href="{{ route('admin_joki.orders') }}"
+                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 &larr; Kembali
             </a>
         </div>
