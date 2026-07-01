@@ -130,20 +130,80 @@
                             </div>
                         </label>
 
-                        {{-- Laravel --}}
+                        {{-- Laravel 13 --}}
                         <label class="relative cursor-pointer group">
-                            <input type="radio" name="template_key" value="laravel_starter" class="peer hidden">
+                            <input type="radio" name="template_key" value="laravel_starter_13" class="peer hidden">
                             <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
                                 <div class="flex items-center gap-3 mb-3">
                                     <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                                         <i class="fa-brands fa-laravel text-xl text-red-500"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-800 text-sm">Laravel Starter</p>
+                                        <p class="font-bold text-slate-800 text-sm">Laravel 13</p>
                                         <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Laravel</span>
                                     </div>
                                 </div>
-                                <p class="text-xs text-slate-500 leading-relaxed">Laravel fresh install dengan Breeze auth, siap pakai sebagai backend API atau web app.</p>
+                                <p class="text-xs text-slate-500 leading-relaxed">Laravel 13 fresh install resmi, siap pakai sebagai backend API atau web app.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Laravel 12 --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="laravel_starter_12" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-laravel text-xl text-red-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Laravel 12</p>
+                                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Laravel</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Laravel 12 fresh install resmi, stabil dan siap untuk produksi.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Laravel 11 --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="laravel_starter_11" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-laravel text-xl text-red-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Laravel 11</p>
+                                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Laravel</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Laravel 11 fresh install, struktur sederhana dan mudah dipelajari.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Laravel 10 --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="laravel_starter_10" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-laravel text-xl text-red-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Laravel 10</p>
+                                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Laravel</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Laravel 10 LTS, kompatibel dengan banyak package dan dokumentasi luas.</p>
                                 <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
                                     <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
                                 </div>

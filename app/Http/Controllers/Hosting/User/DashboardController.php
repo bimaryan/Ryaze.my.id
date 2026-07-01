@@ -117,12 +117,16 @@ class DashboardController extends Controller
 
     // Daftar template yang tersedia beserta metadata-nya
     private array $availableTemplates = [
-        'html_landing'    => ['framework' => 'html'],
-        'php_basic'       => ['framework' => 'php'],
-        'laravel_starter' => ['framework' => 'laravel'],
-        'react_starter'   => ['framework' => 'react'],
-        'nextjs_starter'  => ['framework' => 'nextjs'],
-        'node_express'    => ['framework' => 'node'],
+        'html_landing'        => ['framework' => 'html'],
+        'php_basic'           => ['framework' => 'php'],
+        'laravel_starter'     => ['framework' => 'laravel'],
+        'laravel_starter_10'  => ['framework' => 'laravel'],
+        'laravel_starter_11'  => ['framework' => 'laravel'],
+        'laravel_starter_12'  => ['framework' => 'laravel'],
+        'laravel_starter_13'  => ['framework' => 'laravel'],
+        'react_starter'       => ['framework' => 'react'],
+        'nextjs_starter'      => ['framework' => 'nextjs'],
+        'node_express'        => ['framework' => 'node'],
     ];
 
     // Memproses data dan memulai Deploy Otomatis

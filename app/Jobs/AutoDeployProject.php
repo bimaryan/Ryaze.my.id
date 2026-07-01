@@ -21,7 +21,7 @@ class AutoDeployProject implements ShouldQueue
     public int $tries = 1;
 
     /** Timeout maksimum job (detik). Build NPM + composer bisa lama. */
-    public int $timeout = 900;
+    public int $timeout = 1800; // 30 menit untuk Laravel install
 
     public function __construct(HostingProject $project)
     {
@@ -128,7 +128,7 @@ class AutoDeployProject implements ShouldQueue
             $this->log($deploy, "> Permissions di-set: dir 755, file 644");
 
             $framework = strtolower($this->project->framework);
-            $this->log($deploy, "\n> Setting up " . strtoupper($framework) . ' environment...');
+            $this->log($deploy, "\n> Setting up " . strtoupper($framework) . " environment...");
 
             match ($framework) {
                 'react', 'nextjs', 'vue', 'node' => $this->setupNodeFramework($deploy, $projectDir, $framework),
@@ -411,6 +411,10 @@ class AutoDeployProject implements ShouldQueue
             'html_landing' => $this->scaffoldHtml($dir, $projectName, $domain),
             'php_basic' => $this->scaffoldPhp($dir, $projectName),
             'laravel_starter' => $this->scaffoldLaravel($dir, $projectName, $deploy),
+            'laravel_starter_10' => $this->scaffoldLaravel($dir, $projectName, $deploy, '10'),
+            'laravel_starter_11' => $this->scaffoldLaravel($dir, $projectName, $deploy, '11'),
+            'laravel_starter_12' => $this->scaffoldLaravel($dir, $projectName, $deploy, '12'),
+            'laravel_starter_13' => $this->scaffoldLaravel($dir, $projectName, $deploy, '13'),
             'react_starter' => $this->scaffoldReact($dir, $projectName),
             'nextjs_starter' => $this->scaffoldNextjs($dir, $projectName),
             'node_express' => $this->scaffoldNode($dir, $projectName),
@@ -458,7 +462,7 @@ HTML
         );
 
         file_put_contents("{$dir}/style.css", "/* Tambahkan style kustom di sini */\n");
-        file_put_contents("{$dir}/script.js", "// Tambahkan script kustom di sini\nconsole.log('Hello from {$name}!');\n");
+        file_put_contents("{$dir}/script.js", "/* Tambahkan script kustom di sini */\nconsole.log('Hello from {$name}!');\n");
         file_put_contents("{$dir}/.htaccess", "Options -Indexes\nRewriteEngine On\n");
     }
 
@@ -468,24 +472,11 @@ HTML
         @mkdir("{$dir}/public", 0755, true);
         @mkdir("{$dir}/views", 0755, true);
 
-        // Pindahkan index.php ke public/ agar lebih aman (sesuai best practice)
-        file_put_contents("{$dir}/public/index.php", <<<'PHP'
+        file_put_contents("{$dir}/index.php", <<<'PHP'
 <?php
 // Router sederhana
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-// Hilangkan /public/ dari path jika ada
-$path = preg_replace('#^/public#', '', $path);
-if ($path === '') $path = '/';
-
-require_once __DIR__ . '/../app/router.php';
-PHP
-        );
-
-        // Tambahkan index.php di root yang redirect ke public/
-        file_put_contents("{$dir}/index.php", <<<'PHP'
-<?php
-header('Location: public/');
-exit;
+require_once __DIR__ . '/app/router.php';
 PHP
         );
 
@@ -556,95 +547,74 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]
 HTACCESS
         );
-    }
-
-    private function scaffoldLaravel(string $dir, string $name, $deploy): void
-    {
-        $this->log($deploy, '> Membuat struktur Laravel sederhana...');
-
-        $this->exec("mkdir -p {$dir}/app/Http/Controllers {$dir}/resources/views {$dir}/routes {$dir}/public {$dir}/storage/framework/views {$dir}/storage/logs {$dir}/bootstrap/cache", $deploy);
-
-        file_put_contents("{$dir}/public/index.php", <<<PHP
-<?php
-// Laravel Starter Template dari Ryaze - Sudah siap pakai!
-echo '<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>{$name} - Laravel</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "Segoe UI", sans-serif; max-width: 800px; margin: 80px auto; padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 100vh; }
-        .card { background: white; border-radius: 20px; padding: 60px 50px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); text-align: center; position: relative; }
-        h1 { color: #1a1a2e; margin-bottom: 16px; font-size: 2.5rem; }
-        p { color: #6b7280; line-height: 1.8; margin-bottom: 24px; }
-        .watermark { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 13px; }
-        .watermark a { color: #667eea; text-decoration: none; font-weight: 600; }
-        .info-box { background: #f0fdf4; border: 1px solid #22c55e; border-radius: 10px; padding: 20px; margin-top: 20px; text-align: left; }
-        .info-box h3 { color: #166534; margin-bottom: 10px; font-size: 1.2rem; }
-        .info-box ul { margin-left: 20px; color: #4b5563; }
-        .info-box li { margin: 5px 0; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>🚀 {$name}</h1>
-        <p>Laravel Starter Template dari Ryaze sudah siap!</p>
-
-        <div class="info-box">
-            <h3>Struktur Sudah Tersedia:</h3>
-            <ul>
-                <li><code>app/Http/Controllers/</code> - Tempat Controller</li>
-                <li><code>resources/views/</code> - Tempat View</li>
-                <li><code>routes/web.php</code> - File Routing</li>
-                <li><code>public/</code> - Public directory (document root)</li>
-                <li><code>storage/</code> - Storage file dan logs</li>
-                <li><code>bootstrap/cache/</code> - Cache Laravel</li>
-            </ul>
-        </div>
-
-        <p style="margin-top: 20px;"><small>Kamu bisa langsung mulai edit file sesuai kebutuhan! Jika ingin install Laravel lengkap, hapus semua file di direktori ini terlebih dahulu.</small></p>
-    </div>
-    <div class="watermark">
-        Power by <a href="https://ryaze.my.id" target="_blank">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com">bimaryan046@gmail.com</a>
-    </div>
-</body>
-</html>';
-PHP
-        );
-
-        file_put_contents("{$dir}/.env.example", <<<'PHP'
-APP_NAME=Laravel
-APP_ENV=local
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://localhost
-PHP
-        );
-        copy("{$dir}/.env.example", "{$dir}/.env");
-
-        file_put_contents("{$dir}/composer.json", json_encode([
-            'name' => 'laravel/laravel',
-            'type' => 'project',
-            'description' => 'The Laravel Framework.',
-            'require' => ['php' => '^8.2', 'laravel/framework' => '^11.0'],
-            'autoload' => ['psr-4' => ['App\\' => 'app/']],
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-        file_put_contents("{$dir}/routes/web.php", <<<'PHP'
-<?php
-use Illuminate\Support\Facades\Route;
-Route::get('/', fn() => 'Laravel Starter!');
-PHP
-        );
-
-        file_put_contents("{$dir}/index.php", <<<PHP
+        // Pindahkan index.php ke public
+        file_put_contents("{$dir}/public/index.php", file_get_contents("{$dir}/index.php"));
+        // Update index.php root untuk redirect ke public
+        file_put_contents("{$dir}/index.php", <<<'PHP'
 <?php
 header('Location: public/');
 exit;
 PHP
         );
+    }
 
+    private function scaffoldLaravel(string $dir, string $name, $deploy, string $version = '11'): void
+    {
+        $this->log($deploy, "🚀 Memasang Laravel v{$version} resmi...");
+
+        // Cari composer path
+        $composer = null;
+        foreach (['/usr/local/bin/composer', '/usr/bin/composer'] as $path) {
+            if (file_exists($path)) {
+                $composer = $path;
+                break;
+            }
+        }
+        if (!$composer) {
+            $composer = trim(shell_exec('which composer 2>/dev/null') ?? '');
+        }
+        if (!$composer) {
+            throw new \RuntimeException('composer binary tidak ditemukan di server.');
+        }
+
+        $parentDir = dirname($dir);
+        $baseName = basename($dir);
+        $tmpDir = "{$parentDir}/.tmp_{$baseName}";
+
+        // Hapus direktori project dan temp jika ada
+        $this->exec("rm -rf {$dir} {$tmpDir} 2>/dev/null || true", $deploy);
+        $this->exec("mkdir -p {$parentDir}", $deploy);
+
+        // Tentukan versi Laravel
+        $versionConstraint = match($version) {
+            '10' => '10.*',
+            '11' => '11.*',
+            '12' => '12.*',
+            '13' => '13.*',
+            default => '11.*',
+        };
+
+        $this->log($deploy, "> Mengunduh Laravel v{$version} via composer...");
+        $this->exec(
+            "cd {$parentDir} && {$composer} create-project laravel/laravel .tmp_{$baseName} \"{$versionConstraint}\" --no-interaction --prefer-dist --no-progress 2>&1",
+            $deploy,
+            true
+        );
+
+        // Pindahkan dari temp ke direktori project
+        $this->log($deploy, "> Memindahkan file ke direktori project...");
+        $this->exec("mv {$tmpDir} {$dir}", $deploy);
+
+        // Set permissions yang benar
+        $this->log($deploy, "> Mengatur permissions...");
+        $this->exec("cd {$dir} && chmod -R 775 storage bootstrap/cache 2>/dev/null || true", $deploy);
+        $this->exec("cd {$dir} && chmod -R 777 storage bootstrap/cache 2>/dev/null || true", $deploy);
+
+        // Generate APP_KEY
+        $this->log($deploy, "> Generate APP_KEY...");
+        $this->exec("cd {$dir} && php artisan key:generate --no-interaction 2>&1 || true", $deploy, false);
+
+        // Tambahkan .htaccess di root untuk redirect ke public
         file_put_contents("{$dir}/.htaccess", <<<'PHP'
 <IfModule mod_rewrite.c>
     RewriteEngine On
@@ -654,16 +624,14 @@ PHP
 PHP
         );
 
-        file_put_contents("{$dir}/.gitignore", "/vendor\n/node_modules\n/public/storage\n/storage/*.key\n/.env\n");
-        $this->exec("chmod -R 775 {$dir}/storage {$dir}/bootstrap/cache 2>/dev/null || true", $deploy);
-        $this->log($deploy, '> ✅ Struktur Laravel sederhana berhasil dibuat!');
+        $this->log($deploy, "✅ Laravel v{$version} resmi berhasil dipasang!");
     }
 
     private function scaffoldReact(string $dir, string $name): void
     {
         $safeName = preg_replace('/[^a-z0-9-]/', '-', strtolower($name));
-        @mkdir($dir, 0775, true);
-        @mkdir("{$dir}/src", 0775, true);
+        @mkdir($dir, 0755, true);
+        @mkdir("{$dir}/src", 0755, true);
 
         file_put_contents("{$dir}/package.json", json_encode([
             'name' => $safeName,
@@ -716,37 +684,37 @@ import React from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 
 function Home() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center p-4">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
-        <h1 className="text-4xl font-bold text-slate-800 mb-4">⚛️ {$name}</h1>
-        <p className="text-slate-600 mb-8">React + Vite + TailwindCSS + React Router siap!</p>
-        <Link to="/about" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition">Tentang</Link>
-      </div>
-      <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
-        Power by <a href="https://ryaze.my.id" target="_blank" className="text-purple-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-purple-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
-      </div>
-    </div>
-  )
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center p-4">
+            <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
+                <h1 className="text-4xl font-bold text-slate-800 mb-4">⚛️ {$name}</h1>
+                <p className="text-slate-600 mb-8">React + Vite + TailwindCSS + React Router siap!</p>
+                <Link to="/about" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition">Tentang</Link>
+            </div>
+            <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
+                Power by <a href="https://ryaze.my.id" target="_blank" className="text-purple-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-purple-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
+            </div>
+        </div>
+    )
 }
 
 function About() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center p-4">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
-        <h1 className="text-4xl font-bold text-slate-800 mb-4">Tentang</h1>
-        <p className="text-slate-600 mb-8">Ini adalah halaman tentang.</p>
-        <Link to="/" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">Kembali</Link>
-      </div>
-      <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
-        Power by <a href="https://ryaze.my.id" target="_blank" className="text-blue-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-blue-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
-      </div>
-    </div>
-  )
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center p-4">
+            <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
+                <h1 className="text-4xl font-bold text-slate-800 mb-4">Tentang</h1>
+                <p className="text-slate-600 mb-8">Ini adalah halaman tentang.</p>
+                <Link to="/" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">Kembali</Link>
+            </div>
+            <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
+                Power by <a href="https://ryaze.my.id" target="_blank" className="text-blue-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-blue-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
+            </div>
+        </div>
+    )
 }
 
 export default function App() {
-  return <Routes><Route path="/" element={<Home />} /><Route path="/about" element={<About />} /></Routes>
+    return <Routes><Route path="/" element={<Home />} /><Route path="/about" element={<About />} /></Routes>
 }
 PHP
         );
@@ -762,17 +730,17 @@ CSS
 # {$name} - React + Vite
 
 ## Cara Update Tampilan:
-1. Edit file di folder `src/` (misalnya `src/App.jsx`)
-2. Jalankan `npm run build` di terminal
+1. Edit file di folder <code>src/</code> (misalnya <code>src/App.jsx</code>)
+2. Jalankan <code>npm run build</code> di terminal
 3. Tampilan akan otomatis ter-update!
 
 ## Struktur Folder:
-- `src/main.jsx` - Entry point React
-- `src/App.jsx` - Komponen utama (edit ini untuk ubah tampilan)
-- `src/index.css` - File CSS (include Tailwind)
-- `index.html` - File HTML utama
-- `vite.config.js` - Konfigurasi Vite
-- `tailwind.config.js` - Konfigurasi Tailwind
+- <code>src/main.jsx</code> - Entry point React
+- <code>src/App.jsx</code> - Komponen utama (edit ini untuk ubah tampilan)
+- <code>src/index.css</code> - File CSS (include Tailwind)
+- <code>index.html</code> - File HTML utama
+- <code>vite.config.js</code> - Konfigurasi Vite
+- <code>tailwind.config.js</code> - Konfigurasi Tailwind
 
 ## Power by Ryaze.my.id
 Email: bimaryan046@gmail.com
@@ -783,8 +751,8 @@ MD
     private function scaffoldNextjs(string $dir, string $name): void
     {
         $safeName = preg_replace('/[^a-z0-9-]/', '-', strtolower($name));
-        @mkdir($dir, 0775, true);
-        @mkdir("{$dir}/app", 0775, true);
+        @mkdir($dir, 0755, true);
+        @mkdir("{$dir}/app", 0755, true);
 
         file_put_contents("{$dir}/package.json", json_encode([
             'name' => $safeName,
@@ -815,17 +783,17 @@ JS
 
         file_put_contents("{$dir}/app/page.js", <<<PHP
 export default function Home() {
-  return (
-    <main className="min-h-screen bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center p-4">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
-        <h1 className="text-4xl font-bold text-slate-800 mb-4">▲ {$name}</h1>
-        <p className="text-slate-600 mb-8">Next.js + App Router + TailwindCSS siap!</p>
-      </div>
-      <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
-        Power by <a href="https://ryaze.my.id" target="_blank" className="text-cyan-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-cyan-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
-      </div>
-    </main>
-  )
+    return (
+        <main className="min-h-screen bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center p-4">
+            <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
+                <h1 className="text-4xl font-bold text-slate-800 mb-4">▲ {$name}</h1>
+                <p className="text-slate-600 mb-8">Next.js + App Router + TailwindCSS siap!</p>
+            </div>
+            <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
+                Power by <a href="https://ryaze.my.id" target="_blank" className="text-cyan-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-cyan-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
+            </div>
+        </main>
+    )
 }
 PHP
         );
@@ -848,16 +816,16 @@ CSS
 # {$name} - Next.js
 
 ## Cara Update Tampilan:
-1. Edit file di folder `app/` (misalnya `app/page.js`)
-2. Jalankan `npm run build` di terminal
+1. Edit file di folder <code>app/</code> (misalnya <code>app/page.js</code>)
+2. Jalankan <code>npm run build</code> di terminal
 3. Tampilan akan otomatis ter-update!
 
 ## Struktur Folder:
-- `app/page.js` - Halaman utama (edit ini untuk ubah tampilan)
-- `app/layout.js` - Layout global
-- `app/globals.css` - File CSS global (include Tailwind)
-- `next.config.js` - Konfigurasi Next.js
-- `tailwind.config.js` - Konfigurasi Tailwind
+- <code>app/page.js</code> - Halaman utama (edit ini untuk ubah tampilan)
+- <code>app/layout.js</code> - Layout global
+- <code>app/globals.css</code> - File CSS global (include Tailwind)
+- <code>next.config.js</code> - Konfigurasi Next.js
+- <code>tailwind.config.js</code> - Konfigurasi Tailwind
 
 ## Power by Ryaze.my.id
 Email: bimaryan046@gmail.com
@@ -914,7 +882,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`{$name} listening on port \${PORT}`);
+    console.log('{$name} listening on port ' + PORT);
 });
 PHP
         );
@@ -928,7 +896,7 @@ JS
         file_put_contents("{$dir}/.gitignore", "node_modules\n.env\n");
         file_put_contents("{$dir}/.env.example", "PORT=3000\nJWT_SECRET=your-secret-key\n");
 
-        // Tambahkan index.html di public/ untuk menampilkan info jika diakses via browser
+        // Tambahkan index.html di public untuk menampilkan info jika diakses via browser
         file_put_contents("{$dir}/public/index.html", <<<HTML
 <!DOCTYPE html>
 <html lang="id">
