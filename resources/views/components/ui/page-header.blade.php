@@ -17,10 +17,12 @@
                 {{ $actions }}
             </div>
         @endif
-        <div
-            class="hidden md:flex px-2 py-1 bg-slate-100 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 items-center gap-2">
-            <i class="fa-regular fa-calendar text-slate-400"></i>
-            {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
-        </div>
+        @if (request()->routeIs('*.dashboard'))
+            <div
+                class="hidden md:flex px-2 py-1 bg-slate-100 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 items-center gap-2">
+                <i class="fa-regular fa-calendar text-slate-400"></i>
+                {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
+            </div>
+        @endif
     </div>
 </div>
