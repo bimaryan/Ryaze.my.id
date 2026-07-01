@@ -1,9 +1,37 @@
 @import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer utilities {
+    .bg-mesh {
+        background-color: #f8fafc;
+        background-image: 
+            radial-gradient(at 0% 0%, hsla(253,16%,7deg,0) 0, transparent 50%), 
+            radial-gradient(at 50% 0%, hsla(225,39%,30%,0.05) 0, transparent 50%), 
+            radial-gradient(at 100% 0%, hsla(339,49%,30%,0.05) 0, transparent 50%);
+        background-size: 200% 200%;
+        animation: gradient-move 15s ease infinite alternate;
+    }
+    .glass-panel {
+        @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)];
+    }
+    .glass-nav {
+        @apply bg-white/70 backdrop-blur-md border-b border-white/40 shadow-sm;
+    }
+    .glass-sidebar {
+        @apply bg-white/60 backdrop-blur-xl border-r border-white/40;
+    }
+}
+
+@keyframes gradient-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }

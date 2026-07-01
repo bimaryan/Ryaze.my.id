@@ -1,10 +1,10 @@
-<nav class="fixed top-0 z-50 w-full bg-indigo-700 border-b border-indigo-800 shadow-md">
+<nav class="fixed top-0 z-50 w-full glass-nav">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start gap-2 rtl:justify-end">
                 <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
                     type="button"
-                    class="inline-flex items-center p-2 text-sm text-indigo-100 rounded-lg sm:hidden hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                    class="inline-flex items-center p-2 text-sm text-slate-600 rounded-lg sm:hidden hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -15,10 +15,10 @@
                 </button>
 
                 <a href="{{ url('/') }}" class="flex ms-2 md:me-24 items-center gap-2">
-                    <div class="bg-white text-indigo-700 rounded p-1.5 shadow-sm">
+                    <div class="bg-indigo-600 text-slate-800 rounded p-1.5 shadow-sm">
                         <i class="fa-solid fa-code"></i>
                     </div>
-                    <span class="self-center text-xl font-bold sm:text-2xl whitespace-nowrap text-white">Ryaze
+                    <span class="self-center text-xl font-bold sm:text-2xl whitespace-nowrap text-slate-800">Ryaze
                         Portal</span>
                 </a>
             </div>
@@ -31,7 +31,7 @@
                         $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]);
                     @endphp
                     <button id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification"
-                        class="relative inline-flex items-center text-sm font-medium text-center text-indigo-200 hover:text-white focus:outline-none transition-colors"
+                        class="relative inline-flex items-center text-sm font-medium text-center text-indigo-200 hover:text-slate-800 focus:outline-none transition-colors"
                         type="button">
                         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 14 20">
@@ -40,8 +40,8 @@
                         </svg>
                         @if($unreadNotifications->count() > 0)
                         <div
-                            class="absolute block w-5 h-5 bg-emerald-500 border-2 border-indigo-700 rounded-full -top-1 start-3">
-                            <p class="text-white text-[10px] leading-tight font-bold">{{ $unreadNotifications->count() > 9 ? '9+' : $unreadNotifications->count() }}</p>
+                            class="absolute block w-5 h-5 bg-emerald-500 border-2 border-white rounded-full -top-1 start-3">
+                            <p class="text-slate-800 text-[10px] leading-tight font-bold">{{ $unreadNotifications->count() > 9 ? '9+' : $unreadNotifications->count() }}</p>
                         </div>
                         @endif
                     </button>
@@ -49,7 +49,7 @@
                     <div id="dropdownNotification"
                         class="z-20 hidden w-80 max-w-sm bg-white divide-y divide-slate-100 rounded-lg shadow-xl"
                         aria-labelledby="dropdownNotificationButton">
-                        <div class="flex items-center justify-between px-4 py-3 font-semibold text-slate-700 rounded-t-lg bg-slate-50 border-b border-slate-100">
+                        <div class="flex items-center justify-between px-4 py-3 font-semibold text-slate-700 rounded-t-lg bg-transparent border-b border-slate-100">
                             <span>Notifikasi Terbaru</span>
                             @if($unreadNotifications->count() > 0)
                             <form action="{{ route('notifications.markAllRead') }}" method="POST" class="inline">
@@ -60,7 +60,7 @@
                         </div>
                         <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
                             @forelse($unreadNotifications as $notification)
-                                <a href="#" onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();" class="flex px-4 py-3 hover:bg-slate-50">
+                                <a href="#" onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();" class="flex px-4 py-3 hover:bg-transparent">
                                     <div class="w-full pl-3">
                                         <div class="text-slate-600 text-sm mb-1.5">{{ $notification->data['message'] ?? 'Notifikasi baru' }}</div>
                                         <div class="text-xs text-slate-500">{{ $notification->created_at->diffForHumans() }}</div>
@@ -76,9 +76,9 @@
                     </div>
 
                     {{-- Info User --}}
-                    <div class="hidden md:block text-right border-l border-indigo-500 pl-5">
-                        <p class="text-sm font-semibold text-white">{{ Auth::user()->name ?? 'Guest' }}</p>
-                        <p class="text-xs text-indigo-200">
+                    <div class="hidden md:block text-right border-l border-slate-300 pl-5">
+                        <p class="text-sm font-semibold text-slate-800">{{ Auth::user()->name ?? 'Guest' }}</p>
+                        <p class="text-xs text-slate-500">
                             {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : 'No Role' }}
                         </p>
                     </div>
@@ -86,11 +86,11 @@
                     {{-- Avatar + Dropdown --}}
                     <div>
                         <button type="button"
-                            class="flex text-sm bg-indigo-800 rounded-full focus:ring-4 focus:ring-indigo-400 shadow-sm transition-transform hover:scale-105"
+                            class="flex text-sm bg-slate-100 rounded-full focus:ring-4 focus:ring-slate-200 border border-slate-200 shadow-sm transition-transform hover:scale-105"
                             aria-expanded="false" data-dropdown-toggle="dropdown-user">
                             <span class="sr-only">Open user menu</span>
                             <div
-                                class="w-9 h-9 rounded-full bg-white text-indigo-700 flex items-center justify-center font-bold text-lg">
+                                class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
                                 {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
                             </div>
                         </button>
@@ -107,7 +107,7 @@
                         <ul class="py-1" role="none">
                             <li>
                                 <a href="{{ route('profile.edit') }}"
-                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-transparent">
                                     <i class="fa-solid fa-user me-2 text-indigo-500"></i> Profil Saya
                                 </a>
                             </li>
@@ -115,7 +115,7 @@
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit"
-                                        class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-slate-50 border-t border-slate-100"
+                                        class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-transparent border-t border-slate-100"
                                         role="menuitem">
                                         <i class="fa-solid fa-right-from-bracket me-2"></i> Keluar
                                     </button>
@@ -131,9 +131,9 @@
 </nav>
 
 <aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-slate-50 border-r border-slate-200 sm:translate-x-0"
+    class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full glass-sidebar sm:translate-x-0"
     aria-label="Sidebar">
-    <div class="h-full px-3 pb-4 overflow-y-auto bg-slate-50">
+    <div class="h-full px-3 pb-4 overflow-y-auto bg-transparent">
         <ul class="space-y-1 font-medium">
 
             @php
@@ -157,11 +157,11 @@
 
                 $navLink = fn($active) => 'flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group text-sm font-medium ' .
                     ($active
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200/50'
+                        ? 'bg-indigo-600 text-slate-800 shadow-md shadow-indigo-200/50'
                         : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700');
 
                 $iconClass = fn($active) => 'w-6 text-center text-lg transition-transform group-hover:scale-110 ' .
-                    ($active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600');
+                    ($active ? 'text-slate-800' : 'text-slate-400 group-hover:text-indigo-600');
             @endphp
 
             {{-- Dashboard --}}

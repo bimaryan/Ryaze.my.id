@@ -11,7 +11,7 @@
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer nonce="{{ app('csp_nonce') ?? '' }}"></script>
 </head>
 
-<body class="bg-slate-50 font-sans antialiased text-slate-900">
+<body class="bg-mesh font-sans antialiased text-slate-900">
 
     <div class="min-h-screen flex items-center justify-center p-6">
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
@@ -28,7 +28,7 @@
                     <div>
                         <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Nama Lengkap</label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('name') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
+                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-mesh focus:bg-white {{ $errors->has('name') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
                             placeholder="John Doe" autofocus>
                     </div>
 
@@ -36,14 +36,14 @@
                         <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email
                             Address</label>
                         <input type="email" name="email" id="email" value="{{ old('email') }}"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
+                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-mesh focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
                             placeholder="nama@email.com">
                     </div>
 
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
                         <input type="password" name="password" id="password"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
+                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-mesh focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
                             placeholder="Min. 8 karakter">
 
                         @if ($errors->has('password'))
@@ -59,7 +59,7 @@
                         <label for="password_confirmation"
                             class="block text-sm font-medium text-slate-700 mb-2">Konfirmasi Password</label>
                         <input type="password" name="password_confirmation" id="password_confirmation"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white"
+                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-mesh focus:bg-white"
                             placeholder="Ulangi password">
                     </div>
 
@@ -67,7 +67,7 @@
                         <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Layanan Utama</label>
                         <div class="grid grid-cols-2 gap-4">
                             <label
-                                class="relative flex items-center justify-center p-3 border border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600 {{ $errors->has('role') ? 'border-red-500 ring-1 ring-red-500' : '' }}">
+                                class="relative flex items-center justify-center p-3 border border-slate-300 rounded-lg cursor-pointer hover:bg-mesh transition-colors has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600 {{ $errors->has('role') ? 'border-red-500 ring-1 ring-red-500' : '' }}">
                                 <input type="radio" name="role" value="user_joki" class="peer sr-only"
                                     {{ old('role') == 'user_joki' ? 'checked' : '' }}>
                                 <span class="text-sm font-medium text-slate-600 peer-checked:text-indigo-700">Jasa
@@ -75,7 +75,7 @@
                             </label>
 
                             <label
-                                class="relative flex items-center justify-center p-3 border border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600 {{ $errors->has('role') ? 'border-red-500 ring-1 ring-red-500' : '' }}">
+                                class="relative flex items-center justify-center p-3 border border-slate-300 rounded-lg cursor-pointer hover:bg-mesh transition-colors has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600 {{ $errors->has('role') ? 'border-red-500 ring-1 ring-red-500' : '' }}">
                                 <input type="radio" name="role" value="user_hosting" class="peer sr-only"
                                     {{ old('role') == 'user_hosting' ? 'checked' : '' }}>
                                 <span class="text-sm font-medium text-slate-600 peer-checked:text-indigo-700">Beli
