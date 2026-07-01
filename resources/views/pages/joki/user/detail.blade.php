@@ -2,28 +2,23 @@
 
 @section('content')
     <x-ui.page-layout>
-        <div
-            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-file-invoice text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Detail Proyek: {{ $order->project_name }}</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Pantau progres, tagihan, dan ajukan revisi di halaman ini.</p>
-                </div>
-            </div>
-            <a href="{{ route('user_joki.progress') }}"
-                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
+        <x-ui.page-header 
+            title="Detail Proyek: {{ $order->project_name }}" 
+            subtitle="Pantau progres, tagihan, dan ajukan revisi di halaman ini." 
+            icon="fa-solid fa-file-invoice">
+            <x-slot:actions>
+                <a href="{{ route('user_joki.progress') }}"
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Kolom Kiri: Progress, Milestone, Revisi -->
             <div class="lg:col-span-2 space-y-6">
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4">Progres Keseluruhan</h3>
                     <div class="w-full bg-slate-100 rounded-full h-4 mb-3 overflow-hidden">
                         <div class="bg-indigo-600 h-4 rounded-full transition-all duration-500"
@@ -31,9 +26,9 @@
                     </div>
                     <p class="text-sm text-slate-600">Saat ini pengerjaan mencapai <strong
                             class="text-indigo-600 text-base">{{ $order->progress }}%</strong></p>
-                </div>
+                </x-ui.card>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Target Pengerjaan (Milestone)</h3>
                     @if ($order->milestones->count() > 0)
                         <div class="space-y-4 relative border-l-2 border-slate-100 ml-3 pl-5">
@@ -62,10 +57,10 @@
                         <p class="text-sm text-slate-500 italic text-center py-4">Belum ada milestone yang ditambahkan oleh
                             Admin.</p>
                     @endif
-                </div>
+                </x-ui.card>
 
                 @if ($order->status == 'review' || $order->status == 'progress')
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <x-ui.card class="p-6">
                         <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Ajukan Revisi</h3>
                         <form action="{{ route('user_joki.revision.store', $order->hashid) }}" method="POST">
                             @csrf
@@ -101,13 +96,13 @@
                                 @endforeach
                             </div>
                         @endif
-                    </div>
+                    </x-ui.card>
                 @endif
             </div>
 
             <!-- Kolom Kanan: Info & Pembayaran MIDTRANS -->
             <div class="space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Tagihan Pembayaran</h3>
 
                     @if ($order->payments->count() > 0)
@@ -151,9 +146,9 @@
                             <p class="text-sm text-slate-500">Belum ada tagihan dari Admin.</p>
                         </div>
                     @endif
-                </div>
+                </x-ui.card>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Informasi Dasar</h3>
                     <div class="space-y-3 text-sm">
                         <div class="flex justify-between">
@@ -170,7 +165,7 @@
                                 {{ number_format($order->price ?? 0, 0, ',', '.') }}</span>
                         </div>
                     </div>
-                </div>
+                </x-ui.card>
             </div>
         </div>
     </x-ui.page-layout>

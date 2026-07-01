@@ -1,7 +1,7 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+    <x-ui.page-layout>
 
         <!-- Header -->
         <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative overflow-hidden">
@@ -186,15 +186,12 @@
                         <a href="{{ route('admin_joki.orders') ?? '#' }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Lihat Semua</a>
                     </div>
                     <div class="overflow-x-auto flex-1">
-                        <table class="w-full text-sm text-left text-slate-600">
-                            <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                                <tr>
+                        <x-ui.table>
+                            <x-slot:head>
                                     <th scope="col" class="px-6 py-3">Proyek & Klien</th>
                                     <th scope="col" class="px-6 py-3">Status</th>
                                     <th scope="col" class="px-6 py-3 text-right">Harga</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
+                            </x-slot:head>
                                 @forelse($recentJokiOrders as $order)
                                     <tr class="hover:bg-slate-50 transition-colors">
                                         <td class="px-6 py-3">
@@ -225,8 +222,7 @@
                                         <td colspan="3" class="px-6 py-8 text-center text-slate-500">Belum ada pesanan joki.</td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
+                        </x-ui.table>
                     </div>
                 </div>
 
@@ -240,15 +236,12 @@
                         <a href="{{ route('admin_hosting.projects') ?? '#' }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">Lihat Semua</a>
                     </div>
                     <div class="overflow-x-auto flex-1">
-                        <table class="w-full text-sm text-left text-slate-600">
-                            <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                                <tr>
+                        <x-ui.table>
+                            <x-slot:head>
                                     <th scope="col" class="px-6 py-3">Proyek & Klien</th>
                                     <th scope="col" class="px-6 py-3">Framework</th>
                                     <th scope="col" class="px-6 py-3 text-right">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
+                            </x-slot:head>
                                 @forelse($recentHostingProjects as $project)
                                     <tr class="hover:bg-slate-50 transition-colors">
                                         <td class="px-6 py-3">
@@ -279,8 +272,7 @@
                                         <td colspan="3" class="px-6 py-8 text-center text-slate-500">Belum ada proyek hosting.</td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
+                        </x-ui.table>
                     </div>
                 </div>
 
@@ -299,17 +291,14 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-600">
-                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                            <tr>
+                    <x-ui.table>
+                        <x-slot:head>
                                 <th scope="col" class="px-6 py-4">Nama Klien</th>
                                 <th scope="col" class="px-6 py-4">Email</th>
                                 <th scope="col" class="px-6 py-4">Minat Layanan / Role</th>
                                 <th scope="col" class="px-6 py-4 text-center">Tanggal Daftar</th>
                                 <th scope="col" class="px-6 py-4 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
+                        </x-slot:head>
                             @forelse($recentUsers as $user)
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
@@ -354,11 +343,10 @@
                                     </td>
                                 </tr>
                             @endforelse
-                        </tbody>
-                    </table>
+                    </x-ui.table>
                 </div>
             </div>
 
         </div>
-    </div>
+    </x-ui.page-layout>
 @endsection

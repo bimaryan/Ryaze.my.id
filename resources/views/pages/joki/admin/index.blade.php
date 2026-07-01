@@ -1,20 +1,14 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-gauge text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Manajemen Joki Code</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">
-                        Semangat ngoding, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Dev' }}</span>! Berikut antrean pekerjaanmu.
-                    </p>
-                </div>
-            </div>
-        </div>
+    <x-ui.page-layout>
+        <x-ui.page-header 
+            title="Manajemen Joki Code" 
+            icon="fa-solid fa-gauge">
+            <x-slot:subtitle>
+                Semangat ngoding, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Dev' }}</span>! Berikut antrean pekerjaanmu.
+            </x-slot:subtitle>
+        </x-ui.page-header>
 
         <div class="mt-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -37,22 +31,16 @@
             </div>
 
             {{-- Tabel Antrean --}}
-            <div class="mt-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-5 border-b border-slate-200 bg-slate-50/50">
-                    <h2 class="text-lg font-bold text-slate-800">Antrean Pekerjaan Aktif</h2>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-600">
-                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                            <tr>
-                                <th class="px-6 py-4">Klien & Order ID</th>
-                                <th class="px-6 py-4">Proyek</th>
-                                <th class="px-6 py-4">Status & Progres</th>
-                                <th class="px-6 py-4 text-center">Tenggat Waktu</th>
-                                <th class="px-6 py-4 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
+            <div class="mt-8">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Antrean Pekerjaan Aktif</h2>
+                <x-ui.table>
+                    <x-slot:head>
+                        <th class="px-6 py-4">Klien & Order ID</th>
+                        <th class="px-6 py-4">Proyek</th>
+                        <th class="px-6 py-4">Status & Progres</th>
+                        <th class="px-6 py-4 text-center">Tenggat Waktu</th>
+                        <th class="px-6 py-4 text-center">Aksi</th>
+                    </x-slot:head>
                             @forelse ($queueOrders as $order)
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4">
@@ -97,10 +85,8 @@
                                     <td colspan="5" class="px-6 py-10 text-center text-slate-400">Tidak ada antrean aktif saat ini.</td>
                                 </tr>
                             @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                </x-ui.table>
             </div>
         </div>
-    </div>
+    </x-ui.page-layout>
 @endsection

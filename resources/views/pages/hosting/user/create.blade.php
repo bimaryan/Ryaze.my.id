@@ -3,23 +3,18 @@
 @section('content')
     <x-ui.page-layout>
         {{-- ── 6. USER HOSTING – Deploy Proyek Baru ───────────────────────── --}}
-        <div
-            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
-                    <i class="fa-solid fa-plus text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Deploy Proyek Baru</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Impor repository Git Anda dan biarkan sistem kami melakukan
-                        sisanya.</p>
-                </div>
-            </div>
-            <a href="{{ route('user_hosting.dashboard') }}"
-                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
+        <x-ui.page-header 
+            title="Deploy Proyek Baru" 
+            subtitle="Impor repository Git Anda dan biarkan sistem kami melakukan sisanya." 
+            icon="fa-plus" 
+            iconColor="emerald">
+            <x-slot:actions>
+                <a href="{{ route('user_hosting.dashboard') }}"
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         <div class="mx-auto mt-6">
             <form action="{{ route('user_hosting.store') }}" method="POST" class="space-y-6">

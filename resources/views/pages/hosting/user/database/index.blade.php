@@ -1,35 +1,32 @@
 @extends('index')
 
 @section('content')
-<div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+    <x-ui.page-layout>
 
-    {{-- SweetAlert2 --}}
-    {{-- Flash via SweetAlert --}}
-    @if ($errors->any())
-    <script nonce="{{ app('csp_nonce') }}">
-        document.addEventListener('DOMContentLoaded', () => Swal.fire({
-            icon: 'error', title: 'Validasi Gagal',
-            html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
-            confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
-        }));
-    </script>
-    @endif
+        {{-- SweetAlert2 --}}
+        {{-- Flash via SweetAlert --}}
+        @if ($errors->any())
+        <script nonce="{{ app('csp_nonce') }}">
+            document.addEventListener('DOMContentLoaded', () => Swal.fire({
+                icon: 'error', title: 'Validasi Gagal',
+                html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
+                confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
+            }));
+        </script>
+        @endif
 
-    {{-- Header --}}
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-purple-50 text-purple-600 rounded-lg">
-                    <i class="fa-solid fa-database text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Database & phpMyAdmin</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Kelola database MySQL untuk aplikasi Anda.</p>
-                </div>
-            </div>
-            <button id="btn-open-create-modal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                + Buat Database
-            </button>
-        </div>
+        {{-- Header --}}
+        <x-ui.page-header 
+            title="Database & phpMyAdmin" 
+            subtitle="Kelola database MySQL untuk aplikasi Anda." 
+            icon="fa-database" 
+            iconColor="purple">
+            <x-slot:actions>
+                <button id="btn-open-create-modal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    + Buat Database
+                </button>
+            </x-slot:actions>
+        </x-ui.page-header>
 
     {{-- Database Cards --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -46,8 +43,8 @@
                         <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
                     </div>
                 </div>
-                <button onclick="confirmDelete('{{ route('user_hosting.databases.destroy', $db->hashid) }}')"
-                    class="text-slate-400 hover:text-rose-500 p-2 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Database">
+                <button data-action="{{ route('user_hosting.databases.destroy', $db->hashid) }}"
+                    class="btn-delete-db text-slate-400 hover:text-rose-500 p-2 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Database">
                     <i class="fa-regular fa-trash-can"></i>
                 </button>
             </div>
@@ -123,7 +120,7 @@
         @endforelse
     </div>
 
-</div>
+    </x-ui.page-layout>
 
 {{-- Modal Buat Database --}}
 <div id="createDbModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">

@@ -1,39 +1,29 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-spinner text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Progres Pesanan Joki</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Pantau status pengerjaan proyek Anda yang sedang aktif.</p>
-                </div>
-            </div>
-            <a href="{{ route('user_joki.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
+    <x-ui.page-layout>
+        <x-ui.page-header 
+            title="Progres Pesanan Joki" 
+            subtitle="Pantau status pengerjaan proyek Anda yang sedang aktif." 
+            icon="fa-solid fa-spinner">
+            <x-slot:actions>
+                <a href="{{ route('user_joki.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         <div class="mt-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50">
-                    <h2 class="text-lg font-bold text-slate-800">Proyek Sedang Berjalan</h2>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-600">
-                        <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                            <tr>
-                                <th class="px-6 py-4 whitespace-nowrap">Nama Proyek</th>
-                                <th class="px-6 py-4 whitespace-nowrap">Tech Stack</th>
-                                <th class="px-6 py-4 whitespace-nowrap w-48">Progres</th>
-                                <th class="px-6 py-4 whitespace-nowrap text-center">Status</th>
-                                <th class="px-6 py-4 whitespace-nowrap text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Proyek Sedang Berjalan</h2>
+                <x-ui.table>
+                    <x-slot:head>
+                        <th class="px-6 py-4 whitespace-nowrap">Nama Proyek</th>
+                        <th class="px-6 py-4 whitespace-nowrap">Tech Stack</th>
+                        <th class="px-6 py-4 whitespace-nowrap w-48">Progres</th>
+                        <th class="px-6 py-4 whitespace-nowrap text-center">Status</th>
+                        <th class="px-6 py-4 whitespace-nowrap text-center">Aksi</th>
+                    </x-slot:head>
                             @forelse($activeOrders as $order)
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4 font-medium text-slate-800 whitespace-nowrap">
@@ -93,10 +83,8 @@
                                     </td>
                                 </tr>
                             @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                </x-ui.table>
             </div>
         </div>
-    </div>
+    </x-ui.page-layout>
 @endsection

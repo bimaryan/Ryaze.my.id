@@ -1,36 +1,36 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
+    <x-ui.page-layout>
 
         {{-- Alerts --}}
         {{-- ── Header Project ────────────────────────────────────────────────── --}}
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
+        <x-ui.page-header 
+            title="{{ $project->project_name }}">
+            <x-slot:iconSlot>
+                @php
+                    $fwIcon = match ($project->framework) {
+                        'react' => 'fa-brands fa-react text-sky-500',
+                        'nextjs' => 'fa-brands fa-node-js text-slate-800',
+                        'laravel' => 'fa-brands fa-laravel text-red-500',
+                        'python' => 'fa-brands fa-python text-yellow-500',
+                        'node' => 'fa-brands fa-node text-emerald-500',
+                        'vue' => 'fa-brands fa-vuejs text-emerald-500',
+                        default => 'fa-brands fa-html5 text-orange-500',
+                    };
+                @endphp
                 <div class="shrink-0 w-12 h-12 border border-slate-200 rounded-lg flex items-center justify-center bg-white shadow-sm">
-                    @php
-                        $fwIcon = match ($project->framework) {
-                            'react' => 'fa-brands fa-react text-sky-500',
-                            'nextjs' => 'fa-brands fa-node-js text-slate-800',
-                            'laravel' => 'fa-brands fa-laravel text-red-500',
-                            'python' => 'fa-brands fa-python text-yellow-500',
-                            'node' => 'fa-brands fa-node text-emerald-500',
-                            'vue' => 'fa-brands fa-vuejs text-emerald-500',
-                            default => 'fa-brands fa-html5 text-orange-500',
-                        };
-                    @endphp
                     <i class="{{ $fwIcon }} text-2xl"></i>
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">{{ $project->project_name }}</h1>
-                    <a href="https://{{ $project->ryaze_domain }}" target="_blank"
-                        class="text-sm font-medium text-indigo-600 hover:underline flex items-center gap-1 mt-1">
-                        {{ $project->ryaze_domain }}
-                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
+            </x-slot:iconSlot>
+            <x-slot:subtitle>
+                <a href="https://{{ $project->ryaze_domain }}" target="_blank"
+                    class="text-sm font-medium text-indigo-600 hover:underline flex items-center gap-1 mt-1">
+                    {{ $project->ryaze_domain }}
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </x-slot:subtitle>
+            <x-slot:actions>
                 @php
                     $statusClass = match ($project->status) {
                         'active' => 'bg-emerald-100 text-emerald-700',
@@ -53,8 +53,8 @@
                 <a href="{{ route('user_hosting.projects') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
-            </div>
-        </div>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         {{-- Tab Navigation --}}
         <div class="flex flex-wrap gap-2 mb-6 mt-6 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm w-full">
@@ -505,7 +505,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </x-ui.page-layout>
 
     {{-- SweetAlert2 --}}
     <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

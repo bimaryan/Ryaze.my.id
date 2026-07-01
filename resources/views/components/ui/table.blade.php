@@ -1,4 +1,7 @@
-<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden {{ $attributes->get('class') }}">
+    @if(isset($header))
+        {{ $header }}
+    @endif
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left text-slate-600">
             <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">

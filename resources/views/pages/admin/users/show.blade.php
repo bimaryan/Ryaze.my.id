@@ -2,27 +2,22 @@
 
 @section('content')
     <x-ui.page-layout>
-        <div
-            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-user text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Profil Klien: {{ $user->name }}</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Lihat informasi detail dan riwayat pesanan klien.</p>
-                </div>
-            </div>
-            <a href="{{ route('superadmin.users.index') }}"
-                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
+        <x-ui.page-header 
+            title="Profil Klien: {{ $user->name }}" 
+            subtitle="Lihat informasi detail dan riwayat pesanan klien." 
+            icon="fa-solid fa-user">
+            <x-slot:actions>
+                <a href="{{ route('superadmin.users.index') }}"
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
 
             <div class="lg:col-span-1 space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
 
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                         <div class="flex items-center gap-4 min-w-0">
@@ -59,11 +54,11 @@
                         </div>
                     </div>
 
-                </div>
+                </x-ui.card>
             </div>
 
             <div class="lg:col-span-2">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Riwayat Pesanan Joki Klien Ini</h3>
 
                     @if (isset($jokiOrders) && $jokiOrders->count() > 0)
@@ -99,7 +94,7 @@
                             <p class="text-sm font-medium text-slate-500">Klien ini belum pernah membuat pesanan Joki.</p>
                         </div>
                     @endif
-                </div>
+                </x-ui.card>
             </div>
 
         </div>

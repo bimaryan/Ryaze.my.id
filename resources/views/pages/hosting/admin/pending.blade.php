@@ -1,34 +1,23 @@
 @extends('index')
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-        {{-- ── 3. ADMIN HOSTING – Membutuhkan Tindakan ────────────────────── --}}
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
-                    <i class="fa-solid fa-clock text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Membutuhkan Tindakan</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Project yang butuh aktivasi, suspend, atau perbaikan error.</p>
-                </div>
-            </div>
-            <a href="{{ route('admin_hosting.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-6">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-slate-600">
-                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                        <tr>
-                            <th class="px-6 py-4">Project & Klien</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse ($projects as $project)
+    <x-ui.page-layout>
+        <x-ui.page-header 
+            title="Membutuhkan Tindakan" 
+            subtitle="Project yang butuh aktivasi, suspend, atau perbaikan error." 
+            icon="fa-solid fa-clock">
+            <x-slot:actions>
+                <a href="{{ route('admin_hosting.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
+        <x-ui.table class="mt-6">
+            <x-slot:head>
+                <th class="px-6 py-4">Project & Klien</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4 text-center">Aksi</th>
+            </x-slot:head>
+            @forelse ($projects as $project)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4">
                                     <p class="text-sm font-semibold text-slate-800">{{ $project->project_name }}</p>
@@ -67,12 +56,11 @@
                                     membutuhkan tindakan.</td>
                             </tr>
                         @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <div class="px-6 py-4 border-t border-slate-200">{{ $projects->links() }}</div>
-        </div>
-    </div>
+            <x-slot:pagination>
+                <div class="px-6 py-4 border-t border-slate-200">{{ $projects->links() }}</div>
+            </x-slot:pagination>
+        </x-ui.table>
+    </x-ui.page-layout>
 
     <script nonce="{{ app('csp_nonce') }}">
         document.addEventListener('DOMContentLoaded', function() {

@@ -1,25 +1,21 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-plus text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Buat Pesanan Joki</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Isi detail proyek Anda, saya akan segera meninjau untuk menentukan estimasi biaya dan waktu pengerjaan.</p>
-                </div>
-            </div>
-            <a href="{{ route('user_joki.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
+    <x-ui.page-layout>
+        <x-ui.page-header 
+            title="Buat Pesanan Joki" 
+            subtitle="Isi detail proyek Anda, saya akan segera meninjau untuk menentukan estimasi biaya dan waktu pengerjaan." 
+            icon="fa-solid fa-plus">
+            <x-slot:actions>
+                <a href="{{ route('user_joki.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         <!-- Form Section -->
         <div class="mt-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <x-ui.card class="overflow-hidden">
                 <form action="{{ route('user_joki.store') }}" method="POST" class="p-8 space-y-6">
                     @csrf
 
@@ -82,9 +78,9 @@
                         </button>
                     </div>
                 </form>
-            </div>
+            </x-ui.card>
         </div>
-    </div>
+    </x-ui.page-layout>
 
     <!-- Script untuk menampilkan estimasi harga -->
     <script nonce="{{ app('csp_nonce') ?? '' }}">

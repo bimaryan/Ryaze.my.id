@@ -3,35 +3,27 @@
 @section('content')
     <x-ui.page-layout>
         {{-- ── 2. ADMIN HOSTING – Riwayat Deployment ──────────────────────── --}}
-        <div
-            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
-                    <i class="fa-solid fa-rocket text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Riwayat Deployment</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Pantau status build dan log dari seluruh project klien.</p>
-                </div>
-            </div>
-            <a href="{{ route('admin_hosting.dashboard') }}"
-                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
+        <x-ui.page-header 
+            title="Riwayat Deployment" 
+            subtitle="Pantau status build dan log dari seluruh project klien." 
+            icon="fa-solid fa-rocket">
+            <x-slot:actions>
+                <a href="{{ route('admin_hosting.dashboard') }}"
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         {{-- Tabel Riwayat Deploy --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-6">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-slate-600">
-                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                        <tr>
-                            <th class="px-6 py-4">Project</th>
-                            <th class="px-6 py-4">Klien & Info Commit</th>
-                            <th class="px-6 py-4">Waktu</th>
-                            <th class="px-6 py-4 text-center">Status</th>
-                            </x-slot:head>
-                            @forelse ($deployments as $deploy)
+        <x-ui.table class="mt-6">
+            <x-slot:head>
+                <th class="px-6 py-4">Project</th>
+                <th class="px-6 py-4">Klien & Info Commit</th>
+                <th class="px-6 py-4">Waktu</th>
+                <th class="px-6 py-4 text-center">Status</th>
+            </x-slot:head>
+            @forelse ($deployments as $deploy)
                         <tr class="hover:bg-slate-50 transition-colors">
 
                             {{-- Project Info --}}
@@ -87,16 +79,13 @@
                             </td>
                         </tr>
                         @endforelse
-                        </tbody>
-                </table>
-            </div>
-
-            {{-- Pagination --}}
-            @if ($deployments->hasPages())
-                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50/50">
-                    {{ $deployments->links() }}
-                </div>
-            @endif
-        </div>
+            <x-slot:pagination>
+                @if ($deployments->hasPages())
+                    <div class="px-6 py-4 border-t border-slate-200 bg-slate-50/50">
+                        {{ $deployments->links() }}
+                    </div>
+                @endif
+            </x-slot:pagination>
+        </x-ui.table>
     </x-ui.page-layout>
 @endsection

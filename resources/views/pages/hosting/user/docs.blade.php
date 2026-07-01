@@ -2,16 +2,12 @@
 
 @section('content')
     <x-ui.page-layout>
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 mb-6">
-            <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                <i class="fa-solid fa-book text-lg"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Panduan & Dokumentasi</h1>
-                <p class="text-xs text-slate-500 mt-1">Pelajari cara menggunakan seluruh fitur hosting Ryaze dengan optimal.
-                </p>
-            </div>
-        </div>
+        <x-ui.page-header 
+            title="Panduan & Dokumentasi" 
+            subtitle="Pelajari cara menggunakan seluruh fitur hosting Ryaze dengan optimal." 
+            icon="fa-book" 
+            iconColor="indigo">
+        </x-ui.page-header>
 
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-8">
 

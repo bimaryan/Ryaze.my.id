@@ -2,24 +2,19 @@
 
 @section('content')
     <x-ui.page-layout>
-        <div
-            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-pen-to-square text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Control Center: {{ $order->order_number }}</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Klien: <span
-                            class="font-semibold text-indigo-600">{{ $order->client->name }}</span> | Layanan:
-                        {{ $order->service->name }}</p>
-                </div>
-            </div>
-            <a href="{{ route('admin_joki.orders') }}"
-                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
+        <x-ui.page-header 
+            title="Control Center: {{ $order->order_number }}" 
+            icon="fa-solid fa-pen-to-square">
+            <x-slot:subtitle>
+                Klien: <span class="font-semibold text-indigo-600">{{ $order->client->name }}</span> | Layanan: {{ $order->service->name }}
+            </x-slot:subtitle>
+            <x-slot:actions>
+                <a href="{{ route('admin_joki.orders') }}"
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         @if ($errors->any())
             <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700">
@@ -41,7 +36,7 @@
 
             <div class="xl:col-span-2 space-y-6">
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Update Status & Hasil Kerja</h3>
                     <form action="{{ route('admin_joki.orders.update', $order->hashid) }}" method="POST" class="space-y-4">
                         @csrf
@@ -93,9 +88,9 @@
                                 Perubahan Utama</button>
                         </div>
                     </form>
-                </div>
+                </x-ui.card>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Target Pengerjaan (Milestones)</h3>
 
                     <form action="{{ route('admin_joki.milestone.store', $order->hashid) }}" method="POST"
@@ -148,9 +143,9 @@
                             <p class="text-xs text-slate-400 text-center py-2">Belum ada milestone.</p>
                         @endforelse
                     </div>
-                </div>
+                </x-ui.card>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Permintaan Revisi Klien</h3>
                     <div class="space-y-4">
                         @forelse($order->revisions as $rev)
@@ -193,11 +188,11 @@
                             <p class="text-xs text-slate-400 text-center py-2">Tidak ada permintaan revisi.</p>
                         @endforelse
                     </div>
-                </div>
+                </x-ui.card>
             </div>
 
             <div class="space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-3 border-b pb-2">Kebutuhan Proyek</h3>
                     <div class="text-sm text-slate-600 mb-3">
                         <span class="block font-bold text-slate-800">Nama:</span> {{ $order->project_name }}
@@ -210,9 +205,9 @@
                         <div class="bg-slate-50 p-3 rounded border border-slate-100 whitespace-pre-line">
                             {{ $order->description }}</div>
                     </div>
-                </div>
+                </x-ui.card>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Tagihan & Pembayaran</h3>
 
                     <form action="{{ route('admin_joki.payment.store', $order->hashid) }}" method="POST"
@@ -276,7 +271,7 @@
                             <p class="text-xs text-slate-400 text-center py-2">Belum ada tagihan dibuat.</p>
                         @endforelse
                     </div>
-                </div>
+                </x-ui.card>
 
             </div>
         </div>

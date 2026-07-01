@@ -3,22 +3,16 @@
 @section('content')
     <x-ui.page-layout>
         {{-- Header --}}
-        <div
-            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-wallet text-lg"></i>
+        <x-ui.page-header 
+            title="Keuangan Joki" 
+            subtitle="Laporan pendapatan dan riwayat pembayaran lunas." 
+            icon="fa-solid fa-wallet">
+            <x-slot:actions>
+                <div class="inline-flex items-center px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg font-bold">
+                    Total Pendapatan: Rp{{ number_format($totalRevenue, 0, ',', '.') }}
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Keuangan Joki</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Laporan pendapatan dan riwayat pembayaran lunas.</p>
-                </div>
-            </div>
-            <div
-                class="inline-flex items-center px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg font-bold">
-                Total Pendapatan: Rp{{ number_format($totalRevenue, 0, ',', '.') }}
-            </div>
-        </div>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         {{-- Table --}}
         <x-ui.table>

@@ -1,24 +1,19 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-        {{-- ── 7. USER HOSTING – Dashboard Klien ──────────────────────────── --}}
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
-                    <i class="fa-solid fa-gauge text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Dashboard Hosting</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">
-                        Halo, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Klien' }}</span>! Selamat datang kembali.
-                    </p>
-                </div>
-            </div>
-            <a href="{{ route('user_hosting.create') }}" class="inline-flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                + Deploy Baru
-            </a>
-        </div>
+    <x-ui.page-layout>
+        <x-ui.page-header 
+            title="Dashboard Hosting" 
+            icon="fa-solid fa-gauge">
+            <x-slot:subtitle>
+                Halo, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Klien' }}</span>! Selamat datang kembali.
+            </x-slot:subtitle>
+            <x-slot:actions>
+                <a href="{{ route('user_hosting.create') }}" class="inline-flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    + Deploy Baru
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         {{-- Statistik Dinamis --}}
         <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -29,29 +24,25 @@
         </div>
 
         {{-- Tabel Layanan --}}
-        <div class="mt-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div
-                class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-wrap gap-3 justify-between items-center">
-                <h2 class="text-lg font-bold text-slate-800">Layanan Terbaru</h2>
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('user_hosting.projects') }}"
-                        class="text-sm text-slate-500 font-semibold hover:text-indigo-600 transition-colors">
-                        Lihat Semua <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
-                    </a>
+        <x-ui.table class="mt-8">
+            <x-slot:header>
+                <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-wrap gap-3 justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800">Layanan Terbaru</h2>
+                    <div class="flex items-center gap-4">
+                        <a href="{{ route('user_hosting.projects') }}"
+                            class="text-sm text-slate-500 font-semibold hover:text-indigo-600 transition-colors">
+                            Lihat Semua <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-slate-600">
-                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                        <tr>
-                            <th class="px-6 py-4">Domain/Project</th>
-                            <th class="px-6 py-4">Framework</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse ($projects as $project)
+            </x-slot:header>
+            <x-slot:head>
+                <th class="px-6 py-4">Domain/Project</th>
+                <th class="px-6 py-4">Framework</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4 text-center">Aksi</th>
+            </x-slot:head>
+            @forelse ($projects as $project)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-slate-800">
                                     <a href="https://{{ $project->ryaze_domain }}" target="_blank"
@@ -82,10 +73,7 @@
                                 <td colspan="4" class="px-6 py-10 text-center text-slate-400">Belum ada project hosting.
                                 </td>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+            @endforelse
+        </x-ui.table>
+    </x-ui.page-layout>
 @endsection

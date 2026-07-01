@@ -2,34 +2,22 @@
 
 @section('content')
     <x-ui.page-layout>
-        <div
-            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-users text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Manajemen Pengguna</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Daftar semua klien dan admin di dalam sistem.</p>
-                </div>
-            </div>
-        </div>
+        <x-ui.page-header 
+            title="Manajemen Pengguna" 
+            subtitle="Daftar semua klien dan admin di dalam sistem." 
+            icon="fa-solid fa-users" 
+        />
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-6">
-            <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50">
-                <h2 class="text-lg font-bold text-slate-800">Daftar Semua Klien</h2>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-slate-600">
-                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                        <tr>
-                            <th scope="col" class="px-6 py-4">Nama Pengguna</th>
-                            <th scope="col" class="px-6 py-4">Email Address</th>
-                            <th scope="col" class="px-6 py-4">Role / Tipe Akun</th>
-                            <th scope="col" class="px-6 py-4">Tanggal Daftar</th>
-                            <th scope="col" class="px-6 py-4 text-center">Aksi</th>
-                            </x-slot:head>
+        <div>
+            <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Daftar Semua Klien</h2>
+            <x-ui.table>
+                <x-slot:head>
+                    <th scope="col" class="px-6 py-4">Nama Pengguna</th>
+                    <th scope="col" class="px-6 py-4">Email Address</th>
+                    <th scope="col" class="px-6 py-4">Role / Tipe Akun</th>
+                    <th scope="col" class="px-6 py-4">Tanggal Daftar</th>
+                    <th scope="col" class="px-6 py-4 text-center">Aksi</th>
+                </x-slot:head>
                             @forelse($users as $user)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
@@ -74,15 +62,12 @@
                             </td>
                         </tr>
                         @endforelse
-                        </tbody>
-                </table>
-            </div>
-
-            @if ($users->hasPages())
-                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
-                    {{ $users->links() }}
-                </div>
-            @endif
+                <x-slot:pagination>
+                    @if ($users->hasPages())
+                        {{ $users->links() }}
+                    @endif
+                </x-slot:pagination>
+            </x-ui.table>
         </div>
     </x-ui.page-layout>
 @endsection

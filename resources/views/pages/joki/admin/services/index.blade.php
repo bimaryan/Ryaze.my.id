@@ -1,23 +1,17 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-
-        {{-- Header --}}
-        <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-list text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Manajemen Layanan Joki</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Kelola tipe layanan joki, harga dasar, dan status aktifnya.</p>
-                </div>
-            </div>
-            <button id="btnOpenCreateModal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                + Tambah Layanan
-            </button>
-        </div>
+    <x-ui.page-layout>
+        <x-ui.page-header 
+            title="Manajemen Layanan Joki" 
+            subtitle="Kelola tipe layanan joki, harga dasar, dan status aktifnya." 
+            icon="fa-solid fa-list">
+            <x-slot:actions>
+                <button id="btnOpenCreateModal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    + Tambah Layanan
+                </button>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         @if ($errors->any())
             <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700">
@@ -36,18 +30,13 @@
         @endif
 
         {{-- Table --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-slate-600">
-                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                        <tr>
-                            <th class="px-6 py-4">Nama Layanan</th>
-                            <th class="px-6 py-4">Harga Dasar</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
+        <x-ui.table>
+            <x-slot:head>
+                <th class="px-6 py-4">Nama Layanan</th>
+                <th class="px-6 py-4">Harga Dasar</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4 text-right">Aksi</th>
+            </x-slot:head>
                         @forelse ($services as $service)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4">
@@ -86,12 +75,7 @@
                                 <td colspan="4" class="px-6 py-10 text-center text-slate-400">Belum ada layanan yang ditambahkan.</td>
                             </tr>
                         @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
+        </x-ui.table>
 
     {{-- Modal Create --}}
     <div id="createModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
@@ -258,4 +242,5 @@
             });
         });
     </script>
+    </x-ui.page-layout>
 @endsection

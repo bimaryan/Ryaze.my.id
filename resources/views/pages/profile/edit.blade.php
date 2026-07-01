@@ -3,27 +3,22 @@
 @section('content')
     <x-ui.page-layout>
         {{-- Alerts --}}
-        <div
-            class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-user text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Profil Saya</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Kelola informasi pribadi dan keamanan akun Anda.</p>
-                </div>
-            </div>
-            <a href="{{ url('/') }}"
-                class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                &larr; Kembali
-            </a>
-        </div>
+        <x-ui.page-header 
+            title="Profil Saya" 
+            subtitle="Kelola informasi pribadi dan keamanan akun Anda." 
+            icon="fa-solid fa-user">
+            <x-slot:actions>
+                <a href="{{ url('/') }}"
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             {{-- Form Data Diri --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <x-ui.card class="overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
                     <i class="fa-solid fa-id-card text-indigo-500"></i>
                     <h3 class="font-bold text-slate-800">Informasi Pribadi</h3>
@@ -63,10 +58,10 @@
                         </button>
                     </div>
                 </form>
-            </div>
+            </x-ui.card>
 
             {{-- Form Keamanan --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <x-ui.card class="overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
                     <i class="fa-solid fa-shield-halved text-emerald-500"></i>
                     <h3 class="font-bold text-slate-800">Keamanan Akun</h3>
@@ -119,7 +114,7 @@
                         </button>
                     </div>
                 </form>
-            </div>
+            </x-ui.card>
 
         </div>
     </x-ui.page-layout>
