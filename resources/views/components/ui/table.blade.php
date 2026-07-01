@@ -1,21 +1,23 @@
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden {{ $attributes->get('class') }}">
-    @if(isset($header))
+<div
+    class="glass-panel rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] {{ $attributes->get('class') }}">
+    @if (isset($header))
         {{ $header }}
     @endif
     <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left text-gray-600 whitespace-nowrap">
-            <thead class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200">
+        <table class="w-full text-sm text-left text-slate-600">
+            <thead
+                class="bg-white/40 text-xs uppercase font-semibold text-slate-500 border-b border-white/40 backdrop-blur-sm">
                 <tr>
                     {{ $head }}
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody class="divide-y divide-slate-100">
                 {{ $slot }}
             </tbody>
         </table>
     </div>
-    @if(isset($pagination))
-        <div class="px-6 py-4 border-t border-gray-200 bg-white">
+    @if (isset($pagination))
+        <div class="px-6 py-4 border-t border-slate-200">
             {{ $pagination }}
         </div>
     @endif

@@ -1,29 +1,26 @@
-@props([
-    'title',
-    'description' => null,
-    'icon' => 'cube',
-    'iconColor' => 'indigo'
-])
+@props(['title', 'description' => null, 'icon' => 'cube', 'iconColor' => 'indigo'])
 
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-5 border-b border-gray-200">
+<div
+    class="p-5 glass-panel rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 transition-all duration-300 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)]">
     <div class="flex items-center gap-4">
-        @if(isset($iconSlot))
+        @if (isset($iconSlot))
             {{ $iconSlot }}
         @else
-            <div class="shrink-0 w-10 h-10 flex items-center justify-center bg-white border border-gray-200 text-{{ $iconColor }}-600 rounded-md shadow-sm">
-                <i class="{{ $icon }} text-base"></i>
+            <div
+                class="shrink-0 w-11 h-11 flex items-center justify-center bg-{{ $iconColor }}-50 text-{{ $iconColor }}-600 rounded-lg">
+                <i class="{{ $icon }} text-lg"></i>
             </div>
         @endif
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ $title }}</h1>
-            @if(isset($subtitle))
-                <div class="mt-1">{{ $subtitle }}</div>
+            <h1 class="text-xl font-bold text-slate-800">{{ $title }}</h1>
+            @if (isset($subtitle))
+                {{ $subtitle }}
             @elseif($description)
-                <p class="text-sm text-gray-500 mt-1">{{ $description }}</p>
+                <p class="text-sm text-slate-500 mt-0.5">{{ $description }}</p>
             @endif
         </div>
     </div>
-    @if(isset($actions))
+    @if (isset($actions))
         <div class="flex gap-2">
             {{ $actions }}
         </div>

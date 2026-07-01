@@ -1087,13 +1087,20 @@
                     path: currentEditingFile,
                     content
                 })
-            }).then(r => r.json()).then(data => {
+            }).then(async r => {
+                const text = await r.text();
+                try {
+                    const data = JSON.parse(text);
+                    loader.classList.add('hidden');
+                    if (data.error) swAlert('error', 'Gagal simpan', data.error);
+                    else hotToast('File berhasil disimpan!', 'success');
+                } catch (e) {
+                    loader.classList.add('hidden');
+                    swAlert('error', 'Response Error', 'Status: ' + r.status + ' Text: ' + text.substring(0, 100));
+                }
+            }).catch((err) => {
                 loader.classList.add('hidden');
-                if (data.error) swAlert('error', 'Gagal simpan', data.error);
-                else hotToast('File berhasil disimpan!', 'success');
-            }).catch(() => {
-                loader.classList.add('hidden');
-                swAlert('error', 'Terjadi kesalahan saat menyimpan.');
+                swAlert('error', 'Network/Fetch Error', err.message);
             });
         }
 

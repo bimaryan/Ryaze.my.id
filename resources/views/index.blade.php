@@ -11,7 +11,7 @@
     <script src="https://kit.fontawesome.com/f74deb4653.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="bg-slate-50 font-sans antialiased text-slate-900">
+<body class="bg-mesh font-sans antialiased text-slate-900">
     @include('components.navbar')
     @yield('content')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>

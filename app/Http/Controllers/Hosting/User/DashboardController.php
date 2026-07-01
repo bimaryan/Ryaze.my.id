@@ -250,6 +250,7 @@ class DashboardController extends Controller
     // 4. BARU: Method untuk menyimpan file yang diedit
     public function saveFile(Request $request, $hashid)
     {
+        \Log::info("saveFile route hit! hashid: {$hashid}, path: " . $request->input('path'));
         $project = $this->getValidProject($hashid);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
