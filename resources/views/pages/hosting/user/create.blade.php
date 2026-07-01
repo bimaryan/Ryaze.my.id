@@ -19,10 +19,7 @@
         <div class="mx-auto mt-6">
             <form action="{{ route('user_hosting.store') }}" method="POST" class="space-y-6">
                 @csrf
-                {{-- Hidden fields yang di-isi JS saat pilih template --}}
-                <input type="hidden" name="template_repo" id="hidden_template_repo" value="">
-                <input type="hidden" name="template_branch" id="hidden_template_branch" value="main">
-                <input type="hidden" name="template_framework" id="hidden_template_framework" value="">
+
 
                 {{-- ── STEP 1: Metode Deploy ── --}}
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
@@ -89,7 +86,7 @@
                         <span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
                         Pilih Starter Template
                     </h3>
-                    <p class="text-xs text-slate-500 mb-5 ml-8">Template akan di-clone otomatis, Anda bisa langsung edit file-nya lewat File Manager.</p>
+                    <p class="text-xs text-slate-500 mb-5 ml-8">Sistem akan langsung generate file starter — tidak perlu GitHub, tidak perlu konfigurasi apa pun.</p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
@@ -314,21 +311,10 @@
 @push('scripts')
 <script nonce="{{ csp_nonce() }}">
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Template key → framework map & repo URL ---
-    const templateMeta = {
-        html_landing:    { framework: 'html',    repo: 'https://github.com/ryaze-templates/html-landing-page.git',    branch: 'main' },
-        php_basic:       { framework: 'php',     repo: 'https://github.com/ryaze-templates/php-basic-app.git',        branch: 'main' },
-        laravel_starter: { framework: 'laravel', repo: 'https://github.com/ryaze-templates/laravel-starter.git',      branch: 'main' },
-        react_starter:   { framework: 'react',   repo: 'https://github.com/ryaze-templates/react-vite-starter.git',   branch: 'main' },
-        nextjs_starter:  { framework: 'nextjs',  repo: 'https://github.com/ryaze-templates/nextjs-starter.git',       branch: 'main' },
-        node_express:    { framework: 'node',    repo: 'https://github.com/ryaze-templates/node-express-api.git',     branch: 'main' },
-    };
-
     const sectionRepo     = document.getElementById('section_repo');
     const sectionTemplate = document.getElementById('section_template');
     const frameworkSection= document.getElementById('framework_section');
     const repoUrl         = document.getElementById('input_repo_source');
-    const branchInput     = document.getElementById('input_branch');
     const projectName     = document.getElementById('input_project_name');
     const domainPreview   = document.getElementById('domain_preview');
 
@@ -338,38 +324,27 @@ document.addEventListener('DOMContentLoaded', () => {
         domainPreview.textContent = (slug || 'nama-proyek') + '.ryaze.my.id';
     });
 
-    // --- Switch mode ---
+    // --- Toggle antara mode Repo vs Template ---
     document.querySelectorAll('input[name="source_type"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
-            if (e.target.value === 'template') {
-                sectionRepo.classList.add('hidden');
-                sectionTemplate.classList.remove('hidden');
-                frameworkSection.classList.add('hidden');
+            const isTemplate = e.target.value === 'template';
+
+            // Toggle visibility section
+            sectionRepo.classList.toggle('hidden', isTemplate);
+            sectionTemplate.classList.toggle('hidden', !isTemplate);
+            frameworkSection.classList.toggle('hidden', isTemplate);
+
+            // Toggle required attr untuk repo_source
+            if (isTemplate) {
                 repoUrl.removeAttribute('required');
-                // clear framework required
                 document.querySelectorAll('input[name="framework"]').forEach(r => r.removeAttribute('required'));
             } else {
-                sectionRepo.classList.remove('hidden');
-                sectionTemplate.classList.add('hidden');
-                frameworkSection.classList.remove('hidden');
                 repoUrl.setAttribute('required', 'required');
-                document.querySelector('input[name="framework"]').setAttribute('required', 'required');
-                // reset hidden inputs
-                document.getElementById('hidden_template_repo').value = '';
-                document.getElementById('hidden_template_branch').value = 'main';
-                document.getElementById('hidden_template_framework').value = '';
+                const firstFramework = document.querySelector('input[name="framework"]');
+                if (firstFramework) firstFramework.setAttribute('required', 'required');
+                // Reset pilihan template
+                document.querySelectorAll('input[name="template_key"]').forEach(r => r.checked = false);
             }
-        });
-    });
-
-    // --- Template card selected: auto-fill hidden fields ---
-    document.querySelectorAll('input[name="template_key"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            const meta = templateMeta[e.target.value];
-            if (!meta) return;
-            document.getElementById('hidden_template_repo').value     = meta.repo;
-            document.getElementById('hidden_template_branch').value   = meta.branch;
-            document.getElementById('hidden_template_framework').value= meta.framework;
         });
     });
 });

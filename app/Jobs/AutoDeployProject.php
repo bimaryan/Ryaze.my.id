@@ -77,7 +77,20 @@ class AutoDeployProject implements ShouldQueue
             } else {
                 // ── MODE REPOSITORY ──────────────────────────────────────────
                 $this->log($deploy, "\n> Checking repository status...");
+
+                // Paksa git selalu pakai HTTPS (queue worker tidak punya SSH/terminal)
+                $this->exec("git config --global url.'https://github.com/'.insteadOf 'git@github.com:'", $deploy);
+                $this->exec("git config --global url.'https://gitlab.com/'.insteadOf 'git@gitlab.com:'", $deploy);
+                $this->exec("git config --global url.'https://bitbucket.org/'.insteadOf 'git@bitbucket.org:'", $deploy);
+                $this->exec("git config --global core.askPass ''", $deploy);
                 $this->exec("git config --global --add safe.directory '*'", $deploy);
+
+                // Konversi SSH URL ke HTTPS jika user input format git@
+                $repoUrl = $this->project->repo_source;
+                if (preg_match('/^git@([^:]+):(.+)\.git$/', $repoUrl, $m)) {
+                    $repoUrl = "https://{$m[1]}/{$m[2]}.git";
+                    $this->log($deploy, "> Converted SSH URL to HTTPS: {$repoUrl}");
+                }
 
                 $isRepo = is_dir("{$projectDir}/.git");
 
@@ -97,7 +110,7 @@ class AutoDeployProject implements ShouldQueue
 
                     $this->log($deploy, '> Cloning repository...');
                     $this->exec(
-                        "git clone -b {$this->project->branch} {$this->project->repo_source} {$projectDir}",
+                        "GIT_TERMINAL_PROMPT=0 git clone -b {$this->project->branch} {$repoUrl} {$projectDir}",
                         $deploy,
                         true
                     );
