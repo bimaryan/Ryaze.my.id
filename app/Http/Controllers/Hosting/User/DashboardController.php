@@ -115,31 +115,64 @@ class DashboardController extends Controller
         return view('pages.hosting.user.docs');
     }
 
+    // Daftar template yang tersedia beserta metadata-nya
+    private array $availableTemplates = [
+        'html_landing'    => ['framework' => 'html',    'repo' => 'https://github.com/ryaze-templates/html-landing-page.git',    'branch' => 'main'],
+        'php_basic'       => ['framework' => 'php',     'repo' => 'https://github.com/ryaze-templates/php-basic-app.git',        'branch' => 'main'],
+        'laravel_starter' => ['framework' => 'laravel', 'repo' => 'https://github.com/ryaze-templates/laravel-starter.git',      'branch' => 'main'],
+        'react_starter'   => ['framework' => 'react',   'repo' => 'https://github.com/ryaze-templates/react-vite-starter.git',   'branch' => 'main'],
+        'nextjs_starter'  => ['framework' => 'nextjs',  'repo' => 'https://github.com/ryaze-templates/nextjs-starter.git',       'branch' => 'main'],
+        'node_express'    => ['framework' => 'node',    'repo' => 'https://github.com/ryaze-templates/node-express-api.git',     'branch' => 'main'],
+    ];
+
     // Memproses data dan memulai Deploy Otomatis
     public function store(Request $request)
     {
-        $request->validate([
-            'repo_source' => 'required|url',
-            'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-            'framework' => 'required|in:react,nextjs,python,html,laravel,node,php',
-            'branch' => 'required|string|max:50',
-        ]);
+        $sourceType = $request->input('source_type', 'repo');
+
+        if ($sourceType === 'template') {
+            // ── Mode Template ──────────────────────────────────────────────
+            $request->validate([
+                'template_key'      => 'required|in:' . implode(',', array_keys($this->availableTemplates)),
+                'project_name'      => 'required|string|max:50|unique:hosting_projects,project_name',
+            ]);
+
+            $template  = $this->availableTemplates[$request->input('template_key')];
+            $repoSource = $template['repo'];
+            $branch     = $template['branch'];
+            $framework  = $template['framework'];
+        } else {
+            // ── Mode Repository ────────────────────────────────────────────
+            $request->validate([
+                'repo_source'  => 'required|url',
+                'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
+                'framework'    => 'required|in:react,nextjs,python,html,laravel,node,php',
+                'branch'       => 'required|string|max:50',
+            ]);
+
+            $repoSource = $request->input('repo_source');
+            $branch     = $request->input('branch');
+            $framework  = $request->input('framework');
+        }
 
         $subdomain = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->project_name)));
 
         $project = HostingProject::create([
-            'user_id' => Auth::id(),
+            'user_id'      => Auth::id(),
             'project_name' => $request->project_name,
-            'framework' => $request->framework,
-            'repo_source' => $request->repo_source,
-            'branch' => $request->branch,
+            'framework'    => $framework,
+            'repo_source'  => $repoSource,
+            'branch'       => $branch,
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
-            'status' => 'building',
+            'status'       => 'building',
         ]);
 
+        $isTemplate = $sourceType === 'template';
         $project->deployments()->create([
-            'status' => 'queued',
-            'build_logs' => "> Memulai proses Deploy awal...\n> Mengambil repository...",
+            'status'     => 'queued',
+            'build_logs' => $isTemplate
+                ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
+                : "> Memulai proses Deploy awal...\n> Mengambil repository...",
         ]);
 
         AutoDeployProject::dispatch($project);
@@ -227,12 +260,7 @@ class DashboardController extends Controller
     // 3. BARU: Method untuk membaca isi file
     public function readFile(Request $request, $hashid)
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) {
-            abort(404);
-        }
-
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $project = $this->getValidProject($hashid);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 

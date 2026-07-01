@@ -2,11 +2,11 @@
 
 @section('content')
     <x-ui.page-layout>
-        {{-- ── 6. USER HOSTING – Deploy Proyek Baru ───────────────────────── --}}
-        <x-ui.page-header 
-            title="Deploy Proyek Baru" 
-            subtitle="Impor repository Git Anda dan biarkan sistem kami melakukan sisanya." 
-            icon="fa-plus" 
+        {{-- ── USER HOSTING – Deploy Proyek Baru ───────────────────────── --}}
+        <x-ui.page-header
+            title="Deploy Proyek Baru"
+            subtitle="Impor repository Git Anda atau mulai dengan template siap pakai."
+            icon="fa-plus"
             iconColor="emerald">
             <x-slot:actions>
                 <a href="{{ route('user_hosting.dashboard') }}"
@@ -19,109 +19,278 @@
         <div class="mx-auto mt-6">
             <form action="{{ route('user_hosting.store') }}" method="POST" class="space-y-6">
                 @csrf
+                {{-- Hidden fields yang di-isi JS saat pilih template --}}
+                <input type="hidden" name="template_repo" id="hidden_template_repo" value="">
+                <input type="hidden" name="template_branch" id="hidden_template_branch" value="main">
+                <input type="hidden" name="template_framework" id="hidden_template_framework" value="">
 
+                {{-- ── STEP 1: Metode Deploy ── --}}
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-brands fa-github text-xl"></i> Sumber Repository
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm">
+                        <span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                        Pilih Metode Deploy
+                    </h3>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <label class="relative cursor-pointer flex-1">
+                            <input type="radio" name="source_type" value="repo" id="source_repo" class="peer hidden" checked>
+                            <div class="px-5 py-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all flex items-center gap-4">
+                                <div class="w-11 h-11 bg-slate-900 rounded-xl flex items-center justify-center shrink-0">
+                                    <i class="fa-brands fa-github text-xl text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">Git Repository</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Clone dari repo Git Anda sendiri</p>
+                                </div>
+                                <div class="ml-auto shrink-0 w-5 h-5 border-2 border-slate-300 rounded-full peer-checked:border-indigo-600 flex items-center justify-center">
+                                </div>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer flex-1">
+                            <input type="radio" name="source_type" value="template" id="source_template" class="peer hidden">
+                            <div class="px-5 py-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all flex items-center gap-4">
+                                <div class="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-xl text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">Gunakan Template</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Mulai cepat dengan starter code siap pakai</p>
+                                </div>
+                                <span class="ml-auto shrink-0 bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- ── STEP 2a: Sumber Repository (jika pilih repo) ── --}}
+                <div id="section_repo" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm">
+                        <span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                        Sumber Repository
                     </h3>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">URL Git Repository <span
-                                    class="text-rose-500">*</span></label>
-                            <input type="url" name="repo_source" required
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">URL Git Repository <span class="text-rose-500">*</span></label>
+                            <input type="url" name="repo_source" id="input_repo_source"
                                 placeholder="https://github.com/username/my-project"
                                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">Branch</label>
-                            <input type="text" name="branch" value="main" required
+                            <input type="text" name="branch" id="input_branch" value="main"
                                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all">
-                            <p class="text-[11px] text-slate-500 mt-1">Cabang Git yang akan di-build (misal: main, master,
-                                atau production).</p>
+                            <p class="text-[11px] text-slate-500 mt-1">Cabang Git yang akan di-build (misal: main, master, atau production).</p>
                         </div>
                     </div>
                 </div>
 
+                {{-- ── STEP 2b: Pilih Template (jika pilih template) ── --}}
+                <div id="section_template" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hidden">
+                    <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2 text-sm">
+                        <span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                        Pilih Starter Template
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-5 ml-8">Template akan di-clone otomatis, Anda bisa langsung edit file-nya lewat File Manager.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                        {{-- HTML Static --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="html_landing" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-html5 text-xl text-orange-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">HTML Landing Page</p>
+                                        <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">HTML</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Template landing page modern dengan HTML, CSS & JS. Tidak butuh build step, langsung live.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-bolt"></i> Instant deploy
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- PHP Native --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="php_basic" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-php text-xl text-indigo-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">PHP Basic App</p>
+                                        <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">PHP Native</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Starter PHP murni dengan struktur MVC sederhana, koneksi database, dan router dasar.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-bolt"></i> Instant deploy
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Laravel --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="laravel_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-laravel text-xl text-red-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Laravel Starter</p>
+                                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Laravel</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Laravel fresh install dengan Breeze auth, siap pakai sebagai backend API atau web app.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- React --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="react_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-react text-xl text-sky-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">React + Vite</p>
+                                        <span class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-medium">React JS</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">React dengan Vite bundler, TailwindCSS, dan React Router. Starter app siap dikembangkan.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Next.js --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="nextjs_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-node-js text-xl text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Next.js App</p>
+                                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-medium">Next.js</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Next.js dengan App Router dan TailwindCSS. Cocok untuk SSR, SSG, maupun full-stack web app.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Node.js --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="node_express" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-node text-xl text-emerald-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Node.js Express API</p>
+                                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Node.js</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">REST API Express.js dengan struktur MVC, middleware auth JWT, dan koneksi database siap pakai.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                {{-- ── STEP 3: Konfigurasi Proyek ── --}}
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Konfigurasi Proyek</h3>
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm">
+                        <span id="step_config_num" class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                        Konfigurasi Proyek
+                    </h3>
 
                     <div class="mb-5">
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Proyek <span
-                                class="text-rose-500">*</span></label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Proyek <span class="text-rose-500">*</span></label>
                         <input type="text" name="project_name" required placeholder="my-awesome-app"
+                            id="input_project_name"
                             class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-t-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all">
-                        <div
-                            class="bg-slate-100 border border-t-0 border-slate-200 rounded-b-lg px-4 py-2 text-xs text-slate-500 font-medium flex items-center">
-                            <i class="fa-solid fa-link mr-2"></i> Domain: <span
-                                class="text-indigo-600 ml-1">nama-proyek.ryaze.my.id</span>
+                        <div class="bg-slate-100 border border-t-0 border-slate-200 rounded-b-lg px-4 py-2 text-xs text-slate-500 font-medium flex items-center">
+                            <i class="fa-solid fa-link mr-2"></i> Domain: <span id="domain_preview" class="text-indigo-600 ml-1">nama-proyek.ryaze.my.id</span>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-3">Pilih Framework <span
-                                class="text-rose-500">*</span></label>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {{-- Framework (hanya tampil saat mode repo) --}}
+                    <div id="framework_section">
+                        <label class="block text-xs font-bold text-slate-700 mb-3">Pilih Framework <span class="text-rose-500">*</span></label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
 
                             <label class="relative cursor-pointer">
                                 <input type="radio" name="framework" value="html" class="peer hidden" required>
-                                <div
-                                    class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-html5 text-3xl text-orange-500 mb-2"></i>
-                                    <p class="font-bold text-slate-700 text-sm">HTML Statis</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="react" class="peer hidden">
-                                <div
-                                    class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-react text-3xl text-sky-500 mb-2"></i>
-                                    <p class="font-bold text-slate-700 text-sm">React JS</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="nextjs" class="peer hidden">
-                                <div
-                                    class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-node-js text-3xl text-slate-800 mb-2"></i>
-                                    <p class="font-bold text-slate-700 text-sm">Next.js</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="laravel" class="peer hidden">
-                                <div
-                                    class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-laravel text-3xl text-red-500 mb-2"></i>
-                                    <p class="font-bold text-slate-700 text-sm">Laravel</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="python" class="peer hidden">
-                                <div
-                                    class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-python text-3xl text-yellow-500 mb-2"></i>
-                                    <p class="font-bold text-slate-700 text-sm">Python (FastAPI/Flask)</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="node" class="peer hidden">
-                                <div
-                                    class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-node text-3xl text-emerald-500 mb-2"></i>
-                                    <p class="font-bold text-slate-700 text-sm">Node.js Express</p>
+                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                    <i class="fa-brands fa-html5 text-2xl text-orange-500 mb-1.5 block"></i>
+                                    <p class="font-bold text-slate-700 text-xs">HTML Statis</p>
                                 </div>
                             </label>
 
                             <label class="relative cursor-pointer">
                                 <input type="radio" name="framework" value="php" class="peer hidden">
-                                <div
-                                    class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-php text-3xl text-indigo-500 mb-2"></i>
-                                    <p class="font-bold text-slate-700 text-sm">PHP Native</p>
+                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                    <i class="fa-brands fa-php text-2xl text-indigo-500 mb-1.5 block"></i>
+                                    <p class="font-bold text-slate-700 text-xs">PHP Native</p>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="framework" value="laravel" class="peer hidden">
+                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                    <i class="fa-brands fa-laravel text-2xl text-red-500 mb-1.5 block"></i>
+                                    <p class="font-bold text-slate-700 text-xs">Laravel</p>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="framework" value="react" class="peer hidden">
+                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                    <i class="fa-brands fa-react text-2xl text-sky-500 mb-1.5 block"></i>
+                                    <p class="font-bold text-slate-700 text-xs">React JS</p>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="framework" value="nextjs" class="peer hidden">
+                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                    <i class="fa-brands fa-node-js text-2xl text-slate-800 mb-1.5 block"></i>
+                                    <p class="font-bold text-slate-700 text-xs">Next.js</p>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="framework" value="python" class="peer hidden">
+                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                    <i class="fa-brands fa-python text-2xl text-yellow-500 mb-1.5 block"></i>
+                                    <p class="font-bold text-slate-700 text-xs">Python</p>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="framework" value="node" class="peer hidden">
+                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                    <i class="fa-brands fa-node text-2xl text-emerald-500 mb-1.5 block"></i>
+                                    <p class="font-bold text-slate-700 text-xs">Node.js</p>
                                 </div>
                             </label>
 
@@ -141,3 +310,68 @@
         </div>
     </x-ui.page-layout>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Template key → framework map & repo URL ---
+    const templateMeta = {
+        html_landing:    { framework: 'html',    repo: 'https://github.com/ryaze-templates/html-landing-page.git',    branch: 'main' },
+        php_basic:       { framework: 'php',     repo: 'https://github.com/ryaze-templates/php-basic-app.git',        branch: 'main' },
+        laravel_starter: { framework: 'laravel', repo: 'https://github.com/ryaze-templates/laravel-starter.git',      branch: 'main' },
+        react_starter:   { framework: 'react',   repo: 'https://github.com/ryaze-templates/react-vite-starter.git',   branch: 'main' },
+        nextjs_starter:  { framework: 'nextjs',  repo: 'https://github.com/ryaze-templates/nextjs-starter.git',       branch: 'main' },
+        node_express:    { framework: 'node',    repo: 'https://github.com/ryaze-templates/node-express-api.git',     branch: 'main' },
+    };
+
+    const sectionRepo     = document.getElementById('section_repo');
+    const sectionTemplate = document.getElementById('section_template');
+    const frameworkSection= document.getElementById('framework_section');
+    const repoUrl         = document.getElementById('input_repo_source');
+    const branchInput     = document.getElementById('input_branch');
+    const projectName     = document.getElementById('input_project_name');
+    const domainPreview   = document.getElementById('domain_preview');
+
+    // --- Domain preview live ---
+    projectName.addEventListener('input', () => {
+        const slug = projectName.value.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '');
+        domainPreview.textContent = (slug || 'nama-proyek') + '.ryaze.my.id';
+    });
+
+    // --- Switch mode ---
+    document.querySelectorAll('input[name="source_type"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.value === 'template') {
+                sectionRepo.classList.add('hidden');
+                sectionTemplate.classList.remove('hidden');
+                frameworkSection.classList.add('hidden');
+                repoUrl.removeAttribute('required');
+                // clear framework required
+                document.querySelectorAll('input[name="framework"]').forEach(r => r.removeAttribute('required'));
+            } else {
+                sectionRepo.classList.remove('hidden');
+                sectionTemplate.classList.add('hidden');
+                frameworkSection.classList.remove('hidden');
+                repoUrl.setAttribute('required', 'required');
+                document.querySelector('input[name="framework"]').setAttribute('required', 'required');
+                // reset hidden inputs
+                document.getElementById('hidden_template_repo').value = '';
+                document.getElementById('hidden_template_branch').value = 'main';
+                document.getElementById('hidden_template_framework').value = '';
+            }
+        });
+    });
+
+    // --- Template card selected: auto-fill hidden fields ---
+    document.querySelectorAll('input[name="template_key"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const meta = templateMeta[e.target.value];
+            if (!meta) return;
+            document.getElementById('hidden_template_repo').value     = meta.repo;
+            document.getElementById('hidden_template_branch').value   = meta.branch;
+            document.getElementById('hidden_template_framework').value= meta.framework;
+        });
+    });
+});
+</script>
+@endpush

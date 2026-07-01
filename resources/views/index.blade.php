@@ -17,6 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     @include('components.sweetalert')
     @include('components.hot-toast')
+    @stack('scripts')
 </body>
 
 </html>

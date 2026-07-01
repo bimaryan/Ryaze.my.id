@@ -875,7 +875,7 @@
                                 <td class="px-6 py-2.5 truncate max-w-0">
                                     <div class="flex items-center gap-3 min-w-0">
                                         <span class="shrink-0">${icon}</span>
-                                        <a href="javascript:void(0)" class="file-name-link font-semibold
+                                        <a href="#" class="file-name-link font-semibold
                                             ${locked
                                                 ? 'text-slate-400 cursor-not-allowed'
                                                 : 'text-slate-600 hover:text-indigo-600 cursor-pointer'} truncate">
@@ -915,6 +915,7 @@
 
             // Klik nama file/folder
             if (e.target.closest('.file-name-link')) {
+                e.preventDefault();
                 if (isLocked) swAlert('warning', 'File Terlindungi', 'File sistem ini tidak dapat diubah.');
                 else if (isDir) loadFileManager(path);
                 else openFileEditor(path, name);
