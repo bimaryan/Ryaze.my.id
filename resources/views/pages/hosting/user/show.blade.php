@@ -529,7 +529,7 @@
                         @csrf
                         <div class="flex-1">
                             <input type="text" name="domain_name" placeholder="example.com" required
-                                class="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                class="w-full rounded-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
                             Tambah Domain
@@ -596,12 +596,12 @@
                         <div class="md:col-span-1">
                             <label class="block text-xs font-medium text-slate-700 mb-1">Command</label>
                             <input type="text" name="command" placeholder="php artisan schedule:run" required
-                                class="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                class="w-full rounded-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                         <div class="md:col-span-1">
                             <label class="block text-xs font-medium text-slate-700 mb-1">Schedule (Cron Expr)</label>
                             <input type="text" name="schedule_expression" placeholder="* * * * *" required value="* * * * *"
-                                class="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono">
+                                class="w-full rounded-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono">
                         </div>
                         <div class="md:col-span-1">
                             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
