@@ -312,7 +312,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
 document.addEventListener('DOMContentLoaded', () => {
     // --- Template key → framework map & repo URL ---
     const templateMeta = {
