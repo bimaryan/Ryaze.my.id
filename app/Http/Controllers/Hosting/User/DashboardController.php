@@ -178,7 +178,7 @@ class DashboardController extends Controller
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
             'status'       => 'building',
         ]);
-        
+
         \Illuminate\Support\Facades\Log::info('Project created', [
             'id' => $project->id,
             'source_type' => $project->source_type,
@@ -316,7 +316,7 @@ class DashboardController extends Controller
         $newContent = $request->input('content', '');
         $oldSize = file_exists($targetFile) ? filesize($targetFile) : 0;
         $newSize = strlen($newContent);
-        
+
         if ($newSize > $oldSize) {
             if (!$this->checkDiskQuota($project, $newSize - $oldSize)) {
                 return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda sudah habis.'], 403);
@@ -470,7 +470,7 @@ class DashboardController extends Controller
         }
 
         $query = HostingProject::query();
-        
+
         if ($withDeployments) {
             $query->with(['deployments' => function ($q) {
                 $q->latest();
@@ -538,8 +538,83 @@ class DashboardController extends Controller
 
             return back()->with('success', 'Environment variables berhasil disimpan!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
+    }
+
+    // Start Dev Server (React/Next.js/Vite)
+    public function startDevServer($hashid)
+    {
+        $project = $this->getValidProject($hashid);
+
+        // Only allow React/Next.js/Vue frameworks
+        if (!in_array($project->framework, ['react', 'nextjs', 'vue'])) {
+            return back()->with('error', 'Dev Server hanya tersedia untuk React, Next.js, dan Vue!');
+        }
+
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+
+        // Cari port yang tersedia (3000-4000)
+        $port = null;
+        for ($p = 3000; $p <= 4000; $p++) {
+            $connection = @fsockopen('127.0.0.1', $p);
+            if (!is_resource($connection)) {
+                $port = $p;
+                break;
+            }
+            if (is_resource($connection)) fclose($connection);
+        }
+
+        if (!$port) {
+            return back()->with('error', 'Tidak ada port yang tersedia!');
+        }
+
+        // Hapus process lama jika ada
+        if ($project->dev_pid) {
+            exec("kill -9 {$project->dev_pid} 2>/dev/null || true");
+        }
+
+        // Mulai dev server di background dengan pm2 atau nohup
+        $command = "";
+        if ($project->framework === 'react' || $project->framework === 'vue') {
+            $command = "cd {$projectDir} && nohup npm run dev -- --port {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+        } elseif ($project->framework === 'nextjs') {
+            $command = "cd {$projectDir} && nohup npm run dev -- -p {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+        }
+
+        $pid = trim(shell_exec($command));
+
+        if (!$pid) {
+            return back()->with('error', 'Gagal memulai Dev Server!');
+        }
+
+        // Update project
+        $project->update([
+            'dev_mode' => true,
+            'dev_port' => $port,
+            'dev_pid' => $pid
+        ]);
+
+        return back()->with('success', "Dev Server berhasil dimulai di port {$port}!");
+    }
+
+    // Stop Dev Server
+    public function stopDevServer($hashid)
+    {
+        $project = $this->getValidProject($hashid);
+
+        if ($project->dev_pid) {
+            exec("kill -9 {$project->dev_pid} 2>/dev/null || true");
+        }
+
+        $project->update([
+            'dev_mode' => false,
+            'dev_port' => null,
+            'dev_pid' => null
+        ]);
+
+        return back()->with('success', 'Dev Server berhasil dihentikan!');
     }
 
     // Memproses Redeploy
@@ -752,7 +827,7 @@ class DashboardController extends Controller
     {
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
-        
+
         if (!$projectRootDir || !is_dir($projectRootDir)) {
             return true;
         }
@@ -772,7 +847,7 @@ class DashboardController extends Controller
         if ($totalBytes > $limitBytes) {
             return false;
         }
-        
+
         return true;
     }
 }
