@@ -61,7 +61,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-center flex items-center justify-center gap-2">
-                                <button type="button" onclick="openEditStorageModal('{{ $project->hashid }}', '{{ $project->project_name }}', {{ $project->storage_limit_mb }})" class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 transition-colors tooltip" title="Ubah Limit Storage">
+                                <button type="button" class="btn-edit-storage w-8 h-8 rounded-lg flex items-center justify-center text-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 transition-colors tooltip" title="Ubah Limit Storage" data-modal-target="editStorageModal" data-modal-toggle="editStorageModal" data-hashid="{{ $project->hashid }}" data-name="{{ $project->project_name }}" data-limit="{{ $project->storage_limit_mb }}">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <a href="{{ route('admin_hosting.projects') }}" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors tooltip" title="Detail Proyek">
@@ -94,7 +94,7 @@
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative" onclick="event.stopPropagation()">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 class="text-lg font-bold text-slate-800">Ubah Limit Storage</h3>
-                <button type="button" onclick="document.getElementById('editStorageModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                <button type="button" data-modal-hide="editStorageModal" class="text-slate-400 hover:text-slate-600">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -112,7 +112,7 @@
                     </div>
                 </div>
                 <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                    <button type="button" onclick="document.getElementById('editStorageModal').classList.add('hidden')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-lg shadow-sm">Batal</button>
+                    <button type="button" data-modal-hide="editStorageModal" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-lg shadow-sm">Batal</button>
                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm">Simpan Perubahan</button>
                 </div>
             </form>
@@ -120,13 +120,16 @@
     </div>
 </div>
 
-<script>
-    function openEditStorageModal(hashid, projectName, currentLimit) {
-        const form = document.getElementById('editStorageForm');
-        form.action = `/admin/hosting/storage/${hashid}`;
-        document.getElementById('storageProjectName').textContent = projectName;
-        document.getElementById('storageLimitInput').value = currentLimit;
-        document.getElementById('editStorageModal').classList.remove('hidden');
-    }
+<script nonce="{{ app('csp_nonce') ?? '' }}">
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.btn-edit-storage').forEach(button => {
+            button.addEventListener('click', function() {
+                const form = document.getElementById('editStorageForm');
+                form.action = `/admin/hosting/storage/${this.dataset.hashid}`;
+                document.getElementById('storageProjectName').textContent = this.dataset.name;
+                document.getElementById('storageLimitInput').value = this.dataset.limit;
+            });
+        });
+    });
 </script>
 @endsection

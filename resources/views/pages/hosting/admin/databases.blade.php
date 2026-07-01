@@ -13,7 +13,7 @@
             </div>
         </div>
         <div>
-            <button onclick="document.getElementById('createDbModal').classList.remove('hidden')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-colors flex items-center gap-2">
+            <button data-modal-target="createDbModal" data-modal-toggle="createDbModal" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-colors flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Buat Database
             </button>
         </div>
@@ -52,10 +52,10 @@
                                 {{ $db->created_at->format('d M Y') }}
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus database ini? Semua data di dalamnya akan hilang permanen!');">
+                                <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block" id="delete-form-{{ $db->hashid }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors tooltip" title="Hapus Database">
+                                    <button type="button" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
                                         <i class="fa-regular fa-trash-can"></i>
                                     </button>
                                 </form>
@@ -86,7 +86,7 @@
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative" onclick="event.stopPropagation()">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 class="text-lg font-bold text-slate-800">Buat Database Baru</h3>
-                <button type="button" onclick="document.getElementById('createDbModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                <button type="button" data-modal-hide="createDbModal" class="text-slate-400 hover:text-slate-600">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -117,11 +117,36 @@
                     </div>
                 </div>
                 <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                    <button type="button" onclick="document.getElementById('createDbModal').classList.add('hidden')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-lg shadow-sm">Batal</button>
+                    <button type="button" data-modal-hide="createDbModal" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-lg shadow-sm">Batal</button>
                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm">Buat Database</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script nonce="{{ app('csp_nonce') ?? '' }}">
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function() {
+                const hashid = this.dataset.hashid;
+                Swal.fire({
+                    title: 'Yakin ingin menghapus?',
+                    text: "Semua data di dalam database ini akan hilang permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#94a3b8',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + hashid).submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
 @endsection
