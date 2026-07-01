@@ -8,8 +8,7 @@
     <title>LUPA PASSWORD - RYAZE.MY.ID</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script nonce="{{ app('csp_nonce') ?? '' }}"></script>
-    <script nonce="{{ app('csp_nonce') ?? '' }}"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer nonce="{{ app('csp_nonce') ?? '' }}"></script>
 </head>
 
 <body class="bg-slate-50 font-sans antialiased text-slate-900">
