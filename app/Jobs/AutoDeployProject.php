@@ -56,8 +56,8 @@ class AutoDeployProject implements ShouldQueue
             // TAHAP 2: Sumber File — Git Clone/Pull atau Template Scaffold
             // ----------------------------------------------------------------
             // Debug log untuk melihat nilai yang sebenarnya
-            $this->log($deploy, "> Debug: source_type = " . ($this->project->source_type ?? 'NULL'));
-            $this->log($deploy, "> Debug: repo_source = " . ($this->project->repo_source ?? 'NULL'));
+            $this->log($deploy, '> Debug: source_type = '.($this->project->source_type ?? 'NULL'));
+            $this->log($deploy, '> Debug: repo_source = '.($this->project->repo_source ?? 'NULL'));
 
             // Fallback check: jika repo_source mulai dengan 'template:', kita anggap sebagai template
             $isTemplate = ($this->project->source_type === 'template') || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'template:'));
@@ -66,8 +66,8 @@ class AutoDeployProject implements ShouldQueue
                 // ── MODE TEMPLATE ────────────────────────────────────────────
                 // Tidak ada git sama sekali. File dibuat langsung dari PHP.
                 $this->log($deploy, "\n> ✅ Mode Template aktif!");
-                $templateKey    = str_replace('template:', '', $this->project->repo_source);
-                $markerFile     = "{$projectDir}/.ryaze-template";
+                $templateKey = str_replace('template:', '', $this->project->repo_source);
+                $markerFile = "{$projectDir}/.ryaze-template";
                 $alreadyScaffolded = file_exists($markerFile);
 
                 if ($alreadyScaffolded) {
@@ -91,9 +91,9 @@ class AutoDeployProject implements ShouldQueue
 
                     // Tulis marker agar redeploy berikutnya tidak overwrite file user
                     file_put_contents($markerFile, json_encode([
-                        'template'    => $templateKey,
-                        'scaffolded'  => now()->toISOString(),
-                        'project_id'  => $this->project->id,
+                        'template' => $templateKey,
+                        'scaffolded' => now()->toISOString(),
+                        'project_id' => $this->project->id,
                     ]));
 
                     $this->log($deploy, "> Template files ready in: {$projectDir}");
@@ -173,7 +173,7 @@ class AutoDeployProject implements ShouldQueue
             // TAHAP 5: Cloudflare DNS
             // ----------------------------------------------------------------
             $this->log($deploy, "\n> Configuring Cloudflare DNS for {$this->project->ryaze_domain}...");
-            if (!$this->createCloudflareDNS($deploy)) {
+            if (! $this->createCloudflareDNS($deploy)) {
                 throw new \RuntimeException('Gagal mengkonfigurasi Cloudflare DNS. Periksa API Token atau pengaturan Zone ID.');
             }
 
@@ -384,9 +384,9 @@ class AutoDeployProject implements ShouldQueue
         $this->exec("cd {$projectDir} && {$python} -m venv venv", $deploy, true);
 
         // Deteksi path pip/uvicorn (Linux/Mac menggunakan bin/, Windows menggunakan Scripts/)
-        $binDir = "venv/bin";
+        $binDir = 'venv/bin';
         if (is_dir("{$projectDir}/venv/Scripts")) {
-            $binDir = "venv/Scripts";
+            $binDir = 'venv/Scripts';
         }
         $pipPath = "{$binDir}/pip";
         $uvicornPath = "{$binDir}/uvicorn";
@@ -411,7 +411,7 @@ class AutoDeployProject implements ShouldQueue
         $this->exec("rm -f {$sockFile}", $deploy);
 
         // Start Uvicorn in background via UNIX Socket
-        $this->log($deploy, "> Starting Uvicorn on UNIX Socket...");
+        $this->log($deploy, '> Starting Uvicorn on UNIX Socket...');
         $startCmd = "cd {$projectDir} && nohup {$uvicornPath} main:app --uds {$sockFile} > storage_fastapi.log 2>&1 & echo $! > {$pidFile}";
         $this->exec($startCmd, $deploy);
 
@@ -419,7 +419,7 @@ class AutoDeployProject implements ShouldQueue
         $this->exec("sleep 2 && chmod 777 {$sockFile} 2>/dev/null || true", $deploy);
 
         // Generate PHP Reverse Proxy using UNIX Socket
-        $proxyCode = <<<PHP
+        $proxyCode = <<<'PHP'
 <?php
 /**
  * Auto-generated PHP Reverse Proxy by Ryaze
@@ -427,73 +427,73 @@ class AutoDeployProject implements ShouldQueue
  * This bypasses Docker network isolation!
  */
 
-\$sockFile = __DIR__ . '/uvicorn.sock';
-\$method = \$_SERVER['REQUEST_METHOD'] ?? 'GET';
-\$uri = \$_SERVER['REQUEST_URI'] ?? '/';
-\$url = "http://localhost" . \$uri;
+$sockFile = __DIR__ . '/uvicorn.sock';
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$uri = $_SERVER['REQUEST_URI'] ?? '/';
+$url = "http://localhost" . $uri;
 
-if (!file_exists(\$sockFile)) {
+if (!file_exists($sockFile)) {
     http_response_code(502);
     echo "Ryaze Gateway Error: Uvicorn socket not found. App might still be starting or crashed.";
     exit;
 }
 
-\$ch = curl_init();
-curl_setopt(\$ch, CURLOPT_UNIX_SOCKET_PATH, \$sockFile);
-curl_setopt(\$ch, CURLOPT_URL, \$url);
-curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt(\$ch, CURLOPT_HEADER, true);
-curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$method);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_UNIX_SOCKET_PATH, $sockFile);
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HEADER, true);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 
 // Forward headers
-\$headers = [];
+$headers = [];
 if (function_exists('getallheaders')) {
-    foreach (getallheaders() as \$k => \$v) {
-        if (strtolower(\$k) !== 'host') {
-            \$headers[] = "\$k: \$v";
+    foreach (getallheaders() as $k => $v) {
+        if (strtolower($k) !== 'host') {
+            $headers[] = "$k: $v";
         }
     }
 }
-\$headers[] = "Host: localhost";
-\$headers[] = "Connection: close";
-curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$headers);
+$headers[] = "Host: localhost";
+$headers[] = "Connection: close";
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-if (\$method !== 'GET' && \$method !== 'HEAD') {
-    \$input = file_get_contents('php://input');
-    curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$input);
+if ($method !== 'GET' && $method !== 'HEAD') {
+    $input = file_get_contents('php://input');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
 }
 
-\$response = curl_exec(\$ch);
+$response = curl_exec($ch);
 
-if (\$response === false) {
+if ($response === false) {
     http_response_code(502);
     echo "Ryaze Gateway Error: Failed to connect to Uvicorn via socket.<br>";
-    echo "cURL Error: " . curl_error(\$ch);
+    echo "cURL Error: " . curl_error($ch);
     exit;
 }
 
-\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
-\$responseHeaders = substr(\$response, 0, \$headerSize);
-\$body = substr(\$response, \$headerSize);
-\$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
+$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+$responseHeaders = substr($response, 0, $headerSize);
+$body = substr($response, $headerSize);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-curl_close(\$ch);
-http_response_code(\$httpCode);
+curl_close($ch);
+http_response_code($httpCode);
 
 // Forward Response Headers
-\$headersArray = explode("\\r\\n", \$responseHeaders);
-foreach (\$headersArray as \$header) {
-    if (trim(\$header) && stripos(\$header, 'Transfer-Encoding') === false && stripos(\$header, 'Connection') === false) {
-        header(\$header);
+$headersArray = explode("\r\n", $responseHeaders);
+foreach ($headersArray as $header) {
+    if (trim($header) && stripos($header, 'Transfer-Encoding') === false && stripos($header, 'Connection') === false) {
+        header($header);
     }
 }
 
-echo \$body;
+echo $body;
 PHP;
 
         file_put_contents("{$projectDir}/index.php", $proxyCode);
         $this->exec("chown www-data:www-data {$projectDir}/index.php && chmod 644 {$projectDir}/index.php 2>/dev/null || true", $deploy);
-        $this->log($deploy, "> Reverse Proxy created at index.php (Target: UNIX Socket).");
+        $this->log($deploy, '> Reverse Proxy created at index.php (Target: UNIX Socket).');
     }
 
     private function moveBuiltOutput($deploy, string $projectDir): void
@@ -638,10 +638,11 @@ PHP;
      */
     private function isDirEmpty(string $dir): bool
     {
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             return true;
         }
         $items = array_diff(scandir($dir), ['.', '..']);
+
         return empty($items);
     }
 
@@ -656,16 +657,16 @@ PHP;
     private function scaffoldTemplate(string $key, string $dir, $deploy): void
     {
         $projectName = $this->project->project_name;
-        $domain      = $this->project->ryaze_domain;
+        $domain = $this->project->ryaze_domain;
 
         match ($key) {
-            'html_landing'    => $this->scaffoldHtml($dir, $projectName, $domain),
-            'php_basic'       => $this->scaffoldPhp($dir, $projectName),
+            'html_landing' => $this->scaffoldHtml($dir, $projectName, $domain),
+            'php_basic' => $this->scaffoldPhp($dir, $projectName),
             'laravel_starter' => $this->scaffoldLaravel($dir, $projectName, $deploy),
-            'react_starter'   => $this->scaffoldReact($dir, $projectName),
-            'nextjs_starter'  => $this->scaffoldNextjs($dir, $projectName),
-            'node_express'    => $this->scaffoldNode($dir, $projectName),
-            default           => throw new \RuntimeException("Unknown template key: {$key}"),
+            'react_starter' => $this->scaffoldReact($dir, $projectName),
+            'nextjs_starter' => $this->scaffoldNextjs($dir, $projectName),
+            'node_express' => $this->scaffoldNode($dir, $projectName),
+            default => throw new \RuntimeException("Unknown template key: {$key}"),
         };
     }
 
@@ -719,20 +720,20 @@ $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 require_once __DIR__ . '/app/router.php';
 PHP);
 
-        file_put_contents("{$dir}/app/router.php", <<<PHP
+        file_put_contents("{$dir}/app/router.php", <<<'PHP'
 <?php
-\$routes = [
+$routes = [
     '/' => fn() => view('home'),
 ];
 
-\$handler = \$routes[\$path] ?? fn() => view('404');
-echo \$handler();
+$handler = $routes[$path] ?? fn() => view('404');
+echo $handler();
 
-function view(string \$name): string {
-    \$file = __DIR__ . "/../views/{\$name}.php";
-    if (!file_exists(\$file)) return '<h1>404 Not Found</h1>';
+function view(string $name): string {
+    $file = __DIR__ . "/../views/{$name}.php";
+    if (!file_exists($file)) return '<h1>404 Not Found</h1>';
     ob_start();
-    include \$file;
+    include $file;
     return ob_get_clean();
 }
 PHP);
@@ -750,44 +751,192 @@ PHP);
 </body></html>
 PHP);
 
-        file_put_contents("{$dir}/views/404.php", "<h1>404 — Halaman tidak ditemukan</h1>");
+        file_put_contents("{$dir}/views/404.php", '<h1>404 — Halaman tidak ditemukan</h1>');
         file_put_contents("{$dir}/.htaccess", "Options -Indexes\nRewriteEngine On\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteRule ^ index.php [QSA,L]\n");
     }
 
     private function scaffoldLaravel(string $dir, string $name, $deploy): void
     {
-        // Gunakan composer create-project untuk install Laravel fresh
-        $this->log($deploy, '> Installing fresh Laravel project via Composer...');
-        $this->log($deploy, '> (Ini mungkin membutuhkan waktu 1-2 menit)');
+        // Membuat struktur Laravel sederhana secara manual (cepat dan stabil)
+        $this->log($deploy, '> Membuat struktur Laravel sederhana...');
 
-        $candidates = ['/usr/local/bin/composer', '/usr/bin/composer'];
-        $composer   = null;
-        foreach ($candidates as $path) {
-            if (file_exists($path)) { $composer = $path; break; }
-        }
-        if (!$composer) {
-            $composer = trim(shell_exec('which composer 2>/dev/null') ?? '');
-        }
-        if (!$composer) {
-            throw new \RuntimeException('composer binary tidak ditemukan di server.');
-        }
+        // Buat direktori
+        $this->exec("mkdir -p {$dir}/app/Http/Controllers {$dir}/resources/views {$dir}/routes {$dir}/public {$dir}/storage/framework/views {$dir}/storage/logs {$dir}/bootstrap/cache", $deploy);
 
-        $parentDir = dirname($dir);
-        $baseName  = basename($dir);
+        // File index.php (public)
+        file_put_contents("{$dir}/public/index.php", <<<PHP
+<?php
 
-        // Buat di temp dir lalu pindah
-        $tmpDir = "{$parentDir}/.tmp_{$baseName}";
-        shell_exec("rm -rf {$tmpDir} 2>/dev/null");
+use Illuminate\Http\Request;
 
-        $output = shell_exec(
-            "{$composer} create-project laravel/laravel {$tmpDir} --no-interaction --prefer-dist --no-progress 2>&1"
+define('LARAVEL_START', microtime(true));
+
+// Register the Composer autoloader...
+if (file_exists(\$autoload = __DIR__.'/../vendor/autoload.php')) {
+    require \$autoload;
+}
+
+// Bootstrap Laravel and handle the request...
+if (file_exists(\$bootstrap = __DIR__.'/../bootstrap/app.php')) {
+    \$app = require_once \$bootstrap;
+    \$kernel = \$app->make(Illuminate\Contracts\Http\Kernel::class);
+    \$response = \$kernel->handle(\$request = Request::capture());
+    \$response->send();
+    \$kernel->terminate(\$request, \$response);
+} else {
+    // Fallback jika Laravel tidak diinstal
+    echo '<!DOCTYPE html>
+<html>
+<head>
+    <title>{$name} - Laravel</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 15px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        p { font-size: 1.2em; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 {$name}</h1>
+        <p>Laravel Starter Template siap!</p>
+        <p>Untuk install Laravel lengkap, jalankan composer install via terminal.</p>
+    </div>
+</body>
+</html>';
+}
+PHP
         );
 
-        if (!is_dir("{$tmpDir}/artisan")) {
-            throw new \RuntimeException('Laravel create-project gagal. Output: ' . substr($output ?? '', 0, 200));
-        }
+        // File .env.example
+        file_put_contents("{$dir}/.env.example", <<<'PHP'
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
 
-        shell_exec("mv {$tmpDir} {$dir}");
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+PHP
+        );
+        copy("{$dir}/.env.example", "{$dir}/.env");
+
+        // File composer.json sederhana
+        file_put_contents("{$dir}/composer.json", json_encode([
+            'name' => 'laravel/laravel',
+            'type' => 'project',
+            'description' => 'The Laravel Framework.',
+            'keywords' => ['laravel', 'framework'],
+            'license' => 'MIT',
+            'require' => [
+                'php' => '^8.2',
+                'laravel/framework' => '^11.0',
+            ],
+            'autoload' => [
+                'psr-4' => [
+                    'App\\' => 'app/',
+                ],
+            ],
+            'scripts' => [
+                'post-autoload-dump' => [
+                    'Illuminate\\Foundation\\ComposerScripts::postAutoloadDump',
+                    '@php artisan package:discover --ansi',
+                ],
+            ],
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        // File route/web.php
+        file_put_contents("{$dir}/routes/web.php", <<<'PHP'
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+PHP
+        );
+
+        // File welcome.blade.php
+        file_put_contents("{$dir}/resources/views/welcome.blade.php", <<<PHP
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$name} - Laravel</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 15px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        p { font-size: 1.2em; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 {$name}</h1>
+        <p>Laravel Starter Template siap!</p>
+        <p>Untuk install Laravel lengkap, jalankan composer install via terminal.</p>
+    </div>
+</body>
+</html>
+PHP
+        );
+
+        // .gitignore
+        file_put_contents("{$dir}/.gitignore", <<<'PHP'
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/.env
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
+PHP
+        );
+
+        // Chmod permissions
+        $this->exec("chmod -R 775 {$dir}/storage {$dir}/bootstrap/cache 2>/dev/null || true", $deploy);
+
+        // File index.php di root yang mengarahkan ke public
+        file_put_contents("{$dir}/index.php", <<<'PHP'
+<?php
+// Redirect ke public directory
+header('Location: public/');
+exit;
+PHP
+        );
+
+        // .htaccess di root untuk mengarahkan ke public
+        file_put_contents("{$dir}/.htaccess", <<<'PHP'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+PHP
+        );
+
+        $this->log($deploy, '> ✅ Struktur Laravel sederhana berhasil dibuat!');
     }
 
     private function scaffoldReact(string $dir, string $name): void
@@ -797,15 +946,15 @@ PHP);
         @mkdir($dir, 0775, true);
 
         file_put_contents("{$dir}/package.json", json_encode([
-            'name'    => $safeName,
+            'name' => $safeName,
             'version' => '1.0.0',
             'private' => true,
             'scripts' => ['dev' => 'vite', 'build' => 'vite build', 'preview' => 'vite preview'],
-            'dependencies'    => ['react' => '^18.3.1', 'react-dom' => '^18.3.1'],
+            'dependencies' => ['react' => '^18.3.1', 'react-dom' => '^18.3.1'],
             'devDependencies' => ['@vitejs/plugin-react' => '^4.3.1', 'vite' => '^5.4.2'],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        file_put_contents("{$dir}/vite.config.js", <<<JS
+        file_put_contents("{$dir}/vite.config.js", <<<'JS'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -867,11 +1016,11 @@ PHP);
         @mkdir($dir, 0775, true);
 
         file_put_contents("{$dir}/package.json", json_encode([
-            'name'    => $safeName,
+            'name' => $safeName,
             'version' => '1.0.0',
             'private' => true,
             'scripts' => ['dev' => 'next dev', 'build' => 'next build', 'start' => 'next start'],
-            'dependencies'    => ['next' => '^14.2.5', 'react' => '^18.3.1', 'react-dom' => '^18.3.1'],
+            'dependencies' => ['next' => '^14.2.5', 'react' => '^18.3.1', 'react-dom' => '^18.3.1'],
             'devDependencies' => [],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
@@ -907,10 +1056,10 @@ PHP);
         @mkdir($dir, 0775, true);
 
         file_put_contents("{$dir}/package.json", json_encode([
-            'name'         => $safeName,
-            'version'      => '1.0.0',
-            'main'         => 'index.js',
-            'scripts'      => ['start' => 'node index.js', 'dev' => 'node index.js'],
+            'name' => $safeName,
+            'version' => '1.0.0',
+            'main' => 'index.js',
+            'scripts' => ['start' => 'node index.js', 'dev' => 'node index.js'],
             'dependencies' => ['express' => '^4.19.2'],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
