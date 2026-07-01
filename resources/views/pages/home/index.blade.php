@@ -514,7 +514,7 @@
                                 Sistem Peminjaman Lab Kesehatan
                             </h4>
                         </a>
-                        <p class="text-slate-500 line-clamp-2 mb-4">Aplikasi manajemen jadwal & inventaris untuk Universitas ternama.</p>
+                        <p class="text-slate-500 line-clamp-2 mb-4">Aplikasi peminajaman bahan dan alat laboratorium adalah sebuah sistem berbasis teknologi yang dirancang untuk mempermudah proses peminjaman, pengembalian, serta pengelolaan inventaris laboratorium secara digital. Aplikasi ini memungkinkan pengguna, baik mahasiswa maupun dosen, untuk memesan, meminjam, dan mengembalikan alat serta bahan laboratorium dengan mudah melalui platform yang terhubung secara online.</p>
                         
                         <a href="https://github.com/bimaryan/silk" target="_blank" class="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
                             <i class="fa-brands fa-github text-lg mr-2"></i> Repository
