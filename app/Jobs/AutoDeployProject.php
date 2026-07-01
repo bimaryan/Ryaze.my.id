@@ -549,7 +549,7 @@ HTACCESS
 
         file_put_contents("{$dir}/public/index.php", <<<PHP
 <?php
-// Fallback HTML jika Laravel tidak diinstal
+// Laravel Starter Template dari Ryaze - Sudah siap pakai!
 echo '<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -563,13 +563,30 @@ echo '<!DOCTYPE html>
         p { color: #6b7280; line-height: 1.8; margin-bottom: 24px; }
         .watermark { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 13px; }
         .watermark a { color: #667eea; text-decoration: none; font-weight: 600; }
+        .info-box { background: #f0fdf4; border: 1px solid #22c55e; border-radius: 10px; padding: 20px; margin-top: 20px; text-align: left; }
+        .info-box h3 { color: #166534; margin-bottom: 10px; font-size: 1.2rem; }
+        .info-box ul { margin-left: 20px; color: #4b5563; }
+        .info-box li { margin: 5px 0; }
     </style>
 </head>
 <body>
     <div class="card">
         <h1>🚀 {$name}</h1>
-        <p>Laravel Starter Template siap!</p>
-        <p><small>Untuk install Laravel lengkap dengan Breeze, jalankan: <code>composer create-project laravel/laravel .</code> di terminal</small></p>
+        <p>Laravel Starter Template dari Ryaze sudah siap!</p>
+
+        <div class="info-box">
+            <h3>Struktur Sudah Tersedia:</h3>
+            <ul>
+                <li><code>app/Http/Controllers/</code> - Tempat Controller</li>
+                <li><code>resources/views/</code> - Tempat View</li>
+                <li><code>routes/web.php</code> - File Routing</li>
+                <li><code>public/</code> - Public directory (document root)</li>
+                <li><code>storage/</code> - Storage file dan logs</li>
+                <li><code>bootstrap/cache/</code> - Cache Laravel</li>
+            </ul>
+        </div>
+
+        <p style="margin-top: 20px;"><small>Kamu bisa langsung mulai edit file sesuai kebutuhan! Jika ingin install Laravel lengkap, hapus semua file di direktori ini terlebih dahulu.</small></p>
     </div>
     <div class="watermark">
         Power by <a href="https://ryaze.my.id" target="_blank">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com">bimaryan046@gmail.com</a>
