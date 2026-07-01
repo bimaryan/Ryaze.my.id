@@ -129,6 +129,10 @@ class DashboardController extends Controller
     public function store(Request $request)
     {
         $sourceType = $request->input('source_type', 'repo');
+        \Illuminate\Support\Facades\Log::info('Store method called', [
+            'source_type' => $sourceType,
+            'all_input' => $request->all()
+        ]);
 
         if ($sourceType === 'template') {
             // ── Mode Template ──────────────────────────────────────────────
@@ -169,6 +173,12 @@ class DashboardController extends Controller
             'source_type'  => $sourceType,
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
             'status'       => 'building',
+        ]);
+        
+        \Illuminate\Support\Facades\Log::info('Project created', [
+            'id' => $project->id,
+            'source_type' => $project->source_type,
+            'repo_source' => $project->repo_source
         ]);
 
         $isTemplate = $sourceType === 'template';

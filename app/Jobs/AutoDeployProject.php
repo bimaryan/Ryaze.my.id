@@ -55,11 +55,17 @@ class AutoDeployProject implements ShouldQueue
             // ----------------------------------------------------------------
             // TAHAP 2: Sumber File — Git Clone/Pull atau Template Scaffold
             // ----------------------------------------------------------------
+            // Debug log untuk melihat nilai yang sebenarnya
+            $this->log($deploy, "> Debug: source_type = " . ($this->project->source_type ?? 'NULL'));
+            $this->log($deploy, "> Debug: repo_source = " . ($this->project->repo_source ?? 'NULL'));
+
             // Fallback check: jika repo_source mulai dengan 'template:', kita anggap sebagai template
-            $isTemplate = ($this->project->source_type === 'template') || str_starts_with($this->project->repo_source, 'template:');
+            $isTemplate = ($this->project->source_type === 'template') || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'template:'));
+
             if ($isTemplate) {
                 // ── MODE TEMPLATE ────────────────────────────────────────────
                 // Tidak ada git sama sekali. File dibuat langsung dari PHP.
+                $this->log($deploy, "\n> ✅ Mode Template aktif!");
                 $templateKey    = str_replace('template:', '', $this->project->repo_source);
                 $markerFile     = "{$projectDir}/.ryaze-template";
                 $alreadyScaffolded = file_exists($markerFile);
