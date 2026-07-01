@@ -189,6 +189,12 @@ class AutoDeployProject implements ShouldQueue
             false
         );
 
+        // Berikan executable permission ke node_modules/.bin
+        if (is_dir("{$projectDir}/node_modules/.bin")) {
+            $this->exec("chmod -R +x {$projectDir}/node_modules/.bin 2>&1 || true", $deploy);
+            $this->log($deploy, "> Executable permission di-set untuk node_modules/.bin");
+        }
+
         if (in_array($framework, ['react', 'nextjs', 'vue'])) {
             $this->log($deploy, '> Running build script...');
             $this->exec(
@@ -281,13 +287,24 @@ class AutoDeployProject implements ShouldQueue
         $outputDir = "{$projectDir}/{$outputDirName}";
         $this->log($deploy, "> Output folder found: {$outputDir}");
 
-        $this->exec("cp -a {$outputDir}/. {$projectDir}/ 2>/dev/null || true", $deploy, false);
+        // Hapus file lama di root terlebih dahulu sebelum memindahkan yang baru
+        $this->log($deploy, "> Menghapus file build lama di root...");
+        $this->exec("cd {$projectDir} && rm -f index.html 2>/dev/null || true", $deploy);
+        $this->exec("cd {$projectDir} && rm -rf assets 2>/dev/null || true", $deploy);
+        $this->exec("cd {$projectDir} && rm -f *.ico 2>/dev/null || true", $deploy);
+        $this->exec("cd {$projectDir} && rm -f manifest.json 2>/dev/null || true", $deploy);
+
+        // Copy file baru ke root
+        $this->log($deploy, "> Memindahkan file build baru ke root...");
+        $this->exec("cp -a {$outputDir}/. {$projectDir}/ 2>&1", $deploy, false);
+
+        // Hapus direktori output
         $this->exec("rm -rf {$outputDir} 2>/dev/null || true", $deploy);
 
         if (!file_exists("{$projectDir}/index.html")) {
             $this->log($deploy, '> [WARNING] index.html not found after move.');
         } else {
-            $this->log($deploy, '> Build output moved and ready.');
+            $this->log($deploy, '> Build output berhasil dipindahkan dan di-update!');
         }
     }
 
@@ -741,6 +758,26 @@ CSS
         );
 
         file_put_contents("{$dir}/.gitignore", "node_modules\ndist\n.env\n");
+        file_put_contents("{$dir}/README.md", <<<MD
+# {$name} - React + Vite
+
+## Cara Update Tampilan:
+1. Edit file di folder `src/` (misalnya `src/App.jsx`)
+2. Jalankan `npm run build` di terminal
+3. Tampilan akan otomatis ter-update!
+
+## Struktur Folder:
+- `src/main.jsx` - Entry point React
+- `src/App.jsx` - Komponen utama (edit ini untuk ubah tampilan)
+- `src/index.css` - File CSS (include Tailwind)
+- `index.html` - File HTML utama
+- `vite.config.js` - Konfigurasi Vite
+- `tailwind.config.js` - Konfigurasi Tailwind
+
+## Power by Ryaze.my.id
+Email: bimaryan046@gmail.com
+MD
+        );
     }
 
     private function scaffoldNextjs(string $dir, string $name): void
@@ -807,6 +844,25 @@ CSS
         );
 
         file_put_contents("{$dir}/.gitignore", "node_modules\n.next\nout\n.env\n");
+        file_put_contents("{$dir}/README.md", <<<MD
+# {$name} - Next.js
+
+## Cara Update Tampilan:
+1. Edit file di folder `app/` (misalnya `app/page.js`)
+2. Jalankan `npm run build` di terminal
+3. Tampilan akan otomatis ter-update!
+
+## Struktur Folder:
+- `app/page.js` - Halaman utama (edit ini untuk ubah tampilan)
+- `app/layout.js` - Layout global
+- `app/globals.css` - File CSS global (include Tailwind)
+- `next.config.js` - Konfigurasi Next.js
+- `tailwind.config.js` - Konfigurasi Tailwind
+
+## Power by Ryaze.my.id
+Email: bimaryan046@gmail.com
+MD
+        );
     }
 
     private function scaffoldNode(string $dir, string $name): void
