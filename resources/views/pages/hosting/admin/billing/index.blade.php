@@ -62,7 +62,13 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <button onclick="openVerifyModal('{{ $payment->hashid }}', '{{ $payment->invoice_number }}', '{{ $payment->status }}')" class="px-3 py-1.5 text-xs font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg transition">
+                                    <button type="button" 
+                                            class="btn-open-verify px-3 py-1.5 text-xs font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg transition"
+                                            data-hashid="{{ $payment->hashid }}"
+                                            data-invoice="{{ $payment->invoice_number }}"
+                                            data-status="{{ $payment->status }}">
+                                        Verifikasi
+                                    </button>
                                         Update Status
                                     </button>
                                 </td>
@@ -84,7 +90,7 @@
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden scale-95 transition-transform duration-300 transform">
             <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <h3 class="text-lg font-bold text-slate-800">Update Status Tagihan</h3>
-                <button onclick="closeVerifyModal()" class="text-slate-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50">
+                <button type="button" class="btn-close-verify text-slate-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -101,7 +107,7 @@
                     </select>
                 </div>
                 <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
-                    <button type="button" onclick="closeVerifyModal()" class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                    <button type="button" class="btn-close-verify px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
                         Batal
                     </button>
                     <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm transition-all">
@@ -113,30 +119,50 @@
     </div>
 
     <script nonce="{{ app('csp_nonce') ?? '' }}">
-        function openVerifyModal(id, invoice, status) {
+        document.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('verifyModal');
-            const inner = modal.querySelector('div');
+            const inner = modal.querySelector('div.bg-white');
             const form = document.getElementById('verifyForm');
-            
-            form.action = `/admin/hosting/billing/${id}/verify`;
-            document.getElementById('verify_invoice').innerText = invoice;
-            document.getElementById('verify_status').value = status;
-            
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                inner.classList.remove('scale-95');
-            }, 10);
-        }
 
-        function closeVerifyModal() {
-            const modal = document.getElementById('verifyModal');
-            const inner = modal.querySelector('div');
-            modal.classList.add('opacity-0');
-            inner.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
+            document.querySelectorAll('.btn-open-verify').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const hashid = this.getAttribute('data-hashid');
+                    const invoice = this.getAttribute('data-invoice');
+                    const status = this.getAttribute('data-status');
+                    
+                    form.action = `/admin/hosting/billing/${hashid}/verify`;
+                    const verifyInvoice = document.getElementById('verify_invoice');
+                    if(verifyInvoice) verifyInvoice.innerText = invoice;
+                    const verifyStatus = document.getElementById('verify_status');
+                    if(verifyStatus) verifyStatus.value = status;
+                    
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        inner.classList.remove('scale-95');
+                    }, 10);
+                });
+            });
+
+            const closeVerifyModal = () => {
+                modal.classList.add('opacity-0');
+                inner.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            };
+
+            document.querySelectorAll('.btn-close-verify').forEach(btn => {
+                btn.addEventListener('click', closeVerifyModal);
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) closeVerifyModal();
+            });
+            
+            inner.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
     </script>
 @endsection

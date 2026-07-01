@@ -46,8 +46,7 @@
                         <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
                     </div>
                 </div>
-                <button onclick="confirmDelete('{{ route('user_hosting.databases.destroy', $db->hashid) }}')"
-                    class="text-slate-400 hover:text-rose-500 p-2 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Database">
+                <button class="btn-delete-db w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors tooltip" title="Hapus Database" data-url="{{ route('user_hosting.databases.destroy', $db->hashid) }}">
                     <i class="fa-regular fa-trash-can"></i>
                 </button>
             </div>
@@ -206,12 +205,6 @@
     </div>
 </div>
 
-{{-- Delete form (hidden) --}}
-<form id="deleteForm" method="POST" class="hidden">
-    @csrf
-    @method('DELETE')
-</form>
-
 <script nonce="{{ app('csp_nonce') }}">
     // ── Modal ──────────────────────────────────────────────────────────────────
     function openCreateModal() {
@@ -228,26 +221,42 @@
     });
 
     // ── Delete dengan SweetAlert ───────────────────────────────────────────────
-    function confirmDelete(actionUrl) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Hapus Database?',
-            text: 'Semua tabel dan data akan terhapus permanen dan tidak bisa dikembalikan.',
-            showCancelButton: true,
-            confirmButtonColor: '#EF4444',
-            cancelButtonColor: '#6B7280',
-            confirmButtonText: '<i class="fa-solid fa-trash-can mr-1"></i> Ya, Hapus',
-            cancelButtonText: 'Batal',
-            customClass: { popup: 'rounded-xl text-sm' }
-        }).then(result => {
-            if (result.isConfirmed) {
-                const form = document.getElementById('deleteForm');
-                form.action = actionUrl;
-                form.submit();
-            }
+    </script>
+    <script nonce="{{ app('csp_nonce') ?? '' }}">
+        document.addEventListener('DOMContentLoaded', () => {
+            // Generic Delete confirm
+            document.querySelectorAll('.btn-delete-db').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('data-url');
+                    
+                    Swal.fire({
+                        title: 'Hapus Database?',
+                        text: "Semua data di dalamnya akan hilang permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#4f46e5',
+                        cancelButtonColor: '#ef4444',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = url;
+                            form.innerHTML = `
+                                @csrf
+                                @method('DELETE')
+                            `;
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                });
+            });
         });
-    }
-
+    </script>
+    <script nonce="{{ app('csp_nonce') }}">
     // ── Copy to clipboard dengan Toast ────────────────────────────────────────
         function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {

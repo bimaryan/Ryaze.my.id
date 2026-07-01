@@ -78,7 +78,7 @@
 
     <!-- Modal Edit Storage -->
     <div id="editStorageModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative" onclick="event.stopPropagation()">
+        <div class="modal-content-stop bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 class="text-lg font-bold text-slate-800">Ubah Limit Storage</h3>
                 <button type="button" data-modal-hide="editStorageModal" class="text-slate-400 hover:text-slate-600">
@@ -118,6 +118,7 @@
             });
         });
     });
-    </script>
+        document.querySelectorAll('.modal-content-stop').forEach(el => { el.addEventListener('click', e => e.stopPropagation()); });
+</script>
     </x-ui.page-layout>
 @endsection
