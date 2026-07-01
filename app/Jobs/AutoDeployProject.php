@@ -56,23 +56,40 @@ class AutoDeployProject implements ShouldQueue
             // TAHAP 2: Sumber File — Git Clone/Pull atau Template Scaffold
             // ----------------------------------------------------------------
             $isTemplate = ($this->project->source_type === 'template');
-
             if ($isTemplate) {
                 // ── MODE TEMPLATE ────────────────────────────────────────────
-                // repo_source menyimpan 'template:{key}', bukan URL git
-                $templateKey = str_replace('template:', '', $this->project->repo_source);
+                // Tidak ada git sama sekali. File dibuat langsung dari PHP.
+                $templateKey    = str_replace('template:', '', $this->project->repo_source);
+                $markerFile     = "{$projectDir}/.ryaze-template";
+                $alreadyScaffolded = file_exists($markerFile);
 
-                if ($this->isDirEmpty($projectDir)) {
-                    // Deploy pertama → scaffold file starter dari PHP
-                    $this->log($deploy, "\n> Source: Starter Template [{$templateKey}]");
-                    $this->log($deploy, '> Scaffolding template files...');
-                    $this->exec("mkdir -p {$projectDir}", $deploy);
-                    $this->scaffoldTemplate($templateKey, $projectDir, $deploy);
-                    $this->log($deploy, '> Template files created successfully.');
+                if ($alreadyScaffolded) {
+                    // Redeploy: user sudah bisa edit file, preserve semua perubahan
+                    $this->log($deploy, "\n> [TEMPLATE] Source: {$templateKey}");
+                    $this->log($deploy, '> Template already scaffolded. Preserving user files...');
+                    $this->log($deploy, '> Re-running build step only...');
                 } else {
-                    // Redeploy → user sudah edit file, cukup re-build saja
-                    $this->log($deploy, "\n> Source: Starter Template (existing files — skipping scaffold)");
-                    $this->log($deploy, '> User files preserved. Re-running build step only...');
+                    // Deploy pertama (atau reset): bersihkan lalu generate file
+                    $this->log($deploy, "\n> [TEMPLATE] Scaffolding: {$templateKey}");
+                    $this->log($deploy, '> Generating starter files directly on server (no git required)...');
+
+                    // Bersihkan direktori lama jika ada (dari deploy gagal dll.)
+                    if (is_dir($projectDir)) {
+                        $this->exec("rm -rf {$projectDir}", $deploy);
+                    }
+                    $this->exec("mkdir -p {$projectDir}", $deploy);
+
+                    // Generate file starter
+                    $this->scaffoldTemplate($templateKey, $projectDir, $deploy);
+
+                    // Tulis marker agar redeploy berikutnya tidak overwrite file user
+                    file_put_contents($markerFile, json_encode([
+                        'template'    => $templateKey,
+                        'scaffolded'  => now()->toISOString(),
+                        'project_id'  => $this->project->id,
+                    ]));
+
+                    $this->log($deploy, "> Template files ready in: {$projectDir}");
                 }
             } else {
                 // ── MODE REPOSITORY ──────────────────────────────────────────
@@ -87,9 +104,9 @@ class AutoDeployProject implements ShouldQueue
 
                 // Konversi SSH URL ke HTTPS jika user input format git@
                 $repoUrl = $this->project->repo_source;
-                if (preg_match('/^git@([^:]+):(.+)\.git$/', $repoUrl, $m)) {
+                if (preg_match('/^git@([^:]+):(.+?)(?:\.git)?$/', $repoUrl, $m)) {
                     $repoUrl = "https://{$m[1]}/{$m[2]}.git";
-                    $this->log($deploy, "> Converted SSH URL to HTTPS: {$repoUrl}");
+                    $this->log($deploy, "> [INFO] Converted SSH URL to HTTPS: {$repoUrl}");
                 }
 
                 $isRepo = is_dir("{$projectDir}/.git");
@@ -368,7 +385,7 @@ class AutoDeployProject implements ShouldQueue
         $uvicornPath = "{$binDir}/uvicorn";
 
         $this->exec("cd {$projectDir} && {$pipPath} install --upgrade pip", $deploy);
-        
+
         if (file_exists("{$projectDir}/requirements.txt")) {
             $this->exec("cd {$projectDir} && {$pipPath} install -r requirements.txt", $deploy, true);
             $this->log($deploy, '> Python dependencies installed dari requirements.txt.');
@@ -390,7 +407,7 @@ class AutoDeployProject implements ShouldQueue
         $this->log($deploy, "> Starting Uvicorn on UNIX Socket...");
         $startCmd = "cd {$projectDir} && nohup {$uvicornPath} main:app --uds {$sockFile} > storage_fastapi.log 2>&1 & echo $! > {$pidFile}";
         $this->exec($startCmd, $deploy);
-        
+
         // Wait briefly for Uvicorn to create the socket, then make it writable for PHP-FPM
         $this->exec("sleep 2 && chmod 777 {$sockFile} 2>/dev/null || true", $deploy);
 
