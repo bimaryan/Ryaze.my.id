@@ -35,12 +35,16 @@ class CronController extends Controller
 
     public function destroy($hashid)
     {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+
         $cron = HostingCron::whereHas('project', function($q) {
             $q->where('user_id', Auth::id());
-        })->findOrFail($hashid);
+        })->findOrFail($decoded[0]);
 
+        $projectHashid = $cron->project->hashid;
         $cron->delete();
 
-        return back()->with('success', 'Cron Job berhasil dihapus.');
+        return redirect()->route('user_hosting.storage.show', $projectHashid)->with('success', 'Cron Job berhasil dihapus.');
     }
 }

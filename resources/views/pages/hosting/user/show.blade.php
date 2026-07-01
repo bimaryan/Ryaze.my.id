@@ -563,7 +563,7 @@
                                             {{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <form action="{{ route('user_hosting.domains.destroy', $domain->id) }}" method="POST" onsubmit="return confirm('Hapus domain ini?');">
+                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" onsubmit="return confirm('Hapus domain ini?');">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
                                             </form>
@@ -625,7 +625,7 @@
                                         <td class="px-6 py-4 font-mono text-xs text-slate-800">{{ $cron->command }}</td>
                                         <td class="px-6 py-4 font-mono text-xs">{{ $cron->schedule_expression }}</td>
                                         <td class="px-6 py-4 text-right">
-                                            <form action="{{ route('user_hosting.crons.destroy', $cron->id) }}" method="POST" onsubmit="return confirm('Hapus cron job ini?');">
+                                            <form action="{{ route('user_hosting.crons.destroy', $cron->hashid) }}" method="POST" onsubmit="return confirm('Hapus cron job ini?');">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
                                             </form>

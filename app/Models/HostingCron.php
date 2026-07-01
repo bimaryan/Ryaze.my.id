@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HostingCron extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\HasHashid;
 
     protected $fillable = [
         'project_id',
