@@ -55,11 +55,11 @@ class HostingProject extends Model
 
     public function domains()
     {
-        return $this->hasMany(HostingDomain::class);
+        return $this->hasMany(HostingDomain::class, 'project_id');
     }
 
     public function crons()
     {
-        return $this->hasMany(HostingCron::class);
+        return $this->hasMany(HostingCron::class, 'project_id');
     }
 }
