@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\HostingProject;
+use App\Models\HostingPayment;
 use App\Models\JokiOrder;
 use App\Models\JokiPayment;
 use App\Models\User;
@@ -15,27 +17,64 @@ class DashboardController extends Controller
         // 1. Hitung Total Pengguna
         $totalUsers = User::count();
 
-        // 2. Hitung Pesanan Joki yang masih berjalan
+        // 2. Hitung Pesanan Joki (Aktif & Total)
         $activeJokiOrders = JokiOrder::whereIn('status', ['pending', 'progress', 'review'])->count();
+        $totalJokiOrders = JokiOrder::count();
 
-        // 3. Hitung Layanan Hosting (Karena tabel hosting belum kita buat, kita set 0 dulu)
-        $activeHosting = 0;
+        // 3. Hitung Layanan Hosting (Aktif & Total)
+        $activeHosting = HostingProject::where('status', 'active')->count();
+        $totalHosting = HostingProject::count();
 
-        // 4. Hitung Pendapatan Bulan Ini (Hanya yang statusnya 'paid')
-        $totalRevenue = JokiPayment::where('status', 'paid')
-            ->whereMonth('paid_at', Carbon::now()->month)
-            ->whereYear('paid_at', Carbon::now()->year)
+        // 4. Hitung Pendapatan Bulan Ini & Keseluruhan
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+
+        // Joki Revenue
+        $jokiRevenueMonth = JokiPayment::where('status', 'paid')
+            ->whereMonth('paid_at', $currentMonth)
+            ->whereYear('paid_at', $currentYear)
             ->sum('amount');
+        $jokiRevenueTotal = JokiPayment::where('status', 'paid')->sum('amount');
 
-        // 5. Ambil 5 User terbaru yang mendaftar
+        // Hosting Revenue
+        $hostingRevenueMonth = HostingPayment::where('status', 'paid')
+            ->whereMonth('paid_at', $currentMonth)
+            ->whereYear('paid_at', $currentYear)
+            ->sum('amount');
+        $hostingRevenueTotal = HostingPayment::where('status', 'paid')->sum('amount');
+
+        // Total Revenue
+        $totalRevenueMonth = $jokiRevenueMonth + $hostingRevenueMonth;
+        $totalRevenueTotal = $jokiRevenueTotal + $hostingRevenueTotal;
+
+        // 5. Ambil Data Terbaru (Recent Activities)
         $recentUsers = User::latest()->take(5)->get();
+        
+        $recentJokiOrders = JokiOrder::with('client', 'service')
+            ->latest()
+            ->take(5)
+            ->get();
+            
+        $recentHostingProjects = HostingProject::with('client')
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('pages.admin.index', compact(
             'totalUsers',
             'activeJokiOrders',
+            'totalJokiOrders',
             'activeHosting',
-            'totalRevenue',
-            'recentUsers'
+            'totalHosting',
+            'jokiRevenueMonth',
+            'jokiRevenueTotal',
+            'hostingRevenueMonth',
+            'hostingRevenueTotal',
+            'totalRevenueMonth',
+            'totalRevenueTotal',
+            'recentUsers',
+            'recentJokiOrders',
+            'recentHostingProjects'
         ));
     }
 }
