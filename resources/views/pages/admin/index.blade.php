@@ -183,7 +183,7 @@
                             <i class="fa-solid fa-code-pull-request text-indigo-500"></i>
                             Pesanan Joki Terbaru
                         </h2>
-                        <a href="{{ route('superadmin.joki.index') ?? '#' }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Lihat Semua</a>
+                        <a href="{{ route('admin_joki.orders') ?? '#' }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Lihat Semua</a>
                     </div>
                     <div class="overflow-x-auto flex-1">
                         <table class="w-full text-sm text-left text-slate-600">
@@ -237,7 +237,7 @@
                             <i class="fa-solid fa-server text-emerald-500"></i>
                             Proyek Hosting Terbaru
                         </h2>
-                        <a href="{{ route('superadmin.hosting.index') ?? '#' }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">Lihat Semua</a>
+                        <a href="{{ route('admin_hosting.projects') ?? '#' }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">Lihat Semua</a>
                     </div>
                     <div class="overflow-x-auto flex-1">
                         <table class="w-full text-sm text-left text-slate-600">
