@@ -11,7 +11,7 @@
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer nonce="{{ app('csp_nonce') ?? '' }}"></script>
 </head>
 
-<body class="bg-mesh font-sans antialiased text-slate-900">
+<body class="bg-slate-50 font-sans antialiased text-slate-900">
 
     <div class="min-h-screen flex items-center justify-center p-6">
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
@@ -36,7 +36,7 @@
                         <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email
                             Address</label>
                         <input type="email" name="email" id="email"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-mesh focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
+                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
                             placeholder="nama@email.com" value="{{ old('email') }}" required autofocus>
                         @error('email')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
