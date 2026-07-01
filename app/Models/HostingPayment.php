@@ -9,7 +9,7 @@ class HostingPayment extends Model
     use \App\Traits\HasHashid;
 
     protected $fillable = [
-        'hosting_project_id', 'invoice_number', 'amount',
+        'user_id', 'hosting_project_id', 'invoice_number', 'amount',
         'status', 'payment_method', 'paid_at'
     ];
 
@@ -17,6 +17,11 @@ class HostingPayment extends Model
         'amount' => 'integer',
         'paid_at' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function project()
     {

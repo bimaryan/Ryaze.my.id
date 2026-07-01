@@ -50,16 +50,10 @@ class StorageController extends Controller
             $used = $this->getFolderSize($projectDir);
             $totalUsed += $used;
 
-            $limit = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
-            $totalLimit += $limit;
+        $totalLimit = (Auth::user()->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
-            $items[] = [
-                'project' => $project,
-                'used_bytes' => $used,
-                'used_human' => $this->formatBytes($used),
-                'percent' => $limit > 0 ? min(100, round(($used / $limit) * 100, 1)) : 0,
-                'dir' => $projectDir,
-            ];
+        foreach ($items as &$item) {
+            $item['percent'] = $totalLimit > 0 ? min(100, round(($item['used_bytes'] / $totalLimit) * 100, 1)) : 0;
         }
 
         // Sort by usage descending
@@ -88,7 +82,7 @@ class StorageController extends Controller
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
-        $limit = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
+        $limit = (Auth::user()->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         $totalUsed = $this->getFolderSize($projectDir);
 
@@ -128,36 +122,35 @@ class StorageController extends Controller
     /**
      * Endpoint untuk membeli upgrade storage 2GB.
      */
-    public function upgrade($hashid)
+    public function upgrade()
     {
-        $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) abort(404);
+        $user = Auth::user();
 
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
-
-        if (($project->storage_limit_mb ?? 1024) >= 2048) {
-            return back()->with('error', 'Project ini sudah memiliki kapasitas maksimal (2GB).');
+        if (($user->hosting_storage_limit_mb ?? 1024) >= 3072) {
+            return back()->with('error', 'Anda sudah mencapai kapasitas maksimal saat ini (3GB).');
         }
 
         // Cek jika sudah ada invoice upgrade unpaid
-        $existing = \App\Models\HostingPayment::where('hosting_project_id', $project->id)
+        $existing = \App\Models\HostingPayment::where('user_id', $user->id)
             ->where('invoice_number', 'like', 'HST-UPG-%')
             ->where('status', 'unpaid')
             ->first();
 
         if ($existing) {
-            return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Silakan lunasi tagihan upgrade storage Anda.');
+            return redirect()->route('user_hosting.storage')->with('success', 'Silakan lunasi tagihan upgrade storage Anda.');
         }
 
-        $payment = $project->payments()->create([
+        $payment = \App\Models\HostingPayment::create([
+            'user_id' => $user->id,
+            'hosting_project_id' => null,
             'invoice_number' => 'HST-UPG-'. strtoupper(uniqid()),
             'amount' => 50000,
             'status' => 'unpaid',
         ]);
 
-        Auth::user()->notify(new \App\Notifications\SystemNotification('Tagihan upgrade storage 2GB berhasil dibuat: ' . $payment->invoice_number, 'info'));
+        $user->notify(new \App\Notifications\SystemNotification('Tagihan upgrade storage 2GB berhasil dibuat: ' . $payment->invoice_number, 'info'));
 
-        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Tagihan upgrade storage berhasil dibuat. Silakan bayar tagihan tersebut.');
+        return redirect()->route('user_hosting.storage')->with('success', 'Tagihan upgrade storage berhasil dibuat. Silakan bayar tagihan tersebut.');
     }
 
     /**
@@ -166,12 +159,17 @@ class StorageController extends Controller
      */
     public function check(HostingProject $project): bool
     {
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
-        $used = $this->getFolderSize($projectDir);
+        $user = $project->user;
+        $projects = HostingProject::where('user_id', $user->id)->get();
+        $totalUsed = 0;
 
-        $limit = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
+        foreach ($projects as $p) {
+            $subdomain = str_replace('.ryaze.my.id', '', $p->ryaze_domain);
+            $totalUsed += $this->getFolderSize("/www/sites/hosting_clients/{$subdomain}");
+        }
 
-        return $used < $limit;
+        $limit = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+
+        return $totalUsed < $limit;
     }
 }

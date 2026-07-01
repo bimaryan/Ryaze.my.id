@@ -28,6 +28,30 @@
                         : 'bg-indigo-50 border-indigo-200');
         @endphp
 
+        @php
+            $upgradeInvoice = \App\Models\HostingPayment::where('user_id', Auth::id())
+                ->where('invoice_number', 'like', 'HST-UPG-%')
+                ->where('status', 'unpaid')
+                ->first();
+        @endphp
+
+        @if ($upgradeInvoice)
+            <div class="mt-6 bg-indigo-50 border border-indigo-200 rounded-xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                <div class="flex items-start sm:items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-hard-drive text-indigo-500 text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-indigo-800 text-sm">Menunggu Pembayaran Upgrade Storage</p>
+                        <p class="text-indigo-600 text-xs mt-0.5">Selesaikan tagihan Anda sebesar Rp {{ number_format($upgradeInvoice->amount, 0, ',', '.') }} untuk memperbesar total kapasitas akun Anda.</p>
+                    </div>
+                </div>
+                <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug', 'ryaze') }}/{{ $upgradeInvoice->amount }}?order_id={{ $upgradeInvoice->invoice_number }}" target="_blank" class="shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm">
+                    <i class="fa-solid fa-credit-card"></i> Bayar via Pakasir
+                </a>
+            </div>
+        @endif
+
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6 mt-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <div>
@@ -74,6 +98,21 @@
                     <p class="text-amber-700 text-sm">Penggunaan storage melebihi 70%. Pertimbangkan untuk membersihkan file
                         yang tidak diperlukan.</p>
                 </div>
+            @endif
+
+            @if ((Auth::user()->hosting_storage_limit_mb ?? 1024) < 3072 && !$upgradeInvoice)
+                <form action="{{ route('user_hosting.storage.upgrade') }}" method="POST" class="mt-6 pt-5 border-t border-slate-100">
+                    @csrf
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">Butuh lebih banyak kapasitas?</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Upgrade storage Anda 2GB tambahan hanya dengan Rp 50.000.</p>
+                        </div>
+                        <button type="submit" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-5 py-2.5 rounded-lg text-sm font-semibold transition">
+                            <i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade 2GB (Rp 50.000)
+                        </button>
+                    </div>
+                </form>
             @endif
         </div>
 
