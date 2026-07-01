@@ -122,7 +122,10 @@ class AutoDeployProject implements ShouldQueue
                 }
             }
 
-            $this->exec("chown -R www-data:www-data {$projectDir} && chmod -R 775 {$projectDir}", $deploy);
+            $this->exec("chown -R www-data:www-data {$projectDir}", $deploy);
+            $this->exec("find {$projectDir} -type d -exec chmod 755 {} \;", $deploy);
+            $this->exec("find {$projectDir} -type f -exec chmod 644 {} \;", $deploy);
+            $this->log($deploy, "> Permissions di-set: dir 755, file 644");
 
             $framework = strtolower($this->project->framework);
             $this->log($deploy, "\n> Setting up " . strtoupper($framework) . ' environment...');
@@ -137,10 +140,12 @@ class AutoDeployProject implements ShouldQueue
 
             $this->log($deploy, "\n> Applying final permissions to all generated files...");
             $this->exec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
-            $this->exec("chmod -R 775 {$projectDir} 2>/dev/null || true", $deploy);
+            $this->exec("find {$projectDir} -type d -exec chmod 755 {} \; 2>/dev/null || true", $deploy);
+            $this->exec("find {$projectDir} -type f -exec chmod 644 {} \; 2>/dev/null || true", $deploy);
 
             if ($framework === 'laravel') {
                 $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
+                $this->log($deploy, "> Laravel storage & bootstrap/cache permissions di-set ke 777");
             }
 
             $this->log($deploy, "\n> Configuring Cloudflare DNS for {$this->project->ryaze_domain}...");
@@ -442,15 +447,28 @@ HTML
 
     private function scaffoldPhp(string $dir, string $name): void
     {
-        @mkdir("{$dir}/app", 0775, true);
-        @mkdir("{$dir}/public", 0775, true);
-        @mkdir("{$dir}/views", 0775, true);
+        @mkdir("{$dir}/app", 0755, true);
+        @mkdir("{$dir}/public", 0755, true);
+        @mkdir("{$dir}/views", 0755, true);
 
-        file_put_contents("{$dir}/index.php", <<<'PHP'
+        // Pindahkan index.php ke public/ agar lebih aman (sesuai best practice)
+        file_put_contents("{$dir}/public/index.php", <<<'PHP'
 <?php
 // Router sederhana
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-require_once __DIR__ . '/app/router.php';
+// Hilangkan /public/ dari path jika ada
+$path = preg_replace('#^/public#', '', $path);
+if ($path === '') $path = '/';
+
+require_once __DIR__ . '/../app/router.php';
+PHP
+        );
+
+        // Tambahkan index.php di root yang redirect ke public/
+        file_put_contents("{$dir}/index.php", <<<'PHP'
+<?php
+header('Location: public/');
+exit;
 PHP
         );
 
@@ -504,7 +522,23 @@ PHP
         );
 
         file_put_contents("{$dir}/views/404.php", "<h1>404 — Halaman tidak ditemukan</h1>");
-        file_put_contents("{$dir}/.htaccess", "Options -Indexes\nRewriteEngine On\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteRule ^ index.php [QSA,L]\n");
+        // .htaccess di root untuk redirect ke public/
+        file_put_contents("{$dir}/.htaccess", <<<'HTACCESS'
+Options -Indexes
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]
+HTACCESS
+        );
+        // .htaccess di public/ untuk routing
+        file_put_contents("{$dir}/public/.htaccess", <<<'HTACCESS'
+Options -Indexes
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+HTACCESS
+        );
     }
 
     private function scaffoldLaravel(string $dir, string $name, $deploy): void
@@ -761,11 +795,12 @@ CSS
     private function scaffoldNode(string $dir, string $name): void
     {
         $safeName = preg_replace('/[^a-z0-9-]/', '-', strtolower($name));
-        @mkdir($dir, 0775, true);
-        @mkdir("{$dir}/routes", 0775, true);
-        @mkdir("{$dir}/controllers", 0775, true);
-        @mkdir("{$dir}/models", 0775, true);
-        @mkdir("{$dir}/middleware", 0775, true);
+        @mkdir($dir, 0755, true);
+        @mkdir("{$dir}/routes", 0755, true);
+        @mkdir("{$dir}/controllers", 0755, true);
+        @mkdir("{$dir}/models", 0755, true);
+        @mkdir("{$dir}/middleware", 0755, true);
+        @mkdir("{$dir}/public", 0755, true);
 
         file_put_contents("{$dir}/package.json", json_encode([
             'name' => $safeName,
@@ -777,10 +812,13 @@ CSS
 
         file_put_contents("{$dir}/index.js", <<<PHP
 const express = require('express');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Auth routes
 app.post('/api/login', (req, res) => {
@@ -816,5 +854,43 @@ JS
 
         file_put_contents("{$dir}/.gitignore", "node_modules\n.env\n");
         file_put_contents("{$dir}/.env.example", "PORT=3000\nJWT_SECRET=your-secret-key\n");
+
+        // Tambahkan index.html di public/ untuk menampilkan info jika diakses via browser
+        file_put_contents("{$dir}/public/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$name} - Node.js API</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border-radius: 20px; padding: 60px 50px; text-align: center; max-width: 600px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
+        h1 { font-size: 2.5rem; font-weight: 800; color: #1a1a2e; margin-bottom: 16px; }
+        p { color: #6b7280; line-height: 1.8; margin-bottom: 24px; }
+        .endpoint { background: #f3f4f6; padding: 10px 20px; border-radius: 10px; margin: 8px 0; font-family: monospace; }
+        .watermark { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 13px; }
+        .watermark a { color: #2c3e50; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 {$name}</h1>
+        <p>Node.js Express API sudah berjalan!</p>
+        <div>
+            <p><strong>Endpoints:</strong></p>
+            <div class="endpoint">GET / - Halaman ini</div>
+            <div class="endpoint">POST /api/login - Login endpoint</div>
+            <div class="endpoint">GET /api/users - Users endpoint</div>
+        </div>
+    </div>
+    <div class="watermark">
+        Power by <a href="https://ryaze.my.id" target="_blank">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com">bimaryan046@gmail.com</a>
+    </div>
+</body>
+</html>
+HTML
+        );
     }
 }
