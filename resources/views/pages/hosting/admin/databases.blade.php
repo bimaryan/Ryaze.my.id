@@ -1,38 +1,28 @@
 @extends('index')
 
 @section('content')
-<div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-    <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="flex items-center gap-4">
-            <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-orange-50 text-orange-600 rounded-xl">
-                <i class="fa-solid fa-database text-xl"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Semua Database</h1>
-                <p class="text-sm text-slate-500 mt-1">Kelola semua database klien di server.</p>
-            </div>
-        </div>
-        <div>
-            <button data-modal-target="createDbModal" data-modal-toggle="createDbModal" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-colors flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Buat Database
-            </button>
-        </div>
-    </div>
+    <x-ui.page-layout>
+        <x-ui.page-header 
+            title="Semua Database" 
+            description="Kelola semua database klien di server." 
+            icon="database" 
+            iconColor="orange">
+            <x-slot:actions>
+                <button data-modal-target="createDbModal" data-modal-toggle="createDbModal" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Buat Database
+                </button>
+            </x-slot:actions>
+        </x-ui.page-header>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-slate-600">
-                <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                    <tr>
-                        <th class="px-6 py-4">Database Name</th>
-                        <th class="px-6 py-4">Username</th>
-                        <th class="px-6 py-4">Host : Port</th>
-                        <th class="px-6 py-4">Pemilik (Klien)</th>
-                        <th class="px-6 py-4 text-center">Dibuat Pada</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
+        <x-ui.table>
+            <x-slot:head>
+                <th class="px-6 py-4">Database Name</th>
+                <th class="px-6 py-4">Username</th>
+                <th class="px-6 py-4">Host : Port</th>
+                <th class="px-6 py-4">Pemilik (Klien)</th>
+                <th class="px-6 py-4 text-center">Dibuat Pada</th>
+                <th class="px-6 py-4 text-center">Aksi</th>
+            </x-slot:head>
                     @forelse($databases as $db)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-semibold text-slate-800">{{ $db->db_name }}</td>
@@ -71,15 +61,12 @@
                             </td>
                         </tr>
                     @endforelse
-                </tbody>
-            </table>
-        </div>
-        @if($databases->hasPages())
-            <div class="px-6 py-4 border-t border-slate-100">
-                {{ $databases->links() }}
-            </div>
-        @endif
-    </div>
+            @if($databases->hasPages())
+                <x-slot:pagination>
+                    {{ $databases->links() }}
+                </x-slot:pagination>
+            @endif
+        </x-ui.table>
 
     <!-- Modal Create Database -->
     <div id="createDbModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
@@ -149,4 +136,5 @@
         });
     });
 </script>
+    </x-ui.page-layout>
 @endsection

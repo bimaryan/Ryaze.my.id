@@ -1,32 +1,22 @@
 @extends('index')
 
 @section('content')
-<div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-    <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="flex items-center gap-4">
-            <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl">
-                <i class="fa-solid fa-hard-drive text-xl"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Alokasi Penyimpanan Proyek</h1>
-                <p class="text-sm text-slate-500 mt-1">Daftar semua proyek hosting dan batasan penyimpanannya.</p>
-            </div>
-        </div>
-    </div>
+    <x-ui.page-layout>
+        <x-ui.page-header 
+            title="Alokasi Penyimpanan Proyek" 
+            description="Daftar semua proyek hosting dan batasan penyimpanannya." 
+            icon="hard-drive" 
+            iconColor="teal">
+        </x-ui.page-header>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-slate-600">
-                <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                    <tr>
-                        <th class="px-6 py-4">Nama Proyek</th>
-                        <th class="px-6 py-4">Pemilik (Klien)</th>
-                        <th class="px-6 py-4 text-center">Status</th>
-                        <th class="px-6 py-4 text-right">Limit Storage</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
+        <x-ui.table>
+            <x-slot:head>
+                <th class="px-6 py-4">Nama Proyek</th>
+                <th class="px-6 py-4">Pemilik (Klien)</th>
+                <th class="px-6 py-4 text-center">Status</th>
+                <th class="px-6 py-4 text-right">Limit Storage</th>
+                <th class="px-6 py-4 text-center">Aksi</th>
+            </x-slot:head>
                     @forelse($projects as $project)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-semibold text-slate-800">
@@ -79,15 +69,12 @@
                             </td>
                         </tr>
                     @endforelse
-                </tbody>
-            </table>
-        </div>
-        @if($projects->hasPages())
-            <div class="px-6 py-4 border-t border-slate-100">
-                {{ $projects->links() }}
-            </div>
-        @endif
-    </div>
+            @if($projects->hasPages())
+                <x-slot:pagination>
+                    {{ $projects->links() }}
+                </x-slot:pagination>
+            @endif
+        </x-ui.table>
 
     <!-- Modal Edit Storage -->
     <div id="editStorageModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
@@ -131,5 +118,6 @@
             });
         });
     });
-</script>
+    </script>
+    </x-ui.page-layout>
 @endsection
