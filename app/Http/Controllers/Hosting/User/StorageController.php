@@ -50,6 +50,15 @@ class StorageController extends Controller
             $used = $this->getFolderSize($projectDir);
             $totalUsed += $used;
 
+            $items[] = [
+                'project' => $project,
+                'used_bytes' => $used,
+                'used_human' => $this->formatBytes($used),
+                'percent' => 0,
+                'dir' => $projectDir,
+            ];
+        }
+
         $totalLimit = (Auth::user()->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         foreach ($items as &$item) {
