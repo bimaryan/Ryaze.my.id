@@ -407,14 +407,16 @@ class AutoDeployProject implements ShouldQueue
     <title>{$name}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .card { background: white; border-radius: 20px; padding: 60px 50px; text-align: center; max-width: 500px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border-radius: 20px; padding: 60px 50px; text-align: center; max-width: 500px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); position: relative; }
         .badge { background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 50px; display: inline-block; margin-bottom: 24px; letter-spacing: 1px; text-transform: uppercase; }
         h1 { font-size: 2.5rem; font-weight: 800; color: #1a1a2e; margin-bottom: 16px; }
         p { color: #6b7280; line-height: 1.8; margin-bottom: 32px; }
         .btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 14px 36px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; transition: transform 0.2s, box-shadow 0.2s; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102,126,234,0.4); }
         .domain { margin-top: 24px; font-size: 12px; color: #9ca3af; }
+        .watermark { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 13px; }
+        .watermark a { color: #667eea; text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -424,6 +426,9 @@ class AutoDeployProject implements ShouldQueue
         <p>Website Anda sudah live! Edit file <code>index.html</code> ini lewat <strong>File Manager</strong> untuk mulai kustomisasi tampilan.</p>
         <a href="#" class="btn">Mulai Edit →</a>
         <p class="domain">🌐 {$domain}</p>
+    </div>
+    <div class="watermark">
+        Power by <a href="https://ryaze.my.id" target="_blank">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com">bimaryan046@gmail.com</a>
     </div>
 </body>
 </html>
@@ -475,10 +480,13 @@ PHP
     <meta charset="UTF-8">
     <title>{$name}</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; max-width: 700px; margin: 60px auto; padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; }
-        .card { background: white; border-radius: 20px; padding: 60px 50px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); text-align: center; }
+        .card { background: white; border-radius: 20px; padding: 60px 50px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); text-align: center; position: relative; }
         h1 { color: #1a1a2e; margin-bottom: 16px; font-size: 2.5rem; }
         p { color: #6b7280; line-height: 1.8; margin-bottom: 24px; }
+        .watermark { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 13px; }
+        .watermark a { color: #667eea; text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -486,6 +494,9 @@ PHP
         <h1>🐘 {$name}</h1>
         <p>PHP Native app Anda sudah berjalan! Edit <code>views/home.php</code> untuk memulai.</p>
         <p><small>Struktur: MVC sederhana + Router dasar</small></p>
+    </div>
+    <div class="watermark">
+        Power by <a href="https://ryaze.my.id" target="_blank">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com">bimaryan046@gmail.com</a>
     </div>
 </body>
 </html>
@@ -511,10 +522,13 @@ echo '<!DOCTYPE html>
     <meta charset="UTF-8">
     <title>{$name} - Laravel</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: "Segoe UI", sans-serif; max-width: 800px; margin: 80px auto; padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 100vh; }
-        .card { background: white; border-radius: 20px; padding: 60px 50px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); text-align: center; }
+        .card { background: white; border-radius: 20px; padding: 60px 50px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); text-align: center; position: relative; }
         h1 { color: #1a1a2e; margin-bottom: 16px; font-size: 2.5rem; }
         p { color: #6b7280; line-height: 1.8; margin-bottom: 24px; }
+        .watermark { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 13px; }
+        .watermark a { color: #667eea; text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -522,6 +536,9 @@ echo '<!DOCTYPE html>
         <h1>🚀 {$name}</h1>
         <p>Laravel Starter Template siap!</p>
         <p><small>Untuk install Laravel lengkap dengan Breeze, jalankan: <code>composer create-project laravel/laravel .</code> di terminal</small></p>
+    </div>
+    <div class="watermark">
+        Power by <a href="https://ryaze.my.id" target="_blank">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com">bimaryan046@gmail.com</a>
     </div>
 </body>
 </html>';
@@ -632,11 +649,14 @@ import { Routes, Route, Link } from 'react-router-dom'
 
 function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center p-4">
+      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
         <h1 className="text-4xl font-bold text-slate-800 mb-4">⚛️ {$name}</h1>
         <p className="text-slate-600 mb-8">React + Vite + TailwindCSS + React Router siap!</p>
         <Link to="/about" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition">Tentang</Link>
+      </div>
+      <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
+        Power by <a href="https://ryaze.my.id" target="_blank" className="text-purple-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-purple-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
       </div>
     </div>
   )
@@ -644,11 +664,14 @@ function Home() {
 
 function About() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center p-4">
+      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
         <h1 className="text-4xl font-bold text-slate-800 mb-4">Tentang</h1>
         <p className="text-slate-600 mb-8">Ini adalah halaman tentang.</p>
         <Link to="/" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">Kembali</Link>
+      </div>
+      <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
+        Power by <a href="https://ryaze.my.id" target="_blank" className="text-blue-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-blue-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
       </div>
     </div>
   )
@@ -705,10 +728,13 @@ JS
         file_put_contents("{$dir}/app/page.js", <<<PHP
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md">
+    <main className="min-h-screen bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center p-4">
+      <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md relative">
         <h1 className="text-4xl font-bold text-slate-800 mb-4">▲ {$name}</h1>
         <p className="text-slate-600 mb-8">Next.js + App Router + TailwindCSS siap!</p>
+      </div>
+      <div className="fixed bottom-5 right-5 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg text-sm">
+        Power by <a href="https://ryaze.my.id" target="_blank" className="text-cyan-600 font-semibold hover:underline">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com" className="text-cyan-600 font-semibold hover:underline">bimaryan046@gmail.com</a>
       </div>
     </main>
   )
@@ -770,6 +796,8 @@ app.get('/', (req, res) => {
     res.json({
         name: '{$name}',
         message: 'REST API Express.js dengan struktur MVC, middleware auth JWT siap pakai!',
+        power_by: 'Ryaze.my.id',
+        email: 'bimaryan046@gmail.com',
         endpoints: ['GET /', 'POST /api/login', 'GET /api/users']
     });
 });
