@@ -1,10 +1,10 @@
-<nav class="fixed top-0 z-50 w-full glass-nav">
+<nav class="fixed top-0 z-50 w-full shadow bg-gray-50">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start gap-2 rtl:justify-end">
                 <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
                     type="button"
-                    class="inline-flex items-center p-2 text-sm text-slate-600 rounded-lg sm:hidden hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200">
+                    class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-600">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -15,17 +15,13 @@
                 </button>
 
                 <a href="{{ url('/') }}" class="flex ms-2 md:me-24 items-center gap-2">
-                    <div class="bg-indigo-600 text-slate-800 rounded p-1.5 shadow-sm">
-                        <i class="fa-solid fa-code"></i>
-                    </div>
-                    <span class="self-center text-xl font-bold sm:text-2xl whitespace-nowrap text-slate-800">Ryaze
+                    <span class="self-center text-xl text-indigo-600 font-bold sm:text-2xl whitespace-nowrap">Ryaze
                         Portal</span>
                 </a>
             </div>
 
             <div class="flex items-center">
                 <div class="flex items-center ms-3 gap-5">
-
                     {{-- Notifikasi --}}
                     @php
                         $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]);
@@ -132,7 +128,6 @@
                             </li>
                         </ul>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -140,10 +135,10 @@
 </nav>
 
 <aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full glass-sidebar sm:translate-x-0"
+    class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0"
     aria-label="Sidebar">
-    <div class="h-full px-3 pb-4 overflow-y-auto bg-transparent">
-        <ul class="space-y-1 font-medium">
+    <div class="h-full px-3 pb-4 mt-3 overflow-y-auto bg-white">
+        <ul class="space-y-2 font-medium">
 
             @php
                 $role = Auth::user()->role ?? '';
@@ -168,11 +163,11 @@
                     $active,
                 ) => 'flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group text-sm font-medium ' .
                     ($active
-                        ? 'bg-indigo-600 text-slate-800 shadow-md shadow-indigo-200/50'
+                        ? 'bg-indigo-600 text-slate-800 shadow-md text-white shadow-indigo-200/50'
                         : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700');
 
                 $iconClass = fn($active) => 'w-6 text-center text-lg transition-transform group-hover:scale-110 ' .
-                    ($active ? 'text-slate-800' : 'text-slate-400 group-hover:text-indigo-600');
+                    ($active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600');
             @endphp
 
             {{-- Dashboard --}}
