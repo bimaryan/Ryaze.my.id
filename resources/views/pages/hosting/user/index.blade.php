@@ -1,8 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-        {{-- ── 7. USER HOSTING – Dashboard Klien ──────────────────────────── --}}
+    <x-ui.page-layout>
+{{-- ── 7. USER HOSTING – Dashboard Klien ──────────────────────────── --}}
         <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
@@ -48,9 +48,7 @@
                             <th class="px-6 py-4">Framework</th>
                             <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
+                            </x-slot:head>
                         @forelse ($projects as $project)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-slate-800">
@@ -83,9 +81,6 @@
                                 </td>
                             </tr>
                         @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+                    </x-ui.table>
+    </x-ui.page-layout>
 @endsection

@@ -1,9 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-
-        {{-- Header --}}
+    <x-ui.page-layout>
+{{-- Header --}}
         <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg">
@@ -36,18 +35,13 @@
         @endif
 
         {{-- Table --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-slate-600">
-                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
-                        <tr>
+        <x-ui.table>
+    <x-slot:head>
                             <th class="px-6 py-4">Nama Layanan</th>
                             <th class="px-6 py-4">Harga Dasar</th>
                             <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
+                            </x-slot:head>
                         @forelse ($services as $service)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4">
@@ -86,10 +80,7 @@
                                 <td colspan="4" class="px-6 py-10 text-center text-slate-400">Belum ada layanan yang ditambahkan.</td>
                             </tr>
                         @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    </x-ui.table>
 
     </div>
 

@@ -1,9 +1,8 @@
 @extends('index')
 
 @section('content')
-<div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-
-    {{-- SweetAlert2 --}}
+<x-ui.page-layout>
+{{-- SweetAlert2 --}}
     {{-- Flash via SweetAlert --}}
     @if ($errors->any())
     <script nonce="{{ app('csp_nonce') }}">

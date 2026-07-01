@@ -1,9 +1,8 @@
 @extends('index')
 
 @section('content')
-    <div class="p-4 sm:ml-64 pt-20 min-h-screen bg-slate-50 relative">
-
-        {{-- ── 11. USER HOSTING – Storage Overview ────────────────────────── --}}
+    <x-ui.page-layout>
+{{-- ── 11. USER HOSTING – Storage Overview ────────────────────────── --}}
         <div class="p-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-4">
                 <div class="shrink-0 w-11 h-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
@@ -161,5 +160,5 @@
             Limit storage gabungan: <strong>{{ $limit_human }}</strong>. Data diperbarui setiap kali halaman dimuat.
         </p>
 
-    </div>
+    </x-ui.page-layout>
 @endsection
