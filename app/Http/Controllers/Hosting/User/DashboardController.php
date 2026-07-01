@@ -117,12 +117,12 @@ class DashboardController extends Controller
 
     // Daftar template yang tersedia beserta metadata-nya
     private array $availableTemplates = [
-        'html_landing'    => ['framework' => 'html',    'repo' => 'https://github.com/ryaze-templates/html-landing-page.git',    'branch' => 'main'],
-        'php_basic'       => ['framework' => 'php',     'repo' => 'https://github.com/ryaze-templates/php-basic-app.git',        'branch' => 'main'],
-        'laravel_starter' => ['framework' => 'laravel', 'repo' => 'https://github.com/ryaze-templates/laravel-starter.git',      'branch' => 'main'],
-        'react_starter'   => ['framework' => 'react',   'repo' => 'https://github.com/ryaze-templates/react-vite-starter.git',   'branch' => 'main'],
-        'nextjs_starter'  => ['framework' => 'nextjs',  'repo' => 'https://github.com/ryaze-templates/nextjs-starter.git',       'branch' => 'main'],
-        'node_express'    => ['framework' => 'node',    'repo' => 'https://github.com/ryaze-templates/node-express-api.git',     'branch' => 'main'],
+        'html_landing'    => ['framework' => 'html'],
+        'php_basic'       => ['framework' => 'php'],
+        'laravel_starter' => ['framework' => 'laravel'],
+        'react_starter'   => ['framework' => 'react'],
+        'nextjs_starter'  => ['framework' => 'nextjs'],
+        'node_express'    => ['framework' => 'node'],
     ];
 
     // Memproses data dan memulai Deploy Otomatis
@@ -133,14 +133,17 @@ class DashboardController extends Controller
         if ($sourceType === 'template') {
             // ── Mode Template ──────────────────────────────────────────────
             $request->validate([
-                'template_key'      => 'required|in:' . implode(',', array_keys($this->availableTemplates)),
-                'project_name'      => 'required|string|max:50|unique:hosting_projects,project_name',
+                'template_key' => 'required|in:' . implode(',', array_keys($this->availableTemplates)),
+                'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
             ]);
 
-            $template  = $this->availableTemplates[$request->input('template_key')];
-            $repoSource = $template['repo'];
-            $branch     = $template['branch'];
-            $framework  = $template['framework'];
+            $templateKey = $request->input('template_key');
+            $template    = $this->availableTemplates[$templateKey];
+            // Simpan key template di repo_source dengan prefix 'template:'
+            // AutoDeploy akan membaca ini dan generate file langsung tanpa clone
+            $repoSource  = 'template:' . $templateKey;
+            $branch      = 'main';
+            $framework   = $template['framework'];
         } else {
             // ── Mode Repository ────────────────────────────────────────────
             $request->validate([
