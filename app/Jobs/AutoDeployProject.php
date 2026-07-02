@@ -267,11 +267,11 @@ class AutoDeployProject implements ShouldQueue
     private function setupPython($deploy, string $projectDir): void
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
-        $this->exec("cd {$projectDir} && python3 -m venv venv", $deploy);
+        $this->exec("cd {$projectDir} && python3 -m venv --system-site-packages venv", $deploy);
         $this->exec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
         
         if (file_exists("{$projectDir}/requirements.txt")) {
-            $this->log($deploy, '> Mengoptimalkan requirements.txt (Auto-Fix)...');
+            $this->log($deploy, '> Mengoptimalkan requirements.txt');
             $reqFile = "{$projectDir}/requirements.txt";
             $reqs = file_get_contents($reqFile);
             
