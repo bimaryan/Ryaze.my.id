@@ -805,13 +805,16 @@ class DashboardController extends Controller
             $domainName = "dev-{$port}.ryaze.my.id";
             $existing = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", ['type' => 'CNAME', 'name' => $domainName]);
             if ($existing->successful() && empty($existing->json('result'))) {
-                Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
+                $resp = Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
                     'type'    => 'CNAME',
                     'name'    => $domainName,
                     'content' => $tunnelUrl,
                     'proxied' => true,
                     'ttl'     => 1,
                 ]);
+                \Illuminate\Support\Facades\Log::info("Cloudflare DevServer DNS created: " . $resp->body());
+            } else {
+                \Illuminate\Support\Facades\Log::info("Cloudflare DevServer DNS exists or error: " . $existing->body());
             }
         }
 
