@@ -389,21 +389,93 @@
         {{-- TAB: IDE VS CODE --}}
         <div id="panel-ide" class="tab-panel hidden">
             <div class="flex h-[650px] bg-[#1e1e1e] rounded-xl overflow-hidden shadow-xl border border-slate-700">
+                
+                <!-- Activity Bar -->
+                <div class="w-12 bg-[#333333] flex flex-col items-center py-2 shrink-0 border-r border-[#1e1e1e] z-10">
+                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-white border-l-2 border-indigo-500 hover:text-white transition-colors" data-target="ide-sidebar-explorer" title="Explorer">
+                        <i class="fa-regular fa-copy text-xl"></i>
+                    </button>
+                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-extensions" title="Extensions">
+                        <i class="fa-solid fa-cubes text-xl"></i>
+                    </button>
+                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-chat" title="Ryaze AI">
+                        <i class="fa-brands fa-galactic-senate text-xl"></i>
+                    </button>
+                </div>
+
                 <!-- Sidebar -->
                 <div class="w-64 bg-[#252526] border-r border-[#333] flex flex-col shrink-0">
-                    <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center">
-                        <span>Explorer</span>
-                        <div class="flex gap-2">
-                            <button data-action="ide-up" class="hover:text-white transition-colors" title="Up Directory"><i class="fa-solid fa-arrow-turn-up fa-rotate-270"></i></button>
-                            <button data-action="ide-refresh" class="hover:text-white transition-colors" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+                    
+                    <!-- Explorer View -->
+                    <div id="ide-sidebar-explorer" class="ide-sidebar-view flex flex-col h-full">
+                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center">
+                            <span>Explorer</span>
+                            <div class="flex gap-2">
+                                <button data-action="ide-up" class="hover:text-white transition-colors" title="Up Directory"><i class="fa-solid fa-arrow-turn-up fa-rotate-270"></i></button>
+                                <button data-action="ide-refresh" class="hover:text-white transition-colors" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 bg-[#2d2d2d] text-[#cccccc] text-xs font-mono border-b border-[#333] truncate">
+                            <i class="fa-solid fa-folder-open text-amber-500 mr-2"></i><span id="ide-current-path">/</span>
+                        </div>
+                        <div id="ide-sidebar-tree" class="flex-1 overflow-y-auto text-sm text-[#cccccc] py-2 font-mono" style="font-size: 13px;">
+                            <!-- JS akan merender list file -->
                         </div>
                     </div>
-                    <div class="px-4 py-2 bg-[#2d2d2d] text-[#cccccc] text-xs font-mono border-b border-[#333] truncate">
-                        <i class="fa-solid fa-folder-open text-amber-500 mr-2"></i><span id="ide-current-path">/</span>
+
+                    <!-- Extensions View -->
+                    <div id="ide-sidebar-extensions" class="ide-sidebar-view hidden flex flex-col h-full">
+                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333]">
+                            <span>Extensions</span>
+                        </div>
+                        <div class="p-4 flex-1 overflow-y-auto">
+                            <div class="mb-4 flex gap-3 items-start">
+                                <img src="https://ui-avatars.com/api/?name=PHP&background=4f5b93&color=fff" class="w-10 h-10 rounded">
+                                <div class="w-full">
+                                    <p class="text-sm text-slate-200 font-semibold leading-tight">PHP Intelephense</p>
+                                    <p class="text-[10px] text-slate-400 mb-2">Ben Mewburn</p>
+                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors">Install</button>
+                                </div>
+                            </div>
+                            <div class="mb-4 flex gap-3 items-start">
+                                <img src="https://ui-avatars.com/api/?name=TW&background=38bdf8&color=fff" class="w-10 h-10 rounded">
+                                <div class="w-full">
+                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Tailwind CSS</p>
+                                    <p class="text-[10px] text-slate-400 mb-2">Tailwind Labs</p>
+                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors">Install</button>
+                                </div>
+                            </div>
+                            <div class="mb-4 flex gap-3 items-start">
+                                <img src="https://ui-avatars.com/api/?name=Vue&background=10b981&color=fff" class="w-10 h-10 rounded">
+                                <div class="w-full">
+                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Vue Language</p>
+                                    <p class="text-[10px] text-slate-400 mb-2">Vue.js</p>
+                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors">Install</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="ide-sidebar-tree" class="flex-1 overflow-y-auto text-sm text-[#cccccc] py-2 font-mono" style="font-size: 13px;">
-                        <!-- JS akan merender list file -->
+
+                    <!-- Ryaze AI Chat View -->
+                    <div id="ide-sidebar-chat" class="ide-sidebar-view hidden flex flex-col h-full">
+                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333]">
+                            <i class="fa-brands fa-galactic-senate text-indigo-400 mr-1"></i> <span>Ryaze AI v1.0</span>
+                        </div>
+                        <div id="grok-chat-messages" class="flex-1 overflow-y-auto p-3 text-sm flex flex-col gap-3 font-sans">
+                            <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
+                                Halo! Saya <b>Ryaze AI v1.0</b>. Anda bisa bertanya soal kode, minta analisis bug, atau tulis <i>prompt</i> untuk generate kode baru dengan kecepatan pemrosesan super tinggi.
+                            </div>
+                        </div>
+                        <div class="p-3 border-t border-[#333] bg-[#252526]">
+                            <form id="grok-chat-form" class="flex flex-col gap-2">
+                                <textarea id="grok-chat-input" rows="2" class="w-full bg-[#3c3c3c] text-white text-xs px-3 py-2 rounded outline-none border border-[#444] focus:border-indigo-500 resize-none" placeholder="Tanya Ryaze AI..."></textarea>
+                                <button type="submit" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-xs hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i> Kirim
+                                </button>
+                            </form>
+                        </div>
                     </div>
+
                 </div>
                 <!-- Editor -->
                 <div class="flex-1 flex flex-col relative bg-[#1e1e1e]">
@@ -1499,6 +1571,72 @@
             if (document.getElementById('ide-sidebar-tree').children.length === 0) {
                 loadIdeSidebar('');
             }
+        });
+
+        // ── Activity Bar Logic ──────────────────────────────────────────────────
+        document.querySelectorAll('.ide-activity-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.ide-activity-btn').forEach(b => {
+                    b.classList.remove('text-white', 'border-indigo-500');
+                    b.classList.add('text-slate-500', 'border-transparent');
+                });
+                btn.classList.remove('text-slate-500', 'border-transparent');
+                btn.classList.add('text-white', 'border-indigo-500');
+
+                document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
+                document.getElementById(btn.dataset.target).classList.remove('hidden');
+            });
+        });
+
+        // ── Groq AI Logic ───────────────────────────────────────────────────────
+        document.getElementById('grok-chat-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('grok-chat-input');
+            const val = input.value.trim();
+            if (!val) return;
+            
+            const messagesContainer = document.getElementById('grok-chat-messages');
+            
+            // Add User message
+            messagesContainer.innerHTML += `
+                <div class="bg-indigo-600 text-white p-2 rounded-lg rounded-tr-none self-end max-w-[90%] text-xs leading-relaxed shadow-sm">
+                    ${val.replace(/</g, '&lt;')}
+                </div>
+            `;
+            input.value = '';
+            
+            // Show loading
+            const loaderId = 'grok-loader-' + Date.now();
+            messagesContainer.innerHTML += `
+                <div id="${loaderId}" class="bg-[#333] text-slate-400 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs mt-1 border border-[#444]">
+                    <i class="fa-solid fa-ellipsis fa-fade"></i> Ryaze AI sedang memproses...
+                </div>
+            `;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Simulated Groq Response
+            setTimeout(() => {
+                const loader = document.getElementById(loaderId);
+                if(loader) loader.remove();
+                
+                let contextStr = '';
+                if (ideEditorInstance && ideEditingFile) {
+                    const filename = ideEditingFile.split('/').pop();
+                    contextStr = `<br><br><span class="text-indigo-400"><i class="fa-solid fa-code"></i> Konteks:</span> Saya melihat Anda sedang mengedit <b>${filename}</b>.`;
+                }
+                
+                messagesContainer.innerHTML += `
+                    <div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1">
+                        <b>Ryaze AI v1.0:</b><br>
+                        Pertanyaan Anda tentang "${val.substring(0,20)}${val.length > 20 ? '...' : ''}" diterima.${contextStr}
+                        <br><br>
+                        <i class="text-[10px] text-slate-400 border-t border-[#444] pt-1 block mt-1">
+                            (Simulasi antarmuka. Integrasi backend belum tersedia. Anda perlu menambahkan GROQ_API_KEY ke dalam file .env dan membuat endpoint API terkait untuk mengaktifkan model LLM ini sesungguhnya.)
+                        </i>
+                    </div>
+                `;
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 500); // 500ms for simulated Groq speed!
         });
 
     </script>
