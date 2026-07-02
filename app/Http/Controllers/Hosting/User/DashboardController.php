@@ -774,15 +774,34 @@ class DashboardController extends Controller
 
         // Hapus process lama jika ada
         if ($project->dev_pid) {
-            exec("kill -9 {$project->dev_pid} 2>/dev/null || true");
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+            if ($isWindows) {
+                exec("taskkill /F /T /PID {$project->dev_pid} 2>nul");
+            } else {
+                exec("kill -9 {$project->dev_pid} 2>/dev/null || true");
+            }
         }
 
-        // Mulai dev server di background dengan pm2 atau nohup
-        $command = "";
+        // Mulai dev server di background
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+        $pid = null;
+
         if ($project->framework === 'react' || $project->framework === 'vue') {
-            $command = "cd {$projectDir} && nohup npm run dev -- --port {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+            if ($isWindows) {
+                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '--port', '{$port}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
+            } else {
+                $command = "cd {$projectDir} && nohup npm run dev -- --port {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+                $pid = trim(shell_exec($command));
+            }
         } elseif ($project->framework === 'nextjs') {
-            $command = "cd {$projectDir} && nohup npm run dev -- -p {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+            if ($isWindows) {
+                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '-p', '{$port}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
+            } else {
+                $command = "cd {$projectDir} && nohup npm run dev -- -p {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+                $pid = trim(shell_exec($command));
+            }
         } elseif ($project->framework === 'python') {
             $entrypoint = 'app.py';
             if (file_exists("{$projectDir}/main.py")) $entrypoint = 'main.py';
@@ -792,13 +811,23 @@ class DashboardController extends Controller
             $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
             if ($hasGunicorn) {
                 $module = str_replace('.py', '', $entrypoint);
-                $command = "cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+                if ($isWindows) {
+                    $psCommand = "\$env:PORT='{$port}'; \$process = Start-Process venv\Scripts\gunicorn.exe -ArgumentList '{$module}:app', '-b', '127.0.0.1:{$port}', '--workers', '2' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                    $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
+                } else {
+                    $command = "cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+                    $pid = trim(shell_exec($command));
+                }
             } else {
-                $command = "cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+                if ($isWindows) {
+                    $psCommand = "\$env:PORT='{$port}'; \$env:FLASK_RUN_PORT='{$port}'; \$process = Start-Process venv\Scripts\python.exe -ArgumentList '{$entrypoint}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                    $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
+                } else {
+                    $command = "cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+                    $pid = trim(shell_exec($command));
+                }
             }
         }
-
-        $pid = trim(shell_exec($command));
 
         if (!$pid) {
             return back()->with('error', 'Gagal memulai Dev Server!');
@@ -844,7 +873,12 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
 
         if ($project->dev_pid) {
-            exec("kill -9 {$project->dev_pid} 2>/dev/null || true");
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+            if ($isWindows) {
+                exec("taskkill /F /T /PID {$project->dev_pid} 2>nul");
+            } else {
+                exec("kill -9 {$project->dev_pid} 2>/dev/null || true");
+            }
         }
 
         $devPort = $project->dev_port;
