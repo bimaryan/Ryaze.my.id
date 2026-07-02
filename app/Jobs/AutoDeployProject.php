@@ -267,7 +267,7 @@ class AutoDeployProject implements ShouldQueue
     private function setupPython($deploy, string $projectDir): void
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
-        $this->exec("cd {$projectDir} && python3 -m venv --system-site-packages venv", $deploy);
+        $this->exec("cd {$projectDir} && python3 -m venv venv", $deploy);
         $this->exec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
         
         if (file_exists("{$projectDir}/requirements.txt")) {
@@ -275,10 +275,14 @@ class AutoDeployProject implements ShouldQueue
             $reqFile = "{$projectDir}/requirements.txt";
             $reqs = file_get_contents($reqFile);
             
-            // Hapus versi strict (==) pada mediapipe agar memakai versi yang tersedia di OS
-            $reqs = preg_replace('/mediapipe==[0-9\.]+/', 'mediapipe', $reqs);
+            // Hapus semua versi strict/spesifik (==, >=, <=) pada SEMUA library agar selalu mengunduh versi global yang kompatibel
+            $reqs = preg_replace('/[=><~]+.*$/m', '', $reqs);
+            
             // Hapus torchvision sesuai request user
             $reqs = preg_replace('/^torchvision.*$/m', '', $reqs);
+            
+            // Bersihkan baris kosong
+            $reqs = preg_replace('/^\s*[\r\n]+/m', '', $reqs);
             
             file_put_contents($reqFile, trim($reqs));
 
