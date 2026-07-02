@@ -271,6 +271,17 @@ class AutoDeployProject implements ShouldQueue
         $this->exec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
         
         if (file_exists("{$projectDir}/requirements.txt")) {
+            $this->log($deploy, '> Mengoptimalkan requirements.txt (Auto-Fix)...');
+            $reqFile = "{$projectDir}/requirements.txt";
+            $reqs = file_get_contents($reqFile);
+            
+            // Hapus versi strict (==) pada mediapipe agar memakai versi yang tersedia di OS
+            $reqs = preg_replace('/mediapipe==[0-9\.]+/', 'mediapipe', $reqs);
+            // Hapus torchvision sesuai request user
+            $reqs = preg_replace('/^torchvision.*$/m', '', $reqs);
+            
+            file_put_contents($reqFile, trim($reqs));
+
             $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
             $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
         }
