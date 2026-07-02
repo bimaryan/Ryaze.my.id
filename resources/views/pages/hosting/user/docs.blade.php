@@ -211,6 +211,22 @@
 
             <hr class="border-slate-100">
 
+            <!-- Section 9 -->
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                    <span class="bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center text-xs">9</span>
+                    Batasan Deploy Python
+                </h2>
+                <p class="text-sm text-slate-600 mb-3">Bagi Anda yang ingin mendeploy aplikasi atau skrip berbasis Python, harap perhatikan beberapa batasan server berikut:</p>
+                <ul class="list-disc list-inside text-sm text-slate-600 space-y-1.5 ml-1 mb-4">
+                    <li><strong>Service Persistent:</strong> Server tidak menyediakan process manager otomatis (seperti Supervisor) untuk Python. Jika Anda menjalankan server Flask/Django/FastAPI via Terminal, prosesnya bisa terhenti sewaktu-waktu (kecuali Anda menjalankannya di background).</li>
+                    <li><strong>Port Akses:</strong> Untuk mengekspos aplikasi Python ke web, aplikasi Anda mungkin memerlukan reverse proxy tambahan. Sebaiknya Python dijalankan sebagai service backend/API dan bukan sebagai aplikasi utama yang melayani permintaan HTTP secara langsung jika tidak didukung penuh.</li>
+                    <li><strong>Virtual Environment:</strong> Sangat disarankan untuk membuat Virtual Environment (<code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-200">python3 -m venv venv</code>) di dalam folder project Anda sebelum menginstall library via pip agar tidak merusak sistem.</li>
+                </ul>
+            </div>
+
+            <hr class="border-slate-100">
+
             <div class="text-center py-4">
                 <p class="text-sm text-slate-500">Masih kebingungan? Hubungi Admin untuk bantuan teknis lebih lanjut.</p>
             </div>
