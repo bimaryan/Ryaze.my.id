@@ -218,6 +218,55 @@ class DashboardController extends Controller
         return view('pages.hosting.user.show', compact('project', 'envContent'));
     }
 
+    public function ideChat(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $message = $request->input('message');
+        $context = $request->input('context'); // Current editing file context
+
+        if (empty($message)) {
+            return response()->json(['error' => 'Pesan tidak boleh kosong.'], 400);
+        }
+
+        $groqApiKey = env('GROQ_API_KEY');
+        if (empty($groqApiKey)) {
+            return response()->json(['error' => 'GROQ_API_KEY belum dikonfigurasi di server.'], 500);
+        }
+
+        $systemPrompt = "Kamu adalah Ryaze AI v1.0, asisten koding cerdas yang terintegrasi di dalam IDE Ryaze Hosting. Balas dalam bahasa Indonesia dengan gaya profesional, singkat, dan tepat sasaran. Jika pengguna menyertakan konteks kodenya, berikan analisis atau saran berdasarkan kode tersebut.\n\nJIKA PENGGUNA MEMINTA KAMU UNTUK MERUBAH ATAU MEMPERBAIKI KESELURUHAN KODE SECARA OTOMATIS (misal: 'perbaiki file ini', 'tulis ulang'), maka kamu WAJIB mengembalikan keseluruhan kode baru di dalam blok berikut:\n<<REPLACE_ALL>>\n[kode baru di sini]\n<<END_REPLACE>>\n\nJika pengguna hanya bertanya atau meminta cuplikan kode sebagian, gunakan markdown code block biasa (```).";
+        
+        $userMessage = $message;
+        if (!empty($context)) {
+            $userMessage = "Konteks file yang sedang saya buka:\n```\n" . $context . "\n```\n\nPertanyaan saya:\n" . $message;
+        }
+
+        try {
+            $response = Http::withToken($groqApiKey)
+                ->timeout(15)
+                ->post('https://api.groq.com/openai/v1/chat/completions', [
+                    'model' => 'llama3-8b-8192',
+                    'messages' => [
+                        ['role' => 'system', 'content' => $systemPrompt],
+                        ['role' => 'user', 'content' => $userMessage],
+                    ],
+                    'temperature' => 0.7,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $reply = $data['choices'][0]['message']['content'] ?? 'Tidak ada respons dari AI.';
+                // Konversi markdown sederhana ke HTML bisa dilakukan di frontend, atau kita kembalikan plain markdown.
+                return response()->json(['reply' => $reply]);
+            } else {
+                Log::error('Groq API Error: ' . $response->body());
+                return response()->json(['error' => 'API Ryaze AI sedang bermasalah. Coba lagi nanti.'], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('Groq Exception: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan sistem saat menghubungi AI.'], 500);
+        }
+    }
+
     // 2. Method API untuk navigasi folder
     public function getFiles(Request $request, $hashid)
     {

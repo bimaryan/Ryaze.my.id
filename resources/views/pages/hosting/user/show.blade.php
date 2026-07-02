@@ -1055,6 +1055,7 @@
         const fileCreateUrl = fixUrl('{{ route('user_hosting.files.create', $project->hashid) }}');
         const fileDeleteUrl = fixUrl('{{ route('user_hosting.files.delete', $project->hashid) }}');
         const fileDownloadUrl = fixUrl('{{ route('user_hosting.files.download', $project->hashid) }}');
+        const ideChatUrl = fixUrl('{{ route('user_hosting.ide.chat', $project->hashid) }}');
 
         const PROTECTED_FILES = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
         const isProtected = name => PROTECTED_FILES.includes(name);
@@ -1573,6 +1574,16 @@
             }
         });
 
+        window.applyAiCode = function(b64) {
+            if (ideEditorInstance) {
+                const raw = decodeURIComponent(escape(atob(b64)));
+                ideEditorInstance.setValue(raw);
+                hotToast('Kode berhasil diterapkan!', 'success');
+            } else {
+                swAlert('error', 'Editor tidak aktif', 'Buka file terlebih dahulu.');
+            }
+        };
+
         // ── Activity Bar Logic ──────────────────────────────────────────────────
         document.querySelectorAll('.ide-activity-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1614,29 +1625,82 @@
             `;
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             
-            // Simulated Groq Response
-            setTimeout(() => {
+            // Real API Call to Backend
+            let contextData = '';
+            if (ideEditorInstance && ideEditingFile) {
+                contextData = `File: ${ideEditingFile}\n${ideEditorInstance.getValue()}`;
+            }
+
+            fetch(ideChatUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ message: val, context: contextData })
+            })
+            .then(res => res.json())
+            .then(data => {
                 const loader = document.getElementById(loaderId);
                 if(loader) loader.remove();
-                
-                let contextStr = '';
-                if (ideEditorInstance && ideEditingFile) {
-                    const filename = ideEditingFile.split('/').pop();
-                    contextStr = `<br><br><span class="text-indigo-400"><i class="fa-solid fa-code"></i> Konteks:</span> Saya melihat Anda sedang mengedit <b>${filename}</b>.`;
+
+                if (data.error) {
+                    messagesContainer.innerHTML += `
+                        <div class="bg-rose-900/50 text-rose-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-rose-800 shadow-sm mt-1">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> ${data.error}
+                        </div>
+                    `;
+                } else {
+                    let replyText = data.reply;
+                    
+                    // 1. Cek auto-replace (<<REPLACE_ALL>>)
+                    const replaceMatch = replyText.match(/<<REPLACE_ALL>>([\s\S]*?)<<END_REPLACE>>/);
+                    let autoReplaced = false;
+                    if (replaceMatch && replaceMatch[1]) {
+                        if (ideEditorInstance) {
+                            ideEditorInstance.setValue(replaceMatch[1].trim());
+                            hotToast('File otomatis diperbarui oleh AI!', 'success');
+                        }
+                        replyText = replyText.replace(/<<REPLACE_ALL>>[\s\S]*?<<END_REPLACE>>/, '[[AUTO_REPLACED]]');
+                        autoReplaced = true;
+                    }
+
+                    let formattedReply = replyText
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/\n/g, '<br>')
+                        .replace(/```([a-z]*)(?:<br>)?([\s\S]*?)```/g, (match, lang, code) => {
+                            let rawCode = code.replace(/<br>/g, '\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                            let base64Code = btoa(unescape(encodeURIComponent(rawCode.trim())));
+                            return `<div class="relative group my-2"><div class="absolute right-1 top-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"><button type="button" onclick="window.applyAiCode('${base64Code}')" class="bg-indigo-600 text-white text-[9px] px-1.5 py-0.5 rounded cursor-pointer hover:bg-indigo-500 shadow"><i class="fa-solid fa-wand-magic-sparkles"></i> Terapkan</button></div><pre class="bg-black/30 p-2 pt-6 rounded overflow-x-auto border border-[#444] text-[11px] relative"><code>${code}</code></pre></div>`;
+                        })
+                        .replace(/`([^`]+)`/g, '<code class="bg-black/30 px-1 py-0.5 rounded text-[11px] text-amber-300">$1</code>');
+                    
+                    if (autoReplaced) {
+                        formattedReply = formattedReply.replace('[[AUTO_REPLACED]]', '<div class="text-emerald-400 my-2 p-2 bg-emerald-900/20 rounded border border-emerald-800/50"><i class="fa-solid fa-check-circle"></i> Seluruh kode di editor telah diperbarui secara otomatis.</div>');
+                    }
+                    
+                    messagesContainer.innerHTML += `
+                        <div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1">
+                            <b>Ryaze AI v1.0:</b><br>
+                            ${formattedReply}
+                        </div>
+                    `;
                 }
-                
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            })
+            .catch(err => {
+                const loader = document.getElementById(loaderId);
+                if(loader) loader.remove();
                 messagesContainer.innerHTML += `
-                    <div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1">
-                        <b>Ryaze AI v1.0:</b><br>
-                        Pertanyaan Anda tentang "${val.substring(0,20)}${val.length > 20 ? '...' : ''}" diterima.${contextStr}
-                        <br><br>
-                        <i class="text-[10px] text-slate-400 border-t border-[#444] pt-1 block mt-1">
-                            (Simulasi antarmuka. Integrasi backend belum tersedia. Anda perlu menambahkan GROQ_API_KEY ke dalam file .env dan membuat endpoint API terkait untuk mengaktifkan model LLM ini sesungguhnya.)
-                        </i>
+                    <div class="bg-rose-900/50 text-rose-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-rose-800 shadow-sm mt-1">
+                        <i class="fa-solid fa-plug-circle-xmark mr-1"></i> Gagal menghubungi server.
                     </div>
                 `;
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 500); // 500ms for simulated Groq speed!
+            });
         });
 
     </script>
