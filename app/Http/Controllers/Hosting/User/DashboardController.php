@@ -753,6 +753,19 @@ class DashboardController extends Controller
             $command = "cd {$projectDir} && nohup npm run dev -- --port {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
         } elseif ($project->framework === 'nextjs') {
             $command = "cd {$projectDir} && nohup npm run dev -- -p {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+        } elseif ($project->framework === 'python') {
+            $entrypoint = 'app.py';
+            if (file_exists("{$projectDir}/main.py")) $entrypoint = 'main.py';
+            elseif (file_exists("{$projectDir}/server.py")) $entrypoint = 'server.py';
+            elseif (file_exists("{$projectDir}/wsgi.py")) $entrypoint = 'wsgi.py';
+
+            $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
+            if ($hasGunicorn) {
+                $module = str_replace('.py', '', $entrypoint);
+                $command = "cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+            } else {
+                $command = "cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+            }
         }
 
         $pid = trim(shell_exec($command));

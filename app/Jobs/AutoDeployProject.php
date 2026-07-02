@@ -266,6 +266,68 @@ class AutoDeployProject implements ShouldQueue
 
     private function setupPython($deploy, string $projectDir): void
     {
+        $this->log($deploy, '> Setting up Python virtual environment...');
+        $this->exec("cd {$projectDir} && python3 -m venv venv", $deploy);
+        
+        if (file_exists("{$projectDir}/requirements.txt")) {
+            $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
+            $this->exec("cd {$projectDir} && venv/bin/pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
+        }
+
+        // Allocate a dynamic port for OpenResty reverse proxy (using dev_port)
+        $port = null;
+        for ($p = 8000; $p <= 9000; $p++) {
+            $connection = @fsockopen('127.0.0.1', $p);
+            if (!is_resource($connection)) {
+                $port = $p;
+                break;
+            }
+            if (is_resource($connection)) fclose($connection);
+        }
+
+        if (!$port) {
+            $this->log($deploy, '> [ERROR] Tidak ada port yang tersedia untuk Python Server.');
+            return;
+        }
+
+        // Kill existing process if any
+        if ($this->project->dev_pid) {
+            exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true");
+        }
+
+        $this->log($deploy, "> Starting Python Server on port {$port}...");
+        
+        // Coba cari file entrypoint
+        $entrypoint = 'app.py';
+        if (file_exists("{$projectDir}/main.py")) $entrypoint = 'main.py';
+        elseif (file_exists("{$projectDir}/server.py")) $entrypoint = 'server.py';
+        elseif (file_exists("{$projectDir}/wsgi.py")) $entrypoint = 'wsgi.py';
+
+        // Gunicorn disarankan untuk Flask/Django
+        $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
+        
+        if ($hasGunicorn) {
+            $module = str_replace('.py', '', $entrypoint);
+            $command = "cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+        } else {
+            // Fallback native python run (Pastikan app mendengarkan PORT dari environment)
+            $command = "cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
+        }
+        
+        $pid = trim(shell_exec($command));
+
+        if ($pid) {
+            $this->log($deploy, "> Python server running on PID: {$pid} (Port: {$port})");
+            // Set dev_mode = true agar OpenResty mem-proxy traffic ke port ini
+            $this->project->update([
+                'dev_mode' => true,
+                'dev_port' => $port,
+                'dev_pid' => $pid
+            ]);
+        } else {
+            $this->log($deploy, '> [ERROR] Gagal menjalankan server Python.');
+        }
+
         $this->log($deploy, '> Python setup complete.');
     }
 
