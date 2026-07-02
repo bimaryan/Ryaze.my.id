@@ -786,9 +786,11 @@ class DashboardController extends Controller
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $pid = null;
 
+        $winProjectDir = $isWindows ? substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir) : $projectDir;
+
         if ($project->framework === 'react' || $project->framework === 'vue') {
             if ($isWindows) {
-                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '--port', '{$port}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '--port', '{$port}' -WorkingDirectory '{$winProjectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$winProjectDir}\.dev-server.log' -RedirectStandardError '{$winProjectDir}\.dev-server.log'; echo \$process.Id";
                 $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
             } else {
                 $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && nohup npm run dev -- --port {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
@@ -796,7 +798,7 @@ class DashboardController extends Controller
             }
         } elseif ($project->framework === 'nextjs') {
             if ($isWindows) {
-                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '-p', '{$port}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '-p', '{$port}' -WorkingDirectory '{$winProjectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$winProjectDir}\.dev-server.log' -RedirectStandardError '{$winProjectDir}\.dev-server.log'; echo \$process.Id";
                 $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
             } else {
                 $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && nohup npm run dev -- -p {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
@@ -812,7 +814,7 @@ class DashboardController extends Controller
             if ($hasGunicorn) {
                 $module = str_replace('.py', '', $entrypoint);
                 if ($isWindows) {
-                    $psCommand = "\$env:PORT='{$port}'; \$process = Start-Process venv\Scripts\gunicorn.exe -ArgumentList '{$module}:app', '-b', '127.0.0.1:{$port}', '--workers', '2' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                    $psCommand = "\$env:PORT='{$port}'; \$process = Start-Process venv\Scripts\gunicorn.exe -ArgumentList '{$module}:app', '-b', '127.0.0.1:{$port}', '--workers', '2' -WorkingDirectory '{$winProjectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$winProjectDir}\.dev-server.log' -RedirectStandardError '{$winProjectDir}\.dev-server.log'; echo \$process.Id";
                     $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
                 } else {
                     $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
@@ -820,7 +822,7 @@ class DashboardController extends Controller
                 }
             } else {
                 if ($isWindows) {
-                    $psCommand = "\$env:PORT='{$port}'; \$env:FLASK_RUN_PORT='{$port}'; \$process = Start-Process venv\Scripts\python.exe -ArgumentList '{$entrypoint}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                    $psCommand = "\$env:PORT='{$port}'; \$env:FLASK_RUN_PORT='{$port}'; \$process = Start-Process venv\Scripts\python.exe -ArgumentList '{$entrypoint}' -WorkingDirectory '{$winProjectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$winProjectDir}\.dev-server.log' -RedirectStandardError '{$winProjectDir}\.dev-server.log'; echo \$process.Id";
                     $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
                 } else {
                     $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
