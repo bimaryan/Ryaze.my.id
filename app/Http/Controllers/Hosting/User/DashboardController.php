@@ -801,6 +801,8 @@ class DashboardController extends Controller
         $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
         $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')), '/'));
         
+        \Illuminate\Support\Facades\Log::info("CF Vars: zone=$zoneId, token=$apiToken, tunnel=$tunnelUrl");
+        
         if ($zoneId && $apiToken && $tunnelUrl) {
             $domainName = "dev-{$port}.ryaze.my.id";
             $existing = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", ['type' => 'CNAME', 'name' => $domainName]);
