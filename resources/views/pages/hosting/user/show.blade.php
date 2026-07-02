@@ -372,8 +372,8 @@
                             </button>
                         </div>
                     </div>
-                    <textarea id="file-editor-textarea" spellcheck="false"
-                        class="flex-1 w-full bg-slate-900 text-emerald-400 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
+                    <div id="monaco-editor-container" class="flex-1 w-full bg-[#1e1e1e] relative z-0"></div>
+                    <textarea id="file-editor-textarea" spellcheck="false" class="hidden flex-1 w-full bg-slate-900 text-emerald-400 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
                     <div id="editor-loader"
                         class="hidden absolute inset-0 bg-slate-900/80 flex items-center justify-center z-40">
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
@@ -1189,7 +1189,28 @@
                     if (data.error) {
                         swAlert('error', 'Gagal baca file', data.error);
                         closeFileEditor();
-                    } else textarea.value = data.content;
+                    } else {
+                        if (typeof monaco !== 'undefined' && window.editor) {
+                            let ext = filename.split('.').pop().toLowerCase();
+                            let lang = 'plaintext';
+                            if (ext === 'php') lang = 'php';
+                            else if (ext === 'js') lang = 'javascript';
+                            else if (ext === 'ts') lang = 'typescript';
+                            else if (ext === 'html') lang = 'html';
+                            else if (ext === 'css') lang = 'css';
+                            else if (ext === 'json') lang = 'json';
+                            else if (ext === 'env' || filename === '.env') lang = 'ini';
+                            else if (ext === 'sql') lang = 'sql';
+                            else if (ext === 'sh' || ext === 'bash') lang = 'shell';
+                            else if (ext === 'yaml' || ext === 'yml') lang = 'yaml';
+                            else if (ext === 'xml') lang = 'xml';
+
+                            monaco.editor.setModelLanguage(window.editor.getModel(), lang);
+                            window.editor.setValue(data.content);
+                        } else {
+                            textarea.value = data.content;
+                        }
+                    }
                     loader.classList.add('hidden');
                 })
                 .catch(() => {
@@ -1211,7 +1232,9 @@
             }
 
             const loader = document.getElementById('editor-loader');
-            const content = document.getElementById('file-editor-textarea').value;
+            const content = (typeof monaco !== 'undefined' && window.editor) 
+                            ? window.editor.getValue() 
+                            : document.getElementById('file-editor-textarea').value;
             loader.classList.remove('hidden');
 
             fetch(fileSaveUrl, {
@@ -1268,6 +1291,34 @@
 
         document.querySelector('[data-action="confirm-delete"]')
             ?.addEventListener('click', confirmDelete);
+
+        // ── Load Monaco Editor ──────────────────────────────────────────────────
+        let monacoScript = document.createElement('script');
+        monacoScript.src = "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js";
+        monacoScript.onload = function() {
+            require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+            // Provide proxy to avoid worker cross-origin issues from CDN
+            window.MonacoEnvironment = {
+                getWorkerUrl: function(workerId, label) {
+                    return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+                        self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/' };
+                        importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/base/worker/workerMain.js');
+                    `)}`;
+                }
+            };
+            require(['vs/editor/editor.main'], function() {
+                window.editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+                    value: "",
+                    language: "php",
+                    theme: "vs-dark",
+                    automaticLayout: true,
+                    minimap: { enabled: true },
+                    fontSize: 13,
+                    fontFamily: "'Fira Code', 'JetBrains Mono', 'Courier New', monospace"
+                });
+            });
+        };
+        document.body.appendChild(monacoScript);
     </script>
 
     <style nonce="{{ csp_nonce() }}">
