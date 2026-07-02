@@ -638,9 +638,8 @@ HTML
 
         file_put_contents("{$dir}/index.php", <<<'PHP'
 <?php
-// Router sederhana
-$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-require_once __DIR__ . '/app/router.php';
+header('Location: public/');
+exit;
 PHP
         );
 
@@ -711,13 +710,12 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]
 HTACCESS
         );
-        // Pindahkan index.php ke public
-        file_put_contents("{$dir}/public/index.php", file_get_contents("{$dir}/index.php"));
-        // Update index.php root untuk redirect ke public
-        file_put_contents("{$dir}/index.php", <<<'PHP'
+        // Buat index.php ke public
+        file_put_contents("{$dir}/public/index.php", <<<'PHP'
 <?php
-header('Location: public/');
-exit;
+// Router sederhana
+$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+require_once __DIR__ . '/../app/router.php';
 PHP
         );
     }
