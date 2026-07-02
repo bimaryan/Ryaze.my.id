@@ -53,22 +53,26 @@
                 </span>
                 @if (in_array($project->framework, ['react', 'nextjs', 'vue', 'python']))
                     @if ($project->dev_mode)
-                        <a href="http://dev-{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg text-xs font-medium transition shadow-sm gap-1">
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
-                        </a>
-                        <form action="{{ route('user_hosting.dev.stop', $project->hashid) }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="inline-flex justify-center items-center bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 px-2 py-1 rounded-lg text-xs font-medium transition shadow-sm gap-1">
-                                <i class="fa-solid fa-stop text-[10px]"></i> Matikan Dev
-                            </button>
-                        </form>
+                        <div class="flex items-center gap-2">
+                            <a href="http://dev-{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
+                            </a>
+                            <form action="{{ route('user_hosting.dev.stop', $project->hashid) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="inline-flex justify-center items-center bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
+                                    <i class="fa-solid fa-stop text-[10px]"></i> Matikan Dev
+                                </button>
+                            </form>
+                        </div>
                     @else
-                        <form action="{{ route('user_hosting.dev.start', $project->hashid) }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="inline-flex justify-center items-center bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 px-2 py-1 rounded-lg text-xs font-medium transition shadow-sm gap-1">
-                                <i class="fa-solid fa-play text-[10px]"></i> Nyalakan Dev
-                            </button>
-                        </form>
+                        <div class="flex items-center gap-2">
+                            <form action="{{ route('user_hosting.dev.start', $project->hashid) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="inline-flex justify-center items-center bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
+                                    <i class="fa-solid fa-play text-[10px]"></i> Nyalakan Dev Server
+                                </button>
+                            </form>
+                        </div>
                     @endif
                 @endif
                 <a href="{{ route('user_hosting.projects') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm">
