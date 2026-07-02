@@ -1,7 +1,7 @@
 @props(['title', 'description' => null, 'icon' => 'cube', 'iconColor' => 'indigo'])
 
 <div
-    class="p-4 bg-white rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center items-start justify-between border border-slate-200 mb-6 gap-4 sm:gap-0">
+    class="p-4 bg-white rounded-lg shadow-sm flex flex-wrap items-center justify-between border border-slate-200 mb-6 gap-4">
     <div class="flex items-center gap-4">
         @if (isset($iconSlot))
             {{ $iconSlot }}

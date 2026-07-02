@@ -200,7 +200,7 @@
                     <li>Buka halaman detail project.</li>
                     <li>Di card bagian atas, temukan tombol <strong>Dev Server</strong> (ikon Play/Stop).</li>
                     <li>Klik <strong>Nyalakan Server</strong> dan sistem akan mengeksekusi script dev server Anda di background.</li>
-                    <li>Klik link URL khusus yang muncul (contoh: <code class="text-indigo-600 bg-indigo-50 px-1 py-0.5 rounded border border-indigo-100">dev-1234.ryaze.my.id</code>) untuk melihat live preview web Anda tanpa perlu rebuild!</li>
+                    <li>Klik link URL khusus yang muncul (contoh: <code class="text-indigo-600 bg-indigo-50 px-1 py-0.5 rounded border border-indigo-100">dev1234.ryaze.my.id</code>) untuk melihat live preview web Anda tanpa perlu rebuild!</li>
                     <li>Jangan lupa klik <strong>Matikan Server</strong> jika sudah selesai ngoding.</li>
                 </ol>
                 <div class="bg-sky-50 border border-sky-200 rounded-lg p-3 text-sm text-sky-800 flex items-start gap-3">

@@ -54,7 +54,7 @@
                 @if (in_array($project->framework, ['react', 'nextjs', 'vue', 'python']))
                     @if ($project->dev_mode)
                         <div class="flex items-center gap-2">
-                            <a href="http://dev-{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
+                            <a href="https://dev{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
                                 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
                             </a>
                             <form action="{{ route('user_hosting.dev.stop', $project->hashid) }}" method="POST" class="inline">
