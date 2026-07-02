@@ -42,15 +42,15 @@
     <link rel="preconnect" href="https://unpkg.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700;800;900&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" nonce="{{ app('csp_nonce') ?? '' }}">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ app('csp_nonce') ?? '' }}">
 
     <!-- AOS Animation CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ app('csp_nonce') ?? '' }}">
 
-    <style>
+    <style nonce="{{ app('csp_nonce') ?? '' }}">
         body {
             font-family: 'Inter', sans-serif;
             background-color: #fafafa;
@@ -322,7 +322,7 @@
                         </div>
 
                         <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=600&background=1e293b&color=fff&bold=true"
-                            alt="Bima Ryan Alfarizi" width="400" height="400" loading="lazy" crossorigin="anonymous"
+                            alt="Bima Ryan Alfarizi" width="400" height="400" loading="lazy"
                             class="relative rounded-[2rem] shadow-2xl w-80 lg:w-[400px] border-8 border-white object-cover aspect-square transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02]">
 
                         <!-- Floating Badge -->
