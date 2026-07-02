@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Home\HomeController;
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('superadmin/users/{hashid}', [UserController::class, 'destroy'])->name('superadmin.users.destroy');
         Route::get('superadmin/settings', [SettingController::class, 'index'])->name('superadmin.settings');
         Route::put('superadmin/settings', [SettingController::class, 'update'])->name('superadmin.settings.update');
+        Route::get('superadmin/activity-logs', [ActivityLogController::class, 'index'])->name('superadmin.activity_logs');
     });
 
     // ═══════════════════════════════════════════════════════════════
