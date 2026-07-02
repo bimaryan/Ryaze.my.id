@@ -772,38 +772,42 @@ class DashboardController extends Controller
             return back()->with('error', 'Tidak ada port yang tersedia!');
         }
 
-        // Hapus process lama jika ada
+        // Hapus process lama jika ada (cleanup)
         if ($project->dev_pid) {
             $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             if ($isWindows) {
-                exec("taskkill /F /T /PID {$project->dev_pid} 2>nul");
+                if (is_numeric($project->dev_pid)) {
+                    exec("taskkill /F /T /PID {$project->dev_pid} 2>nul");
+                } else {
+                    exec("pm2 delete \"{$project->dev_pid}\" 2>nul");
+                }
             } else {
-                exec("docker exec -u root 1Panel-php8-aJQI sh -c 'kill -9 {$project->dev_pid} 2>/dev/null || true'");
+                if (is_numeric($project->dev_pid)) {
+                    exec("docker exec -u root 1Panel-php8-aJQI sh -c 'kill -9 {$project->dev_pid} 2>/dev/null || true'");
+                } else {
+                    exec("docker exec -u root 1Panel-php8-aJQI sh -c 'pm2 delete \"{$project->dev_pid}\" 2>/dev/null || true'");
+                }
             }
         }
 
-        // Mulai dev server di background
+        // Mulai dev server menggunakan PM2
+        $appName = "dev-{$project->id}";
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-        $pid = null;
-
         $winProjectDir = $isWindows ? substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir) : $projectDir;
 
+        $pm2Wrapper = function($cmd) use ($isWindows, $winProjectDir, $projectDir) {
+            if ($isWindows) {
+                return "cd /D \"{$winProjectDir}\" && {$cmd} 2>&1";
+            }
+            // PHP is already running inside the container (e.g. 1Panel-php8-aJQI), so just run it directly.
+            // We assume pm2 and npm/python are installed globally inside the PHP container.
+            return "cd {$projectDir} && {$cmd} 2>&1";
+        };
+
         if ($project->framework === 'react' || $project->framework === 'vue') {
-            if ($isWindows) {
-                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '--port', '{$port}' -WorkingDirectory '{$winProjectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$winProjectDir}\.dev-server.log' -RedirectStandardError '{$winProjectDir}\.dev-server.log'; echo \$process.Id";
-                $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
-            } else {
-                $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && nohup npm run dev -- --port {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
-                $pid = trim(shell_exec($command));
-            }
+            shell_exec($pm2Wrapper("pm2 start npm --name \"{$appName}\" -- run dev -- --port {$port}"));
         } elseif ($project->framework === 'nextjs') {
-            if ($isWindows) {
-                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '-p', '{$port}' -WorkingDirectory '{$winProjectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$winProjectDir}\.dev-server.log' -RedirectStandardError '{$winProjectDir}\.dev-server.log'; echo \$process.Id";
-                $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
-            } else {
-                $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && nohup npm run dev -- -p {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
-                $pid = trim(shell_exec($command));
-            }
+            shell_exec($pm2Wrapper("pm2 start npm --name \"{$appName}\" -- run dev -- -p {$port}"));
         } elseif ($project->framework === 'python') {
             $entrypoint = 'app.py';
             if (file_exists("{$projectDir}/main.py")) $entrypoint = 'main.py';
@@ -813,23 +817,13 @@ class DashboardController extends Controller
             $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
             if ($hasGunicorn) {
                 $module = str_replace('.py', '', $entrypoint);
-                if ($isWindows) {
-                    $psCommand = "\$env:PORT='{$port}'; \$process = Start-Process venv\Scripts\gunicorn.exe -ArgumentList '{$module}:app', '-b', '127.0.0.1:{$port}', '--workers', '2' -WorkingDirectory '{$winProjectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$winProjectDir}\.dev-server.log' -RedirectStandardError '{$winProjectDir}\.dev-server.log'; echo \$process.Id";
-                    $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
-                } else {
-                    $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
-                    $pid = trim(shell_exec($command));
-                }
+                shell_exec($pm2Wrapper("PORT={$port} pm2 start venv/bin/gunicorn --name \"{$appName}\" -- {$module}:app -b 127.0.0.1:{$port} --workers 2"));
             } else {
-                if ($isWindows) {
-                    $psCommand = "\$env:PORT='{$port}'; \$env:FLASK_RUN_PORT='{$port}'; \$process = Start-Process venv\Scripts\python.exe -ArgumentList '{$entrypoint}' -WorkingDirectory '{$winProjectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$winProjectDir}\.dev-server.log' -RedirectStandardError '{$winProjectDir}\.dev-server.log'; echo \$process.Id";
-                    $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
-                } else {
-                    $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
-                    $pid = trim(shell_exec($command));
-                }
+                shell_exec($pm2Wrapper("PORT={$port} FLASK_RUN_PORT={$port} pm2 start venv/bin/python --name \"{$appName}\" -- {$entrypoint}"));
             }
         }
+        
+        $pid = $appName; // PM2 name as identifier
 
         if (!$pid) {
             return back()->with('error', 'Gagal memulai Dev Server!');
@@ -948,9 +942,17 @@ PHP;
         if ($project->dev_pid) {
             $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             if ($isWindows) {
-                exec("taskkill /F /T /PID {$project->dev_pid} 2>nul");
+                if (is_numeric($project->dev_pid)) {
+                    exec("taskkill /F /T /PID {$project->dev_pid} 2>nul");
+                } else {
+                    exec("pm2 delete \"{$project->dev_pid}\" 2>nul");
+                }
             } else {
-                exec("docker exec -u root 1Panel-php8-aJQI sh -c 'kill -9 {$project->dev_pid} 2>/dev/null || true'");
+                if (is_numeric($project->dev_pid)) {
+                    exec("kill -9 {$project->dev_pid} 2>/dev/null || true");
+                } else {
+                    exec("pm2 delete \"{$project->dev_pid}\" 2>/dev/null || true");
+                }
             }
         }
         
