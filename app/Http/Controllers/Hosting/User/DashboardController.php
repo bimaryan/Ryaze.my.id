@@ -791,7 +791,7 @@ class DashboardController extends Controller
         }
 
         // Mulai dev server menggunakan PM2
-        $appName = "dev-{$project->id}";
+        $appName = "dev{$project->id}";
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $winProjectDir = $isWindows ? substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir) : $projectDir;
 
@@ -829,7 +829,7 @@ class DashboardController extends Controller
             return back()->with('error', 'Gagal memulai Dev Server!');
         }
 
-        // Generate PHP Reverse Proxy to route dev-*.ryaze.my.id to the Dev Server Port
+        // Generate PHP Reverse Proxy to route dev*.ryaze.my.id to the Dev Server Port
         // This solves the issue where Laragon/OpenResty serves the default production site instead of the dev server.
         $proxyScript = <<<PHP
 <?php
@@ -837,7 +837,7 @@ class DashboardController extends Controller
 \$port = {$port};
 \$hostHeader = \$_SERVER['HTTP_HOST'] ?? '';
 
-if (preg_match('/^dev-\d+\./', \$hostHeader)) {
+if (preg_match('/^dev\d+\./', \$hostHeader)) {
     \$path = \$_SERVER['REQUEST_URI'];
     \$method = \$_SERVER['REQUEST_METHOD'];
     \$headers = getallheaders();
@@ -912,7 +912,7 @@ PHP;
         \Illuminate\Support\Facades\Log::info("CF Vars: zone=$zoneId, token=$apiToken, tunnel=$tunnelUrl");
         
         if ($zoneId && $apiToken && $tunnelUrl) {
-            $domainName = "dev-{$port}.ryaze.my.id";
+            $domainName = "dev{$port}.ryaze.my.id";
             $existing = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", ['type' => 'CNAME', 'name' => $domainName]);
             if ($existing->successful() && empty($existing->json('result'))) {
                 $resp = Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
