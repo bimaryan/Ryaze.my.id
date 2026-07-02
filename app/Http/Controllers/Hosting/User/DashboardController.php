@@ -259,7 +259,7 @@ class DashboardController extends Controller
             $response = Http::withToken($groqApiKey)
                 ->timeout(15)
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model' => 'llama3-8b-8192',
+                    'model' => 'llama-3.1-8b-instant',
                     'messages' => [
                         ['role' => 'system', 'content' => $systemPrompt],
                         ['role' => 'user', 'content' => $userMessage],
@@ -796,6 +796,25 @@ class DashboardController extends Controller
             'dev_pid' => $pid
         ]);
 
+        // Create Cloudflare DNS for Dev Server
+        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+        $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')), '/'));
+        
+        if ($zoneId && $apiToken && $tunnelUrl) {
+            $domainName = "dev-{$port}.ryaze.my.id";
+            $existing = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", ['type' => 'CNAME', 'name' => $domainName]);
+            if ($existing->successful() && empty($existing->json('result'))) {
+                Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
+                    'type'    => 'CNAME',
+                    'name'    => $domainName,
+                    'content' => $tunnelUrl,
+                    'proxied' => true,
+                    'ttl'     => 1,
+                ]);
+            }
+        }
+
         return back()->with('success', "Dev Server berhasil dimulai di port {$port}!");
     }
 
@@ -808,11 +827,18 @@ class DashboardController extends Controller
             exec("kill -9 {$project->dev_pid} 2>/dev/null || true");
         }
 
+        $devPort = $project->dev_port;
+
         $project->update([
             'dev_mode' => false,
             'dev_port' => null,
             'dev_pid' => null
         ]);
+
+        // Hapus Cloudflare DNS for Dev Server
+        if ($devPort) {
+            $this->deleteCloudflareDNS("dev-{$devPort}.ryaze.my.id");
+        }
 
         return back()->with('success', 'Dev Server berhasil dihentikan!');
     }
