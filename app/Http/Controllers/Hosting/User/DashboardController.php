@@ -774,18 +774,34 @@ class DashboardController extends Controller
 
         // Hapus process lama jika ada
         if ($project->dev_pid) {
-            exec("docker exec -u root 1Panel-php8-aJQI sh -c 'kill -9 {$project->dev_pid} 2>/dev/null || true'");
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+            if ($isWindows) {
+                exec("taskkill /F /T /PID {$project->dev_pid} 2>nul");
+            } else {
+                exec("docker exec -u root 1Panel-php8-aJQI sh -c 'kill -9 {$project->dev_pid} 2>/dev/null || true'");
+            }
         }
 
-        // Mulai dev server di background menggunakan docker exec 1Panel
+        // Mulai dev server di background
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $pid = null;
 
         if ($project->framework === 'react' || $project->framework === 'vue') {
-            $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && nohup npm run dev -- --port {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
-            $pid = trim(shell_exec($command));
+            if ($isWindows) {
+                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '--port', '{$port}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
+            } else {
+                $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && nohup npm run dev -- --port {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
+                $pid = trim(shell_exec($command));
+            }
         } elseif ($project->framework === 'nextjs') {
-            $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && nohup npm run dev -- -p {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
-            $pid = trim(shell_exec($command));
+            if ($isWindows) {
+                $psCommand = "\$process = Start-Process npm.cmd -ArgumentList 'run', 'dev', '--', '-p', '{$port}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
+            } else {
+                $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && nohup npm run dev -- -p {$port} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
+                $pid = trim(shell_exec($command));
+            }
         } elseif ($project->framework === 'python') {
             $entrypoint = 'app.py';
             if (file_exists("{$projectDir}/main.py")) $entrypoint = 'main.py';
@@ -795,17 +811,95 @@ class DashboardController extends Controller
             $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
             if ($hasGunicorn) {
                 $module = str_replace('.py', '', $entrypoint);
-                $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
-                $pid = trim(shell_exec($command));
+                if ($isWindows) {
+                    $psCommand = "\$env:PORT='{$port}'; \$process = Start-Process venv\Scripts\gunicorn.exe -ArgumentList '{$module}:app', '-b', '127.0.0.1:{$port}', '--workers', '2' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                    $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
+                } else {
+                    $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
+                    $pid = trim(shell_exec($command));
+                }
             } else {
-                $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
-                $pid = trim(shell_exec($command));
+                if ($isWindows) {
+                    $psCommand = "\$env:PORT='{$port}'; \$env:FLASK_RUN_PORT='{$port}'; \$process = Start-Process venv\Scripts\python.exe -ArgumentList '{$entrypoint}' -WorkingDirectory '{$projectDir}' -PassThru -WindowStyle Hidden -RedirectStandardOutput '{$projectDir}\.dev-server.log' -RedirectStandardError '{$projectDir}\.dev-server.log'; echo \$process.Id";
+                    $pid = trim(shell_exec("powershell.exe -Command \"{$psCommand}\""));
+                } else {
+                    $command = "docker exec -u root 1Panel-php8-aJQI sh -c 'cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!'";
+                    $pid = trim(shell_exec($command));
+                }
             }
         }
 
         if (!$pid) {
             return back()->with('error', 'Gagal memulai Dev Server!');
         }
+
+        // Generate PHP Reverse Proxy to route dev-*.ryaze.my.id to the Dev Server Port
+        // This solves the issue where Laragon/OpenResty serves the default production site instead of the dev server.
+        $proxyScript = <<<PHP
+<?php
+// Auto-generated Reverse Proxy for Ryaze Dev Server
+\$port = {$port};
+\$hostHeader = \$_SERVER['HTTP_HOST'] ?? '';
+
+if (preg_match('/^dev-\d+\./', \$hostHeader)) {
+    \$path = \$_SERVER['REQUEST_URI'];
+    \$method = \$_SERVER['REQUEST_METHOD'];
+    \$headers = getallheaders();
+
+    \$url = "http://127.0.0.1:{\$port}{\$path}";
+    \$ch = curl_init(\$url);
+    curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$method);
+    curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt(\$ch, CURLOPT_HEADER, true);
+
+    \$reqHeaders = [];
+    foreach (\$headers as \$k => \$v) {
+        if (strtolower(\$k) === 'host') continue;
+        \$reqHeaders[] = "\$k: \$v";
+    }
+    curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$reqHeaders);
+
+    if (\$method === 'POST' || \$method === 'PUT' || \$method === 'PATCH') {
+        curl_setopt(\$ch, CURLOPT_POSTFIELDS, file_get_contents('php://input'));
+    }
+
+    \$response = curl_exec(\$ch);
+    if (curl_errno(\$ch)) {
+        http_response_code(502);
+        echo "502 Bad Gateway - Dev Server is still starting up or crashed. Please refresh in a few seconds.";
+        exit;
+    }
+
+    \$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
+    \$resHeaders = substr(\$response, 0, \$headerSize);
+    \$resBody = substr(\$response, \$headerSize);
+    \$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
+
+    http_response_code(\$httpCode);
+    \$lines = explode("\\n", \$resHeaders);
+    foreach (\$lines as \$line) {
+        \$line = trim(\$line);
+        if (empty(\$line)) continue;
+        if (strpos(strtolower(\$line), 'transfer-encoding:') === 0) continue;
+        header(\$line, false);
+    }
+    echo \$resBody;
+    exit;
+} else {
+    // Fallback: serve production index.html
+    if (file_exists(__DIR__ . '/index.html')) {
+        // Simple mime-type mapping for static assets
+        \$ext = pathinfo(\$_SERVER['REQUEST_URI'], PATHINFO_EXTENSION);
+        if (\$ext === 'css') header('Content-Type: text/css');
+        if (\$ext === 'js') header('Content-Type: application/javascript');
+        
+        echo file_get_contents(__DIR__ . '/index.html');
+    } else {
+        echo "Produksi belum di-build!";
+    }
+}
+PHP;
+        file_put_contents("{$projectDir}/index.php", $proxyScript);
 
         // Update project
         $project->update([
@@ -845,9 +939,22 @@ class DashboardController extends Controller
     public function stopDevServer($hashid)
     {
         $project = $this->getValidProject($hashid);
+        
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         if ($project->dev_pid) {
-            exec("docker exec -u root 1Panel-php8-aJQI sh -c 'kill -9 {$project->dev_pid} 2>/dev/null || true'");
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+            if ($isWindows) {
+                exec("taskkill /F /T /PID {$project->dev_pid} 2>nul");
+            } else {
+                exec("docker exec -u root 1Panel-php8-aJQI sh -c 'kill -9 {$project->dev_pid} 2>/dev/null || true'");
+            }
+        }
+        
+        // Hapus proxy script saat dev server dimatikan
+        if (file_exists("{$projectDir}/index.php")) {
+            @unlink("{$projectDir}/index.php");
         }
 
         $devPort = $project->dev_port;
