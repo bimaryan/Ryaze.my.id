@@ -96,6 +96,11 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/projects/{hashid}/files/delete', [DashboardController::class, 'deleteItem'])->name('user_hosting.files.delete');
         Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
         Route::post('user/hosting/projects/{hashid}/ide/chat', [DashboardController::class, 'ideChat'])->name('user_hosting.ide.chat');
+        Route::post('user/hosting/projects/{hashid}/ide/search', [DashboardController::class, 'ideSearch'])->name('user_hosting.ide.search');
+        Route::post('user/hosting/projects/{hashid}/ide/git/status', [DashboardController::class, 'ideGitStatus'])->name('user_hosting.ide.git.status');
+        Route::post('user/hosting/projects/{hashid}/ide/git/commit', [DashboardController::class, 'ideGitCommit'])->name('user_hosting.ide.git.commit');
+        Route::post('user/hosting/projects/{hashid}/ide/git/pull', [DashboardController::class, 'ideGitPull'])->name('user_hosting.ide.git.pull');
+        Route::post('user/hosting/projects/{hashid}/ide/git/push', [DashboardController::class, 'ideGitPush'])->name('user_hosting.ide.git.push');
         Route::get('user/hosting/storage', [StorageController::class, 'index'])->name('user_hosting.storage');
         Route::post('user/hosting/storage/upgrade', [StorageController::class, 'upgrade'])->name('user_hosting.storage.upgrade');
         Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.show');

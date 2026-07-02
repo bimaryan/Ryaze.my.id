@@ -267,6 +267,129 @@ class DashboardController extends Controller
         }
     }
 
+    public function ideSearch(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        $query = $request->input('query', '');
+        $matchCase = filter_var($request->input('matchCase', false), FILTER_VALIDATE_BOOLEAN);
+
+        if (empty($query)) {
+            return response()->json(['results' => []]);
+        }
+
+        if (strlen($query) > 100) {
+            $query = substr($query, 0, 100);
+        }
+
+        $caseFlag = $matchCase ? '' : '-i';
+        $escapedQuery = escapeshellarg($query);
+        $escapedDir = escapeshellarg($projectRootDir);
+
+        // Execute grep command to search text inside project directory, ignoring common big folders
+        $cmd = "grep -rIn {$caseFlag} --exclude-dir={node_modules,vendor,.git,storage,.next} {$escapedQuery} {$escapedDir} | head -n 50";
+        $output = shell_exec($cmd);
+
+        $results = [];
+        if ($output) {
+            $lines = explode("\n", trim($output));
+            foreach ($lines as $line) {
+                if (empty($line)) continue;
+                // Parse grep output: /full/path:line:content
+                $parts = explode(':', $line, 3);
+                if (count($parts) >= 3) {
+                    $fullPath = $parts[0];
+                    $lineNumber = $parts[1];
+                    $content = $parts[2];
+                    
+                    // Ensure the result is within project scope
+                    if (strpos($fullPath, $projectRootDir) === 0) {
+                        $relativePath = str_replace($projectRootDir . '/', '', $fullPath);
+                        $results[] = [
+                            'path' => $relativePath,
+                            'line' => $lineNumber,
+                            'content' => mb_strimwidth(trim($content), 0, 120, '...')
+                        ];
+                    }
+                }
+            }
+        }
+
+        return response()->json(['results' => $results]);
+    }
+
+    public function ideGitStatus(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        // Check if git is initialized
+        if (!is_dir($projectRootDir . '/.git')) {
+            return response()->json(['error' => 'Git repository belum diinisialisasi di project ini.']);
+        }
+
+        $cmd = "cd " . escapeshellarg($projectRootDir) . " && git status -s";
+        $output = shell_exec($cmd);
+
+        $changes = [];
+        if ($output) {
+            $lines = explode("\n", trim($output));
+            foreach ($lines as $line) {
+                if (empty($line)) continue;
+                $status = substr($line, 0, 2);
+                $file = trim(substr($line, 2));
+                $changes[] = [
+                    'status' => trim($status),
+                    'file' => $file
+                ];
+            }
+        }
+
+        return response()->json(['changes' => $changes]);
+    }
+
+    public function ideGitCommit(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        $msg = $request->input('message', 'Update');
+        $msg = escapeshellarg($msg);
+
+        $cmd = "cd " . escapeshellarg($projectRootDir) . " && git add . && git commit -m {$msg} 2>&1";
+        $output = shell_exec($cmd);
+
+        return response()->json(['message' => 'Commit berhasil', 'output' => $output]);
+    }
+
+    public function ideGitPull(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        $cmd = "cd " . escapeshellarg($projectRootDir) . " && git pull 2>&1";
+        $output = shell_exec($cmd);
+
+        return response()->json(['message' => 'Pull berhasil (Cek log untuk detail)', 'output' => $output]);
+    }
+
+    public function ideGitPush(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+
+        $cmd = "cd " . escapeshellarg($projectRootDir) . " && git push 2>&1";
+        $output = shell_exec($cmd);
+
+        return response()->json(['message' => 'Push dijalankan (Cek log untuk detail)', 'output' => $output]);
+    }
+
     // 2. Method API untuk navigasi folder
     public function getFiles(Request $request, $hashid)
     {

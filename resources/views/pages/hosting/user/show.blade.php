@@ -395,12 +395,23 @@
                     <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-white border-l-2 border-indigo-500 hover:text-white transition-colors" data-target="ide-sidebar-explorer" title="Explorer">
                         <i class="fa-regular fa-copy text-xl"></i>
                     </button>
+                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-search" title="Search">
+                        <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                    </button>
+                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-git" title="Source Control">
+                        <i class="fa-solid fa-code-branch text-xl"></i>
+                    </button>
                     <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-extensions" title="Extensions">
                         <i class="fa-solid fa-cubes text-xl"></i>
                     </button>
                     <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-chat" title="Ryaze AI">
                         <i class="fa-brands fa-galactic-senate text-xl"></i>
                     </button>
+                    <div class="mt-auto mb-2">
+                        <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-settings" title="Settings / Themes">
+                            <i class="fa-solid fa-gear text-xl"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Sidebar -->
@@ -411,8 +422,10 @@
                         <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center">
                             <span>Explorer</span>
                             <div class="flex gap-2">
-                                <button data-action="ide-up" class="hover:text-white transition-colors" title="Up Directory"><i class="fa-solid fa-arrow-turn-up fa-rotate-270"></i></button>
+                                <button data-action="ide-new-file" class="hover:text-white transition-colors" title="New File"><i class="fa-solid fa-file-medical"></i></button>
+                                <button data-action="ide-new-dir" class="hover:text-white transition-colors" title="New Folder"><i class="fa-solid fa-folder-plus"></i></button>
                                 <button data-action="ide-refresh" class="hover:text-white transition-colors" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+                                <button data-action="ide-collapse" class="hover:text-white transition-colors" title="Collapse All"><i class="fa-solid fa-compress"></i></button>
                             </div>
                         </div>
                         <div class="px-4 py-2 bg-[#2d2d2d] text-[#cccccc] text-xs font-mono border-b border-[#333] truncate">
@@ -420,6 +433,61 @@
                         </div>
                         <div id="ide-sidebar-tree" class="flex-1 overflow-y-auto text-sm text-[#cccccc] py-2 font-mono" style="font-size: 13px;">
                             <!-- JS akan merender list file -->
+                        </div>
+                    </div>
+
+                    <!-- Search View -->
+                    <div id="ide-sidebar-search" class="ide-sidebar-view hidden flex flex-col h-full">
+                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333]">
+                            <span>Search</span>
+                        </div>
+                        <div class="p-3">
+                            <input type="text" id="ide-search-input" class="w-full bg-[#3c3c3c] text-slate-200 border border-[#3c3c3c] focus:border-indigo-500 rounded text-xs p-1.5 outline-none placeholder-slate-500 mb-2" placeholder="Search (Enter)">
+                            <div class="text-[10px] text-slate-500 flex gap-2">
+                                <label class="flex items-center gap-1 cursor-pointer hover:text-slate-300">
+                                    <input type="checkbox" id="ide-search-case" class="accent-indigo-500 rounded-sm bg-[#3c3c3c]"> Match Case
+                                </label>
+                            </div>
+                        </div>
+                        <div id="ide-search-results" class="flex-1 overflow-y-auto px-2 py-2 text-xs font-mono">
+                            <div class="text-slate-500 text-center mt-10">Ketik dan tekan Enter untuk mencari</div>
+                        </div>
+                    </div>
+
+                    <!-- Git / Source Control View -->
+                    <div id="ide-sidebar-git" class="ide-sidebar-view hidden flex flex-col h-full">
+                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center">
+                            <span>Source Control</span>
+                            <button id="ide-git-refresh" class="hover:text-white transition-colors" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+                        <div class="p-3 border-b border-[#333]">
+                            <textarea id="ide-git-commit-msg" class="w-full bg-[#3c3c3c] text-slate-200 border border-[#3c3c3c] focus:border-indigo-500 rounded text-xs p-2 outline-none placeholder-slate-500 resize-none h-16 mb-2" placeholder="Message (Enter to commit)"></textarea>
+                            <div class="flex gap-2">
+                                <button id="ide-git-commit-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] py-1.5 rounded transition">Commit</button>
+                                <button id="ide-git-pull-btn" class="bg-[#3c3c3c] hover:bg-[#4c4c4c] text-white px-2 py-1.5 rounded transition" title="Pull"><i class="fa-solid fa-arrow-down"></i></button>
+                                <button id="ide-git-push-btn" class="bg-[#3c3c3c] hover:bg-[#4c4c4c] text-white px-2 py-1.5 rounded transition" title="Push"><i class="fa-solid fa-arrow-up"></i></button>
+                            </div>
+                        </div>
+                        <div class="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase">Changes</div>
+                        <div id="ide-git-changes" class="flex-1 overflow-y-auto px-2 py-1 text-xs font-mono text-slate-300">
+                            <!-- Git changes rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Settings / Themes View -->
+                    <div id="ide-sidebar-settings" class="ide-sidebar-view hidden flex flex-col h-full">
+                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333]">
+                            <span>Settings</span>
+                        </div>
+                        <div class="p-4">
+                            <label class="block text-xs font-semibold text-slate-300 mb-2">Color Theme</label>
+                            <select id="ide-theme-selector" class="w-full bg-[#3c3c3c] text-slate-200 border border-[#3c3c3c] rounded text-xs p-2 outline-none focus:border-indigo-500">
+                                <option value="vs-dark">Dark+ (default dark)</option>
+                                <option value="vs">Light+ (default light)</option>
+                                <option value="hc-black">High Contrast</option>
+                                <option value="one-dark-pro">One Dark Pro</option>
+                                <option value="dracula">Dracula</option>
+                            </select>
                         </div>
                     </div>
 
@@ -1429,10 +1497,12 @@
                 }
             };
             require(['vs/editor/editor.main'], function() {
+                defineMonacoThemes();
+                themesDefined = true;
                 window.editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
                     value: "",
                     language: "php",
-                    theme: "vs-dark",
+                    theme: localStorage.getItem('ryaze-ide-theme') || 'vs-dark',
                     automaticLayout: true,
                     minimap: { enabled: true },
                     fontSize: 13,
@@ -1514,7 +1584,7 @@
                     if (!ideEditorInstance && typeof monaco !== 'undefined') {
                         ideEditorInstance = monaco.editor.create(document.getElementById('ide-monaco-container'), {
                             value: data.content,
-                            theme: 'vs-dark',
+                            theme: localStorage.getItem('ryaze-ide-theme') || 'vs-dark',
                             automaticLayout: true,
                             minimap: { enabled: true },
                             fontSize: 13,
@@ -1549,6 +1619,38 @@
         document.querySelector('[data-action="ide-refresh"]')?.addEventListener('click', () => {
             loadIdeSidebar(ideCurrentPath);
         });
+        document.querySelector('[data-action="ide-collapse"]')?.addEventListener('click', () => {
+            loadIdeSidebar(''); // Reload from root
+        });
+        document.querySelector('[data-action="ide-new-file"]')?.addEventListener('click', () => {
+            promptCreateIdeItem('file');
+        });
+        document.querySelector('[data-action="ide-new-dir"]')?.addEventListener('click', () => {
+            promptCreateIdeItem('dir');
+        });
+
+        async function promptCreateIdeItem(type) {
+            const label = type === 'dir' ? 'Folder' : 'File';
+            const { value: name } = await swInput(`Buat ${label} Baru`, `Nama ${label}...`);
+            if (!name) return;
+
+            if (isProtected(name)) {
+                swAlert('error', 'Tidak Diizinkan', 'Nama file tersebut adalah file sistem.');
+                return;
+            }
+
+            fetch(fileCreateUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({ type, name, current_path: ideCurrentPath })
+            }).then(r => r.json()).then(data => {
+                if (data.error) swAlert('error', 'Gagal', data.error);
+                else {
+                    hotToast(`${label} berhasil dibuat!`, 'success');
+                    loadIdeSidebar(ideCurrentPath);
+                }
+            });
+        }
         document.querySelector('[data-action="ide-save"]')?.addEventListener('click', () => {
             if (!ideEditingFile || !ideEditorInstance) return;
             const loader = document.getElementById('ide-loader');
@@ -1584,6 +1686,70 @@
             }
         };
 
+        // ── Themes Logic ────────────────────────────────────────────────────────
+        function defineMonacoThemes() {
+            if (typeof monaco === 'undefined') return;
+            // One Dark Pro
+            monaco.editor.defineTheme('one-dark-pro', {
+                base: 'vs-dark', inherit: true,
+                rules: [
+                    { background: '282c34' },
+                    { token: 'keyword', foreground: 'c678dd' },
+                    { token: 'string', foreground: '98c379' },
+                    { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
+                    { token: 'number', foreground: 'd19a66' },
+                    { token: 'type', foreground: 'e5c07b' },
+                ],
+                colors: {
+                    'editor.background': '#282c34',
+                    'editor.foreground': '#abb2bf',
+                    'editorLineNumber.foreground': '#495162',
+                    'editor.selectionBackground': '#3e4451',
+                    'editor.lineHighlightBackground': '#2c313c'
+                }
+            });
+            // Dracula
+            monaco.editor.defineTheme('dracula', {
+                base: 'vs-dark', inherit: true,
+                rules: [
+                    { background: '282a36' },
+                    { token: 'keyword', foreground: 'ff79c6' },
+                    { token: 'string', foreground: 'f1fa8c' },
+                    { token: 'comment', foreground: '6272a4', fontStyle: 'italic' },
+                    { token: 'number', foreground: 'bd93f9' },
+                    { token: 'type', foreground: '8be9fd' },
+                ],
+                colors: {
+                    'editor.background': '#282a36',
+                    'editor.foreground': '#f8f8f2',
+                    'editorLineNumber.foreground': '#6272a4',
+                    'editor.selectionBackground': '#44475a',
+                    'editor.lineHighlightBackground': '#44475a'
+                }
+            });
+        }
+        
+        let themesDefined = false;
+        document.getElementById('ide-theme-selector')?.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            if (typeof monaco !== 'undefined') {
+                if (!themesDefined) {
+                    defineMonacoThemes();
+                    themesDefined = true;
+                }
+                monaco.editor.setTheme(theme);
+                localStorage.setItem('ryaze-ide-theme', theme);
+                hotToast('Tema diubah ke ' + theme, 'success');
+            }
+        });
+
+        // Terapkan tema tersimpan jika ada saat editor pertama kali dibuat
+        const savedTheme = localStorage.getItem('ryaze-ide-theme');
+        if (savedTheme) {
+            document.getElementById('ide-theme-selector').value = savedTheme;
+            // monaco.editor.setTheme(savedTheme) will be called after editor is created.
+        }
+
         // ── Activity Bar Logic ──────────────────────────────────────────────────
         document.querySelectorAll('.ide-activity-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1596,6 +1762,142 @@
 
                 document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
                 document.getElementById(btn.dataset.target).classList.remove('hidden');
+            });
+        });
+
+        // ── Search Logic ────────────────────────────────────────────────────────
+        const searchInput = document.getElementById('ide-search-input');
+        const searchCase = document.getElementById('ide-search-case');
+        const searchResults = document.getElementById('ide-search-results');
+        const searchUrl = '{{ route("user_hosting.ide.search", $project->hashid) }}';
+
+        searchInput?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (!query) {
+                    searchResults.innerHTML = '<div class="text-slate-500 text-center mt-10">Ketik dan tekan Enter untuk mencari</div>';
+                    return;
+                }
+                
+                searchResults.innerHTML = '<div class="text-center mt-10 text-indigo-400"><i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i><br>Mencari...</div>';
+                
+                fetch(searchUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                    body: JSON.stringify({ query: query, matchCase: searchCase.checked })
+                }).then(r => r.json()).then(data => {
+                    if (data.results && data.results.length > 0) {
+                        let html = '';
+                        let currentFile = '';
+                        
+                        data.results.forEach(res => {
+                            if (currentFile !== res.path) {
+                                currentFile = res.path;
+                                html += `<div class="mt-3 mb-1 text-[11px] font-bold text-slate-300 break-all cursor-pointer hover:text-indigo-400 transition" onclick="openIdeFile('${res.path}', '${res.path.split('/').pop()}')"><i class="fa-regular fa-file-code mr-1"></i>${res.path}</div>`;
+                            }
+                            // Highlight the matching text basically
+                            const safeContent = res.content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                            html += `<div class="pl-4 py-1 hover:bg-[#2a2d2e] cursor-pointer text-slate-400 transition-colors flex gap-2" onclick="openIdeFile('${res.path}', '${res.path.split('/').pop()}'); setTimeout(() => { if(ideEditorInstance) { ideEditorInstance.revealLineInCenter(${res.line}); ideEditorInstance.setPosition({lineNumber: ${res.line}, column: 1}); } }, 500);">
+                                <span class="text-slate-600 shrink-0 w-6 text-right">${res.line}</span>
+                                <span class="truncate">${safeContent}</span>
+                            </div>`;
+                        });
+                        searchResults.innerHTML = html;
+                    } else {
+                        searchResults.innerHTML = '<div class="text-slate-500 text-center mt-10">Tidak ditemukan hasil.</div>';
+                    }
+                }).catch(() => {
+                    searchResults.innerHTML = '<div class="text-rose-500 text-center mt-10">Error melakukan pencarian.</div>';
+                });
+            }
+        });
+
+        // ── Git Logic ───────────────────────────────────────────────────────────
+        const gitStatusUrl = '{{ route("user_hosting.ide.git.status", $project->hashid) }}';
+        const gitCommitUrl = '{{ route("user_hosting.ide.git.commit", $project->hashid) }}';
+        const gitPullUrl = '{{ route("user_hosting.ide.git.pull", $project->hashid) }}';
+        const gitPushUrl = '{{ route("user_hosting.ide.git.push", $project->hashid) }}';
+        
+        function loadGitStatus() {
+            const container = document.getElementById('ide-git-changes');
+            if(!container) return;
+            container.innerHTML = '<div class="text-center mt-5 text-indigo-400"><i class="fa-solid fa-spinner fa-spin mb-2"></i><br>Checking status...</div>';
+            
+            fetch(gitStatusUrl, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken }})
+            .then(r => r.json()).then(data => {
+                if(data.error) {
+                    container.innerHTML = `<div class="text-rose-500 text-center mt-5">${data.error}</div>`;
+                    return;
+                }
+                if(!data.changes || data.changes.length === 0) {
+                    container.innerHTML = '<div class="text-slate-500 text-center mt-5">Working tree clean</div>';
+                    return;
+                }
+                let html = '';
+                data.changes.forEach(c => {
+                    let color = 'text-slate-300';
+                    let title = 'Modified';
+                    if (c.status.includes('?')) { color = 'text-emerald-400'; title = 'Untracked'; }
+                    else if (c.status.includes('D')) { color = 'text-rose-400'; title = 'Deleted'; }
+                    else if (c.status.includes('M')) { color = 'text-amber-400'; title = 'Modified'; }
+                    else if (c.status.includes('A')) { color = 'text-emerald-400'; title = 'Added'; }
+                    
+                    html += `<div class="flex items-center justify-between py-1 px-2 hover:bg-[#2a2d2e] cursor-pointer rounded" title="${title}">
+                        <div class="flex items-center gap-2 truncate">
+                            <span class="${color} font-bold w-4 text-center shrink-0">${c.status}</span>
+                            <span class="truncate text-slate-300 hover:text-white" onclick="openIdeFile('${c.file}', '${c.file.split('/').pop()}')">${c.file}</span>
+                        </div>
+                    </div>`;
+                });
+                container.innerHTML = html;
+            }).catch(() => {
+                container.innerHTML = '<div class="text-rose-500 text-center mt-5">Failed to load status</div>';
+            });
+        }
+
+        document.getElementById('ide-git-refresh')?.addEventListener('click', loadGitStatus);
+        
+        document.querySelector('[data-target="ide-sidebar-git"]')?.addEventListener('click', () => {
+            loadGitStatus(); // Auto load when clicking Git tab
+        });
+
+        document.getElementById('ide-git-commit-btn')?.addEventListener('click', () => {
+            const msg = document.getElementById('ide-git-commit-msg').value;
+            if(!msg) { swAlert('error', 'Error', 'Commit message required'); return; }
+            
+            const btn = document.getElementById('ide-git-commit-btn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            fetch(gitCommitUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({ message: msg })
+            }).then(r => r.json()).then(data => {
+                btn.innerHTML = 'Commit';
+                document.getElementById('ide-git-commit-msg').value = '';
+                hotToast(data.message, 'success');
+                loadGitStatus();
+            }).catch(() => {
+                btn.innerHTML = 'Commit';
+                swAlert('error', 'Error', 'Failed to commit');
+            });
+        });
+
+        document.getElementById('ide-git-pull-btn')?.addEventListener('click', () => {
+            hotToast('Pulling...', 'info');
+            fetch(gitPullUrl, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken }})
+            .then(r => r.json()).then(data => {
+                if(data.error) swAlert('error', 'Error', data.error);
+                else { swAlert('success', 'Pull Result', data.output || data.message); loadGitStatus(); }
+            });
+        });
+
+        document.getElementById('ide-git-push-btn')?.addEventListener('click', () => {
+            hotToast('Pushing...', 'info');
+            fetch(gitPushUrl, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken }})
+            .then(r => r.json()).then(data => {
+                if(data.error) swAlert('error', 'Error', data.error);
+                else { swAlert('success', 'Push Result', data.output || data.message); }
             });
         });
 
