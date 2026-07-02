@@ -22,7 +22,7 @@
     <meta property="og:url" content="{{ url('/') }}">
     <meta property="og:title" content="Ryaze Portal - Hosting & Joki IT Terpercaya">
     <meta property="og:description" content="Layanan hosting instan & joki coding profesional dengan sistem otomatis.">
-    <meta property="og:image" content="{{ asset('assets/ryaze-og-image.jpg') }}">
+    <meta property="og:image" content="https://ui-avatars.com/api/?name=Ryaze&size=600&background=4f46e5&color=fff">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -30,7 +30,7 @@
     <meta property="twitter:title" content="Ryaze Portal - Hosting & Joki IT Terpercaya">
     <meta property="twitter:description"
         content="Layanan hosting instan & joki coding profesional dengan sistem otomatis.">
-    <meta property="twitter:image" content="{{ asset('assets/ryaze-og-image.jpg') }}">
+    <meta property="twitter:image" content="https://ui-avatars.com/api/?name=Ryaze&size=600&background=4f46e5&color=fff">
 
     <!-- Vite Config -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -45,10 +45,10 @@
         rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <!-- AOS Animation CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <style>
         body {
@@ -322,7 +322,7 @@
                         </div>
 
                         <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=600&background=1e293b&color=fff&bold=true"
-                            alt="Bima Ryan Alfarizi" width="400" height="400" loading="lazy"
+                            alt="Bima Ryan Alfarizi" width="400" height="400" loading="lazy" crossorigin="anonymous"
                             class="relative rounded-[2rem] shadow-2xl w-80 lg:w-[400px] border-8 border-white object-cover aspect-square transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02]">
 
                         <!-- Floating Badge -->
@@ -597,7 +597,7 @@
     </footer>
 
     <!-- AOS Script -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer nonce="{{ app('csp_nonce') ?? '' }}"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ app('csp_nonce') ?? '' }}"></script>
     <script nonce="{{ app('csp_nonce') ?? '' }}">
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof AOS !== 'undefined') {
