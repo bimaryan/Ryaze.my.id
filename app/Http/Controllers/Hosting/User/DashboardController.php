@@ -971,7 +971,7 @@ PHP;
 
         // Hapus Cloudflare DNS for Dev Server
         if ($devPort) {
-            $this->deleteCloudflareDNS("dev-{$devPort}.ryaze.my.id");
+            $this->deleteCloudflareDNS("dev{$devPort}.ryaze.my.id");
         }
 
         return back()->with('success', 'Dev Server berhasil dihentikan!');
