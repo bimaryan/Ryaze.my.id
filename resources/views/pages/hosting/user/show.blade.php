@@ -51,6 +51,26 @@
                     <i class="fa-solid {{ $statusIcon }}"></i>
                     {{ $project->status }}
                 </span>
+                @if (in_array($project->framework, ['react', 'nextjs', 'vue', 'python']))
+                    @if ($project->dev_mode)
+                        <a href="http://dev-{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm gap-2">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Dev
+                        </a>
+                        <form action="{{ route('user_hosting.dev.stop', $project->hashid) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="inline-flex justify-center items-center bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm gap-2">
+                                <i class="fa-solid fa-stop"></i> Matikan Dev Server
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('user_hosting.dev.start', $project->hashid) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="inline-flex justify-center items-center bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm gap-2">
+                                <i class="fa-solid fa-play"></i> Nyalakan Dev Server
+                            </button>
+                        </form>
+                    @endif
+                @endif
                 <a href="{{ route('user_hosting.projects') }}" class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>

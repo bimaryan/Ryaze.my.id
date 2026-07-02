@@ -228,7 +228,22 @@ class DashboardController extends Controller
             return response()->json(['error' => 'Pesan tidak boleh kosong.'], 400);
         }
 
-        $groqApiKey = env('GROQ_API_KEY');
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $envPath = $projectDir . '/.env';
+        $userApiKey = null;
+        if (file_exists($envPath)) {
+            $envLines = explode("\n", file_get_contents($envPath));
+            foreach ($envLines as $line) {
+                if (str_starts_with(trim($line), 'GROQ_API_KEY=')) {
+                    $userApiKey = trim(explode('=', $line, 2)[1]);
+                    $userApiKey = trim($userApiKey, "\"'");
+                    break;
+                }
+            }
+        }
+
+        $groqApiKey = $userApiKey ?: env('GROQ_API_KEY');
         if (empty($groqApiKey)) {
             return response()->json(['error' => 'GROQ_API_KEY belum dikonfigurasi di server.'], 500);
         }
@@ -719,9 +734,9 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
 
-        // Only allow React/Next.js/Vue frameworks
-        if (!in_array($project->framework, ['react', 'nextjs', 'vue'])) {
-            return back()->with('error', 'Dev Server hanya tersedia untuk React, Next.js, dan Vue!');
+        // Only allow React/Next.js/Vue/Python frameworks
+        if (!in_array($project->framework, ['react', 'nextjs', 'vue', 'python'])) {
+            return back()->with('error', 'Dev Server hanya tersedia untuk React, Next.js, Vue, dan Python!');
         }
 
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
