@@ -896,6 +896,7 @@ if (preg_match('/^dev\d+\./', \$hostHeader)) {
 }
 PHP;
         file_put_contents("{$projectDir}/index.php", $proxyScript);
+        file_put_contents("{$projectDir}/.port", $port);
 
         // Update project
         $project->update([

@@ -418,7 +418,8 @@ echo \$resBody;
 curl_close(\$ch);
 PHP;
             file_put_contents("{$projectDir}/index.php", $proxyScript);
-            $this->exec("chown www-data:www-data {$projectDir}/index.php", $deploy);
+            file_put_contents("{$projectDir}/.port", $port);
+            $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
             
             $this->project->update([
                 'dev_mode' => true,
