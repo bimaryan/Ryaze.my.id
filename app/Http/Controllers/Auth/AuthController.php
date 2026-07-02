@@ -77,6 +77,16 @@ class AuthController extends Controller
         $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
+            // Check if suspended
+            if (Auth::user()->status === 'suspended') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors([
+                    'email' => 'Akun Anda telah ditangguhkan. Silakan hubungi admin.',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
 
             // Reset counter & catat login sukses

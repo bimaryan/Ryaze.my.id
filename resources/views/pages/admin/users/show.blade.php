@@ -7,12 +7,65 @@
             subtitle="Lihat informasi detail dan riwayat pesanan klien." 
             icon="fa-solid fa-user">
             <x-slot:actions>
+                @if($user->id !== auth()->id())
+                    <button onclick="document.getElementById('modal-role-{{ $user->hashid }}').showModal()"
+                        class="inline-flex justify-center items-center bg-blue-50 text-blue-700 hover:bg-blue-100 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm border border-blue-200">
+                        <i class="fa-solid fa-user-shield mr-2"></i> Edit Role
+                    </button>
+                    
+                    <form action="{{ route('superadmin.users.status.toggle', $user->hashid) }}" method="POST" class="inline">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" onclick="return confirm('Apakah Anda yakin ingin {{ $user->status === 'active' ? 'menangguhkan' : 'mengaktifkan' }} akun ini?')"
+                            class="inline-flex justify-center items-center px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm border {{ $user->status === 'active' ? 'bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200' }}">
+                            <i class="fa-solid {{ $user->status === 'active' ? 'fa-ban' : 'fa-check' }} mr-2"></i> 
+                            {{ $user->status === 'active' ? 'Suspend' : 'Unsuspend' }}
+                        </button>
+                    </form>
+
+                    <form action="{{ route('superadmin.users.destroy', $user->hashid) }}" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" onclick="return confirm('Peringatan: Aksi ini akan menghapus akun user secara permanen. Lanjutkan?')"
+                            class="inline-flex justify-center items-center bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                            <i class="fa-solid fa-trash mr-2"></i> Hapus
+                        </button>
+                    </form>
+                @endif
                 <a href="{{ route('superadmin.users.index') }}"
                     class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
             </x-slot:actions>
         </x-ui.page-header>
+        
+        <!-- Modal Edit Role -->
+        <dialog id="modal-role-{{ $user->hashid }}" class="modal backdrop:bg-black/50 p-6 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 open:animate-in open:fade-in open:zoom-in-95">
+            <form action="{{ route('superadmin.users.role.update', $user->hashid) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="mb-5">
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">Edit Role Klien</h3>
+                    <p class="text-sm text-slate-500">Pilih hak akses baru untuk {{ $user->name }}</p>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Role Saat Ini: {{ str_replace('_', ' ', $user->role) }}</label>
+                    <select name="role" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5">
+                        <option value="user_hosting" {{ $user->role === 'user_hosting' ? 'selected' : '' }}>User Hosting</option>
+                        <option value="user_joki" {{ $user->role === 'user_joki' ? 'selected' : '' }}>User Joki</option>
+                        <option value="admin_hosting" {{ $user->role === 'admin_hosting' ? 'selected' : '' }}>Admin Hosting</option>
+                        <option value="admin_joki" {{ $user->role === 'admin_joki' ? 'selected' : '' }}>Admin Joki</option>
+                        <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>Superadmin</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button" onclick="document.getElementById('modal-role-{{ $user->hashid }}').close()" class="px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg font-medium hover:bg-slate-50">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 shadow-sm">Simpan Perubahan</button>
+                </div>
+            </form>
+        </dialog>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
 

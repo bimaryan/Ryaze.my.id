@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Home\HomeController;
@@ -51,6 +52,11 @@ Route::middleware('auth')->group(function () {
         Route::get('superadmin/dashboard', [AdminDashboardController::class, 'index'])->name('superadmin.dashboard');
         Route::get('superadmin/users', [UserController::class, 'index'])->name('superadmin.users.index');
         Route::get('superadmin/users/{hashid}', [UserController::class, 'show'])->name('superadmin.users.show');
+        Route::put('superadmin/users/{hashid}/role', [UserController::class, 'updateRole'])->name('superadmin.users.role.update');
+        Route::patch('superadmin/users/{hashid}/status', [UserController::class, 'toggleStatus'])->name('superadmin.users.status.toggle');
+        Route::delete('superadmin/users/{hashid}', [UserController::class, 'destroy'])->name('superadmin.users.destroy');
+        Route::get('superadmin/settings', [SettingController::class, 'index'])->name('superadmin.settings');
+        Route::put('superadmin/settings', [SettingController::class, 'update'])->name('superadmin.settings.update');
     });
 
     // ═══════════════════════════════════════════════════════════════
