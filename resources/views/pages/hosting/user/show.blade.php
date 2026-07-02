@@ -75,6 +75,10 @@
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-folder-tree"></i> <span>Root Files</span>
             </button>
+            <button data-tab="ide" id="tab-ide"
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-laptop-code"></i> <span>IDE VS Code</span>
+            </button>
             <button data-tab="env" id="tab-env"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-key"></i> <span>.env</span>
@@ -376,6 +380,51 @@
                     <textarea id="file-editor-textarea" spellcheck="false" class="hidden flex-1 w-full bg-slate-900 text-emerald-400 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
                     <div id="editor-loader"
                         class="hidden absolute inset-0 bg-slate-900/80 flex items-center justify-center z-40">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- TAB: IDE VS CODE --}}
+        <div id="panel-ide" class="tab-panel hidden">
+            <div class="flex h-[650px] bg-[#1e1e1e] rounded-xl overflow-hidden shadow-xl border border-slate-700">
+                <!-- Sidebar -->
+                <div class="w-64 bg-[#252526] border-r border-[#333] flex flex-col shrink-0">
+                    <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center">
+                        <span>Explorer</span>
+                        <div class="flex gap-2">
+                            <button data-action="ide-up" class="hover:text-white transition-colors" title="Up Directory"><i class="fa-solid fa-arrow-turn-up fa-rotate-270"></i></button>
+                            <button data-action="ide-refresh" class="hover:text-white transition-colors" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="px-4 py-2 bg-[#2d2d2d] text-[#cccccc] text-xs font-mono border-b border-[#333] truncate">
+                        <i class="fa-solid fa-folder-open text-amber-500 mr-2"></i><span id="ide-current-path">/</span>
+                    </div>
+                    <div id="ide-sidebar-tree" class="flex-1 overflow-y-auto text-sm text-[#cccccc] py-2 font-mono" style="font-size: 13px;">
+                        <!-- JS akan merender list file -->
+                    </div>
+                </div>
+                <!-- Editor -->
+                <div class="flex-1 flex flex-col relative bg-[#1e1e1e]">
+                    <div class="h-10 bg-[#2d2d2d] flex items-center px-4 border-b border-[#1e1e1e] shrink-0 justify-between">
+                        <div class="flex items-center gap-2 text-sm text-[#cccccc] font-mono min-w-0">
+                            <i class="fa-solid fa-file-code text-indigo-400 shrink-0"></i>
+                            <span id="ide-current-filename" class="truncate">Pilih file...</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button id="ide-save-btn" data-action="ide-save" class="hidden text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded transition-colors flex items-center gap-1.5 font-semibold">
+                                <i class="fa-solid fa-save"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                    <div id="ide-monaco-container" class="flex-1 relative w-full bg-[#1e1e1e]">
+                        <div id="ide-empty-state" class="absolute inset-0 flex items-center justify-center flex-col gap-4 opacity-30">
+                            <i class="fa-solid fa-laptop-code text-7xl text-slate-500"></i>
+                            <p class="text-slate-400 font-mono">Pilih file dari explorer untuk mengedit</p>
+                        </div>
+                    </div>
+                    <div id="ide-loader" class="hidden absolute inset-0 bg-[#1e1e1e]/80 flex items-center justify-center z-10">
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
                     </div>
                 </div>
@@ -1319,6 +1368,139 @@
             });
         };
         document.body.appendChild(monacoScript);
+
+        // ── IDE Tab Logic ───────────────────────────────────────────────────────
+        let ideEditorInstance = null;
+        let ideCurrentPath = '';
+        let ideEditingFile = '';
+        let ideLoading = false;
+
+        function loadIdeSidebar(path = '') {
+            const treeEl = document.getElementById('ide-sidebar-tree');
+            const pathEl = document.getElementById('ide-current-path');
+            ideCurrentPath = path;
+            pathEl.textContent = path ? '/' + path : '/';
+            treeEl.innerHTML = '<div class="px-4 py-2 opacity-50 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading...</div>';
+            
+            fetch(`${fileManagerUrl}?path=${encodeURIComponent(path)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        treeEl.innerHTML = `<div class="px-4 py-2 text-rose-500">${data.error}</div>`;
+                        return;
+                    }
+                    treeEl.innerHTML = '';
+                    if (!data.items.length) {
+                        treeEl.innerHTML = '<div class="px-4 py-2 opacity-50 italic">Folder kosong</div>';
+                        return;
+                    }
+                    data.items.forEach(item => {
+                        const isDir = item.type === 'dir';
+                        const locked = !isDir && isProtected(item.name);
+                        const icon = isDir ? '<i class="fa-solid fa-folder text-amber-500 w-4"></i>' : 
+                                     locked ? '<i class="fa-solid fa-lock text-slate-500 w-4"></i>' :
+                                     '<i class="fa-regular fa-file-code text-indigo-400 w-4"></i>';
+                        
+                        const div = document.createElement('div');
+                        div.className = `px-4 py-1.5 flex items-center gap-2 cursor-pointer hover:bg-[#2a2d2e] transition-colors ${locked ? 'opacity-50' : ''}`;
+                        div.innerHTML = `${icon} <span class="truncate">${item.name}</span>`;
+                        div.onclick = () => {
+                            if (locked) {
+                                swAlert('warning', 'File Terlindungi', 'File ini tidak bisa diedit.');
+                                return;
+                            }
+                            if (isDir) loadIdeSidebar(item.path);
+                            else openIdeFile(item.path, item.name);
+                        };
+                        treeEl.appendChild(div);
+                    });
+                }).catch(() => {
+                    treeEl.innerHTML = '<div class="px-4 py-2 text-rose-500">Gagal load explorer</div>';
+                });
+        }
+
+        function openIdeFile(path, filename) {
+            const loader = document.getElementById('ide-loader');
+            const saveBtn = document.getElementById('ide-save-btn');
+            const emptyState = document.getElementById('ide-empty-state');
+            document.getElementById('ide-current-filename').textContent = filename;
+            loader.classList.remove('hidden');
+
+            fetch(`${fileReadUrl}?path=${encodeURIComponent(path)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        swAlert('error', 'Gagal', data.error);
+                        loader.classList.add('hidden');
+                        return;
+                    }
+                    ideEditingFile = path;
+                    emptyState.classList.add('hidden');
+                    saveBtn.classList.remove('hidden');
+
+                    if (!ideEditorInstance && typeof monaco !== 'undefined') {
+                        ideEditorInstance = monaco.editor.create(document.getElementById('ide-monaco-container'), {
+                            value: data.content,
+                            theme: 'vs-dark',
+                            automaticLayout: true,
+                            minimap: { enabled: true },
+                            fontSize: 13,
+                            fontFamily: "'Fira Code', 'JetBrains Mono', 'Courier New', monospace"
+                        });
+                    } else if (ideEditorInstance) {
+                        ideEditorInstance.setValue(data.content);
+                    }
+                    
+                    if (ideEditorInstance) {
+                        let ext = filename.split('.').pop().toLowerCase();
+                        let lang = 'plaintext';
+                        if (ext === 'php') lang = 'php';
+                        else if (ext === 'js') lang = 'javascript';
+                        else if (ext === 'html') lang = 'html';
+                        else if (ext === 'css') lang = 'css';
+                        else if (ext === 'json') lang = 'json';
+                        else if (ext === 'env' || filename === '.env') lang = 'ini';
+                        monaco.editor.setModelLanguage(ideEditorInstance.getModel(), lang);
+                    }
+                    loader.classList.add('hidden');
+                }).catch(() => {
+                    swAlert('error', 'Error', 'Gagal membaca file');
+                    loader.classList.add('hidden');
+                });
+        }
+
+        document.querySelector('[data-action="ide-up"]')?.addEventListener('click', () => {
+            if (!ideCurrentPath) return;
+            loadIdeSidebar(ideCurrentPath.split('/').slice(0, -1).join('/'));
+        });
+        document.querySelector('[data-action="ide-refresh"]')?.addEventListener('click', () => {
+            loadIdeSidebar(ideCurrentPath);
+        });
+        document.querySelector('[data-action="ide-save"]')?.addEventListener('click', () => {
+            if (!ideEditingFile || !ideEditorInstance) return;
+            const loader = document.getElementById('ide-loader');
+            loader.classList.remove('hidden');
+            fetch(fileSaveUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                body: JSON.stringify({ path: ideEditingFile, content: ideEditorInstance.getValue() })
+            }).then(r => r.json()).then(data => {
+                loader.classList.add('hidden');
+                if (data.error) swAlert('error', 'Gagal', data.error);
+                else hotToast('File berhasil disimpan!', 'success');
+            }).catch(() => {
+                loader.classList.add('hidden');
+                swAlert('error', 'Error', 'Gagal menyimpan file');
+            });
+        });
+
+        // Add IDE tab trigger logic
+        document.getElementById('tab-ide')?.addEventListener('click', () => {
+            if (document.getElementById('ide-sidebar-tree').children.length === 0) {
+                loadIdeSidebar('');
+            }
+        });
+
     </script>
 
     <style nonce="{{ csp_nonce() }}">
