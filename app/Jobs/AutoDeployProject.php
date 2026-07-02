@@ -141,7 +141,7 @@ class AutoDeployProject implements ShouldQueue
             $this->log($deploy, "\n> Applying final permissions to all generated files...");
             $this->exec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
             $this->exec("find {$projectDir} -type d -exec chmod 755 {} \; 2>/dev/null || true", $deploy);
-            $this->exec("find {$projectDir} -type f -exec chmod 644 {} \; 2>/dev/null || true", $deploy);
+            $this->exec("find {$projectDir} -type f -not -path '*/venv/bin/*' -not -path '*/node_modules/.bin/*' -exec chmod 644 {} \; 2>/dev/null || true", $deploy);
 
             if ($framework === 'laravel') {
                 $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
@@ -268,10 +268,11 @@ class AutoDeployProject implements ShouldQueue
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
         $this->exec("cd {$projectDir} && python3 -m venv venv", $deploy);
+        $this->exec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
         
         if (file_exists("{$projectDir}/requirements.txt")) {
             $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
-            $this->exec("cd {$projectDir} && venv/bin/pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
+            $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
         }
 
         // Allocate a dynamic port for OpenResty reverse proxy (using dev_port)
@@ -289,6 +290,9 @@ class AutoDeployProject implements ShouldQueue
             $this->log($deploy, '> [ERROR] Tidak ada port yang tersedia untuk Python Server.');
             return;
         }
+
+        // Ensure binaries installed via pip are executable
+        $this->exec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
 
         // Kill existing process if any
         if ($this->project->dev_pid) {
