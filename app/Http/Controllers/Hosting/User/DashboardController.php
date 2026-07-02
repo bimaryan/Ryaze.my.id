@@ -742,15 +742,30 @@ class DashboardController extends Controller
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
-        // Cari port yang tersedia (3000-4000)
+        // Cari port yang tersedia dengan start random (3000-4000) untuk mem-bypass DNS negative caching
         $port = null;
-        for ($p = 3000; $p <= 4000; $p++) {
-            $connection = @fsockopen('127.0.0.1', $p);
+        $startPort = rand(3000, 4000);
+        
+        // Cari dari startPort ke 4000
+        for ($p = $startPort; $p <= 4000; $p++) {
+            $connection = @fsockopen('127.0.0.1', $p, $errCode, $errStr, 0.1);
             if (!is_resource($connection)) {
                 $port = $p;
                 break;
             }
-            if (is_resource($connection)) fclose($connection);
+            fclose($connection);
+        }
+        
+        // Jika belum ketemu, cari dari 3000 ke startPort
+        if (!$port) {
+            for ($p = 3000; $p < $startPort; $p++) {
+                $connection = @fsockopen('127.0.0.1', $p, $errCode, $errStr, 0.1);
+                if (!is_resource($connection)) {
+                    $port = $p;
+                    break;
+                }
+                fclose($connection);
+            }
         }
 
         if (!$port) {
