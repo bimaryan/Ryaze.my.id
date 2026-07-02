@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="id" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url('/') }}">
     <title>Ryaze Portal - Hosting & Joki Terbaik</title>
 
     <!-- SEO Meta Tags -->
@@ -35,6 +38,8 @@
     <!-- Google Fonts: Outfit & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700;800;900&display=swap"
         rel="stylesheet">
@@ -317,7 +322,7 @@
                         </div>
 
                         <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=600&background=1e293b&color=fff&bold=true"
-                            alt="Bima Ryan Alfarizi"
+                            alt="Bima Ryan Alfarizi" width="400" height="400" loading="lazy"
                             class="relative rounded-[2rem] shadow-2xl w-80 lg:w-[400px] border-8 border-white object-cover aspect-square transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02]">
 
                         <!-- Floating Badge -->
@@ -339,9 +344,9 @@
 
                 <!-- Text Content -->
                 <div class="w-full lg:w-1/2" data-aos="fade-left">
-                    <h2 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Tentang Kreator</h2>
-                    <h3 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Halo, kenali saya
-                        lebih dekat!</h3>
+                    <p class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Tentang Kreator</p>
+                    <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Halo, kenali saya
+                        lebih dekat!</h2>
 
                     <p class="text-lg text-slate-600 mb-6 leading-relaxed">
                         Saya <strong>Bima Ryan Alfarizi</strong>, mahasiswa D4 Rekayasa Perangkat Lunak di Politeknik
@@ -384,8 +389,8 @@
     <section id="services" class="py-24 bg-[#f8fafc] relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-20" data-aos="fade-up">
-                <h2 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Layanan Kami</h2>
-                <h3 class="text-4xl md:text-5xl font-black text-slate-900">Solusi Digital Lengkap</h3>
+                <p class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Layanan Kami</p>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900">Solusi Digital Lengkap</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
@@ -482,8 +487,8 @@
     <section id="portfolio" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Portofolio</h2>
-                <h3 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Mahakarya Terbaru</h3>
+                <p class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Portofolio</p>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Mahakarya Terbaru</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -491,7 +496,7 @@
                 <!-- Portofolio Item 1 -->
                 <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-500"
                     data-aos="fade-up" data-aos-delay="100">
-                    <a href="https://silk.ryaze.my.id/login" target="_blank" class="block">
+                    <a href="https://silk.ryaze.my.id/login" target="_blank" rel="noopener noreferrer" class="block">
                         <div class="img-zoom-container h-60 bg-slate-100 relative">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
@@ -509,14 +514,14 @@
                             <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Laravel</span>
                             <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Tailwind</span>
                         </div>
-                        <a href="https://silk.ryaze.my.id/login" target="_blank">
-                            <h4 class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-indigo-600 transition-colors">
+                        <a href="https://silk.ryaze.my.id/login" target="_blank" rel="noopener noreferrer">
+                            <h3 class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-indigo-600 transition-colors">
                                 Sistem Peminjaman Lab Kesehatan
-                            </h4>
+                            </h3>
                         </a>
                         <p class="text-slate-500 line-clamp-2 mb-4">Aplikasi peminjaman bahan dan alat laboratorium adalah sebuah sistem berbasis teknologi yang dirancang untuk mempermudah proses peminjaman, pengembalian, serta pengelolaan inventaris laboratorium secara digital. Aplikasi ini memungkinkan pengguna, baik mahasiswa maupun dosen, untuk memesan, meminjam, dan mengembalikan alat serta bahan laboratorium dengan mudah melalui platform yang terhubung secara online.</p>
                         
-                        <a href="https://github.com/bimaryan/silk" target="_blank" class="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
+                        <a href="https://github.com/bimaryan/silk" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
                             <i class="fa-brands fa-github text-lg mr-2"></i> Repository
                         </a>
                     </div>
@@ -525,7 +530,7 @@
             </div>
 
             <div class="text-center mt-16" data-aos="fade-up">
-                <a href="https://github.com/bimaryan" target="_blank"
+                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer"
                     class="inline-flex items-center justify-center px-8 py-4 font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-full hover:border-indigo-500 hover:text-indigo-600 transition-all">
                     Jelajahi GitHub Saya <i class="fa-brands fa-github ml-3 text-xl"></i>
                 </a>
@@ -569,15 +574,15 @@
                             class="text-indigo-500">.</span></span>
                 </div>
                 <div class="flex gap-6">
-                    <a href="https://github.com/bimaryan" target="_blank"
+                    <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
                         class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition-all">
                         <i class="fa-brands fa-github text-lg"></i>
                     </a>
-                    <a href="#"
+                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                         class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-pink-600 hover:text-white transition-all">
                         <i class="fa-brands fa-instagram text-lg"></i>
                     </a>
-                    <a href="#"
+                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
                         class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all">
                         <i class="fa-brands fa-linkedin text-lg"></i>
                     </a>
@@ -592,13 +597,17 @@
     </footer>
 
     <!-- AOS Script -->
-    <script nonce="{{ app('csp_nonce') ?? '' }}"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer nonce="{{ app('csp_nonce') ?? '' }}"></script>
     <script nonce="{{ app('csp_nonce') ?? '' }}">
-        AOS.init({
-            once: true,
-            offset: 100,
-            duration: 800,
-            easing: 'ease-out-cubic',
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    once: true,
+                    offset: 100,
+                    duration: 800,
+                    easing: 'ease-out-cubic',
+                });
+            }
         });
     </script>
     @include('components.hot-toast')
