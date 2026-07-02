@@ -1,7 +1,7 @@
 @props(['title', 'description' => null, 'icon' => 'cube', 'iconColor' => 'indigo'])
 
 <div
-    class="p-4 bg-white rounded-lg shadow-sm flex items-center justify-between border border-slate-200 mb-6">
+    class="p-4 bg-white rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center items-start justify-between border border-slate-200 mb-6 gap-4 sm:gap-0">
     <div class="flex items-center gap-4">
         @if (isset($iconSlot))
             {{ $iconSlot }}
@@ -16,9 +16,9 @@
         </div>
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex flex-wrap items-center gap-3">
         @if (isset($actions))
-            <div class="flex gap-2 [&>*]:!px-2 [&>*]:!py-1">
+            <div class="flex flex-wrap items-center gap-2">
                 {{ $actions }}
             </div>
         @endif
