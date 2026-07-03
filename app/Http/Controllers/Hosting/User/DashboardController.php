@@ -189,7 +189,10 @@ class DashboardController extends Controller
                 // Voucher 100% Gratis, langsung buat billing aktif
                 \App\Models\HostingBilling::create([
                     'user_id' => $user->id,
+                    'hosting_project_id' => null,
+                    'plan_name' => 'Bulanan Rp 10.000',
                     'amount' => 0,
+                    'billing_cycle' => 'monthly',
                     'status' => 'active',
                     'next_due_date' => now()->addMonth(),
                 ]);
