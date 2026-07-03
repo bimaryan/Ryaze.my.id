@@ -47,7 +47,7 @@ class TicketController extends Controller
             'message' => $request->message,
         ]);
 
-        return redirect()->route('user.tickets.show', $ticket->hashid)
+        return redirect()->route('user_hosting.tickets.show', $ticket->hashid)
             ->with('success', 'Tiket bantuan berhasil dibuat.');
     }
 
