@@ -13,7 +13,7 @@
         </x-slot:actions>
     </x-ui.page-header>
 
-    <form action="{{ route('superadmin.articles.update', $article->hashid) }}" method="POST" enctype="multipart/form-data">
+    <form id="article-form" action="{{ route('superadmin.articles.update', $article->hashid) }}" method="POST" enctype="multipart/form-data">
         @csrf @method('PUT')
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -153,9 +153,13 @@
             const toolbarPlaceholder = document.querySelector('.quill-toolbar-container');
             if(toolbarPlaceholder) toolbarPlaceholder.remove();
 
-            const form = document.querySelector('form');
+            const form = document.getElementById('article-form');
             form.addEventListener('submit', function() {
-                document.querySelector('#body').value = quill.root.innerHTML;
+                let html = quill.root.innerHTML;
+                if (html === '<p><br></p>') {
+                    html = '';
+                }
+                document.querySelector('#body').value = html;
             });
         }
     });
