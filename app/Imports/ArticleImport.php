@@ -53,6 +53,12 @@ class ArticleImport implements ToModel, WithHeadingRow
             $status = 'draft';
         }
 
+        // Parse tags
+        $tags = null;
+        if (!empty($row['tags'])) {
+            $tags = array_filter(array_map('trim', explode(',', $row['tags'])));
+        }
+
         return new Article([
             'user_id'      => Auth::id() ?? 1,
             'category_id'  => $categoryId,
@@ -60,7 +66,7 @@ class ArticleImport implements ToModel, WithHeadingRow
             'slug'         => $slug,
             'excerpt'      => $row['excerpt'] ?? null,
             'body'         => $row['body'] ?? '',
-            'tags'         => $row['tags'] ?? null,
+            'tags'         => $tags,
             'status'       => $status,
             'is_featured'  => false,
             'published_at' => $status === 'published' ? Carbon::now() : null,
