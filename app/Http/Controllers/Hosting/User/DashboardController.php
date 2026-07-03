@@ -201,6 +201,17 @@ class DashboardController extends Controller
                     ->where('invoice_number', 'like', 'HST-INV-%')
                     ->where('status', 'unpaid')
                     ->delete();
+                    
+                // Buat invoice lunas untuk riwayat
+                \App\Models\HostingPayment::create([
+                    'user_id' => $user->id,
+                    'hosting_project_id' => null,
+                    'invoice_number' => 'HST-INV-'. strtoupper(uniqid()),
+                    'amount' => 0,
+                    'status' => 'paid',
+                    'payment_method' => 'Voucher',
+                    'paid_at' => now(),
+                ]);
             } else {
                 $voucherMessage = 'Voucher berhasil digunakan! Anda mendapatkan potongan harga.';
             }
@@ -1157,10 +1168,11 @@ PHP;
 
     public function billingHistory()
     {
-        // Mengambil semua tagihan milik user yang sedang login
-        $billings = HostingBilling::whereHas('project', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->latest()->paginate(15);
+        // Mengambil semua invoice/tagihan milik user yang sedang login
+        $billings = \App\Models\HostingPayment::where('user_id', Auth::id())
+            ->where('invoice_number', 'like', 'HST-INV-%')
+            ->latest()
+            ->paginate(15);
 
         return view('pages.hosting.user.billing', compact('billings'));
     }
