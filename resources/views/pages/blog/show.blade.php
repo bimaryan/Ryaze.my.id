@@ -20,10 +20,12 @@
     @if($article->category)
         <meta property="article:section" content="{{ $article->category->name }}">
     @endif
-    @if($article->tags)
+    @if(is_array($article->tags))
         @foreach($article->tags as $tag)
             <meta property="article:tag" content="{{ $tag }}">
         @endforeach
+    @elseif(is_string($article->tags))
+        <meta property="article:tag" content="{{ $article->tags }}">
     @endif
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -137,12 +139,18 @@
         </div>
 
         {{-- Tags --}}
-        @if($article->tags && count($article->tags) > 0)
+        @if(is_array($article->tags) && count($article->tags) > 0)
             <div class="mt-12 pt-8 border-t border-slate-200">
                 <div class="flex flex-wrap gap-2">
                     @foreach($article->tags as $tag)
                         <span class="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold rounded-full">#{{ $tag }}</span>
                     @endforeach
+                </div>
+            </div>
+        @elseif(is_string($article->tags) && !empty($article->tags))
+            <div class="mt-12 pt-8 border-t border-slate-200">
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold rounded-full">#{{ $article->tags }}</span>
                 </div>
             </div>
         @endif
