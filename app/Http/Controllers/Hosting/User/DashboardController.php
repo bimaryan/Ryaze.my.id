@@ -176,29 +176,27 @@ class DashboardController extends Controller
             'branch'       => $branch,
             'source_type'  => $sourceType,
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
-            'status'       => 'building',
+            'status'       => 'unpaid',
         ]);
 
-        \Illuminate\Support\Facades\Log::info('Project created', [
+        \Illuminate\Support\Facades\Log::info('Project created (Unpaid)', [
             'id' => $project->id,
             'source_type' => $project->source_type,
             'repo_source' => $project->repo_source
         ]);
 
-        $isTemplate = $sourceType === 'template';
-        $project->deployments()->create([
-            'status'     => 'queued',
-            'build_logs' => $isTemplate
-                ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
-                : "> Memulai proses Deploy awal...\n> Mengambil repository...",
+        \App\Models\HostingPayment::create([
+            'user_id' => Auth::id(),
+            'hosting_project_id' => $project->id,
+            'invoice_number' => 'HST-INV-'. strtoupper(uniqid()),
+            'amount' => 10000,
+            'status' => 'unpaid',
         ]);
 
-        AutoDeployProject::dispatch($project);
-
         // Notifikasi ke User
-        \Illuminate\Support\Facades\Auth::user()->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat dan proses deployment telah dimulai.', 'info'));
+        \Illuminate\Support\Facades\Auth::user()->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat. Silakan lakukan pembayaran agar proses deployment dapat dimulai.', 'info'));
 
-        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat dan sedang dalam proses deployment!');
+        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat. Silakan lakukan pembayaran tagihan hosting!');
     }
 
     public function show($hashed_id)

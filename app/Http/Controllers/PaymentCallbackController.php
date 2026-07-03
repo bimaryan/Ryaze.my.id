@@ -43,8 +43,8 @@ class PaymentCallbackController extends Controller
                             // Tambahkan masa aktif 1 bulan
                             \App\Models\HostingBilling::create([
                                 'hosting_project_id' => $project->id,
-                                'plan_name' => 'Bulanan Rp 15.000',
-                                'amount' => 15000,
+                                'plan_name' => 'Bulanan Rp 10.000',
+                                'amount' => 10000,
                                 'billing_cycle' => 'monthly',
                                 'next_due_date' => now()->addMonth(),
                                 'status' => 'active'
