@@ -38,9 +38,14 @@ class SuspendExpiredHosting extends Command
         $count = 0;
 
         foreach ($expiredBillings as $billing) {
-            $project = $billing->project;
+            $user = $billing->user;
+            if (!$user) continue;
 
-            if ($project && $project->status === 'active') {
+            $projects = \App\Models\HostingProject::where('user_id', $user->id)
+                ->where('status', 'active')
+                ->get();
+
+            foreach ($projects as $project) {
                 // Ubah status ke suspended
                 $project->status = 'suspended';
                 $project->save();
@@ -58,7 +63,7 @@ class SuspendExpiredHosting extends Command
                 // Catat log
                 $project->deployments()->create([
                     'status' => 'error',
-                    'build_logs' => "> SISTEM: Hosting disuspend otomatis karena tagihan melewati batas waktu pembayaran.",
+                    'build_logs' => "> SISTEM: Hosting disuspend otomatis karena tagihan langganan akun melewati batas waktu pembayaran.",
                 ]);
 
                 // Todo: Send email notification

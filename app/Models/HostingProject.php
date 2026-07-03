@@ -47,10 +47,10 @@ class HostingProject extends Model
         return $this->hasMany(HostingEnvironment::class);
     }
 
-    // Info Tagihan/Langganan
+    // Info Tagihan/Langganan (Sekarang per-akun, di-join lewat user_id)
     public function billing()
     {
-        return $this->hasOne(HostingBilling::class);
+        return $this->hasOne(HostingBilling::class, 'user_id', 'user_id')->latestOfMany();
     }
 
     public function domains()

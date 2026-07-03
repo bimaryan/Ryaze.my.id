@@ -83,6 +83,14 @@ Route::middleware('auth')->group(function () {
         // Kelola Tagihan Hosting
         Route::get('admin/hosting/billing', [\App\Http\Controllers\Hosting\Admin\BillingController::class, 'index'])->name('admin_hosting.billing');
         Route::put('admin/hosting/billing/{hashid}/verify', [\App\Http\Controllers\Hosting\Admin\BillingController::class, 'verifyPayment'])->name('admin_hosting.billing.verify');
+
+        // Kelola Voucher Hosting
+        Route::get('admin/hosting/vouchers', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'index'])->name('admin_hosting.vouchers.index');
+        Route::get('admin/hosting/vouchers/create', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'create'])->name('admin_hosting.vouchers.create');
+        Route::post('admin/hosting/vouchers', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'store'])->name('admin_hosting.vouchers.store');
+        Route::get('admin/hosting/vouchers/{hashid}/edit', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'edit'])->name('admin_hosting.vouchers.edit');
+        Route::put('admin/hosting/vouchers/{hashid}', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'update'])->name('admin_hosting.vouchers.update');
+        Route::delete('admin/hosting/vouchers/{hashid}', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'destroy'])->name('admin_hosting.vouchers.destroy');
     });
 
     // ═══════════════════════════════════════════════════════════════

@@ -361,6 +361,23 @@
                     </div>
                 </div>
 
+                @if (!Auth::user()->hasActiveHostingSubscription())
+                    {{-- ── STEP 4: Voucher & Pembayaran ── --}}
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm">
+                            <span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                            Pembayaran & Voucher
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-4">Anda belum memiliki langganan hosting aktif. Tagihan sebesar <span class="font-bold text-slate-800">Rp 10.000</span> akan diterbitkan setelah Anda membuat proyek ini.</p>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Kode Voucher <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                            <input type="text" name="voucher_code" placeholder="Masukkan kode voucher jika ada" class="w-full uppercase px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all font-mono">
+                            <p class="text-[11px] text-slate-500 mt-1">Gunakan voucher diskon untuk memotong biaya langganan pertama Anda.</p>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="flex items-center justify-end gap-4 pt-2">
                     <a href="{{ route('user_hosting.dashboard') }}"
                         class="text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Batal</a>

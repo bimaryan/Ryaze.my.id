@@ -153,14 +153,17 @@
                         </div>
                     @elseif ($project->status == 'unpaid')
                         @php
-                            $unpaidPayment = $project->payments->where('status', 'unpaid')->first();
+                            $unpaidPayment = \App\Models\HostingPayment::where('user_id', $project->user_id)
+                                ->where('invoice_number', 'like', 'HST-INV-%')
+                                ->where('status', 'unpaid')
+                                ->first();
                         @endphp
                         <div class="bg-white rounded-xl border border-rose-200 p-10 text-center shadow-sm">
                             <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fa-solid fa-file-invoice-dollar text-rose-500 text-3xl"></i>
                             </div>
                             <h3 class="text-lg font-bold text-slate-800 mb-2">Menunggu Pembayaran</h3>
-                            <p class="text-slate-500 mb-6 text-sm max-w-md mx-auto">Tagihan hosting Anda belum dibayar. Deployment akan otomatis dimulai setelah Anda menyelesaikan pembayaran.</p>
+                            <p class="text-slate-500 mb-6 text-sm max-w-md mx-auto">Tagihan langganan akun hosting Anda belum dibayar. Deployment akan otomatis dimulai setelah Anda menyelesaikan pembayaran langganan.</p>
                             @if($unpaidPayment)
                                 <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug', 'ryaze') }}/{{ $unpaidPayment->amount }}?order_id={{ $unpaidPayment->invoice_number }}" target="_blank"
                                     class="inline-flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md shadow-rose-200">

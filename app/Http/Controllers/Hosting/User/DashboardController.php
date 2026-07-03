@@ -168,35 +168,111 @@ class DashboardController extends Controller
 
         $subdomain = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->project_name)));
 
+        $user = Auth::user();
+        $hasSubscription = $user->hasActiveHostingSubscription();
+        $voucherMessage = null;
+        $voucherFinalPrice = null;
+
+        if (!$hasSubscription && $request->filled('voucher_code')) {
+            $voucher = \App\Models\Voucher::where('code', strtoupper(trim($request->voucher_code)))->first();
+            
+            if (!$voucher || !$voucher->isValid()) {
+                return back()->withInput()->with('error', 'Kode voucher tidak valid, kuota habis, atau sudah tidak berlaku.');
+            }
+            
+            $basePrice = 10000;
+            $voucherFinalPrice = $basePrice - $voucher->calculateDiscount($basePrice);
+            
+            $voucher->increment('uses');
+            
+            if ($voucherFinalPrice <= 0) {
+                // Voucher 100% Gratis, langsung buat billing aktif
+                \App\Models\HostingBilling::create([
+                    'user_id' => $user->id,
+                    'amount' => 0,
+                    'status' => 'active',
+                    'next_due_date' => now()->addMonth(),
+                ]);
+                $hasSubscription = true;
+                $voucherMessage = 'Voucher berhasil digunakan! Langganan Anda aktif secara gratis untuk 1 bulan.';
+                
+                // Hapus invoice lama jika ada, karena sudah tercover voucher 100%
+                \App\Models\HostingPayment::where('user_id', $user->id)
+                    ->where('invoice_number', 'like', 'HST-INV-%')
+                    ->where('status', 'unpaid')
+                    ->delete();
+            } else {
+                $voucherMessage = 'Voucher berhasil digunakan! Anda mendapatkan potongan harga.';
+            }
+        }
+
         $project = HostingProject::create([
-            'user_id'      => Auth::id(),
+            'user_id'      => $user->id,
             'project_name' => $request->project_name,
             'framework'    => $framework,
             'repo_source'  => $repoSource,
             'branch'       => $branch,
             'source_type'  => $sourceType,
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
-            'status'       => 'unpaid',
+            'status'       => $hasSubscription ? 'building' : 'unpaid',
         ]);
 
-        \Illuminate\Support\Facades\Log::info('Project created (Unpaid)', [
+        \Illuminate\Support\Facades\Log::info('Project created (' . ($hasSubscription ? 'Building' : 'Unpaid') . ')', [
             'id' => $project->id,
             'source_type' => $project->source_type,
             'repo_source' => $project->repo_source
         ]);
 
-        \App\Models\HostingPayment::create([
-            'user_id' => Auth::id(),
-            'hosting_project_id' => $project->id,
-            'invoice_number' => 'HST-INV-'. strtoupper(uniqid()),
-            'amount' => 10000,
-            'status' => 'unpaid',
-        ]);
+        if ($hasSubscription) {
+            $isTemplate = $sourceType === 'template';
+            $project->deployments()->create([
+                'status'     => 'queued',
+                'build_logs' => $isTemplate
+                    ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
+                    : "> Memulai proses Deploy awal...\n> Mengambil repository...",
+            ]);
+            AutoDeployProject::dispatch($project);
+            
+            $user->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat dan proses deployment telah dimulai.', 'info'));
+            
+            $successMsg = 'Project berhasil dibuat dan sedang dalam proses deployment!';
+            if ($voucherMessage) $successMsg = $voucherMessage . ' ' . $successMsg;
+            
+            return redirect()->route('user_hosting.show', $project->hashid)->with('success', $successMsg);
+        } else {
+            // Cek apakah user sudah punya tagihan langganan yang belum dibayar
+            $existingInvoice = \App\Models\HostingPayment::where('user_id', $user->id)
+                ->where('invoice_number', 'like', 'HST-INV-%')
+                ->where('status', 'unpaid')
+                ->first();
 
-        // Notifikasi ke User
-        \Illuminate\Support\Facades\Auth::user()->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat. Silakan lakukan pembayaran agar proses deployment dapat dimulai.', 'info'));
+            $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : 10000;
 
-        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat. Silakan lakukan pembayaran tagihan hosting!');
+            if (!$existingInvoice) {
+                \App\Models\HostingPayment::create([
+                    'user_id' => $user->id,
+                    'hosting_project_id' => null, // Invoice langganan akun
+                    'invoice_number' => 'HST-INV-'. strtoupper(uniqid()),
+                    'amount' => $invoiceAmount,
+                    'status' => 'unpaid',
+                ]);
+            } else {
+                if (isset($voucherFinalPrice) && $existingInvoice->amount != $invoiceAmount) {
+                    // Update invoice yang sudah ada dengan harga baru dan generate nomor invoice baru agar sistem payment (misal Pakasir) tidak duplikat
+                    $existingInvoice->update([
+                        'amount' => $invoiceAmount,
+                        'invoice_number' => 'HST-INV-'. strtoupper(uniqid())
+                    ]);
+                }
+            }
+
+            $user->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat. Silakan lakukan pembayaran tagihan langganan agar deployment dapat dimulai.', 'info'));
+            
+            $successMsg = 'Project berhasil dibuat. Silakan lakukan pembayaran langganan akun hosting Anda!';
+            if ($voucherMessage) $successMsg = $voucherMessage . ' ' . $successMsg;
+            
+            return redirect()->route('user_hosting.show', $project->hashid)->with('success', $successMsg);
+        }
     }
 
     public function show($hashed_id)

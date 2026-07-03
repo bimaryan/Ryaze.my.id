@@ -273,6 +273,14 @@
                         <span class="ms-3 whitespace-nowrap">Kelola Tagihan</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin_hosting.vouchers.index') }}"
+                        class="{{ $navLink(request()->routeIs('admin_hosting.vouchers*')) }}">
+                        <i
+                            class="fa-solid fa-ticket {{ $iconClass(request()->routeIs('admin_hosting.vouchers*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Kelola Voucher</span>
+                    </a>
+                </li>
             @endif
 
 

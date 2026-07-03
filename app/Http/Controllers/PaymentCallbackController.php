@@ -29,30 +29,47 @@ class PaymentCallbackController extends Controller
                             'paid_at' => now(),
                         ]);
 
-                        $project = $payment->project;
-                        if ($project && $project->status == 'unpaid') {
-                            $project->update(['status' => 'building']);
+                        $user = $payment->user;
+                        if ($user) {
+                            // Update atau buat langganan
+                            $billing = \App\Models\HostingBilling::where('user_id', $user->id)
+                                ->where('status', 'active')
+                                ->first();
 
-                            $project->deployments()->create([
-                                'status' => 'queued',
-                                'build_logs' => "> Payment received!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil repository dari ".$project->repo_source."\n> Branch: ".$project->branch."\n> Menyiapkan environment ".strtoupper($project->framework).'...',
-                            ]);
-
-                            \App\Jobs\AutoDeployProject::dispatch($project);
-
-                            // Tambahkan masa aktif 1 bulan
-                            \App\Models\HostingBilling::create([
-                                'hosting_project_id' => $project->id,
-                                'plan_name' => 'Bulanan Rp 10.000',
-                                'amount' => 10000,
-                                'billing_cycle' => 'monthly',
-                                'next_due_date' => now()->addMonth(),
-                                'status' => 'active'
-                            ]);
-
-                            if ($project->user) {
-                                $project->user->notify(new \App\Notifications\SystemNotification('Pembayaran hosting Anda ('.$payment->invoice_number.') berhasil dikonfirmasi. Layanan sedang disiapkan.', 'success'));
+                            if ($billing) {
+                                $billing->update([
+                                    'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
+                                ]);
+                            } else {
+                                \App\Models\HostingBilling::create([
+                                    'user_id' => $user->id,
+                                    'hosting_project_id' => null,
+                                    'plan_name' => 'Bulanan Rp 10.000',
+                                    'amount' => 10000,
+                                    'billing_cycle' => 'monthly',
+                                    'next_due_date' => now()->addMonth(),
+                                    'status' => 'active'
+                                ]);
                             }
+
+                            // Cari semua project unpaid dan deploy
+                            $unpaidProjects = \App\Models\HostingProject::where('user_id', $user->id)
+                                ->where('status', 'unpaid')
+                                ->get();
+
+                            foreach ($unpaidProjects as $proj) {
+                                $proj->update(['status' => 'building']);
+                                $isTemplate = $proj->source_type === 'template';
+                                $proj->deployments()->create([
+                                    'status' => 'queued',
+                                    'build_logs' => $isTemplate
+                                        ? "> Payment received!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil template starter code...\n> Menyiapkan environment ".strtoupper($proj->framework).'...'
+                                        : "> Payment received!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil repository dari ".$proj->repo_source."\n> Branch: ".$proj->branch."\n> Menyiapkan environment ".strtoupper($proj->framework).'...',
+                                ]);
+                                \App\Jobs\AutoDeployProject::dispatch($proj);
+                            }
+
+                            $user->notify(new \App\Notifications\SystemNotification('Pembayaran langganan hosting ('.$payment->invoice_number.') berhasil. ' . $unpaidProjects->count() . ' project sedang disiapkan.', 'success'));
                         }
                     }
                 } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {

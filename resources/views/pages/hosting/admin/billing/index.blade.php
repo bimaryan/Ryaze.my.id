@@ -24,8 +24,8 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="font-semibold text-slate-800">{{ $payment->project->project_name ?? '-' }}</div>
-                        <div class="text-xs text-slate-500">{{ $payment->project->client->name ?? '-' }}</div>
+                        <div class="font-semibold text-slate-800">{{ $payment->project->project_name ?? 'Langganan Akun' }}</div>
+                        <div class="text-xs text-slate-500">{{ $payment->user->name ?? ($payment->project->client->name ?? '-') }}</div>
                     </td>
                     <td class="px-6 py-4 uppercase text-xs font-semibold text-slate-500">
                         {{ $payment->payment_method ?? 'BELUM DIPILIH' }}

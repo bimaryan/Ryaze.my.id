@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HostingBilling;
 use App\Models\HostingDatabase;
 use App\Models\HostingDeployment;
+use App\Models\HostingPayment;
 use App\Models\HostingProject;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class DashboardController extends Controller
             'active_projects' => HostingProject::where('status', 'active')->count(),
             'total_clients' => User::whereHas('hostingProjects')->count(),
             'total_databases' => HostingDatabase::count(),
-            'pending_billing' => HostingBilling::where('status', 'unpaid')->count(),
+            'pending_billing' => HostingPayment::where('status', 'unpaid')->where('invoice_number', 'like', 'HST-INV-%')->count(),
             'building_now' => HostingProject::where('status', 'building')->count(),
             'action_required' => HostingProject::whereIn('status', ['unpaid', 'error', 'suspended'])->count(),
         ];

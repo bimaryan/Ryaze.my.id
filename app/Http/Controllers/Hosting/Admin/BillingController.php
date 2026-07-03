@@ -10,7 +10,7 @@ class BillingController extends Controller
 {
     public function index()
     {
-        $payments = HostingPayment::with('project.client')
+        $payments = HostingPayment::with(['user', 'project.client'])
             ->latest()
             ->get();
             

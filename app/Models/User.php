@@ -48,4 +48,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(HostingProject::class, 'user_id');
     }
+
+    public function hostingBillings()
+    {
+        return $this->hasMany(HostingBilling::class, 'user_id');
+    }
+
+    public function hasActiveHostingSubscription()
+    {
+        return $this->hostingBillings()
+            ->where('status', 'active')
+            ->where('next_due_date', '>', now())
+            ->exists();
+    }
 }
