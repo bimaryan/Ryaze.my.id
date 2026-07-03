@@ -106,7 +106,7 @@ class DashboardController extends Controller
         $prefix = 'ryz_'.$user->id.'_';
         $cleanDbName = $prefix.strtolower(trim($request->db_name));
         $cleanUsername = $prefix.strtolower(trim($request->db_username));
-        $dbPassword = $request->db_password;
+        $dbPassword = $prefix.trim($request->db_password);
 
         if (HostingDatabase::where('db_name', $cleanDbName)->exists()) {
             return back()->with('error', 'Nama database "'.$cleanDbName.'" sudah digunakan.');
