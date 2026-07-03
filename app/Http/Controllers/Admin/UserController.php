@@ -26,12 +26,13 @@ class UserController extends Controller
         }
         $id = $decoded[0];
 
-        $user = User::findOrFail($id);
+        $user = User::withCount(['clientOrders', 'hostingProjects'])->findOrFail($id);
 
         // Opsional: Jika ingin sekalian melihat pesanan joki milik user ini
         $jokiOrders = JokiOrder::where('client_id', $id)->latest()->get();
+        $hostingProjects = \App\Models\HostingProject::where('user_id', $id)->latest()->get();
 
-        return view('pages.admin.users.show', compact('user', 'jokiOrders'));
+        return view('pages.admin.users.show', compact('user', 'jokiOrders', 'hostingProjects'));
     }
 
     public function updateRole(\Illuminate\Http\Request $request, $hashid)
