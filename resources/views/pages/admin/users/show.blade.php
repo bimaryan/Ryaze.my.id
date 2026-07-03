@@ -9,7 +9,7 @@
             <x-slot:actions>
                 @if($user->id !== auth()->id())
                     <button onclick="document.getElementById('modal-role-{{ $user->hashid }}').showModal()"
-                        class="inline-flex justify-center items-center bg-blue-50 text-blue-700 hover:bg-blue-100 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm border border-blue-200">
+                        class="inline-flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm border border-transparent">
                         <i class="fa-solid fa-user-shield mr-2"></i> Edit Role
                     </button>
                     
@@ -17,7 +17,7 @@
                         @csrf
                         @method('PATCH')
                         <button type="submit" onclick="event.preventDefault(); Swal.fire({title: 'Konfirmasi', text: 'Apakah Anda yakin ingin {{ $user->status === 'active' ? 'menangguhkan' : 'mengaktifkan' }} akun ini?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#4f46e5', cancelButtonColor: '#ef4444', confirmButtonText: 'Ya, Lanjutkan', cancelButtonText: 'Batal'}).then((result) => { if (result.isConfirmed) { this.closest('form').submit(); } })"
-                            class="inline-flex justify-center items-center px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm border {{ $user->status === 'active' ? 'bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200' }}">
+                            class="inline-flex justify-center items-center px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm border {{ $user->status === 'active' ? 'bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200' }}">
                             <i class="fa-solid {{ $user->status === 'active' ? 'fa-ban' : 'fa-check' }} mr-2"></i> 
                             {{ $user->status === 'active' ? 'Suspend' : 'Unsuspend' }}
                         </button>
@@ -27,13 +27,13 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" onclick="event.preventDefault(); Swal.fire({title: 'Peringatan', text: 'Peringatan: Aksi ini akan menghapus akun user secara permanen. Lanjutkan?', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Ya, Hapus', cancelButtonText: 'Batal'}).then((result) => { if (result.isConfirmed) { this.closest('form').submit(); } })"
-                            class="inline-flex justify-center items-center bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                            class="inline-flex justify-center items-center bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                             <i class="fa-solid fa-trash mr-2"></i> Hapus
                         </button>
                     </form>
                 @endif
                 <a href="{{ route('superadmin.users.index') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
             </x-slot:actions>

@@ -146,46 +146,104 @@
                 </x-ui.card>
 
                 <x-ui.card class="p-6">
-                    <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Permintaan Revisi Klien</h3>
-                    <div class="space-y-4">
+                    <div class="flex justify-between items-center mb-5 border-b pb-3">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-comments text-indigo-500"></i>
+                            Permintaan Revisi Klien
+                        </h3>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                            {{ $order->revisions->count() }} Permintaan
+                        </span>
+                    </div>
+
+                    <div class="space-y-6">
                         @forelse($order->revisions as $rev)
-                            <div
-                                class="border border-slate-200 rounded-lg p-4 {{ $rev->status == 'pending' ? 'bg-amber-50 border-amber-200' : 'bg-white' }}">
-                                <div class="flex justify-between items-start mb-2">
-                                    <p class="text-sm font-medium text-slate-800"><span
-                                            class="font-bold text-amber-600">Note:</span> {{ $rev->revision_note }}</p>
-                                    <span
-                                        class="text-xs font-bold px-2 py-1 rounded uppercase bg-slate-100 text-slate-600">{{ $rev->status }}</span>
-                                </div>
-
-                                <form action="{{ route('admin_joki.revision.reply', $rev->hashid) }}" method="POST"
-                                    class="mt-3 border-t border-slate-100 pt-3">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="flex flex-col sm:flex-row gap-2">
-                                        <input type="text" name="admin_reply" value="{{ $rev->admin_reply }}"
-                                            placeholder="Balasan admin..." required
-                                            class="flex-1 w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
-
-                                        <select name="status"
-                                            class="w-full sm:w-32 flex-shrink-0 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
-                                            <option value="fixing" {{ $rev->status == 'fixing' ? 'selected' : '' }}>Fixing
-                                            </option>
-                                            <option value="resolved" {{ $rev->status == 'resolved' ? 'selected' : '' }}>
-                                                Resolved</option>
-                                            <option value="rejected" {{ $rev->status == 'rejected' ? 'selected' : '' }}>
-                                                Rejected</option>
-                                        </select>
-
-                                        <button type="submit"
-                                            class="w-full sm:w-auto flex-shrink-0 bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 text-sm font-bold transition-colors">
-                                            Kirim
-                                        </button>
+                            <div class="relative pl-4 border-l-2 {{ $rev->status == 'resolved' ? 'border-emerald-500' : ($rev->status == 'fixing' ? 'border-blue-500' : ($rev->status == 'rejected' ? 'border-rose-500' : 'border-amber-400')) }}">
+                                <!-- Status Dot -->
+                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full border-4 border-white shadow-sm {{ $rev->status == 'resolved' ? 'bg-emerald-500' : ($rev->status == 'fixing' ? 'bg-blue-500' : ($rev->status == 'rejected' ? 'bg-rose-500' : 'bg-amber-400')) }}"></div>
+                                
+                                <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                                    <!-- Header (Client Note) -->
+                                    <div class="p-4 {{ $rev->status == 'pending' ? 'bg-amber-50/30' : 'bg-slate-50/50' }} border-b border-slate-100">
+                                        <div class="flex justify-between items-start gap-4">
+                                            <div class="flex items-start gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                    <i class="fa-solid fa-user text-xs"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[11px] font-bold text-slate-500 mb-1 uppercase tracking-wider">
+                                                        {{ $order->client->name }} &bull; {{ $rev->created_at->format('d M Y, H:i') }}
+                                                    </p>
+                                                    <div class="text-sm text-slate-800 leading-relaxed font-medium">
+                                                        "{{ $rev->revision_note }}"
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0
+                                                {{ $rev->status == 'resolved' ? 'bg-emerald-100 text-emerald-700' : 
+                                                   ($rev->status == 'fixing' ? 'bg-blue-100 text-blue-700' : 
+                                                   ($rev->status == 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700')) }}">
+                                                {{ $rev->status }}
+                                            </span>
+                                        </div>
                                     </div>
-                                </form>
+
+                                    <!-- Body (Admin Reply & Form) -->
+                                    <div class="p-4 bg-white">
+                                        @if($rev->admin_reply)
+                                        <div class="mb-4 bg-indigo-50/50 rounded-lg p-3 border border-indigo-100/50">
+                                            <div class="flex items-start gap-3">
+                                                <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                    <i class="fa-solid fa-headset text-[10px]"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[11px] font-bold text-indigo-500 mb-0.5 uppercase tracking-wider">Admin Reply</p>
+                                                    <p class="text-sm text-slate-700">{{ $rev->admin_reply }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endif
+
+                                        <form action="{{ route('admin_joki.revision.reply', $rev->hashid) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <label class="block text-xs font-bold text-slate-600 mb-2">Update Status & Tanggapan</label>
+                                            <div class="flex flex-col sm:flex-row gap-3">
+                                                <div class="relative flex-1">
+                                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                                        <i class="fa-solid fa-pen text-xs"></i>
+                                                    </div>
+                                                    <input type="text" name="admin_reply" value="{{ $rev->admin_reply }}"
+                                                        placeholder="Ketik tanggapan Anda di sini..." required
+                                                        class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                                </div>
+
+                                                <select name="status"
+                                                    class="w-full sm:w-40 flex-shrink-0 px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 font-medium text-slate-700">
+                                                    <option value="pending" {{ $rev->status == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
+                                                    <option value="fixing" {{ $rev->status == 'fixing' ? 'selected' : '' }}>🛠️ Fixing</option>
+                                                    <option value="resolved" {{ $rev->status == 'resolved' ? 'selected' : '' }}>✅ Resolved</option>
+                                                    <option value="rejected" {{ $rev->status == 'rejected' ? 'selected' : '' }}>❌ Rejected</option>
+                                                </select>
+
+                                                <button type="submit"
+                                                    class="w-full sm:w-auto flex-shrink-0 bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 hover:shadow-md text-sm font-bold transition-all flex items-center justify-center gap-2">
+                                                    Simpan
+                                                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         @empty
-                            <p class="text-xs text-slate-400 text-center py-2">Tidak ada permintaan revisi.</p>
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <i class="fa-solid fa-clipboard-check text-2xl"></i>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-700 mb-1">Belum ada revisi</h4>
+                                <p class="text-xs font-medium text-slate-500">Klien belum mengajukan permintaan revisi untuk proyek ini.</p>
+                            </div>
                         @endforelse
                     </div>
                 </x-ui.card>
