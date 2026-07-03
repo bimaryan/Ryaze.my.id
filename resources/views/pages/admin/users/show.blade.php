@@ -121,7 +121,12 @@
                         </div>
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-slate-500">Storage Hosting</span>
-                            <span class="font-semibold text-slate-800">{{ number_format($user->hosting_storage_limit_mb ?? 500) }} MB</span>
+                            @php
+                                $totalLimit = isset($hostingProjects) && $hostingProjects->count() > 0 
+                                    ? $hostingProjects->sum(fn($p) => $p->storage_limit_mb ?? 1024) 
+                                    : ($user->hosting_storage_limit_mb ?? 1024);
+                            @endphp
+                            <span class="font-semibold text-slate-800">{{ number_format($totalLimit) }} MB</span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-slate-500">IP Terakhir</span>

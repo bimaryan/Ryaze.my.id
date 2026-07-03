@@ -50,6 +50,9 @@ class StorageController extends Controller
             $used = $this->getFolderSize($projectDir);
             $totalUsed += $used;
 
+            $limitMb = $project->storage_limit_mb ?? 1024;
+            $totalLimit += $limitMb * 1024 * 1024;
+
             $items[] = [
                 'project' => $project,
                 'used_bytes' => $used,
@@ -59,10 +62,9 @@ class StorageController extends Controller
             ];
         }
 
-        $totalLimit = (Auth::user()->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
-
         foreach ($items as &$item) {
-            $item['percent'] = $totalLimit > 0 ? min(100, round(($item['used_bytes'] / $totalLimit) * 100, 1)) : 0;
+            $itemLimit = ($item['project']->storage_limit_mb ?? 1024) * 1024 * 1024;
+            $item['percent'] = $itemLimit > 0 ? min(100, round(($item['used_bytes'] / $itemLimit) * 100, 1)) : 0;
         }
 
         // Sort by usage descending
@@ -91,7 +93,7 @@ class StorageController extends Controller
         $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
-        $limit = (Auth::user()->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $limit = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
 
         $totalUsed = $this->getFolderSize($projectDir);
 
@@ -177,7 +179,10 @@ class StorageController extends Controller
             $totalUsed += $this->getFolderSize("/www/sites/hosting_clients/{$subdomain}");
         }
 
-        $limit = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $limit = 0;
+        foreach ($projects as $p) {
+            $limit += ($p->storage_limit_mb ?? 1024) * 1024 * 1024;
+        }
 
         return $totalUsed < $limit;
     }
