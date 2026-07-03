@@ -150,6 +150,12 @@
                                 <iframe src="https://{{ $project->ryaze_domain }}"
                                     class="w-full h-full border-0 relative z-10 bg-white"></iframe>
                             </div>
+                            <div class="bg-amber-50 border-t border-amber-100 px-4 py-3 flex items-start gap-3">
+                                <i class="fa-solid fa-circle-info text-amber-500 mt-0.5"></i>
+                                <p class="text-xs text-amber-700 leading-relaxed">
+                                    <strong>Website belum muncul?</strong> Harap bersabar. Jika Anda baru saja mendeploy proyek ini, mungkin diperlukan waktu <strong>1-5 menit</strong> agar DNS menyebar (propagasi) ke seluruh dunia, dan sistem menerbitkan sertifikat SSL (HTTPS) Anda. Coba refresh halaman beberapa saat lagi.
+                                </p>
+                            </div>
                         </div>
                     @elseif ($project->status == 'unpaid')
                         @php
