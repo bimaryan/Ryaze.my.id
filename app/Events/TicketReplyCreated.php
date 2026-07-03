@@ -56,6 +56,7 @@ class TicketReplyCreated implements ShouldBroadcastNow
             'user_role' => $this->reply->user->role,
             'is_admin' => $isAdmin,
             'message' => $this->reply->message,
+            'attachment_url' => $this->reply->attachment_path ? asset('storage/' . $this->reply->attachment_path) : null,
             'created_at' => $this->reply->created_at->format('d M Y, H:i'),
         ];
     }

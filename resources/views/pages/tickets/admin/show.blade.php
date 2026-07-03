@@ -100,7 +100,7 @@
                                     <span class="font-bold text-slate-700">{{ $isAdmin ? 'Anda (Support)' : $reply->user->name }}</span> &bull; 
                                     {{ $reply->created_at->format('d M Y, H:i') }}
                                 </div>
-                                <div class="{{ $isAdmin ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed whitespace-pre-wrap">{{ $reply->message }}</div>
+                                <div class="{{ $isAdmin ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed whitespace-pre-wrap">@if($reply->attachment_path)<div class="mb-2"><a href="{{ asset('storage/' . $reply->attachment_path) }}" target="_blank"><img src="{{ asset('storage/' . $reply->attachment_path) }}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment"></a></div>@endif{{ $reply->message }}</div>
                             </div>
 
                         </div>
@@ -109,21 +109,27 @@
             </div>
 
             {{-- Reply Form --}}
-            <div class="px-4 py-3 bg-[#f0f2f5] border-t border-slate-200">
+            <div class="px-4 py-3 bg-[#f0f2f5] border-t border-slate-200 flex flex-col">
+                <div id="attachment-preview-container" class="hidden mb-3 bg-white p-2 rounded-xl shadow-sm border border-slate-200 w-max relative">
+                    <button type="button" onclick="removeAttachment()" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition shadow"><i class="fa-solid fa-xmark"></i></button>
+                    <img id="attachment-preview-img" src="" class="h-20 object-cover rounded-lg">
+                </div>
+
                 @if($ticket->status != 'closed')
-                    <form id="chat-form" action="{{ route('admin_hosting.tickets.reply', $ticket->hashid) }}" method="POST" class="flex gap-3 items-end">
+                    <form id="chat-form" action="{{ route('admin_hosting.tickets.reply', $ticket->hashid) }}" method="POST" enctype="multipart/form-data" class="flex gap-3 items-end">
                         @csrf
                         
                         {{-- Tombol Kosmetik (Emoticon & Attachment) --}}
                         <button type="button" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
                             <i class="fa-regular fa-face-smile"></i>
                         </button>
-                        <button type="button" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
+                        <button type="button" onclick="document.getElementById('attachment-input').click()" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
                             <i class="fa-solid fa-paperclip"></i>
                         </button>
+                        <input type="file" name="attachment" id="attachment-input" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="previewAttachment(this)">
 
                         <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex items-center px-4 py-2">
-                            <textarea name="message" rows="1" class="w-full bg-transparent border-none px-1 py-1 text-[15px] focus:ring-0 focus:outline-none resize-none m-0" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'" required></textarea>
+                            <textarea name="message" id="message-input" rows="1" class="w-full bg-transparent border-none px-1 py-1 text-[15px] focus:ring-0 focus:outline-none resize-none m-0" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
                         </div>
 
                         <button type="submit" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-sm mb-0.5">
@@ -170,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <span class="text-xs text-slate-400">${e.created_at}</span>
                             </div>
                                 <div class="px-4 py-2 mt-1 rounded-xl ${isSelf ? 'bg-[#d9fdd3] text-slate-800 rounded-tl-none' : 'bg-white border border-slate-200 text-slate-800 rounded-tr-none'} shadow-sm">
+                                    ${e.attachment_url ? `<div class="mb-2"><a href="${e.attachment_url}" target="_blank"><img src="${e.attachment_url}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment"></a></div>` : ''}
                                     <p class="text-[15px] whitespace-pre-wrap">${e.message}</p>
                             </div>
                         </div>
@@ -209,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => res.json())
             .then(() => {
                 textarea.value = '';
+                if(typeof removeAttachment === 'function') removeAttachment();
             })
             .catch(err => {
                 console.error('Error sending message:', err);
@@ -221,5 +229,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function previewAttachment(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('attachment-preview-img').src = e.target.result;
+            document.getElementById('attachment-preview-container').classList.remove('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeAttachment() {
+    document.getElementById('attachment-input').value = "";
+    document.getElementById('attachment-preview-img').src = "";
+    document.getElementById('attachment-preview-container').classList.add('hidden');
+}
+
+window.previewAttachment = previewAttachment;
+window.removeAttachment = removeAttachment;
 </script>
 @endsection

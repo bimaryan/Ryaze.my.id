@@ -31,15 +31,26 @@ class TicketController extends Controller
     public function reply(Request $request, $hashid)
     {
         $request->validate([
-            'message' => 'required|string',
+            'message' => 'nullable|string',
+            'attachment' => 'nullable|image|max:2048',
         ]);
 
+        if (!$request->message && !$request->hasFile('attachment')) {
+            return back()->withErrors(['message' => 'Pesan atau gambar harus diisi.']);
+        }
+
         $ticket = Ticket::findByHashidOrFail($hashid);
+
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('tickets/attachments', 'public');
+        }
 
         $reply = TicketReply::create([
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
-            'message' => $request->message,
+            'message' => $request->message ?? '[Gambar dilampirkan]',
+            'attachment_path' => $attachmentPath,
         ]);
 
         // Update status to answered
