@@ -130,12 +130,9 @@
                         </td>
                     </tr>
                 @endforelse
-                <x-slot:pagination>
-                    @if ($portfolios->hasPages())
-                        {{ $portfolios->links() }}
-                    @endif
-                </x-slot:pagination>
             </x-ui.table>
+
+            <div class="mt-4">{{ $portfolios->links() }}</div>
         </div>
     </x-ui.page-layout>
 @endsection
