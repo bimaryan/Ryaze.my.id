@@ -51,6 +51,7 @@ class TicketReplyCreated implements ShouldBroadcastNow
         return [
             'id' => $this->reply->id,
             'ticket_id' => $this->reply->ticket_id,
+            'ticket_status' => $this->reply->ticket->status,
             'user_id' => $this->reply->user_id,
             'user_name' => $this->reply->user->name,
             'user_role' => $this->reply->user->role,

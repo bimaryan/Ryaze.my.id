@@ -11,19 +11,21 @@
             </div>
         </x-slot:iconSlot>
         <x-slot:actions>
-            @if($ticket->status == 'open')
-                <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-amber-100 text-amber-700 border border-amber-200">
-                    <i class="fa-solid fa-clock mr-1"></i> Menunggu Balasan
-                </span>
-            @elseif($ticket->status == 'answered')
-                <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
-                    <i class="fa-solid fa-check mr-1"></i> Dijawab
-                </span>
-            @else
-                <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200">
-                    <i class="fa-solid fa-lock mr-1"></i> Tiket Ditutup
-                </span>
-            @endif
+            <div id="ticket-status-badge">
+                @if($ticket->status == 'open')
+                    <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-amber-100 text-amber-700 border border-amber-200">
+                        <i class="fa-solid fa-clock mr-1"></i> Menunggu Balasan
+                    </span>
+                @elseif($ticket->status == 'answered')
+                    <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                        <i class="fa-solid fa-check mr-1"></i> Dijawab
+                    </span>
+                @else
+                    <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                        <i class="fa-solid fa-lock mr-1"></i> Tiket Ditutup
+                    </span>
+                @endif
+            </div>
             <a href="{{ route('user_hosting.tickets.index') }}" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg font-medium transition text-sm flex items-center gap-2 shadow-sm">
                 Kembali
             </a>
@@ -176,6 +178,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Sembunyikan indikator saat pesan masuk
                 typingIndicator.classList.add('hidden');
                 
+                // Update status badge if available
+                if (e.ticket_status) {
+                    const statusBadge = document.getElementById('ticket-status-badge');
+                    if (statusBadge) {
+                        if (e.ticket_status === 'open') {
+                            statusBadge.innerHTML = '<span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-amber-100 text-amber-700 border border-amber-200"><i class="fa-solid fa-clock mr-1"></i> Menunggu Balasan</span>';
+                        } else if (e.ticket_status === 'answered') {
+                            statusBadge.innerHTML = '<span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-emerald-100 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check mr-1"></i> Dijawab</span>';
+                        } else {
+                            statusBadge.innerHTML = '<span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200"><i class="fa-solid fa-lock mr-1"></i> Tiket Ditutup</span>';
+                        }
+                    }
+                }
+
                 // Render message bubble
                 const isSelf = e.user_id == {{ Auth::id() }};
                 const bubbleHtml = `

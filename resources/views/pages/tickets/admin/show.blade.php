@@ -46,13 +46,15 @@
                 <div class="space-y-3 text-sm">
                     <div>
                         <div class="text-xs text-slate-500 mb-1">Status</div>
-                        @if($ticket->status == 'open')
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700">Open</span>
-                        @elseif($ticket->status == 'answered')
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">Answered</span>
-                        @else
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-600">Closed</span>
-                        @endif
+                        <div id="ticket-status-badge">
+                            @if($ticket->status == 'open')
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700">Open</span>
+                            @elseif($ticket->status == 'answered')
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">Answered</span>
+                            @else
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-600">Closed</span>
+                            @endif
+                        </div>
                     </div>
                     <div>
                         <div class="text-xs text-slate-500 mb-1">Prioritas</div>
@@ -218,6 +220,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Sembunyikan indikator saat pesan masuk
                 typingIndicator.classList.add('hidden');
                 
+                // Update status badge if available
+                if (e.ticket_status) {
+                    const statusBadge = document.getElementById('ticket-status-badge');
+                    if (statusBadge) {
+                        if (e.ticket_status === 'open') {
+                            statusBadge.innerHTML = '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700">Open</span>';
+                        } else if (e.ticket_status === 'answered') {
+                            statusBadge.innerHTML = '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">Answered</span>';
+                        } else {
+                            statusBadge.innerHTML = '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-600">Closed</span>';
+                        }
+                    }
+                }
+
                 // Render message bubble
                 const isSelf = e.user_id == {{ Auth::id() }};
                 const bubbleHtml = `
