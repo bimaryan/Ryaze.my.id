@@ -40,7 +40,7 @@
         </x-ui.page-header>
         
         <!-- Modal Edit Role -->
-        <dialog id="modal-role-{{ $user->hashid }}" class="modal backdrop:bg-black/50 p-6 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 open:animate-in open:fade-in open:zoom-in-95">
+        <dialog id="modal-role-{{ $user->hashid }}" class="m-auto backdrop:bg-black/50 p-6 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 open:animate-in open:fade-in open:zoom-in-95">
             <form action="{{ route('superadmin.users.role.update', $user->hashid) }}" method="POST">
                 @csrf
                 @method('PUT')
