@@ -1,219 +1,93 @@
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#ffffff">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/') }}">
-    <title>Ryaze Portal - Hosting & Joki Terbaik</title>
+    <title>Ryaze - Cloud Hosting & Web Development</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description"
-        content="Ryaze Portal menawarkan layanan web hosting instan dan joki tugas IT terpercaya. Proses serba otomatis, aman, dan harga terjangkau.">
-    <meta name="keywords"
-        content="hosting murah, joki tugas IT, web hosting otomatis, Ryaze, panel hosting, joki koding">
+    <meta name="description" content="Ryaze menawarkan layanan web hosting canggih dan jasa development profesional dengan sistem serba otomatis, aman, dan dapat diandalkan.">
+    <meta name="keywords" content="hosting, web development, ryaze, server, cloud">
     <meta name="author" content="Ryaze">
 
-    <!-- Open Graph / Facebook / WhatsApp -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="Ryaze Portal - Hosting & Joki IT Terpercaya">
-    <meta property="og:description" content="Layanan hosting instan & joki coding profesional dengan sistem otomatis.">
-    <meta property="og:image" content="https://ui-avatars.com/api/?name=Ryaze&size=600&background=4f46e5&color=fff">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url('/') }}">
-    <meta property="twitter:title" content="Ryaze Portal - Hosting & Joki IT Terpercaya">
-    <meta property="twitter:description"
-        content="Layanan hosting instan & joki coding profesional dengan sistem otomatis.">
-    <meta property="twitter:image" content="https://ui-avatars.com/api/?name=Ryaze&size=600&background=4f46e5&color=fff">
+    <meta property="og:title" content="Ryaze - Cloud Hosting & Web Development">
+    <meta property="og:description" content="Layanan hosting instan & pengembangan web profesional dengan sistem otomatis.">
+    <meta property="og:image" content="https://ui-avatars.com/api/?name=Ryaze&size=600&background=000&color=fff">
 
     <!-- Vite Config -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Google Fonts: Outfit & Inter -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://unpkg.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700;800;900&display=swap"
-        rel="stylesheet" nonce="{{ app('csp_nonce') ?? '' }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" nonce="{{ app('csp_nonce') ?? '' }}">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ app('csp_nonce') ?? '' }}">
 
-    <!-- AOS Animation CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ app('csp_nonce') ?? '' }}">
-
     <style nonce="{{ app('csp_nonce') ?? '' }}">
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #fafafa;
+            background-color: #ffffff;
+            color: #111827;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        .font-outfit {
-            font-family: 'Outfit', sans-serif;
+        /* Subtle grid pattern background */
+        .bg-grid {
+            background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px),
+                              linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center top;
         }
 
-        /* Glassmorphism Navbar */
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        /* Strict borders for cards */
+        .card-brutal {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .card-brutal:hover {
+            border-color: #0f172a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        /* Mesh Gradient Background */
-        .mesh-bg {
-            background-color: #f8fafc;
-            background-image:
-                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0) 0, transparent 50%),
-                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0) 0, transparent 50%),
-                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0) 0, transparent 50%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .blob {
-            position: absolute;
-            filter: blur(80px);
-            z-index: -1;
-            opacity: 0.6;
-            animation: float 10s infinite ease-in-out alternate;
-        }
-
-        .blob-1 {
-            top: -10%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: rgba(99, 102, 241, 0.4);
-        }
-
-        .blob-2 {
-            bottom: -10%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: rgba(236, 72, 153, 0.3);
-            animation-delay: -5s;
-        }
-
-        .blob-3 {
-            top: 40%;
-            left: 50%;
-            width: 400px;
-            height: 400px;
-            background: rgba(56, 189, 248, 0.4);
-            animation-delay: -2s;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-
-            100% {
-                transform: translate(30px, 50px) scale(1.1);
-            }
-        }
-
-        /* Glowing Button */
-        .btn-glow {
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-glow::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-            background: inherit;
-            filter: blur(12px);
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
-
-        .btn-glow:hover::before {
-            opacity: 1;
-            filter: blur(16px);
-        }
-
-        /* Gradient Text */
-        .text-gradient {
-            background-clip: text;
+        /* Gradient text but strictly monochrome/subtle */
+        .text-gradient-mono {
+            background: linear-gradient(to right, #111827, #6b7280);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-image: linear-gradient(135deg, #4f46e5 0%, #db2777 100%);
-        }
-
-        /* Premium Card Hover */
-        .card-premium {
-            background: white;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card-premium:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
-            border-color: rgba(99, 102, 241, 0.3);
-        }
-
-        /* Image Zoom */
-        .img-zoom-container {
-            overflow: hidden;
-        }
-
-        .img-zoom {
-            transition: transform 0.7s ease;
-        }
-
-        .group:hover .img-zoom {
-            transform: scale(1.08);
+            background-clip: text;
         }
     </style>
 </head>
-
-<body class="text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="antialiased selection:bg-black selection:text-white relative">
 
     <!-- NAVBAR -->
-    <nav class="fixed top-0 z-50 w-full glass-nav transition-all duration-300 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+    <nav class="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 transition-all duration-200">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
-                <a href="{{ url('/') }}" class="flex items-center gap-3 group">
-                    <div
-                        class="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-xl p-2.5 shadow-lg shadow-indigo-200 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
-                        <i class="fa-solid fa-code text-xl"></i>
+                <a href="{{ url('/') }}" class="flex items-center gap-2.5">
+                    <div class="bg-black text-white rounded-md w-8 h-8 flex items-center justify-center">
+                        <i class="fa-solid fa-code text-sm"></i>
                     </div>
-                    <span class="text-2xl font-outfit font-black tracking-tight text-slate-900">Ryaze<span
-                            class="text-indigo-600">.</span></span>
+                    <span class="text-xl font-bold tracking-tight text-black">Ryaze.</span>
                 </a>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center gap-8 font-medium text-slate-600">
-                    <a href="#about"
-                        class="hover:text-indigo-600 transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all hover:after:w-full">Tentang</a>
-                    <a href="#services"
-                        class="hover:text-indigo-600 transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all hover:after:w-full">Layanan</a>
-                    <a href="#portfolio"
-                        class="hover:text-indigo-600 transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all hover:after:w-full">Portofolio</a>
+                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                    <a href="#about" class="hover:text-black transition-colors">Tentang</a>
+                    <a href="#services" class="hover:text-black transition-colors">Layanan</a>
+                    <a href="#portfolio" class="hover:text-black transition-colors">Portofolio</a>
                 </div>
 
                 <!-- Auth Buttons -->
@@ -229,18 +103,15 @@
                                 default => url('/'),
                             };
                         @endphp
-                        <a href="{{ $dashboardUrl }}"
-                            class="btn-glow text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5">
+                        <a href="{{ $dashboardUrl }}" class="text-sm font-semibold bg-black text-white px-5 py-2 rounded-md hover:bg-slate-800 transition-colors">
                             Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}"
-                            class="text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors hidden sm:block">
+                        <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 hover:text-black transition-colors hidden sm:block">
                             Masuk
                         </a>
-                        <a href="{{ route('register') }}"
-                            class="btn-glow text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5">
-                            Daftar Gratis
+                        <a href="{{ route('register') }}" class="text-sm font-semibold bg-black text-white px-5 py-2 rounded-md hover:bg-slate-800 transition-colors">
+                            Daftar
                         </a>
                     @endauth
                 </div>
@@ -249,136 +120,87 @@
     </nav>
 
     <!-- HERO SECTION -->
-    <section class="mesh-bg relative pt-36 pb-24 lg:pt-48 lg:pb-40 min-h-[90vh] flex items-center">
-        <!-- Floating Blobs -->
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center z-10" data-aos="fade-up"
-            data-aos-duration="1000">
-            <div
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-white/50 text-indigo-700 text-sm font-bold mb-8 shadow-sm">
-                <span class="relative flex h-3 w-3">
-                    <span
-                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
-                </span>
-                Fullstack Developer & Deployment Specialist
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-grid min-h-[90vh] flex items-center border-b border-slate-200">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-slate-600 text-xs font-semibold mb-8">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                Sistem Deployment Tersedia
             </div>
 
-            <h1 class="text-5xl md:text-7xl lg:text-[5rem] font-black leading-tight tracking-tight mb-6">
-                Wujudkan Website Impian <br class="hidden md:block" />
-                <span class="text-gradient">Tanpa Hambatan.</span>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.1] mb-6">
+                Bangun Produk Digital Anda <br class="hidden md:block" />
+                <span class="text-gradient-mono">Lebih Cepat & Kuat.</span>
             </h1>
 
-            <p class="mt-6 text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-                Dari pembuatan *code* hingga mengudara di internet. Kami melayani Jasa Joki Tugas Akhir, Web Custom,
-                hingga platform Hosting canggih untuk developer.
+            <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+                Infrastruktur hosting tangguh berbasis cloud dan tim development profesional siap mengeksekusi visi teknologi Anda tanpa kompromi.
             </p>
 
-            <div class="flex flex-col sm:flex-row justify-center gap-5">
-                <a href="#services"
-                    class="btn-glow px-8 py-4 text-lg font-bold rounded-full text-white bg-slate-900 hover:bg-black shadow-xl transition-transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                    Mulai Sekarang <i class="fa-solid fa-arrow-right"></i>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#services" class="px-8 py-3.5 text-sm font-semibold rounded-md text-white bg-black hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                    Jelajahi Layanan
                 </a>
-                <a href="#portfolio"
-                    class="px-8 py-4 text-lg font-bold rounded-full text-slate-700 bg-white/80 backdrop-blur-sm border border-slate-200 hover:bg-white hover:border-slate-300 hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                    Lihat Karya <i class="fa-solid fa-play text-indigo-500"></i>
+                <a href="#portfolio" class="px-8 py-3.5 text-sm font-semibold rounded-md text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
+                    Lihat Portofolio
                 </a>
             </div>
 
-            <!-- Tech Stack Marquee (Static Preview) -->
-            <div class="mt-20 pt-10 border-t border-slate-200/60 max-w-4xl mx-auto">
-                <p class="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-6">Dipercaya dengan
-                    Teknologi Terbaik</p>
-                <div
-                    class="flex flex-wrap justify-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                    <i class="fa-brands fa-laravel text-4xl hover:text-[#FF2D20] transition-colors"></i>
-                    <i class="fa-brands fa-react text-4xl hover:text-[#61DAFB] transition-colors"></i>
-                    <i class="fa-brands fa-node-js text-4xl hover:text-[#339933] transition-colors"></i>
-                    <i class="fa-brands fa-python text-4xl hover:text-[#3776AB] transition-colors"></i>
-                    <i class="fa-brands fa-vuejs text-4xl hover:text-[#4FC08D] transition-colors"></i>
-                    <i class="fa-brands fa-aws text-4xl hover:text-[#232F3E] transition-colors"></i>
+            <div class="mt-24 pt-8 border-t border-slate-200 max-w-3xl mx-auto">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-6">Stack Teknologi Kami</p>
+                <div class="flex flex-wrap justify-center gap-8 text-slate-300 hover:text-slate-400 transition-colors">
+                    <i class="fa-brands fa-laravel text-3xl"></i>
+                    <i class="fa-brands fa-react text-3xl"></i>
+                    <i class="fa-brands fa-node-js text-3xl"></i>
+                    <i class="fa-brands fa-python text-3xl"></i>
+                    <i class="fa-brands fa-vuejs text-3xl"></i>
+                    <i class="fa-brands fa-aws text-3xl"></i>
+                    <i class="fa-brands fa-docker text-3xl"></i>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ABOUT SECTION -->
-    <section id="about" class="py-24 bg-white relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+    <section id="about" class="py-24 bg-slate-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Text Content -->
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Di Balik Layar</h2>
+                    <div class="w-10 h-1 bg-black mb-8"></div>
+                    
+                    <p class="text-base text-slate-600 mb-6 leading-relaxed">
+                        Saya <strong>Bima Ryan Alfarizi</strong>, mahasiswa D4 Rekayasa Perangkat Lunak di Politeknik Negeri Indramayu. Visi utama saya adalah menciptakan standar rekayasa perangkat lunak yang bersih, skalabel, dan fungsional.
+                    </p>
+                    <p class="text-base text-slate-600 mb-8 leading-relaxed">
+                        Ryaze dikembangkan bukan hanya sebagai penyedia layanan, tetapi sebagai ekosistem di mana kode dan infrastruktur berpadu dengan sempurna. Fokus kami ada pada efisiensi teknis dan keandalan sistem.
+                    </p>
 
-                <!-- Avatar / Photo -->
-                <div class="w-full lg:w-1/2 flex justify-center" data-aos="fade-right">
-                    <div class="relative group">
-                        <!-- Decorative Elements -->
-                        <div
-                            class="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-[2rem] opacity-20 group-hover:opacity-40 blur-xl transition-opacity duration-500">
-                        </div>
-                        <div
-                            class="absolute inset-0 bg-gradient-to-tr from-indigo-600 to-fuchsia-500 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-transform duration-500">
-                        </div>
-
-                        <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=600&background=1e293b&color=fff&bold=true"
-                            alt="Bima Ryan Alfarizi" width="400" height="400" loading="lazy"
-                            class="relative rounded-[2rem] shadow-2xl w-80 lg:w-[400px] border-8 border-white object-cover aspect-square transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02]">
-
-                        <!-- Floating Badge -->
-                        <div
-                            class="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 animate-bounce">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                    <i class="fa-solid fa-check-double"></i>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-slate-500 font-bold uppercase">Experience</p>
-                                    <p class="text-lg font-black text-slate-900">3+ Years</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-600">Fullstack Web</span>
+                        <span class="px-3 py-1 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-600">Cloud Server</span>
+                        <span class="px-3 py-1 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-600">CI/CD Pipeline</span>
+                        <span class="px-3 py-1 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-600">Game Engine</span>
                     </div>
                 </div>
 
-                <!-- Text Content -->
-                <div class="w-full lg:w-1/2" data-aos="fade-left">
-                    <p class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Tentang Kreator</p>
-                    <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Halo, kenali saya
-                        lebih dekat!</h2>
-
-                    <p class="text-lg text-slate-600 mb-6 leading-relaxed">
-                        Saya <strong>Bima Ryan Alfarizi</strong>, mahasiswa D4 Rekayasa Perangkat Lunak di Politeknik
-                        Negeri Indramayu (POLINDRA). Saya terobsesi dengan menciptakan antarmuka digital yang memukau
-                        dan arsitektur backend yang kokoh.
-                    </p>
-
-                    <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                        Keahlian saya mencakup Web Development dan Game Development. Misi saya adalah membantu klien
-                        mengubah ide rumit menjadi produk digital yang mulus dan siap pakai.
-                    </p>
-
-                    <!-- Modern Skill Badges -->
-                    <div class="flex flex-wrap gap-3">
-                        @php
-                            $skills = [
-                                ['name' => 'Laravel', 'icon' => 'fa-brands fa-laravel text-red-500'],
-                                ['name' => 'React', 'icon' => 'fa-brands fa-react text-sky-400'],
-                                ['name' => 'Python', 'icon' => 'fa-brands fa-python text-yellow-500'],
-                                ['name' => 'Node.js', 'icon' => 'fa-brands fa-node-js text-green-600'],
-                                ['name' => 'Tailwind', 'icon' => 'fa-brands fa-css3-alt text-teal-400'],
-                                ['name' => 'Linux/VPS', 'icon' => 'fa-brands fa-linux text-slate-800'],
-                                ['name' => 'Unity 3D', 'icon' => 'fa-brands fa-unity text-slate-700'],
-                            ];
-                        @endphp
-
-                        @foreach ($skills as $skill)
-                            <div
-                                class="px-5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-700 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-indigo-300 transition-all cursor-default flex items-center gap-2">
-                                <i class="{{ $skill['icon'] }} text-lg"></i> {{ $skill['name'] }}
+                <!-- Rigid Profile Card -->
+                <div class="flex justify-center lg:justify-end">
+                    <div class="card-brutal p-2 w-full max-w-sm bg-slate-100">
+                        <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+                            <div class="aspect-square bg-slate-200 relative">
+                                <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=600&background=0f172a&color=fff" alt="Bima Ryan" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
                             </div>
-                        @endforeach
+                            <div class="p-6 border-t border-slate-200">
+                                <h3 class="font-bold text-slate-900 text-lg">Bima Ryan Alfarizi</h3>
+                                <p class="text-slate-500 text-sm mb-4">Software Engineer / Founder</p>
+                                <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                                    <i class="fa-solid fa-location-dot"></i> Indramayu, Indonesia
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -386,259 +208,167 @@
     </section>
 
     <!-- SERVICES SECTION -->
-    <section id="services" class="py-24 bg-[#f8fafc] relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-20" data-aos="fade-up">
-                <p class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Layanan Kami</p>
-                <h2 class="text-4xl md:text-5xl font-black text-slate-900">Solusi Digital Lengkap</h2>
+    <section id="services" class="py-24 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="mb-16 max-w-2xl">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Infrastruktur & Layanan</h2>
+                <p class="text-slate-500 text-base">Kami merancang arsitektur web dan infrastruktur cloud kelas pekerja yang bisa diandalkan kapan saja.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-
-                <!-- Service 1: Joki Code -->
-                <div class="card-premium rounded-3xl p-10 relative overflow-hidden group" data-aos="fade-up"
-                    data-aos-delay="100">
-                    <div
-                        class="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-3xl -mr-20 -mt-20 transition-all group-hover:bg-indigo-100">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Web Dev Box -->
+                <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50">
+                    <div class="w-12 h-12 bg-black text-white rounded flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-laptop-code text-xl"></i>
                     </div>
-
-                    <div class="relative z-10">
-                        <div
-                            class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-indigo-200 text-white group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-                            <i class="fa-solid fa-code text-2xl"></i>
-                        </div>
-
-                        <h3 class="text-2xl font-black text-slate-900 mb-4 font-outfit">Jasa Web Development</h3>
-                        <p class="text-slate-600 mb-8 text-lg leading-relaxed">
-                            Bantuan pembuatan Website Custom, Sistem Informasi, ERP, hingga penyelesaian Tugas Akhir /
-                            Skripsi IT Anda dengan kode yang bersih dan terstruktur.
-                        </p>
-
-                        <ul class="space-y-4 mb-10 text-slate-700 font-medium">
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-lg"></i>
-                                <span>Pengerjaan cepat & profesional</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-lg"></i>
-                                <span>Tech stack modern (Laravel, React, Vue)</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-lg"></i>
-                                <span>Free revisi & konsultasi desain arsitektur</span>
-                            </li>
-                        </ul>
-
-                        <a href="{{ route('register') }}"
-                            class="inline-flex items-center font-bold text-indigo-600 hover:text-indigo-800 text-lg group/link">
-                            Mulai Konsultasi <i
-                                class="fa-solid fa-arrow-right ml-2 transition-transform group-hover/link:translate-x-2"></i>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Custom Web Development</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-8 flex-1">
+                        Pembangunan sistem informasi terintegrasi, aplikasi SaaS, hingga prototipe fungsional untuk Tugas Akhir berbasis arsitektur modern yang bersih dan terdokumentasi.
+                    </p>
+                    <ul class="space-y-3 mb-8 text-sm font-medium text-slate-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> Backend & API Design</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> Frontend Modern (React/Vue)</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> Keamanan & Skalabilitas Tinggi</li>
+                    </ul>
+                    <a href="{{ route('register') }}" class="text-sm font-semibold text-black inline-flex items-center gap-2 group-hover:underline">
+                        Mulai Konsultasi <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                    </a>
                 </div>
 
-                <!-- Service 2: Hosting -->
-                <div class="card-premium rounded-3xl p-10 relative overflow-hidden group" data-aos="fade-up"
-                    data-aos-delay="200">
-                    <div
-                        class="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -mr-20 -mt-20 transition-all group-hover:bg-emerald-100">
+                <!-- Hosting Box -->
+                <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50">
+                    <div class="w-12 h-12 bg-black text-white rounded flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-server text-xl"></i>
                     </div>
-
-                    <div class="relative z-10">
-                        <div
-                            class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-emerald-200 text-white group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-                            <i class="fa-solid fa-server text-2xl"></i>
-                        </div>
-
-                        <h3 class="text-2xl font-black text-slate-900 mb-4 font-outfit">Developer Cloud Hosting</h3>
-                        <p class="text-slate-600 mb-8 text-lg leading-relaxed">
-                            Deploy aplikasi Node.js, Next.js, React, hingga Python Flask di infrastruktur kami semudah
-                            klik tombol. Berbasis kontrol panel modern.
-                        </p>
-
-                        <ul class="space-y-4 mb-10 text-slate-700 font-medium">
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-emerald-500 mt-1 text-lg"></i>
-                                <span>Auto-Deploy dari GitHub / GitLab</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-emerald-500 mt-1 text-lg"></i>
-                                <span>Akses Web-Terminal & File Manager</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-emerald-500 mt-1 text-lg"></i>
-                                <span>Support PM2, Composer, NPM, & SSL Gratis</span>
-                            </li>
-                        </ul>
-
-                        <a href="{{ route('register') }}"
-                            class="inline-flex items-center font-bold text-emerald-600 hover:text-emerald-800 text-lg group/link">
-                            Deploy Aplikasi <i
-                                class="fa-solid fa-arrow-right ml-2 transition-transform group-hover/link:translate-x-2"></i>
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Cloud Application Hosting</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-8 flex-1">
+                        Deployment otomatis tanpa pusing. Eksekusi repositori kode Anda langsung ke server publik dengan dukungan web-terminal, proses manager, dan manajemen database bawaan.
+                    </p>
+                    <ul class="space-y-3 mb-8 text-sm font-medium text-slate-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> 1-Click Deployment (Node/PHP/Python)</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> Web Terminal & IDE Bawaan</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> SSL & Domain Management</li>
+                    </ul>
+                    <a href="{{ route('register') }}" class="text-sm font-semibold text-black inline-flex items-center gap-2 group-hover:underline">
+                        Deploy Sekarang <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                    </a>
                 </div>
-
             </div>
         </div>
     </section>
 
     <!-- PORTFOLIO SECTION -->
-    <section id="portfolio" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <p class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-3">Portofolio</p>
-                <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Mahakarya Terbaru</h2>
+    <section id="portfolio" class="py-24 bg-slate-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="mb-12 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-2">Arsip Karya</h2>
+                    <p class="text-slate-500 text-sm">Beberapa entitas digital yang telah kami kembangkan.</p>
+                </div>
+                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="hidden md:flex text-sm font-semibold text-black items-center gap-2 hover:underline">
+                    Lihat Repositori <i class="fa-brands fa-github text-lg"></i>
+                </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-                @forelse($portfolios as $index => $portfolio)
-                <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-500"
-                    data-aos="fade-up" data-aos-delay="{{ 100 * ($index + 1) }}">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @forelse($portfolios as $portfolio)
+                <div class="card-brutal flex flex-col overflow-hidden bg-white group">
                     @if($portfolio->link_preview)
-                        <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer" class="block">
+                        <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer" class="block h-48 border-b border-slate-100 bg-slate-100 overflow-hidden relative">
                     @else
-                        <div class="block">
+                        <div class="block h-48 border-b border-slate-100 bg-slate-100 overflow-hidden relative">
                     @endif
-                        <div class="img-zoom-container h-60 bg-slate-100 relative">
-                            @if($portfolio->link_preview)
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                                <span class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Live Preview →</span>
+                        
+                        @if($portfolio->image_path)
+                            <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-300">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-slate-300 bg-slate-50">
+                                <i class="fa-solid fa-image text-3xl"></i>
                             </div>
-                            @endif
-                            <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative overflow-hidden">
-                                @if($portfolio->image_path)
-                                    <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover">
-                                @else
-                                    <i class="fa-solid fa-laptop-code text-7xl text-white/20 absolute"></i>
-                                    <div class="w-full h-full bg-gradient-to-br from-indigo-500/30 to-purple-600/30"></div>
-                                @endif
-                            </div>
-                        </div>
+                        @endif
+
                     @if($portfolio->link_preview)
                         </a>
                     @else
                         </div>
                     @endif
                     
-                    <div class="p-8 border border-t-0 border-slate-100 bg-white rounded-b-3xl">
-                        <div class="flex gap-2 mb-4 flex-wrap">
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex gap-2 mb-3 flex-wrap">
                             @if($portfolio->tags)
                                 @foreach($portfolio->tags as $tag)
-                                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">{{ $tag }}</span>
+                                    <span class="px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-600 text-[10px] uppercase font-bold rounded">{{ $tag }}</span>
                                 @endforeach
                             @endif
                         </div>
-                        @if($portfolio->link_preview)
-                            <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer">
-                        @endif
-                            <h3 class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-indigo-600 transition-colors">
-                                {{ $portfolio->title }}
-                            </h3>
-                        @if($portfolio->link_preview)
-                            </a>
-                        @endif
                         
-                        <p class="text-slate-500 line-clamp-3 mb-4 text-sm">{{ $portfolio->description }}</p>
+                        <h3 class="text-base font-bold text-slate-900 mb-2">{{ $portfolio->title }}</h3>
+                        <p class="text-slate-500 text-sm line-clamp-3 mb-4 flex-1 leading-relaxed">{{ $portfolio->description }}</p>
                         
-                        @if($portfolio->link_github)
-                            <a href="{{ $portfolio->link_github }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                                <i class="fa-brands fa-github text-lg mr-2"></i> Repository
-                            </a>
-                        @endif
+                        <div class="flex items-center gap-4 mt-auto pt-4 border-t border-slate-100">
+                            @if($portfolio->link_github)
+                                <a href="{{ $portfolio->link_github }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-600 hover:text-black transition-colors flex items-center gap-1.5">
+                                    <i class="fa-brands fa-github text-sm"></i> Code
+                                </a>
+                            @endif
+                            @if($portfolio->link_preview)
+                                <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-600 hover:text-black transition-colors flex items-center gap-1.5 ml-auto">
+                                    Visit <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 @empty
-                    <div class="col-span-full text-center text-slate-500 py-12">
-                        <p>Belum ada mahakarya yang dipublikasikan saat ini.</p>
+                    <div class="col-span-full py-12 border border-dashed border-slate-300 rounded-lg text-center bg-white">
+                        <p class="text-sm text-slate-500 font-medium">Data arsip belum tersedia.</p>
                     </div>
                 @endforelse
-
             </div>
-
-            <div class="text-center mt-16" data-aos="fade-up">
-                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer"
-                    class="inline-flex items-center justify-center px-8 py-4 font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-full hover:border-indigo-500 hover:text-indigo-600 transition-all">
-                    Jelajahi GitHub Saya <i class="fa-brands fa-github ml-3 text-xl"></i>
+            
+            <div class="mt-8 md:hidden">
+                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-black inline-flex items-center gap-2 hover:underline">
+                    Lihat Repositori <i class="fa-brands fa-github text-lg"></i>
                 </a>
             </div>
         </div>
     </section>
 
     <!-- CALL TO ACTION -->
-    <section class="py-24 relative overflow-hidden">
-        <div class="absolute inset-0 bg-slate-900"></div>
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-purple-900 opacity-80"></div>
-
-        <!-- Animated Background Pattern -->
-        <div class="absolute inset-0"
-            style="background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 30px 30px;">
-        </div>
-
-        <div class="max-w-4xl mx-auto px-4 text-center relative z-10" data-aos="zoom-in">
-            <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 font-outfit tracking-tight">Siap
-                Memulai Proyek Anda?</h2>
-            <p class="text-indigo-200 text-xl mb-12 font-medium max-w-2xl mx-auto">
-                Bergabunglah dengan platform kami hari ini. Pesan jasa pembuatan web atau kelola hosting aplikasi Anda
-                dalam satu dashboard canggih.
-            </p>
-            <a href="{{ route('register') }}"
-                class="btn-glow inline-block px-10 py-5 text-xl font-black rounded-full text-indigo-900 bg-white shadow-2xl hover:scale-105 transition-transform duration-300">
-                Buat Akun Gratis Sekarang
+    <section class="py-24 bg-black text-white text-center px-6">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-6">Siap Mengeksekusi Ide?</h2>
+            <p class="text-slate-400 text-lg mb-10 max-w-xl mx-auto">Daftar sekarang untuk mengakses lingkungan deployment yang kuat atau hubungi kami untuk pengerjaan perangkat lunak Anda.</p>
+            <a href="{{ route('register') }}" class="inline-block px-8 py-3 bg-white text-black text-sm font-bold rounded-md hover:bg-slate-200 transition-colors">
+                Mulai Secara Gratis
             </a>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-950 pt-20 pb-10 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center gap-3 mb-6 md:mb-0">
-                    <div class="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-lg p-2">
-                        <i class="fa-solid fa-code"></i>
-                    </div>
-                    <span class="text-2xl font-black font-outfit text-white">Ryaze<span
-                            class="text-indigo-500">.</span></span>
+    <footer class="bg-white border-t border-slate-200 py-12">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2 text-black">
+                    <i class="fa-solid fa-code text-lg"></i>
+                    <span class="text-xl font-bold tracking-tight">Ryaze.</span>
                 </div>
                 <div class="flex gap-6">
-                    <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
-                        class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition-all">
-                        <i class="fa-brands fa-github text-lg"></i>
+                    <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-black transition-colors">
+                        <i class="fa-brands fa-github text-xl"></i>
                     </a>
-                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
-                        class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-pink-600 hover:text-white transition-all">
-                        <i class="fa-brands fa-instagram text-lg"></i>
-                    </a>
-                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
-                        class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all">
-                        <i class="fa-brands fa-linkedin text-lg"></i>
+                    <a href="#" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-black transition-colors">
+                        <i class="fa-brands fa-linkedin text-xl"></i>
                     </a>
                 </div>
             </div>
-            <div
-                class="mt-12 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 font-medium">
+            <div class="mt-8 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
                 <p>&copy; {{ date('Y') }} Ryaze Portal. All rights reserved.</p>
-                <p>Designed with <i class="fa-solid fa-heart text-rose-500 mx-1"></i> by Bima Ryan</p>
+                <p>Engineered by Bima Ryan.</p>
             </div>
         </div>
     </footer>
 
-    <!-- AOS Script -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ app('csp_nonce') ?? '' }}"></script>
-    <script nonce="{{ app('csp_nonce') ?? '' }}">
-        document.addEventListener("DOMContentLoaded", function() {
-            if (typeof AOS !== 'undefined') {
-                AOS.init({
-                    once: true,
-                    offset: 100,
-                    duration: 800,
-                    easing: 'ease-out-cubic',
-                });
-            }
-        });
-    </script>
     @include('components.hot-toast')
 </body>
-
 </html>
