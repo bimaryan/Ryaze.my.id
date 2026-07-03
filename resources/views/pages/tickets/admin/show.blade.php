@@ -153,8 +153,7 @@
     </div>
 </x-ui.page-layout>
 
-<script src="https://cdn.jsdelivr.net/npm/picmo@5.8.5/dist/umd/picmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@picmo/popup-picker@5.8.5/dist/umd/picmo-popup.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.4/dist/index.min.js"></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', function() {
     const chatArea = document.getElementById('chat-messages-area');
@@ -164,17 +163,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const emojiBtn = document.getElementById('emoji-btn');
     const messageInput = document.getElementById('message-input');
     
-    if (emojiBtn && window.picmo && window.picmoPopup) {
-        const { createPopup } = window.picmoPopup;
-        
-        const picker = createPopup({}, {
-            referenceElement: emojiBtn,
-            triggerElement: emojiBtn,
-            position: 'top-start'
+    if (emojiBtn && typeof EmojiButton !== 'undefined') {
+        const picker = new EmojiButton({
+            position: 'top-start',
+            autoHide: false,
+            zIndex: 9999
         });
         
-        picker.addEventListener('emoji:select', (event) => {
-            messageInput.value += event.emoji;
+        picker.on('emoji', selection => {
+            messageInput.value += selection.emoji;
             messageInput.style.height = '24px'; 
             messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
             messageInput.focus();
@@ -182,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         emojiBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            picker.toggle();
+            picker.togglePicker(emojiBtn);
         });
     }
 
