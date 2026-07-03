@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Vinkla\Hashids\Facades\Hashids;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ArticleImport;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ArticleController extends Controller
 {
@@ -201,5 +204,51 @@ class ArticleController extends Controller
         }
 
         return back()->with('success', "Artikel berhasil {$msg}.");
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,csv,xls|max:5120',
+        ]);
+
+        try {
+            Excel::import(new ArticleImport, $request->file('file'));
+            return redirect()->route('superadmin.articles.index')->with('success', 'Artikel berhasil diimpor!');
+        } catch (\Exception $e) {
+            return redirect()->route('superadmin.articles.index')->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=template_import_artikel.csv',
+            'Expires'             => '0',
+            'Pragma'              => 'public'
+        ];
+
+        $columns = ['title', 'category', 'excerpt', 'body', 'tags', 'status'];
+
+        $callback = function() use ($columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            
+            // Contoh data
+            fputcsv($file, [
+                'Contoh Judul Artikel Pertama',
+                'Tutorial',
+                'Ini adalah ringkasan singkat artikel.',
+                '<p>Isi konten menggunakan tag HTML. Anda bisa <strong>menebalkan teks</strong> atau membuat list.</p>',
+                'tips, laravel, web',
+                'published'
+            ]);
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

@@ -11,6 +11,10 @@
                 class="inline-flex items-center bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 <i class="fa-solid fa-folder mr-2"></i> Kategori
             </a>
+            <button type="button" onclick="document.getElementById('importModal').classList.remove('hidden')"
+                class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                <i class="fa-solid fa-file-excel mr-2"></i> Import Excel
+            </button>
             <a href="{{ route('superadmin.articles.create') }}"
                 class="inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 <i class="fa-solid fa-plus mr-2"></i> Tulis Artikel
@@ -148,6 +152,40 @@
         </x-ui.table>
 
         <div class="mt-4">{{ $articles->links() }}</div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full flex bg-slate-900/50 backdrop-blur-sm">
+        <div class="relative p-4 w-full max-w-md max-h-full m-auto">
+            <div class="relative bg-white rounded-xl shadow">
+                <div class="flex items-center justify-between p-4 md:p-5 border-b border-slate-100 rounded-t">
+                    <h3 class="text-lg font-semibold text-slate-900">
+                        Import Artikel (Excel/CSV)
+                    </h3>
+                    <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="text-slate-400 bg-transparent hover:bg-slate-200 hover:text-slate-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <form action="{{ route('superadmin.articles.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="p-4 md:p-5 space-y-4">
+                        <div class="bg-indigo-50 text-indigo-700 p-3 rounded-lg text-xs font-medium border border-indigo-100 mb-4">
+                            Unduh template Excel untuk memastikan format kolom sudah benar sebelum mengunggah.
+                            <a href="{{ route('superadmin.articles.template') }}" class="inline-block mt-2 underline font-bold"><i class="fa-solid fa-download"></i> Download Template</a>
+                        </div>
+                        
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-slate-900" for="file">Upload File Excel/CSV</label>
+                            <input class="block w-full text-sm text-slate-900 border border-slate-300 rounded-lg cursor-pointer bg-slate-50 focus:outline-none p-2.5" id="file" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-4 md:p-5 border-t border-slate-100 rounded-b">
+                        <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">Import Data</button>
+                        <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-900 focus:outline-none bg-white rounded-lg border border-slate-200 hover:bg-slate-100 hover:text-indigo-700 transition">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </x-ui.page-layout>
 @endsection

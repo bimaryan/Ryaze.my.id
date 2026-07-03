@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('superadmin/portfolios/{hashid}/status', [\App\Http\Controllers\Admin\PortfolioController::class, 'toggleStatus'])->name('superadmin.portfolios.status.toggle');
 
         // Manajemen Artikel
+        Route::post('superadmin/articles/import', [\App\Http\Controllers\Admin\ArticleController::class, 'import'])->name('superadmin.articles.import');
+        Route::get('superadmin/articles/template', [\App\Http\Controllers\Admin\ArticleController::class, 'downloadTemplate'])->name('superadmin.articles.template');
         Route::resource('superadmin/articles', \App\Http\Controllers\Admin\ArticleController::class)->names('superadmin.articles');
         Route::patch('superadmin/articles/{hashid}/featured', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleFeatured'])->name('superadmin.articles.featured');
         Route::patch('superadmin/articles/{hashid}/status', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleStatus'])->name('superadmin.articles.status');
