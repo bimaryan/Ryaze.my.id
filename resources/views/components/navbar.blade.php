@@ -191,13 +191,7 @@
                         <span class="ms-3 whitespace-nowrap">Data Pengguna</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('superadmin.settings') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.settings*')) }}">
-                        <i class="fa-solid fa-cogs {{ $iconClass(request()->routeIs('superadmin.settings*')) }}"></i>
-                        <span class="ms-3 whitespace-nowrap">Pengaturan Sistem</span>
-                    </a>
-                </li>
+
             @endif
 
             {{-- ══ MANAJEMEN JOKI ══════════════════════════════════ --}}
