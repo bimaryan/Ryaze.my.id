@@ -8,8 +8,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('ticket.{hashid}', function ($user, $hashid) {
-    $ticket = Ticket::findByHashid($hashid);
-    if (!$ticket) return false;
+    $ticket = Ticket::findByHashidOrFail($hashid);
 
     // Admin can access all tickets
     if (in_array($user->role, ['admin_hosting', 'superadmin'])) {
