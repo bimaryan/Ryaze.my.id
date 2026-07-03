@@ -144,22 +144,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Render message bubble
                 const isSelf = e.user_id == {{ Auth::id() }};
                 const bubbleHtml = `
-                    <div class="flex gap-4 ${isSelf ? 'flex-row-reverse' : ''}">
-                        <div class="shrink-0">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold shadow-sm">
-                                ${e.user_name.substring(0, 2).toUpperCase()}
+                    <div class="flex ${isSelf ? 'justify-end' : 'justify-start'}">
+                        <div class="flex max-w-[80%] ${isSelf ? 'flex-row-reverse' : 'flex-row'} items-end gap-3">
+                            
+                            <!-- Avatar -->
+                            <div class="shrink-0">
+                                ${isSelf 
+                                    ? `<div class="w-10 h-10 rounded-full bg-indigo-100 border-2 border-white shadow-sm flex items-center justify-center text-indigo-700 font-bold">
+                                        ${e.user_name.substring(0, 1).toUpperCase()}
+                                       </div>`
+                                    : `<div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-white shadow-sm flex items-center justify-center text-white font-bold">
+                                        <i class="fa-solid fa-headset text-sm"></i>
+                                       </div>`
+                                }
                             </div>
-                        </div>
-                        <div class="max-w-[80%] ${isSelf ? 'text-right' : ''}">
-                            <div class="flex items-center gap-2 mb-1 ${isSelf ? 'justify-end' : ''}">
-                                <span class="font-medium text-sm text-slate-900">${e.user_name}</span>
-                                ${e.is_admin ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">ADMIN</span>' : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-600">KLIEN</span>'}
-                                <span class="text-xs text-slate-400">${e.created_at}</span>
+
+                            <!-- Bubble -->
+                            <div class="flex flex-col ${isSelf ? 'items-end' : 'items-start'}">
+                                <div class="text-xs text-slate-500 mb-1 px-1">
+                                    <span class="font-bold text-slate-700">${isSelf ? 'Anda' : 'Admin Support'}</span> &bull; 
+                                    ${e.created_at}
+                                </div>
+                                <div class="${isSelf ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm'} px-4 py-2 text-[15px] leading-relaxed whitespace-pre-wrap">${e.attachment_url ? `<div class="mb-2"><a href="${e.attachment_url}" target="_blank"><img src="${e.attachment_url}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment"></a></div>` : ''}${e.message}</div>
                             </div>
-                            <div class="px-4 py-2 mt-1 rounded-xl ${isSelf ? 'bg-[#d9fdd3] text-slate-800 rounded-tr-none' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none'} shadow-sm">
-                                ${e.attachment_url ? `<div class="mb-2"><a href="${e.attachment_url}" target="_blank"><img src="${e.attachment_url}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment"></a></div>` : ''}
-                                <p class="text-[15px] whitespace-pre-wrap">${e.message}</p>
-                            </div>
+
                         </div>
                     </div>
                 `;
