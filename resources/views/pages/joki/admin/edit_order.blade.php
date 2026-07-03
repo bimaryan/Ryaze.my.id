@@ -10,7 +10,7 @@
             </x-slot:subtitle>
             <x-slot:actions>
                 <a href="{{ route('admin_joki.orders') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
             </x-slot:actions>

@@ -96,14 +96,40 @@
                     <div class="border-t border-slate-100 pt-5 text-left space-y-3 text-sm">
                         <div class="flex items-center text-slate-600">
                             <i class="fa-solid fa-calendar-alt w-6 text-center text-slate-400"></i>
-                            <span>Terdaftar: <strong
-                                    class="text-slate-800">{{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('d F Y') }}</strong></span>
+                            <span>Terdaftar: <strong class="text-slate-800">{{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('d F Y') }}</strong></span>
                         </div>
                         <div class="flex items-center text-slate-600">
                             <i class="fa-solid fa-clock w-6 text-center text-slate-400"></i>
-                            <span>Waktu: <strong
-                                    class="text-slate-800">{{ \Carbon\Carbon::parse($user->created_at)->format('H:i') }}
-                                    WIB</strong></span>
+                            <span>Waktu: <strong class="text-slate-800">{{ \Carbon\Carbon::parse($user->created_at)->format('H:i') }} WIB</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3 mt-5 border-t border-slate-100 pt-5">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500">Status Akun</span>
+                            <span class="font-bold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider {{ $user->status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                                {{ $user->status }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500">Total Pesanan Joki</span>
+                            <span class="font-semibold text-slate-800">{{ $user->client_orders_count ?? 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500">Total Proyek Hosting</span>
+                            <span class="font-semibold text-slate-800">{{ $user->hosting_projects_count ?? 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500">Storage Hosting</span>
+                            <span class="font-semibold text-slate-800">{{ number_format($user->hosting_storage_limit_mb ?? 500) }} MB</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500">IP Terakhir</span>
+                            <span class="font-mono text-xs text-slate-600">{{ $user->last_login_ip ?? '-' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500">Aktivitas Terakhir</span>
+                            <span class="font-semibold text-slate-800">{{ $user->last_login_at ? \Carbon\Carbon::parse($user->last_login_at)->diffForHumans() : '-' }}</span>
                         </div>
                     </div>
 
@@ -145,6 +171,41 @@
                                 <i class="fa-solid fa-box-open"></i>
                             </div>
                             <p class="text-sm font-medium text-slate-500">Klien ini belum pernah membuat pesanan Joki.</p>
+                        </div>
+                    @endif
+                </x-ui.card>
+
+                <x-ui.card class="p-6 mt-6">
+                    <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Riwayat Proyek Hosting Klien Ini</h3>
+
+                    @if (isset($hostingProjects) && $hostingProjects->count() > 0)
+                        <div class="space-y-4">
+                            @foreach ($hostingProjects as $project)
+                                <div class="border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <h4 class="font-bold text-slate-800">{{ $project->project_name }}</h4>
+                                            <span class="text-[10px] px-2 py-0.5 rounded font-bold uppercase {{ $project->status === 'active' ? 'bg-emerald-100 text-emerald-700' : ($project->status === 'suspended' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600') }}">
+                                                {{ $project->status }}
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-slate-500">
+                                            <i class="fa-solid fa-code mr-1"></i> {{ ucfirst($project->framework) }}
+                                        </p>
+                                    </div>
+                                    <a href="{{ route('admin_hosting.projects') }}"
+                                        class="inline-block text-xs border border-indigo-200 text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 font-semibold shadow-sm">
+                                        Lihat di Hosting
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-300 text-2xl">
+                                <i class="fa-solid fa-server"></i>
+                            </div>
+                            <p class="text-sm font-medium text-slate-500">Klien ini belum memiliki proyek hosting.</p>
                         </div>
                     @endif
                 </x-ui.card>
