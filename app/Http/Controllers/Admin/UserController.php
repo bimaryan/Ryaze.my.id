@@ -9,10 +9,19 @@ use App\Models\User;
 class UserController extends Controller
 {
     // Fungsi untuk halaman "Lihat Semua"
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        // Mengambil semua user, diurutkan dari yang terbaru, dan dipaginasi (10 per halaman)
-        $users = User::latest()->paginate(10);
+        $query = User::latest();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        $users = $query->paginate(10)->withQueryString();
 
         return view('pages.admin.users.index', compact('users'));
     }

@@ -9,7 +9,26 @@
         />
 
         <div>
-            <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Daftar Semua Klien</h2>
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-1 gap-4">
+                <h2 class="text-lg font-bold text-slate-800">Daftar Semua Klien</h2>
+                
+                <form action="{{ route('superadmin.users.index') }}" method="GET" class="flex items-center w-full sm:w-auto">
+                    <div class="relative w-full sm:w-64">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <i class="fa-solid fa-search text-slate-400"></i>
+                        </div>
+                        <input type="text" name="search" class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full ps-9 p-2 shadow-sm" placeholder="Cari nama atau email..." value="{{ request('search') }}">
+                    </div>
+                    <button type="submit" class="p-2 ms-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm transition">
+                        Cari
+                    </button>
+                    @if(request()->has('search') && request()->search != '')
+                        <a href="{{ route('superadmin.users.index') }}" class="p-2 ms-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
+                            Reset
+                        </a>
+                    @endif
+                </form>
+            </div>
             <x-ui.table>
                 <x-slot:head>
                     <th scope="col" class="px-6 py-4">Nama Pengguna</th>

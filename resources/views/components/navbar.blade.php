@@ -191,6 +191,13 @@
                         <span class="ms-3 whitespace-nowrap">Data Pengguna</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('superadmin.portfolios.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.portfolios*')) }}">
+                        <i class="fa-solid fa-briefcase {{ $iconClass(request()->routeIs('superadmin.portfolios*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Manajemen Portofolio</span>
+                    </a>
+                </li>
 
             @endif
 

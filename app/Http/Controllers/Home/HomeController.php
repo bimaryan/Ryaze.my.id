@@ -9,6 +9,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('pages.home.index');
+        $portfolios = \App\Models\Portfolio::where('is_active', true)->latest()->take(6)->get();
+        return view('pages.home.index', compact('portfolios'));
     }
 }

@@ -59,6 +59,8 @@ Route::middleware('auth')->group(function () {
         Route::get('superadmin/settings', [SettingController::class, 'index'])->name('superadmin.settings');
         Route::put('superadmin/settings', [SettingController::class, 'update'])->name('superadmin.settings.update');
         Route::get('superadmin/activity-logs', [ActivityLogController::class, 'index'])->name('superadmin.activity_logs');
+        Route::resource('superadmin/portfolios', \App\Http\Controllers\Admin\PortfolioController::class)->names('superadmin.portfolios');
+        Route::patch('superadmin/portfolios/{hashid}/status', [\App\Http\Controllers\Admin\PortfolioController::class, 'toggleStatus'])->name('superadmin.portfolios.status.toggle');
     });
 
     // ═══════════════════════════════════════════════════════════════

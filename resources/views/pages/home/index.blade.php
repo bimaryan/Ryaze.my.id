@@ -493,39 +493,67 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-                <!-- Portofolio Item 1 -->
+                @forelse($portfolios as $index => $portfolio)
                 <div class="group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-500"
-                    data-aos="fade-up" data-aos-delay="100">
-                    <a href="https://silk.ryaze.my.id/login" target="_blank" rel="noopener noreferrer" class="block">
+                    data-aos="fade-up" data-aos-delay="{{ 100 * ($index + 1) }}">
+                    @if($portfolio->link_preview)
+                        <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer" class="block">
+                    @else
+                        <div class="block">
+                    @endif
                         <div class="img-zoom-container h-60 bg-slate-100 relative">
-                            <div
-                                class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                                <span
-                                    class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Live Preview →</span>
+                            @if($portfolio->link_preview)
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                                <span class="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Live Preview →</span>
                             </div>
-                            <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative">
-                                <i class="fa-solid fa-microscope text-7xl text-white/20 absolute"></i>
-                                <div class="w-full h-full bg-gradient-to-br from-indigo-500/30 to-purple-600/30"></div>
+                            @endif
+                            <div class="w-full h-full bg-slate-800 flex items-center justify-center img-zoom relative overflow-hidden">
+                                @if($portfolio->image_path)
+                                    <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover">
+                                @else
+                                    <i class="fa-solid fa-laptop-code text-7xl text-white/20 absolute"></i>
+                                    <div class="w-full h-full bg-gradient-to-br from-indigo-500/30 to-purple-600/30"></div>
+                                @endif
                             </div>
                         </div>
-                    </a>
+                    @if($portfolio->link_preview)
+                        </a>
+                    @else
+                        </div>
+                    @endif
+                    
                     <div class="p-8 border border-t-0 border-slate-100 bg-white rounded-b-3xl">
-                        <div class="flex gap-2 mb-4">
-                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Laravel</span>
-                            <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">Tailwind</span>
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            @if($portfolio->tags)
+                                @foreach($portfolio->tags as $tag)
+                                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">{{ $tag }}</span>
+                                @endforeach
+                            @endif
                         </div>
-                        <a href="https://silk.ryaze.my.id/login" target="_blank" rel="noopener noreferrer">
+                        @if($portfolio->link_preview)
+                            <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer">
+                        @endif
                             <h3 class="text-xl font-black text-slate-900 mb-2 font-outfit group-hover:text-indigo-600 transition-colors">
-                                Sistem Peminjaman Lab Kesehatan
+                                {{ $portfolio->title }}
                             </h3>
-                        </a>
-                        <p class="text-slate-500 line-clamp-2 mb-4">Aplikasi peminjaman bahan dan alat laboratorium adalah sebuah sistem berbasis teknologi yang dirancang untuk mempermudah proses peminjaman, pengembalian, serta pengelolaan inventaris laboratorium secara digital. Aplikasi ini memungkinkan pengguna, baik mahasiswa maupun dosen, untuk memesan, meminjam, dan mengembalikan alat serta bahan laboratorium dengan mudah melalui platform yang terhubung secara online.</p>
+                        @if($portfolio->link_preview)
+                            </a>
+                        @endif
                         
-                        <a href="https://github.com/bimaryan/silk" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                            <i class="fa-brands fa-github text-lg mr-2"></i> Repository
-                        </a>
+                        <p class="text-slate-500 line-clamp-3 mb-4 text-sm">{{ $portfolio->description }}</p>
+                        
+                        @if($portfolio->link_github)
+                            <a href="{{ $portfolio->link_github }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
+                                <i class="fa-brands fa-github text-lg mr-2"></i> Repository
+                            </a>
+                        @endif
                     </div>
                 </div>
+                @empty
+                    <div class="col-span-full text-center text-slate-500 py-12">
+                        <p>Belum ada mahakarya yang dipublikasikan saat ini.</p>
+                    </div>
+                @endforelse
 
             </div>
 
