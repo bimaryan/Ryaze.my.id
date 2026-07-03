@@ -60,7 +60,7 @@
                                 <span class="font-bold text-slate-700">{{ $isSelf ? 'Anda' : 'Admin Support' }}</span> &bull; 
                                 {{ $reply->created_at->format('d M Y, H:i') }}
                             </div>
-                            <div class="{{ $isSelf ? 'bg-indigo-600 text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white border border-slate-200 text-slate-700 rounded-r-2xl rounded-tl-2xl shadow-sm' }} px-5 py-3 text-sm leading-relaxed whitespace-pre-wrap">{{ $reply->message }}</div>
+                            <div class="{{ $isSelf ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed whitespace-pre-wrap">{{ $reply->message }}</div>
                         </div>
 
                     </div>
@@ -127,8 +127,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${e.is_admin ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">ADMIN</span>' : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-600">KLIEN</span>'}
                                 <span class="text-xs text-slate-400">${e.created_at}</span>
                             </div>
-                            <div class="p-4 rounded-2xl ${isSelf ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'} shadow-sm">
-                                <p class="text-sm whitespace-pre-wrap">${e.message}</p>
+                            <div class="px-4 py-2 mt-1 rounded-xl ${isSelf ? 'bg-[#d9fdd3] text-slate-800 rounded-tr-none' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none'} shadow-sm">
+                                <p class="text-[15px] whitespace-pre-wrap">${e.message}</p>
                             </div>
                         </div>
                     </div>
