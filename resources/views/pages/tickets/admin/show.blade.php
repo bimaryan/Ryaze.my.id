@@ -73,7 +73,7 @@
         <div class="lg:col-span-3 flex flex-col h-[700px] bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
             
             {{-- Chat Messages Area --}}
-            <div id="chat-messages-area" class="flex-1 overflow-y-auto p-6 bg-slate-50 flex flex-col gap-6">
+            <div id="chat-messages-area" class="flex-1 overflow-y-auto p-6 bg-[#efeae2] flex flex-col gap-6">
                 @foreach($ticket->replies as $reply)
                     @php
                         $isAdmin = $reply->user->role == 'admin_hosting' || $reply->user->role == 'superadmin';
@@ -109,15 +109,25 @@
             </div>
 
             {{-- Reply Form --}}
-            <div class="p-4 bg-white border-t border-slate-200">
+            <div class="px-4 py-3 bg-[#f0f2f5] border-t border-slate-200">
                 @if($ticket->status != 'closed')
                     <form id="chat-form" action="{{ route('admin_hosting.tickets.reply', $ticket->hashid) }}" method="POST" class="flex gap-3 items-end">
                         @csrf
-                        <div class="flex-1">
-                            <textarea name="message" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 outline-none transition resize-none" placeholder="Balas keluhan klien..." required></textarea>
+                        
+                        {{-- Tombol Kosmetik (Emoticon & Attachment) --}}
+                        <button type="button" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
+                            <i class="fa-regular fa-face-smile"></i>
+                        </button>
+                        <button type="button" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </button>
+
+                        <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex items-center px-4 py-2">
+                            <textarea name="message" rows="1" class="w-full bg-transparent border-none px-1 py-1 text-[15px] focus:ring-0 focus:outline-none resize-none m-0" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'" required></textarea>
                         </div>
-                        <button type="submit" class="shrink-0 bg-slate-800 hover:bg-slate-900 text-white w-12 h-12 rounded-xl flex items-center justify-center transition shadow-md">
-                            <i class="fa-solid fa-paper-plane"></i>
+
+                        <button type="submit" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-sm mb-0.5">
+                            <i class="fa-solid fa-paper-plane mr-1"></i>
                         </button>
                     </form>
                 @else
