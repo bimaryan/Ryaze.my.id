@@ -42,7 +42,7 @@ class SecurityHeaders
             "img-src 'self' data: blob: https://ui-avatars.com; ".
             "frame-src 'self' *.ryaze.my.id challenges.cloudflare.com; ".
             "worker-src 'self' data: blob:; ".
-            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com ws://127.0.0.1:5173 ws://localhost:5173;"
+            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com ws: wss:;"
         );
 
         return $response;
