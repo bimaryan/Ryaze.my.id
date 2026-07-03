@@ -116,6 +116,11 @@
                     <i class="fa-solid fa-pen-nib mr-1"></i> <span id="typing-name"></span> sedang mengetik...
                 </div>
 
+                <!-- Emoji Picker Container -->
+                <div id="emoji-picker-container" class="hidden absolute bottom-full left-4 mb-2 z-50 shadow-xl rounded-xl overflow-hidden border border-slate-200 bg-white">
+                    <emoji-picker class="light"></emoji-picker>
+                </div>
+
                 <div id="attachment-preview-container" class="hidden mb-3 bg-white p-2 rounded-xl shadow-sm border border-slate-200 w-max relative">
                     <button type="button" onclick="removeAttachment()" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition shadow"><i class="fa-solid fa-xmark"></i></button>
                     <img id="attachment-preview-img" src="" class="h-20 object-cover rounded-lg">
@@ -155,7 +160,7 @@
     </div>
 </x-ui.page-layout>
 
-<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.4/dist/index.min.js"></script>
+<script type="module" src="https://unpkg.com/emoji-picker-element@1"></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', function() {
     const chatArea = document.getElementById('chat-messages-area');
@@ -164,24 +169,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Emoji Picker
     const emojiBtn = document.getElementById('emoji-btn');
     const messageInput = document.getElementById('message-input');
+    const emojiContainer = document.getElementById('emoji-picker-container');
+    const emojiPicker = document.querySelector('emoji-picker');
     
-    if (emojiBtn && typeof EmojiButton !== 'undefined') {
-        const picker = new EmojiButton({
-            position: 'top-start',
-            autoHide: false,
-            zIndex: 9999
+    if (emojiBtn && emojiContainer && emojiPicker) {
+        emojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            emojiContainer.classList.toggle('hidden');
         });
-        
-        picker.on('emoji', selection => {
-            messageInput.value += selection.emoji;
+
+        emojiPicker.addEventListener('emoji-click', event => {
+            messageInput.value += event.detail.unicode;
             messageInput.style.height = '24px'; 
             messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
             messageInput.focus();
         });
 
-        emojiBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            picker.togglePicker(emojiBtn);
+        // Hide when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!emojiContainer.contains(e.target) && !emojiBtn.contains(e.target)) {
+                emojiContainer.classList.add('hidden');
+            }
         });
     }
 
