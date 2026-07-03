@@ -14,7 +14,7 @@
             </x-slot:actions>
         </x-ui.page-header>
 
-        <x-ui.card class="max-w-4xl mx-auto mt-6">
+        <x-ui.card class="w-full mt-6">
             <form action="{{ route('superadmin.portfolios.store') }}" method="POST" enctype="multipart/form-data" class="p-6">
                 @csrf
                 <div class="space-y-6">
