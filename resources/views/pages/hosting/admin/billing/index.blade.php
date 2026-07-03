@@ -47,10 +47,10 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <button type="button"
-                            class="btn-open-verify px-3 py-1.5 text-xs font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg transition"
-                            data-hashid="{{ $payment->hashid }}" data-invoice="{{ $payment->invoice_number }}"
+                            class="btn-open-verify w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                            title="Verifikasi Tagihan" data-hashid="{{ $payment->hashid }}" data-invoice="{{ $payment->invoice_number }}"
                             data-status="{{ $payment->status }}">
-                            Verifikasi
+                            <i class="fa-solid fa-clipboard-check"></i>
                         </button>
                     </td>
                 </tr>

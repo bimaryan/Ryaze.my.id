@@ -47,7 +47,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="button"
-                                class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors tooltip"
+                                class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip mx-auto"
                                 title="Hapus Database" data-hashid="{{ $db->hashid }}">
                                 <i class="fa-regular fa-trash-can"></i>
                             </button>

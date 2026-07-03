@@ -60,8 +60,8 @@
                                     </td>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         <a href="{{ route('user_joki.detail', $order->hashid) }}"
-                                            class="inline-block text-xs border border-indigo-200 text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 font-semibold shadow-sm">
-                                            Detail
+                                            class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Detail Proyek">
+                                            <i class="fa-solid fa-file-lines"></i>
                                         </a>
                                     </td>
                                 </tr>

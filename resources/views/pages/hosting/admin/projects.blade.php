@@ -52,7 +52,10 @@
                         <div class="flex justify-center gap-2">
                             {{-- Kelola Detail --}}
                             <a href="{{ route('user_hosting.show', $project->hashid) }}"
-                                class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Kelola</a>
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                title="Kelola">
+                                <i class="fa-solid fa-gear"></i>
+                            </a>
 
                             {{-- Aktivasi --}}
                             @if (in_array($project->status, ['unpaid', 'suspended', 'error']))
@@ -60,7 +63,10 @@
                                     class="admin-action-form" data-msg="Aktifkan project {{ $project->project_name }}?">
                                     @csrf @method('PATCH')
                                     <button type="submit"
-                                        class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Aktifkan</button>
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                        title="Aktifkan">
+                                        <i class="fa-solid fa-play"></i>
+                                    </button>
                                 </form>
                             @endif
 
@@ -70,7 +76,10 @@
                                     class="admin-action-form" data-msg="Suspend project {{ $project->project_name }}?">
                                     @csrf @method('PATCH')
                                     <button type="submit"
-                                        class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Suspend</button>
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-amber-600 bg-amber-50 hover:bg-amber-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                        title="Suspend">
+                                        <i class="fa-solid fa-pause"></i>
+                                    </button>
                                 </form>
                             @endif
 
@@ -79,7 +88,10 @@
                                 class="admin-action-form" data-msg="Hapus PERMANEN project {{ $project->project_name }}?">
                                 @csrf @method('DELETE')
                                 <button type="submit"
-                                    class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg transition-colors font-medium">Hapus</button>
+                                    class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                    title="Hapus">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
                             </form>
                         </div>
                     </td>

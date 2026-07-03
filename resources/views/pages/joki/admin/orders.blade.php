@@ -57,8 +57,9 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ route('admin_joki.orders.edit', $order->hashid) }}"
-                                class="inline-block text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
-                                Update Data
+                                class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                title="Kelola Pesanan">
+                                <i class="fa-solid fa-gear"></i>
                             </a>
                         </td>
                     </tr>

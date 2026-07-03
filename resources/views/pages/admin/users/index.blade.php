@@ -49,8 +49,9 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <a href="{{ route('superadmin.users.show', $user->hashid) }}"
-                                    class="inline-block text-xs border border-indigo-200 text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 font-semibold shadow-sm">
-                                    Detail Profil
+                                    class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                    title="Detail Profil">
+                                    <i class="fa-regular fa-eye"></i>
                                 </a>
                             </td>
                         </tr>

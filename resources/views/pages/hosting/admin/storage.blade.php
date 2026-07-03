@@ -49,16 +49,16 @@
                     </td>
                     <td class="px-6 py-4 text-center flex items-center justify-center gap-2">
                         <button type="button"
-                            class="btn-edit-storage w-8 h-8 rounded-lg flex items-center justify-center text-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 transition-colors tooltip"
+                            class="btn-edit-storage w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
                             title="Ubah Limit Storage" data-modal-target="editStorageModal"
                             data-modal-toggle="editStorageModal" data-hashid="{{ $project->hashid }}"
                             data-name="{{ $project->project_name }}" data-limit="{{ $project->storage_limit_mb }}">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                         <a href="{{ route('admin_hosting.projects') }}"
-                            class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors tooltip"
+                            class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 bg-slate-50 hover:bg-slate-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
                             title="Detail Proyek">
-                            <i class="fa-solid fa-arrow-right"></i>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </a>
                     </td>
                 </tr>

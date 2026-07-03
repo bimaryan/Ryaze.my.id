@@ -51,7 +51,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <button class="p-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition btn-edit-modal" 
+                                        <button class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip btn-edit-modal" 
                                             title="Edit Layanan"
                                             data-id="{{ $service->hashid }}"
                                             data-name="{{ $service->name }}"
@@ -63,7 +63,7 @@
                                         <form action="{{ route('admin_joki.services.destroy', $service->hashid) }}" method="POST" class="inline form-delete-service">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition" title="Hapus Layanan">
+                                            <button type="submit" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Layanan">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </form>
@@ -160,7 +160,7 @@
         </div>
     </div>
 
-    <script nonce="{{ app('csp_nonce') }}">
+    <script nonce="{{ csp_nonce() ?? '' }}">
         document.addEventListener('DOMContentLoaded', function () {
             // Setup modals
             const createModal = document.getElementById('createModal');
