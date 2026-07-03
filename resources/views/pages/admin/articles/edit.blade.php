@@ -119,7 +119,7 @@
                 {{-- Tags --}}
                 <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
                     <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Tags</h3>
-                    <input type="text" name="tags" value="{{ old('tags', $article->tags ? implode(', ', $article->tags) : '') }}"
+                    <input type="text" name="tags" value="{{ old('tags', is_array($article->tags) ? implode(', ', $article->tags) : $article->tags) }}"
                         class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" placeholder="laravel, php, tutorial">
                     <p class="text-xs text-slate-400 mt-2">Pisahkan dengan koma.</p>
                 </div>
