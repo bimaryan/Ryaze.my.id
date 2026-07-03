@@ -129,7 +129,7 @@
     </x-ui.page-layout>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     function confirmDelete(button) {
         Swal.fire({
@@ -148,4 +148,4 @@
         })
     }
 </script>
-@endsection
+@endpush
