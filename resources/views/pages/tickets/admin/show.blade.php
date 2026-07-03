@@ -158,7 +158,7 @@
     </div>
 </x-ui.page-layout>
 
-<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.22.8/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/bundled/index.js"></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', function() {
     const chatArea = document.getElementById('chat-messages-area');
