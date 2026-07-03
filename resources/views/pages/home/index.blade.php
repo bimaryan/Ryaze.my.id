@@ -88,6 +88,7 @@
                     <a href="#about" class="hover:text-indigo-600 transition-colors">Tentang</a>
                     <a href="#services" class="hover:text-indigo-600 transition-colors">Layanan</a>
                     <a href="#portfolio" class="hover:text-indigo-600 transition-colors">Portofolio</a>
+                    <a href="{{ route('blog.index') }}" class="hover:text-indigo-600 transition-colors">Blog</a>
                 </div>
 
                 <!-- Auth Buttons -->
@@ -329,6 +330,59 @@
             <div class="mt-8 md:hidden">
                 <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-indigo-600 inline-flex items-center gap-2 hover:underline">
                     Lihat Repositori <i class="fa-brands fa-github text-lg"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOG SECTION -->
+    <section class="py-24 bg-slate-50 border-t border-slate-200" id="blog">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
+                <div>
+                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 mb-2">Artikel Terbaru</h2>
+                    <p class="text-slate-500 text-sm max-w-2xl">Tulisan seputar web development, tips hosting, dan wawasan teknologi lainnya dari tim Ryaze.</p>
+                </div>
+                <a href="{{ route('blog.index') }}" class="hidden md:inline-flex text-sm font-semibold text-indigo-600 items-center gap-2 hover:underline">
+                    Lihat Semua Artikel <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @forelse($articles as $article)
+                    <a href="{{ route('blog.show', $article->slug) }}" class="group card-brutal overflow-hidden flex flex-col">
+                        @if($article->cover_image)
+                            <div class="h-48 overflow-hidden bg-slate-100 border-b border-slate-200">
+                                <img src="{{ Storage::url($article->cover_image) }}" alt="{{ $article->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            </div>
+                        @else
+                            <div class="h-48 bg-slate-50 border-b border-slate-200 flex items-center justify-center text-slate-300">
+                                <i class="fa-solid fa-newspaper text-5xl"></i>
+                            </div>
+                        @endif
+                        <div class="p-6 flex flex-col flex-1">
+                            @if($article->category)
+                                <span class="text-[10px] font-bold uppercase text-indigo-600 mb-2">{{ $article->category->name }}</span>
+                            @endif
+                            <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">{{ $article->title }}</h3>
+                            <p class="text-slate-500 text-sm line-clamp-2 mb-4 flex-1">{{ $article->excerpt ?: Str::limit(strip_tags($article->body), 100) }}</p>
+                            <div class="flex items-center gap-3 text-xs text-slate-400 mt-auto pt-4 border-t border-slate-100">
+                                <span>{{ $article->published_at?->format('d M Y') }}</span>
+                                <span>&middot;</span>
+                                <span>{{ $article->reading_time }} min</span>
+                            </div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="col-span-full py-12 border border-dashed border-slate-300 rounded-lg text-center bg-white">
+                        <p class="text-sm text-slate-500 font-medium">Belum ada artikel.</p>
+                    </div>
+                @endforelse
+            </div>
+            
+            <div class="mt-8 md:hidden text-center">
+                <a href="{{ route('blog.index') }}" class="text-sm font-semibold text-indigo-600 inline-flex items-center gap-2 hover:underline">
+                    Lihat Semua Artikel <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
             </div>
         </div>

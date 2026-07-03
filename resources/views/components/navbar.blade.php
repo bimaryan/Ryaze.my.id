@@ -198,6 +198,13 @@
                         <span class="ms-3 whitespace-nowrap">Manajemen Portofolio</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('superadmin.articles.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.articles*') || request()->routeIs('superadmin.article_categories*')) }}">
+                        <i class="fa-solid fa-newspaper {{ $iconClass(request()->routeIs('superadmin.articles*') || request()->routeIs('superadmin.article_categories*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Manajemen Blog</span>
+                    </a>
+                </li>
 
             @endif
 
