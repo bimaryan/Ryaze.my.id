@@ -16,7 +16,7 @@
                     <form action="{{ route('superadmin.users.status.toggle', $user->hashid) }}" method="POST" class="inline">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" onclick="return confirm('Apakah Anda yakin ingin {{ $user->status === 'active' ? 'menangguhkan' : 'mengaktifkan' }} akun ini?')"
+                        <button type="submit" onclick="event.preventDefault(); Swal.fire({title: 'Konfirmasi', text: 'Apakah Anda yakin ingin {{ $user->status === 'active' ? 'menangguhkan' : 'mengaktifkan' }} akun ini?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#4f46e5', cancelButtonColor: '#ef4444', confirmButtonText: 'Ya, Lanjutkan', cancelButtonText: 'Batal'}).then((result) => { if (result.isConfirmed) { this.closest('form').submit(); } })"
                             class="inline-flex justify-center items-center px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm border {{ $user->status === 'active' ? 'bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200' }}">
                             <i class="fa-solid {{ $user->status === 'active' ? 'fa-ban' : 'fa-check' }} mr-2"></i> 
                             {{ $user->status === 'active' ? 'Suspend' : 'Unsuspend' }}
@@ -26,7 +26,7 @@
                     <form action="{{ route('superadmin.users.destroy', $user->hashid) }}" method="POST" class="inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Peringatan: Aksi ini akan menghapus akun user secara permanen. Lanjutkan?')"
+                        <button type="submit" onclick="event.preventDefault(); Swal.fire({title: 'Peringatan', text: 'Peringatan: Aksi ini akan menghapus akun user secara permanen. Lanjutkan?', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Ya, Hapus', cancelButtonText: 'Batal'}).then((result) => { if (result.isConfirmed) { this.closest('form').submit(); } })"
                             class="inline-flex justify-center items-center bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
                             <i class="fa-solid fa-trash mr-2"></i> Hapus
                         </button>
