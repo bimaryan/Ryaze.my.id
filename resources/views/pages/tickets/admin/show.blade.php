@@ -73,7 +73,7 @@
         <div class="lg:col-span-3 flex flex-col h-[700px] bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
             
             {{-- Chat Messages Area --}}
-            <div class="flex-1 overflow-y-auto p-6 bg-slate-50 flex flex-col gap-6">
+            <div id="chat-messages-area" class="flex-1 overflow-y-auto p-6 bg-slate-50 flex flex-col gap-6">
                 @foreach($ticket->replies as $reply)
                     @php
                         $isAdmin = $reply->user->role == 'admin_hosting' || $reply->user->role == 'superadmin';
@@ -111,7 +111,7 @@
             {{-- Reply Form --}}
             <div class="p-4 bg-white border-t border-slate-200">
                 @if($ticket->status != 'closed')
-                    <form action="{{ route('admin_hosting.tickets.reply', $ticket->hashid) }}" method="POST" class="flex gap-3 items-end">
+                    <form id="chat-form" action="{{ route('admin_hosting.tickets.reply', $ticket->hashid) }}" method="POST" class="flex gap-3 items-end">
                         @csrf
                         <div class="flex-1">
                             <textarea name="message" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 outline-none transition resize-none" placeholder="Balas keluhan klien..." required></textarea>
@@ -131,4 +131,78 @@
 
     </div>
 </x-ui.page-layout>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatArea = document.getElementById('chat-messages-area');
+    const chatForm = document.getElementById('chat-form');
+    
+    // Auto scroll ke bawah saat pertama load
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    // Polling setiap 3 detik untuk mengambil pesan baru
+    setInterval(() => {
+        fetch(window.location.href)
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newChatArea = doc.getElementById('chat-messages-area');
+                
+                // Jika ada perubahan konten (pesan baru)
+                if (chatArea.innerHTML !== newChatArea.innerHTML) {
+                    const isScrolledToBottom = chatArea.scrollHeight - chatArea.clientHeight <= chatArea.scrollTop + 10;
+                    
+                    chatArea.innerHTML = newChatArea.innerHTML;
+                    
+                    // Scroll ke bawah otomatis jika posisi scroll user sudah di bawah
+                    if (isScrolledToBottom) {
+                        chatArea.scrollTop = chatArea.scrollHeight;
+                    }
+                }
+            })
+            .catch(err => console.error('Error polling chat:', err));
+    }, 3000);
+
+    // Kirim pesan tanpa reload (AJAX)
+    if (chatForm) {
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(chatForm);
+            const submitBtn = chatForm.querySelector('button[type="submit"]');
+            const textarea = chatForm.querySelector('textarea');
+            const originalBtnContent = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+            submitBtn.disabled = true;
+
+            fetch(chatForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.text()) // Controller saat ini mereturn back() yang berupa HTML redirect/page
+            .then(() => {
+                textarea.value = '';
+                // Paksa trigger fetch untuk update langsung tanpa tunggu 3 detik
+                return fetch(window.location.href);
+            })
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                chatArea.innerHTML = doc.getElementById('chat-messages-area').innerHTML;
+                chatArea.scrollTop = chatArea.scrollHeight;
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.disabled = false;
+            });
+        });
+    }
+});
+</script>
 @endsection

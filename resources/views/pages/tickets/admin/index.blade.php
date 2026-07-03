@@ -5,11 +5,6 @@
     <x-ui.page-header 
         title="Manajemen Tiket Bantuan" 
         subtitle="Kelola dan balas keluhan dari klien Hosting, Joki, dll.">
-        <x-slot:iconSlot>
-            <div class="shrink-0 w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-headset text-indigo-600 text-xl"></i>
-            </div>
-        </x-slot:iconSlot>
     </x-ui.page-header>
 
     <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mt-6">

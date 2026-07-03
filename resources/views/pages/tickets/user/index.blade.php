@@ -5,11 +5,6 @@
     <x-ui.page-header 
         title="Tiket Bantuan" 
         subtitle="Daftar tiket dukungan Anda. Hubungi kami jika Anda memiliki kendala.">
-        <x-slot:iconSlot>
-            <div class="shrink-0 w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-life-ring text-indigo-600 text-xl"></i>
-            </div>
-        </x-slot:iconSlot>
         <x-slot:actions>
             <a href="{{ route('user_hosting.tickets.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition text-sm flex items-center gap-2 shadow-md">
                 <i class="fa-solid fa-plus"></i> Buat Tiket Baru
