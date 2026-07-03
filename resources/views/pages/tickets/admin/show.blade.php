@@ -132,7 +132,7 @@
     </div>
 </x-ui.page-layout>
 
-<script>
+<script type="module">
 document.addEventListener('DOMContentLoaded', function() {
     const chatArea = document.getElementById('chat-messages-area');
     const chatForm = document.getElementById('chat-form');
@@ -140,29 +140,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto scroll ke bawah saat pertama load
     chatArea.scrollTop = chatArea.scrollHeight;
 
-    // Polling setiap 3 detik untuk mengambil pesan baru
-    setInterval(() => {
-        fetch(window.location.href)
-            .then(res => res.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newChatArea = doc.getElementById('chat-messages-area');
+    // Listen to WebSocket (Reverb)
+    if (window.Echo) {
+        window.Echo.private('ticket.{{ $ticket->hashid }}')
+            .listen('TicketReplyCreated', (e) => {
+                // Render message bubble
+                const isSelf = e.user_id == {{ Auth::id() }};
+                const bubbleHtml = `
+                    <div class="flex gap-4 ${isSelf ? 'flex-row-reverse' : ''}">
+                        <div class="shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold shadow-sm">
+                                ${e.user_name.substring(0, 2).toUpperCase()}
+                            </div>
+                        </div>
+                        <div class="max-w-[80%] ${isSelf ? 'text-right' : ''}">
+                            <div class="flex items-center gap-2 mb-1 ${isSelf ? 'justify-end' : ''}">
+                                <span class="font-medium text-sm text-slate-900">${e.user_name}</span>
+                                ${e.is_admin ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">ADMIN</span>' : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-600">KLIEN</span>'}
+                                <span class="text-xs text-slate-400">${e.created_at}</span>
+                            </div>
+                            <div class="p-4 rounded-2xl ${isSelf ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'} shadow-sm">
+                                <p class="text-sm whitespace-pre-wrap">${e.message}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
                 
-                // Jika ada perubahan konten (pesan baru)
-                if (chatArea.innerHTML !== newChatArea.innerHTML) {
-                    const isScrolledToBottom = chatArea.scrollHeight - chatArea.clientHeight <= chatArea.scrollTop + 10;
-                    
-                    chatArea.innerHTML = newChatArea.innerHTML;
-                    
-                    // Scroll ke bawah otomatis jika posisi scroll user sudah di bawah
-                    if (isScrolledToBottom) {
-                        chatArea.scrollTop = chatArea.scrollHeight;
-                    }
+                const isScrolledToBottom = chatArea.scrollHeight - chatArea.clientHeight <= chatArea.scrollTop + 10;
+                
+                chatArea.insertAdjacentHTML('beforeend', bubbleHtml);
+                
+                if (isScrolledToBottom || isSelf) {
+                    chatArea.scrollTop = chatArea.scrollHeight;
                 }
-            })
-            .catch(err => console.error('Error polling chat:', err));
-    }, 3000);
+            });
+    }
 
     // Kirim pesan tanpa reload (AJAX)
     if (chatForm) {
@@ -184,18 +196,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(res => res.text()) // Controller saat ini mereturn back() yang berupa HTML redirect/page
+            .then(res => res.json())
             .then(() => {
                 textarea.value = '';
-                // Paksa trigger fetch untuk update langsung tanpa tunggu 3 detik
-                return fetch(window.location.href);
             })
-            .then(res => res.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                chatArea.innerHTML = doc.getElementById('chat-messages-area').innerHTML;
-                chatArea.scrollTop = chatArea.scrollHeight;
+            .catch(err => {
+                console.error('Error sending message:', err);
+                alert('Gagal mengirim pesan. Silakan coba lagi.');
             })
             .finally(() => {
                 submitBtn.innerHTML = originalBtnContent;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Hosting\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Events\TicketReplyCreated;
 use App\Models\Ticket;
 use App\Models\TicketReply;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class TicketController extends Controller
 
         $ticket = Ticket::findByHashidOrFail($hashid);
 
-        TicketReply::create([
+        $reply = TicketReply::create([
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
             'message' => $request->message,
@@ -43,6 +44,12 @@ class TicketController extends Controller
 
         // Update status to answered
         $ticket->update(['status' => 'answered']);
+        
+        broadcast(new TicketReplyCreated($reply));
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
         
         return back()->with('success', 'Balasan berhasil dikirim.');
     }
