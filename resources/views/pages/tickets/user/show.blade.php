@@ -76,20 +76,21 @@
             </div>
 
             @if($ticket->status != 'closed')
-                <form id="chat-form" action="{{ route('user_hosting.tickets.reply', $ticket->hashid) }}" method="POST" enctype="multipart/form-data" class="flex gap-3 items-end">
+                <form id="chat-form" action="{{ route('user_hosting.tickets.reply', $ticket->hashid) }}" method="POST" enctype="multipart/form-data" class="flex gap-2 items-end">
                     @csrf
                     
-                    {{-- Tombol Kosmetik (Emoticon & Attachment) --}}
-                    <button type="button" id="emoji-btn" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
-                        <i class="fa-regular fa-face-smile"></i>
-                    </button>
-                    <button type="button" onclick="document.getElementById('attachment-input').click()" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
-                        <i class="fa-solid fa-paperclip"></i>
-                    </button>
                     <input type="file" name="attachment" id="attachment-input" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="previewAttachment(this)">
 
-                    <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex items-center px-4 py-2">
-                        <textarea name="message" id="message-input" rows="1" class="w-full bg-transparent border-none px-1 py-1 text-[15px] focus:ring-0 focus:outline-none resize-none m-0" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
+                    <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex items-end px-2 py-1.5">
+                        <button type="button" id="emoji-btn" class="shrink-0 text-slate-500 hover:text-slate-700 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
+                            <i class="fa-regular fa-face-smile"></i>
+                        </button>
+
+                        <textarea name="message" id="message-input" rows="1" class="w-full bg-transparent border-none px-2 py-1.5 text-[15px] focus:ring-0 focus:outline-none resize-none m-0" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
+
+                        <button type="button" onclick="document.getElementById('attachment-input').click()" class="shrink-0 text-slate-500 hover:text-slate-700 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </button>
                     </div>
 
                     <button type="submit" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-sm mb-0.5">
