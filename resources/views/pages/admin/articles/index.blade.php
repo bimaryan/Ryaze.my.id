@@ -128,9 +128,9 @@
                             <a href="{{ route('superadmin.articles.edit', $article->hashid) }}" class="p-1.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
-                            <form action="{{ route('superadmin.articles.destroy', $article->hashid) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus artikel ini?')">
+                            <form action="{{ route('superadmin.articles.destroy', $article->hashid) }}" method="POST" class="inline delete-form">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="p-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition">
+                                <button type="button" class="p-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition delete-btn">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </form>
@@ -151,3 +151,33 @@
     </div>
 </x-ui.page-layout>
 @endsection
+
+@push('scripts')
+<script nonce="{{ app('csp_nonce') ?? '' }}">
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteBtns = document.querySelectorAll('.delete-btn');
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                
+                Swal.fire({
+                    title: 'Hapus Artikel?',
+                    text: "Artikel yang dihapus tidak dapat dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4f46e5',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
+@endpush
