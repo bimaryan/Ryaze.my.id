@@ -16,9 +16,28 @@
 
         <div>
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-1 gap-4">
-                <h2 class="text-lg font-bold text-slate-800">Daftar Portofolio</h2>
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    {{-- Status Filter --}}
+                    <div class="flex bg-slate-100 rounded-lg p-0.5">
+                        <a href="{{ route('superadmin.portfolios.index', request()->except('status')) }}" 
+                            class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ !request()->has('status') ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700' }}">
+                            Semua
+                        </a>
+                        <a href="{{ route('superadmin.portfolios.index', array_merge(request()->except('status'), ['status' => '1'])) }}" 
+                            class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ request('status') === '1' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700' }}">
+                            Aktif
+                        </a>
+                        <a href="{{ route('superadmin.portfolios.index', array_merge(request()->except('status'), ['status' => '0'])) }}" 
+                            class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ request('status') === '0' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700' }}">
+                            Draft
+                        </a>
+                    </div>
+                </div>
                 
                 <form action="{{ route('superadmin.portfolios.index') }}" method="GET" class="flex items-center w-full sm:w-auto">
+                    @if(request()->has('status'))
+                        <input type="hidden" name="status" value="{{ request('status') }}">
+                    @endif
                     <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-solid fa-search text-slate-400"></i>
@@ -45,19 +64,21 @@
                 </x-slot:head>
                 @forelse($portfolios as $portfolio)
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
-                            @if($portfolio->image_path)
-                                <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}" class="w-10 h-10 object-cover rounded-lg border border-slate-200">
-                            @else
-                                <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-400 border border-indigo-100">
-                                    <i class="fa-solid fa-image"></i>
-                                </div>
-                            @endif
-                            <div class="flex flex-col">
-                                <span>{{ $portfolio->title }}</span>
-                                @if($portfolio->link_preview)
-                                    <a href="{{ $portfolio->link_preview }}" target="_blank" class="text-xs text-indigo-500 hover:underline"><i class="fa-solid fa-link mr-1"></i>Live Preview</a>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                @if($portfolio->image_path)
+                                    <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}" class="w-12 h-12 object-cover rounded-lg border border-slate-200">
+                                @else
+                                    <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-400 border border-indigo-100">
+                                        <i class="fa-solid fa-image"></i>
+                                    </div>
                                 @endif
+                                <div class="flex flex-col min-w-0">
+                                    <span class="font-medium text-slate-800 truncate max-w-[250px]">{{ $portfolio->title }}</span>
+                                    @if($portfolio->link_preview)
+                                        <a href="{{ $portfolio->link_preview }}" target="_blank" class="text-[10px] text-indigo-500 hover:underline mt-0.5 font-bold"><i class="fa-solid fa-link mr-1"></i>Live Preview</a>
+                                    @endif
+                                </div>
                             </div>
                         </td>
                         <td class="px-6 py-4">
@@ -73,38 +94,28 @@
                         </td>
                         <td class="px-6 py-4">
                             @if ($portfolio->is_active)
-                                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600 border border-emerald-200">Aktif</span>
+                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase rounded">Aktif</span>
                             @else
-                                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-600 border border-rose-200">Draft</span>
+                                <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">Draft</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 text-sm text-slate-500">
                             {{ \Carbon\Carbon::parse($portfolio->created_at)->translatedFormat('d M Y') }}
                         </td>
                         <td class="px-6 py-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('superadmin.portfolios.edit', $portfolio->hashid) }}"
-                                    class="w-8 h-8 rounded-lg flex items-center justify-center text-amber-600 bg-amber-50 hover:bg-amber-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
-                                    title="Edit">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                </a>
-                                
-                                <form action="{{ route('superadmin.portfolios.status.toggle', $portfolio->hashid) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center {{ $portfolio->is_active ? 'text-rose-600 bg-rose-50 hover:bg-rose-600' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-600' }} hover:text-white transition-all duration-200 shadow-sm tooltip"
-                                        title="{{ $portfolio->is_active ? 'Jadikan Draft' : 'Aktifkan' }}">
-                                        <i class="fa-solid {{ $portfolio->is_active ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+                                <form action="{{ route('superadmin.portfolios.status.toggle', $portfolio->hashid) }}" method="POST" class="inline">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" title="{{ $portfolio->is_active ? 'Jadikan Draft' : 'Aktifkan' }}" class="p-1.5 rounded-lg transition {{ $portfolio->is_active ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50' }}">
+                                        <i class="fa-solid {{ $portfolio->is_active ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                                     </button>
                                 </form>
-
-                                <form action="{{ route('superadmin.portfolios.destroy', $portfolio->hashid) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDelete(this)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
-                                        title="Hapus">
+                                <a href="{{ route('superadmin.portfolios.edit', $portfolio->hashid) }}" class="p-1.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <form action="{{ route('superadmin.portfolios.destroy', $portfolio->hashid) }}" method="POST" class="inline">
+                                    @csrf @method('DELETE')
+                                    <button type="button" onclick="confirmDelete(this)" class="p-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>
