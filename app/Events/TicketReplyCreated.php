@@ -37,13 +37,7 @@ class TicketReplyCreated implements ShouldBroadcastNow
         ];
     }
 
-    /**
-     * The event's broadcast name.
-     */
-    public function broadcastAs(): string
-    {
-        return 'TicketReplyCreated';
-    }
+
 
     /**
      * Get the data to broadcast.
