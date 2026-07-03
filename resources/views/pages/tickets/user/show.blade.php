@@ -80,7 +80,7 @@
                     @csrf
                     
                     {{-- Tombol Kosmetik (Emoticon & Attachment) --}}
-                    <button type="button" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
+                    <button type="button" id="emoji-btn" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
                         <i class="fa-regular fa-face-smile"></i>
                     </button>
                     <button type="button" onclick="document.getElementById('attachment-input').click()" class="shrink-0 text-slate-500 hover:text-slate-700 w-10 h-10 flex items-center justify-center text-xl transition mb-1">
@@ -106,11 +106,33 @@
     </div>
 </x-ui.page-layout>
 
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.4/dist/index.min.js"></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', function() {
     const chatArea = document.getElementById('chat-messages-area');
     const chatForm = document.getElementById('chat-form');
     
+    // Emoji Picker
+    const emojiBtn = document.getElementById('emoji-btn');
+    const messageInput = document.getElementById('message-input');
+    
+    if (emojiBtn && typeof EmojiButton !== 'undefined') {
+        const picker = new EmojiButton({
+            position: 'top-start',
+            autoHide: false
+        });
+
+        picker.on('emoji', selection => {
+            messageInput.value += selection.emoji;
+            messageInput.style.height = '24px'; 
+            messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+        });
+
+        emojiBtn.addEventListener('click', () => {
+            picker.togglePicker(emojiBtn);
+        });
+    }
+
     // Auto scroll ke bawah saat pertama load
     chatArea.scrollTop = chatArea.scrollHeight;
 
