@@ -60,9 +60,7 @@
                                 <span class="font-bold text-slate-700">{{ $isSelf ? 'Anda' : 'Admin Support' }}</span> &bull; 
                                 {{ $reply->created_at->format('d M Y, H:i') }}
                             </div>
-                            <div class="{{ $isSelf ? 'bg-indigo-600 text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white border border-slate-200 text-slate-700 rounded-r-2xl rounded-tl-2xl shadow-sm' }} px-5 py-3 text-sm leading-relaxed whitespace-pre-wrap">
-                                {{ $reply->message }}
-                            </div>
+                            <div class="{{ $isSelf ? 'bg-indigo-600 text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white border border-slate-200 text-slate-700 rounded-r-2xl rounded-tl-2xl shadow-sm' }} px-5 py-3 text-sm leading-relaxed whitespace-pre-wrap">{{ $reply->message }}</div>
                         </div>
 
                     </div>
