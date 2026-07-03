@@ -19,7 +19,7 @@
     <meta property="og:url" content="{{ url('/') }}">
     <meta property="og:title" content="Ryaze - Cloud Hosting & Web Development">
     <meta property="og:description" content="Layanan hosting instan & pengembangan web profesional dengan sistem otomatis.">
-    <meta property="og:image" content="https://ui-avatars.com/api/?name=Ryaze&size=600&background=000&color=fff">
+    <meta property="og:image" content="https://ui-avatars.com/api/?name=Ryaze&size=600&background=4f46e5&color=fff">
 
     <!-- Vite Config -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -56,20 +56,20 @@
         }
         
         .card-brutal:hover {
-            border-color: #0f172a;
+            border-color: #4f46e5;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         /* Gradient text but strictly monochrome/subtle */
         .text-gradient-mono {
-            background: linear-gradient(to right, #111827, #6b7280);
+            background: linear-gradient(to right, #4f46e5, #818cf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
     </style>
 </head>
-<body class="antialiased selection:bg-black selection:text-white relative">
+<body class="antialiased selection:bg-indigo-600 selection:text-white relative">
 
     <!-- NAVBAR -->
     <nav class="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 transition-all duration-200">
@@ -77,17 +77,17 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                    <div class="bg-black text-white rounded-md w-8 h-8 flex items-center justify-center">
+                    <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
                         <i class="fa-solid fa-code text-sm"></i>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-black">Ryaze.</span>
+                    <span class="text-xl font-bold tracking-tight text-indigo-600">Ryaze Portal</span>
                 </a>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-                    <a href="#about" class="hover:text-black transition-colors">Tentang</a>
-                    <a href="#services" class="hover:text-black transition-colors">Layanan</a>
-                    <a href="#portfolio" class="hover:text-black transition-colors">Portofolio</a>
+                    <a href="#about" class="hover:text-indigo-600 transition-colors">Tentang</a>
+                    <a href="#services" class="hover:text-indigo-600 transition-colors">Layanan</a>
+                    <a href="#portfolio" class="hover:text-indigo-600 transition-colors">Portofolio</a>
                 </div>
 
                 <!-- Auth Buttons -->
@@ -103,14 +103,14 @@
                                 default => url('/'),
                             };
                         @endphp
-                        <a href="{{ $dashboardUrl }}" class="text-sm font-semibold bg-black text-white px-5 py-2 rounded-md hover:bg-slate-800 transition-colors">
+                        <a href="{{ $dashboardUrl }}" class="text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">
                             Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 hover:text-black transition-colors hidden sm:block">
+                        <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden sm:block">
                             Masuk
                         </a>
-                        <a href="{{ route('register') }}" class="text-sm font-semibold bg-black text-white px-5 py-2 rounded-md hover:bg-slate-800 transition-colors">
+                        <a href="{{ route('register') }}" class="text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">
                             Daftar
                         </a>
                     @endauth
@@ -139,7 +139,7 @@
             </p>
 
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#services" class="px-8 py-3.5 text-sm font-semibold rounded-md text-white bg-black hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                <a href="#services" class="px-8 py-3.5 text-sm font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
                     Jelajahi Layanan
                 </a>
                 <a href="#portfolio" class="px-8 py-3.5 text-sm font-semibold rounded-md text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
@@ -169,7 +169,7 @@
                 <!-- Text Content -->
                 <div>
                     <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Di Balik Layar</h2>
-                    <div class="w-10 h-1 bg-black mb-8"></div>
+                    <div class="w-10 h-1 bg-indigo-600 mb-8"></div>
                     
                     <p class="text-base text-slate-600 mb-6 leading-relaxed">
                         Saya <strong>Bima Ryan Alfarizi</strong>, mahasiswa D4 Rekayasa Perangkat Lunak di Politeknik Negeri Indramayu. Visi utama saya adalah menciptakan standar rekayasa perangkat lunak yang bersih, skalabel, dan fungsional.
@@ -191,7 +191,7 @@
                     <div class="card-brutal p-2 w-full max-w-sm bg-slate-100">
                         <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
                             <div class="aspect-square bg-slate-200 relative">
-                                <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=600&background=0f172a&color=fff" alt="Bima Ryan" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+                                <img src="https://ui-avatars.com/api/?name=Bima+Ryan&size=600&background=4f46e5&color=fff" alt="Bima Ryan" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
                             </div>
                             <div class="p-6 border-t border-slate-200">
                                 <h3 class="font-bold text-slate-900 text-lg">Bima Ryan Alfarizi</h3>
@@ -218,7 +218,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Web Dev Box -->
                 <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50">
-                    <div class="w-12 h-12 bg-black text-white rounded flex items-center justify-center mb-6">
+                    <div class="w-12 h-12 bg-indigo-600 text-white rounded flex items-center justify-center mb-6">
                         <i class="fa-solid fa-laptop-code text-xl"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-3">Custom Web Development</h3>
@@ -226,18 +226,18 @@
                         Pembangunan sistem informasi terintegrasi, aplikasi SaaS, hingga prototipe fungsional untuk Tugas Akhir berbasis arsitektur modern yang bersih dan terdokumentasi.
                     </p>
                     <ul class="space-y-3 mb-8 text-sm font-medium text-slate-600">
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> Backend & API Design</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> Frontend Modern (React/Vue)</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> Keamanan & Skalabilitas Tinggi</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Backend & API Design</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Frontend Modern (React/Vue)</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Keamanan & Skalabilitas Tinggi</li>
                     </ul>
-                    <a href="{{ route('register') }}" class="text-sm font-semibold text-black inline-flex items-center gap-2 group-hover:underline">
+                    <a href="{{ route('register') }}" class="text-sm font-semibold text-indigo-600 inline-flex items-center gap-2 group-hover:underline">
                         Mulai Konsultasi <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
                     </a>
                 </div>
 
                 <!-- Hosting Box -->
                 <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50">
-                    <div class="w-12 h-12 bg-black text-white rounded flex items-center justify-center mb-6">
+                    <div class="w-12 h-12 bg-indigo-600 text-white rounded flex items-center justify-center mb-6">
                         <i class="fa-solid fa-server text-xl"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-3">Cloud Application Hosting</h3>
@@ -245,11 +245,11 @@
                         Deployment otomatis tanpa pusing. Eksekusi repositori kode Anda langsung ke server publik dengan dukungan web-terminal, proses manager, dan manajemen database bawaan.
                     </p>
                     <ul class="space-y-3 mb-8 text-sm font-medium text-slate-600">
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> 1-Click Deployment (Node/PHP/Python)</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> Web Terminal & IDE Bawaan</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-minus text-slate-300"></i> SSL & Domain Management</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> 1-Click Deployment (Node/PHP/Python)</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Web Terminal & IDE Bawaan</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> SSL & Domain Management</li>
                     </ul>
-                    <a href="{{ route('register') }}" class="text-sm font-semibold text-black inline-flex items-center gap-2 group-hover:underline">
+                    <a href="{{ route('register') }}" class="text-sm font-semibold text-indigo-600 inline-flex items-center gap-2 group-hover:underline">
                         Deploy Sekarang <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
                     </a>
                 </div>
@@ -265,7 +265,7 @@
                     <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-2">Arsip Karya</h2>
                     <p class="text-slate-500 text-sm">Beberapa entitas digital yang telah kami kembangkan.</p>
                 </div>
-                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="hidden md:flex text-sm font-semibold text-black items-center gap-2 hover:underline">
+                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="hidden md:flex text-sm font-semibold text-indigo-600 items-center gap-2 hover:underline">
                     Lihat Repositori <i class="fa-brands fa-github text-lg"></i>
                 </a>
             </div>
@@ -307,12 +307,12 @@
                         
                         <div class="flex items-center gap-4 mt-auto pt-4 border-t border-slate-100">
                             @if($portfolio->link_github)
-                                <a href="{{ $portfolio->link_github }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-600 hover:text-black transition-colors flex items-center gap-1.5">
+                                <a href="{{ $portfolio->link_github }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1.5">
                                     <i class="fa-brands fa-github text-sm"></i> Code
                                 </a>
                             @endif
                             @if($portfolio->link_preview)
-                                <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-600 hover:text-black transition-colors flex items-center gap-1.5 ml-auto">
+                                <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1.5 ml-auto">
                                     Visit <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                                 </a>
                             @endif
@@ -327,7 +327,7 @@
             </div>
             
             <div class="mt-8 md:hidden">
-                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-black inline-flex items-center gap-2 hover:underline">
+                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-indigo-600 inline-flex items-center gap-2 hover:underline">
                     Lihat Repositori <i class="fa-brands fa-github text-lg"></i>
                 </a>
             </div>
@@ -335,11 +335,11 @@
     </section>
 
     <!-- CALL TO ACTION -->
-    <section class="py-24 bg-black text-white text-center px-6">
+    <section class="py-24 bg-indigo-600 text-white text-center px-6">
         <div class="max-w-3xl mx-auto">
             <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-6">Siap Mengeksekusi Ide?</h2>
-            <p class="text-slate-400 text-lg mb-10 max-w-xl mx-auto">Daftar sekarang untuk mengakses lingkungan deployment yang kuat atau hubungi kami untuk pengerjaan perangkat lunak Anda.</p>
-            <a href="{{ route('register') }}" class="inline-block px-8 py-3 bg-white text-black text-sm font-bold rounded-md hover:bg-slate-200 transition-colors">
+            <p class="text-indigo-200 text-lg mb-10 max-w-xl mx-auto">Daftar sekarang untuk mengakses lingkungan deployment yang kuat atau hubungi kami untuk pengerjaan perangkat lunak Anda.</p>
+            <a href="{{ route('register') }}" class="inline-block px-8 py-3 bg-white text-indigo-700 text-sm font-bold rounded-md hover:bg-indigo-50 transition-colors">
                 Mulai Secara Gratis
             </a>
         </div>
@@ -349,15 +349,15 @@
     <footer class="bg-white border-t border-slate-200 py-12">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-2 text-black">
+                <div class="flex items-center gap-2 text-indigo-600">
                     <i class="fa-solid fa-code text-lg"></i>
-                    <span class="text-xl font-bold tracking-tight">Ryaze.</span>
+                    <span class="text-xl font-bold tracking-tight">Ryaze Portal</span>
                 </div>
                 <div class="flex gap-6">
-                    <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-black transition-colors">
+                    <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-indigo-600 transition-colors">
                         <i class="fa-brands fa-github text-xl"></i>
                     </a>
-                    <a href="#" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-black transition-colors">
+                    <a href="#" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-indigo-600 transition-colors">
                         <i class="fa-brands fa-linkedin text-xl"></i>
                     </a>
                 </div>
