@@ -281,6 +281,14 @@
                         <span class="ms-3 whitespace-nowrap">Kelola Voucher</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin_hosting.tickets.index') }}"
+                        class="{{ $navLink(request()->routeIs('admin_hosting.tickets*')) }}">
+                        <i
+                            class="fa-solid fa-headset {{ $iconClass(request()->routeIs('admin_hosting.tickets*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Kelola Tiket</span>
+                    </a>
+                </li>
             @endif
 
 
@@ -377,6 +385,14 @@
                             <i
                                 class="fa-solid fa-file-invoice-dollar {{ $iconClass(request()->routeIs('user_hosting.billing')) }}"></i>
                             <span class="ms-3 whitespace-nowrap">Riwayat Tagihan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('user_hosting.tickets.index') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.tickets*')) }}">
+                            <i
+                                class="fa-solid fa-life-ring {{ $iconClass(request()->routeIs('user_hosting.tickets*')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Tiket Bantuan</span>
                         </a>
                     </li>
                 @endif

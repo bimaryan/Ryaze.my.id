@@ -91,6 +91,12 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/hosting/vouchers/{hashid}/edit', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'edit'])->name('admin_hosting.vouchers.edit');
         Route::put('admin/hosting/vouchers/{hashid}', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'update'])->name('admin_hosting.vouchers.update');
         Route::delete('admin/hosting/vouchers/{hashid}', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'destroy'])->name('admin_hosting.vouchers.destroy');
+        
+        // Tiket Bantuan
+        Route::get('admin/hosting/tickets', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'index'])->name('admin_hosting.tickets.index');
+        Route::get('admin/hosting/tickets/{hashid}', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'show'])->name('admin_hosting.tickets.show');
+        Route::post('admin/hosting/tickets/{hashid}/reply', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'reply'])->name('admin_hosting.tickets.reply');
+        Route::post('admin/hosting/tickets/{hashid}/close', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'close'])->name('admin_hosting.tickets.close');
     });
 
     // ═══════════════════════════════════════════════════════════════
@@ -136,6 +142,14 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/projects/{hashid}/crons', [CronController::class, 'store'])->name('user_hosting.crons.store');
         Route::delete('user/hosting/crons/{hashid}', [CronController::class, 'destroy'])->name('user_hosting.crons.destroy');
         Route::get('user/hosting/docs', [DashboardController::class, 'docs'])->name('user_hosting.docs');
+
+        // Tiket Bantuan (User)
+        Route::get('user/hosting/tickets', [\App\Http\Controllers\User\TicketController::class, 'index'])->name('user_hosting.tickets.index');
+        Route::get('user/hosting/tickets/create', [\App\Http\Controllers\User\TicketController::class, 'create'])->name('user_hosting.tickets.create');
+        Route::post('user/hosting/tickets', [\App\Http\Controllers\User\TicketController::class, 'store'])->name('user_hosting.tickets.store');
+        Route::get('user/hosting/tickets/{hashid}', [\App\Http\Controllers\User\TicketController::class, 'show'])->name('user_hosting.tickets.show');
+        Route::post('user/hosting/tickets/{hashid}/reply', [\App\Http\Controllers\User\TicketController::class, 'reply'])->name('user_hosting.tickets.reply');
+
     });
 
     // ═══════════════════════════════════════════════════════════════
