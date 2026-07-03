@@ -98,7 +98,7 @@ class DashboardController extends Controller
             'user_id' => 'required|exists:users,id',
             'db_name' => 'required|string|alpha_dash|max:15',
             'db_username' => 'required|string|alpha_dash|max:15',
-            'db_password' => 'required|string|min:8|max:32',
+            'db_password' => 'required|string|max:32',
         ]);
 
         $user = User::findOrFail($request->user_id);

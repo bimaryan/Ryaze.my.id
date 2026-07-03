@@ -124,8 +124,8 @@
                                 <span class="prefix-addon inline-flex items-center px-3 bg-slate-100 text-slate-500 text-sm font-mono border-r border-slate-300 whitespace-nowrap">
                                     ryz_.._
                                 </span>
-                                <input type="text" name="db_password" required minlength="8" maxlength="32"
-                                    placeholder="Masukkan password kuat"
+                                <input type="text" name="db_password" required maxlength="32"
+                                    placeholder="Masukkan password (otomatis ditambah prefix)"
                                     class="flex-1 px-3 py-2.5 text-sm font-mono outline-none bg-white">
                             </div>
                         </div>

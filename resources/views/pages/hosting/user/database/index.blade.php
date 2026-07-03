@@ -175,16 +175,19 @@
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
                     </button>
                 </div>
-                <div class="relative">
-                    <input type="text" name="db_password" id="modalPassword" required minlength="8" maxlength="32"
+                <div class="relative flex rounded-xl overflow-hidden border border-slate-300 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-slate-100 text-slate-500 text-sm font-mono border-r border-slate-300 whitespace-nowrap">
+                        ryz_{{ Auth::id() }}_
+                    </span>
+                    <input type="text" name="db_password" id="modalPassword" required maxlength="32"
                         placeholder="Masukkan password kuat"
-                        class="w-full rounded-xl border border-slate-300 px-3 py-2.5 pr-10 text-sm font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                        class="flex-1 px-3 py-2.5 pr-10 text-sm font-mono outline-none bg-white">
                     <button type="button" id="btn-copy-modal-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-indigo-600" title="Copy">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
                 <p class="mt-1.5 text-[11px] text-slate-400">
-                    <i class="fa-solid fa-shield-halved"></i> Simpan password ini. Minimal 8 karakter.
+                    <i class="fa-solid fa-shield-halved"></i> Simpan password ini. Otomatis ditambah prefix.
                 </p>
             </div>
 

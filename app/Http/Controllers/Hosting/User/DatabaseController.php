@@ -24,18 +24,17 @@ class DatabaseController extends Controller
         $request->validate([
             'db_name' => 'required|string|alpha_dash|max:15',
             'db_username' => 'required|string|alpha_dash|max:15',
-            'db_password' => 'required|string|min:8|max:32',
+            'db_password' => 'required|string|max:32',
         ], [
             'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
             'db_username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, strip, dan underscore.',
-            'db_password.min' => 'Password minimal 8 karakter.',
         ]);
 
         // 2. Terapkan Prefix (ryz_{id}_) agar tidak bentrok antar user di server MySQL
         $prefix = 'ryz_'.Auth::id().'_';
         $cleanDbName = $prefix.strtolower(trim($request->db_name));
         $cleanUsername = $prefix.strtolower(trim($request->db_username));
-        $dbPassword = $request->db_password;
+        $dbPassword = $prefix.trim($request->db_password);
 
         // 3. Cek apakah nama database ini sudah ada (karena digabung prefix)
         if (HostingDatabase::where('db_name', $cleanDbName)->exists()) {
