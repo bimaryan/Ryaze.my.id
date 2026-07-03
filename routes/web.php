@@ -17,9 +17,15 @@ use App\Http\Controllers\Joki\Admin\DashboardController as JokiAdminDashboardCon
 use App\Http\Controllers\Joki\User\DashboardController as UserJokiDashboardController;
 use App\Http\Controllers\Joki\User\ProgressController;
 use App\Http\Controllers\Joki\User\RiwayatController;
+use App\Http\Controllers\Blog\BlogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// ── BLOG PUBLIK ─────────────────────────────────────────────
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/kategori/{slug}', [BlogController::class, 'category'])->name('blog.category');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
@@ -61,6 +67,12 @@ Route::middleware('auth')->group(function () {
         Route::get('superadmin/activity-logs', [ActivityLogController::class, 'index'])->name('superadmin.activity_logs');
         Route::resource('superadmin/portfolios', \App\Http\Controllers\Admin\PortfolioController::class)->names('superadmin.portfolios');
         Route::patch('superadmin/portfolios/{hashid}/status', [\App\Http\Controllers\Admin\PortfolioController::class, 'toggleStatus'])->name('superadmin.portfolios.status.toggle');
+
+        // Manajemen Artikel
+        Route::resource('superadmin/articles', \App\Http\Controllers\Admin\ArticleController::class)->names('superadmin.articles');
+        Route::patch('superadmin/articles/{hashid}/featured', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleFeatured'])->name('superadmin.articles.featured');
+        Route::patch('superadmin/articles/{hashid}/status', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleStatus'])->name('superadmin.articles.status');
+        Route::resource('superadmin/article-categories', \App\Http\Controllers\Admin\ArticleCategoryController::class)->names('superadmin.article_categories');
     });
 
     // ═══════════════════════════════════════════════════════════════

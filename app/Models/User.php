@@ -61,4 +61,9 @@ class User extends Authenticatable
             ->where('next_due_date', '>', now())
             ->exists();
     }
+
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
 }
