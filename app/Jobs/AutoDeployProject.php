@@ -273,6 +273,9 @@ PHP;
 
     private function setupLaravel($deploy, string $projectDir): void
     {
+        $this->exec("rm -f {$projectDir}/public/hot 2>/dev/null || true", $deploy);
+        $this->log($deploy, "> Menghapus public/hot (jika ada) agar Laravel Vite menggunakan production build.");
+        
         $this->log($deploy, '> Laravel setup complete.');
     }
 
@@ -293,6 +296,10 @@ PHP;
 
     private function runLaravelPostSetup($deploy, string $projectDir): void
     {
+        // Menghapus file public/hot peninggalan npm run dev di lokal agar Laravel membaca file build production
+        $this->exec("rm -f {$projectDir}/public/hot 2>/dev/null || true", $deploy);
+        $this->log($deploy, "> Menghapus public/hot (jika ada) agar Laravel menggunakan production build.");
+
         $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
         $this->exec("chown -R www-data:www-data {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
     }
