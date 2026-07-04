@@ -71,14 +71,15 @@ class DashboardController extends Controller
         return view('pages.hosting.admin.databases', compact('databases', 'users'));
     }
 
-    // 6. Halaman Storage (Penyimpanan Proyek)
+    // 6. Halaman Storage (Penyimpanan Akun)
     public function storage()
     {
-        $projects = HostingProject::with('client')
-            ->orderBy('storage_limit_mb', 'desc')
+        $users = User::whereHas('hostingProjects')
+            ->withCount('hostingProjects')
+            ->orderBy('hosting_storage_limit_mb', 'desc')
             ->paginate(15);
 
-        return view('pages.hosting.admin.storage', compact('projects'));
+        return view('pages.hosting.admin.storage', compact('users'));
     }
 
     public function updateStorage(Request $request, $hashid)
@@ -87,10 +88,10 @@ class DashboardController extends Controller
             'storage_limit_mb' => 'required|integer|min:100',
         ]);
 
-        $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
-        $project->update(['storage_limit_mb' => $request->storage_limit_mb]);
+        $user = User::findOrFail(Hashids::decode($hashid)[0]);
+        $user->update(['hosting_storage_limit_mb' => $request->storage_limit_mb]);
 
-        return back()->with('success', "Limit penyimpanan proyek '{$project->project_name}' berhasil diperbarui.");
+        return back()->with('success', "Limit penyimpanan klien '{$user->name}' berhasil diperbarui.");
     }
 
     public function storeDatabase(Request $request)

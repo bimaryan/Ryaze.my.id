@@ -2,79 +2,56 @@
 
 @section('content')
     <x-ui.page-layout>
-        <x-ui.page-header title="Alokasi Penyimpanan Proyek"
-            description="Daftar semua proyek hosting dan batasan penyimpanannya." icon="hard-drive" iconColor="teal">
+        <x-ui.page-header title="Alokasi Penyimpanan Akun"
+            description="Daftar semua klien hosting dan batasan penyimpanannya." icon="hard-drive" iconColor="teal">
         </x-ui.page-header>
 
         <x-ui.table>
             <x-slot:head>
-                <th class="px-6 py-4">Nama Proyek</th>
-                <th class="px-6 py-4">Pemilik (Klien)</th>
-                <th class="px-6 py-4 text-center">Status</th>
-                <th class="px-6 py-4 text-right">Limit Storage</th>
+                <th class="px-6 py-4">Klien</th>
+                <th class="px-6 py-4 text-center">Jumlah Proyek</th>
+                <th class="px-6 py-4 text-right">Limit Storage Akun</th>
                 <th class="px-6 py-4 text-center">Aksi</th>
             </x-slot:head>
-            @forelse($projects as $project)
+            @forelse($users as $user)
                 <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-semibold text-slate-800">
-                        {{ $project->project_name }}
-                        <div class="text-xs font-normal text-slate-500 mt-1">{{ $project->ryaze_domain }}</div>
-                    </td>
                     <td class="px-6 py-4">
-                        @if ($project->client)
-                            <div class="font-medium text-slate-800">{{ $project->client->name }}</div>
-                            <div class="text-xs text-slate-500">{{ $project->client->email }}</div>
-                        @else
-                            <span class="text-slate-400 italic">Unknown</span>
-                        @endif
+                        <div class="font-medium text-slate-800">{{ $user->name }}</div>
+                        <div class="text-xs text-slate-500">{{ $user->email }}</div>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        @php
-                            $statusColors = [
-                                'active' => 'bg-emerald-100 text-emerald-700',
-                                'suspended' => 'bg-red-100 text-red-700',
-                                'building' => 'bg-blue-100 text-blue-700',
-                                'unpaid' => 'bg-amber-100 text-amber-700',
-                            ];
-                            $colorClass = $statusColors[$project->status] ?? 'bg-slate-100 text-slate-700';
-                        @endphp
-                        <span class="px-2.5 py-1 rounded-md text-xs font-medium {{ $colorClass }}">
-                            {{ ucfirst($project->status) }}
+                        <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 text-indigo-700">
+                            {{ $user->hosting_projects_count }} Proyek
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <span class="font-semibold text-slate-800">
-                            {{ $project->storage_limit_mb >= 1024 ? number_format($project->storage_limit_mb / 1024, 1) . ' GB' : number_format($project->storage_limit_mb) . ' MB' }}
+                            {{ $user->hosting_storage_limit_mb >= 1024 ? number_format($user->hosting_storage_limit_mb / 1024, 1) . ' GB' : number_format($user->hosting_storage_limit_mb) . ' MB' }}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-center flex items-center justify-center gap-2">
                         <button type="button"
                             class="btn-edit-storage w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
                             title="Ubah Limit Storage" data-modal-target="editStorageModal"
-                            data-modal-toggle="editStorageModal" data-hashid="{{ $project->hashid }}"
-                            data-name="{{ $project->project_name }}" data-limit="{{ $project->storage_limit_mb }}">
+                            data-modal-toggle="editStorageModal" data-hashid="{{ $user->hashid }}"
+                            data-name="{{ $user->name }}" data-limit="{{ $user->hosting_storage_limit_mb }}">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
-                        <a href="{{ route('admin_hosting.projects') }}"
-                            class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 bg-slate-50 hover:bg-slate-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
-                            title="Detail Proyek">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                    <td colspan="4" class="px-6 py-12 text-center text-slate-500">
                         <div class="flex flex-col items-center justify-center gap-2">
-                            <i class="fa-solid fa-folder-open text-3xl text-slate-300"></i>
-                            <p>Belum ada proyek hosting.</p>
+                            <i class="fa-solid fa-users text-3xl text-slate-300"></i>
+                            <p>Belum ada klien hosting.</p>
                         </div>
                     </td>
                 </tr>
             @endforelse
-            @if ($projects->hasPages())
+            @if ($users->hasPages())
                 <x-slot:pagination>
-                    {{ $projects->links() }}
+                    {{ $users->links() }}
                 </x-slot:pagination>
             @endif
         </x-ui.table>
@@ -94,7 +71,7 @@
                     @method('PUT')
                     <div class="p-6 space-y-4">
                         <div>
-                            <p class="text-sm text-slate-600 mb-4">Ubah limit penyimpanan untuk proyek: <strong
+                            <p class="text-sm text-slate-600 mb-4">Ubah limit penyimpanan untuk klien: <strong
                                     id="storageProjectName" class="text-slate-800"></strong></p>
                         </div>
                         <div>
