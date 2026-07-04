@@ -392,7 +392,8 @@ class DashboardController extends Controller
         $escapedDir = escapeshellarg($projectRootDir);
 
         // Execute grep command to search text inside project directory, ignoring common big folders
-        $cmd = "grep -rIn {$caseFlag} --exclude-dir={node_modules,vendor,.git,storage,.next} {$escapedQuery} {$escapedDir} | head -n 50";
+        // Avoid brace expansion {} as it may fail in Alpine's /bin/sh
+        $cmd = "grep -rIn {$caseFlag} --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=.git --exclude-dir=storage --exclude-dir=.next {$escapedQuery} {$escapedDir} | head -n 50";
         $output = shell_exec($cmd);
 
         $results = [];
