@@ -18,6 +18,37 @@
         </x-ui.page-header>
 
         <div class="mt-6">
+            @php
+                $activeGracePeriod = auth()->user()->hostingBillings()
+                    ->where('status', 'active')
+                    ->where('plan_name', 'like', '%Grace Period%')
+                    ->where('next_due_date', '>', now())
+                    ->first();
+            @endphp
+            
+            @if($activeGracePeriod)
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-md border-0 p-5 mb-6 text-white flex items-center justify-between relative overflow-hidden">
+                    <div class="absolute -right-4 -top-10 opacity-20 transform rotate-12 pointer-events-none">
+                        <i class="fa-solid fa-gift text-9xl"></i>
+                    </div>
+                    <div class="relative z-10 flex items-start gap-4">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-gift text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">Apresiasi Pengguna Beta! 🎁</h3>
+                            <p class="text-indigo-100 text-sm leading-relaxed max-w-3xl">
+                                Terima kasih telah menggunakan versi Beta kami! Sebagai bentuk apresiasi, kami telah memberikan Anda <strong>Masa Tenggang (Grace Period) 1 Bulan secara gratis</strong>. 
+                                Tagihan Anda berikutnya akan dimulai pada <strong class="text-white">{{ $activeGracePeriod->next_due_date->translatedFormat('d F Y') }}</strong>.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="{{ route('user_hosting.billing') ?? '#' }}" class="relative z-10 shrink-0 bg-white text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded-lg text-sm font-bold transition shadow-sm ml-4 whitespace-nowrap">
+                        Cek Tagihan &rarr;
+                    </a>
+                </div>
+            @endif
+
             @if ($projects->isEmpty())
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
                     <div
