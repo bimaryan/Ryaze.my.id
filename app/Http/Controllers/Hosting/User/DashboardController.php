@@ -166,7 +166,7 @@ class DashboardController extends Controller
             $framework  = $request->input('framework');
         }
 
-        $subdomain = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->project_name)));
+        $subdomain = trim(strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', trim($request->project_name))), '-');
 
         $user = Auth::user();
         $hasSubscription = $user->hasActiveHostingSubscription();
