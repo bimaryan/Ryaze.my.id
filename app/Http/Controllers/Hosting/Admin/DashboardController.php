@@ -179,6 +179,9 @@ class DashboardController extends Controller
 
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $filePath = substr(base_path(), 0, 2) . str_replace('/', '\\', $filePath);
+        }
 
         // Buat file marker agar Nginx 503
         touch($filePath);
@@ -194,6 +197,9 @@ class DashboardController extends Controller
 
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $filePath = substr(base_path(), 0, 2) . str_replace('/', '\\', $filePath);
+        }
 
         // Hapus file marker agar Nginx kembali normal
         if (file_exists($filePath)) {
@@ -222,6 +228,9 @@ class DashboardController extends Controller
         // Hapus folder server (opsional, sesuaikan path)
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $projectDir = substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir);
+        }
         if (is_dir($projectDir)) {
             exec('rm -rf '.escapeshellarg($projectDir));
         }

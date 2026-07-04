@@ -796,6 +796,9 @@ class DashboardController extends Controller
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
 
         $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $envPath = substr(base_path(), 0, 2) . str_replace('/', '\\', $envPath);
+        }
         $content = $request->input('env_content', '');
 
         try {
@@ -984,15 +987,15 @@ if (preg_match('/^dev\d+\./', \$hostHeader)) {
     }
 }
 PHP;
-        file_put_contents("{$projectDir}/index.php", $proxyScript);
-        file_put_contents("{$projectDir}/.port", $port);
+        file_put_contents("{$winProjectDir}/index.php", $proxyScript);
+        file_put_contents("{$winProjectDir}/.port", $port);
 
         // Buat symlink agar OpenResty dapat melakukan routing dev{port}.ryaze.my.id ke projectDir
         $baseDir = dirname($projectDir);
-        $devSymlink = "{$baseDir}/dev{$port}";
+        $devSymlink = $isWindows ? "{$winProjectDir}\\..\\dev{$port}" : "{$baseDir}/dev{$port}";
         if (!file_exists($devSymlink)) {
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                exec("mklink /D \"{$devSymlink}\" \"{$projectDir}\" 2>nul");
+            if ($isWindows) {
+                exec("mklink /D \"{$devSymlink}\" \"{$winProjectDir}\" 2>nul");
             } else {
                 exec("ln -s \"{$projectDir}\" \"{$devSymlink}\"");
                 exec("chown -h www-data:www-data \"{$devSymlink}\" 2>/dev/null");

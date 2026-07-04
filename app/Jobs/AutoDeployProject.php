@@ -138,6 +138,55 @@ class AutoDeployProject implements ShouldQueue
                 default => $this->log($deploy, "> [WARNING] Framework '{$framework}' tidak dikenali. Melewati build step."),
             };
 
+            if (!file_exists("{$projectDir}/index.php") && file_exists("{$projectDir}/index.html")) {
+                $spaProxy = <<<'PHP'
+<?php
+/**
+ * Ryaze - Auto-generated SPA Proxy
+ * Membantu Nginx OpenResty melayani fallback file static dan routing SPA
+ */
+$requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$file = __DIR__ . $requestUri;
+
+if ($requestUri !== '/' && file_exists($file) && is_file($file)) {
+    $mime = @mime_content_type($file) ?: 'application/octet-stream';
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    
+    $mime_types = [
+        'css' => 'text/css',
+        'js'  => 'application/javascript',
+        'svg' => 'image/svg+xml',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg'=> 'image/jpeg',
+        'gif' => 'image/gif',
+        'ico' => 'image/x-icon',
+        'json'=> 'application/json',
+        'txt' => 'text/plain',
+        'woff'=> 'font/woff',
+        'woff2'=>'font/woff2',
+        'ttf' => 'font/ttf',
+        'eot' => 'application/vnd.ms-fontobject',
+        'otf' => 'font/otf',
+        'mp4' => 'video/mp4',
+        'webm'=> 'video/webm'
+    ];
+
+    if (isset($mime_types[$ext])) {
+        $mime = $mime_types[$ext];
+    }
+
+    header("Content-Type: $mime");
+    readfile($file);
+    exit;
+}
+
+require __DIR__ . '/index.html';
+PHP;
+                file_put_contents("{$projectDir}/index.php", $spaProxy);
+                $this->log($deploy, "> SPA Proxy (index.php) berhasil dibuat untuk fallback.");
+            }
+
             $this->log($deploy, "\n> Applying final permissions to all generated files...");
             $this->exec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
             $this->exec("find {$projectDir} -type d -exec chmod 755 {} \; 2>/dev/null || true", $deploy);
