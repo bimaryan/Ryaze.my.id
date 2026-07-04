@@ -138,6 +138,7 @@ class AutoDeployProject implements ShouldQueue
                 default => $this->log($deploy, "> [WARNING] Framework '{$framework}' tidak dikenali. Melewati build step."),
             };
 
+            clearstatcache();
             if (!file_exists("{$projectDir}/index.php") && file_exists("{$projectDir}/index.html")) {
                 $spaProxy = <<<'PHP'
 <?php
