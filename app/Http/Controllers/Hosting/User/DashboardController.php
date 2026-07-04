@@ -986,6 +986,18 @@ PHP;
         file_put_contents("{$projectDir}/index.php", $proxyScript);
         file_put_contents("{$projectDir}/.port", $port);
 
+        // Buat symlink agar OpenResty dapat melakukan routing dev{port}.ryaze.my.id ke projectDir
+        $baseDir = dirname($projectDir);
+        $devSymlink = "{$baseDir}/dev{$port}";
+        if (!file_exists($devSymlink)) {
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                exec("mklink /D \"{$devSymlink}\" \"{$projectDir}\" 2>nul");
+            } else {
+                exec("ln -s \"{$projectDir}\" \"{$devSymlink}\"");
+                exec("chown -h www-data:www-data \"{$devSymlink}\" 2>/dev/null");
+            }
+        }
+
         // Update project
         $project->update([
             'dev_mode' => true,
@@ -1048,6 +1060,17 @@ PHP;
         // Hapus proxy script saat dev server dimatikan
         if (file_exists("{$projectDir}/index.php")) {
             @unlink("{$projectDir}/index.php");
+        }
+        
+        // Hapus symlink dev server
+        $baseDir = dirname($projectDir);
+        $devSymlink = "{$baseDir}/dev" . $project->dev_port;
+        if (file_exists($devSymlink) || is_link($devSymlink)) {
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                exec("rmdir \"{$devSymlink}\" 2>nul");
+            } else {
+                exec("rm -f \"{$devSymlink}\"");
+            }
         }
 
         $devPort = $project->dev_port;

@@ -199,6 +199,7 @@ class AutoDeployProject implements ShouldQueue
 
         if (in_array($framework, ['react', 'nextjs', 'vue'])) {
             $this->log($deploy, '> Running build script...');
+            $this->exec("rm -rf {$projectDir}/dist {$projectDir}/build {$projectDir}/out 2>/dev/null || true", $deploy);
             $this->exec(
                 "cd {$projectDir} && npm run build 2>&1 || true",
                 $deploy,
