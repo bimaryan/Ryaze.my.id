@@ -190,11 +190,16 @@ class AutoDeployProject implements ShouldQueue
         );
 
         // Berikan executable permission ke node_modules/.bin
+        clearstatcache();
         if (is_dir("{$projectDir}/node_modules/.bin")) {
             $this->exec("chmod -R +x {$projectDir}/node_modules/.bin 2>&1 || true", $deploy);
             $this->exec("chmod +x {$projectDir}/node_modules/.bin/* 2>/dev/null || true", $deploy);
             $this->exec("find {$projectDir}/node_modules -path '*/bin/*' -type f -exec chmod +x {} \; 2>/dev/null || true", $deploy);
             $this->log($deploy, "> Executable permission di-set untuk node_modules/.bin dan bin files");
+        } else {
+            // Fallback: pastikan semua isi node_modules memiliki hak eksekusi jika .bin tidak terdeteksi
+            $this->exec("chmod -R 755 {$projectDir}/node_modules 2>/dev/null || true", $deploy);
+            $this->log($deploy, "> Executable permission fallback di-set untuk seluruh node_modules");
         }
 
         if (in_array($framework, ['react', 'nextjs', 'vue'])) {
