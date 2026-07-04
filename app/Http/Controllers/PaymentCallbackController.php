@@ -92,9 +92,9 @@ class PaymentCallbackController extends Controller
 
                         $user = $payment->user;
                         if ($user) {
-                            $user->increment('hosting_storage_limit_mb', 2048); // Add 2GB globally
+                            $user->increment('hosting_storage_limit_mb', 1024); // Add 1GB globally
 
-                            $user->notify(new \App\Notifications\SystemNotification('Pembayaran upgrade storage ('.$payment->invoice_number.') berhasil. Kapasitas storage akun Anda bertambah 2GB.', 'success'));
+                            $user->notify(new \App\Notifications\SystemNotification('Pembayaran upgrade storage ('.$payment->invoice_number.') berhasil. Kapasitas storage akun Anda bertambah 1GB.', 'success'));
                         }
                     }
                 } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {

@@ -290,6 +290,11 @@ class AutoDeployProject implements ShouldQueue
             file_put_contents($reqFile, trim($reqs));
 
             $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
+            
+            // Install build dependencies for Alpine Linux (useful for scikit-learn, numpy, etc.)
+            $this->exec("apk add --no-cache gcc g++ gfortran python3-dev openblas-dev pkgconf meson ninja 2>/dev/null || true", $deploy);
+            $this->exec("apt-get update && apt-get install -y build-essential python3-dev libopenblas-dev pkg-config meson ninja-build 2>/dev/null || true", $deploy);
+            
             $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
         }
 

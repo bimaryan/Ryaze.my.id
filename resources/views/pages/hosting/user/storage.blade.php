@@ -106,10 +106,10 @@
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <p class="font-bold text-slate-800 text-sm">Butuh lebih banyak kapasitas?</p>
-                            <p class="text-xs text-slate-500 mt-0.5">Upgrade storage Anda 2GB tambahan hanya dengan Rp 50.000.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Upgrade storage Anda 1GB tambahan hanya dengan Rp 15.000.</p>
                         </div>
                         <button type="submit" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-5 py-2.5 rounded-lg text-sm font-semibold transition">
-                            <i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade 2GB (Rp 50.000)
+                            <i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade 1GB (Rp 15.000)
                         </button>
                     </div>
                 </form>

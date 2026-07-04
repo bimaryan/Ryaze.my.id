@@ -131,14 +131,14 @@ class StorageController extends Controller
     }
 
     /**
-     * Endpoint untuk membeli upgrade storage 2GB.
+     * Endpoint untuk membeli upgrade storage 1GB.
      */
     public function upgrade()
     {
         $user = Auth::user();
 
-        if (($user->hosting_storage_limit_mb ?? 1024) >= 3072) {
-            return back()->with('error', 'Anda sudah mencapai kapasitas maksimal saat ini (3GB).');
+        if (($user->hosting_storage_limit_mb ?? 1024) >= 5120) { // Limit max 5GB misalnya
+            return back()->with('error', 'Anda sudah mencapai kapasitas maksimal saat ini.');
         }
 
         // Cek jika sudah ada invoice upgrade unpaid
@@ -155,13 +155,13 @@ class StorageController extends Controller
             'user_id' => $user->id,
             'hosting_project_id' => null,
             'invoice_number' => 'HST-UPG-'. strtoupper(uniqid()),
-            'amount' => 50000,
+            'amount' => 15000,
             'status' => 'unpaid',
         ]);
 
-        $user->notify(new \App\Notifications\SystemNotification('Tagihan upgrade storage 2GB berhasil dibuat: ' . $payment->invoice_number, 'info'));
+        $user->notify(new \App\Notifications\SystemNotification('Tagihan upgrade storage 1GB berhasil dibuat: ' . $payment->invoice_number, 'info'));
 
-        return redirect()->route('user_hosting.storage')->with('success', 'Tagihan upgrade storage berhasil dibuat. Silakan bayar tagihan tersebut.');
+        return redirect()->route('user_hosting.storage')->with('success', 'Tagihan upgrade storage 1GB berhasil dibuat. Silakan selesaikan pembayaran.');
     }
 
     /**
