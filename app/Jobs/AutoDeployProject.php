@@ -270,7 +270,8 @@ class AutoDeployProject implements ShouldQueue
     private function setupPython($deploy, string $projectDir): void
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
-        $this->exec("cd {$projectDir} && python3 -m venv venv", $deploy);
+        // Gunakan --system-site-packages agar venv bisa membaca library bawaan sistem (seperti scikit-learn versi Alpine)
+        $this->exec("cd {$projectDir} && python3 -m venv --system-site-packages venv", $deploy);
         $this->exec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
         
         if (file_exists("{$projectDir}/requirements.txt")) {
@@ -291,9 +292,10 @@ class AutoDeployProject implements ShouldQueue
 
             $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
             
-            // Install build dependencies for Alpine Linux (useful for scikit-learn, numpy, etc.)
-            $this->exec("apk add --no-cache gcc g++ gfortran python3-dev openblas-dev pkgconf meson ninja 2>/dev/null || true", $deploy);
-            $this->exec("apt-get update && apt-get install -y build-essential python3-dev libopenblas-dev pkg-config meson ninja-build 2>/dev/null || true", $deploy);
+            // Install build dependencies AND pre-compiled Alpine Python ML packages
+            // Ini untuk menghindari kompilasi scikit-learn, numpy, pandas dari nol yang error di Alpine
+            $this->exec("apk add --no-cache gcc g++ python3-dev py3-scikit-learn py3-numpy py3-scipy py3-pandas py3-joblib 2>/dev/null || true", $deploy);
+            $this->exec("apt-get update && apt-get install -y build-essential python3-dev python3-sklearn python3-numpy python3-scipy python3-pandas 2>/dev/null || true", $deploy);
             
             $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
         }
