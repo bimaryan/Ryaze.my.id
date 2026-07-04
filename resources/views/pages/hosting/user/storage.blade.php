@@ -120,10 +120,10 @@
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h2 class="font-bold text-slate-800 text-sm">Penggunaan Per Project</h2>
-                <span class="text-xs text-slate-400">{{ count($items) }} project</span>
+                <span class="text-xs text-slate-400">{{ $items->total() }} project</span>
             </div>
 
-            @if (count($items) === 0)
+            @if ($items->isEmpty())
                 <div class="px-6 py-16 text-center">
                     <i class="fa-solid fa-box-open text-slate-200 text-5xl mb-4"></i>
                     <p class="text-slate-400 font-medium">Belum ada project yang di-deploy.</p>
@@ -188,6 +188,12 @@
                         </div>
                     @endforeach
                 </div>
+                
+                @if ($items->hasPages())
+                    <div class="px-6 py-4 border-t border-slate-100">
+                        {{ $items->links() }}
+                    </div>
+                @endif
             @endif
         </div>
 

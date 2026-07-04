@@ -70,8 +70,17 @@ class StorageController extends Controller
         // Sort by usage descending
         usort($items, fn ($a, $b) => $b['used_bytes'] <=> $a['used_bytes']);
 
+        $page = request()->get('page', 1);
+        $perPage = 5; // Tampilkan 5 per halaman agar rapi
+        $offset = ($page - 1) * $perPage;
+        $paginatedItems = array_slice($items, $offset, $perPage);
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator($paginatedItems, count($items), $perPage, $page, [
+            'path' => request()->url(),
+            'query' => request()->query()
+        ]);
+
         return view('pages.hosting.user.storage', [
-            'items' => $items,
+            'items' => $paginator,
             'total_used' => $totalUsed,
             'total_human' => $this->formatBytes($totalUsed),
             'limit_bytes' => $totalLimit,
