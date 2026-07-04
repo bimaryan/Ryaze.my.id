@@ -123,9 +123,9 @@ class AutoDeployProject implements ShouldQueue
             }
 
             $this->exec("chown -R www-data:www-data {$projectDir}", $deploy);
-            $this->exec("find {$projectDir} -type d -exec chmod 755 {} \;", $deploy);
-            $this->exec("find {$projectDir} -type f -exec chmod 644 {} \;", $deploy);
-            $this->log($deploy, "> Permissions di-set: dir 755, file 644");
+            $this->exec("find {$projectDir} -type d -not -path '*/node_modules*' -exec chmod 755 {} \;", $deploy);
+            $this->exec("find {$projectDir} -type f -not -path '*/node_modules*' -exec chmod 644 {} \;", $deploy);
+            $this->log($deploy, "> Permissions di-set: dir 755, file 644 (mengabaikan node_modules)");
 
             $framework = strtolower($this->project->framework);
             $this->log($deploy, "\n> Setting up " . strtoupper($framework) . " environment...");
