@@ -294,8 +294,8 @@ class AutoDeployProject implements ShouldQueue
             
             // Install build dependencies AND pre-compiled Alpine Python ML packages
             // Ini untuk menghindari kompilasi scikit-learn, numpy, pandas dari nol yang error di Alpine
-            $this->exec("apk add --no-cache gcc g++ python3-dev py3-scikit-learn py3-numpy py3-scipy py3-pandas py3-joblib 2>/dev/null || true", $deploy);
-            $this->exec("apt-get update && apt-get install -y build-essential python3-dev python3-sklearn python3-numpy python3-scipy python3-pandas 2>/dev/null || true", $deploy);
+            $this->exec("apk add --no-cache gcc g++ cmake make python3-dev py3-scikit-learn py3-numpy py3-scipy py3-pandas py3-joblib 2>/dev/null || true", $deploy);
+            $this->exec("apt-get update && apt-get install -y build-essential cmake python3-dev python3-sklearn python3-numpy python3-scipy python3-pandas 2>/dev/null || true", $deploy);
             
             $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
         }
