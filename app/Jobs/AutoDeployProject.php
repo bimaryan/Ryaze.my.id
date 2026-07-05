@@ -362,7 +362,86 @@ class AutoDeployProject implements ShouldQueue
 
         if ($pid) {
             $this->log($deploy, "> Python server running on PID: {$pid} (Port: {$port})");
-            $this->log($deploy, "> Nginx OpenResty akan melakukan proxy secara langsung ke port {$port} via Lua...");
+            $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty (mengatasi isolasi Docker)...");
+            $proxyScript = <<<PHP
+<?php
+/**
+ * Ryaze - Auto-generated PHP Reverse Proxy
+ * Proxies traffic from OpenResty to the Python daemon.
+ */
+\$port = {$port};
+\$host = '127.0.0.1';
+\$path = \$_SERVER['REQUEST_URI'];
+\$method = \$_SERVER['REQUEST_METHOD'];
+\$headers = getallheaders();
+
+\$url = "http://{\$host}:{\$port}{\$path}";
+
+\$ch = curl_init(\$url);
+curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$method);
+curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt(\$ch, CURLOPT_HEADER, true);
+curl_setopt(\$ch, CURLOPT_FOLLOWLOCATION, false);
+
+\$reqHeaders = [];
+foreach (\$headers as \$k => \$v) {
+    if (strtolower(\$k) === 'host') continue;
+    \$reqHeaders[] = "\$k: \$v";
+}
+curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$reqHeaders);
+
+if (\$method === 'POST' || \$method === 'PUT' || \$method === 'PATCH') {
+    \$body = file_get_contents('php://input');
+    if (empty(\$body) && !empty(\$_POST)) {
+        // Fallback for multipart/form-data if php://input is empty
+        \$postFields = \$_POST;
+        if (!empty(\$_FILES)) {
+            foreach (\$_FILES as \$key => \$file) {
+                if (is_array(\$file['tmp_name'])) {
+                    foreach (\$file['tmp_name'] as \$i => \$tmpName) {
+                        if (\$file['error'][\$i] === UPLOAD_ERR_OK) {
+                            \$postFields["{\$key}[\$i]"] = new \CURLFile(\$tmpName, \$file['type'][\$i], \$file['name'][\$i]);
+                        }
+                    }
+                } else {
+                    if (\$file['error'] === UPLOAD_ERR_OK) {
+                        \$postFields[\$key] = new \CURLFile(\$file['tmp_name'], \$file['type'], \$file['name']);
+                    }
+                }
+            }
+        }
+        curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$postFields);
+    } else {
+        curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$body);
+    }
+}
+
+\$response = curl_exec(\$ch);
+if (curl_errno(\$ch)) {
+    http_response_code(502);
+    echo "502 Bad Gateway - Python Application Server is down, crashed, or still starting up.";
+    exit;
+}
+
+\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
+\$resHeaders = substr(\$response, 0, \$headerSize);
+\$resBody = substr(\$response, \$headerSize);
+\$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
+
+http_response_code(\$httpCode);
+
+\$lines = explode("\\n", \$resHeaders);
+foreach (\$lines as \$line) {
+    \$line = trim(\$line);
+    if (empty(\$line)) continue;
+    if (strpos(strtolower(\$line), 'transfer-encoding:') === 0) continue;
+    header(\$line, false);
+}
+
+echo \$resBody;
+curl_close(\$ch);
+PHP;
+            file_put_contents("{$projectDir}/index.php", $proxyScript);
             file_put_contents("{$projectDir}/.port", $port);
             $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
             
