@@ -69,6 +69,11 @@
                             masuk.</td>
                     </tr>
                 @endforelse
+                @if ($orders->hasPages())
+                    <x-slot:pagination>
+                        {{ $orders->links() }}
+                    </x-slot:pagination>
+                @endif
             </x-ui.table>
         </div>
     </x-ui.page-layout>

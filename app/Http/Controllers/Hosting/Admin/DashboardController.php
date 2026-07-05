@@ -66,7 +66,7 @@ class DashboardController extends Controller
         $databases = HostingDatabase::with('user')
             ->latest()
             ->paginate(15);
-        $users = User::orderBy('name')->get();
+        $users = User::select('id', 'name', 'email')->orderBy('name')->get();
 
         return view('pages.hosting.admin.databases', compact('databases', 'users'));
     }

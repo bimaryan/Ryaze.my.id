@@ -40,7 +40,7 @@ class DashboardController extends Controller
     public function manageOrders()
     {
         // Menambahkan relasi payments agar admin bisa mengecek status pembayaran di tabel
-        $orders = JokiOrder::with(['client', 'service', 'payments'])->latest()->get();
+        $orders = JokiOrder::with(['client', 'service', 'payments'])->latest()->paginate(15);
 
         return view('pages.joki.admin.orders', compact('orders'));
     }
