@@ -219,7 +219,17 @@ class AutoDeployProject implements ShouldQueue
                 $this->log($deploy, '> Laravel+Inertia: Vite output is at public/build. No file move needed.');
                 $this->runLaravelPostSetup($deploy, $projectDir);
             } else {
-                $this->log($deploy, '> Nginx akan secara dinamis menyajikan folder dist/build. Tidak perlu memindahkan file ke root.');
+                $this->log($deploy, '> Memindahkan hasil build SPA ke root agar Nginx dapat melayani aset statis (/assets) dengan benar...');
+                $this->exec("
+                    if [ -d \"{$projectDir}/dist\" ]; then
+                        cp -a {$projectDir}/dist/* {$projectDir}/ 2>/dev/null || true
+                    elif [ -d \"{$projectDir}/build\" ]; then
+                        cp -a {$projectDir}/build/* {$projectDir}/ 2>/dev/null || true
+                    elif [ -d \"{$projectDir}/out\" ]; then
+                        cp -a {$projectDir}/out/* {$projectDir}/ 2>/dev/null || true
+                    fi
+                ", $deploy);
+                $this->log($deploy, '> Berhasil memindahkan output build ke root direktori.');
             }
         }
     }

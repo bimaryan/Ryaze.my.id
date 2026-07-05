@@ -11,10 +11,43 @@ class PaymentCallbackController extends Controller
     {
         $notification = $request->all();
         $order_id = $notification['order_id'] ?? null;
-        $status = $notification['status'] ?? null;
+        $amount = $notification['amount'] ?? null;
 
-        if (!$order_id) {
-            return response()->json(['success' => false, 'message' => 'Missing order_id'], 400);
+        if (!$order_id || !$amount) {
+            return response()->json(['success' => false, 'message' => 'Missing order_id or amount'], 400);
+        }
+
+        // 1. Verifikasi Resmi Pakasir (Cross-Check API)
+        $apiKey = env('PAKASIR_API_KEY');
+        $projectSlug = env('PAKASIR_SLUG');
+        
+        if (!$apiKey || !$projectSlug) {
+            \Illuminate\Support\Facades\Log::error('Pakasir API Key or Slug is missing in .env');
+            return response()->json(['success' => false, 'message' => 'Server Configuration Error'], 500);
+        }
+
+        try {
+            $verifyResponse = \Illuminate\Support\Facades\Http::get('https://app.pakasir.com/api/transactiondetail', [
+                'project' => $projectSlug,
+                'amount' => $amount,
+                'order_id' => $order_id,
+                'api_key' => $apiKey
+            ]);
+
+            if (!$verifyResponse->successful()) {
+                \Illuminate\Support\Facades\Log::warning("Fake Webhook attempt detected for Order ID: {$order_id} from IP: " . $request->ip());
+                return response()->json(['success' => false, 'message' => 'Transaction verification failed'], 401);
+            }
+
+            $transactionData = $verifyResponse->json('transaction');
+            if (!$transactionData) {
+                return response()->json(['success' => false, 'message' => 'Invalid transaction data from Pakasir'], 401);
+            }
+
+            $status = $transactionData['status'] ?? null;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Pakasir Webhook Verification Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Internal server error during verification'], 500);
         }
 
         if (str_starts_with($order_id, 'HST-INV-')) {
