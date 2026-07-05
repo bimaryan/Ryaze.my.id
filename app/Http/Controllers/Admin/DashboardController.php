@@ -50,7 +50,7 @@ class DashboardController extends Controller
 
         // 5. Hitung Database & Storage
         $totalDatabases = HostingDatabase::count();
-        $totalStorageMB = HostingProject::sum('storage_limit_mb');
+        $totalStorageMB = \App\Models\User::sum('hosting_storage_limit_mb');
 
         // 6. Ambil Data Terbaru (Recent Activities)
         $recentUsers = User::latest()->take(5)->get();
