@@ -190,8 +190,8 @@ PHP;
 
             $this->log($deploy, "\n> Applying final permissions to all generated files...");
             $this->exec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
-            $this->exec("find {$projectDir} -type d -exec chmod 755 {} \; 2>/dev/null || true", $deploy);
-            $this->exec("find {$projectDir} -type f -not -path '*/venv/bin/*' -not -path '*/node_modules/.bin/*' -exec chmod 644 {} \; 2>/dev/null || true", $deploy);
+            $this->exec("find {$projectDir} -type d -not -path '*/node_modules*' -exec chmod 755 {} \; 2>/dev/null || true", $deploy);
+            $this->exec("find {$projectDir} -type f -not -path '*/venv/bin/*' -not -path '*/node_modules*' -exec chmod 644 {} \; 2>/dev/null || true", $deploy);
 
             if ($framework === 'laravel') {
                 $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
