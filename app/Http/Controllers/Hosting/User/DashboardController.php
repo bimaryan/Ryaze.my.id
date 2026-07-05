@@ -1302,24 +1302,28 @@ PHP;
 
     private function checkDiskQuota($project, $additionalBytes = 0)
     {
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $user = \Illuminate\Support\Facades\Auth::user() ?? $project->user;
+        $projects = \App\Models\HostingProject::where('user_id', $user->id)->get();
+        $totalBytes = 0;
 
-        if (!$projectRootDir || !is_dir($projectRootDir)) {
-            return true;
-        }
-
-        $output = shell_exec("du -sb " . escapeshellarg($projectRootDir) . " 2>/dev/null");
-        $currentBytes = 0;
-        if ($output) {
-            $parts = explode("\t", trim($output));
-            if (isset($parts[0])) {
-                $currentBytes = (int) $parts[0];
+        foreach ($projects as $p) {
+            $subdomain = str_replace('.ryaze.my.id', '', $p->ryaze_domain);
+            $dir = realpath("/www/sites/hosting_clients/{$subdomain}");
+            if ($dir && is_dir($dir)) {
+                $output = shell_exec("du -sb " . escapeshellarg($dir) . " 2>/dev/null");
+                if ($output) {
+                    $parts = explode("\t", trim($output));
+                    if (isset($parts[0])) {
+                        $totalBytes += (int) $parts[0];
+                    }
+                }
             }
         }
 
-        $totalBytes = $currentBytes + $additionalBytes;
-        $limitBytes = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
+        $totalBytes += $additionalBytes;
+        
+        // Shared Hosting: Limit global per akun (bukan per project)
+        $limitBytes = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         if ($totalBytes > $limitBytes) {
             return false;

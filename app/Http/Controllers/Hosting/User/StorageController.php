@@ -38,10 +38,12 @@ class StorageController extends Controller
      */
     public function index()
     {
-        $projects = HostingProject::where('user_id', Auth::id())->latest()->get();
+        $user = Auth::user();
+        $projects = HostingProject::where('user_id', $user->id)->latest()->get();
 
         $totalUsed = 0;
-        $totalLimit = 0;
+        // Shared Hosting: Limit adalah jatah akun secara global
+        $totalLimit = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
         $items = [];
 
         foreach ($projects as $project) {
@@ -49,9 +51,6 @@ class StorageController extends Controller
             $projectDir = "/www/sites/hosting_clients/{$subdomain}";
             $used = $this->getFolderSize($projectDir);
             $totalUsed += $used;
-
-            $limitMb = $project->storage_limit_mb ?? 1024;
-            $totalLimit += $limitMb * 1024 * 1024;
 
             $items[] = [
                 'project' => $project,
@@ -63,8 +62,8 @@ class StorageController extends Controller
         }
 
         foreach ($items as &$item) {
-            $itemLimit = ($item['project']->storage_limit_mb ?? 1024) * 1024 * 1024;
-            $item['percent'] = $itemLimit > 0 ? min(100, round(($item['used_bytes'] / $itemLimit) * 100, 1)) : 0;
+            // Karena Shared Hosting, persentase project dihitung berdasarkan limit global akun
+            $item['percent'] = $totalLimit > 0 ? min(100, round(($item['used_bytes'] / $totalLimit) * 100, 1)) : 0;
         }
 
         // Sort by usage descending
@@ -99,10 +98,13 @@ class StorageController extends Controller
             abort(404);
         }
 
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $user = Auth::user();
+        $project = HostingProject::where('user_id', $user->id)->findOrFail($decoded[0]);
         $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
-        $limit = ($project->storage_limit_mb ?? 1024) * 1024 * 1024;
+        
+        // Shared Hosting: Limit yg ditampilkan adalah limit total akun
+        $limit = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         $totalUsed = $this->getFolderSize($projectDir);
 
@@ -188,10 +190,8 @@ class StorageController extends Controller
             $totalUsed += $this->getFolderSize("/www/sites/hosting_clients/{$subdomain}");
         }
 
-        $limit = 0;
-        foreach ($projects as $p) {
-            $limit += ($p->storage_limit_mb ?? 1024) * 1024 * 1024;
-        }
+        // Shared Hosting: Bandingkan total penggunaan dengan jatah global akun
+        $limit = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         return $totalUsed < $limit;
     }
