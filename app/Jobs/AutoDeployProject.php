@@ -139,54 +139,8 @@ class AutoDeployProject implements ShouldQueue
             };
 
             clearstatcache();
-            if (!file_exists("{$projectDir}/index.php") && file_exists("{$projectDir}/index.html")) {
-                $spaProxy = <<<'PHP'
-<?php
-/**
- * Ryaze - Auto-generated SPA Proxy
- * Membantu Nginx OpenResty melayani fallback file static dan routing SPA
- */
-$requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-$file = __DIR__ . $requestUri;
-
-if ($requestUri !== '/' && file_exists($file) && is_file($file)) {
-    $mime = @mime_content_type($file) ?: 'application/octet-stream';
-    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-    
-    $mime_types = [
-        'css' => 'text/css',
-        'js'  => 'application/javascript',
-        'svg' => 'image/svg+xml',
-        'png' => 'image/png',
-        'jpg' => 'image/jpeg',
-        'jpeg'=> 'image/jpeg',
-        'gif' => 'image/gif',
-        'ico' => 'image/x-icon',
-        'json'=> 'application/json',
-        'txt' => 'text/plain',
-        'woff'=> 'font/woff',
-        'woff2'=>'font/woff2',
-        'ttf' => 'font/ttf',
-        'eot' => 'application/vnd.ms-fontobject',
-        'otf' => 'font/otf',
-        'mp4' => 'video/mp4',
-        'webm'=> 'video/webm'
-    ];
-
-    if (isset($mime_types[$ext])) {
-        $mime = $mime_types[$ext];
-    }
-
-    header("Content-Type: $mime");
-    readfile($file);
-    exit;
-}
-
-require __DIR__ . '/index.html';
-PHP;
-                file_put_contents("{$projectDir}/index.php", $spaProxy);
-                $this->log($deploy, "> SPA Proxy (index.php) berhasil dibuat untuk fallback.");
-            }
+            // Nginx OpenResty sudah memiliki fallback otomatis ke index.html untuk SPA
+            // sehingga PHP SPA Proxy tidak lagi diperlukan.
 
             $this->log($deploy, "\n> Applying final permissions to all generated files...");
             $this->exec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
@@ -265,8 +219,7 @@ PHP;
                 $this->log($deploy, '> Laravel+Inertia: Vite output is at public/build. No file move needed.');
                 $this->runLaravelPostSetup($deploy, $projectDir);
             } else {
-                $this->log($deploy, '> Organizing build output...');
-                $this->moveBuiltOutput($deploy, $projectDir);
+                $this->log($deploy, '> Nginx akan secara dinamis menyajikan folder dist/build. Tidak perlu memindahkan file ke root.');
             }
         }
     }
@@ -409,87 +362,7 @@ PHP;
 
         if ($pid) {
             $this->log($deploy, "> Python server running on PID: {$pid} (Port: {$port})");
-            
-            $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty...");
-            $proxyScript = <<<PHP
-<?php
-/**
- * Ryaze - Auto-generated PHP Reverse Proxy
- * Proxies traffic from OpenResty to the Python daemon.
- */
-\$port = {$port};
-\$host = '127.0.0.1';
-\$path = \$_SERVER['REQUEST_URI'];
-\$method = \$_SERVER['REQUEST_METHOD'];
-\$headers = getallheaders();
-
-\$url = "http://{\$host}:{\$port}{\$path}";
-
-\$ch = curl_init(\$url);
-curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$method);
-curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt(\$ch, CURLOPT_HEADER, true);
-curl_setopt(\$ch, CURLOPT_FOLLOWLOCATION, false);
-
-\$reqHeaders = [];
-foreach (\$headers as \$k => \$v) {
-    if (strtolower(\$k) === 'host') continue;
-    \$reqHeaders[] = "\$k: \$v";
-}
-curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$reqHeaders);
-
-if (\$method === 'POST' || \$method === 'PUT' || \$method === 'PATCH') {
-    \$body = file_get_contents('php://input');
-    if (empty(\$body) && !empty(\$_POST)) {
-        // Fallback for multipart/form-data if php://input is empty
-        \$postFields = \$_POST;
-        if (!empty(\$_FILES)) {
-            foreach (\$_FILES as \$key => \$file) {
-                if (is_array(\$file['tmp_name'])) {
-                    foreach (\$file['tmp_name'] as \$i => \$tmpName) {
-                        if (\$file['error'][\$i] === UPLOAD_ERR_OK) {
-                            \$postFields["{\$key}[\$i]"] = new \CURLFile(\$tmpName, \$file['type'][\$i], \$file['name'][\$i]);
-                        }
-                    }
-                } else {
-                    if (\$file['error'] === UPLOAD_ERR_OK) {
-                        \$postFields[\$key] = new \CURLFile(\$file['tmp_name'], \$file['type'], \$file['name']);
-                    }
-                }
-            }
-        }
-        curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$postFields);
-    } else {
-        curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$body);
-    }
-}
-
-\$response = curl_exec(\$ch);
-if (curl_errno(\$ch)) {
-    http_response_code(502);
-    echo "502 Bad Gateway - Python Application Server is down, crashed, or still starting up.";
-    exit;
-}
-
-\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
-\$resHeaders = substr(\$response, 0, \$headerSize);
-\$resBody = substr(\$response, \$headerSize);
-\$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
-
-http_response_code(\$httpCode);
-
-\$lines = explode("\\n", \$resHeaders);
-foreach (\$lines as \$line) {
-    \$line = trim(\$line);
-    if (empty(\$line)) continue;
-    if (strpos(strtolower(\$line), 'transfer-encoding:') === 0) continue;
-    header(\$line, false);
-}
-
-echo \$resBody;
-curl_close(\$ch);
-PHP;
-            file_put_contents("{$projectDir}/index.php", $proxyScript);
+            $this->log($deploy, "> Nginx OpenResty akan melakukan proxy secara langsung ke port {$port} via Lua...");
             file_put_contents("{$projectDir}/.port", $port);
             $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
             
@@ -505,44 +378,7 @@ PHP;
         $this->log($deploy, '> Python setup complete.');
     }
 
-    private function moveBuiltOutput($deploy, string $projectDir): void
-    {
-        $outputDirName = null;
-        foreach (['dist', 'build', 'out'] as $candidate) {
-            if (is_dir("{$projectDir}/{$candidate}")) {
-                $outputDirName = $candidate;
-                break;
-            }
-        }
 
-        if (!$outputDirName) {
-            $this->log($deploy, '> [WARNING] Build output not found, skipping move.');
-            return;
-        }
-
-        $outputDir = "{$projectDir}/{$outputDirName}";
-        $this->log($deploy, "> Output folder found: {$outputDir}");
-
-        // Hapus file lama di root terlebih dahulu sebelum memindahkan yang baru
-        $this->log($deploy, "> Menghapus file build lama di root...");
-        $this->exec("cd {$projectDir} && rm -f index.html 2>/dev/null || true", $deploy);
-        $this->exec("cd {$projectDir} && rm -rf assets 2>/dev/null || true", $deploy);
-        $this->exec("cd {$projectDir} && rm -f *.ico 2>/dev/null || true", $deploy);
-        $this->exec("cd {$projectDir} && rm -f manifest.json 2>/dev/null || true", $deploy);
-
-        // Copy file baru ke root
-        $this->log($deploy, "> Memindahkan file build baru ke root...");
-        $this->exec("cp -a {$outputDir}/. {$projectDir}/ 2>&1", $deploy, false);
-
-        // Hapus direktori output
-        $this->exec("rm -rf {$outputDir} 2>/dev/null || true", $deploy);
-
-        if (!file_exists("{$projectDir}/index.html")) {
-            $this->log($deploy, '> [WARNING] index.html not found after move.');
-        } else {
-            $this->log($deploy, '> Build output berhasil dipindahkan dan di-update!');
-        }
-    }
 
     private function createCloudflareDNS($deploy): bool
     {
