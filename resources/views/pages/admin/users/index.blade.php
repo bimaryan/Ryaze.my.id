@@ -8,7 +8,7 @@
             icon="fa-solid fa-users" 
         />
 
-        <div>
+        <div id="users-container" class="transition-opacity duration-300">
             <div class="mb-6 flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
                 <a href="{{ route('superadmin.users.index') }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ !request()->has('role') || request('role') == '' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Semua Pengguna</a>
                 <a href="{{ route('superadmin.users.index', ['role' => 'user_joki']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'user_joki' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Klien Joki</a>
@@ -69,9 +69,7 @@
                                         Deployment</span>
                                 @else
                                     <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-slate-100 text-slate-600 border border-slate-200">
-                                        {{ ucfirst(str_replace('_', ' ', $user->role ?? 'User')) }}
-                                    </span>
+                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-purple-50 text-purple-600 border border-purple-200 uppercase">{{ str_replace('_', ' ', $user->role) }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -102,3 +100,83 @@
         </div>
     </x-ui.page-layout>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('users-container');
+        let currentUrl = window.location.href;
+        
+        function fetchAndUpdate(url) {
+            container.style.opacity = '0.5';
+            container.style.pointerEvents = 'none';
+            
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContainer = doc.getElementById('users-container');
+                
+                if (newContainer) {
+                    container.innerHTML = newContainer.innerHTML;
+                }
+                
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+                
+                // Update the URL without reloading the page
+                if (url !== window.location.href) {
+                    window.history.pushState({path: url}, '', url);
+                    currentUrl = url;
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching data:', err);
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            });
+        }
+
+        container.addEventListener('click', function (e) {
+            const link = e.target.closest('a');
+            if (link && link.href && !link.href.includes('#')) {
+                try {
+                    const urlObj = new URL(link.href);
+                    // Only intercept if the link is exactly /superadmin/users (ignoring query params)
+                    if (urlObj.pathname === '/superadmin/users') {
+                        e.preventDefault();
+                        fetchAndUpdate(link.href);
+                    }
+                } catch(e) {}
+            }
+        });
+
+        container.addEventListener('submit', function (e) {
+            const form = e.target.closest('form');
+            if (form && form.action) {
+                try {
+                    const urlObj = new URL(form.action);
+                    if (urlObj.pathname === '/superadmin/users') {
+                        e.preventDefault();
+                        const formData = new FormData(form);
+                        const params = new URLSearchParams(formData);
+                        urlObj.search = params.toString();
+                        fetchAndUpdate(urlObj.toString());
+                    }
+                } catch(e) {}
+            }
+        });
+        
+        window.addEventListener('popstate', function (e) {
+            if (window.location.href !== currentUrl) {
+                fetchAndUpdate(window.location.href);
+            }
+        });
+    });
+</script>
+@endpush
