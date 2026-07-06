@@ -13,12 +13,8 @@
             customClass: {
                 popup: 'rounded-2xl shadow-xl border border-slate-100',
                 title: 'text-xl font-bold text-slate-800',
-                htmlContainer: 'text-sm text-slate-500',
-                confirmButton: 'bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-md shadow-indigo-200 transition-all mx-2',
-                cancelButton: 'bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 px-6 rounded-lg transition-all mx-2',
-                actions: 'mt-6'
-            },
-            buttonsStyling: false
+                htmlContainer: 'text-sm text-slate-500'
+            }
         });
     </script>
     <script src="https://kit.fontawesome.com/f74deb4653.js" crossorigin="anonymous" nonce="{{ csp_nonce() }}"></script>
