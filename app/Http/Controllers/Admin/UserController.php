@@ -8,30 +8,48 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    // Fungsi untuk halaman "Lihat Semua"
     public function index(\Illuminate\Http\Request $request)
     {
-        $query = User::latest();
+        if ($request->ajax()) {
+            $query = User::latest();
 
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%');
-            });
-        }
-
-        if ($request->has('role') && $request->role != '') {
-            if ($request->role === 'admin') {
-                $query->whereIn('role', ['admin_joki', 'admin_hosting']);
-            } else {
-                $query->where('role', $request->role);
+            if ($request->has('role') && $request->role != '') {
+                if ($request->role === 'admin') {
+                    $query->whereIn('role', ['admin_joki', 'admin_hosting']);
+                } else {
+                    $query->where('role', $request->role);
+                }
             }
+
+            return \Yajra\DataTables\Facades\DataTables::of($query)
+                ->addColumn('avatar', function($user) {
+                    return substr($user->name, 0, 1);
+                })
+                ->addColumn('role_badge', function($user) {
+                    if ($user->role == 'user_joki') {
+                        return '<span class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-blue-50 text-blue-600 border border-blue-200">Jasa Joki Code</span>';
+                    } elseif ($user->role == 'user_hosting') {
+                        return '<span class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-emerald-50 text-emerald-600 border border-emerald-200">App Deployment</span>';
+                    } else {
+                        return '<span class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-purple-50 text-purple-600 border border-purple-200 uppercase">' . str_replace('_', ' ', $user->role) . '</span>';
+                    }
+                })
+                ->addColumn('created_at_formatted', function($user) {
+                    return $user->created_at->format('d M Y, H:i');
+                })
+                ->addColumn('action', function($user) {
+                    $url = route('superadmin.users.show', \Vinkla\Hashids\Facades\Hashids::encode($user->id));
+                    return '<div class="flex items-center justify-center gap-2">
+                                <a href="' . $url . '" class="p-2 text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors" title="Lihat Detail Profil">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </div>';
+                })
+                ->rawColumns(['role_badge', 'action'])
+                ->make(true);
         }
 
-        $users = $query->paginate(10)->withQueryString();
-
-        return view('pages.admin.users.index', compact('users'));
+        return view('pages.admin.users.index');
     }
 
     // Fungsi untuk tombol "Ikon Mata" (Detail Profil)

@@ -42,116 +42,28 @@
                 </div>
             </div>
             
-            <form action="{{ route('superadmin.articles.index') }}" method="GET" class="flex items-center w-full sm:w-auto">
-                @if(request('status'))
-                    <input type="hidden" name="status" value="{{ request('status') }}">
-                @endif
-                <div class="relative w-full sm:w-64">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <i class="fa-solid fa-search text-slate-400"></i>
-                    </div>
-                    <input type="text" name="search" class="text-slate-800 block ps-9 p-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Cari judul artikel..." value="{{ request('search') }}">
-                </div>
-                <button type="submit" class="p-2 ms-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm transition">
-                    Cari
-                </button>
-                @if(request()->has('search') && request()->search != '')
-                    <a href="{{ route('superadmin.articles.index') }}" class="p-2 ms-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
-                        Reset
-                    </a>
-                @endif
-            </form>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-4">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h2 class="text-lg font-bold text-slate-800">Daftar Artikel</h2>
+            </div>
+            <div class="p-4 overflow-x-auto">
+                <table id="articlesTable" class="w-full text-sm text-left text-slate-500">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 rounded-tl-lg">Artikel</th>
+                            <th scope="col" class="px-6 py-4">Penulis</th>
+                            <th scope="col" class="px-6 py-4">Status</th>
+                            <th scope="col" class="px-6 py-4">Views</th>
+                            <th scope="col" class="px-6 py-4">Tanggal</th>
+                            <th scope="col" class="px-6 py-4 text-center rounded-tr-lg">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- DataTables will inject rows here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-        <x-ui.table>
-            <x-slot:head>
-                <th scope="col" class="px-6 py-4">Artikel</th>
-                <th scope="col" class="px-6 py-4">Kategori</th>
-                <th scope="col" class="px-6 py-4">Status</th>
-                <th scope="col" class="px-6 py-4">Views</th>
-                <th scope="col" class="px-6 py-4">Tanggal</th>
-                <th scope="col" class="px-6 py-4 text-center">Aksi</th>
-            </x-slot:head>
-
-            @forelse($articles as $article)
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            @if($article->cover_image)
-                                <img src="{{ Storage::url($article->cover_image) }}" alt="{{ $article->title }}" class="w-12 h-12 object-cover rounded-lg border border-slate-200">
-                            @else
-                                <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-400 border border-indigo-100">
-                                    <i class="fa-solid fa-file-lines"></i>
-                                </div>
-                            @endif
-                            <div class="flex flex-col min-w-0">
-                                <span class="font-medium text-slate-800 truncate max-w-[250px]">{{ $article->title }}</span>
-                                <span class="text-xs text-slate-400">{{ $article->user->name ?? '-' }}</span>
-                                @if($article->is_featured)
-                                    <span class="inline-flex items-center gap-1 text-[10px] text-amber-600 font-bold mt-0.5"><i class="fa-solid fa-star"></i> Sorotan</span>
-                                @endif
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        @if($article->category)
-                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-medium rounded">{{ $article->category->name }}</span>
-                        @else
-                            <span class="text-xs text-slate-400">-</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4">
-                        @if($article->status == 'published')
-                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase rounded">Published</span>
-                        @elseif($article->status == 'draft')
-                            <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">Draft</span>
-                        @else
-                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase rounded">Archived</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-600">
-                        <i class="fa-solid fa-eye text-slate-400 mr-1"></i>{{ number_format($article->views_count) }}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500">
-                        {{ $article->created_at->format('d M Y') }}
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center justify-center gap-2">
-                            <form action="{{ route('superadmin.articles.featured', $article->hashid) }}" method="POST" class="inline">
-                                @csrf @method('PATCH')
-                                <button type="submit" title="{{ $article->is_featured ? 'Hapus Sorotan' : 'Jadikan Sorotan' }}" class="p-1.5 rounded-lg transition {{ $article->is_featured ? 'text-amber-500 bg-amber-50 hover:bg-amber-100' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50' }}">
-                                    <i class="fa-solid fa-star"></i>
-                                </button>
-                            </form>
-                            <form action="{{ route('superadmin.articles.status', $article->hashid) }}" method="POST" class="inline">
-                                @csrf @method('PATCH')
-                                <button type="submit" title="{{ $article->status == 'published' ? 'Draft' : 'Publish' }}" class="p-1.5 rounded-lg transition {{ $article->status == 'published' ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50' }}">
-                                    <i class="fa-solid {{ $article->status == 'published' ? 'fa-eye' : 'fa-eye-slash' }}"></i>
-                                </button>
-                            </form>
-                            <a href="{{ route('superadmin.articles.edit', $article->hashid) }}" class="p-1.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
-                            <form action="{{ route('superadmin.articles.destroy', $article->hashid) }}" method="POST" class="inline delete-form">
-                                @csrf @method('DELETE')
-                                <button type="button" class="p-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition delete-btn">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-slate-500">
-                        <i class="fa-solid fa-newspaper text-4xl text-slate-300 mb-3"></i>
-                        <p class="font-medium">Belum ada artikel.</p>
-                    </td>
-                </tr>
-            @endforelse
-        </x-ui.table>
-
-        <div class="mt-4">{{ $articles->links() }}</div>
     </div>
 
     <!-- Import Modal -->
@@ -189,6 +101,39 @@
     </div>
 </x-ui.page-layout>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#articlesTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{!! route('superadmin.articles.index', request()->query()) !!}",
+            columns: [
+                { data: 'title_html', name: 'title' },
+                { data: 'author', name: 'user.name' },
+                { data: 'status_html', name: 'status', searchable: false },
+                { data: 'views', name: 'views', searchable: false },
+                { data: 'created_at_formatted', name: 'created_at', searchable: false },
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
+            ],
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Menampilkan 0 data",
+                infoFiltered: "(difilter dari _MAX_ total data)",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Selanjutnya",
+                    previous: "Sebelumnya"
+                }
+            }
+        });
+    });
+</script>
 
 @push('scripts')
 <script nonce="{{ app('csp_nonce') ?? '' }}">

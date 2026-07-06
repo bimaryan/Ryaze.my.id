@@ -9,11 +9,6 @@
         </x-ui.page-header>
         
         <x-ui.card class="p-6 mt-6">
-            @if(session('success'))
-                <div class="mb-4 p-4 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
 
             <form action="{{ route('superadmin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                 @csrf
