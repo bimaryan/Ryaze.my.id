@@ -27,6 +27,11 @@ class AuthController extends Controller
     // Menampilkan halaman register
     public function registerindex(Request $request)
     {
+        $enableRegistration = \App\Models\Setting::where('key', 'enable_registration')->value('value');
+        if (isset($enableRegistration) && $enableRegistration == '0') {
+            return redirect()->route('login')->with('error', 'Pendaftaran akun baru ditutup sementara.');
+        }
+
         return view('pages.auth.register');
     }
 
@@ -129,6 +134,11 @@ class AuthController extends Controller
     // Memproses data register
     public function registerProcess(Request $request)
     {
+        $enableRegistration = \App\Models\Setting::where('key', 'enable_registration')->value('value');
+        if (isset($enableRegistration) && $enableRegistration == '0') {
+            return redirect()->route('login')->with('error', 'Pendaftaran akun baru ditutup sementara.');
+        }
+
         // 1. Validasi Input form register (Password diperkuat)
         $request->validate([
             'name' => 'required|string|max:255',

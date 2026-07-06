@@ -6,6 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'RYAZE PORTAL' }}</title>
+    
+    @php
+        $siteDescription = \App\Models\Setting::where('key', 'site_description')->value('value');
+        $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value');
+        $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
+    @endphp
+
+    @if($siteDescription)
+        <meta name="description" content="{{ $siteDescription }}">
+    @endif
+    
+    @if($siteFavicon)
+        <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
+    @endif
+
+    @if($gaId)
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ $gaId }}');
+        </script>
+    @endif
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" nonce="{{ csp_nonce() }}"></script>
     <script nonce="{{ csp_nonce() }}">

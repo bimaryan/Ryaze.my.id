@@ -15,6 +15,12 @@
                 </button>
 
                 <a href="{{ url('/') }}" class="flex ms-2 md:me-24 items-center gap-2">
+                    @php
+                        $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value');
+                    @endphp
+                    @if($siteLogo)
+                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 object-contain">
+                    @endif
                     <span class="self-center text-xl text-indigo-600 font-bold sm:text-2xl whitespace-nowrap">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
                 </a>
             </div>

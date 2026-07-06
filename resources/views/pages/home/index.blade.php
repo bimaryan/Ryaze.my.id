@@ -7,19 +7,41 @@
     <meta name="theme-color" content="#ffffff">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url('/') }}">
-    <title>Ryaze - Cloud Hosting & Web Development</title>
+    @php
+        $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal';
+        $siteDescription = \App\Models\Setting::where('key', 'site_description')->value('value') ?? 'Layanan web hosting canggih dan jasa development profesional.';
+        $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value');
+        $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
+    @endphp
+
+    <title>{{ $siteName }} - Cloud Hosting & Web Development</title>
+    
+    @if($siteFavicon)
+        <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
+    @endif
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Ryaze menawarkan layanan web hosting canggih dan jasa development profesional dengan sistem serba otomatis, aman, dan dapat diandalkan.">
+    <meta name="description" content="{{ $siteDescription }}">
     <meta name="keywords" content="hosting, web development, ryaze, server, cloud">
-    <meta name="author" content="Ryaze">
+    <meta name="author" content="{{ $siteName }}">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="Ryaze - Cloud Hosting & Web Development">
-    <meta property="og:description" content="Layanan hosting instan & pengembangan web profesional dengan sistem otomatis.">
-    <meta property="og:image" content="https://ui-avatars.com/api/?name=Ryaze&size=600&background=4f46e5&color=fff">
+    <meta property="og:title" content="{{ $siteName }} - Cloud Hosting & Web Development">
+    <meta property="og:description" content="{{ $siteDescription }}">
+    <meta property="og:image" content="https://ui-avatars.com/api/?name={{ urlencode($siteName) }}&size=600&background=4f46e5&color=fff">
+
+    @if($gaId)
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ $gaId }}');
+        </script>
+    @endif
 
     <!-- Vite Config -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

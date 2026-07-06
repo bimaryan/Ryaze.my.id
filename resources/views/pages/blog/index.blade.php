@@ -4,7 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ isset($currentCategory) ? $currentCategory->name . ' - ' : '' }}Blog - {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</title>
-    <meta name="description" content="Artikel terbaru seputar teknologi, web development, dan tips hosting dari tim Ryaze.">
+    @php
+        $siteDescription = \App\Models\Setting::where('key', 'site_description')->value('value');
+        $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value');
+        $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
+        $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value');
+    @endphp
+    
+    <meta name="description" content="{{ $siteDescription ?? 'Artikel terbaru seputar teknologi, web development, dan tips hosting dari tim Ryaze.' }}">
+    
+    @if($siteFavicon)
+        <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
+    @endif
+
+    @if($gaId)
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ $gaId }}');
+        </script>
+    @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,9 +43,13 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                    <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
-                        <i class="fa-solid fa-code text-sm"></i>
-                    </div>
+                    @if($siteLogo)
+                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 object-contain">
+                    @else
+                        <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
+                            <i class="fa-solid fa-code text-sm"></i>
+                        </div>
+                    @endif
                     <span class="text-xl font-bold tracking-tight text-indigo-600">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
                 </a>
                 <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">

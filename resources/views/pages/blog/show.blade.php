@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $article->seo_title }} - Ryaze Blog</title>
+    @php
+        $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value');
+        $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
+        $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value');
+        $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal';
+    @endphp
+    <title>{{ $article->seo_title }} - {{ $siteName }}</title>
+    @if($siteFavicon)
+        <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
+    @endif
+    @if($gaId)
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ $gaId }}');
+        </script>
+    @endif
     <meta name="description" content="{{ $article->seo_description }}">
     <meta name="author" content="{{ $article->user->name ?? 'Ryaze' }}">
 
@@ -63,7 +82,11 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                    <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-code text-sm"></i></div>
+                    @if($siteLogo)
+                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 object-contain">
+                    @else
+                        <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-code text-sm"></i></div>
+                    @endif
                     <span class="text-xl font-bold tracking-tight text-indigo-600">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
                 </a>
                 <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
