@@ -45,7 +45,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Status Proyek</label>
                                 <select name="status"
-                                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                                     <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending
                                     </option>
                                     <option value="progress" {{ $order->status == 'progress' ? 'selected' : '' }}>In
@@ -99,20 +99,20 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                             <div class="md:col-span-2">
                                 <input type="text" name="title" required placeholder="Judul Tugas (Cth: Slicing UI)"
-                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             </div>
                             <div>
                                 <input type="date" name="due_date"
-                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div class="md:col-span-2">
                                 <input type="text" name="description" placeholder="Deskripsi singkat..."
-                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             </div>
                             <div class="flex gap-2">
-                                <select name="status" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                <select name="status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                                     <option value="pending">Pending</option>
                                     <option value="working">Working</option>
                                     <option value="done">Done</option>
@@ -219,7 +219,7 @@
                                                 </div>
 
                                                 <select name="status"
-                                                    class="w-full sm:w-40 flex-shrink-0 px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 font-medium text-slate-700">
+                                                    class="sm:w-40 flex-shrink-0 transition-all font-medium text-slate-700 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                                                     <option value="pending" {{ $rev->status == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
                                                     <option value="fixing" {{ $rev->status == 'fixing' ? 'selected' : '' }}>🛠️ Fixing</option>
                                                     <option value="resolved" {{ $rev->status == 'resolved' ? 'selected' : '' }}>✅ Resolved</option>
@@ -273,9 +273,9 @@
                         @csrf
                         <div class="space-y-2">
                             <input type="text" name="payment_name" required placeholder="Nama (Cth: DP 50%)"
-                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <input type="number" name="amount" required placeholder="Nominal (Cth: 1500000)"
-                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <button type="submit"
                                 class="w-full bg-slate-800 text-white font-bold py-2 rounded-lg hover:bg-slate-900 text-sm">Buat
                                 Tagihan</button>
@@ -313,7 +313,7 @@
                                                 @csrf
                                                 @method('PUT')
                                                 <select name="status"
-                                                    class="flex-1 px-2 py-1 border border-slate-200 rounded text-xs">
+                                                    class="flex-1 px-2 py-1 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                                                     <option value="paid">Terima (Lunas)</option>
                                                     <option value="failed">Tolak (Gagal)</option>
                                                     <option value="unpaid">Reset ke Unpaid</option>

@@ -24,7 +24,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1.5">Tipe Diskon <span class="text-rose-500">*</span></label>
-                        <select name="discount_type" required class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all">
+                        <select name="discount_type" required class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <option value="amount" {{ old('discount_type', $voucher->discount_amount ? 'amount' : 'percentage') == 'amount' ? 'selected' : '' }}>Nominal (Rp)</option>
                             <option value="percentage" {{ old('discount_type', $voucher->discount_percentage ? 'percentage' : 'amount') == 'percentage' ? 'selected' : '' }}>Persentase (%)</option>
                         </select>

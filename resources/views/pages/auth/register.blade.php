@@ -28,7 +28,7 @@
                     <div>
                         <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Nama Lengkap</label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('name') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
+                            class="py-3 transition-all duration-200 focus:bg-white {{ $errors->has('name') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
                             placeholder="John Doe" autofocus>
                     </div>
 
@@ -36,14 +36,14 @@
                         <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email
                             Address</label>
                         <input type="email" name="email" id="email" value="{{ old('email') }}"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
+                            class="py-3 transition-all duration-200 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
                             placeholder="nama@email.com">
                     </div>
 
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
                         <input type="password" name="password" id="password"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }}"
+                            class="py-3 transition-all duration-200 focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
                             placeholder="Min. 8 karakter">
 
                         @if ($errors->has('password'))
@@ -59,7 +59,7 @@
                         <label for="password_confirmation"
                             class="block text-sm font-medium text-slate-700 mb-2">Konfirmasi Password</label>
                         <input type="password" name="password_confirmation" id="password_confirmation"
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition-all duration-200 bg-slate-50 focus:bg-white"
+                            class="py-3 transition-all duration-200 focus:bg-white w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
                             placeholder="Ulangi password">
                     </div>
 

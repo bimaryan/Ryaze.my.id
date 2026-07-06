@@ -25,11 +25,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Website</label>
-                            <input type="text" name="site_name" value="{{ $settings['site_name'] ?? 'Ryaze Portal' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5">
+                            <input type="text" name="site_name" value="{{ $settings['site_name'] ?? 'Ryaze Portal' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi Website (SEO)</label>
-                            <input type="text" name="site_description" value="{{ $settings['site_description'] ?? '' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="Portal layanan joki dan hosting terbaik...">
+                            <input type="text" name="site_description" value="{{ $settings['site_description'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Portal layanan joki dan hosting terbaik...">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Upload Logo (opsional, disarankan rasio 1:1)</label>
@@ -56,24 +56,24 @@
                             <label class="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp CS</label>
                             <div class="flex">
                                 <span class="inline-flex items-center px-3 text-sm text-slate-500 bg-slate-100 border border-r-0 border-slate-200 rounded-l-lg">+62</span>
-                                <input type="text" name="contact_whatsapp" value="{{ $settings['contact_whatsapp'] ?? '' }}" class="w-full border-slate-200 rounded-r-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="81234567890">
+                                <input type="text" name="contact_whatsapp" value="{{ $settings['contact_whatsapp'] ?? '' }}" class="rounded-r-lg w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="81234567890">
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Email Dukungan</label>
-                            <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="support@ryaze.my.id">
+                            <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="support@ryaze.my.id">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">URL GitHub</label>
-                            <input type="url" name="social_github" value="{{ $settings['social_github'] ?? '' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="https://github.com/bimaryan">
+                            <input type="url" name="social_github" value="{{ $settings['social_github'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://github.com/bimaryan">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">URL Instagram</label>
-                            <input type="url" name="social_instagram" value="{{ $settings['social_instagram'] ?? '' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="https://instagram.com/bimaryan">
+                            <input type="url" name="social_instagram" value="{{ $settings['social_instagram'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://instagram.com/bimaryan">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">URL LinkedIn</label>
-                            <input type="url" name="social_linkedin" value="{{ $settings['social_linkedin'] ?? '' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="https://linkedin.com/in/bimaryan">
+                            <input type="url" name="social_linkedin" value="{{ $settings['social_linkedin'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://linkedin.com/in/bimaryan">
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Biaya Admin / Pajak Layanan (%)</label>
-                            <input type="number" name="admin_fee_percentage" value="{{ $settings['admin_fee_percentage'] ?? '0' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" min="0" max="100" step="0.1">
+                            <input type="number" name="admin_fee_percentage" value="{{ $settings['admin_fee_percentage'] ?? '0' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" max="100" step="0.1">
                             <p class="text-xs text-slate-500 mt-1">Biaya admin yang ditambahkan ke setiap tagihan pembayaran (%).</p>
                         </div>
                         
@@ -126,11 +126,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Pakasir Server Key</label>
-                            <input type="password" name="pakasir_server_key" value="{{ $settings['pakasir_server_key'] ?? '' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="Pakasir API Server Key">
+                            <input type="password" name="pakasir_server_key" value="{{ $settings['pakasir_server_key'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Pakasir API Server Key">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Google Analytics ID</label>
-                            <input type="text" name="google_analytics_id" value="{{ $settings['google_analytics_id'] ?? '' }}" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5" placeholder="G-XXXXXXXXXX">
+                            <input type="text" name="google_analytics_id" value="{{ $settings['google_analytics_id'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="G-XXXXXXXXXX">
                         </div>
                     </div>
                 </div>

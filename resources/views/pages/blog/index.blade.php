@@ -170,7 +170,7 @@
                 {{-- Search --}}
                 <form action="{{ route('blog.index') }}" method="GET" class="relative">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel..."
-                        class="w-full bg-white border border-slate-200 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        class="pl-10 pr-4 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                     <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                 </form>
 

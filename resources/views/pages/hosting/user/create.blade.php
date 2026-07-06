@@ -75,12 +75,12 @@
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">URL Git Repository <span class="text-rose-500">*</span></label>
                             <input type="url" name="repo_source" id="input_repo_source"
                                 placeholder="https://github.com/username/my-project"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all">
+                                class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">Branch</label>
                             <input type="text" name="branch" id="input_branch" value="main"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all">
+                                class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <p class="text-[11px] text-slate-500 mt-1">Cabang Git yang akan di-build (misal: main, master, atau production).</p>
                         </div>
                     </div>
@@ -290,7 +290,7 @@
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Proyek <span class="text-rose-500">*</span></label>
                         <input type="text" name="project_name" required placeholder="my-awesome-app"
                             id="input_project_name"
-                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-t-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all">
+                            class="rounded-t-lg transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                         <div class="bg-slate-100 border border-t-0 border-slate-200 rounded-b-lg px-4 py-2 text-xs text-slate-500 font-medium flex items-center">
                             <i class="fa-solid fa-link mr-2"></i> Domain: <span id="domain_preview" class="text-indigo-600 ml-1">nama-proyek.ryaze.my.id</span>
                         </div>

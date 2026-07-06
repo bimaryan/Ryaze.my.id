@@ -25,14 +25,14 @@
                     <div class="mb-5">
                         <label for="title" class="block mb-1.5 text-sm font-medium text-slate-700">Judul <span class="text-rose-500">*</span></label>
                         <input type="text" name="title" id="title" value="{{ old('title') }}" required
-                            class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" placeholder="Judul artikel yang menarik...">
+                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Judul artikel yang menarik...">
                         @error('title') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="mb-5">
                         <label for="excerpt" class="block mb-1.5 text-sm font-medium text-slate-700">Ringkasan</label>
                         <textarea name="excerpt" id="excerpt" rows="3"
-                            class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" placeholder="Ringkasan singkat artikel (opsional, maks 500 karakter)...">{{ old('excerpt') }}</textarea>
+                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Ringkasan singkat artikel (opsional, maks 500 karakter)...">{{ old('excerpt') }}</textarea>
                         @error('excerpt') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -53,12 +53,12 @@
                     <div class="mb-5">
                         <label for="meta_title" class="block mb-1.5 text-sm font-medium text-slate-700">Meta Title</label>
                         <input type="text" name="meta_title" id="meta_title" value="{{ old('meta_title') }}" maxlength="70"
-                            class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" placeholder="Override judul untuk mesin pencari (maks 70 karakter)">
+                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Override judul untuk mesin pencari (maks 70 karakter)">
                     </div>
                     <div>
                         <label for="meta_description" class="block mb-1.5 text-sm font-medium text-slate-700">Meta Description</label>
                         <textarea name="meta_description" id="meta_description" rows="2" maxlength="160"
-                            class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" placeholder="Deskripsi singkat untuk hasil pencarian Google (maks 160 karakter)">{{ old('meta_description') }}</textarea>
+                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Deskripsi singkat untuk hasil pencarian Google (maks 160 karakter)">{{ old('meta_description') }}</textarea>
                     </div>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                     
                     <div class="mb-5">
                         <label for="status" class="block mb-1.5 text-sm font-medium text-slate-700">Status</label>
-                        <select name="status" id="status" class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">
+                        <select name="status" id="status" class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                             <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
                             <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Archived</option>
@@ -80,7 +80,7 @@
 
                     <div class="mb-5">
                         <label for="category_id" class="block mb-1.5 text-sm font-medium text-slate-700">Kategori</label>
-                        <select name="category_id" id="category_id" class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">
+                        <select name="category_id" id="category_id" class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <option value="">Tanpa Kategori</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -112,7 +112,7 @@
                 <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
                     <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Tags</h3>
                     <input type="text" name="tags" id="tags" value="{{ old('tags') }}"
-                        class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" placeholder="laravel, php, tutorial">
+                        class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="laravel, php, tutorial">
                     <p class="text-xs text-slate-400 mt-2">Pisahkan dengan koma.</p>
                 </div>
             </div>

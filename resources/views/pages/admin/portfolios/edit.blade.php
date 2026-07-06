@@ -21,31 +21,31 @@
                 <div class="space-y-6">
                     <div>
                         <label for="title" class="block text-sm font-medium text-slate-700 mb-2">Judul Portofolio <span class="text-red-500">*</span></label>
-                        <input type="text" name="title" id="title" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition-all @error('title') border-red-500 @enderror" value="{{ old('title', $portfolio->title) }}" required>
+                        <input type="text" name="title" id="title" class="transition-all @error('title') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('title', $portfolio->title) }}" required>
                         @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label for="description" class="block text-sm font-medium text-slate-700 mb-2">Deskripsi <span class="text-red-500">*</span></label>
-                        <textarea name="description" id="description" rows="5" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition-all @error('description') border-red-500 @enderror" required>{{ old('description', $portfolio->description) }}</textarea>
+                        <textarea name="description" id="description" rows="5" class="transition-all @error('description') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" required>{{ old('description', $portfolio->description) }}</textarea>
                         @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label for="tags" class="block text-sm font-medium text-slate-700 mb-2">Tags / Teknologi (Pisahkan dengan koma)</label>
-                        <input type="text" name="tags" id="tags" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition-all @error('tags') border-red-500 @enderror" value="{{ old('tags', implode(', ', $portfolio->tags ?? [])) }}" placeholder="Contoh: Laravel, Tailwind, React">
+                        <input type="text" name="tags" id="tags" class="transition-all @error('tags') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('tags', implode(', ', $portfolio->tags ?? [])) }}" placeholder="Contoh: Laravel, Tailwind, React">
                         @error('tags') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="link_preview" class="block text-sm font-medium text-slate-700 mb-2">Link Live Preview</label>
-                            <input type="url" name="link_preview" id="link_preview" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition-all @error('link_preview') border-red-500 @enderror" value="{{ old('link_preview', $portfolio->link_preview) }}" placeholder="https://...">
+                            <input type="url" name="link_preview" id="link_preview" class="transition-all @error('link_preview') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_preview', $portfolio->link_preview) }}" placeholder="https://...">
                             @error('link_preview') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label for="link_github" class="block text-sm font-medium text-slate-700 mb-2">Link GitHub / Repo</label>
-                            <input type="url" name="link_github" id="link_github" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition-all @error('link_github') border-red-500 @enderror" value="{{ old('link_github', $portfolio->link_github) }}" placeholder="https://github.com/...">
+                            <input type="url" name="link_github" id="link_github" class="transition-all @error('link_github') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_github', $portfolio->link_github) }}" placeholder="https://github.com/...">
                             @error('link_github') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>

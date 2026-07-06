@@ -83,7 +83,7 @@
                                 class="text-slate-800"></strong>:</p>
 
                         <select name="status" id="verify_status"
-                            class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 transition-shadow">
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <option value="unpaid">UNPAID (Belum Lunas)</option>
                             <option value="paid">PAID (Lunas)</option>
                             <option value="failed">FAILED (Gagal/Dibatalkan)</option>

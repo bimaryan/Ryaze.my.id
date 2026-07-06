@@ -87,7 +87,7 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Klien</label>
                             <select name="user_id" required
-                                class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                class="focus:ring-1 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                                 <option value="">-- Pilih Klien --</option>
                                 @foreach ($users as $u)
                                     <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})
@@ -104,7 +104,7 @@
                                 </span>
                                 <input type="text" name="db_name" required pattern="[A-Za-z0-9\-_]+" maxlength="15"
                                     placeholder="contoh: wp_blog"
-                                    class="flex-1 px-3 py-2.5 text-sm font-mono outline-none bg-white">
+                                    class="flex-1 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             </div>
                         </div>
                         <div>
@@ -115,7 +115,7 @@
                                 </span>
                                 <input type="text" name="db_username" required pattern="[A-Za-z0-9\-_]+" maxlength="15"
                                     placeholder="contoh: wp_user"
-                                    class="flex-1 px-3 py-2.5 text-sm font-mono outline-none bg-white">
+                                    class="flex-1 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             </div>
                         </div>
                         <div>
@@ -126,7 +126,7 @@
                                 </span>
                                 <input type="text" name="db_password" required maxlength="32"
                                     placeholder="Masukkan password (otomatis ditambah prefix)"
-                                    class="flex-1 px-3 py-2.5 text-sm font-mono outline-none bg-white">
+                                    class="flex-1 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             </div>
                         </div>
                     </div>

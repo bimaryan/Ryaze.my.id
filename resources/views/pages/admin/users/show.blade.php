@@ -51,7 +51,7 @@
                 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-slate-700 mb-2">Role Saat Ini: {{ str_replace('_', ' ', $user->role) }}</label>
-                    <select name="role" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5">
+                    <select name="role" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                         <option value="user_hosting" {{ $user->role === 'user_hosting' ? 'selected' : '' }}>User Hosting</option>
                         <option value="user_joki" {{ $user->role === 'user_joki' ? 'selected' : '' }}>User Joki</option>
                         <option value="admin_hosting" {{ $user->role === 'admin_hosting' ? 'selected' : '' }}>Admin Hosting</option>

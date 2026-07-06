@@ -32,7 +32,7 @@
                     <div class="mb-5">
                         <label for="excerpt" class="block mb-1.5 text-sm font-medium text-slate-700">Ringkasan</label>
                         <textarea name="excerpt" id="excerpt" rows="3"
-                            class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">{{ old('excerpt', $article->excerpt) }}</textarea>
+                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">{{ old('excerpt', $article->excerpt) }}</textarea>
                         @error('excerpt') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -58,7 +58,7 @@
                     <div>
                         <label for="meta_description" class="block mb-1.5 text-sm font-medium text-slate-700">Meta Description</label>
                         <textarea name="meta_description" id="meta_description" rows="2" maxlength="160"
-                            class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">{{ old('meta_description', $article->meta_description) }}</textarea>
+                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">{{ old('meta_description', $article->meta_description) }}</textarea>
                     </div>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                     
                     <div class="mb-5">
                         <label for="status" class="block mb-1.5 text-sm font-medium text-slate-700">Status</label>
-                        <select name="status" id="status" class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">
+                        <select name="status" id="status" class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <option value="draft" {{ old('status', $article->status) == 'draft' ? 'selected' : '' }}>Draft</option>
                             <option value="published" {{ old('status', $article->status) == 'published' ? 'selected' : '' }}>Published</option>
                             <option value="archived" {{ old('status', $article->status) == 'archived' ? 'selected' : '' }}>Archived</option>
@@ -79,7 +79,7 @@
 
                     <div class="mb-5">
                         <label for="category_id" class="block mb-1.5 text-sm font-medium text-slate-700">Kategori</label>
-                        <select name="category_id" id="category_id" class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">
+                        <select name="category_id" id="category_id" class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <option value="">Tanpa Kategori</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}" {{ old('category_id', $article->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>

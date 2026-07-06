@@ -149,7 +149,7 @@
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_name" required pattern="[A-Za-z0-9_]+" placeholder="myapp" maxlength="15"
-                        class="flex-1 px-3 py-2.5 text-sm font-mono outline-none bg-white">
+                        class="flex-1 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                 </div>
             </div>
 
@@ -163,7 +163,7 @@
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_username" required pattern="[A-Za-z0-9_]+" placeholder="user" maxlength="15"
-                        class="flex-1 px-3 py-2.5 text-sm font-mono outline-none bg-white">
+                        class="flex-1 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                 </div>
             </div>
 
@@ -181,7 +181,7 @@
                     </span>
                     <input type="text" name="db_password" id="modalPassword" required maxlength="32"
                         placeholder="Masukkan password kuat"
-                        class="flex-1 px-3 py-2.5 pr-10 text-sm font-mono outline-none bg-white">
+                        class="flex-1 pr-10 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                     <button type="button" id="btn-copy-modal-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-indigo-600" title="Copy">
                         <i class="fa-regular fa-copy"></i>
                     </button>

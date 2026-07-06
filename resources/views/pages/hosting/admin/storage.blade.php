@@ -77,7 +77,7 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Limit Storage Baru (MB)</label>
                             <input type="number" name="storage_limit_mb" id="storageLimitInput" required min="100"
-                                class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                class="focus:ring-1 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <p class="text-[11px] text-slate-500 mt-1">1024 MB = 1 GB. Minimal 100 MB.</p>
                         </div>
                     </div>

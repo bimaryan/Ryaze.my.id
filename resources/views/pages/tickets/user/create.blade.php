@@ -23,13 +23,13 @@
             <div class="p-6 space-y-5">
                 <div>
                     <label for="subject" class="block text-sm font-semibold text-slate-700 mb-1.5">Subjek</label>
-                    <input type="text" name="subject" id="subject" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Contoh: Domain saya tidak bisa diakses" required>
+                    <input type="text" name="subject" id="subject" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Contoh: Domain saya tidak bisa diakses" required>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label for="department" class="block text-sm font-semibold text-slate-700 mb-1.5">Departemen</label>
-                        <select name="department" id="department" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" required>
+                        <select name="department" id="department" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" required>
                             <option value="Hosting">Hosting</option>
                             <option value="Billing">Tagihan / Billing</option>
                             <option value="Teknis">Dukungan Teknis</option>
@@ -38,7 +38,7 @@
                     </div>
                     <div>
                         <label for="priority" class="block text-sm font-semibold text-slate-700 mb-1.5">Prioritas</label>
-                        <select name="priority" id="priority" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" required>
+                        <select name="priority" id="priority" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" required>
                             <option value="low">Rendah</option>
                             <option value="medium" selected>Sedang</option>
                             <option value="high">Tinggi (Penting)</option>
@@ -48,7 +48,7 @@
 
                 <div>
                     <label for="message" class="block text-sm font-semibold text-slate-700 mb-1.5">Pesan Anda</label>
-                    <textarea name="message" id="message" rows="6" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Jelaskan kendala Anda secara detail di sini..." required></textarea>
+                    <textarea name="message" id="message" rows="6" class="py-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Jelaskan kendala Anda secara detail di sini..." required></textarea>
                 </div>
             </div>
             

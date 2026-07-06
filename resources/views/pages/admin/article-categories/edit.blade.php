@@ -18,7 +18,7 @@
                 </div>
                 <div class="mb-5">
                     <label for="description" class="block mb-1.5 text-sm font-medium text-slate-700">Deskripsi</label>
-                    <textarea name="description" id="description" rows="3" class="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">{{ old('description', $category->description) }}</textarea>
+                    <textarea name="description" id="description" rows="3" class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">{{ old('description', $category->description) }}</textarea>
                     @error('description') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-3 px-6 rounded-lg transition shadow-sm">

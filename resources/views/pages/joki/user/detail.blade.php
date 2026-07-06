@@ -65,7 +65,7 @@
                         <form action="{{ route('user_joki.revision.store', $order->hashid) }}" method="POST">
                             @csrf
                             <textarea name="revision_note" rows="3" required placeholder="Jelaskan bagian mana yang perlu diperbaiki..."
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm mb-3 transition-shadow"></textarea>
+                                class="mb-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
                             <button type="submit"
                                 class="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors w-full sm:w-auto">
                                 Kirim Permintaan Revisi
