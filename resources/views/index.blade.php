@@ -45,10 +45,6 @@
     </script>
     <script src="https://kit.fontawesome.com/f74deb4653.js" crossorigin="anonymous" nonce="{{ csp_nonce() }}"></script>
     
-    <!-- DataTables & jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" nonce="{{ csp_nonce() }}"></script>
-    <link href="https://cdn.datatables.net/v/tw/dt-2.0.8/datatables.min.css" rel="stylesheet" nonce="{{ csp_nonce() }}">
-    <script src="https://cdn.datatables.net/v/tw/dt-2.0.8/datatables.min.js" nonce="{{ csp_nonce() }}"></script>
 </head>
 
 <body class="bg-mesh font-sans antialiased text-slate-900">
@@ -57,6 +53,91 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js" nonce="{{ csp_nonce() }}"></script>
     @include('components.hot-toast')
     @stack('scripts')
+
+    <!-- Global Smart AJAX Navigation -->
+    <script nonce="{{ csp_nonce() }}">
+        document.addEventListener('DOMContentLoaded', function () {
+            // Find the global PJAX container
+            const container = document.getElementById('pjax-container');
+            if (!container) return; // Only run on pages that use the page-layout
+            
+            let currentUrl = window.location.href;
+            
+            function fetchAndUpdate(url) {
+                container.style.opacity = '0.5';
+                container.style.pointerEvents = 'none';
+                
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContainer = doc.getElementById('pjax-container');
+                    
+                    if (newContainer) {
+                        container.innerHTML = newContainer.innerHTML;
+                    }
+                    
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'auto';
+                    
+                    // Update the URL without reloading the page
+                    if (url !== window.location.href) {
+                        window.history.pushState({path: url}, '', url);
+                        currentUrl = url;
+                    }
+                })
+                .catch(err => {
+                    console.error('Error fetching data:', err);
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'auto';
+                });
+            }
+
+            // Intercept Clicks on Links (Pagination, Filters)
+            document.body.addEventListener('click', function (e) {
+                const link = e.target.closest('a');
+                if (link && link.href && !link.href.includes('#')) {
+                    try {
+                        const urlObj = new URL(link.href);
+                        // If the base path is exactly the same, it's a filter/pagination
+                        if (urlObj.pathname === window.location.pathname) {
+                            e.preventDefault();
+                            fetchAndUpdate(link.href);
+                        }
+                    } catch(err) {}
+                }
+            });
+
+            // Intercept GET Forms (Search)
+            document.body.addEventListener('submit', function (e) {
+                const form = e.target.closest('form');
+                if (form && form.method.toUpperCase() === 'GET' && form.action) {
+                    try {
+                        const urlObj = new URL(form.action);
+                        if (urlObj.pathname === window.location.pathname) {
+                            e.preventDefault();
+                            const formData = new FormData(form);
+                            const params = new URLSearchParams(formData);
+                            urlObj.search = params.toString();
+                            fetchAndUpdate(urlObj.toString());
+                        }
+                    } catch(err) {}
+                }
+            });
+            
+            // Handle browser Back/Forward buttons
+            window.addEventListener('popstate', function (e) {
+                if (window.location.href !== currentUrl) {
+                    fetchAndUpdate(window.location.href);
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
