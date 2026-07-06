@@ -9,6 +9,8 @@ class PaymentCallbackController extends Controller
 {
     public function handleWebhook(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info('Pakasir Webhook Hit:', $request->all());
+        
         $notification = $request->all();
         $order_id = $notification['order_id'] ?? null;
         $amount = $notification['amount'] ?? null;
