@@ -174,54 +174,9 @@ class DashboardController extends Controller
 
         $user = Auth::user();
         $hasSubscription = $user->hasActiveHostingSubscription();
-        $voucherMessage = null;
-        $voucherFinalPrice = null;
 
-        if (!$hasSubscription && $request->filled('voucher_code')) {
-            $voucher = \App\Models\Voucher::where('code', strtoupper(trim($request->voucher_code)))->first();
-            
-            if (!$voucher || !$voucher->isValid()) {
-                return back()->withInput()->with('error', 'Kode voucher tidak valid, kuota habis, atau sudah tidak berlaku.');
-            }
-            
-            $basePrice = 10000;
-            $voucherFinalPrice = $basePrice - $voucher->calculateDiscount($basePrice);
-            
-            $voucher->increment('uses');
-            
-            if ($voucherFinalPrice <= 0) {
-                // Voucher 100% Gratis, langsung buat billing aktif
-                \App\Models\HostingBilling::create([
-                    'user_id' => $user->id,
-                    'hosting_project_id' => null,
-                    'plan_name' => 'Bulanan Rp 10.000',
-                    'amount' => 0,
-                    'billing_cycle' => 'monthly',
-                    'status' => 'active',
-                    'next_due_date' => now()->addMonth(),
-                ]);
-                $hasSubscription = true;
-                $voucherMessage = 'Voucher berhasil digunakan! Langganan Anda aktif secara gratis untuk 1 bulan.';
-                
-                // Hapus invoice lama jika ada, karena sudah tercover voucher 100%
-                \App\Models\HostingPayment::where('user_id', $user->id)
-                    ->where('invoice_number', 'like', 'HST-INV-%')
-                    ->where('status', 'unpaid')
-                    ->delete();
-                    
-                // Buat invoice lunas untuk riwayat
-                \App\Models\HostingPayment::create([
-                    'user_id' => $user->id,
-                    'hosting_project_id' => null,
-                    'invoice_number' => 'HST-INV-'. strtoupper(uniqid()),
-                    'amount' => 0,
-                    'status' => 'paid',
-                    'payment_method' => 'Voucher',
-                    'paid_at' => now(),
-                ]);
-            } else {
-                $voucherMessage = 'Voucher berhasil digunakan! Anda mendapatkan potongan harga.';
-            }
+        if (!$hasSubscription) {
+            return redirect()->route('user_hosting.billing')->with('error', 'Anda harus berlangganan hosting terlebih dahulu untuk mendeploy aplikasi.');
         }
 
         $project = HostingProject::create([
@@ -232,65 +187,27 @@ class DashboardController extends Controller
             'branch'       => $branch,
             'source_type'  => $sourceType,
             'ryaze_domain' => $subdomain.'.ryaze.my.id',
-            'status'       => $hasSubscription ? 'building' : 'unpaid',
+            'status'       => 'building',
         ]);
 
-        \Illuminate\Support\Facades\Log::info('Project created (' . ($hasSubscription ? 'Building' : 'Unpaid') . ')', [
+        \Illuminate\Support\Facades\Log::info('Project created (Building)', [
             'id' => $project->id,
             'source_type' => $project->source_type,
             'repo_source' => $project->repo_source
         ]);
 
-        if ($hasSubscription) {
-            $isTemplate = $sourceType === 'template';
-            $project->deployments()->create([
-                'status'     => 'queued',
-                'build_logs' => $isTemplate
-                    ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
-                    : "> Memulai proses Deploy awal...\n> Mengambil repository...",
-            ]);
-            AutoDeployProject::dispatch($project);
-            
-            $user->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat dan proses deployment telah dimulai.', 'info'));
-            
-            $successMsg = 'Project berhasil dibuat dan sedang dalam proses deployment!';
-            if ($voucherMessage) $successMsg = $voucherMessage . ' ' . $successMsg;
-            
-            return redirect()->route('user_hosting.show', $project->hashid)->with('success', $successMsg);
-        } else {
-            // Cek apakah user sudah punya tagihan langganan yang belum dibayar
-            $existingInvoice = \App\Models\HostingPayment::where('user_id', $user->id)
-                ->where('invoice_number', 'like', 'HST-INV-%')
-                ->where('status', 'unpaid')
-                ->first();
-
-            $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : 10000;
-
-            if (!$existingInvoice) {
-                \App\Models\HostingPayment::create([
-                    'user_id' => $user->id,
-                    'hosting_project_id' => null, // Invoice langganan akun
-                    'invoice_number' => 'HST-INV-'. strtoupper(uniqid()),
-                    'amount' => $invoiceAmount,
-                    'status' => 'unpaid',
-                ]);
-            } else {
-                if (isset($voucherFinalPrice) && $existingInvoice->amount != $invoiceAmount) {
-                    // Update invoice yang sudah ada dengan harga baru dan generate nomor invoice baru agar sistem payment (misal Pakasir) tidak duplikat
-                    $existingInvoice->update([
-                        'amount' => $invoiceAmount,
-                        'invoice_number' => 'HST-INV-'. strtoupper(uniqid())
-                    ]);
-                }
-            }
-
-            $user->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat. Silakan lakukan pembayaran tagihan langganan agar deployment dapat dimulai.', 'info'));
-            
-            $successMsg = 'Project berhasil dibuat. Silakan lakukan pembayaran langganan akun hosting Anda!';
-            if ($voucherMessage) $successMsg = $voucherMessage . ' ' . $successMsg;
-            
-            return redirect()->route('user_hosting.show', $project->hashid)->with('success', $successMsg);
-        }
+        $isTemplate = $sourceType === 'template';
+        $project->deployments()->create([
+            'status'     => 'queued',
+            'build_logs' => $isTemplate
+                ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
+                : "> Memulai proses Deploy awal...\n> Mengambil repository...",
+        ]);
+        AutoDeployProject::dispatch($project);
+        
+        $user->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat dan proses deployment telah dimulai.', 'info'));
+        
+        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat dan sedang dalam proses deployment!');
     }
 
     public function show($hashed_id)
@@ -1209,6 +1126,94 @@ PHP;
             ->paginate(15);
 
         return view('pages.hosting.user.billing', compact('billings'));
+    }
+
+    public function subscribe(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->hasActiveHostingSubscription()) {
+            return back()->with('error', 'Anda sudah memiliki langganan hosting yang aktif.');
+        }
+
+        $voucherFinalPrice = null;
+        $voucherMessage = null;
+
+        if ($request->filled('voucher_code')) {
+            $voucher = \App\Models\Voucher::where('code', strtoupper(trim($request->voucher_code)))->first();
+            
+            if (!$voucher || !$voucher->isValid()) {
+                return back()->withInput()->with('error', 'Kode voucher tidak valid, kuota habis, atau sudah tidak berlaku.');
+            }
+            
+            $basePrice = 10000;
+            $voucherFinalPrice = $basePrice - $voucher->calculateDiscount($basePrice);
+            
+            $voucher->increment('uses');
+            
+            if ($voucherFinalPrice <= 0) {
+                // Voucher 100% Gratis, langsung buat billing aktif
+                \App\Models\HostingBilling::create([
+                    'user_id' => $user->id,
+                    'hosting_project_id' => null,
+                    'plan_name' => 'Bulanan Rp 10.000',
+                    'amount' => 0,
+                    'billing_cycle' => 'monthly',
+                    'status' => 'active',
+                    'next_due_date' => now()->addMonth(),
+                ]);
+                
+                // Hapus invoice lama jika ada
+                \App\Models\HostingPayment::where('user_id', $user->id)
+                    ->where('invoice_number', 'like', 'HST-INV-%')
+                    ->where('status', 'unpaid')
+                    ->delete();
+                    
+                // Buat invoice lunas
+                \App\Models\HostingPayment::create([
+                    'user_id' => $user->id,
+                    'hosting_project_id' => null,
+                    'invoice_number' => 'HST-INV-'. strtoupper(uniqid()),
+                    'amount' => 0,
+                    'status' => 'paid',
+                    'payment_method' => 'Voucher',
+                    'paid_at' => now(),
+                ]);
+
+                return back()->with('success', 'Voucher berhasil digunakan! Langganan Anda aktif secara gratis untuk 1 bulan.');
+            } else {
+                $voucherMessage = 'Voucher berhasil digunakan! Anda mendapatkan potongan harga.';
+            }
+        }
+
+        $existingInvoice = \App\Models\HostingPayment::where('user_id', $user->id)
+            ->where('invoice_number', 'like', 'HST-INV-%')
+            ->where('status', 'unpaid')
+            ->first();
+
+        $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : 10000;
+
+        if (!$existingInvoice) {
+            \App\Models\HostingPayment::create([
+                'user_id' => $user->id,
+                'hosting_project_id' => null,
+                'invoice_number' => 'HST-INV-'. strtoupper(uniqid()),
+                'amount' => $invoiceAmount,
+                'status' => 'unpaid',
+            ]);
+        } else {
+            if (isset($voucherFinalPrice) && $existingInvoice->amount != $invoiceAmount) {
+                $existingInvoice->update([
+                    'amount' => $invoiceAmount,
+                    'invoice_number' => 'HST-INV-'. strtoupper(uniqid())
+                ]);
+            }
+        }
+
+        $successMsg = 'Tagihan langganan berhasil dibuat. Silakan selesaikan pembayaran.';
+        if ($voucherMessage) $successMsg = $voucherMessage . ' ' . $successMsg;
+
+        return back()->with('success', $successMsg);
     }
 
     public function deleteProject(Request $request, $hashid)
