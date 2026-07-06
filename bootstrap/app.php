@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Security headers (CSP, X-Frame-Options, etc.)
         $middleware->append(SecurityHeaders::class);
+        
+        // Maintenance Mode
+        $middleware->append(\App\Http\Middleware\CheckMaintenanceMode::class);
 
         // Role-based authorization alias
         $middleware->alias([
