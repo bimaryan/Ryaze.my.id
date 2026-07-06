@@ -341,7 +341,7 @@
                                 </div>
                             </label>
 
-                            <label class="relative cursor-pointer opacity-60" onclick="alert('Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.')">
+                            <label class="relative cursor-pointer opacity-60" onclick="Swal.fire({icon: 'info', title: 'Informasi', text: 'Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.'})">
                                 <input type="radio" name="framework" value="python" class="peer hidden" disabled>
                                 <div class="p-3 border-2 border-slate-200 rounded-xl bg-slate-50 transition-all text-center cursor-not-allowed">
                                     <i class="fa-brands fa-python text-2xl text-yellow-500 mb-1.5 block opacity-60"></i>
