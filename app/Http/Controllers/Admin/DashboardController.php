@@ -66,6 +66,48 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // 7. Chart Data (Pie, Line, Bar)
+        
+        // 7a. Pie Chart: User Roles
+        $rolesCount = User::selectRaw('role, count(*) as count')->groupBy('role')->pluck('count', 'role')->toArray();
+        $chartUserRoles = [
+            'labels' => array_keys($rolesCount),
+            'series' => array_values($rolesCount)
+        ];
+
+        // 7b. Line Chart: User Registrations (Last 6 Months)
+        $months = [];
+        $registrations = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->startOfMonth()->subMonths($i);
+            $months[] = $date->translatedFormat('M Y');
+            $registrations[] = User::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count();
+        }
+        $chartUserRegistrations = [
+            'labels' => $months,
+            'series' => $registrations
+        ];
+
+        // 7c. Bar Chart: Revenue Last 6 Months (Joki vs Hosting)
+        $jokiRev = [];
+        $hostingRev = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->startOfMonth()->subMonths($i);
+            $jokiRev[] = JokiPayment::where('status', 'paid')
+                ->whereMonth('paid_at', $date->month)
+                ->whereYear('paid_at', $date->year)
+                ->sum('amount');
+            $hostingRev[] = HostingPayment::where('status', 'paid')
+                ->whereMonth('paid_at', $date->month)
+                ->whereYear('paid_at', $date->year)
+                ->sum('amount');
+        }
+        $chartRevenue = [
+            'labels' => $months,
+            'joki' => $jokiRev,
+            'hosting' => $hostingRev
+        ];
+
         return view('pages.admin.index', compact(
             'totalUsers',
             'activeJokiOrders',
@@ -82,7 +124,10 @@ class DashboardController extends Controller
             'totalStorageMB',
             'recentUsers',
             'recentJokiOrders',
-            'recentHostingProjects'
+            'recentHostingProjects',
+            'chartUserRoles',
+            'chartUserRegistrations',
+            'chartRevenue'
         ));
     }
 }

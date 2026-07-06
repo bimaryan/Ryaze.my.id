@@ -104,6 +104,27 @@
             </x-ui.card>
         </div>
 
+        {{-- ══ CHARTS SECTION ══════════════════════════════════════════ --}}
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Line Chart: Tren Tagihan -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Tren Pendapatan Hosting (6 Bulan Terakhir)</h3>
+                <div id="chart-hosting-billings"></div>
+            </div>
+
+            <!-- Pie Chart: Status Proyek -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Distribusi Status Proyek</h3>
+                <div id="chart-project-status" class="flex justify-center"></div>
+            </div>
+
+            <!-- Bar Chart: Proyek Baru -->
+            <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Proyek Hosting Baru (6 Bulan Terakhir)</h3>
+                <div id="chart-new-projects"></div>
+            </div>
+        </div>
+
         {{-- ══ NAVIGASI MENU (PENGGANTI TABEL) ════════════════════════════ --}}
         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -172,3 +193,95 @@
         </div>
     </x-ui.page-layout>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Line Chart: Hosting Revenue (Billings)
+        var optionsBillings = {
+            series: [{
+                name: 'Pendapatan',
+                data: @json($chartBillings['series'])
+            }],
+            chart: {
+                type: 'line',
+                height: 300,
+                toolbar: { show: false },
+                fontFamily: 'inherit'
+            },
+            colors: ['#10b981'],
+            stroke: { curve: 'smooth', width: 3 },
+            xaxis: {
+                categories: @json($chartBillings['labels']),
+                tooltip: { enabled: false }
+            },
+            yaxis: {
+                labels: {
+                    formatter: function(val) {
+                        return "Rp " + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
+                }
+            },
+            dataLabels: { enabled: false },
+            tooltip: {
+                theme: 'light',
+                y: {
+                    formatter: function (val) {
+                        return "Rp " + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
+                }
+            }
+        };
+        new ApexCharts(document.querySelector("#chart-hosting-billings"), optionsBillings).render();
+
+        // 2. Pie Chart: Project Status
+        var optionsStatus = {
+            series: @json($chartProjectStatus['series']),
+            chart: {
+                type: 'pie',
+                height: 300,
+                fontFamily: 'inherit'
+            },
+            labels: @json($chartProjectStatus['labels']),
+            colors: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#64748b'],
+            dataLabels: { enabled: false },
+            legend: {
+                position: 'bottom'
+            }
+        };
+        new ApexCharts(document.querySelector("#chart-project-status"), optionsStatus).render();
+
+        // 3. Bar Chart: New Projects
+        var optionsProjects = {
+            series: [{
+                name: 'Proyek Baru',
+                data: @json($chartNewProjects['series'])
+            }],
+            chart: {
+                type: 'bar',
+                height: 350,
+                toolbar: { show: false },
+                fontFamily: 'inherit'
+            },
+            colors: ['#3b82f6'],
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    columnWidth: '40%'
+                },
+            },
+            xaxis: {
+                categories: @json($chartNewProjects['labels']),
+            },
+            yaxis: {
+                labels: { formatter: function(val) { return Math.round(val); } }
+            },
+            dataLabels: { enabled: false },
+            tooltip: {
+                y: { formatter: function (val) { return val + " Proyek" } }
+            }
+        };
+        new ApexCharts(document.querySelector("#chart-new-projects"), optionsProjects).render();
+    });
+</script>
+@endpush

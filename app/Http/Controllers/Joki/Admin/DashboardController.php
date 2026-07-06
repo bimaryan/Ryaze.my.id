@@ -27,13 +27,51 @@ class DashboardController extends Controller
             ->orderBy('deadline', 'asc') // Urutkan dari deadline terdekat
             ->get();
 
-        // 3. Kirim data ke view
+        // 3. Chart Data
+        // 3a. Pie Chart: Order Status
+        $statusCount = JokiOrder::selectRaw('status, count(*) as count')->groupBy('status')->pluck('count', 'status')->toArray();
+        $chartOrderStatus = [
+            'labels' => array_keys($statusCount),
+            'series' => array_values($statusCount)
+        ];
+
+        // 3b. Bar Chart: New Orders (Last 6 Months)
+        $months = [];
+        $newOrders = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = \Carbon\Carbon::now()->startOfMonth()->subMonths($i);
+            $months[] = $date->translatedFormat('M Y');
+            $newOrders[] = JokiOrder::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count();
+        }
+        $chartNewOrders = [
+            'labels' => $months,
+            'series' => $newOrders
+        ];
+
+        // 3c. Line Chart: Completed Orders Trend
+        $completedOrdersTrend = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = \Carbon\Carbon::now()->startOfMonth()->subMonths($i);
+            $completedOrdersTrend[] = JokiOrder::where('status', 'completed')
+                ->whereMonth('updated_at', $date->month)
+                ->whereYear('updated_at', $date->year)
+                ->count();
+        }
+        $chartCompletedOrders = [
+            'labels' => $months,
+            'series' => $completedOrdersTrend
+        ];
+
+        // 4. Kirim data ke view
         return view('pages.joki.admin.index', compact(
             'pendingOrders',
             'progressOrders',
             'reviewOrders',
             'completedOrders',
-            'queueOrders'
+            'queueOrders',
+            'chartOrderStatus',
+            'chartNewOrders',
+            'chartCompletedOrders'
         ));
     }
 

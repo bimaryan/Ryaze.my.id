@@ -25,8 +25,42 @@ class DashboardController extends Controller
             'building_now' => HostingProject::where('status', 'building')->count(),
             'action_required' => HostingProject::whereIn('status', ['unpaid', 'error', 'suspended'])->count(),
         ];
+        // Charts Data
+        // 1. Bar Chart: Proyek Baru (6 Bulan Terakhir)
+        $months = [];
+        $newProjects = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = \Carbon\Carbon::now()->startOfMonth()->subMonths($i);
+            $months[] = $date->translatedFormat('M Y');
+            $newProjects[] = HostingProject::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count();
+        }
+        $chartNewProjects = [
+            'labels' => $months,
+            'series' => $newProjects
+        ];
 
-        return view('pages.hosting.admin.index', compact('stats'));
+        // 2. Pie Chart: Status Proyek
+        $statusCount = HostingProject::selectRaw('status, count(*) as count')->groupBy('status')->pluck('count', 'status')->toArray();
+        $chartProjectStatus = [
+            'labels' => array_keys($statusCount),
+            'series' => array_values($statusCount)
+        ];
+
+        // 3. Line Chart: Tren Tagihan Terbayar (6 Bulan Terakhir)
+        $paidBillings = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = \Carbon\Carbon::now()->startOfMonth()->subMonths($i);
+            $paidBillings[] = HostingPayment::where('status', 'paid')
+                ->whereMonth('paid_at', $date->month)
+                ->whereYear('paid_at', $date->year)
+                ->sum('amount');
+        }
+        $chartBillings = [
+            'labels' => $months,
+            'series' => $paidBillings
+        ];
+
+        return view('pages.hosting.admin.index', compact('stats', 'chartNewProjects', 'chartProjectStatus', 'chartBillings'));
     }
 
     // 2. Halaman Membutuhkan Tindakan

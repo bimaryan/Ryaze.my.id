@@ -30,6 +30,27 @@
                 </div>
             </div>
 
+            {{-- ══ CHARTS SECTION ══════════════════════════════════════════ --}}
+            <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Line Chart: Selesai -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Tren Pesanan Selesai (6 Bulan Terakhir)</h3>
+                    <div id="chart-completed-orders"></div>
+                </div>
+
+                <!-- Pie Chart: Status -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Distribusi Status Pesanan</h3>
+                    <div id="chart-order-status" class="flex justify-center"></div>
+                </div>
+
+                <!-- Bar Chart: Baru -->
+                <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Pesanan Joki Baru (6 Bulan Terakhir)</h3>
+                    <div id="chart-new-orders"></div>
+                </div>
+            </div>
+
             {{-- Tabel Antrean --}}
             <div class="mt-8">
                 <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Antrean Pekerjaan Aktif</h2>
@@ -90,3 +111,80 @@
         </div>
     </x-ui.page-layout>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Line Chart: Completed Orders
+        var optionsCompleted = {
+            series: [{
+                name: 'Pesanan Selesai',
+                data: @json($chartCompletedOrders['series'])
+            }],
+            chart: {
+                type: 'line',
+                height: 300,
+                toolbar: { show: false },
+                fontFamily: 'inherit'
+            },
+            colors: ['#10b981'],
+            stroke: { curve: 'smooth', width: 3 },
+            xaxis: {
+                categories: @json($chartCompletedOrders['labels']),
+                tooltip: { enabled: false }
+            },
+            yaxis: {
+                labels: { formatter: function(val) { return Math.round(val); } }
+            },
+            dataLabels: { enabled: false }
+        };
+        new ApexCharts(document.querySelector("#chart-completed-orders"), optionsCompleted).render();
+
+        // 2. Pie Chart: Order Status
+        var optionsStatus = {
+            series: @json($chartOrderStatus['series']),
+            chart: {
+                type: 'pie',
+                height: 300,
+                fontFamily: 'inherit'
+            },
+            labels: @json($chartOrderStatus['labels']),
+            colors: ['#f59e0b', '#3b82f6', '#8b5cf6', '#10b981', '#ef4444'],
+            dataLabels: { enabled: false },
+            legend: {
+                position: 'bottom'
+            }
+        };
+        new ApexCharts(document.querySelector("#chart-order-status"), optionsStatus).render();
+
+        // 3. Bar Chart: New Orders
+        var optionsNewOrders = {
+            series: [{
+                name: 'Pesanan Baru',
+                data: @json($chartNewOrders['series'])
+            }],
+            chart: {
+                type: 'bar',
+                height: 350,
+                toolbar: { show: false },
+                fontFamily: 'inherit'
+            },
+            colors: ['#6366f1'],
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    columnWidth: '40%'
+                },
+            },
+            xaxis: {
+                categories: @json($chartNewOrders['labels']),
+            },
+            yaxis: {
+                labels: { formatter: function(val) { return Math.round(val); } }
+            },
+            dataLabels: { enabled: false }
+        };
+        new ApexCharts(document.querySelector("#chart-new-orders"), optionsNewOrders).render();
+    });
+</script>
+@endpush

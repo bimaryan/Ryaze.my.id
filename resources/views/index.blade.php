@@ -45,6 +45,8 @@
     </script>
     <script src="https://kit.fontawesome.com/f74deb4653.js" crossorigin="anonymous" nonce="{{ csp_nonce() }}"></script>
     
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts" nonce="{{ csp_nonce() }}"></script>
 </head>
 
 <body class="bg-mesh font-sans antialiased text-slate-900">

@@ -135,6 +135,27 @@
                 </a>
             </div>
 
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Line Chart: Pendaftaran Pengguna -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Tren Pendaftaran Pengguna</h3>
+                    <div id="chart-user-registrations"></div>
+                </div>
+
+                <!-- Pie Chart: Tipe Pengguna -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Distribusi Peran Pengguna</h3>
+                    <div id="chart-user-roles" class="flex justify-center"></div>
+                </div>
+
+                <!-- Bar Chart: Pendapatan -->
+                <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Perbandingan Pendapatan Joki vs Hosting (6 Bulan Terakhir)</h3>
+                    <div id="chart-revenue"></div>
+                </div>
+            </div>
+
             <!-- Detailed Revenue Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Joki Revenue -->
@@ -387,3 +408,110 @@
         </div>
     </x-ui.page-layout>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Line Chart: User Registrations
+        var optionsRegistrations = {
+            series: [{
+                name: 'Pengguna Baru',
+                data: @json($chartUserRegistrations['series'])
+            }],
+            chart: {
+                type: 'line',
+                height: 300,
+                toolbar: { show: false },
+                fontFamily: 'inherit'
+            },
+            colors: ['#3b82f6'],
+            stroke: { curve: 'smooth', width: 3 },
+            xaxis: {
+                categories: @json($chartUserRegistrations['labels']),
+                tooltip: { enabled: false }
+            },
+            yaxis: {
+                labels: { formatter: function(val) { return Math.round(val); } }
+            },
+            dataLabels: { enabled: false },
+            tooltip: {
+                theme: 'light',
+                y: { formatter: function (val) { return val + " Pengguna" } }
+            }
+        };
+        new ApexCharts(document.querySelector("#chart-user-registrations"), optionsRegistrations).render();
+
+        // 2. Pie Chart: User Roles
+        var optionsRoles = {
+            series: @json($chartUserRoles['series']),
+            chart: {
+                type: 'donut',
+                height: 300,
+                fontFamily: 'inherit'
+            },
+            labels: @json($chartUserRoles['labels']),
+            colors: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+            dataLabels: { enabled: false },
+            plotOptions: {
+                pie: {
+                    donut: { size: '70%' },
+                    expandOnClick: false
+                }
+            },
+            legend: {
+                position: 'bottom'
+            }
+        };
+        new ApexCharts(document.querySelector("#chart-user-roles"), optionsRoles).render();
+
+        // 3. Bar Chart: Revenue
+        var optionsRevenue = {
+            series: [{
+                name: 'Jasa Joki Code',
+                data: @json($chartRevenue['joki'])
+            }, {
+                name: 'Hosting & Deployment',
+                data: @json($chartRevenue['hosting'])
+            }],
+            chart: {
+                type: 'bar',
+                height: 350,
+                stacked: true,
+                toolbar: { show: false },
+                fontFamily: 'inherit'
+            },
+            colors: ['#4f46e5', '#10b981'],
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    borderRadius: 4,
+                    columnWidth: '40%'
+                },
+            },
+            xaxis: {
+                categories: @json($chartRevenue['labels']),
+            },
+            yaxis: {
+                labels: {
+                    formatter: function(val) {
+                        return "Rp " + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
+                }
+            },
+            dataLabels: { enabled: false },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return "Rp " + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'left'
+            }
+        };
+        new ApexCharts(document.querySelector("#chart-revenue"), optionsRevenue).render();
+    });
+</script>
+@endpush
