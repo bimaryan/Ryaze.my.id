@@ -13,8 +13,7 @@
         "laravel/tinker": "^3.0",
         "maatwebsite/excel": "*",
         "midtrans/midtrans-php": "^2.6",
-        "vinkla/hashids": "^14.0",
-        "yajra/laravel-datatables-oracle": "*"
+        "vinkla/hashids": "^14.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

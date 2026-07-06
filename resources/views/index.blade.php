@@ -44,11 +44,6 @@
         });
     </script>
     <script src="https://kit.fontawesome.com/f74deb4653.js" crossorigin="anonymous" nonce="{{ csp_nonce() }}"></script>
-    
-    <!-- DataTables & jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" nonce="{{ csp_nonce() }}"></script>
-    <link href="https://cdn.datatables.net/v/tw/dt-2.0.8/datatables.min.css" rel="stylesheet" nonce="{{ csp_nonce() }}">
-    <script src="https://cdn.datatables.net/v/tw/dt-2.0.8/datatables.min.js" nonce="{{ csp_nonce() }}"></script>
 </head>
 
 <body class="bg-mesh font-sans antialiased text-slate-900">

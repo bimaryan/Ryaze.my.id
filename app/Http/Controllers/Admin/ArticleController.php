@@ -18,74 +18,27 @@ class ArticleController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $query = Article::with(['user', 'category'])->latest();
+        $query = Article::with(['user', 'category'])->latest();
 
-            if ($request->filled('status')) {
-                $query->where('status', $request->status);
-            }
-
-            if ($request->filled('category')) {
-                $decoded = Hashids::decode($request->category);
-                if (!empty($decoded)) {
-                    $query->where('category_id', $decoded[0]);
-                }
-            }
-
-            return \Yajra\DataTables\Facades\DataTables::of($query)
-                ->addColumn('title_html', function($article) {
-                    $img = $article->image_path 
-                        ? '<img src="' . Storage::url($article->image_path) . '" alt="' . $article->title . '" class="w-12 h-12 object-cover rounded-lg border border-slate-200">' 
-                        : '<div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-400 border border-indigo-100"><i class="fa-solid fa-image"></i></div>';
-                    
-                    $category = $article->category ? '<a href="'.route('superadmin.articles.index', ['category' => $article->category->hashid]).'" class="text-[10px] text-indigo-500 hover:underline mt-0.5 font-bold"><i class="fa-solid fa-folder mr-1"></i>'.$article->category->name.'</a>' : '<span class="text-[10px] text-slate-400 mt-0.5"><i class="fa-solid fa-folder-open mr-1"></i>Tanpa Kategori</span>';
-
-                    return '<div class="flex items-center gap-3">' . $img . '<div class="flex flex-col min-w-0"><span class="font-medium text-slate-800 truncate max-w-[250px]">' . $article->title . '</span>' . $category . '</div></div>';
-                })
-                ->addColumn('author', function($article) {
-                    return '<div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[10px] uppercase border border-slate-200">'.substr($article->user->name, 0, 1).'</div><span class="text-xs font-medium text-slate-700">'.$article->user->name.'</span></div>';
-                })
-                ->addColumn('status_html', function($article) {
-                    if ($article->status === 'published') {
-                        return '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase rounded"><i class="fa-solid fa-check-circle mr-1"></i>Published</span>';
-                    } elseif ($article->status === 'draft') {
-                        return '<span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded"><i class="fa-solid fa-file-lines mr-1"></i>Draft</span>';
-                    } else {
-                        return '<span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold uppercase rounded"><i class="fa-solid fa-box-archive mr-1"></i>Archived</span>';
-                    }
-                })
-                ->addColumn('views', function($article) {
-                    return '<span class="text-xs text-slate-600 font-medium"><i class="fa-regular fa-eye text-slate-400 mr-1"></i>' . number_format($article->views) . '</span>';
-                })
-                ->addColumn('created_at_formatted', function($article) {
-                    return '<div class="text-xs text-slate-600"><div class="font-medium">'.\Carbon\Carbon::parse($article->created_at)->translatedFormat('d M Y').'</div><div class="text-slate-400">'.\Carbon\Carbon::parse($article->created_at)->translatedFormat('H:i').'</div></div>';
-                })
-                ->addColumn('action', function($article) {
-                    $editRoute = route('superadmin.articles.edit', $article->hashid);
-                    $deleteRoute = route('superadmin.articles.destroy', $article->hashid);
-                    $csrf = csrf_field();
-                    $methodDelete = method_field('DELETE');
-
-                    return '
-                        <div class="flex items-center justify-center gap-2">
-                            <a href="'.$editRoute.'" class="p-1.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition" title="Edit Artikel">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
-                            <form action="'.$deleteRoute.'" method="POST" class="inline">
-                                '.$csrf.' '.$methodDelete.'
-                                <button type="button" onclick="confirmDelete(this)" class="p-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition" title="Hapus Artikel">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
-                        </div>
-                    ';
-                })
-                ->rawColumns(['title_html', 'author', 'status_html', 'views', 'created_at_formatted', 'action'])
-                ->make(true);
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
         }
 
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('category')) {
+            $decoded = Hashids::decode($request->category);
+            if (!empty($decoded)) {
+                $query->where('category_id', $decoded[0]);
+            }
+        }
+
+        $articles = $query->paginate(15)->withQueryString();
         $categories = ArticleCategory::orderBy('name')->get();
-        return view('pages.admin.articles.index', compact('categories'));
+
+        return view('pages.admin.articles.index', compact('articles', 'categories'));
     }
 
     public function create()

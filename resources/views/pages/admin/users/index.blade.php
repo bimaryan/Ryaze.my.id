@@ -17,69 +17,164 @@
                 <a href="{{ route('superadmin.users.index', ['role' => 'superadmin']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'superadmin' ? 'bg-purple-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Superadmin</a>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                    <h2 class="text-lg font-bold text-slate-800">Daftar Pengguna</h2>
-                </div>
-                <div class="p-4 overflow-x-auto">
-                    <table id="usersTable" class="w-full text-sm text-left text-slate-500">
-                        <thead class="text-xs text-slate-700 uppercase bg-slate-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-4 rounded-tl-lg">Nama Pengguna</th>
-                                <th scope="col" class="px-6 py-4">Email Address</th>
-                                <th scope="col" class="px-6 py-4">Role / Tipe Akun</th>
-                                <th scope="col" class="px-6 py-4">Tanggal Daftar</th>
-                                <th scope="col" class="px-6 py-4 text-center rounded-tr-lg">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- DataTables will inject rows here -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-1 gap-4">
+                <h2 class="text-lg font-bold text-slate-800">Daftar Pengguna</h2>
+                
+                <form action="{{ route('superadmin.users.index') }}" method="GET" class="flex items-center w-full sm:w-auto">
+                    @if(request()->has('role'))
+                        <input type="hidden" name="role" value="{{ request('role') }}">
+                    @endif
+                    <div class="relative w-full sm:w-64">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <i class="fa-solid fa-search text-slate-400"></i>
+                        </div>
+                        <input type="text" name="search" class="text-slate-800 block ps-9 p-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Cari nama atau email..." value="{{ request('search') }}">
+                    </div>
+                    <button type="submit" class="p-2 ms-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm transition">
+                        Cari
+                    </button>
+                    @if(request()->has('search') && request()->search != '')
+                        <a href="{{ route('superadmin.users.index', request()->has('role') ? ['role' => request('role')] : []) }}" class="p-2 ms-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
+                            Reset
+                        </a>
+                    @endif
+                </form>
             </div>
+            <x-ui.table>
+                <x-slot:head>
+                    <th scope="col" class="px-6 py-4">Nama Pengguna</th>
+                    <th scope="col" class="px-6 py-4">Email Address</th>
+                    <th scope="col" class="px-6 py-4">Role / Tipe Akun</th>
+                    <th scope="col" class="px-6 py-4">Tanggal Daftar</th>
+                    <th scope="col" class="px-6 py-4 text-center">Aksi</th>
+                </x-slot:head>
+                            @forelse($users as $user)
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm uppercase shadow-sm border border-slate-200">
+                                    {{ substr($user->name, 0, 1) }}
+                                </div>
+                                {{ $user->name }}
+                            </td>
+                            <td class="px-6 py-4">{{ $user->email }}</td>
+                            <td class="px-6 py-4">
+                                @if ($user->role == 'user_joki')
+                                    <span
+                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-blue-50 text-blue-600 border border-blue-200">Jasa
+                                        Joki Code</span>
+                                @elseif($user->role == 'user_hosting')
+                                    <span
+                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-emerald-50 text-emerald-600 border border-emerald-200">App
+                                        Deployment</span>
+                                @else
+                                    <span
+                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-purple-50 text-purple-600 border border-purple-200 uppercase">{{ str_replace('_', ' ', $user->role) }}</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('d F Y, H:i') }}
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <a href="{{ route('superadmin.users.show', $user->hashid) }}"
+                                    class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                    title="Detail Profil">
+                                    <i class="fa-regular fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                                <i class="fa-solid fa-users-slash text-3xl mb-3 text-slate-300"></i>
+                                <p>Belum ada data pengguna.</p>
+                            </td>
+                        </tr>
+                        @endforelse
+                <x-slot:pagination>
+                    @if ($users->hasPages())
+                        {{ $users->links() }}
+                    @endif
+                </x-slot:pagination>
+            </x-ui.table>
         </div>
     </x-ui.page-layout>
 @endsection
 
 @push('scripts')
 <script>
-    $(document).ready(function() {
-        $('#usersTable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{!! route('superadmin.users.index', request()->query()) !!}",
-            columns: [
-                { 
-                    data: 'name', 
-                    name: 'name',
-                    render: function(data, type, row) {
-                        return `<div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm uppercase shadow-sm border border-slate-200">
-                                        ${row.avatar}
-                                    </div>
-                                    <span class="font-medium text-slate-800">${data}</span>
-                                </div>`;
-                    }
-                },
-                { data: 'email', name: 'email' },
-                { data: 'role_badge', name: 'role', orderable: false, searchable: false },
-                { data: 'created_at_formatted', name: 'created_at', searchable: false },
-                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
-            ],
-            language: {
-                search: "Cari:",
-                lengthMenu: "Tampilkan _MENU_ data per halaman",
-                zeroRecords: "Tidak ada data yang ditemukan",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
-                infoFiltered: "(difilter dari _MAX_ total data)",
-                paginate: {
-                    first: "Pertama",
-                    last: "Terakhir",
-                    next: "Selanjutnya",
-                    previous: "Sebelumnya"
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('users-container');
+        let currentUrl = window.location.href;
+        
+        function fetchAndUpdate(url) {
+            container.style.opacity = '0.5';
+            container.style.pointerEvents = 'none';
+            
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContainer = doc.getElementById('users-container');
+                
+                if (newContainer) {
+                    container.innerHTML = newContainer.innerHTML;
+                }
+                
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+                
+                // Update the URL without reloading the page
+                if (url !== window.location.href) {
+                    window.history.pushState({path: url}, '', url);
+                    currentUrl = url;
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching data:', err);
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            });
+        }
+
+        container.addEventListener('click', function (e) {
+            const link = e.target.closest('a');
+            if (link && link.href && !link.href.includes('#')) {
+                try {
+                    const urlObj = new URL(link.href);
+                    // Only intercept if the link is exactly /superadmin/users (ignoring query params)
+                    if (urlObj.pathname === '/superadmin/users') {
+                        e.preventDefault();
+                        fetchAndUpdate(link.href);
+                    }
+                } catch(e) {}
+            }
+        });
+
+        container.addEventListener('submit', function (e) {
+            const form = e.target.closest('form');
+            if (form && form.action) {
+                try {
+                    const urlObj = new URL(form.action);
+                    if (urlObj.pathname === '/superadmin/users') {
+                        e.preventDefault();
+                        const formData = new FormData(form);
+                        const params = new URLSearchParams(formData);
+                        urlObj.search = params.toString();
+                        fetchAndUpdate(urlObj.toString());
+                    }
+                } catch(e) {}
+            }
+        });
+        
+        window.addEventListener('popstate', function (e) {
+            if (window.location.href !== currentUrl) {
+                fetchAndUpdate(window.location.href);
             }
         });
     });
