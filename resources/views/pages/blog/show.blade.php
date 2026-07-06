@@ -64,7 +64,7 @@
             <div class="flex justify-between items-center h-16">
                 <a href="{{ url('/') }}" class="flex items-center gap-2.5">
                     <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-code text-sm"></i></div>
-                    <span class="text-xl font-bold tracking-tight text-indigo-600">Ryaze Portal</span>
+                    <span class="text-xl font-bold tracking-tight text-indigo-600">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
                 </a>
                 <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
                     <a href="{{ url('/') }}" class="hover:text-indigo-600 transition-colors">Beranda</a>
@@ -190,7 +190,7 @@
     {{-- Footer --}}
     <footer class="bg-white border-t border-slate-200 py-8">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
-            <p>&copy; {{ date('Y') }} Ryaze Portal. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}. All rights reserved.</p>
             <p>Engineered by Bima Ryan.</p>
         </div>
     </footer>

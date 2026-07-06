@@ -80,7 +80,7 @@
                     <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
                         <i class="fa-solid fa-code text-sm"></i>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-indigo-600">Ryaze Portal</span>
+                    <span class="text-xl font-bold tracking-tight text-indigo-600">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
                 </a>
 
                 <!-- Desktop Menu -->
@@ -405,7 +405,7 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="flex items-center gap-2 text-indigo-600">
                     <i class="fa-solid fa-code text-lg"></i>
-                    <span class="text-xl font-bold tracking-tight">Ryaze Portal</span>
+                    <span class="text-xl font-bold tracking-tight">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
                 </div>
                 <div class="flex gap-6">
                     <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-indigo-600 transition-colors">
@@ -417,7 +417,7 @@
                 </div>
             </div>
             <div class="mt-8 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
-                <p>&copy; {{ date('Y') }} Ryaze Portal. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}. All rights reserved.</p>
                 <p>Engineered by Bima Ryan.</p>
             </div>
         </div>

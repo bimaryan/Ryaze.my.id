@@ -17,7 +17,7 @@
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
 
             <div class="bg-indigo-600 px-8 py-10 text-center">
-                <h1 class="text-3xl font-bold text-white tracking-tight">Ryaze Portal</h1>
+                <h1 class="text-3xl font-bold text-white tracking-tight">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</h1>
                 <p class="text-indigo-200 mt-2 text-sm">Masuk untuk mengelola Joki & Hosting Anda</p>
             </div>
 

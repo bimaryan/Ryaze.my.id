@@ -15,8 +15,7 @@
                 </button>
 
                 <a href="{{ url('/') }}" class="flex ms-2 md:me-24 items-center gap-2">
-                    <span class="self-center text-xl text-indigo-600 font-bold sm:text-2xl whitespace-nowrap">Ryaze
-                        Portal</span>
+                    <span class="self-center text-xl text-indigo-600 font-bold sm:text-2xl whitespace-nowrap">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
                 </a>
             </div>
 
