@@ -341,11 +341,11 @@
                                 </div>
                             </label>
 
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="python" class="peer hidden">
-                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-python text-2xl text-yellow-500 mb-1.5 block"></i>
-                                    <p class="font-bold text-slate-700 text-xs">Python</p>
+                            <label class="relative cursor-pointer opacity-60" onclick="alert('Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.')">
+                                <input type="radio" name="framework" value="python" class="peer hidden" disabled>
+                                <div class="p-3 border-2 border-slate-200 rounded-xl bg-slate-50 transition-all text-center cursor-not-allowed">
+                                    <i class="fa-brands fa-python text-2xl text-yellow-500 mb-1.5 block opacity-60"></i>
+                                    <p class="font-bold text-slate-700 text-xs opacity-60">Python</p>
                                 </div>
                             </label>
 

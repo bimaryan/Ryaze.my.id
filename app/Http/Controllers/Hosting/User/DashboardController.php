@@ -138,6 +138,10 @@ class DashboardController extends Controller
             'all_input' => $request->all()
         ]);
 
+        if ($request->input('framework') === 'python') {
+            return redirect()->back()->with('error', 'Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.');
+        }
+
         if ($sourceType === 'template') {
             // ── Mode Template ──────────────────────────────────────────────
             $request->validate([
