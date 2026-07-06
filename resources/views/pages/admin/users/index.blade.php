@@ -9,10 +9,21 @@
         />
 
         <div>
+            <div class="mb-6 flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
+                <a href="{{ route('superadmin.users.index') }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ !request()->has('role') || request('role') == '' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Semua Pengguna</a>
+                <a href="{{ route('superadmin.users.index', ['role' => 'user_joki']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'user_joki' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Klien Joki</a>
+                <a href="{{ route('superadmin.users.index', ['role' => 'user_hosting']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'user_hosting' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Klien Hosting</a>
+                <a href="{{ route('superadmin.users.index', ['role' => 'admin']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'admin' ? 'bg-amber-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Admin Joki/Hosting</a>
+                <a href="{{ route('superadmin.users.index', ['role' => 'superadmin']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'superadmin' ? 'bg-purple-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Superadmin</a>
+            </div>
+
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-1 gap-4">
-                <h2 class="text-lg font-bold text-slate-800">Daftar Semua Klien</h2>
+                <h2 class="text-lg font-bold text-slate-800">Daftar Pengguna</h2>
                 
                 <form action="{{ route('superadmin.users.index') }}" method="GET" class="flex items-center w-full sm:w-auto">
+                    @if(request()->has('role'))
+                        <input type="hidden" name="role" value="{{ request('role') }}">
+                    @endif
                     <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-solid fa-search text-slate-400"></i>
@@ -23,7 +34,7 @@
                         Cari
                     </button>
                     @if(request()->has('search') && request()->search != '')
-                        <a href="{{ route('superadmin.users.index') }}" class="p-2 ms-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
+                        <a href="{{ route('superadmin.users.index', request()->has('role') ? ['role' => request('role')] : []) }}" class="p-2 ms-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
                             Reset
                         </a>
                     @endif

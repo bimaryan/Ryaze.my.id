@@ -21,6 +21,14 @@ class UserController extends Controller
             });
         }
 
+        if ($request->has('role') && $request->role != '') {
+            if ($request->role === 'admin') {
+                $query->whereIn('role', ['admin_joki', 'admin_hosting']);
+            } else {
+                $query->where('role', $request->role);
+            }
+        }
+
         $users = $query->paginate(10)->withQueryString();
 
         return view('pages.admin.users.index', compact('users'));
