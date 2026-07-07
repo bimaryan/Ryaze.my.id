@@ -1207,7 +1207,7 @@ PHP;
                 'status' => 'unpaid',
             ]);
         } else {
-            if (isset($voucherFinalPrice) && $existingInvoice->amount != $invoiceAmount) {
+            if ($existingInvoice->amount != $invoiceAmount) {
                 $existingInvoice->update([
                     'amount' => $invoiceAmount,
                     'invoice_number' => 'HST-INV-'. strtoupper(uniqid())
