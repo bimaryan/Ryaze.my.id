@@ -237,7 +237,7 @@ class DashboardController extends Controller
             }
 
             // Visitors (Unique IPs in access log)
-            $logPath = "/www/sites/{$subdomain}/log/access.log";
+            $logPath = "/www/sites/{$project->ryaze_domain}/log/access.log";
             if (file_exists($logPath)) {
                 $wcCommand = sprintf("awk '{print $1}' %s | sort | uniq | wc -l", escapeshellarg($logPath));
                 exec($wcCommand, $wcOutput, $wcReturnVar);

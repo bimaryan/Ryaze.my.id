@@ -37,7 +37,7 @@ class EmailController extends Controller
         // Logic for actually creating the mailbox on the mail server goes here (e.g. 1Panel API / Docker exec)
         // For now, we will store it in the Ryaze database.
         
-        HostingEmail::create([
+        $email = HostingEmail::create([
             'user_id' => Auth::id(),
             'email_address' => $fullEmail,
             'domain' => $request->domain,
@@ -46,7 +46,22 @@ class EmailController extends Controller
             'status' => 'active',
         ]);
 
+        $this->syncToMailServer($email, $request->password, 'create');
+
         return back()->with('success', "Akun email {$fullEmail} berhasil dibuat!");
+    }
+
+    /**
+     * Stub for syncing mailbox to actual Mail Server (e.g. 1Panel Mail App or docker-mailserver)
+     */
+    private function syncToMailServer(HostingEmail $email, string $rawPassword, string $action)
+    {
+        // TODO: Implement actual API call or Docker exec to mail server
+        \Log::info("[MailServer Sync] Action: {$action}, Email: {$email->email_address}");
+        
+        // Example if using docker-mailserver:
+        // $cmd = sprintf("docker exec mailserver setup email add %s %s", escapeshellarg($email->email_address), escapeshellarg($rawPassword));
+        // exec($cmd);
     }
 
     public function destroy($hashid)
@@ -58,7 +73,7 @@ class EmailController extends Controller
 
         $email = HostingEmail::where('user_id', Auth::id())->findOrFail($decoded[0]);
         
-        // Delete logic on mail server goes here
+        $this->syncToMailServer($email, '', 'delete');
         
         $email->delete();
 
