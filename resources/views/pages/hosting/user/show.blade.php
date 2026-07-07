@@ -706,6 +706,38 @@
                 </form>
             </div>
 
+            {{-- Backup & Restore --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-box-archive text-indigo-500"></i> Backup & Restore
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Buat salinan proyek Anda atau pulihkan dari file zip.</p>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-slate-200 rounded-xl p-5 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-700 mb-2">Buat Backup (Download)</h4>
+                        <p class="text-xs text-slate-500 mb-4">Fitur ini akan mengompresi seluruh file source code aplikasi Anda ke dalam format .zip dan langsung diunduh ke komputer Anda.</p>
+                        <a href="{{ route('user_hosting.backup.download', $project->hashid) }}" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors w-full justify-center">
+                            <i class="fa-solid fa-download"></i> Download Backup .ZIP
+                        </a>
+                    </div>
+                    <div class="border border-slate-200 rounded-xl p-5 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-700 mb-2">Restore Backup (Upload)</h4>
+                        <p class="text-xs text-slate-500 mb-4">Pilih file .zip untuk mengekstrak dan menimpa (overwrite) file yang ada saat ini di server Anda. Harap berhati-hati.</p>
+                        <form action="{{ route('user_hosting.backup.upload', $project->hashid) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="flex gap-2">
+                                <input type="file" name="backup_file" accept=".zip" required class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-lg cursor-pointer bg-white">
+                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors shrink-0">
+                                    <i class="fa-solid fa-upload"></i> Restore
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             {{-- Danger Zone --}}
             <div class="bg-white rounded-2xl shadow-sm border border-rose-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-rose-100 bg-rose-50/50">

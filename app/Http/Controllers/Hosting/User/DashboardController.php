@@ -1345,4 +1345,75 @@ PHP;
 
         return true;
     }
+
+    // ==========================================
+    // BACKUP & RESTORE
+    // ==========================================
+    public function downloadBackup($hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+
+        if (!is_dir($projectDir)) {
+            return back()->with('error', 'Direktori proyek tidak ditemukan.');
+        }
+
+        $zipFileName = $subdomain . '_backup_' . date('Y-m-d_H-i-s') . '.zip';
+        $zipFilePath = storage_path('app/backups/' . $zipFileName);
+        
+        if (!is_dir(storage_path('app/backups'))) {
+            mkdir(storage_path('app/backups'), 0755, true);
+        }
+
+        $zip = new \ZipArchive();
+        if ($zip->open($zipFilePath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($projectDir),
+                \RecursiveIteratorIterator::LEAVES_ONLY
+            );
+
+            foreach ($files as $name => $file) {
+                if (!$file->isDir()) {
+                    $filePath = $file->getRealPath();
+                    $relativePath = substr($filePath, strlen($projectDir) + 1);
+                    $zip->addFile($filePath, $relativePath);
+                }
+            }
+            $zip->close();
+            
+            return response()->download($zipFilePath)->deleteFileAfterSend(true);
+        } else {
+            return back()->with('error', 'Gagal membuat file backup (ZIP).');
+        }
+    }
+
+    public function uploadBackup(Request $request, $hashid)
+    {
+        $request->validate([
+            'backup_file' => 'required|file|mimes:zip|max:512000' // Max 500MB
+        ]);
+
+        $project = $this->getValidProject($hashid);
+        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+
+        if (!is_dir($projectDir)) {
+            return back()->with('error', 'Direktori proyek tidak ditemukan.');
+        }
+
+        $zipFile = $request->file('backup_file');
+        
+        $zip = new \ZipArchive();
+        if ($zip->open($zipFile->getRealPath()) === TRUE) {
+            // Overwrite existing files
+            $zip->extractTo($projectDir);
+            $zip->close();
+            return back()->with('success', 'Backup berhasil di-restore! File yang ada telah ditimpa.');
+        } else {
+            return back()->with('error', 'Gagal membuka file ZIP.');
+        }
+    }
+
+
 }

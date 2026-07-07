@@ -158,6 +158,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('user/hosting/crons/{hashid}', [CronController::class, 'destroy'])->name('user_hosting.crons.destroy');
         Route::get('user/hosting/docs', [DashboardController::class, 'docs'])->name('user_hosting.docs');
 
+        // Backup & Restore
+        Route::get('user/hosting/projects/{hashid}/backup', [DashboardController::class, 'downloadBackup'])->name('user_hosting.backup.download');
+        Route::post('user/hosting/projects/{hashid}/restore', [DashboardController::class, 'uploadBackup'])->name('user_hosting.backup.upload');
+
+        // Env Manager
+        Route::get('user/hosting/projects/{hashid}/env', [DashboardController::class, 'editEnv'])->name('user_hosting.env.edit');
+        Route::put('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
+
         // Tiket Bantuan (User)
         Route::get('user/hosting/tickets', [\App\Http\Controllers\User\TicketController::class, 'index'])->name('user_hosting.tickets.index');
         Route::get('user/hosting/tickets/create', [\App\Http\Controllers\User\TicketController::class, 'create'])->name('user_hosting.tickets.create');
