@@ -21,7 +21,19 @@
                 <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2 text-lg">
                     <i class="fa-solid fa-crown text-indigo-600"></i> Langganan Hosting
                 </h3>
-                <p class="text-sm text-slate-500 mb-4">Anda belum memiliki langganan hosting aktif. Silakan berlangganan seharga <span class="font-bold text-slate-800">Rp 10.000 / bulan</span> untuk dapat mendeploy project baru.</p>
+                @php
+                    $normalPrice = (int) \App\Models\Setting::val('hosting_price', 10000);
+                    $promoPrice = (int) \App\Models\Setting::val('hosting_promo_price', 0);
+                @endphp
+                <p class="text-sm text-slate-500 mb-4">Anda belum memiliki langganan hosting aktif. Silakan berlangganan seharga 
+                    @if($promoPrice > 0)
+                        <del class="text-slate-400 text-xs mr-1">Rp {{ number_format($normalPrice, 0, ',', '.') }}</del>
+                        <span class="font-bold text-emerald-600 text-base bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Rp {{ number_format($promoPrice, 0, ',', '.') }} / bulan</span>
+                    @else
+                        <span class="font-bold text-slate-800">Rp {{ number_format($normalPrice, 0, ',', '.') }} / bulan</span>
+                    @endif
+                    untuk dapat mendeploy project baru.
+                </p>
                 
                 <form action="{{ route('user_hosting.billing.subscribe') }}" method="POST" class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                     @csrf

@@ -1146,7 +1146,9 @@ PHP;
                 return back()->withInput()->with('error', 'Kode voucher tidak valid, kuota habis, atau sudah tidak berlaku.');
             }
             
-            $basePrice = 10000;
+            $normalPrice = (int) \App\Models\Setting::val('hosting_price', 10000);
+            $promoPrice = (int) \App\Models\Setting::val('hosting_promo_price', 0);
+            $basePrice = $promoPrice > 0 ? $promoPrice : $normalPrice;
             $voucherFinalPrice = $basePrice - $voucher->calculateDiscount($basePrice);
             
             $voucher->increment('uses');
@@ -1156,7 +1158,7 @@ PHP;
                 \App\Models\HostingBilling::create([
                     'user_id' => $user->id,
                     'hosting_project_id' => null,
-                    'plan_name' => 'Bulanan Rp 10.000',
+                    'plan_name' => 'Bulanan Rp ' . number_format($basePrice, 0, ',', '.'),
                     'amount' => 0,
                     'billing_cycle' => 'monthly',
                     'status' => 'active',
@@ -1191,7 +1193,10 @@ PHP;
             ->where('status', 'unpaid')
             ->first();
 
-        $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : 10000;
+        $normalPrice = (int) \App\Models\Setting::val('hosting_price', 10000);
+        $promoPrice = (int) \App\Models\Setting::val('hosting_promo_price', 0);
+        $defaultPrice = $promoPrice > 0 ? $promoPrice : $normalPrice;
+        $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : $defaultPrice;
 
         if (!$existingInvoice) {
             \App\Models\HostingPayment::create([
