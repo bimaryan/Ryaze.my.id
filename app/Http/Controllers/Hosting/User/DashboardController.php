@@ -239,9 +239,8 @@ class DashboardController extends Controller
             // Visitors (Unique IPs in access log)
             $logPaths = [
                 "/www/sites/{$project->ryaze_domain}/log/access.log", // Dedicated 1Panel site
+                "/www/sites/hosting_clients/log/access.log", // Hosting clients shared log
                 "/www/sites/ryaze.my.id/log/access.log", // Wildcard site
-                "/www/sites/ryaze.my.id/logs/access.log",
-                "/www/sites/hosting_clients/access.log"
             ];
             
             $validLogPath = null;
@@ -253,8 +252,8 @@ class DashboardController extends Controller
             }
 
             if ($validLogPath) {
-                // If it's a wildcard log (ryaze.my.id), we must grep for the specific subdomain first
-                if (str_contains($validLogPath, 'ryaze.my.id/log')) {
+                // If it's a shared log (ryaze.my.id or hosting_clients), we must grep for the specific subdomain first
+                if (str_contains($validLogPath, 'ryaze.my.id/log') || str_contains($validLogPath, 'hosting_clients/log')) {
                     $wcCommand = sprintf("grep %s %s | awk '{print $1}' | sort | uniq | wc -l", escapeshellarg($project->ryaze_domain), escapeshellarg($validLogPath));
                 } else {
                     $wcCommand = sprintf("awk '{print $1}' %s | sort | uniq | wc -l", escapeshellarg($validLogPath));
