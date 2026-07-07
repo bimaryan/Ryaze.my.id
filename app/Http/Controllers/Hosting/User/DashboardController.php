@@ -244,13 +244,7 @@ class DashboardController extends Controller
                 if ($wcReturnVar === 0 && isset($wcOutput[0])) {
                     $visitorsCount = (int)$wcOutput[0];
                 }
-            } else {
-                $visitorsCount = rand(5, 50); // Fallback dummy
             }
-        } else {
-            // Windows Local dev fallback
-            $diskUsage = rand(10, 50) . ' MB';
-            $visitorsCount = rand(100, 1000);
         }
 
         return view('pages.hosting.user.show', compact('project', 'envContent', 'diskUsage', 'visitorsCount'));
