@@ -876,68 +876,70 @@
         {{-- TAB: CRON JOBS --}}
         {{-- TAB: EMAIL --}}
         <div id="panel-email" class="tab-panel hidden space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-envelope text-indigo-500"></i> Kelola Email
-                    </h2>
-                    <p class="text-sm text-slate-500 mt-1">Buat email profesional dengan domain project ini.</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800">Kelola Email</h3>
+                        <p class="text-xs text-slate-500">Buat email profesional dengan domain project ini.</p>
+                    </div>
+                    <button type="button" onclick="document.getElementById('modal-create-email').classList.remove('hidden')"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm hover:shadow-md">
+                        <i class="fa-solid fa-plus"></i> Buat Akun Email
+                    </button>
                 </div>
-                <button type="button" onclick="document.getElementById('modal-create-email').classList.remove('hidden')"
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm hover:shadow-md">
-                    <i class="fa-solid fa-plus"></i> Buat Akun Email
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                @forelse ($projectEmails ?? [] as $email)
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
-                    <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-4 flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
-                                <i class="fa-solid fa-envelope text-lg"></i>
+                <div class="p-6 bg-slate-50/30">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        @forelse ($projectEmails ?? [] as $email)
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-4 flex justify-between items-center">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
+                                        <i class="fa-solid fa-envelope text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-800 text-base">{{ $email->email_address }}</h3>
+                                        <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
+                                    </div>
+                                </div>
+                                <form action="{{ route('user_hosting.emails.destroy', $email->hashid) }}" method="POST" class="inline" onsubmit="return confirm('Hapus akun email ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-slate-400 hover:text-rose-500 p-2 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Email">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                </form>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-slate-800 text-base">{{ $email->email_address }}</h3>
-                                <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
+                            <div class="p-5 space-y-4">
+                                <div class="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50">
+                                    <div>
+                                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Domain</span>
+                                        <code class="text-sm font-mono text-slate-700">{{ $email->domain }}</code>
+                                    </div>
+                                    <div>
+                                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Quota</span>
+                                        <span class="text-sm font-medium text-slate-700">{{ $email->quota_mb }} MB</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                                    <a href="https://webmail.{{ $email->domain }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition-colors">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Login Webmail
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                        <form action="{{ route('user_hosting.emails.destroy', $email->hashid) }}" method="POST" class="inline" onsubmit="return confirm('Hapus akun email ini?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="text-slate-400 hover:text-rose-500 p-2 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Email">
-                                <i class="fa-regular fa-trash-can"></i>
-                            </button>
-                        </form>
-                    </div>
-                    <div class="p-5 space-y-4">
-                        <div class="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50">
-                            <div>
-                                <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Domain</span>
-                                <code class="text-sm font-mono text-slate-700">{{ $email->domain }}</code>
+                        @empty
+                        <div class="col-span-full py-12 px-4 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center text-center">
+                            <div class="w-16 h-16 mb-4 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center">
+                                <i class="fa-regular fa-envelope-open text-2xl text-slate-300"></i>
                             </div>
-                            <div>
-                                <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Quota</span>
-                                <span class="text-sm font-medium text-slate-700">{{ $email->quota_mb }} MB</span>
-                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-2">Belum Ada Email</h3>
+                            <p class="text-sm text-slate-500 max-w-sm mb-4">Anda belum membuat akun email untuk project ini.</p>
                         </div>
-                        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-                            <a href="https://webmail.{{ $email->domain }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition-colors">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Login Webmail
-                            </a>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
-                @empty
-                <div class="col-span-full py-12 px-4 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center text-center">
-                    <div class="w-16 h-16 mb-4 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center">
-                        <i class="fa-regular fa-envelope-open text-2xl text-slate-300"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">Belum Ada Email</h3>
-                    <p class="text-sm text-slate-500 max-w-sm mb-4">Anda belum membuat akun email untuk project ini.</p>
-                </div>
-                @endforelse
             </div>
         </div>
+
 
         <div id="panel-crons" class="tab-panel hidden space-y-6">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
