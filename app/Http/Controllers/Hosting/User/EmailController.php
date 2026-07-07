@@ -52,16 +52,54 @@ class EmailController extends Controller
     }
 
     /**
-     * Stub for syncing mailbox to actual Mail Server (e.g. 1Panel Mail App or docker-mailserver)
+     * Sync mailbox to actual Mail Server (Poste.io API)
      */
     private function syncToMailServer(HostingEmail $email, string $rawPassword, string $action)
     {
-        // TODO: Implement actual API call or Docker exec to mail server
-        \Log::info("[MailServer Sync] Action: {$action}, Email: {$email->email_address}");
-        
-        // Example if using docker-mailserver:
-        // $cmd = sprintf("docker exec mailserver setup email add %s %s", escapeshellarg($email->email_address), escapeshellarg($rawPassword));
-        // exec($cmd);
+        $url = env('POSTE_IO_URL');
+        $user = env('POSTE_IO_USER');
+        $pass = env('POSTE_IO_PASSWORD');
+
+        if (!$url || !$user || !$pass) {
+            \Log::warning("[MailServer Sync] Missing Poste.io credentials in .env");
+            return;
+        }
+
+        $apiUrl = rtrim($url, '/') . '/admin/api/v1';
+
+        try {
+            if ($action === 'create') {
+                // Pastikan domainnya sudah ada di Poste.io
+                \Illuminate\Support\Facades\Http::withoutVerifying()
+                    ->withBasicAuth($user, $pass)
+                    ->post("{$apiUrl}/domains", [
+                        'name' => $email->domain,
+                    ]);
+
+                // Buat mailbox-nya
+                $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                    ->withBasicAuth($user, $pass)
+                    ->post("{$apiUrl}/boxes", [
+                        'name' => explode('@', $email->email_address)[0],
+                        'email' => $email->email_address,
+                        'passwordPlaintext' => $rawPassword,
+                    ]);
+
+                if (!$response->successful()) {
+                    \Log::error("[MailServer Sync Create] Failed: " . $response->body());
+                }
+            } elseif ($action === 'delete') {
+                $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                    ->withBasicAuth($user, $pass)
+                    ->delete("{$apiUrl}/boxes/" . urlencode($email->email_address));
+
+                if (!$response->successful()) {
+                    \Log::error("[MailServer Sync Delete] Failed: " . $response->body());
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error("[MailServer Sync] Error: " . $e->getMessage());
+        }
     }
 
     public function destroy($hashid)
