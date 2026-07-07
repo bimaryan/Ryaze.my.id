@@ -130,4 +130,10 @@ class DashboardController extends Controller
             'chartRevenue'
         ));
     }
+
+    public function getServerStatus()
+    {
+        $status = \App\Services\ServerMonitorService::getStatus();
+        return response()->json($status);
+    }
 }

@@ -1415,5 +1415,21 @@ PHP;
         }
     }
 
-
+    public function getServerStatus()
+    {
+        $status = \App\Services\ServerMonitorService::getStatus();
+        
+        // Censor total RAM/Disk for standard users to avoid exposing too much raw host info
+        // We only provide load & percentage so they know if the node is healthy
+        return response()->json([
+            'cpu' => [
+                'load_1m' => $status['cpu']['load_1m'],
+                'usage_percent' => $status['cpu']['usage_percent']
+            ],
+            'ram' => [
+                'percentage' => $status['ram']['percentage']
+            ],
+            'status' => ($status['cpu']['load_1m'] > 80 || $status['ram']['percentage'] > 90) ? 'heavy_load' : 'healthy'
+        ]);
+    }
 }
