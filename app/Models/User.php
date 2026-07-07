@@ -62,6 +62,23 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function hasActiveJokiSubscription()
+    {
+        // ... (bisa disesuaikan logicnya nanti jika ada langganan Joki)
+        return false;
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPassword($token));
+    }
+
     public function articles()
     {
         return $this->hasMany(Article::class);
