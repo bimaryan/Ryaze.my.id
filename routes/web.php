@@ -46,6 +46,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 
+    // ── EMAIL VERIFICATION ─────────────────────────────────────────
+    Route::get('/email/verify', function () {
+        return view('pages.auth.verify-email');
+    })->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+        $request->fulfill();
+        $user = $request->user();
+        $redirect = match ($user->role) {
+            'superadmin' => '/superadmin/dashboard',
+            'admin_joki' => '/admin/joki/dashboard',
+            'admin_hosting' => '/admin/hosting/dashboard',
+            'user_joki' => '/user/joki/dashboard',
+            'user_hosting' => '/user/hosting/dashboard',
+            default => '/dashboard',
+        };
+        return redirect($redirect)->with('success', 'Email berhasil diverifikasi!');
+    })->middleware(['signed'])->name('verification.verify');
+
+    Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('success', 'Link verifikasi telah dikirim ulang ke email Anda!');
+    })->middleware(['throttle:6,1'])->name('verification.send');
+
+
     // ── LOGOUT ───────────────────────────────────────────────────
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -55,7 +80,7 @@ Route::middleware('auth')->group(function () {
     // ═══════════════════════════════════════════════════════════════
     // SUPERADMIN ONLY
     // ═══════════════════════════════════════════════════════════════
-    Route::middleware('role:superadmin')->group(function () {
+    Route::middleware(['role:superadmin', 'verified'])->group(function () {
         Route::get('superadmin/dashboard', [AdminDashboardController::class, 'index'])->name('superadmin.dashboard');
         Route::get('superadmin/server-status', [AdminDashboardController::class, 'getServerStatus'])->name('superadmin.server_status');
         
@@ -89,7 +114,7 @@ Route::middleware('auth')->group(function () {
     // ═══════════════════════════════════════════════════════════════
     // ADMIN HOSTING (+ superadmin)
     // ═══════════════════════════════════════════════════════════════
-    Route::middleware('role:admin_hosting,superadmin')->group(function () {
+    Route::middleware(['role:admin_hosting,superadmin', 'verified'])->group(function () {
         Route::get('admin/hosting/dashboard', [HostingAdminDashboardController::class, 'index'])->name('admin_hosting.dashboard');
         Route::get('admin/hosting/pending', [HostingAdminDashboardController::class, 'pending'])->name('admin_hosting.pending');
         Route::get('admin/hosting/deployments', [HostingAdminDashboardController::class, 'deployments'])->name('admin_hosting.deployments');
@@ -125,7 +150,7 @@ Route::middleware('auth')->group(function () {
     // ═══════════════════════════════════════════════════════════════
     // USER HOSTING (+ admin_hosting, superadmin)
     // ═══════════════════════════════════════════════════════════════
-    Route::middleware('role:user_hosting,admin_hosting,superadmin')->group(function () {
+    Route::middleware(['role:user_hosting,admin_hosting,superadmin', 'verified'])->group(function () {
         Route::get('user/hosting/dashboard', [DashboardController::class, 'index'])->name('user_hosting.dashboard');
         Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
         Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
@@ -198,7 +223,7 @@ Route::middleware('auth')->group(function () {
     // ═══════════════════════════════════════════════════════════════
     // USER JOKI (+ admin_joki, superadmin)
     // ═══════════════════════════════════════════════════════════════
-    Route::middleware('role:user_joki,admin_joki,superadmin')->group(function () {
+    Route::middleware(['role:user_joki,admin_joki,superadmin', 'verified'])->group(function () {
         Route::get('user/joki/dashboard', [UserJokiDashboardController::class, 'index'])->name('user_joki.dashboard');
         Route::get('user/joki/create', [UserJokiDashboardController::class, 'create'])->name('user_joki.create');
         Route::post('user/joki/store', [UserJokiDashboardController::class, 'store'])->name('user_joki.store');
