@@ -932,7 +932,7 @@
                                         <td class="px-6 py-4 text-xs font-medium text-slate-700">{{ $email->quota_mb }} MB</td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex justify-end items-center gap-3">
-                                                <a href="https://webmail.{{ $email->domain }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold">
+                                                <a href="{{ rtrim(env('POSTE_IO_URL', 'https://mail.ryaze.my.id'), '/') }}/webmail" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold">
                                                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Webmail
                                                 </a>
                                                 <form action="{{ route('user_hosting.emails.destroy', $email->hashid) }}" method="POST" class="inline" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Email?', 'Apakah Anda yakin ingin menghapus akun email ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">

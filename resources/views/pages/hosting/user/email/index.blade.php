@@ -63,7 +63,7 @@
 
                 {{-- Action Buttons --}}
                 <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-                    <a href="https://webmail.{{ $email->domain }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition-colors">
+                    <a href="{{ rtrim(env('POSTE_IO_URL', 'https://mail.ryaze.my.id'), '/') }}/webmail" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition-colors">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> Login Webmail
                     </a>
                 </div>
