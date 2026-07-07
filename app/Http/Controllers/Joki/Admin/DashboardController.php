@@ -221,6 +221,28 @@ class DashboardController extends Controller
 
         return back()->with('success', 'Tanggapan revisi berhasil dikirim!');
     }
+    public function pushToPortfolio(Request $request, $hashid)
+    {
+        $order = \App\Models\JokiOrder::where('status', 'completed')->findOrFail(\Vinkla\Hashids\Facades\Hashids::decode($hashid)[0]);
+
+        $exists = \App\Models\Portfolio::where('title', $order->project_name)->exists();
+        if ($exists) {
+            return back()->with('error', 'Proyek ini sudah ada di Etalase Portofolio.');
+        }
+
+        \App\Models\Portfolio::create([
+            'title' => $order->project_name,
+            'description' => $order->description ?? 'Deskripsi otomatis dari pesanan joki.',
+            'tags' => array_map('trim', explode(',', $order->tech_stack ?? '')),
+            'link_preview' => $order->demo_link,
+            'link_github' => null, // Joki repos are private usually
+            'image_path' => null,
+            'is_active' => true,
+        ]);
+
+        return back()->with('success', 'Berhasil ditambahkan ke Portofolio Publik!');
+    }
+
 
     public function financeReport()
     {

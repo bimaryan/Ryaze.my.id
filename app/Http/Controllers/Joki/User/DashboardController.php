@@ -126,6 +126,30 @@ class DashboardController extends Controller
             $query->where('client_id', Auth::id());
         })->with('order')->orderBy('created_at', 'desc')->get();
 
-        return view('pages.joki.user.billing', compact('payments'));
+        return view('pages.joki.user.riwayat_tagihan', compact('payments'));
+    }
+
+    public function submitReview(Request $request, $hashid)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|max:1000'
+        ]);
+
+        $orderId = \Vinkla\Hashids\Facades\Hashids::decode($hashid)[0];
+        $order = JokiOrder::where('client_id', Auth::id())
+            ->where('status', 'completed')
+            ->findOrFail($orderId);
+
+        if ($order->rating || $order->review) {
+            return back()->with('error', 'Anda sudah memberikan ulasan untuk pesanan ini.');
+        }
+
+        $order->update([
+            'rating' => $request->rating,
+            'review' => $request->review
+        ]);
+
+        return back()->with('success', 'Terima kasih! Ulasan Anda berhasil dikirim.');
     }
 }

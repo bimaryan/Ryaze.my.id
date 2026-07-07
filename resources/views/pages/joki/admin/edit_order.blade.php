@@ -9,6 +9,14 @@
                 Klien: <span class="font-semibold text-indigo-600">{{ $order->client->name }}</span> | Layanan: {{ $order->service->name }}
             </x-slot:subtitle>
             <x-slot:actions>
+                @if($order->status == 'completed')
+                    <form action="{{ route('admin_joki.orders.portfolio', $order->hashid) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="inline-flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm mr-2">
+                            <i class="fa-solid fa-star mr-2"></i> Jadikan Portofolio
+                        </button>
+                    </form>
+                @endif
                 <a href="{{ route('admin_joki.orders') }}"
                     class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali

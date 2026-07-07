@@ -98,6 +98,48 @@
                         @endif
                     </x-ui.card>
                 @endif
+
+                @if ($order->status == 'completed')
+                    <x-ui.card class="p-6">
+                        <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Ulasan Anda</h3>
+                        @if ($order->rating || $order->review)
+                            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                <div class="flex items-center gap-1 text-amber-500 mb-2 text-lg">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fa-solid fa-star {{ $i <= $order->rating ? '' : 'text-slate-300' }}"></i>
+                                    @endfor
+                                </div>
+                                <p class="text-sm text-slate-700 italic">"{{ $order->review }}"</p>
+                            </div>
+                        @else
+                            <form action="{{ route('user_joki.review.store', $order->hashid) }}" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <label class="block text-xs font-bold text-slate-700 mb-2">Rating (1-5)</label>
+                                    <div class="flex items-center gap-4">
+                                        @for($i = 5; $i >= 1; $i--)
+                                        <label class="cursor-pointer text-center group">
+                                            <input type="radio" name="rating" value="{{ $i }}" class="peer sr-only" required>
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-slate-200 peer-checked:border-amber-500 peer-checked:bg-amber-50 group-hover:border-amber-300 transition-all">
+                                                <span class="font-bold text-slate-500 peer-checked:text-amber-500">{{ $i }}</span>
+                                            </div>
+                                        </label>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-xs font-bold text-slate-700 mb-2">Ulasan</label>
+                                    <textarea name="review" rows="3" required placeholder="Bagaimana pengalaman Anda bekerja sama dengan kami?"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
+                                </div>
+                                <button type="submit"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors w-full">
+                                    Kirim Ulasan
+                                </button>
+                            </form>
+                        @endif
+                    </x-ui.card>
+                @endif
             </div>
 
             <!-- Kolom Kanan: Info & Pembayaran MIDTRANS -->

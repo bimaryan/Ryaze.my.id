@@ -25,6 +25,8 @@ class JokiOrder extends Model
         'deadline',
         'repo_link',
         'demo_link',
+        'rating',
+        'review',
     ];
 
     protected $casts = [
