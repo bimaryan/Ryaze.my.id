@@ -237,9 +237,29 @@ class DashboardController extends Controller
             }
 
             // Visitors (Unique IPs in access log)
-            $logPath = "/www/sites/{$project->ryaze_domain}/log/access.log";
-            if (file_exists($logPath)) {
-                $wcCommand = sprintf("awk '{print $1}' %s | sort | uniq | wc -l", escapeshellarg($logPath));
+            $logPaths = [
+                "/www/sites/{$project->ryaze_domain}/log/access.log", // Dedicated 1Panel site
+                "/www/sites/ryaze.my.id/log/access.log", // Wildcard site
+                "/www/sites/ryaze.my.id/logs/access.log",
+                "/www/sites/hosting_clients/access.log"
+            ];
+            
+            $validLogPath = null;
+            foreach ($logPaths as $path) {
+                if (file_exists($path)) {
+                    $validLogPath = $path;
+                    break;
+                }
+            }
+
+            if ($validLogPath) {
+                // If it's a wildcard log (ryaze.my.id), we must grep for the specific subdomain first
+                if (str_contains($validLogPath, 'ryaze.my.id/log')) {
+                    $wcCommand = sprintf("grep %s %s | awk '{print $1}' | sort | uniq | wc -l", escapeshellarg($project->ryaze_domain), escapeshellarg($validLogPath));
+                } else {
+                    $wcCommand = sprintf("awk '{print $1}' %s | sort | uniq | wc -l", escapeshellarg($validLogPath));
+                }
+                
                 exec($wcCommand, $wcOutput, $wcReturnVar);
                 if ($wcReturnVar === 0 && isset($wcOutput[0])) {
                     $visitorsCount = (int)$wcOutput[0];
