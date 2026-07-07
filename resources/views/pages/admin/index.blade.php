@@ -206,7 +206,7 @@
                 </div>
             </div>
 
-            <script>
+            <script nonce="{{ csp_nonce() }}">
             document.addEventListener('alpine:init', () => {
                 Alpine.data('serverHealth', () => ({
                     loading: true,

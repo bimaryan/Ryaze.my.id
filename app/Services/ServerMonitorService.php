@@ -54,7 +54,7 @@ class ServerMonitorService
         $ram = self::getRamUsage();
         $disk = self::getDiskUsage();
         
-        $uptime = shell_exec('uptime -p');
+        $uptime = @shell_exec('uptime -p');
         if ($uptime) {
             $uptime = trim(str_replace('up ', '', $uptime));
         } else {
@@ -102,8 +102,8 @@ class ServerMonitorService
 
     private static function getRamUsage(): array
     {
-        $free = shell_exec('free -m');
-        $free = (string)trim($free);
+        $free = @shell_exec('free -m');
+        $free = (string)trim((string)$free);
         $free_arr = explode("\n", $free);
         
         if (count($free_arr) >= 2) {
@@ -130,8 +130,9 @@ class ServerMonitorService
 
     private static function getDiskUsage(): array
     {
-        $total = disk_total_space('/');
-        $free = disk_free_space('/');
+        $path = function_exists('base_path') ? base_path() : '/';
+        $total = @disk_total_space($path);
+        $free = @disk_free_space($path);
         $used = $total - $free;
         
         if ($total > 0) {
