@@ -240,4 +240,88 @@ class DatabaseController extends Controller
                 ->with('error', 'Auto-login gagal, silakan login manual.');
         }
     }
+
+    public function export($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) {
+            abort(404);
+        }
+
+        $db = HostingDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
+
+        $mysqlHost = config('services.panel_mysql.host');
+        $rootPass = config('services.panel_mysql.root_password');
+
+        $filename = $db->db_name . '_' . date('Ymd_His') . '.sql';
+        $tempPath = storage_path('app/temp/' . $filename);
+
+        if (!file_exists(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+
+        // Use mysqldump from the environment
+        $command = sprintf(
+            'mysqldump -h %s -u root -p%s %s > %s 2>&1',
+            escapeshellarg($mysqlHost),
+            escapeshellarg($rootPass),
+            escapeshellarg($db->db_name),
+            escapeshellarg($tempPath)
+        );
+
+        exec($command, $output, $returnVar);
+
+        if ($returnVar !== 0) {
+            \Log::error("mysqldump error: " . implode("\n", $output));
+            if (file_exists($tempPath)) {
+                unlink($tempPath);
+            }
+            return back()->with('error', 'Gagal mengekspor database. Pastikan mysqldump terinstal di server.');
+        }
+
+        return response()->download($tempPath)->deleteFileAfterSend(true);
+    }
+
+    public function import(Request $request, $hashid)
+    {
+        $request->validate([
+            'sql_file' => 'required|file|max:51200', // max 50MB
+        ]);
+
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) {
+            abort(404);
+        }
+
+        $db = HostingDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
+
+        $file = $request->file('sql_file');
+        
+        // Simple validation for sql file
+        if ($file->getClientOriginalExtension() !== 'sql' && $file->getClientOriginalExtension() !== 'txt') {
+            return back()->with('error', 'File harus berupa .sql atau .txt');
+        }
+
+        $mysqlHost = config('services.panel_mysql.host');
+        $rootPass = config('services.panel_mysql.root_password');
+
+        $tempPath = $file->path();
+
+        $command = sprintf(
+            'mysql -h %s -u root -p%s %s < %s 2>&1',
+            escapeshellarg($mysqlHost),
+            escapeshellarg($rootPass),
+            escapeshellarg($db->db_name),
+            escapeshellarg($tempPath)
+        );
+
+        exec($command, $output, $returnVar);
+
+        if ($returnVar !== 0) {
+            \Log::error("mysql import error: " . implode("\n", $output));
+            return back()->with('error', 'Gagal mengimpor database. Periksa kembali struktur file SQL Anda.');
+        }
+
+        return back()->with('success', 'Database berhasil diimpor!');
+    }
 }

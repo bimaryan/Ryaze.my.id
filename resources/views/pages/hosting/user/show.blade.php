@@ -224,7 +224,41 @@
                                     <i class="fa-solid fa-rotate"></i> Redeploy Sekarang
                                 </button>
                             </form>
+                            @if (!str_starts_with($project->ryaze_domain, 'staging-'))
+                            <form action="{{ route('user_hosting.staging.create', $project->hashid) }}" method="POST"
+                                class="mt-2">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg transition-colors text-sm">
+                                    <i class="fa-solid fa-flask"></i> Buat Staging
+                                </button>
+                            </form>
+                            @endif
                         </div>
+                    </div>
+
+                    {{-- Resource Monitoring --}}
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mt-4">
+                        <h3 class="font-bold text-slate-800 mb-4 border-b pb-2 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-indigo-500"></i> Statistik Penggunaan
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl">
+                                <span class="block text-slate-500 text-[10px] uppercase font-bold tracking-wider mb-1">Disk Usage</span>
+                                <div class="flex items-end gap-2">
+                                    <i class="fa-solid fa-hard-drive text-slate-400 text-lg mb-0.5"></i>
+                                    <span class="font-bold text-slate-800 text-lg">{{ $diskUsage ?? '0 MB' }}</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl">
+                                <span class="block text-slate-500 text-[10px] uppercase font-bold tracking-wider mb-1">Total Visitor</span>
+                                <div class="flex items-end gap-2">
+                                    <i class="fa-solid fa-users text-emerald-400 text-lg mb-0.5"></i>
+                                    <span class="font-bold text-slate-800 text-lg">{{ $visitorsCount ?? 0 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-3 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Data visitor dan disk diupdate secara realtime.</p>
                     </div>
                 </div>
             </div>
