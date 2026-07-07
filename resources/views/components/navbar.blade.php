@@ -217,6 +217,13 @@
                         <span class="ms-3 whitespace-nowrap">Pengaturan Sistem</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('superadmin.backup.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.backup*')) }}">
+                        <i class="fa-solid fa-box-archive {{ $iconClass(request()->routeIs('superadmin.backup*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Sistem Backup</span>
+                    </a>
+                </li>
 
             @endif
 

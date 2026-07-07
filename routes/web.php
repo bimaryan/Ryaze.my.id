@@ -58,6 +58,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:superadmin')->group(function () {
         Route::get('superadmin/dashboard', [AdminDashboardController::class, 'index'])->name('superadmin.dashboard');
         Route::get('superadmin/server-status', [AdminDashboardController::class, 'getServerStatus'])->name('superadmin.server_status');
+        
+        // Backup Sistem
+        Route::get('superadmin/backup', [\App\Http\Controllers\Admin\BackupController::class, 'index'])->name('superadmin.backup.index');
+        Route::post('superadmin/backup/create', [\App\Http\Controllers\Admin\BackupController::class, 'create'])->name('superadmin.backup.create');
+        Route::get('superadmin/backup/download/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('superadmin.backup.download');
+        Route::delete('superadmin/backup/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'destroy'])->name('superadmin.backup.destroy');
+        Route::post('superadmin/backup/restore', [\App\Http\Controllers\Admin\BackupController::class, 'restore'])->name('superadmin.backup.restore');
+
         Route::get('superadmin/users', [UserController::class, 'index'])->name('superadmin.users.index');
         Route::get('superadmin/users/{hashid}', [UserController::class, 'show'])->name('superadmin.users.show');
         Route::put('superadmin/users/{hashid}/role', [UserController::class, 'updateRole'])->name('superadmin.users.role.update');
