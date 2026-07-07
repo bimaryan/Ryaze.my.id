@@ -389,14 +389,6 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('user_hosting.emails.index') }}"
-                            class="{{ $navLink(request()->routeIs('user_hosting.emails*')) }}">
-                            <i
-                                class="fa-solid fa-envelope {{ $iconClass(request()->routeIs('user_hosting.emails*')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Email Accounts</span>
-                        </a>
-                    </li>
-                    <li>
                         <a href="{{ route('user_hosting.storage') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.storage*')) }}">
                             <i

@@ -266,7 +266,15 @@ class DashboardController extends Controller
             }
         }
 
-        return view('pages.hosting.user.show', compact('project', 'envContent', 'diskUsage', 'visitorsCount'));
+        $projectEmails = \App\Models\HostingEmail::where('user_id', Auth::id())
+            ->where(function($query) use ($project) {
+                $query->where('domain', $project->ryaze_domain);
+                if ($project->custom_domain) {
+                    $query->orWhere('domain', $project->custom_domain);
+                }
+            })->get();
+
+        return view('pages.hosting.user.show', compact('project', 'envContent', 'diskUsage', 'visitorsCount', 'projectEmails'));
     }
 
     public function createStaging($hashid)
