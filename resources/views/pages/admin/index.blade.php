@@ -138,19 +138,110 @@
             </div>
 
             <!-- Server Health Status -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 mb-1">
-                            <i class="fa-solid fa-server text-indigo-500"></i> Status Kesehatan Server (1Panel)
-                        </h3>
-                        <p class="text-sm text-slate-500">Pantau penggunaan CPU, RAM, dan Disk secara real-time langsung melalui Control Panel.</p>
+            <div x-data="serverHealth()" x-init="startMonitoring()" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-server text-indigo-500"></i> Status Kesehatan Server
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-3 w-3">
+                            <span :class="{'bg-emerald-400': !loading && !error, 'bg-rose-400': error, 'bg-slate-400': loading}" class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"></span>
+                            <span :class="{'bg-emerald-500': !loading && !error, 'bg-rose-500': error, 'bg-slate-500': loading}" class="relative inline-flex rounded-full h-3 w-3"></span>
+                        </span>
+                        <span class="text-sm font-bold text-slate-600" x-text="error ? 'Terputus' : (loading ? 'Menghubungkan...' : 'Online')"></span>
                     </div>
-                    <a href="{{ \App\Models\Setting::where('key', '1panel_url')->value('value') ?? 'https://192.168.2.100:10086/' }}" target="_blank" class="shrink-0 inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
-                        Buka 1Panel Dashboard <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
-                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- CPU -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-microchip"></i> CPU Load (1m)
+                        </p>
+                        <div class="flex items-end gap-2">
+                            <h4 class="text-2xl font-black" :class="{'text-rose-600': data.cpu.load_1m > 80, 'text-amber-500': data.cpu.load_1m > 50, 'text-slate-800': data.cpu.load_1m <= 50}" x-text="data.cpu.load_1m + '%'"></h4>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-200 rounded-full h-1.5 mt-3">
+                            <div class="h-1.5 rounded-full transition-all duration-1000" :class="{'bg-rose-500': data.cpu.load_1m > 80, 'bg-amber-500': data.cpu.load_1m > 50, 'bg-emerald-500': data.cpu.load_1m <= 50}" :style="`width: ${Math.min(data.cpu.load_1m, 100)}%`"></div>
+                        </div>
+                    </div>
+
+                    <!-- RAM -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-memory"></i> RAM Usage
+                        </p>
+                        <div class="flex items-end gap-2">
+                            <h4 class="text-2xl font-black text-slate-800" x-text="data.ram.percentage + '%'"></h4>
+                            <span class="text-xs font-semibold text-slate-400 mb-1" x-text="`${Math.round(data.ram.used_mb/1024)}GB / ${Math.round(data.ram.total_mb/1024)}GB`"></span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-200 rounded-full h-1.5 mt-3">
+                            <div class="h-1.5 rounded-full transition-all duration-1000" :class="{'bg-rose-500': data.ram.percentage > 85, 'bg-amber-500': data.ram.percentage > 70, 'bg-emerald-500': data.ram.percentage <= 70}" :style="`width: ${data.ram.percentage}%`"></div>
+                        </div>
+                    </div>
+
+                    <!-- DISK -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-hard-drive"></i> Disk Space
+                        </p>
+                        <div class="flex items-end gap-2">
+                            <h4 class="text-2xl font-black text-slate-800" x-text="data.disk.percentage + '%'"></h4>
+                            <span class="text-xs font-semibold text-slate-400 mb-1" x-text="`${data.disk.free_gb}GB Free`"></span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-200 rounded-full h-1.5 mt-3">
+                            <div class="h-1.5 rounded-full transition-all duration-1000" :class="{'bg-rose-500': data.disk.percentage > 90, 'bg-amber-500': data.disk.percentage > 75, 'bg-blue-500': data.disk.percentage <= 75}" :style="`width: ${data.disk.percentage}%`"></div>
+                        </div>
+                    </div>
+
+                    <!-- UPTIME -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col justify-center items-center text-center">
+                        <i class="fa-solid fa-clock text-slate-300 text-2xl mb-2"></i>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Server Uptime</p>
+                        <h4 class="text-sm font-black text-slate-800" x-text="data.uptime"></h4>
+                    </div>
                 </div>
             </div>
+
+            <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('serverHealth', () => ({
+                    loading: true,
+                    error: false,
+                    data: {
+                        cpu: { load_1m: 0 },
+                        ram: { percentage: 0, used_mb: 0, total_mb: 0 },
+                        disk: { percentage: 0, free_gb: 0 },
+                        uptime: '...'
+                    },
+                    startMonitoring() {
+                        this.fetchData();
+                        setInterval(() => {
+                            this.fetchData();
+                        }, 5000); // Poll setiap 5 detik
+                    },
+                    fetchData() {
+                        fetch('{{ route("superadmin.server_status") }}')
+                            .then(res => {
+                                if(!res.ok) throw new Error('Network error');
+                                return res.json();
+                            })
+                            .then(data => {
+                                this.data = data;
+                                this.loading = false;
+                                this.error = false;
+                            })
+                            .catch(err => {
+                                console.error('Error fetching server status:', err);
+                                this.error = true;
+                            });
+                    }
+                }));
+            });
+            </script>
 
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
