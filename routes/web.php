@@ -185,6 +185,8 @@ Route::middleware('auth')->group(function () {
         Route::get('user/joki/progress', [ProgressController::class, 'index'])->name('user_joki.progress');
         Route::get('user/joki/riwayat', [RiwayatController::class, 'index'])->name('user_joki.riwayat');
         Route::get('user/joki/detail/{hashid}', [UserJokiDashboardController::class, 'detail'])->name('user_joki.detail');
+        Route::get('user/joki/orders/{hashid}/chat', [\App\Http\Controllers\Joki\ChatController::class, 'fetchMessages'])->name('user_joki.chat.fetch');
+        Route::post('user/joki/orders/{hashid}/chat', [\App\Http\Controllers\Joki\ChatController::class, 'sendMessage'])->name('user_joki.chat.store');
         Route::post('user/joki/orders/payment/{hashid}/proof', [UserJokiDashboardController::class, 'uploadPaymentProof'])->name('user_joki.payment.proof');
         Route::post('user/joki/orders/{hashid}/revision', [UserJokiDashboardController::class, 'requestRevision'])->name('user_joki.revision.store');
         Route::post('user/joki/orders/{hashid}/review', [UserJokiDashboardController::class, 'submitReview'])->name('user_joki.review.store');
@@ -200,6 +202,8 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/joki/orders/{hashid}/edit', [JokiAdminDashboardController::class, 'editOrder'])->name('admin_joki.orders.edit');
         Route::put('admin/joki/orders/{hashid}', [JokiAdminDashboardController::class, 'updateOrder'])->name('admin_joki.orders.update');
         Route::post('admin/joki/orders/{hashid}/portfolio', [JokiAdminDashboardController::class, 'pushToPortfolio'])->name('admin_joki.orders.portfolio');
+        Route::get('admin/joki/orders/{hashid}/chat', [\App\Http\Controllers\Joki\ChatController::class, 'fetchMessages'])->name('admin_joki.chat.fetch');
+        Route::post('admin/joki/orders/{hashid}/chat', [\App\Http\Controllers\Joki\ChatController::class, 'sendMessage'])->name('admin_joki.chat.store');
         Route::post('admin/joki/orders/{hashid}/milestone', [JokiAdminDashboardController::class, 'storeMilestone'])->name('admin_joki.milestone.store');
         Route::post('admin/joki/orders/{hashid}/payment', [JokiAdminDashboardController::class, 'storePayment'])->name('admin_joki.payment.store');
         Route::put('admin/joki/payments/{hashid}/verify', [JokiAdminDashboardController::class, 'verifyPayment'])->name('admin_joki.payment.verify');

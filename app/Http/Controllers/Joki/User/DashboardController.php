@@ -56,12 +56,21 @@ class DashboardController extends Controller
         $order = JokiOrder::create($validated);
 
         // Notifikasi ke User
-        \Illuminate\Support\Facades\Auth::user()->notify(new \App\Notifications\SystemNotification('Pesanan Joki ' . $order->order_number . ' berhasil dibuat. Kami akan segera menghubungi Anda.', 'success'));
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $msgUser = 'Pesanan Joki ' . $order->order_number . ' berhasil dibuat. Kami akan segera menghubungi Anda.';
+        $user->notify(new \App\Notifications\SystemNotification($msgUser, 'success'));
+        if ($user->phone) {
+            \App\Services\WhatsAppService::send($user->phone, "*RYAZE ORDER BERHASIL*\n\n" . $msgUser);
+        }
 
         // Notifikasi ke Admin Joki (Jika ada user dengan role admin_joki)
         $adminJoki = \App\Models\User::where('role', 'admin_joki')->first();
         if ($adminJoki) {
-            $adminJoki->notify(new \App\Notifications\SystemNotification('Pesanan Joki Baru: ' . $order->order_number . ' dari ' . \Illuminate\Support\Facades\Auth::user()->name, 'info'));
+            $msgAdmin = 'Pesanan Joki Baru: ' . $order->order_number . ' dari ' . $user->name;
+            $adminJoki->notify(new \App\Notifications\SystemNotification($msgAdmin, 'info'));
+            if ($adminJoki->phone) {
+                \App\Services\WhatsAppService::send($adminJoki->phone, "*RYAZE ORDER MASUK*\n\n" . $msgAdmin);
+            }
         }
 
         return redirect()->route('user_joki.dashboard')->with('success', 'Pesanan berhasil dibuat!');

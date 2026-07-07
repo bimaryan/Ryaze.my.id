@@ -140,6 +140,16 @@
                         @endif
                     </x-ui.card>
                 @endif
+                
+                {{-- Live Chat Component --}}
+                @if ($order->status != 'pending')
+                    <x-joki-chat 
+                        :order="$order" 
+                        :user="Auth::user()" 
+                        :fetch-route="route('user_joki.chat.fetch', $order->hashid)" 
+                        :store-route="route('user_joki.chat.store', $order->hashid)" 
+                    />
+                @endif
             </div>
 
             <!-- Kolom Kanan: Info & Pembayaran MIDTRANS -->

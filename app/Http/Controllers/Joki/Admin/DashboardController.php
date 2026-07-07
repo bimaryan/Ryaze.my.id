@@ -119,7 +119,12 @@ class DashboardController extends Controller
         $order->update($validated);
 
         if ($oldStatus != $order->status) {
-            $order->client->notify(new \App\Notifications\SystemNotification('Status pesanan Joki Anda (' . $order->order_number . ') telah diubah menjadi: ' . strtoupper($order->status), 'info'));
+            $msg = 'Status pesanan Joki Anda (' . $order->order_number . ') telah diubah menjadi: ' . strtoupper($order->status);
+            $order->client->notify(new \App\Notifications\SystemNotification($msg, 'info'));
+            
+            if ($order->client->phone) {
+                \App\Services\WhatsAppService::send($order->client->phone, "*RYAZE UPDATE*\n\n" . $msg);
+            }
         }
 
         return redirect()->route('admin_joki.orders')->with('success', 'Data pesanan berhasil diperbarui!');

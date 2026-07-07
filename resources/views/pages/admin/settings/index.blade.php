@@ -78,6 +78,22 @@
                     </div>
                 </div>
 
+                {{-- API & Integrasi --}}
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-plug text-indigo-500 mr-2"></i> API & Integrasi</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp API Endpoint</label>
+                            <input type="text" name="wa_api_endpoint" value="{{ $settings['wa_api_endpoint'] ?? 'https://api.fonnte.com/send' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://api.fonnte.com/send">
+                            <p class="text-xs text-slate-500 mt-1">Default: Fonnte. Kosongkan jika tidak menggunakan WA Notif.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp API Token</label>
+                            <input type="password" name="wa_api_token" value="{{ $settings['wa_api_token'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Token API">
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Kontrol Layanan --}}
                 <div>
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-sliders text-indigo-500 mr-2"></i> Kontrol Layanan</h3>

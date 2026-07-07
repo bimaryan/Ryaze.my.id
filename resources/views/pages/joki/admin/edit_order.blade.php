@@ -255,6 +255,16 @@
                         @endforelse
                     </div>
                 </x-ui.card>
+
+                {{-- Live Chat Component --}}
+                @if ($order->status != 'pending')
+                    <x-joki-chat 
+                        :order="$order" 
+                        :user="Auth::user()" 
+                        :fetch-route="route('admin_joki.chat.fetch', $order->hashid)" 
+                        :store-route="route('admin_joki.chat.store', $order->hashid)" 
+                    />
+                @endif
             </div>
 
             <div class="space-y-6">
