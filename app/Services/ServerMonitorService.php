@@ -71,7 +71,8 @@ class ServerMonitorService
 
     private static function getCpuLoad(): array
     {
-        $load = sys_getloadavg();
+        $load = function_exists('sys_getloadavg') ? sys_getloadavg() : false;
+        $load = is_array($load) ? $load : [0, 0, 0];
         // Return 1 minute average load as a percentage (approximate based on cores if known, assuming 100% is full load, but load is just process queue)
         // Better way to get CPU usage percentage on Linux:
         $cpuUsage = 0;

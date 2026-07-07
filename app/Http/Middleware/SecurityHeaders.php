@@ -35,14 +35,14 @@ class SecurityHeaders
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=()');
         $response->headers->set('Content-Security-Policy',
             "default-src 'self'; ".
-            "script-src 'self' 'unsafe-inline' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com http://127.0.0.1:5173 http://localhost:5173; ".
+            "script-src 'self' 'unsafe-inline' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com http://127.0.0.1:5173 http://localhost:5173; ".
             "script-src-attr 'unsafe-inline'; ".
             "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
             "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
-            "img-src 'self' data: blob: https://ui-avatars.com; ".
+            "img-src 'self' data: blob: https://ui-avatars.com https://www.google-analytics.com https://www.googletagmanager.com; ".
             "frame-src 'self' *.ryaze.my.id challenges.cloudflare.com; ".
             "worker-src 'self' data: blob:; ".
-            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com ws: wss:;"
+            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:;"
         );
 
         return $response;
