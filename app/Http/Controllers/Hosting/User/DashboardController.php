@@ -1414,6 +1414,19 @@ PHP;
             return back()->with('error', 'Gagal membuka file ZIP.');
         }
     }
-
+    public function getServerStatus()
+    {
+        $status = \App\Services\ServerMonitorService::getStatus();
+        
+        return response()->json([
+            'cpu' => [
+                'load_1m' => $status['cpu']['load_1m'] ?? 0,
+                'usage_percent' => $status['cpu']['usage_percent'] ?? 0
+            ],
+            'ram' => [
+                'percentage' => $status['ram']['percentage'] ?? 0
+            ],
+            'status' => (($status['cpu']['load_1m'] ?? 0) > 80 || ($status['ram']['percentage'] ?? 0) > 90) ? 'heavy_load' : 'healthy'
+        ]);
     }
 }

@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
     // ═══════════════════════════════════════════════════════════════
     Route::middleware('role:superadmin')->group(function () {
         Route::get('superadmin/dashboard', [AdminDashboardController::class, 'index'])->name('superadmin.dashboard');
+        Route::get('superadmin/server-status', [AdminDashboardController::class, 'getServerStatus'])->name('superadmin.server_status');
         Route::get('superadmin/users', [UserController::class, 'index'])->name('superadmin.users.index');
         Route::get('superadmin/users/{hashid}', [UserController::class, 'show'])->name('superadmin.users.show');
         Route::put('superadmin/users/{hashid}/role', [UserController::class, 'updateRole'])->name('superadmin.users.role.update');
@@ -123,6 +124,7 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
         Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
         Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
+        Route::get('user/hosting/server-status', [DashboardController::class, 'getServerStatus'])->name('user_hosting.server_status');
         Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
         Route::get('user/hosting/projects/{hashid}/logs', [DashboardController::class, 'buildLogs'])->name('user_hosting.build_logs');
         Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');

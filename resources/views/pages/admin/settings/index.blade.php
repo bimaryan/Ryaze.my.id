@@ -140,6 +140,27 @@
                 <div>
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-tags text-indigo-500 mr-2"></i> Harga Langganan Hosting</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
+                {{-- API & Integrasi 1Panel --}}
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-server text-indigo-500 mr-2"></i> API & Integrasi 1Panel</h3>
+                    <p class="text-xs text-slate-500 mb-4">Integrasi ini digunakan untuk memantau status kesehatan server langsung dari 1Panel.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">1Panel API URL</label>
+                            <input type="url" name="1panel_url" value="{{ $settings['1panel_url'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://192.168.1.1:10086">
+                            <p class="text-[11px] text-slate-500 mt-1">URL panel tanpa trailing slash (contoh: https://ip:port)</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">1Panel API Key / Token</label>
+                            <input type="text" name="1panel_api_key" value="{{ $settings['1panel_api_key'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Token dari 1Panel API">
+                            <p class="text-[11px] text-slate-500 mt-1">Dapatkan di 1Panel > Pengaturan Panel > API.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Harga Normal (Rp / Bulan)</label>
                             <input type="number" name="hosting_price" value="{{ $settings['hosting_price'] ?? '10000' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">

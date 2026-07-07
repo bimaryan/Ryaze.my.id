@@ -9,6 +9,47 @@ class ServerMonitorService
      */
     public static function getStatus(): array
     {
+        $panelUrl = \App\Models\Setting::where('key', '1panel_url')->value('value');
+        $panelKey = \App\Models\Setting::where('key', '1panel_api_key')->value('value');
+
+        if ($panelUrl && $panelKey) {
+            try {
+                $panelUrl = rtrim($panelUrl, '/');
+                $timestamp = time();
+                $token = md5('1panel' . $panelKey . $timestamp);
+
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    '1Panel-Token' => $token,
+                    '1Panel-Timestamp' => $timestamp
+                ])->timeout(3)->post($panelUrl . '/api/v1/dashboard/system/info');
+
+                if ($response->successful()) {
+                    $resData = $response->json('data');
+                    if ($resData) {
+                        return [
+                            'cpu' => [
+                                'load_1m' => $resData['cpuUsage'] ?? 0,
+                                'usage_percent' => $resData['cpuUsage'] ?? 0
+                            ],
+                            'ram' => [
+                                'percentage' => $resData['memoryUsage'] ?? 0,
+                                'used_mb' => ($resData['memoryUsed'] ?? 0) / 1024 / 1024,
+                                'total_mb' => ($resData['memoryTotal'] ?? 0) / 1024 / 1024
+                            ],
+                            'disk' => [
+                                'percentage' => $resData['diskUsage'] ?? 0,
+                                'free_gb' => 0
+                            ],
+                            'uptime' => $resData['uptime'] ?? 'Online'
+                        ];
+                    }
+                }
+            } catch (\Exception $e) {
+                \Log::error('1Panel API Error: ' . $e->getMessage());
+            }
+        }
+
+        // Fallback to local script
         $cpu = self::getCpuLoad();
         $ram = self::getRamUsage();
         $disk = self::getDiskUsage();
