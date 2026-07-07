@@ -270,7 +270,7 @@ class DashboardController extends Controller
             'framework'    => $project->framework,
             'repo_source'  => $project->repo_source,
             'branch'       => $project->branch,
-            'source_type'  => 'clone', 
+            'source_type'  => 'repo', 
             'ryaze_domain' => $stagingDomain,
             'status'       => 'active',
         ]);
