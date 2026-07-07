@@ -828,8 +828,8 @@
                         </button>
                     </form>
 
-                    <div class="mt-6 border border-slate-200 rounded-xl overflow-hidden">
-                        <table class="w-full text-sm text-left text-slate-500">
+                    <div class="mt-6 border border-slate-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500 whitespace-nowrap min-w-[600px]">
                             <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Nama Domain</th>
@@ -912,8 +912,8 @@
                         </div>
                     </form>
 
-                    <div class="mt-6 border border-slate-200 rounded-xl overflow-hidden">
-                        <table class="w-full text-sm text-left text-slate-500">
+                    <div class="mt-6 border border-slate-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500 whitespace-nowrap min-w-[600px]">
                             <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Alamat Email</th>
@@ -983,8 +983,8 @@
                         </div>
                     </form>
 
-                    <div class="mt-6 border border-slate-200 rounded-xl overflow-hidden">
-                        <table class="w-full text-sm text-left text-slate-500">
+                    <div class="mt-6 border border-slate-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500 whitespace-nowrap min-w-[600px]">
                             <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Command</th>
