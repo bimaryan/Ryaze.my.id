@@ -855,7 +855,7 @@
                                             {{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" onsubmit="return confirm('Hapus domain ini?');">
+                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" onsubmit="event.preventDefault(); swConfirm('Hapus Domain?', 'Apakah Anda yakin ingin menghapus domain ini?').then(res => { if(res.isConfirmed) this.submit(); });">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
                                             </form>
@@ -935,7 +935,7 @@
                                                 <a href="https://webmail.{{ $email->domain }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold">
                                                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Webmail
                                                 </a>
-                                                <form action="{{ route('user_hosting.emails.destroy', $email->hashid) }}" method="POST" class="inline" onsubmit="return confirm('Hapus akun email ini?');">
+                                                <form action="{{ route('user_hosting.emails.destroy', $email->hashid) }}" method="POST" class="inline" onsubmit="event.preventDefault(); swConfirm('Hapus Email?', 'Apakah Anda yakin ingin menghapus akun email ini?').then(res => { if(res.isConfirmed) this.submit(); });">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
                                                 </form>
@@ -998,7 +998,7 @@
                                         <td class="px-6 py-4 font-mono text-xs text-slate-800">{{ $cron->command }}</td>
                                         <td class="px-6 py-4 font-mono text-xs">{{ $cron->schedule_expression }}</td>
                                         <td class="px-6 py-4 text-right">
-                                            <form action="{{ route('user_hosting.crons.destroy', $cron->hashid) }}" method="POST" onsubmit="return confirm('Hapus cron job ini?');">
+                                            <form action="{{ route('user_hosting.crons.destroy', $cron->hashid) }}" method="POST" onsubmit="event.preventDefault(); swConfirm('Hapus Cron Job?', 'Apakah Anda yakin ingin menghapus cron job ini?').then(res => { if(res.isConfirmed) this.submit(); });">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
                                             </form>
