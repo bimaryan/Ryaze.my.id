@@ -884,15 +884,15 @@
                     </div>
                 </div>
                 <div class="p-6">
-                    <form action="{{ route('user_hosting.emails.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                    <form action="{{ route('user_hosting.emails.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         @csrf
-                        <div class="md:col-span-6">
+                        <div class="md:col-span-1">
                             <label class="block text-xs font-medium text-slate-700 mb-1">Alamat Email</label>
-                            <div class="flex items-center">
+                            <div class="flex items-stretch">
                                 <input type="text" name="prefix" placeholder="admin" required
-                                    class="w-full rounded-l-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                <span class="px-3 border-y border-slate-300 bg-slate-50 text-slate-500 text-sm">@</span>
-                                <select name="domain" required class="rounded-r-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm max-w-[200px]">
+                                    class="w-1/2 rounded-none rounded-l-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <span class="px-2 flex items-center border-y border-slate-300 bg-slate-50 text-slate-500 text-sm">@</span>
+                                <select name="domain" required class="w-1/2 rounded-none rounded-r-lg border border-l-0 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                     <option value="{{ $project->ryaze_domain }}">{{ $project->ryaze_domain }}</option>
                                     @foreach($project->domains as $d)
                                         <option value="{{ $d->domain_name }}">{{ $d->domain_name }}</option>
@@ -900,13 +900,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="md:col-span-4">
+                        <div class="md:col-span-1">
                             <label class="block text-xs font-medium text-slate-700 mb-1">Password</label>
                             <input type="password" name="password" placeholder="Min. 8 karakter" required minlength="8"
                                 class="w-full rounded-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
-                        <div class="md:col-span-2">
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
+                        <div class="md:col-span-1">
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm h-[38px]">
                                 Tambah Email
                             </button>
                         </div>
