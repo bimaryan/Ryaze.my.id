@@ -821,9 +821,9 @@
                         @csrf
                         <div class="flex-1">
                             <input type="text" name="domain_name" placeholder="example.com" required
-                                class="w-full rounded-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         </div>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
                             Tambah Domain
                         </button>
                     </form>
@@ -855,7 +855,7 @@
                                             {{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" onsubmit="event.preventDefault(); swConfirm('Hapus Domain?', 'Apakah Anda yakin ingin menghapus domain ini?').then(res => { if(res.isConfirmed) this.submit(); });">
+                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Domain?', 'Apakah Anda yakin ingin menghapus domain ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
                                             </form>
@@ -887,12 +887,12 @@
                     <form action="{{ route('user_hosting.emails.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         @csrf
                         <div class="md:col-span-1">
-                            <label class="block text-xs font-medium text-slate-700 mb-1">Alamat Email</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Alamat Email</label>
                             <div class="flex items-stretch">
                                 <input type="text" name="prefix" placeholder="admin" required
-                                    class="w-1/2 rounded-none rounded-l-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                <span class="px-2 flex items-center border-y border-slate-300 bg-slate-50 text-slate-500 text-sm">@</span>
-                                <select name="domain" required class="w-1/2 rounded-none rounded-r-lg border border-l-0 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    class="transition-all w-1/2 bg-slate-50 border border-slate-200 rounded-none rounded-l-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                                <span class="px-3 flex items-center border-y border-slate-200 bg-slate-100 text-slate-500 text-sm font-bold">@</span>
+                                <select name="domain" required class="transition-all w-1/2 bg-slate-50 border border-l-0 border-slate-200 rounded-none rounded-r-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                                     <option value="{{ $project->ryaze_domain }}">{{ $project->ryaze_domain }}</option>
                                     @foreach($project->domains as $d)
                                         <option value="{{ $d->domain_name }}">{{ $d->domain_name }}</option>
@@ -901,12 +901,12 @@
                             </div>
                         </div>
                         <div class="md:col-span-1">
-                            <label class="block text-xs font-medium text-slate-700 mb-1">Password</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
                             <input type="password" name="password" placeholder="Min. 8 karakter" required minlength="8"
-                                class="w-full rounded-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         </div>
                         <div class="md:col-span-1">
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm h-[38px]">
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-sm hover:shadow-md">
                                 Tambah Email
                             </button>
                         </div>
@@ -935,7 +935,7 @@
                                                 <a href="https://webmail.{{ $email->domain }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold">
                                                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Webmail
                                                 </a>
-                                                <form action="{{ route('user_hosting.emails.destroy', $email->hashid) }}" method="POST" class="inline" onsubmit="event.preventDefault(); swConfirm('Hapus Email?', 'Apakah Anda yakin ingin menghapus akun email ini?').then(res => { if(res.isConfirmed) this.submit(); });">
+                                                <form action="{{ route('user_hosting.emails.destroy', $email->hashid) }}" method="POST" class="inline" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Email?', 'Apakah Anda yakin ingin menghapus akun email ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
                                                 </form>
@@ -967,17 +967,17 @@
                     <form action="{{ route('user_hosting.crons.store', $project->hashid) }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         @csrf
                         <div class="md:col-span-1">
-                            <label class="block text-xs font-medium text-slate-700 mb-1">Command</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Command</label>
                             <input type="text" name="command" placeholder="php artisan schedule:run" required
-                                class="w-full rounded-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         </div>
                         <div class="md:col-span-1">
-                            <label class="block text-xs font-medium text-slate-700 mb-1">Schedule (Cron Expr)</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Schedule (Cron Expr)</label>
                             <input type="text" name="schedule_expression" placeholder="* * * * *" required value="* * * * *"
-                                class="w-full rounded-lg border border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono">
+                                class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none font-mono">
                         </div>
                         <div class="md:col-span-1">
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-sm hover:shadow-md">
                                 Tambah Cron
                             </button>
                         </div>
@@ -998,7 +998,7 @@
                                         <td class="px-6 py-4 font-mono text-xs text-slate-800">{{ $cron->command }}</td>
                                         <td class="px-6 py-4 font-mono text-xs">{{ $cron->schedule_expression }}</td>
                                         <td class="px-6 py-4 text-right">
-                                            <form action="{{ route('user_hosting.crons.destroy', $cron->hashid) }}" method="POST" onsubmit="event.preventDefault(); swConfirm('Hapus Cron Job?', 'Apakah Anda yakin ingin menghapus cron job ini?').then(res => { if(res.isConfirmed) this.submit(); });">
+                                            <form action="{{ route('user_hosting.crons.destroy', $cron->hashid) }}" method="POST" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Cron Job?', 'Apakah Anda yakin ingin menghapus cron job ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
                                             </form>
