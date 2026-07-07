@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HostingEmail extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\HasHashid;
 
     protected $fillable = [
         'user_id',
