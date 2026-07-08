@@ -181,10 +181,10 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
         Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
 
-        // Email Management
-        Route::get('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'index'])->name('user_hosting.emails.index');
-        Route::post('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'store'])->name('user_hosting.emails.store');
-        Route::delete('user/hosting/emails/{hashid}', [\App\Http\Controllers\Hosting\User\EmailController::class, 'destroy'])->name('user_hosting.emails.destroy');
+        // Email Management (disabled)
+        // Route::get('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'index'])->name('user_hosting.emails.index');
+        // Route::post('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'store'])->name('user_hosting.emails.store');
+        // Route::delete('user/hosting/emails/{hashid}', [\App\Http\Controllers\Hosting\User\EmailController::class, 'destroy'])->name('user_hosting.emails.destroy');
 
         // Billing & Vouchers
         Route::get('user/hosting/databases/{hashid}/export', [DatabaseController::class, 'export'])->name('user_hosting.databases.export');

@@ -115,10 +115,10 @@
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-globe"></i> <span>Domains</span>
             </button>
-            <button data-tab="email" id="tab-email"
+            {{-- <button data-tab="email" id="tab-email"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-envelope"></i> <span>Email</span>
-            </button>
+            </button> --}}
             <button data-tab="crons" id="tab-crons"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-clock"></i> <span>Cron Jobs</span>
@@ -875,7 +875,7 @@
 
         {{-- TAB: CRON JOBS --}}
         {{-- TAB: EMAIL --}}
-        <div id="panel-email" class="tab-panel hidden space-y-6">
+        {{-- <div id="panel-email" class="tab-panel hidden space-y-6">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <div>
