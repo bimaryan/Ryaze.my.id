@@ -9,11 +9,7 @@
         </x-ui.page-header>
         
         <x-ui.card class="p-6 mt-6">
-            @if(session('success'))
-                <div class="mb-4 p-4 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
+            {{-- Success Toast already handled globally --}}
 
             <form action="{{ route('superadmin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                 @csrf
@@ -84,8 +80,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp API Endpoint</label>
-                            <input type="text" name="wa_api_endpoint" value="{{ $settings['wa_api_endpoint'] ?? 'https://api.fonnte.com/send' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://api.fonnte.com/send">
-                            <p class="text-xs text-slate-500 mt-1">Default: Fonnte. Kosongkan jika tidak menggunakan WA Notif.</p>
+                            <input type="text" name="wa_api_endpoint" value="{{ $settings['wa_api_endpoint'] ?? 'https://api.ryz.my.id/api/whatsapp/v1/send-message' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://api.ryz.my.id/api/whatsapp/v1/send-message">
+                            <p class="text-xs text-slate-500 mt-1">Kosongkan jika tidak menggunakan WA Notif.</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp API Token</label>

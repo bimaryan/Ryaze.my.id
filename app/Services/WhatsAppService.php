@@ -19,7 +19,7 @@ class WhatsAppService
     {
         try {
             $token = Setting::getValue('wa_api_token');
-            $endpoint = Setting::getValue('wa_api_endpoint', 'https://api.fonnte.com/send'); // default Fonnte
+            $endpoint = Setting::getValue('wa_api_endpoint', 'https://api.ryz.my.id/api/whatsapp/v1/send-message');
 
             if (!$token || !$endpoint) {
                 Log::warning('WhatsApp Notification skipped: WA API Token or Endpoint is not configured.');
@@ -31,12 +31,12 @@ class WhatsAppService
                 $target = '62' . substr($target, 1);
             }
 
+            // Bearer Token Authorization for the new custom API
             $response = Http::withHeaders([
-                'Authorization' => $token
+                'Authorization' => 'Bearer ' . $token
             ])->post($endpoint, [
-                'target' => $target,
-                'message' => $message,
-                'countryCode' => '62', // Optional for Fonnte
+                'to' => $target,
+                'message' => $message
             ]);
 
             if ($response->successful()) {
