@@ -70,8 +70,8 @@ class ArticleImport implements ToModel, WithHeadingRow
             'status'           => $status,
             'is_featured'      => false,
             'published_at'     => $status === 'published' ? Carbon::now() : null,
-            'meta_title'       => !empty($row['meta_title']) ? $row['meta_title'] : $row['title'],
-            'meta_description' => !empty($row['meta_description']) ? $row['meta_description'] : (!empty($row['excerpt']) ? $row['excerpt'] : Str::limit(strip_tags($row['body'] ?? ''), 155)),
+            'meta_title'       => \Illuminate\Support\Str::limit(!empty($row['meta_title']) ? $row['meta_title'] : $row['title'], 70, ''),
+            'meta_description' => \Illuminate\Support\Str::limit(!empty($row['meta_description']) ? $row['meta_description'] : (!empty($row['excerpt']) ? $row['excerpt'] : strip_tags($row['body'] ?? '')), 160, ''),
         ]);
     }
 }
