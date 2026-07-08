@@ -38,7 +38,6 @@
                         <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
                     </div>
                 </div>
-                </div>
             </div>
 
             <div class="p-5 space-y-4">
