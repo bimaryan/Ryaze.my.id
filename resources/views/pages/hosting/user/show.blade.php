@@ -316,66 +316,72 @@
 
         {{-- TAB: TERMINAL --}}
         <div id="panel-terminal" class="tab-panel hidden">
-            <div class="bg-slate-900 rounded-xl shadow-xl border border-slate-700 overflow-hidden">
-                <div class="bg-slate-800 px-4 py-3 flex items-center gap-3 border-b border-slate-700 select-none">
-                    <div class="flex gap-1.5">
-                        {{-- Tombol merah: clear — pakai data-action, BUKAN onclick --}}
-                        <div class="w-3 h-3 rounded-full bg-rose-500 hover:bg-rose-400 cursor-pointer transition-colors"
-                            data-action="clear-terminal" title="Clear"></div>
-                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            <div class="bg-slate-900 border border-slate-800/60 rounded-xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.4)] relative group">
+                {{-- Terminal header --}}
+                <div class="bg-slate-800/40 backdrop-blur-md border-b border-slate-700/50 px-4 py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="flex gap-1.5 group/dots">
+                            <div class="w-3 h-3 rounded-full bg-rose-500/80 shadow-[0_0_10px_rgba(244,63,94,0.3)] group-hover/dots:bg-rose-500 transition-colors"></div>
+                            <div class="w-3 h-3 rounded-full bg-amber-500/80 shadow-[0_0_10px_rgba(245,158,11,0.3)] group-hover/dots:bg-amber-500 transition-colors"></div>
+                            <div class="w-3 h-3 rounded-full bg-emerald-500/80 shadow-[0_0_10px_rgba(16,185,129,0.3)] hover:bg-emerald-400 cursor-pointer transition-colors" data-action="clear-terminal" title="Clear"></div>
+                        </div>
+                        <div class="h-4 w-px bg-slate-700/60"></div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-emerald-400/80 text-xs shrink-0"></i>
+                            <span class="text-slate-400/80 text-[11px] font-mono tracking-wide truncate" id="terminal-cwd-display">
+                                /{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
+                            </span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2 ml-2 min-w-0">
-                        <i class="fa-solid fa-terminal text-slate-400 text-xs shrink-0"></i>
-                        <span class="text-slate-300 text-xs font-mono font-semibold shrink-0">bash</span>
-                        <span class="text-slate-600 text-xs shrink-0">—</span>
-                        <span class="text-slate-400 text-xs font-mono truncate" id="terminal-cwd-display">
-                            /{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
-                        </span>
-                    </div>
-                    <div class="ml-auto shrink-0">
-                        <button data-action="clear-terminal"
-                            class="text-slate-500 hover:text-slate-300 text-xs transition-colors px-2 py-1 rounded hover:bg-slate-700">
-                            <i class="fa-solid fa-trash-can mr-1"></i><span class="hidden sm:inline">Clear</span>
+                    <div class="flex items-center gap-2">
+                        <button data-action="clear-terminal" class="text-slate-500 hover:text-rose-400 transition-colors text-xs opacity-0 group-hover:opacity-100 duration-300" title="Clear Terminal (Ctrl+L)">
+                            <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
                 </div>
-                {{-- Terminal output: data-action menggantikan onclick --}}
+
+                {{-- Terminal output --}}
                 <div id="terminal-output"
-                    class="px-4 pt-4 pb-2 font-mono text-sm text-slate-200 overflow-y-auto leading-relaxed cursor-text"
-                    style="height:420px;background:#0f1117;" data-action="focus-terminal">
-                    <div id="terminal-welcome" class="text-slate-500 mb-3 select-none border-b border-slate-800 pb-3">
-                        <span class="text-emerald-500 font-bold">ryaze</span><span class="text-slate-400"> hosting
-                            terminal</span><br>
-                        <span class="text-slate-600 text-xs">Project: <span
-                                class="text-slate-400">{{ $project->project_name }}</span> · Ketik perintah dan tekan
-                            Enter.</span>
+                    class="px-5 pt-5 pb-3 font-mono text-sm text-slate-300 overflow-y-auto leading-relaxed cursor-text selection:bg-emerald-500/30 transition-all duration-300 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent"
+                    style="height:420px;background:radial-gradient(circle at center, #131620 0%, #0b0d14 100%);" data-action="focus-terminal">
+                    <div id="terminal-welcome" class="mb-5 select-none">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-md mb-3 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+                            <i class="fa-solid fa-terminal text-emerald-400/80 text-xs"></i>
+                            <span class="text-emerald-400 font-bold tracking-widest text-[10px] uppercase">Ryaze Cloud Terminal</span>
+                        </div>
+                        <div class="text-slate-500/80 text-xs flex items-center gap-2 font-sans tracking-wide">
+                            Connected to <span class="text-slate-300 font-medium bg-slate-800/50 px-2 py-0.5 rounded border border-slate-700/50">{{ $project->project_name }}</span>
+                        </div>
+                        <div class="w-full h-px bg-gradient-to-r from-emerald-500/20 via-slate-700/20 to-transparent mt-4"></div>
                     </div>
                 </div>
-                <div class="flex items-center bg-[#0f1117] border-t border-slate-800 px-4 py-3 gap-2">
-                    <span id="terminal-prompt"
-                        class="text-emerald-400 font-mono text-sm font-bold select-none shrink-0 whitespace-nowrap">
-                        <span
-                            class="text-indigo-400">{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}</span><span
-                            class="text-slate-400"> $</span>
+
+                {{-- Terminal input --}}
+                <div class="flex items-center bg-[#090b10] border-t border-slate-800/80 px-5 py-3.5 gap-3 relative overflow-hidden focus-within:bg-[#0f121a] transition-colors duration-300 group/input">
+                    <div class="absolute left-0 top-0 w-[3px] h-full bg-emerald-500/80 transform scale-y-0 group-focus-within/input:scale-y-100 transition-transform duration-300 ease-out origin-bottom shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                    <span id="terminal-prompt" class="font-mono text-sm font-bold select-none shrink-0 flex items-center gap-2">
+                        <span class="text-indigo-400/90">{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}</span>
+                        <i class="fa-solid fa-angle-right text-emerald-400/80 text-xs"></i>
                     </span>
                     <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off"
-                        spellcheck="false" placeholder="ketik perintah..."
-                        class="flex-1 bg-transparent text-slate-100 font-mono text-sm outline-none placeholder-slate-700 caret-emerald-400 min-w-0">
-                    {{-- Tombol kirim: data-action, BUKAN onclick --}}
+                        spellcheck="false" placeholder="Enter command..."
+                        class="flex-1 bg-transparent text-slate-100 font-mono text-sm outline-none placeholder-slate-600/50 caret-emerald-400 min-w-0">
                     <button data-action="run-command"
-                        class="text-slate-500 hover:text-emerald-400 transition-colors shrink-0">
-                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                        class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] shrink-0 group/btn">
+                        <i class="fa-solid fa-arrow-turn-down -rotate-90 text-xs group-hover/btn:translate-x-0.5 transition-transform"></i>
                     </button>
                 </div>
             </div>
-            <p class="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
-                <i class="fa-solid fa-circle-info text-slate-500"></i>
-                Terminal berjalan di folder project. Mendukung <kbd
-                    class="bg-slate-200 text-slate-600 px-1 rounded text-[10px]">cd</kbd>, <kbd
-                    class="bg-slate-200 text-slate-600 px-1 rounded text-[10px]">↑↓</kbd> history, <kbd
-                    class="bg-slate-200 text-slate-600 px-1 rounded text-[10px]">Ctrl+L</kbd> clear.
-            </p>
+            
+            <div class="flex items-center justify-between mt-4 px-1">
+                <p class="text-[11px] text-slate-500/80 flex items-center gap-2 font-sans">
+                    <i class="fa-solid fa-circle-info text-slate-600"></i>
+                    <span>Pro tip: Use <kbd class="bg-slate-800/80 border border-slate-700/50 text-slate-300 px-1.5 py-0.5 rounded shadow-sm text-[10px] mx-0.5 font-mono">↑</kbd> <kbd class="bg-slate-800/80 border border-slate-700/50 text-slate-300 px-1.5 py-0.5 rounded shadow-sm text-[10px] mx-0.5 font-mono">↓</kbd> for history and <kbd class="bg-slate-800/80 border border-slate-700/50 text-slate-300 px-1.5 py-0.5 rounded shadow-sm text-[10px] mx-0.5 font-mono">Ctrl+L</kbd> to clear</span>
+                </p>
+                <div class="flex items-center gap-1.5 text-[9px] text-emerald-400/80 font-mono uppercase tracking-widest px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.8)]"></span> Session Active
+                </div>
+            </div>
         </div>
 
         {{-- TAB: FILE MANAGER --}}
