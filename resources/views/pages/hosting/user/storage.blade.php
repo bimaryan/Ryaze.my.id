@@ -166,8 +166,8 @@
                             {{ $item['project']->status == 'active' ? 'text-emerald-400' : ($item['project']->status == 'building' ? 'text-amber-400' : 'text-rose-400') }}"></i>
                                     {{ $item['project']->status }}
                                 </span>
-                                <a href="{{ route('user_hosting.storage.detail', $item['project']->hashid) }}"
-                                    class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
+                                <a href="{{ route('user_hosting.storage.show', $item['project']->hashid) }}"
+                                   class="text-indigo-600 hover:text-indigo-800 text-sm font-bold flex items-center gap-1">
                                     Detail <i class="fa-solid fa-chevron-right text-[10px]"></i>
                                 </a>
                             </div>
