@@ -33,8 +33,11 @@ class SecurityHeaders
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=()');
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
         $response->headers->set('Content-Security-Policy',
             "default-src 'self'; ".
+            "base-uri 'self'; ".
+            "object-src 'none'; ".
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com http://127.0.0.1:5173 http://localhost:5173; ".
             "script-src-attr 'unsafe-inline'; ".
             "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
