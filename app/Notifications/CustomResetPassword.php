@@ -28,13 +28,16 @@ class CustomResetPassword extends Notification
     {
         return (new MailMessage)
             ->from('resetpassword@ryaze.my.id', 'Ryaze Security')
-            ->subject(Lang::get('Reset Password Notification'))
-            ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
-            ->action(Lang::get('Reset Password'), url(route('password.reset', [
-                'token' => $this->token,
-                'email' => $notifiable->getEmailForPasswordReset(),
-            ], false)))
-            ->line(Lang::get('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
-            ->line(Lang::get('If you did not request a password reset, no further action is required.'));
+            ->subject('Permintaan Reset Password')
+            ->view('emails.custom-auth', [
+                'title' => 'Reset Password',
+                'intro' => 'Kami menerima permintaan untuk mereset password akun Anda di Ryaze Portal. Silakan klik tombol di bawah ini untuk membuat password baru.',
+                'actionText' => 'Reset Password Sekarang',
+                'actionUrl' => url(route('password.reset', [
+                    'token' => $this->token,
+                    'email' => $notifiable->getEmailForPasswordReset(),
+                ], false)),
+                'outro' => 'Jika Anda tidak pernah meminta reset password, abaikan saja email ini. Tautan ini akan kedaluwarsa dalam ' . config('auth.passwords.'.config('auth.defaults.passwords').'.expire') . ' menit.'
+            ]);
     }
 }
