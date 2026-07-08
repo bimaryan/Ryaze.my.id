@@ -27,6 +27,7 @@ class JokiOrder extends Model
         'demo_link',
         'rating',
         'review',
+        'is_deployed_to_hosting',
     ];
 
     protected $casts = [

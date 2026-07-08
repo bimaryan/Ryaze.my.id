@@ -238,6 +238,7 @@ Route::middleware('auth')->group(function () {
         Route::post('user/joki/orders/payment/{hashid}/proof', [UserJokiDashboardController::class, 'uploadPaymentProof'])->name('user_joki.payment.proof');
         Route::post('user/joki/orders/{hashid}/revision', [UserJokiDashboardController::class, 'requestRevision'])->name('user_joki.revision.store');
         Route::post('user/joki/orders/{hashid}/review', [UserJokiDashboardController::class, 'submitReview'])->name('user_joki.review.store');
+        Route::post('user/joki/orders/{hashid}/deploy-hosting', [UserJokiDashboardController::class, 'deployToHosting'])->name('user_joki.deploy_hosting');
         Route::get('user/joki/billing', [UserJokiDashboardController::class, 'billingHistory'])->name('user_joki.billing');
     });
 

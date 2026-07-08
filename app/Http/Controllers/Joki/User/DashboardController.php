@@ -161,4 +161,42 @@ class DashboardController extends Controller
 
         return back()->with('success', 'Terima kasih! Ulasan Anda berhasil dikirim.');
     }
+
+    public function deployToHosting(Request $request, $hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+        $order_id = $decoded[0];
+
+        $order = JokiOrder::where('client_id', Auth::id())
+            ->where('status', 'completed')
+            ->findOrFail($order_id);
+
+        if ($order->is_deployed_to_hosting) {
+            return back()->with('error', 'Pesanan ini sudah pernah di-deploy ke Hosting.');
+        }
+
+        // Create a new Hosting Project from this Joki Order
+        $project = \App\Models\HostingProject::create([
+            'user_id' => Auth::id(),
+            'name' => 'joki-' . strtolower(str_replace(' ', '-', $order->project_name)) . '-' . rand(100,999),
+            'description' => 'Deployed from Joki Order: ' . $order->order_number,
+            'status' => 'active',
+            'type' => 'php', 
+            'directory' => 'joki-' . $order->order_number . '-' . time(),
+            'port' => rand(8000, 9000), 
+            'storage_limit_mb' => Auth::user()->hosting_storage_limit_mb ?? 512,
+        ]);
+        
+        // Buat folder project
+        $clientDir = env('HOSTING_CLIENTS_DIR', storage_path('app/hosting_clients'));
+        $projectPath = $clientDir . DIRECTORY_SEPARATOR . $project->directory;
+        if (!file_exists($projectPath)) {
+            mkdir($projectPath, 0777, true);
+        }
+
+        $order->update(['is_deployed_to_hosting' => true]);
+
+        return redirect()->route('user_hosting.projects')->with('success', 'Project Joki berhasil di-deploy ke Hosting Anda!');
+    }
 }

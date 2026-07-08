@@ -154,6 +154,32 @@
 
             <!-- Kolom Kanan: Info & Pembayaran MIDTRANS -->
             <div class="space-y-6">
+                @if ($order->status == 'completed')
+                    <x-ui.card class="p-6 bg-gradient-to-br from-indigo-600 to-violet-600 text-white relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i class="fa-solid fa-server text-6xl"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="font-bold text-white mb-2 text-lg">🚀 1-Click Deploy</h3>
+                            <p class="text-indigo-100 text-xs mb-4">Proyek Anda sudah selesai! Anda bisa langsung meng-online-kannya ke layanan Ryaze Hosting hanya dengan satu klik.</p>
+                            
+                            @if ($order->is_deployed_to_hosting)
+                                <div class="bg-white/20 border border-white/30 rounded-lg px-4 py-2 text-sm font-semibold flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-check-circle"></i> Sudah di-deploy
+                                </div>
+                            @else
+                                <form action="{{ route('user_joki.deploy_hosting', $order->hashid) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" onclick="return confirm('Apakah Anda yakin ingin men-deploy project ini ke Ryaze Hosting? (Memerlukan penyimpanan aktif)')"
+                                        class="w-full bg-white text-indigo-700 hover:bg-slate-50 font-bold px-4 py-2.5 rounded-lg text-sm shadow-md transition-colors flex justify-center items-center gap-2">
+                                        Deploy ke Ryaze Hosting
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </x-ui.card>
+                @endif
+
                 <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Tagihan Pembayaran</h3>
 
