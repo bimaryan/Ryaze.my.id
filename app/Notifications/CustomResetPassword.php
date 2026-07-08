@@ -27,6 +27,7 @@ class CustomResetPassword extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
+            ->mailer('smtp_reset')
             ->from('resetpassword@ryaze.my.id', 'Ryaze Security')
             ->subject(Lang::get('Reset Password Notification'))
             ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
