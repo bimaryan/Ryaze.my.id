@@ -18,6 +18,12 @@ class DatabaseController extends Controller
         return view('pages.hosting.user.database.index', compact('databases'));
     }
 
+    public function pmaIndex()
+    {
+        $databases = HostingDatabase::where('user_id', Auth::id())->latest()->get();
+        return view('pages.hosting.user.database.pma', compact('databases'));
+    }
+
     public function store(Request $request)
     {
         // 1. Validasi input manual dari user

@@ -382,10 +382,18 @@
                     </li>
                     <li>
                         <a href="{{ route('user_hosting.databases') }}"
-                            class="{{ $navLink(request()->routeIs('user_hosting.databases*')) }}">
+                            class="{{ $navLink(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }}">
                             <i
-                                class="fa-solid fa-database {{ $iconClass(request()->routeIs('user_hosting.databases*')) }}"></i>
+                                class="fa-solid fa-database {{ $iconClass(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }}"></i>
                             <span class="ms-3 whitespace-nowrap">Database MySQL</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('user_hosting.databases.pma') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.databases.pma')) }}">
+                            <i
+                                class="fa-solid fa-server {{ $iconClass(request()->routeIs('user_hosting.databases.pma')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">phpMyAdmin</span>
                         </a>
                     </li>
                     <li>

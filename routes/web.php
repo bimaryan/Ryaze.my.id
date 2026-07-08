@@ -190,6 +190,8 @@ Route::middleware('auth')->group(function () {
         // Billing & Vouchers
         Route::get('user/hosting/databases/{hashid}/export', [DatabaseController::class, 'export'])->name('user_hosting.databases.export');
         Route::post('user/hosting/databases/{hashid}/import', [DatabaseController::class, 'import'])->name('user_hosting.databases.import');
+        Route::get('user/hosting/pma', [DatabaseController::class, 'pmaIndex'])->name('user_hosting.databases.pma');
+        Route::get('user/hosting/databases/{hashid}/pma', [DatabaseController::class, 'phpMyAdmin'])->name('user_hosting.databases.pma.login');
         Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.detail');
         Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
         Route::post('user/hosting/billing/subscribe', [DashboardController::class, 'subscribe'])->name('user_hosting.billing.subscribe');

@@ -17,7 +17,7 @@
 
         {{-- Header --}}
         <x-ui.page-header 
-            title="Database & phpMyAdmin" 
+            title="Manajemen Database" 
             subtitle="Kelola database MySQL untuk aplikasi Anda." 
             icon="fa-database" 
             iconColor="purple">
@@ -101,18 +101,6 @@
                         <button onclick="openImportModal('{{ $db->hashid }}', '{{ $db->db_name }}')" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-upload"></i> Import
                         </button>
-                        {{-- Form POST auto-login ke phpMyAdmin --}}
-                        <form method="POST" action="{{ env('PMA_URL', '#') }}" target="_blank" class="shrink-0">
-                            <input type="hidden" name="pma_username" value="{{ $db->db_username }}">
-                            <input type="hidden" name="pma_password" value="{{ $db->db_password }}">
-                            <input type="hidden" name="server" value="1">
-                            <button type="submit"
-                                class="bg-indigo-600 border border-indigo-600 text-white hover:bg-indigo-700 hover:border-indigo-700 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
-                                <i class="fa-solid fa-database"></i>
-                                phpMyAdmin
-                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
