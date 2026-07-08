@@ -18,49 +18,55 @@
         {{-- Wallet & Affiliate Summary --}}
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             {{-- Ryaze Wallet --}}
-            <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
-                <div class="absolute top-0 right-0 p-4 opacity-10">
-                    <i class="fa-solid fa-wallet text-8xl"></i>
-                </div>
-                <div class="relative z-10">
-                    <div class="flex items-center gap-2 text-slate-300 text-sm font-semibold mb-1">
-                        <i class="fa-solid fa-wallet"></i> Ryaze Wallet
+            <x-ui.card class="p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-2 text-slate-500 text-sm font-bold mb-2">
+                        <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                            <i class="fa-solid fa-wallet text-sm"></i>
+                        </div>
+                        Ryaze Wallet
                     </div>
-                    <div class="text-3xl font-black mb-4">
+                    <div class="text-3xl font-black text-slate-800 mb-1">
                         Rp {{ number_format(Auth::user()->wallet->balance ?? 0, 0, ',', '.') }}
                     </div>
-                    <div class="flex gap-3">
-                        <button onclick="alert('Fitur Top Up sedang dalam pengembangan')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 px-4 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-plus mr-1"></i> Top Up
-                        </button>
-                        <button onclick="alert('Fitur Riwayat sedang dalam pengembangan')" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-2 px-4 rounded-lg transition shadow-sm">
-                            Riwayat
-                        </button>
-                    </div>
+                    <p class="text-xs text-slate-500 mb-5">Saldo aktif yang dapat digunakan untuk transaksi.</p>
                 </div>
-            </div>
+                <div class="flex gap-3 mt-auto">
+                    <button onclick="Swal.fire('Info', 'Fitur Top Up sedang dalam pengembangan MVP.', 'info')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm flex-1 text-center">
+                        <i class="fa-solid fa-plus mr-1"></i> Top Up
+                    </button>
+                    <button onclick="Swal.fire('Info', 'Fitur Riwayat sedang dalam pengembangan MVP.', 'info')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm flex-1 text-center">
+                        Riwayat
+                    </button>
+                </div>
+            </x-ui.card>
 
             {{-- Affiliate --}}
-            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <x-ui.card class="p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-users text-indigo-600"></i> Affiliate Program</h3>
-                        <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded">Aktif</span>
+                        <div class="flex items-center gap-2 text-slate-500 text-sm font-bold mb-2">
+                            <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                <i class="fa-solid fa-users text-sm"></i>
+                            </div>
+                            Affiliate Program
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded">Aktif</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-4">Ajak teman dan dapatkan komisi untuk setiap transaksi mereka.</p>
                 </div>
-                <div>
-                    <div class="text-xs font-semibold text-slate-700 mb-1">Link Referral Anda:</div>
+                <div class="mt-auto">
+                    <div class="text-xs font-bold text-slate-700 mb-2">Link Referral Anda:</div>
                     <div class="flex items-center gap-2">
-                        <code class="bg-slate-100 border border-slate-200 px-3 py-2 rounded-lg text-indigo-600 flex-1 break-all select-all text-xs font-mono">
+                        <code class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-indigo-600 flex-1 break-all select-all text-xs font-mono font-medium">
                             {{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}
                         </code>
-                        <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}'); alert('Link disalin!')" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg transition tooltip" title="Copy Link">
+                        <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}'); Swal.fire('Berhasil', 'Link referral disalin ke clipboard!', 'success')" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl transition shadow-sm flex-shrink-0" title="Copy Link">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
                 </div>
-            </div>
+            </x-ui.card>
         </div>
 
         {{-- Statistik Dinamis --}}
