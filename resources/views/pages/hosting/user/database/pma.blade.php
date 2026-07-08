@@ -48,12 +48,19 @@
                         <span class="opacity-80 text-xs">Klik tombol di samping untuk masuk ke phpMyAdmin database <code class="font-mono bg-indigo-100 px-1 rounded">{{ $db->db_name }}</code> tanpa harus mengetik password.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <a href="{{ route('user_hosting.databases.pma.login', $db->hashid) }}" target="_blank" 
-                            class="bg-indigo-600 border border-indigo-600 text-white hover:bg-indigo-700 hover:border-indigo-700 transition-all text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm flex items-center gap-2 whitespace-nowrap">
-                            <i class="fa-solid fa-server"></i>
-                            Buka phpMyAdmin
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                        </a>
+                        {{-- Form POST auto-login ke phpMyAdmin --}}
+                        <form method="POST" action="{{ rtrim(env('PMA_URL', '#'), '/') }}/index.php" target="_blank" class="shrink-0">
+                            <input type="hidden" name="pma_username" value="{{ $db->db_username }}">
+                            <input type="hidden" name="pma_password" value="{{ $db->db_password }}">
+                            <input type="hidden" name="server" value="1">
+                            <input type="hidden" name="pma_servername" value="{{ $db->host }}">
+                            <button type="submit"
+                                class="bg-indigo-600 border border-indigo-600 text-white hover:bg-indigo-700 hover:border-indigo-700 transition-all text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm flex items-center gap-2 whitespace-nowrap">
+                                <i class="fa-solid fa-server"></i>
+                                Buka phpMyAdmin
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
