@@ -114,6 +114,10 @@
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-clock"></i> <span>Cron Jobs</span>
             </button>
+            <button data-tab="team" id="tab-team"
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-users"></i> <span>Team Access</span>
+            </button>
         </div>
 
         {{-- TAB: OVERVIEW --}}
@@ -1022,6 +1026,72 @@
                                 @empty
                                     <tr>
                                         <td colspan="3" class="px-6 py-4 text-center text-slate-500">Belum ada cron job yang didaftarkan.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- TAB: TEAM ACCESS --}}
+        <div id="panel-team" class="tab-panel hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-slate-800">Team Access & Collaborators</h3>
+                        <p class="text-xs text-slate-500">Undang anggota tim lain untuk berkolaborasi dalam proyek ini.</p>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form action="#" method="POST" class="flex gap-4" onsubmit="event.preventDefault(); swAlert('Info', 'Fitur undang anggota sedang dalam pengembangan MVP.', 'info');">
+                        @csrf
+                        <div class="flex-1">
+                            <input type="email" name="email" placeholder="Alamat email anggota baru" required
+                                class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                        </div>
+                        <select name="role" class="transition-all bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                            <option value="viewer">Viewer (Hanya Lihat)</option>
+                            <option value="editor">Editor (Bisa Ubah)</option>
+                        </select>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
+                            Undang Anggota
+                        </button>
+                    </form>
+
+                    <div class="mt-6 border border-slate-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500 whitespace-nowrap min-w-[600px]">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">User</th>
+                                    <th scope="col" class="px-6 py-3">Role</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($project->teamMembers as $member)
+                                    <tr class="bg-white border-b border-slate-100 hover:bg-slate-50">
+                                        <td class="px-6 py-4 font-semibold text-slate-800">
+                                            {{ $member->name }} <br><span class="text-xs font-normal text-slate-500">{{ $member->email }}</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            @if($member->pivot->role == 'editor')
+                                                <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs font-bold">Editor</span>
+                                            @else
+                                                <span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold">Viewer</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <form action="#" method="POST" onsubmit="event.preventDefault(); swAlert('Info', 'Fitur hapus anggota sedang dalam pengembangan MVP.', 'info');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold bg-rose-50 px-2 py-1 rounded"><i class="fa-solid fa-user-xmark"></i> Cabut Akses</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-4 text-center text-slate-500">Belum ada anggota tim yang diundang.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

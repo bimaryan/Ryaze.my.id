@@ -154,6 +154,25 @@
 
             <!-- Kolom Kanan: Info & Pembayaran MIDTRANS -->
             <div class="space-y-6">
+
+                @if ($order->preview_url)
+                    <x-ui.card class="p-6 bg-slate-800 text-white border-none shadow-md">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-slate-700 rounded-full flex justify-center items-center">
+                                <i class="fa-solid fa-eye text-emerald-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-sm">Live Preview</h3>
+                                <p class="text-xs text-slate-400">Lihat hasil pengerjaan secara langsung.</p>
+                            </div>
+                        </div>
+                        <a href="{{ $order->preview_url }}" target="_blank"
+                            class="block w-full bg-indigo-600 hover:bg-indigo-500 text-center text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors">
+                            Buka Preview URL &rarr;
+                        </a>
+                    </x-ui.card>
+                @endif
+
                 @if ($order->status == 'completed')
                     <x-ui.card class="p-6 bg-gradient-to-br from-indigo-600 to-violet-600 text-white relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10">

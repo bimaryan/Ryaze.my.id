@@ -58,6 +58,13 @@ class HostingProject extends Model
         return $this->hasMany(HostingDomain::class, 'project_id');
     }
 
+    public function teamMembers()
+    {
+        return $this->belongsToMany(User::class, 'hosting_project_users', 'project_id', 'user_id')
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
+
     public function crons()
     {
         return $this->hasMany(HostingCron::class, 'project_id');

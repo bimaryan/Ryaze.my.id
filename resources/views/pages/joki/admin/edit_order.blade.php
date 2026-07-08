@@ -73,10 +73,15 @@
                                     class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Harga Deal (Rp)</label>
                                 <input type="number" name="price" value="{{ $order->price }}"
+                                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Live Preview URL</label>
+                                <input type="url" name="preview_url" value="{{ $order->preview_url }}" placeholder="https://staging.ryaze.my.id"
                                     class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                             </div>
                             <div>
@@ -85,7 +90,7 @@
                                     class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Link Demo / Hosting</label>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Link Demo Akhir</label>
                                 <input type="url" name="demo_link" value="{{ $order->demo_link }}"
                                     class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                             </div>

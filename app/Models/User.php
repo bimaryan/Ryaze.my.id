@@ -49,6 +49,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(HostingProject::class, 'user_id');
     }
 
+    public function sharedHostingProjects()
+    {
+        return $this->belongsToMany(HostingProject::class, 'hosting_project_users', 'user_id', 'project_id')
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
+
     public function hostingBillings()
     {
         return $this->hasMany(HostingBilling::class, 'user_id');

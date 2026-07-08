@@ -116,6 +116,45 @@
                 </form>
             </x-ui.card>
 
+            <!-- 2FA Section -->
+            <x-ui.card>
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <h2 class="text-sm font-bold text-slate-800">Two-Factor Authentication (2FA)</h2>
+                    @if(auth()->user()->two_factor_secret)
+                        <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-shield-check"></i> Aktif
+                        </span>
+                    @else
+                        <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-shield"></i> Belum Aktif
+                        </span>
+                    @endif
+                </div>
+
+                <div class="p-6">
+                    <p class="text-sm text-slate-600 mb-6">
+                        Tambahkan lapisan keamanan ekstra ke akun Anda menggunakan aplikasi autentikator (seperti Google Authenticator).
+                    </p>
+
+                    @if(!auth()->user()->two_factor_secret)
+                        <form action="#" method="POST" onsubmit="event.preventDefault(); swAlert('Info', 'Fitur 2FA Setup sedang dalam pengembangan MVP.', 'info');">
+                            @csrf
+                            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
+                                Aktifkan 2FA
+                            </button>
+                        </form>
+                    @else
+                        <form action="#" method="POST" onsubmit="event.preventDefault(); swConfirm('Nonaktifkan 2FA?', 'Apakah Anda yakin ingin menonaktifkan pengamanan ekstra ini?').then(res => { if(res.isConfirmed) { swAlert('Info', 'Fitur 2FA Disable sedang dalam pengembangan MVP.', 'info'); } }); return false;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
+                                Nonaktifkan 2FA
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </x-ui.card>
+
         </div>
     </x-ui.page-layout>
 @endsection
