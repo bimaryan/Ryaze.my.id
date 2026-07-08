@@ -67,19 +67,7 @@
                                 <div class="flex items-center gap-3">
                                     <div
                                         class="w-10 h-10 border border-slate-200 rounded-lg flex items-center justify-center bg-slate-50 shrink-0">
-                                        @if ($project->framework == 'react')
-                                            <i class="fa-brands fa-react text-xl text-sky-500"></i>
-                                        @elseif($project->framework == 'nextjs')
-                                            <i class="fa-brands fa-node-js text-xl text-slate-800"></i>
-                                        @elseif($project->framework == 'laravel')
-                                            <i class="fa-brands fa-laravel text-xl text-red-500"></i>
-                                        @elseif($project->framework == 'python')
-                                            <i class="fa-brands fa-python text-xl text-yellow-500"></i>
-                                        @elseif($project->framework == 'node')
-                                            <i class="fa-brands fa-node text-xl text-emerald-500"></i>
-                                        @else
-                                            <i class="fa-brands fa-html5 text-xl text-orange-500"></i>
-                                        @endif
+                                        <i class="{{ get_framework_icon($project->framework) }} text-xl"></i>
                                     </div>
                                     <div>
                                         <a href="{{ route('user_hosting.show', $project->hashid) }}"

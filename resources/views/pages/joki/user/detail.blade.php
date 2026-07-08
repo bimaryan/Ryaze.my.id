@@ -174,11 +174,10 @@
 
                                     <!-- TOMBOL BAYAR PAKASIR -->
                                     @if ($payment->status == 'unpaid' || $payment->status == 'failed')
-                                        <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug') }}/{{ $payment->amount }}?order_id={{ $payment->invoice_number }}"
-                                            target="_blank"
+                                        <button type="button" onclick="openPaymentModal({{ $payment->amount }}, '{{ number_format($payment->amount, 0, ',', '.') }}', '{{ $payment->invoice_number }}')"
                                             class="mt-2 block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-lg transition-colors shadow-md shadow-indigo-200">
-                                            <i class="fa-solid fa-credit-card mr-1"></i> Bayar Sekarang
-                                        </a>
+                                            <i class="fa-solid fa-credit-card mr-1"></i> Pilih Metode Pembayaran
+                                        </button>
                                     @else
                                         <!-- TAMPILAN JIKA LUNAS -->
                                         <p
@@ -221,4 +220,82 @@
             </div>
         </div>
     </x-ui.page-layout>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" tabindex="-1" class="hidden fixed inset-0 z-[100] flex items-center justify-center w-full h-full bg-slate-900/50 backdrop-blur-sm p-4">
+        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-lg font-bold text-slate-800">
+                    Pilih Metode Pembayaran
+                </h3>
+                <button type="button" onclick="closePaymentModal()" class="text-slate-400 hover:bg-slate-100 hover:text-slate-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div class="text-center mb-6">
+                    <p class="text-sm text-slate-500 font-medium mb-1">Total Tagihan</p>
+                    <div class="text-3xl font-black text-slate-800">Rp <span id="modalPaymentAmount">0</span></div>
+                    <p class="text-xs text-slate-400 mt-1">Invoice: <span id="modalPaymentInvoice" class="font-mono"></span></p>
+                </div>
+
+                <!-- Option 1: Pakasir -->
+                <a id="btnPakasir" href="#" target="_blank" onclick="closePaymentModal()" class="flex items-center justify-between p-4 border-2 border-slate-100 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-bolt text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">Otomatis (Virtual Account/QRIS)</h4>
+                            <p class="text-xs text-slate-500">Konfirmasi instan, diproses otomatis.</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-indigo-500"></i>
+                </a>
+
+                <!-- Option 2: DANA -->
+                <div class="p-4 border-2 border-slate-100 rounded-xl space-y-3 mt-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-wallet text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">Transfer DANA</h4>
+                            <p class="text-xs text-slate-500 font-mono text-lg font-bold mt-1 text-slate-700">{{ \App\Models\Setting::val('payment_dana', '085157433395') }}</p>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100">
+                        <p class="text-[11px] text-slate-500 leading-relaxed mb-3">
+                            Setelah melakukan transfer, silakan kirim bukti pembayaran melalui WhatsApp untuk diverifikasi secara manual oleh Admin.
+                        </p>
+                        <a id="btnWA" href="#" target="_blank" onclick="closePaymentModal()" class="block w-full text-center bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg text-sm transition-colors shadow-sm">
+                            <i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi ke Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPaymentModal(amount, formattedAmount, invoice) {
+            document.getElementById('modalPaymentAmount').innerText = formattedAmount;
+            document.getElementById('modalPaymentInvoice').innerText = invoice;
+            
+            let pakasirSlug = "{{ config('services.pakasir.slug', 'ryaze') }}";
+            let pakasirUrl = `https://app.pakasir.com/pay/${pakasirSlug}/${amount}?order_id=${invoice}`;
+            document.getElementById('btnPakasir').href = pakasirUrl;
+
+            let adminWa = "{{ \App\Models\Setting::val('contact_whatsapp', '') }}";
+            let waMessage = `Halo Admin, saya ingin konfirmasi pembayaran untuk Invoice *${invoice}* sebesar *Rp ${formattedAmount}* via DANA. Berikut lampiran buktinya:`;
+            let waUrl = `https://wa.me/62${adminWa}?text=${encodeURIComponent(waMessage)}`;
+            document.getElementById('btnWA').href = waUrl;
+
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+    </script>
 @endsection

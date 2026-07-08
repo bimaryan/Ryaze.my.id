@@ -87,6 +87,11 @@
                             <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp API Token</label>
                             <input type="password" name="wa_api_token" value="{{ $settings['wa_api_token'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Token API">
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nomor DANA (Transfer Manual)</label>
+                            <input type="text" name="payment_dana" value="{{ $settings['payment_dana'] ?? '085157433395' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="085157433395">
+                            <p class="text-xs text-slate-500 mt-1">Digunakan untuk opsi pembayaran Transfer Manual via DANA.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -98,6 +103,12 @@
                             <label class="block text-sm font-medium text-slate-700 mb-1">Biaya Admin / Pajak Layanan (%)</label>
                             <input type="number" name="admin_fee_percentage" value="{{ $settings['admin_fee_percentage'] ?? '0' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" max="100" step="0.1">
                             <p class="text-xs text-slate-500 mt-1">Biaya admin yang ditambahkan ke setiap tagihan pembayaran (%).</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Pilihan Framework Tersedia</label>
+                            <input type="text" name="available_frameworks" value="{{ $settings['available_frameworks'] ?? 'html,php,laravel,react,nextjs,python,node,vue' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="html,php,laravel,react,nextjs,python,node">
+                            <p class="text-xs text-slate-500 mt-1">Pisahkan dengan koma (tanpa spasi). Contoh: html,php,laravel</p>
                         </div>
                         
                         <div class="space-y-4">

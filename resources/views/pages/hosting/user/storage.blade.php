@@ -141,21 +141,7 @@
                                     {{-- Framework icon --}}
                                     <div
                                         class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
-                                        @if ($item['project']->framework == 'react')
-                                            <i class="fa-brands fa-react text-sky-500"></i>
-                                        @elseif($item['project']->framework == 'nextjs')
-                                            <i class="fa-brands fa-node-js text-slate-700"></i>
-                                        @elseif($item['project']->framework == 'laravel')
-                                            <i class="fa-brands fa-laravel text-red-500"></i>
-                                        @elseif($item['project']->framework == 'python')
-                                            <i class="fa-brands fa-python text-yellow-500"></i>
-                                        @elseif($item['project']->framework == 'node')
-                                            <i class="fa-brands fa-node text-emerald-500"></i>
-                                        @elseif($item['project']->framework == 'vue')
-                                            <i class="fa-brands fa-vuejs text-emerald-500"></i>
-                                        @else
-                                            <i class="fa-brands fa-html5 text-orange-500"></i>
-                                        @endif
+                                        <i class="{{ get_framework_icon($item['project']->framework) }}"></i>
                                     </div>
                                     <div class="min-w-0">
                                         <p class="font-semibold text-slate-800 text-sm truncate">

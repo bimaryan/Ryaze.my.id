@@ -300,63 +300,46 @@
                     <div id="framework_section">
                         <label class="block text-xs font-bold text-slate-700 mb-3">Pilih Framework <span class="text-rose-500">*</span></label>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            @php
+                            $availableFrameworks = explode(',', \App\Models\Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,python,node,vue'));
+                            $availableFrameworks = array_map('trim', $availableFrameworks);
+                            $frameworkIcons = [
+                                'html' => ['icon' => 'fa-brands fa-html5', 'color' => 'text-orange-500', 'name' => 'HTML Statis'],
+                                'php' => ['icon' => 'fa-brands fa-php', 'color' => 'text-indigo-500', 'name' => 'PHP Native'],
+                                'laravel' => ['icon' => 'fa-brands fa-laravel', 'color' => 'text-red-500', 'name' => 'Laravel'],
+                                'react' => ['icon' => 'fa-brands fa-react', 'color' => 'text-sky-500', 'name' => 'React JS'],
+                                'nextjs' => ['icon' => 'fa-brands fa-node-js', 'color' => 'text-slate-800', 'name' => 'Next.js'],
+                                'python' => ['icon' => 'fa-brands fa-python', 'color' => 'text-yellow-500', 'name' => 'Python'],
+                                'node' => ['icon' => 'fa-brands fa-node', 'color' => 'text-emerald-500', 'name' => 'Node.js'],
+                                'vue' => ['icon' => 'fa-brands fa-vuejs', 'color' => 'text-emerald-500', 'name' => 'Vue JS'],
+                            ];
+                            @endphp
 
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="html" class="peer hidden" required>
-                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-html5 text-2xl text-orange-500 mb-1.5 block"></i>
-                                    <p class="font-bold text-slate-700 text-xs">HTML Statis</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="php" class="peer hidden">
-                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-php text-2xl text-indigo-500 mb-1.5 block"></i>
-                                    <p class="font-bold text-slate-700 text-xs">PHP Native</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="laravel" class="peer hidden">
-                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-laravel text-2xl text-red-500 mb-1.5 block"></i>
-                                    <p class="font-bold text-slate-700 text-xs">Laravel</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="react" class="peer hidden">
-                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-react text-2xl text-sky-500 mb-1.5 block"></i>
-                                    <p class="font-bold text-slate-700 text-xs">React JS</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="nextjs" class="peer hidden">
-                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-node-js text-2xl text-slate-800 mb-1.5 block"></i>
-                                    <p class="font-bold text-slate-700 text-xs">Next.js</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer opacity-60" onclick="Swal.fire({icon: 'info', title: 'Informasi', text: 'Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.'})">
-                                <input type="radio" name="framework" value="python" class="peer hidden" disabled>
-                                <div class="p-3 border-2 border-slate-200 rounded-xl bg-slate-50 transition-all text-center cursor-not-allowed">
-                                    <i class="fa-brands fa-python text-2xl text-yellow-500 mb-1.5 block opacity-60"></i>
-                                    <p class="font-bold text-slate-700 text-xs opacity-60">Python</p>
-                                </div>
-                            </label>
-
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="framework" value="node" class="peer hidden">
-                                <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
-                                    <i class="fa-brands fa-node text-2xl text-emerald-500 mb-1.5 block"></i>
-                                    <p class="font-bold text-slate-700 text-xs">Node.js</p>
-                                </div>
-                            </label>
-
+                            @foreach($availableFrameworks as $index => $fw)
+                                @php
+                                    $fwKey = strtolower($fw);
+                                    $info = $frameworkIcons[$fwKey] ?? ['icon' => 'fa-solid fa-code', 'color' => 'text-slate-500', 'name' => strtoupper($fw)];
+                                    $isDisabled = ($fwKey == 'python'); // Python always manual contact
+                                @endphp
+                                
+                                @if($isDisabled)
+                                    <label class="relative cursor-pointer opacity-60" onclick="Swal.fire({icon: 'info', title: 'Informasi', text: 'Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.'})">
+                                        <input type="radio" name="framework" value="{{ $fw }}" class="peer hidden" disabled>
+                                        <div class="p-3 border-2 border-slate-200 rounded-xl bg-slate-50 transition-all text-center cursor-not-allowed">
+                                            <i class="{{ $info['icon'] }} text-2xl {{ $info['color'] }} mb-1.5 block opacity-60"></i>
+                                            <p class="font-bold text-slate-700 text-xs opacity-60">{{ $info['name'] }}</p>
+                                        </div>
+                                    </label>
+                                @else
+                                    <label class="relative cursor-pointer">
+                                        <input type="radio" name="framework" value="{{ $fw }}" class="peer hidden" {{ $index === 0 ? 'required' : '' }}>
+                                        <div class="p-3 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all text-center">
+                                            <i class="{{ $info['icon'] }} text-2xl {{ $info['color'] }} mb-1.5 block"></i>
+                                            <p class="font-bold text-slate-700 text-xs">{{ $info['name'] }}</p>
+                                        </div>
+                                    </label>
+                                @endif
+                            @endforeach
                         </div>
                     </div>
                 </div>
