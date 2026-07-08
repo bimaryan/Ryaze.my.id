@@ -72,7 +72,12 @@ class BackupController extends Controller
             $dbPass = env('DB_PASSWORD');
 
             try {
-                $dump = new \Ifsnop\Mysqldump\Mysqldump("mysql:host={$dbHost};port={$dbPort};dbname={$dbName}", $dbUser, $dbPass);
+                $dump = new \Ifsnop\Mysqldump\Mysqldump(
+                    "mysql:host={$dbHost};port={$dbPort};dbname={$dbName}", 
+                    $dbUser, 
+                    $dbPass,
+                    ['add-drop-table' => true]
+                );
                 $dump->start($sqlPath);
             } catch (\Exception $e) {
                 throw new \Exception("Gagal melakukan dump database: " . $e->getMessage());

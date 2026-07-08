@@ -264,7 +264,8 @@ class DatabaseController extends Controller
             $dump = new \Ifsnop\Mysqldump\Mysqldump(
                 "mysql:host={$mysqlHost};dbname={$db->db_name}",
                 'root',
-                $rootPass
+                $rootPass,
+                ['add-drop-table' => true]
             );
             $dump->start($tempPath);
         } catch (\Exception $e) {
