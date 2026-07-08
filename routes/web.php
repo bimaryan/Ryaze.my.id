@@ -70,6 +70,9 @@ Route::middleware('auth')->group(function () {
         return back()->with('success', 'Link verifikasi telah dikirim ulang ke email Anda!');
     })->middleware(['throttle:6,1'])->name('verification.send');
 
+    // ── WALLET ───────────────────────────────────────────────────
+    Route::get('/user/wallet', [\App\Http\Controllers\WalletController::class, 'history'])->name('user.wallet.history');
+    Route::post('/user/wallet/topup', [\App\Http\Controllers\WalletController::class, 'topUp'])->name('user.wallet.topup');
 
     // ── LOGOUT ───────────────────────────────────────────────────
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

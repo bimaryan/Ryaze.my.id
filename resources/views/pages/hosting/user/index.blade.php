@@ -32,12 +32,12 @@
                     <p class="text-xs text-slate-500 mb-5">Saldo aktif yang dapat digunakan untuk transaksi.</p>
                 </div>
                 <div class="flex gap-3 mt-auto">
-                    <button onclick="Swal.fire('Info', 'Fitur Top Up sedang dalam pengembangan MVP.', 'info')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm flex-1 text-center">
+                    <a href="{{ route('user.wallet.history') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm flex-1 text-center">
                         <i class="fa-solid fa-plus mr-1"></i> Top Up
-                    </button>
-                    <button onclick="Swal.fire('Info', 'Fitur Riwayat sedang dalam pengembangan MVP.', 'info')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm flex-1 text-center">
+                    </a>
+                    <a href="{{ route('user.wallet.history') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm flex-1 text-center">
                         Riwayat
-                    </button>
+                    </a>
                 </div>
             </x-ui.card>
 

@@ -7,6 +7,37 @@ use App\Models\JokiPayment;
 
 class PaymentCallbackController extends Controller
 {
+    private function distributeAffiliateCommission($user, $amount, $description)
+    {
+        if ($user && $user->referred_by) {
+            $referrer = $user->referrer;
+            if ($referrer) {
+                $commissionAmount = $amount * 0.10; // 10%
+                
+                \App\Models\AffiliateCommission::create([
+                    'user_id' => $referrer->id,
+                    'referred_user_id' => $user->id,
+                    'amount' => $commissionAmount,
+                    'description' => $description,
+                    'status' => 'paid',
+                ]);
+
+                $referrerWallet = $referrer->wallet()->firstOrCreate(['user_id' => $referrer->id], ['balance' => 0]);
+                $referrerWallet->increment('balance', $commissionAmount);
+
+                \App\Models\WalletTransaction::create([
+                    'wallet_id' => $referrerWallet->id,
+                    'amount' => $commissionAmount,
+                    'type' => 'credit',
+                    'description' => 'Komisi Affiliate: ' . $description,
+                    'status' => 'completed',
+                ]);
+                
+                $referrer->notify(new \App\Notifications\SystemNotification('Anda mendapatkan komisi afiliasi sebesar Rp ' . number_format($commissionAmount, 0, ',', '.') . ' dari referal Anda.', 'success'));
+            }
+        }
+    }
+
     public function handleWebhook(Request $request)
     {
         \Illuminate\Support\Facades\Log::info('Pakasir Webhook Hit:', $request->all());
@@ -105,6 +136,8 @@ class PaymentCallbackController extends Controller
                             }
 
                             $user->notify(new \App\Notifications\SystemNotification('Pembayaran langganan hosting ('.$payment->invoice_number.') berhasil. ' . $unpaidProjects->count() . ' project sedang disiapkan.', 'success'));
+                            
+                            $this->distributeAffiliateCommission($user, $payment->amount, 'Pembayaran Langganan Hosting');
                         }
                     }
                 } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
@@ -130,6 +163,8 @@ class PaymentCallbackController extends Controller
                             $user->increment('hosting_storage_limit_mb', 1024); // Add 1GB globally
 
                             $user->notify(new \App\Notifications\SystemNotification('Pembayaran upgrade storage ('.$payment->invoice_number.') berhasil. Kapasitas storage akun Anda bertambah 1GB.', 'success'));
+                            
+                            $this->distributeAffiliateCommission($user, $payment->amount, 'Pembayaran Upgrade Storage Hosting');
                         }
                     }
                 } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
@@ -153,12 +188,32 @@ class PaymentCallbackController extends Controller
 
                     if ($payment->order && $payment->order->client) {
                         $payment->order->client->notify(new \App\Notifications\SystemNotification('Pembayaran joki Anda ('.$payment->invoice_number.') telah kami terima. Admin segera memprosesnya.', 'success'));
+                        $this->distributeAffiliateCommission($payment->order->client, $payment->amount, 'Pembayaran Layanan Joki');
                     }
                 } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
                     $payment->update(['status' => 'failed']);
                 }
             } else {
                 return response()->json(['success' => false, 'message' => 'Invoice not found'], 404);
+            }
+        } elseif (str_starts_with($order_id, 'WLT-TOPUP-')) {
+            $transaction = \App\Models\WalletTransaction::where('reference_id', $order_id)->first();
+            if ($transaction) {
+                $statusLower = strtolower($status);
+                if (in_array($statusLower, ['completed', 'paid', 'success'])) {
+                    if ($transaction->status != 'completed') {
+                        $transaction->update(['status' => 'completed']);
+                        $wallet = $transaction->wallet;
+                        if ($wallet) {
+                            $wallet->increment('balance', $transaction->amount);
+                            $wallet->user->notify(new \App\Notifications\SystemNotification('Top Up Wallet sebesar Rp ' . number_format($transaction->amount, 0, ',', '.') . ' berhasil ditambahkan.', 'success'));
+                        }
+                    }
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                    $transaction->update(['status' => 'failed']);
+                }
+            } else {
+                return response()->json(['success' => false, 'message' => 'Wallet Transaction not found'], 404);
             }
         }
 
