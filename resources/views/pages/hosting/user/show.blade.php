@@ -875,6 +875,7 @@
 
         {{-- TAB: CRON JOBS --}}
         {{-- TAB: EMAIL --}}
+        {{--
         <div id="panel-email" class="tab-panel hidden space-y-6">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
@@ -953,6 +954,7 @@
                 </div>
             </div>
         </div>
+        --}}
 
 
         <div id="panel-crons" class="tab-panel hidden space-y-6">
