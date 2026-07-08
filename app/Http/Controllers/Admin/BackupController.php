@@ -64,25 +64,18 @@ class BackupController extends Controller
                 mkdir(storage_path('app/temp'), 0755, true);
             }
 
-            // Dump Database using mysqldump
+            // Dump Database using pure PHP (ifsnop/mysqldump-php)
             $dbHost = env('DB_HOST', '127.0.0.1');
             $dbPort = env('DB_PORT', '3306');
             $dbName = env('DB_DATABASE');
             $dbUser = env('DB_USERNAME');
             $dbPass = env('DB_PASSWORD');
 
-            // Escape password
-            $passwordArg = empty($dbPass) ? '' : "-p\"{$dbPass}\"";
-            $command = "mysqldump -h {$dbHost} -P {$dbPort} -u {$dbUser} {$passwordArg} {$dbName} > {$sqlPath} 2>&1";
-            
-            $output = [];
-            $returnVar = 0;
-            exec($command, $output, $returnVar);
-
-            if ($returnVar !== 0) {
-                // If mysqldump fails, just continue without db or throw error
-                // We'll throw an error if SQL dump fails
-                throw new \Exception("Gagal melakukan dump database. Pastikan perintah 'mysqldump' tersedia di server. Log: " . implode("\n", $output));
+            try {
+                $dump = new \Ifsnop\Mysqldump\Mysqldump("mysql:host={$dbHost};port={$dbPort};dbname={$dbName}", $dbUser, $dbPass);
+                $dump->start($sqlPath);
+            } catch (\Exception $e) {
+                throw new \Exception("Gagal melakukan dump database: " . $e->getMessage());
             }
 
             // Create ZIP
@@ -184,19 +177,11 @@ class BackupController extends Controller
                 $dbHost = env('DB_HOST', '127.0.0.1');
                 $dbPort = env('DB_PORT', '3306');
                 $dbName = env('DB_DATABASE');
-                $dbUser = env('DB_USERNAME');
-                $dbPass = env('DB_PASSWORD');
-
-                $passwordArg = empty($dbPass) ? '' : "-p\"{$dbPass}\"";
-                // Restore logic
-                $command = "mysql -h {$dbHost} -P {$dbPort} -u {$dbUser} {$passwordArg} {$dbName} < {$sqlFile} 2>&1";
-                
-                $output = [];
-                $returnVar = 0;
-                exec($command, $output, $returnVar);
-
-                if ($returnVar !== 0) {
-                    throw new \Exception("Gagal me-restore database. Log: " . implode("\n", $output));
+                try {
+                    $sql = file_get_contents($sqlFile);
+                    \Illuminate\Support\Facades\DB::unprepared($sql);
+                } catch (\Exception $e) {
+                    throw new \Exception("Gagal me-restore database: " . $e->getMessage());
                 }
             }
 
