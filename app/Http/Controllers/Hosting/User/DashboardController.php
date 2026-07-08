@@ -1170,7 +1170,14 @@ PHP;
 
         // Izinkan 'php artisan ...' sebagai satu command prefix
         if ($firstWord === 'php' && str_starts_with($command, 'php artisan')) {
-            // allowed
+            // Auto-append --force untuk menghindari prompt yes/no (karena terminal non-interactive)
+            $interactiveArtisan = ['migrate', 'migrate:fresh', 'migrate:refresh', 'migrate:reset', 'db:seed', 'db:wipe', 'key:generate'];
+            foreach ($interactiveArtisan as $artCmd) {
+                if (str_contains($command, $artCmd) && !str_contains($command, '--force')) {
+                    $command .= ' --force';
+                    break;
+                }
+            }
         } elseif (! in_array($firstWord, $this->allowedCommands, true)) {
             return response()->json([
                 'output' => "⛔ Command '{$firstWord}' tidak diizinkan.\nCommand yang diizinkan: ".implode(', ', $this->allowedCommands),
