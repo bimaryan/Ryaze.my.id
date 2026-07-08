@@ -61,7 +61,7 @@
                         <code class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-indigo-600 flex-1 break-all select-all text-xs font-mono font-medium">
                             {{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}
                         </code>
-                        <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}'); Swal.fire('Berhasil', 'Link referral disalin ke clipboard!', 'success')" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl transition shadow-sm flex-shrink-0" title="Copy Link">
+                        <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}'); typeof hotToast !== 'undefined' ? hotToast('Link referral disalin ke clipboard!', 'success') : alert('Link disalin!')" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl transition shadow-sm flex-shrink-0" title="Copy Link">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>

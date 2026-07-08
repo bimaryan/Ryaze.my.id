@@ -53,7 +53,7 @@
                 <code class="bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-indigo-600 flex-1 break-all select-all text-sm font-mono font-medium">
                     {{ url('/register?ref=' . ($user->referral_code ?? 'RYZ-'.$user->id)) }}
                 </code>
-                <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . ($user->referral_code ?? 'RYZ-'.$user->id)) }}'); typeof swAlert !== 'undefined' ? swAlert('Berhasil', 'Link referral disalin ke clipboard!', 'success') : Swal.fire('Berhasil', 'Link disalin!', 'success')" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-3 rounded-xl transition shadow-sm flex-shrink-0 font-bold text-sm">
+                <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . ($user->referral_code ?? 'RYZ-'.$user->id)) }}'); typeof hotToast !== 'undefined' ? hotToast('Link referral disalin ke clipboard!', 'success') : alert('Link disalin!')" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-3 rounded-xl transition shadow-sm flex-shrink-0 font-bold text-sm">
                     <i class="fa-regular fa-copy mr-1"></i> Copy
                 </button>
             </div>
