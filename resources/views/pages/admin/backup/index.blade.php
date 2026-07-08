@@ -5,32 +5,26 @@
     <div class="max-w-7xl mx-auto space-y-6">
         
         <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
-                        <i class="fa-solid fa-server"></i>
-                    </div>
-                    Sistem Backup & Restore
-                </h1>
-                <p class="text-sm text-slate-500 mt-1 ml-13">Kelola pencadangan data Ryaze dan pemulihan sistem (Database + File Klien).</p>
-            </div>
+        <x-ui.page-header 
+            title="Sistem Backup & Restore" 
+            subtitle="Kelola pencadangan data Ryaze dan pemulihan sistem (Database + File Klien)." 
+            icon="fa-solid fa-server">
             
-            <div class="flex items-center gap-3 w-full md:w-auto">
-                <button type="button" onclick="document.getElementById('restoreModal').classList.remove('hidden')" class="w-full md:w-auto flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 rounded-xl transition-all duration-300">
+            <x-slot name="actions">
+                <button type="button" onclick="document.getElementById('restoreModal').classList.remove('hidden')" class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 rounded-xl transition-all duration-300">
                     <i class="fa-solid fa-upload"></i> Restore Backup
                 </button>
-                <form action="{{ route('superadmin.backup.create') }}" method="POST" class="w-full md:w-auto" onsubmit="event.preventDefault(); let f = this; swConfirm('Buat Backup?', 'Proses ini memakan waktu beberapa menit karena akan membungkus database dan seluruh file klien. Lanjutkan?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
+                <form action="{{ route('superadmin.backup.create') }}" method="POST" class="inline" onsubmit="event.preventDefault(); let f = this; swConfirm('Buat Backup?', 'Proses ini memakan waktu beberapa menit karena akan membungkus database dan seluruh file klien. Lanjutkan?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                     @csrf
-                    <button type="submit" class="w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-300">
+                    <button type="submit" class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-300">
                         <i class="fa-solid fa-download"></i> Buat Backup Baru
                     </button>
                 </form>
-            </div>
-        </div>
+            </x-slot>
+        </x-ui.page-header>
 
         <!-- Tabel Backup -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <x-ui.card class="overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                 <h2 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-file-archive text-slate-400 mr-2"></i>Riwayat Backup Server</h2>
             </div>
@@ -92,7 +86,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </x-ui.card>
 
     </div>
 </div>
@@ -136,4 +130,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function swConfirm(title, text, icon = 'warning') {
+        return Swal.fire({
+            title,
+            text,
+            icon,
+            showCancelButton: true,
+            confirmButtonColor: '#4F46E5', // Indigo to match theme, red was for delete only, but wait. Let's make it standard
+            cancelButtonColor: '#6B7280',
+            confirmButtonText: 'Ya, lanjutkan',
+            cancelButtonText: 'Batal',
+            customClass: {
+                popup: 'rounded-xl text-sm'
+            }
+        });
+    }
+</script>
 @endsection
