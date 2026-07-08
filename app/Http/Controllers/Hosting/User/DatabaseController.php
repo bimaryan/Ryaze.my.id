@@ -260,23 +260,19 @@ class DatabaseController extends Controller
             mkdir(storage_path('app/temp'), 0755, true);
         }
 
-        // Use mysqldump from the environment
-        $command = sprintf(
-            'mysqldump -h %s -u root -p%s %s > %s 2>&1',
-            escapeshellarg($mysqlHost),
-            escapeshellarg($rootPass),
-            escapeshellarg($db->db_name),
-            escapeshellarg($tempPath)
-        );
-
-        exec($command, $output, $returnVar);
-
-        if ($returnVar !== 0) {
-            \Log::error("mysqldump error: " . implode("\n", $output));
+        try {
+            $dump = new \Ifsnop\Mysqldump\Mysqldump(
+                "mysql:host={$mysqlHost};dbname={$db->db_name}",
+                'root',
+                $rootPass
+            );
+            $dump->start($tempPath);
+        } catch (\Exception $e) {
+            \Log::error("mysqldump-php error: " . $e->getMessage());
             if (file_exists($tempPath)) {
                 unlink($tempPath);
             }
-            return back()->with('error', 'Gagal mengekspor database. Pastikan mysqldump terinstal di server.');
+            return back()->with('error', 'Gagal mengekspor database: ' . $e->getMessage());
         }
 
         return response()->download($tempPath)->deleteFileAfterSend(true);
@@ -307,18 +303,15 @@ class DatabaseController extends Controller
 
         $tempPath = $file->path();
 
-        $command = sprintf(
-            'mysql -h %s -u root -p%s %s < %s 2>&1',
-            escapeshellarg($mysqlHost),
-            escapeshellarg($rootPass),
-            escapeshellarg($db->db_name),
-            escapeshellarg($tempPath)
-        );
-
-        exec($command, $output, $returnVar);
-
-        if ($returnVar !== 0) {
-            \Log::error("mysql import error: " . implode("\n", $output));
+        try {
+            $pdo = new \PDO("mysql:host={$mysqlHost};dbname={$db->db_name}", 'root', $rootPass);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            
+            $sql = file_get_contents($tempPath);
+            // Non-prepared statement is needed to execute multiple queries at once
+            $pdo->exec($sql);
+        } catch (\Exception $e) {
+            \Log::error("mysql import error: " . $e->getMessage());
             return back()->with('error', 'Gagal mengimpor database. Periksa kembali struktur file SQL Anda.');
         }
 

@@ -32,6 +32,7 @@ class SettingController extends Controller
                 ['key' => $key],
                 ['value' => $value]
             );
+            \Illuminate\Support\Facades\Cache::forget('setting_' . $key);
         }
 
         return redirect()->back()->with('success', 'Pengaturan berhasil diperbarui!');

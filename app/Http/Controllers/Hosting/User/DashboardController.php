@@ -157,11 +157,13 @@ class DashboardController extends Controller
             $branch      = 'main';
             $framework   = $template['framework'];
         } else {
-            // ── Mode Repository ────────────────────────────────────────────
+            $availableFrameworks = \App\Models\Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,python,node,vue');
+            $allowedFrameworks = implode(',', array_map('trim', explode(',', $availableFrameworks)));
+
             $request->validate([
                 'repo_source'  => 'required|url',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-                'framework'    => 'required|in:react,nextjs,python,html,laravel,node,php',
+                'framework'    => 'required|in:' . $allowedFrameworks,
                 'branch'       => 'required|string|max:50',
             ]);
 
