@@ -23,7 +23,6 @@ class CustomVerifyEmail extends VerifyEmailBase
         }
 
         return (new MailMessage)
-            ->mailer('smtp_verify')
             ->from('verifikasi@ryaze.my.id', 'Ryaze Security')
             ->subject(Lang::get('Verify Email Address'))
             ->line(Lang::get('Please click the button below to verify your email address.'))
