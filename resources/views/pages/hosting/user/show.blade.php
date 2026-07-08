@@ -1052,17 +1052,17 @@
                 </div>
                 <div class="p-6">
                     @if($project->user_id == Auth::id())
-                    <form action="{{ route('user_hosting.team.invite', $project->hashid) }}" method="POST" class="flex gap-4">
+                    <form action="{{ route('user_hosting.team.invite', $project->hashid) }}" method="POST" class="flex flex-col sm:flex-row gap-4">
                         @csrf
-                        <div class="flex-1">
+                        <div class="flex-1 w-full sm:w-auto">
                             <input type="email" name="email" placeholder="Alamat email anggota baru" required
                                 class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                         </div>
-                        <select name="role" class="transition-all bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                        <select name="role" class="transition-all w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
                             <option value="viewer">Viewer (Hanya Lihat)</option>
                             <option value="editor">Editor (Bisa Ubah)</option>
                         </select>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
+                        <button type="submit" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
                             Undang Anggota
                         </button>
                     </form>
