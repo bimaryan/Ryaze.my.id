@@ -308,6 +308,15 @@ class DatabaseController extends Controller
             $pdo = new \PDO("mysql:host={$mysqlHost};dbname={$db->db_name}", 'root', $rootPass);
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             
+            if ($request->has('drop_tables') && $request->drop_tables == '1') {
+                $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+                $tables = $pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN);
+                foreach ($tables as $table) {
+                    $pdo->exec("DROP TABLE IF EXISTS `$table`");
+                }
+                $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+            }
+
             $sql = file_get_contents($tempPath);
             // Non-prepared statement is needed to execute multiple queries at once
             $pdo->exec($sql);

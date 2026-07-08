@@ -239,7 +239,12 @@
                 </label>
                 <input type="file" name="sql_file" accept=".sql,.txt" required
                     class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="text-[11px] text-slate-500 mt-1">Maksimal ukuran file: 50MB.</p>
+                <p class="text-[11px] text-slate-500 mt-1 mb-3">Maksimal ukuran file: 50MB.</p>
+
+                <label class="flex items-center gap-2 mt-4 cursor-pointer">
+                    <input type="checkbox" name="drop_tables" value="1" class="rounded border-slate-300 text-rose-500 focus:ring-rose-500">
+                    <span class="text-sm text-slate-700">Kosongkan database sebelum Import <br><span class="text-[11px] text-rose-500 font-semibold">(Bahaya: Menghapus seluruh tabel yang sudah ada)</span></span>
+                </label>
             </div>
 
             <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
