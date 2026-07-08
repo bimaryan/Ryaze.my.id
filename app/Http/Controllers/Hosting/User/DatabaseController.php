@@ -313,7 +313,7 @@ class DatabaseController extends Controller
             $pdo->exec($sql);
         } catch (\Exception $e) {
             \Log::error("mysql import error: " . $e->getMessage());
-            return back()->with('error', 'Gagal mengimpor database. Periksa kembali struktur file SQL Anda.');
+            return back()->with('error', 'Gagal mengimpor database: ' . $e->getMessage());
         }
 
         return back()->with('success', 'Database berhasil diimpor!');
