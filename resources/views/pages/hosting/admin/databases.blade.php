@@ -14,21 +14,26 @@
 
         <x-ui.table>
             <x-slot:head>
-                <th class="px-6 py-4">Database Name</th>
-                <th class="px-6 py-4">Username</th>
-                <th class="px-6 py-4">Host : Port</th>
+                <th class="px-6 py-4">Informasi Database</th>
+                <th class="px-6 py-4">Host & Password</th>
                 <th class="px-6 py-4">Pemilik (Klien)</th>
                 <th class="px-6 py-4 text-center">Dibuat Pada</th>
                 <th class="px-6 py-4 text-center">Aksi</th>
             </x-slot:head>
             @forelse($databases as $db)
                 <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-semibold text-slate-800">{{ $db->db_name }}</td>
-                    <td class="px-6 py-4 font-mono text-xs text-slate-600 bg-slate-50 rounded px-2">{{ $db->db_username }}
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-800">{{ $db->db_name }}</div>
+                        <div class="text-xs text-slate-500 mt-1">User: <span class="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded border border-slate-200">{{ $db->db_username }}</span></div>
                     </td>
                     <td class="px-6 py-4">
-                        <span class="text-slate-700">{{ $db->host }}</span>:<span
-                            class="text-slate-500">{{ $db->port }}</span>
+                        <div class="text-sm text-slate-700">{{ $db->host }}<span class="text-slate-400">:{{ $db->port }}</span></div>
+                        <div class="text-xs text-slate-500 mt-1 flex items-center gap-1 group">
+                            Pass: 
+                            <span class="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded border border-slate-200 filter blur-[4px] group-hover:blur-none transition-all duration-300 cursor-pointer" title="Arahkan kursor untuk melihat">
+                                {{ $db->db_password }}
+                            </span>
+                        </div>
                     </td>
                     <td class="px-6 py-4">
                         @if ($db->user)
@@ -41,13 +46,25 @@
                     <td class="px-6 py-4 text-center text-slate-500">
                         {{ $db->created_at->format('d M Y') }}
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-4 flex items-center justify-center gap-2">
+                        <form method="POST" action="{{ rtrim(env('PMA_URL', '#'), '/') }}/index.php" target="_blank" class="inline-block">
+                            <input type="hidden" name="pma_username" value="{{ $db->db_username }}">
+                            <input type="hidden" name="pma_password" value="{{ $db->db_password }}">
+                            <input type="hidden" name="server" value="1">
+                            <input type="hidden" name="pma_servername" value="{{ $db->host }}">
+                            <button type="submit"
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                title="Buka phpMyAdmin">
+                                <i class="fa-solid fa-server"></i>
+                            </button>
+                        </form>
+
                         <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST"
                             class="inline-block" id="delete-form-{{ $db->hashid }}">
                             @csrf
                             @method('DELETE')
                             <button type="button"
-                                class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip mx-auto"
+                                class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
                                 title="Hapus Database" data-hashid="{{ $db->hashid }}">
                                 <i class="fa-regular fa-trash-can"></i>
                             </button>
