@@ -200,6 +200,8 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/billing/subscribe', [DashboardController::class, 'subscribe'])->name('user_hosting.billing.subscribe');
         Route::delete('user/hosting/projects/{hashid}/delete', [DashboardController::class, 'deleteProject'])->name('user_hosting.destroy');
         Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
+        Route::post('user/hosting/projects/{hashid}/team', [DashboardController::class, 'inviteTeamMember'])->name('user_hosting.team.invite');
+        Route::delete('user/hosting/projects/{hashid}/team/{user_id}', [DashboardController::class, 'removeTeamMember'])->name('user_hosting.team.remove');
         Route::post('user/hosting/projects/{hashid}/dev/start', [DashboardController::class, 'startDevServer'])->name('user_hosting.dev.start');
         Route::post('user/hosting/projects/{hashid}/dev/stop', [DashboardController::class, 'stopDevServer'])->name('user_hosting.dev.stop');
         Route::post('user/hosting/projects/{hashid}/staging', [DashboardController::class, 'createStaging'])->name('user_hosting.staging.create');

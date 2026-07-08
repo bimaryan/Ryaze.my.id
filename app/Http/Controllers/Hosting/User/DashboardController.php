@@ -80,12 +80,17 @@ class DashboardController extends Controller
     public function index()
     {
         // 1. Ambil SEMUA project untuk menghitung statistik yang akurat
-        $allProjects = HostingProject::where('user_id', Auth::id())->latest()->get();
+        $allProjects = HostingProject::where('user_id', Auth::id())
+            ->orWhereHas('teamMembers', function ($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->latest()->get();
 
-        // 2. Menghitung statistik berdasarkan KESELURUHAN data user
+        // 2. Menghitung statistik berdasarkan KESELURUHAN data user (hanya project sendiri)
+        $ownProjects = $allProjects->where('user_id', Auth::id());
         $stats = [
-            'active' => $allProjects->where('status', 'active')->count(),
-            'unpaid' => $allProjects->where('status', 'unpaid')->count(),
+            'active' => $ownProjects->where('status', 'active')->count(),
+            'unpaid' => $ownProjects->where('status', 'unpaid')->count(),
             'tickets' => 0,
         ];
 
@@ -104,7 +109,11 @@ class DashboardController extends Controller
     // Menampilkan daftar project
     public function projects()
     {
-        $projects = HostingProject::where('user_id', Auth::id())->latest()->get();
+        $projects = HostingProject::where('user_id', Auth::id())
+            ->orWhereHas('teamMembers', function ($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->latest()->get();
 
         return view('pages.hosting.user.project', compact('projects'));
     }
@@ -772,7 +781,12 @@ class DashboardController extends Controller
         }
 
         if (!in_array(Auth::user()->role, ['superadmin', 'admin_hosting'])) {
-            $query->where('user_id', Auth::id());
+            $query->where(function($q) {
+                $q->where('user_id', Auth::id())
+                  ->orWhereHas('teamMembers', function($sq) {
+                      $sq->where('user_id', Auth::id());
+                  });
+            });
         }
 
         return $query->findOrFail($decoded[0]);
@@ -1532,5 +1546,50 @@ PHP;
             ],
             'status' => (($status['cpu']['load_1m'] ?? 0) > 80 || ($status['ram']['percentage'] ?? 0) > 90) ? 'heavy_load' : 'healthy'
         ]);
+    }
+
+    public function inviteTeamMember(Request $request, $hashid)
+    {
+        $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
+
+        if ($project->user_id !== Auth::id()) {
+            return back()->with('error', 'Hanya pemilik project yang dapat mengundang anggota.');
+        }
+
+        $request->validate([
+            'email' => 'required|email',
+            'role' => 'required|in:viewer,editor',
+        ]);
+
+        $userToInvite = \App\Models\User::where('email', $request->email)->first();
+
+        if (!$userToInvite) {
+            return back()->with('error', 'Pengguna dengan email tersebut tidak terdaftar di Ryaze.');
+        }
+
+        if ($userToInvite->id === $project->user_id) {
+            return back()->with('error', 'Anda tidak dapat mengundang diri sendiri.');
+        }
+
+        if ($project->teamMembers()->where('user_id', $userToInvite->id)->exists()) {
+            return back()->with('error', 'Pengguna ini sudah menjadi anggota tim.');
+        }
+
+        $project->teamMembers()->attach($userToInvite->id, ['role' => $request->role]);
+
+        return back()->with('success', 'Anggota tim berhasil ditambahkan.');
+    }
+
+    public function removeTeamMember($hashid, $userId)
+    {
+        $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
+
+        if ($project->user_id !== Auth::id()) {
+            return back()->with('error', 'Hanya pemilik project yang dapat menghapus anggota.');
+        }
+
+        $project->teamMembers()->detach($userId);
+
+        return back()->with('success', 'Akses anggota tim berhasil dicabut.');
     }
 }

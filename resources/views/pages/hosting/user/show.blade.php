@@ -1051,7 +1051,8 @@
                     </div>
                 </div>
                 <div class="p-6">
-                    <form action="#" method="POST" class="flex gap-4" onsubmit="event.preventDefault(); swAlert('Info', 'Fitur undang anggota sedang dalam pengembangan MVP.', 'info');">
+                    @if($project->user_id == Auth::id())
+                    <form action="{{ route('user_hosting.team.invite', $project->hashid) }}" method="POST" class="flex gap-4">
                         @csrf
                         <div class="flex-1">
                             <input type="email" name="email" placeholder="Alamat email anggota baru" required
@@ -1065,6 +1066,11 @@
                             Undang Anggota
                         </button>
                     </form>
+                    @else
+                    <div class="bg-blue-50 text-blue-700 p-4 rounded-xl text-sm mb-4">
+                        <i class="fa-solid fa-info-circle mr-2"></i> Hanya pemilik project yang dapat mengundang anggota tim baru.
+                    </div>
+                    @endif
 
                     <div class="mt-6 border border-slate-200 rounded-xl overflow-x-auto">
                         <table class="w-full text-sm text-left text-slate-500 whitespace-nowrap min-w-[600px]">
@@ -1089,10 +1095,12 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <form action="#" method="POST" onsubmit="event.preventDefault(); swAlert('Info', 'Fitur hapus anggota sedang dalam pengembangan MVP.', 'info');">
+                                            @if($project->user_id == Auth::id())
+                                            <form action="{{ route('user_hosting.team.remove', [$project->hashid, $member->id]) }}" method="POST" onsubmit="event.preventDefault(); let f = this; swConfirm('Cabut Akses?', 'Apakah Anda yakin ingin mencabut akses pengguna ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold bg-rose-50 px-2 py-1 rounded"><i class="fa-solid fa-user-xmark"></i> Cabut Akses</button>
                                             </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
