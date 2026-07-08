@@ -105,10 +105,37 @@
                             <p class="text-xs text-slate-500 mt-1">Biaya admin yang ditambahkan ke setiap tagihan pembayaran (%).</p>
                         </div>
 
-                        <div>
+                        <div x-data="{
+                            tags: '{{ $settings['available_frameworks'] ?? 'html,php,laravel,react,nextjs,python,node,vue' }}'.split(',').filter(t => t.trim() !== ''),
+                            newTag: '',
+                            addTag() {
+                                let tag = this.newTag.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+                                if (tag && !this.tags.includes(tag)) {
+                                    this.tags.push(tag);
+                                }
+                                this.newTag = '';
+                            },
+                            removeTag(index) {
+                                this.tags.splice(index, 1);
+                            }
+                        }">
+                            <input type="hidden" name="available_frameworks" :value="tags.join(',')">
+                            
                             <label class="block text-sm font-medium text-slate-700 mb-1">Pilihan Framework Tersedia</label>
-                            <input type="text" name="available_frameworks" value="{{ $settings['available_frameworks'] ?? 'html,php,laravel,react,nextjs,python,node,vue' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="html,php,laravel,react,nextjs,python,node">
-                            <p class="text-xs text-slate-500 mt-1">Pisahkan dengan koma (tanpa spasi). Contoh: html,php,laravel</p>
+                            
+                            <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all min-h-[46px]">
+                                <template x-for="(tag, index) in tags" :key="index">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-indigo-100 text-indigo-700">
+                                        <span x-text="tag"></span>
+                                        <button type="button" @click="removeTag(index)" class="text-indigo-400 hover:text-indigo-600 focus:outline-none">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </span>
+                                </template>
+                                
+                                <input type="text" x-model="newTag" @keydown.enter.prevent="addTag()" @keydown.comma.prevent="addTag()" @keydown.space.prevent="addTag()" @keydown.backspace="if(newTag === '' && tags.length > 0) removeTag(tags.length - 1)" placeholder="Ketik lalu Enter..." class="flex-1 bg-transparent border-none outline-none focus:ring-0 text-sm min-w-[120px] p-1">
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Ketik nama framework (misal: svelte) lalu tekan <kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded text-slate-600 text-[10px] font-mono">Enter</kbd> atau <kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded text-slate-600 text-[10px] font-mono">Spasi</kbd>.</p>
                         </div>
                         
                         <div class="space-y-4">
