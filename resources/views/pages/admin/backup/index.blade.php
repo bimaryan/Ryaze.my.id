@@ -20,7 +20,7 @@
                 <button type="button" onclick="document.getElementById('restoreModal').classList.remove('hidden')" class="w-full md:w-auto flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 rounded-xl transition-all duration-300">
                     <i class="fa-solid fa-upload"></i> Restore Backup
                 </button>
-                <form action="{{ route('superadmin.backup.create') }}" method="POST" class="w-full md:w-auto" onsubmit="return confirm('Proses ini memakan waktu beberapa menit karena akan membungkus database dan seluruh file klien. Lanjutkan?');">
+                <form action="{{ route('superadmin.backup.create') }}" method="POST" class="w-full md:w-auto" onsubmit="event.preventDefault(); let f = this; swConfirm('Buat Backup?', 'Proses ini memakan waktu beberapa menit karena akan membungkus database dan seluruh file klien. Lanjutkan?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                     @csrf
                     <button type="submit" class="w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-300">
                         <i class="fa-solid fa-download"></i> Buat Backup Baru
@@ -70,7 +70,7 @@
                                     <a href="{{ route('superadmin.backup.download', $backup['name']) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors" title="Download">
                                         <i class="fa-solid fa-download"></i>
                                     </a>
-                                    <form action="{{ route('superadmin.backup.destroy', $backup['name']) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus file backup ini?');">
+                                    <form action="{{ route('superadmin.backup.destroy', $backup['name']) }}" method="POST" class="inline-block" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Backup?', 'Yakin ingin menghapus file backup ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-colors" title="Hapus">
@@ -117,7 +117,7 @@
                     <i class="fa-solid fa-triangle-exclamation mr-1"></i> Peringatan: Proses ini akan menimpa (overwrite) seluruh database Ryaze dan file-file klien yang ada. Pastikan file ZIP valid.
                 </div>
                 
-                <form action="{{ route('superadmin.backup.restore') }}" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="return confirm('APAKAH ANDA YAKIN? Data saat ini akan DITIMPA. Ketik YA dalam hati dan klik OK jika Anda paham risikonya.');">
+                <form action="{{ route('superadmin.backup.restore') }}" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="event.preventDefault(); let f = this; swConfirm('Restore Backup?', 'APAKAH ANDA YAKIN? Data saat ini akan DITIMPA. Lanjutkan jika Anda paham risikonya.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                     @csrf
                     
                     <div>
