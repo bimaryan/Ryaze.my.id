@@ -313,7 +313,13 @@ class DatabaseController extends Controller
             $pdo->exec($sql);
         } catch (\Exception $e) {
             \Log::error("mysql import error: " . $e->getMessage());
-            return back()->with('error', 'Gagal mengimpor database: ' . $e->getMessage());
+            
+            $msg = $e->getMessage();
+            if (str_contains($msg, '42S01') || str_contains($msg, 'already exists')) {
+                return back()->with('error', 'Gagal: Tabel sudah ada di database. Silakan kosongkan database terlebih dahulu melalui phpMyAdmin (Drop semua tabel), lalu coba Import lagi.');
+            }
+
+            return back()->with('error', 'Gagal mengimpor database: ' . $msg);
         }
 
         return back()->with('success', 'Database berhasil diimpor!');
