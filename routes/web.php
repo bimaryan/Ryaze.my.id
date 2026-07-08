@@ -103,6 +103,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('superadmin/portfolios/{hashid}/status', [\App\Http\Controllers\Admin\PortfolioController::class, 'toggleStatus'])->name('superadmin.portfolios.status.toggle');
 
         // Manajemen Artikel
+        Route::post('superadmin/articles/upload-image', [\App\Http\Controllers\Admin\ArticleController::class, 'uploadImage'])->name('superadmin.articles.uploadImage');
         Route::post('superadmin/articles/import', [\App\Http\Controllers\Admin\ArticleController::class, 'import'])->name('superadmin.articles.import');
         Route::get('superadmin/articles/template', [\App\Http\Controllers\Admin\ArticleController::class, 'downloadTemplate'])->name('superadmin.articles.template');
         Route::resource('superadmin/articles', \App\Http\Controllers\Admin\ArticleController::class)->names('superadmin.articles');

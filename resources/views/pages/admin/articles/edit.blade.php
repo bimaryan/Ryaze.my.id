@@ -138,17 +138,65 @@
                 theme: 'snow',
                 placeholder: 'Tulis konten artikel di sini...',
                 modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'align': [] }],
-                        ['link', 'image', 'video'],
-                        ['clean'],
-                        ['code-block']
-                    ]
+                    toolbar: {
+                        container: [
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'align': [] }],
+                            ['link', 'image', 'video'],
+                            ['clean'],
+                            ['code-block']
+                        ],
+                        handlers: {
+                            image: function() {
+                                const input = document.createElement('input');
+                                input.setAttribute('type', 'file');
+                                input.setAttribute('accept', 'image/*');
+                                input.click();
+                                input.onchange = async () => {
+                                    const file = input.files[0];
+                                    uploadQuillImage(file, quill);
+                                };
+                            }
+                        }
+                    }
                 }
             });
+
+            quill.root.addEventListener('paste', function(e) {
+                if (e.clipboardData && e.clipboardData.items && e.clipboardData.items.length) {
+                    const item = e.clipboardData.items[0];
+                    if (item.type.indexOf('image/') !== -1) {
+                        e.preventDefault();
+                        const file = item.getAsFile();
+                        uploadQuillImage(file, quill);
+                    }
+                }
+            });
+
+            async function uploadQuillImage(file, editor) {
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('_token', '{{ csrf_token() }}');
+                
+                try {
+                    const response = await fetch('{{ route("superadmin.articles.uploadImage") }}', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        const range = editor.getSelection(true);
+                        editor.insertEmbed(range.index, 'image', result.url);
+                    } else {
+                        alert(result.message || 'Gagal mengunggah gambar');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat mengunggah gambar');
+                }
+            }
 
             const toolbarPlaceholder = document.querySelector('.quill-toolbar-container');
             if(toolbarPlaceholder) toolbarPlaceholder.remove();

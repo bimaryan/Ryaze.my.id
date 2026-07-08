@@ -206,6 +206,26 @@ class ArticleController extends Controller
         return back()->with('success', "Artikel berhasil {$msg}.");
     }
 
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('articles/body', 'public');
+            return response()->json([
+                'success' => true,
+                'url' => Storage::url($path)
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal mengunggah gambar'
+        ], 400);
+    }
+
     public function import(Request $request)
     {
         $request->validate([
