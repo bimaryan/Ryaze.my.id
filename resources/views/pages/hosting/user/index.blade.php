@@ -57,7 +57,7 @@
                 </div>
                 <div class="mt-auto">
                     <div class="text-xs font-bold text-slate-700 mb-2">Link Referral Anda:</div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 mb-3">
                         <code class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-indigo-600 flex-1 break-all select-all text-xs font-mono font-medium">
                             {{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}
                         </code>
@@ -65,6 +65,9 @@
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
+                    <a href="{{ route('user.affiliate.dashboard') }}" class="block w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm text-center">
+                        <i class="fa-solid fa-chart-line mr-1"></i> Buka Dashboard Affiliate
+                    </a>
                 </div>
             </x-ui.card>
         </div>

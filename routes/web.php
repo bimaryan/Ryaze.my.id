@@ -69,10 +69,10 @@ Route::middleware('auth')->group(function () {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('success', 'Link verifikasi telah dikirim ulang ke email Anda!');
     })->middleware(['throttle:6,1'])->name('verification.send');
-
-    // ── WALLET ───────────────────────────────────────────────────
+    // ── WALLET & AFFILIATE ───────────────────────────────────────
     Route::get('/user/wallet', [\App\Http\Controllers\WalletController::class, 'history'])->name('user.wallet.history');
     Route::post('/user/wallet/topup', [\App\Http\Controllers\WalletController::class, 'topUp'])->name('user.wallet.topup');
+    Route::get('/user/affiliate', [\App\Http\Controllers\AffiliateController::class, 'dashboard'])->name('user.affiliate.dashboard');
 
     // ── LOGOUT ───────────────────────────────────────────────────
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
