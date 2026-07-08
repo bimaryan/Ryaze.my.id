@@ -17,10 +17,7 @@
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
 
             <div class="bg-indigo-600 px-8 py-10 text-center">
-                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fa-solid fa-lock-open text-2xl text-white"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">Buat Password Baru</h1>
+                <h1 class="text-3xl font-bold text-white tracking-tight">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</h1>
                 <p class="text-indigo-200 mt-2 text-sm">Silakan masukkan password baru untuk akun Anda.</p>
             </div>
 

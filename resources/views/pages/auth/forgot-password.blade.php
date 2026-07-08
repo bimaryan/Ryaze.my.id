@@ -21,10 +21,7 @@
                     class="absolute top-4 left-4 text-indigo-200 hover:text-white transition">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fa-solid fa-key text-2xl text-white"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">Lupa Password?</h1>
+                <h1 class="text-3xl font-bold text-white tracking-tight">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</h1>
                 <p class="text-indigo-200 mt-2 text-sm">Masukkan email Anda untuk menerima link reset password.</p>
             </div>
 
