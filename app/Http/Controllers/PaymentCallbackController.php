@@ -173,6 +173,25 @@ class PaymentCallbackController extends Controller
             } else {
                 return response()->json(['success' => false, 'message' => 'Upgrade Invoice not found'], 404);
             }
+        } elseif (str_starts_with($order_id, 'WLT-TOPUP-')) {
+            $transaction = \App\Models\WalletTransaction::where('reference_id', $order_id)->first();
+            if ($transaction) {
+                $statusLower = strtolower($status);
+                if (in_array($statusLower, ['completed', 'paid', 'success'])) {
+                    if ($transaction->status != 'completed') {
+                        $transaction->update(['status' => 'completed']);
+                        $wallet = $transaction->wallet;
+                        if ($wallet) {
+                            $wallet->increment('balance', $transaction->amount);
+                            $wallet->user->notify(new \App\Notifications\SystemNotification('Top Up Wallet sebesar Rp ' . number_format($transaction->amount, 0, ',', '.') . ' berhasil ditambahkan.', 'success'));
+                        }
+                    }
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                    $transaction->update(['status' => 'failed']);
+                }
+            } else {
+                return response()->json(['success' => false, 'message' => 'Wallet Transaction not found'], 404);
+            }
         } else {
             // Default ke Joki Payment
             $payment = JokiPayment::where('invoice_number', $order_id)->first();
@@ -195,25 +214,6 @@ class PaymentCallbackController extends Controller
                 }
             } else {
                 return response()->json(['success' => false, 'message' => 'Invoice not found'], 404);
-            }
-        } elseif (str_starts_with($order_id, 'WLT-TOPUP-')) {
-            $transaction = \App\Models\WalletTransaction::where('reference_id', $order_id)->first();
-            if ($transaction) {
-                $statusLower = strtolower($status);
-                if (in_array($statusLower, ['completed', 'paid', 'success'])) {
-                    if ($transaction->status != 'completed') {
-                        $transaction->update(['status' => 'completed']);
-                        $wallet = $transaction->wallet;
-                        if ($wallet) {
-                            $wallet->increment('balance', $transaction->amount);
-                            $wallet->user->notify(new \App\Notifications\SystemNotification('Top Up Wallet sebesar Rp ' . number_format($transaction->amount, 0, ',', '.') . ' berhasil ditambahkan.', 'success'));
-                        }
-                    }
-                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
-                    $transaction->update(['status' => 'failed']);
-                }
-            } else {
-                return response()->json(['success' => false, 'message' => 'Wallet Transaction not found'], 404);
             }
         }
 
