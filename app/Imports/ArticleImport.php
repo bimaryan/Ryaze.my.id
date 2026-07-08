@@ -60,16 +60,18 @@ class ArticleImport implements ToModel, WithHeadingRow
         }
 
         return new Article([
-            'user_id'      => Auth::id() ?? 1,
-            'category_id'  => $categoryId,
-            'title'        => $row['title'],
-            'slug'         => $slug,
-            'excerpt'      => $row['excerpt'] ?? null,
-            'body'         => $row['body'] ?? '',
-            'tags'         => $tags,
-            'status'       => $status,
-            'is_featured'  => false,
-            'published_at' => $status === 'published' ? Carbon::now() : null,
+            'user_id'          => Auth::id() ?? 1,
+            'category_id'      => $categoryId,
+            'title'            => $row['title'],
+            'slug'             => $slug,
+            'excerpt'          => $row['excerpt'] ?? null,
+            'body'             => $row['body'] ?? '',
+            'tags'             => $tags,
+            'status'           => $status,
+            'is_featured'      => false,
+            'published_at'     => $status === 'published' ? Carbon::now() : null,
+            'meta_title'       => !empty($row['meta_title']) ? $row['meta_title'] : $row['title'],
+            'meta_description' => !empty($row['meta_description']) ? $row['meta_description'] : (!empty($row['excerpt']) ? $row['excerpt'] : Str::limit(strip_tags($row['body'] ?? ''), 155)),
         ]);
     }
 }
