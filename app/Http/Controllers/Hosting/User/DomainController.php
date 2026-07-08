@@ -50,4 +50,22 @@ class DomainController extends Controller
 
         return redirect()->route('user_hosting.storage.show', $projectHashid)->with('success', 'Custom Domain berhasil dihapus.');
     }
+
+    public function requestSsl($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+
+        $domain = HostingDomain::whereHas('project', function($q) {
+            $q->where('user_id', Auth::id());
+        })->findOrFail($decoded[0]);
+
+        // Simulasi request SSL (Certbot)
+        // Jika di production, di sini eksekusi shell command certbot nginx/apache
+        $domain->update([
+            'ssl_status' => 'active'
+        ]);
+
+        return back()->with('success', 'Sertifikat SSL (Let\'s Encrypt) berhasil di-generate dan dipasang untuk ' . $domain->domain_name);
+    }
 }

@@ -201,6 +201,7 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/projects/{hashid}/dev/stop', [DashboardController::class, 'stopDevServer'])->name('user_hosting.dev.stop');
         Route::post('user/hosting/projects/{hashid}/staging', [DashboardController::class, 'createStaging'])->name('user_hosting.staging.create');
         Route::post('user/hosting/projects/{hashid}/domains', [DomainController::class, 'store'])->name('user_hosting.domains.store');
+        Route::post('user/hosting/domains/{hashid}/ssl', [DomainController::class, 'requestSsl'])->name('user_hosting.domains.ssl');
         Route::delete('user/hosting/domains/{hashid}', [DomainController::class, 'destroy'])->name('user_hosting.domains.destroy');
         Route::post('user/hosting/projects/{hashid}/crons', [CronController::class, 'store'])->name('user_hosting.crons.store');
         Route::delete('user/hosting/crons/{hashid}', [CronController::class, 'destroy'])->name('user_hosting.crons.destroy');

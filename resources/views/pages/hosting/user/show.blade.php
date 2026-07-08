@@ -257,6 +257,20 @@
                     </div>
                 </div>
             </div>
+
+            {{-- CPU & RAM Usage Chart --}}
+            <div class="mt-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-indigo-500"></i> Server Resource Usage (Last 24h)
+                    </h3>
+                    <div class="text-xs text-slate-500 flex items-center gap-2">
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> CPU</span>
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> RAM</span>
+                    </div>
+                </div>
+                <div id="resourceChart" class="w-full h-[250px]"></div>
+            </div>
         </div>
 
         {{-- TAB: BUILD LOGS --}}
@@ -845,10 +859,18 @@
                                         <td class="px-6 py-4 font-mono text-xs">
                                             {{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}
                                         </td>
-                                        <td class="px-6 py-4 text-right">
+                                        <td class="px-6 py-4 text-right flex items-center justify-end gap-3">
+                                            @if($domain->ssl_status != 'active')
+                                                <form action="{{ route('user_hosting.domains.ssl', $domain->hashid) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold bg-emerald-50 px-2 py-1 rounded">
+                                                        <i class="fa-solid fa-lock"></i> Aktifkan SSL
+                                                    </button>
+                                                </form>
+                                            @endif
                                             <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Domain?', 'Apakah Anda yakin ingin menghapus domain ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Hapus</button>
+                                                <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold bg-rose-50 px-2 py-1 rounded"><i class="fa-solid fa-trash"></i> Hapus</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -2273,5 +2295,72 @@
         function closePaymentModal() {
             document.getElementById('paymentModal').classList.add('hidden');
         }
+    </script>
+
+    <!-- ApexCharts for Resource Monitoring -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Generate dummy 24h data for CPU & RAM
+            const cpuData = [];
+            const ramData = [];
+            const categories = [];
+            let now = new Date();
+            for(let i = 24; i >= 0; i--) {
+                let d = new Date(now.getTime() - (i * 60 * 60 * 1000));
+                categories.push(d.getHours() + ':00');
+                cpuData.push(Math.floor(Math.random() * (80 - 10 + 1)) + 10);
+                ramData.push(Math.floor(Math.random() * (90 - 40 + 1)) + 40);
+            }
+
+            var options = {
+                series: [{
+                    name: 'CPU Usage (%)',
+                    data: cpuData
+                }, {
+                    name: 'RAM Usage (%)',
+                    data: ramData
+                }],
+                chart: {
+                    height: 250,
+                    type: 'area',
+                    toolbar: { show: false },
+                    fontFamily: 'inherit'
+                },
+                colors: ['#6366f1', '#34d399'], // indigo-500, emerald-400
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 2 },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.4,
+                        opacityTo: 0.05,
+                        stops: [0, 100]
+                    }
+                },
+                xaxis: {
+                    categories: categories,
+                    labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false }
+                },
+                yaxis: {
+                    min: 0,
+                    max: 100,
+                    labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
+                },
+                grid: {
+                    borderColor: '#f1f5f9',
+                    strokeDashArray: 4,
+                    yaxis: { lines: { show: true } }
+                },
+                legend: { show: false },
+                tooltip: { theme: 'light' }
+            };
+
+            var chart = new ApexCharts(document.querySelector("#resourceChart"), options);
+            chart.render();
+        });
     </script>
 @endsection

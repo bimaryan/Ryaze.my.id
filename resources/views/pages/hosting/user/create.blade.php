@@ -136,6 +136,26 @@
                             </div>
                         </label>
 
+                        {{-- WordPress --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="wordpress" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-wordpress text-xl text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">WordPress CMS</p>
+                                        <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">PHP & MySQL</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Auto-install WordPress terbaru lengkap dengan database siap pakai.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
                         {{-- Laravel 13 --}}
                         <label class="relative cursor-pointer group">
                             <input type="radio" name="template_key" value="laravel_starter_13" class="peer hidden">
