@@ -92,42 +92,45 @@
 </div>
 
 <!-- Modal Restore -->
-<div id="restoreModal" tabindex="-1" class="hidden fixed inset-0 z-[100] flex items-center justify-center w-full h-full bg-slate-900/50 backdrop-blur-sm">
-    <div class="relative p-4 w-full max-w-md">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-2xl shadow-xl">
-            <!-- Modal header -->
-            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                <h3 class="text-xl font-bold text-slate-800">
-                    Restore Backup Sistem
-                </h3>
-                <button type="button" onclick="document.getElementById('restoreModal').classList.add('hidden')" class="text-slate-400 bg-transparent hover:bg-slate-200 hover:text-slate-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+<div id="restoreModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-upload text-indigo-500"></i> Restore Backup Sistem
+            </h3>
+            <button type="button" onclick="document.getElementById('restoreModal').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Modal Body -->
+        <form action="{{ route('superadmin.backup.restore') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4" onsubmit="event.preventDefault(); let f = this; swConfirm('Restore Backup?', 'APAKAH ANDA YAKIN? Data saat ini akan DITIMPA. Lanjutkan jika Anda paham risikonya.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
+            @csrf
+            
+            <div class="p-4 mb-2 text-sm text-amber-800 rounded-xl bg-amber-50 border border-amber-200/50 flex items-start gap-3">
+                <i class="fa-solid fa-triangle-exclamation mt-0.5 text-amber-600"></i>
+                <div class="leading-relaxed">
+                    <span class="font-bold block mb-0.5">Peringatan Kritis</span>
+                    Proses ini akan menimpa (overwrite) seluruh database Ryaze dan file-file klien yang ada.
+                </div>
+            </div>
+            
+            <div>
+                <label class="block mb-2 text-sm font-semibold text-slate-700">Upload File Backup (.zip)</label>
+                <input type="file" name="backup_file" accept=".zip" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-xl cursor-pointer bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+                <p class="mt-2 text-xs text-slate-500 font-medium"><i class="fa-solid fa-circle-info mr-1 text-slate-400"></i>Maksimal ukuran file: 500MB</p>
+            </div>
+
+            <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-6">
+                <button type="button" onclick="document.getElementById('restoreModal').classList.add('hidden')" class="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-semibold rounded-xl text-sm px-5 py-2.5 transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-upload"></i> Restore Sekarang
                 </button>
             </div>
-            <!-- Modal body -->
-            <div class="p-4 md:p-5">
-                <div class="p-4 mb-4 text-sm text-amber-800 rounded-lg bg-amber-50 font-medium">
-                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Peringatan: Proses ini akan menimpa (overwrite) seluruh database Ryaze dan file-file klien yang ada. Pastikan file ZIP valid.
-                </div>
-                
-                <form action="{{ route('superadmin.backup.restore') }}" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="event.preventDefault(); let f = this; swConfirm('Restore Backup?', 'APAKAH ANDA YAKIN? Data saat ini akan DITIMPA. Lanjutkan jika Anda paham risikonya.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
-                    @csrf
-                    
-                    <div>
-                        <label class="block mb-2 text-sm font-semibold text-slate-900">Upload File Backup (.zip)</label>
-                        <input type="file" name="backup_file" accept=".zip" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-xl cursor-pointer bg-slate-50">
-                        <p class="mt-1 text-xs text-slate-500">Maksimal ukuran file: 500MB</p>
-                    </div>
-
-                    <div class="flex justify-end pt-2">
-                        <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-xl text-sm px-5 py-2.5 text-center">
-                            Restore Sekarang
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 
