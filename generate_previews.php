@@ -1,12 +1,17 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
-$app = require_once __DIR__ . '/bootstrap/app.php';
-$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+// generate_previews.php
 
-$reflection = new ReflectionClass(\App\Jobs\AutoDeployProject::class);
-$job = $reflection->newInstanceWithoutConstructor();
+$filePath = __DIR__ . '/app/Jobs/AutoDeployProject.php';
+$content = file_get_contents($filePath);
+
+// We'll extract the HTML for each template and save it to resources/views/previews/
+$previewsDir = __DIR__ . '/resources/views/previews';
+if (!is_dir($previewsDir)) {
+    mkdir($previewsDir, 0755, true);
+}
 
 $templates = [
+    'tailwind_starter' => 'scaffoldTailwind',
     'tailwind_portfolio' => 'scaffoldTailwindPortfolio',
     'tailwind_landing' => 'scaffoldTailwindLanding',
     'tailwind_blog' => 'scaffoldTailwindBlog',
@@ -15,19 +20,31 @@ $templates = [
     'tailwind_linkinbio' => 'scaffoldTailwindLinkinbio',
 ];
 
-foreach ($templates as $key => $method) {
-    $m = $reflection->getMethod($method);
-    $m->setAccessible(true);
+foreach ($templates as $key => $methodName) {
+    // Find the method
+    $startStr = "private function {$methodName}(string \$dir, string \$name): void";
+    $startPos = strpos($content, $startStr);
+    if ($startPos === false) continue;
     
-    $tmpDir = __DIR__ . '/storage/app/tmp_' . $key;
-    @mkdir($tmpDir, 0755, true);
+    // Find the HTML block inside it
+    $htmlStart = strpos($content, '<<<HTML', $startPos);
+    if ($htmlStart === false) continue;
     
-    $m->invokeArgs($job, [$tmpDir, 'Preview ' . ucwords(str_replace('_', ' ', $key))]);
+    $htmlStart += 7; // Length of <<<HTML
+    $htmlEnd = strpos($content, "\nHTML", $htmlStart);
+    if ($htmlEnd === false) continue;
     
-    $html = file_get_contents($tmpDir . '/index.html');
-    file_put_contents(__DIR__ . '/resources/views/previews/' . $key . '.blade.php', $html);
+    $htmlContent = substr($content, $htmlStart, $htmlEnd - $htmlStart);
     
-    @unlink($tmpDir . '/index.html');
-    @rmdir($tmpDir);
+    // Replace {$name} with a placeholder name for the preview
+    $name = ucwords(str_replace('_', ' ', str_replace('tailwind_', '', $key)));
+    if ($key === 'tailwind_starter') $name = 'Tailwind CSS Starter';
+    
+    $htmlContent = str_replace('{$name}', $name, $htmlContent);
+    
+    $previewFile = "{$previewsDir}/{$key}.blade.php";
+    file_put_contents($previewFile, ltrim($htmlContent));
+    echo "Generated preview for {$key}\n";
 }
-echo "Done\n";
+
+echo "All previews generated successfully!\n";
