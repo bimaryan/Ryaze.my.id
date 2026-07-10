@@ -24,6 +24,9 @@
             <div class="p-8">
                 <form action="{{ route('register.process') }}" method="POST" class="space-y-5">
                     @csrf
+                    @if(request()->has('ref'))
+                        <input type="hidden" name="ref" value="{{ request('ref') }}">
+                    @endif
 
                     <div>
                         <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Nama Lengkap</label>

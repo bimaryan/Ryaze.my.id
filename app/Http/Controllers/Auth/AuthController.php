@@ -177,11 +177,21 @@ class AuthController extends Controller
         }
 
         // 2. Simpan User Baru ke Database
+        $referrerId = null;
+        if ($request->has('ref')) {
+            $referrer = User::where('referral_code', $request->ref)->first();
+            if ($referrer) {
+                $referrerId = $referrer->id;
+            }
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'referral_code' => Str::random(8),
+            'referred_by' => $referrerId,
         ]);
 
         // 3. Auto-Login setelah berhasil register
