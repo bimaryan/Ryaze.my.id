@@ -137,14 +137,14 @@
                     </p>
 
                     @if(!auth()->user()->two_factor_secret)
-                        <form action="#" method="POST" onsubmit="event.preventDefault(); swAlert('Info', 'Fitur 2FA Setup sedang dalam pengembangan MVP.', 'info');">
+                        <form action="#" method="POST" onsubmit="event.preventDefault(); Swal.fire('Info', 'Fitur 2FA Setup sedang dalam pengembangan MVP.', 'info');">
                             @csrf
                             <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
                                 Aktifkan 2FA
                             </button>
                         </form>
                     @else
-                        <form action="#" method="POST" onsubmit="event.preventDefault(); swConfirm('Nonaktifkan 2FA?', 'Apakah Anda yakin ingin menonaktifkan pengamanan ekstra ini?').then(res => { if(res.isConfirmed) { swAlert('Info', 'Fitur 2FA Disable sedang dalam pengembangan MVP.', 'info'); } }); return false;">
+                        <form action="#" method="POST" onsubmit="event.preventDefault(); Swal.fire({title: 'Nonaktifkan 2FA?', text: 'Apakah Anda yakin ingin menonaktifkan pengamanan ekstra ini?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya', cancelButtonText: 'Batal'}).then(res => { if(res.isConfirmed) { Swal.fire('Info', 'Fitur 2FA Disable sedang dalam pengembangan MVP.', 'info'); } }); return false;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
