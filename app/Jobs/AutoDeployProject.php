@@ -578,7 +578,11 @@ PHP;
             'laravel_starter_13' => $this->scaffoldLaravel($dir, $projectName, $deploy, '13'),
             'react_starter' => $this->scaffoldReact($dir, $projectName),
             'nextjs_starter' => $this->scaffoldNextjs($dir, $projectName),
+            'vue_starter' => $this->scaffoldVue($dir, $projectName),
+            'nuxt_starter' => $this->scaffoldNuxt($dir, $projectName),
+            'svelte_starter' => $this->scaffoldSvelte($dir, $projectName),
             'node_express' => $this->scaffoldNode($dir, $projectName),
+            'ghost_cms' => $this->scaffoldGhost($dir, $projectName, $deploy),
             'wordpress' => $this->scaffoldWordpress($dir, $projectName, $deploy),
             default => throw new \RuntimeException("Unknown template key: {$key}"),
         };
