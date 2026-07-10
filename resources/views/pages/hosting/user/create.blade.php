@@ -116,6 +116,26 @@
                             </div>
                         </label>
 
+                        {{-- Tailwind CSS --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="tailwind_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-wind text-xl text-cyan-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Tailwind CSS</p>
+                                        <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full font-medium">HTML & CSS</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Starter template UI modern dengan Tailwind CSS CDN. Langsung ngoding utility class tanpa build step.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-bolt"></i> Instant deploy
+                                </div>
+                            </div>
+                        </label>
+
                         {{-- PHP Native --}}
                         <label class="relative cursor-pointer group">
                             <input type="radio" name="template_key" value="php_basic" class="peer hidden">
