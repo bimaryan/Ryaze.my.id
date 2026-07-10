@@ -157,6 +157,9 @@ class DashboardController extends Controller
         'tailwind_portfolio'  => ['framework' => 'html'],
         'tailwind_landing'    => ['framework' => 'html'],
         'tailwind_blog'       => ['framework' => 'html'],
+        'tailwind_ecommerce'  => ['framework' => 'html'],
+        'tailwind_admin'      => ['framework' => 'html'],
+        'tailwind_linkinbio'  => ['framework' => 'html'],
     ];
 
     // Memproses data dan memulai Deploy Otomatis
