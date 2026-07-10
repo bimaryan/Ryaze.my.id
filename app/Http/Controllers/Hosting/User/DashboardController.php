@@ -148,6 +148,9 @@ class DashboardController extends Controller
         'svelte_starter'      => ['framework' => 'node'],
         'node_express'        => ['framework' => 'node'],
         'tailwind_starter'    => ['framework' => 'html'],
+        'tailwind_portfolio'  => ['framework' => 'html'],
+        'tailwind_landing'    => ['framework' => 'html'],
+        'tailwind_blog'       => ['framework' => 'html'],
     ];
 
     // Memproses data dan memulai Deploy Otomatis

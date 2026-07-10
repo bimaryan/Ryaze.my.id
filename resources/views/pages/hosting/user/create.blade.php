@@ -136,6 +136,66 @@
                             </div>
                         </label>
 
+                        {{-- Tailwind Portfolio --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="tailwind_portfolio" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-user-tie text-xl text-indigo-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Tailwind Portfolio</p>
+                                        <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full font-medium">Design Template</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Template UI portfolio personal yang elegan, menggunakan dark mode dan gradient khas Tailwind.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-bolt"></i> Instant deploy
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Tailwind Landing Page --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="tailwind_landing" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-rocket text-xl text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Tailwind Landing</p>
+                                        <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full font-medium">Design Template</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Template UI untuk SaaS landing page yang bersih, profesional, dengan section hero yang menarik.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-bolt"></i> Instant deploy
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Tailwind Blog --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="tailwind_blog" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-newspaper text-xl text-orange-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Tailwind Blog</p>
+                                        <span class="text-[10px] bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full font-medium">Design Template</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Template UI bergaya minimalis dan clean typography, sangat cocok untuk blog atau jurnal personal.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-bolt"></i> Instant deploy
+                                </div>
+                            </div>
+                        </label>
+
                         {{-- PHP Native --}}
                         <label class="relative cursor-pointer group">
                             <input type="radio" name="template_key" value="php_basic" class="peer hidden">

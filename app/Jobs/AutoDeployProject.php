@@ -585,6 +585,9 @@ PHP;
             'ghost_cms' => $this->scaffoldGhost($dir, $projectName, $deploy),
             'wordpress' => $this->scaffoldWordpress($dir, $projectName, $deploy),
             'tailwind_starter' => $this->scaffoldTailwind($dir, $projectName),
+            'tailwind_portfolio' => $this->scaffoldTailwindPortfolio($dir, $projectName),
+            'tailwind_landing' => $this->scaffoldTailwindLanding($dir, $projectName),
+            'tailwind_blog' => $this->scaffoldTailwindBlog($dir, $projectName),
             default => throw new \RuntimeException("Unknown template key: {$key}"),
         };
     }
@@ -645,6 +648,121 @@ PHP;
             Powered by <span class="font-semibold text-slate-700">Ryaze.my.id</span>
         </div>
     </div>
+</body>
+</html>
+HTML
+        );
+    }
+
+    private function scaffoldTailwindPortfolio(string $dir, string $name): void
+    {
+        @mkdir($dir, 0755, true);
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$name} - Personal Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-200 antialiased selection:bg-indigo-500 selection:text-white">
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="font-bold text-xl text-white tracking-tight">{$name}<span class="text-indigo-500">.</span></div>
+                <div class="flex space-x-8">
+                    <a href="#about" class="text-sm font-medium hover:text-white transition-colors">About</a>
+                    <a href="#projects" class="text-sm font-medium hover:text-white transition-colors">Projects</a>
+                    <a href="#contact" class="text-sm font-medium hover:text-white transition-colors">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <section id="hero" class="py-20 lg:py-32 flex flex-col items-center text-center px-4">
+            <div class="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-full mb-6 p-1">
+                <div class="w-full h-full bg-slate-800 rounded-full border-4 border-slate-900"></div>
+            </div>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white tracking-tight mb-6">Creative Developer</h1>
+            <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">I build exceptional and accessible digital experiences for the web. Specialized in modern frontend frameworks.</p>
+            <div class="flex gap-4">
+                <a href="#contact" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-full font-semibold transition-all">Get in touch</a>
+                <a href="#projects" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-full font-semibold transition-all">View Work</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+HTML
+        );
+    }
+
+    private function scaffoldTailwindLanding(string $dir, string $name): void
+    {
+        @mkdir($dir, 0755, true);
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$name} - SaaS Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+    <header class="bg-slate-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
+            <div class="font-black text-2xl text-indigo-600 tracking-tighter">{$name}</div>
+            <nav class="hidden md:flex gap-8 font-medium text-slate-600">
+                <a href="#" class="hover:text-indigo-600">Features</a>
+                <a href="#" class="hover:text-indigo-600">Pricing</a>
+                <a href="#" class="hover:text-indigo-600">Testimonials</a>
+            </nav>
+            <a href="#" class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-indigo-700 transition">Get Started</a>
+        </div>
+    </header>
+    <main>
+        <section class="py-24 text-center px-4 max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-8">Build faster. Scale infinitely.</h1>
+            <p class="text-xl text-slate-500 mb-10 leading-relaxed">The ultimate platform for modern teams to collaborate, design, and ship products at lightning speed.</p>
+            <div class="flex justify-center gap-4">
+                <input type="email" placeholder="Enter your email" class="px-5 py-3 bg-slate-100 border-none rounded-lg w-64 focus:ring-2 focus:ring-indigo-600 outline-none">
+                <button class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-indigo-700">Try for free</button>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+HTML
+        );
+    }
+
+    private function scaffoldTailwindBlog(string $dir, string $name): void
+    {
+        @mkdir($dir, 0755, true);
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$name} - Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased font-serif">
+    <header class="max-w-3xl mx-auto px-6 py-12 border-b border-stone-200">
+        <h1 class="text-4xl font-black tracking-tight mb-2">{$name} Journal</h1>
+        <p class="text-stone-500 italic">Thoughts on design, code, and life.</p>
+    </header>
+    <main class="max-w-3xl mx-auto px-6 py-12">
+        <article class="mb-16">
+            <div class="text-sm text-stone-400 mb-2 font-sans tracking-widest uppercase">October 12, 2026</div>
+            <h2 class="text-3xl font-bold mb-4 hover:text-stone-600 cursor-pointer transition">The Art of Minimalism in UI Design</h2>
+            <p class="text-lg leading-relaxed text-stone-600 mb-6">Minimalism isn't just about removing things; it's about making sure everything that remains has a clear purpose. In modern web development, this translates to faster load times and clearer user flows...</p>
+            <a href="#" class="text-stone-900 font-bold border-b border-stone-900 pb-1 hover:text-stone-500 hover:border-stone-500 transition">Read article &rarr;</a>
+        </article>
+    </main>
 </body>
 </html>
 HTML
