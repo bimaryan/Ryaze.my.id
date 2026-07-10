@@ -5,11 +5,6 @@
 @section('content')
 <x-ui.page-layout>
     <x-ui.page-header title="Galeri Template ✨">
-        <x-slot name="iconSlot">
-            <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-200">
-                <i class="fa-solid fa-layer-group text-xl"></i>
-            </div>
-        </x-slot>
         <x-slot name="subtitle">
             <p class="text-sm text-slate-500">Pilih desain UI siap pakai berbasis Tailwind CSS untuk website Anda.</p>
         </x-slot>
