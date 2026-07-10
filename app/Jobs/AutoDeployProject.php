@@ -600,63 +600,101 @@ PHP;
         @mkdir($dir, 0755, true);
         file_put_contents("{$dir}/index.html", <<<HTML
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$name} - Tailwind CSS</title>
+    <title>{$name} - Tailwind CSS Starter</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        brand: '#0ea5e9',
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brand: '#4f46e5' }
                 }
             }
         }
     </script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');</style>
 </head>
-<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
-        <div class="bg-gradient-to-br from-brand to-blue-600 p-8 text-center relative overflow-hidden">
-            <div class="absolute inset-0 bg-white/10 opacity-50 pattern-dots"></div>
-            <h1 class="text-3xl font-extrabold text-white mb-2 relative z-10">Tailwind CSS</h1>
-            <p class="text-blue-100 font-medium relative z-10">Starter Template Siap Pakai!</p>
-        </div>
-        <div class="p-8">
-            <div class="space-y-6">
-                <div class="flex items-start gap-4">
-                    <div class="bg-green-100 p-2 rounded-full flex-shrink-0 text-green-600">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    </div>
-                    <p class="text-slate-600 text-sm leading-relaxed">Tanpa build atau <code class="bg-slate-100 px-1 py-0.5 rounded text-slate-800">npm install</code>. Langsung edit HTML dan gunakan utility class Tailwind!</p>
-                </div>
-                <div class="flex items-start gap-4">
-                    <div class="bg-green-100 p-2 rounded-full flex-shrink-0 text-green-600">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    </div>
-                    <p class="text-slate-600 text-sm leading-relaxed">Sangat cocok untuk membuat prototipe desain dan landing page interaktif dengan cepat.</p>
-                </div>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased flex flex-col min-h-screen">
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <div class="font-bold text-xl text-brand flex items-center gap-2">
+                <i class="fa-solid fa-code"></i> {$name}
             </div>
-            
-            <div class="mt-8">
-                <a href="#" class="block w-full text-center bg-brand hover:bg-blue-600 text-white font-semibold py-3.5 px-4 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-brand/30">
-                    Mulai Mendesain
-                </a>
+            <div class="flex gap-4">
+                <a href="#" class="text-sm font-medium text-slate-600 hover:text-brand transition">Documentation</a>
+                <a href="#" class="text-sm font-medium text-slate-600 hover:text-brand transition">GitHub</a>
             </div>
         </div>
-        <div class="bg-slate-50 p-4 text-center text-xs text-slate-500 border-t border-slate-100">
-            Powered by <span class="font-semibold text-slate-700">Ryaze.my.id</span>
+    </nav>
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="max-w-3xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+            <div class="bg-gradient-to-br from-brand to-indigo-700 p-12 text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/10 opacity-30" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 20px 20px;"></div>
+                <i class="fa-brands fa-css3-alt text-6xl text-white mb-6 relative z-10 drop-shadow-md"></i>
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-white mb-4 relative z-10 tracking-tight">Tailwind CSS Starter</h1>
+                <p class="text-indigo-100 font-medium text-lg relative z-10 max-w-xl mx-auto">Proyek <strong>{$name}</strong> Anda sudah siap digunakan! Tidak perlu repot dengan instalasi NPM atau build tools.</p>
+            </div>
+            <div class="p-8 sm:p-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex gap-4">
+                        <div class="bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-brand">
+                            <i class="fa-solid fa-bolt text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 mb-2">Super Cepat</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">Menggunakan Tailwind CSS dari CDN. Langsung render dengan sempurna di semua perangkat.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-brand">
+                            <i class="fa-solid fa-paintbrush text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 mb-2">Siap Dikustomisasi</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">Buka File Manager Anda, edit <code>index.html</code>, dan mulai tambahkan utility class Tailwind favorit Anda.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-brand">
+                            <i class="fa-solid fa-icons text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 mb-2">FontAwesome Included</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">Lebih dari 2.000+ ikon gratis siap pakai. Cukup gunakan tag <code>&lt;i class="fa-solid fa-user"&gt;</code>.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-brand">
+                            <i class="fa-solid fa-mobile-screen text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 mb-2">100% Responsif</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">Gunakan prefix seperti <code>md:</code>, <code>lg:</code>, dan <code>hover:</code> untuk membuat tampilan menakjubkan.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-12 text-center">
+                    <a href="https://tailwindcss.com/docs" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-8 rounded-xl transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/20">
+                        Baca Dokumentasi Tailwind <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
+    <footer class="py-6 text-center text-sm text-slate-500">
+        &copy; 2026 {$name}. Powered by <a href="https://ryaze.my.id" class="font-semibold text-brand hover:underline">Ryaze Hosting</a>.
+    </footer>
 </body>
 </html>
 HTML
         );
     }
-
     private function scaffoldTailwindPortfolio(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -666,81 +704,419 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$name} - Personal Portfolio</title>
+    <title>{$name} - Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: { primary: '#6366f1' }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .blob { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-20px) scale(1.05); } 100% { transform: translateY(0px) scale(1); } }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-200 antialiased selection:bg-indigo-500 selection:text-white">
-    <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="font-bold text-xl text-white tracking-tight">{$name}<span class="text-indigo-500">.</span></div>
-                <div class="flex space-x-8">
-                    <a href="#about" class="text-sm font-medium hover:text-white transition-colors">About</a>
-                    <a href="#projects" class="text-sm font-medium hover:text-white transition-colors">Projects</a>
-                    <a href="#contact" class="text-sm font-medium hover:text-white transition-colors">Contact</a>
+<body class="bg-slate-950 text-slate-300 font-sans antialiased selection:bg-primary selection:text-white overflow-x-hidden">
+    
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="#" class="text-2xl font-bold text-white tracking-tight">{$name}<span class="text-primary">.</span></a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-sm font-medium text-white hover:text-primary transition">Home</a>
+                    <a href="#about" class="text-sm font-medium text-slate-400 hover:text-white transition">About</a>
+                    <a href="#projects" class="text-sm font-medium text-slate-400 hover:text-white transition">Projects</a>
+                    <a href="#contact" class="text-sm font-medium text-slate-400 hover:text-white transition">Contact</a>
                 </div>
+                <a href="#contact" class="hidden md:inline-flex items-center justify-center px-5 py-2.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-full text-sm font-semibold transition-all">Let's Talk</a>
             </div>
         </div>
     </nav>
-    <main>
-        <section id="hero" class="py-20 lg:py-32 flex flex-col items-center text-center px-4">
-            <div class="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-full mb-6 p-1">
-                <div class="w-full h-full bg-slate-800 rounded-full border-4 border-slate-900"></div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 min-h-screen flex items-center">
+        <div class="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full mix-blend-screen filter blur-3xl opacity-50 blob"></div>
+        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/20 rounded-full mix-blend-screen filter blur-3xl opacity-50 blob" style="animation-delay: 2s;"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-sm font-medium text-slate-300 mb-6">
+                        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Available for work
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-extrabold text-white tracking-tight mb-6 leading-tight">
+                        Hi, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">{$name}</span>
+                    </h1>
+                    <p class="text-xl text-slate-400 mb-8 max-w-xl leading-relaxed">
+                        A passionate Full Stack Developer & UI/UX Designer specializing in building exceptional digital experiences.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#projects" class="px-8 py-4 bg-primary hover:bg-indigo-500 text-white rounded-full font-semibold transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:-translate-y-1">View My Work</a>
+                        <a href="https://github.com" target="_blank" class="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-full font-semibold transition-all flex items-center gap-2 border border-slate-700 hover:-translate-y-1">
+                            <i class="fa-brands fa-github text-xl"></i> Github
+                        </a>
+                    </div>
+                </div>
+                <div class="relative hidden lg:block">
+                    <div class="w-full aspect-square max-w-md mx-auto relative">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-primary to-purple-500 rounded-3xl transform rotate-6 opacity-50 blur-lg"></div>
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Profile" class="w-full h-full object-cover rounded-3xl relative z-10 shadow-2xl border border-slate-800">
+                    </div>
+                </div>
             </div>
-            <h1 class="text-5xl lg:text-7xl font-extrabold text-white tracking-tight mb-6">Creative Developer</h1>
-            <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">I build exceptional and accessible digital experiences for the web. Specialized in modern frontend frameworks.</p>
-            <div class="flex gap-4">
-                <a href="#contact" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-full font-semibold transition-all">Get in touch</a>
-                <a href="#projects" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-full font-semibold transition-all">View Work</a>
+        </div>
+    </section>
+
+    <!-- Services / Skills -->
+    <section id="about" class="py-24 bg-slate-900 border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">What I Do</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">I craft high-performance, beautifully designed web applications from concept to deployment.</p>
             </div>
-        </section>
-    </main>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Skill 1 -->
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-primary/50 transition-colors group">
+                    <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center text-primary text-2xl mb-6 shadow-inner group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">UI/UX Design</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Designing intuitive and modern interfaces with Figma, focusing on user experience and accessibility.</p>
+                </div>
+                <!-- Skill 2 -->
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-primary/50 transition-colors group">
+                    <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center text-purple-400 text-2xl mb-6 shadow-inner group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Frontend Dev</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Building responsive and interactive web applications using React, Vue, TailwindCSS, and Next.js.</p>
+                </div>
+                <!-- Skill 3 -->
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-primary/50 transition-colors group">
+                    <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center text-emerald-400 text-2xl mb-6 shadow-inner group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Backend & API</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Developing robust backend systems and RESTful APIs with Node.js, Express, Laravel, and PostgreSQL.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="py-24">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">Featured Projects</h2>
+                    <p class="text-slate-400">Some of my recent work.</p>
+                </div>
+                <a href="#" class="hidden sm:inline-flex text-primary hover:text-white font-medium items-center gap-2 transition">View all <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Project 1 -->
+                <div class="group relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800">
+                    <div class="aspect-video w-full overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Project 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <a href="#" class="px-6 py-3 bg-white text-slate-900 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:scale-105">View Live Demo</a>
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex gap-2 mb-4">
+                            <span class="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full border border-primary/20">React</span>
+                            <span class="px-3 py-1 text-xs font-medium bg-slate-800 text-slate-300 rounded-full border border-slate-700">Tailwind</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">E-Commerce Dashboard</h3>
+                        <p class="text-slate-400 mb-6">A comprehensive admin panel for managing e-commerce stores with real-time analytics.</p>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="group relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800">
+                    <div class="aspect-video w-full overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Project 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <a href="#" class="px-6 py-3 bg-white text-slate-900 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:scale-105">View Live Demo</a>
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex gap-2 mb-4">
+                            <span class="px-3 py-1 text-xs font-medium bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20">Next.js</span>
+                            <span class="px-3 py-1 text-xs font-medium bg-slate-800 text-slate-300 rounded-full border border-slate-700">Stripe</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">SaaS Landing Page</h3>
+                        <p class="text-slate-400 mb-6">A high-converting landing page for a B2B SaaS startup with integrated payment flows.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-slate-900 border-t border-slate-800">
+        <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center">
+            <h2 class="text-3xl lg:text-5xl font-bold text-white mb-6">Let's build something great together.</h2>
+            <p class="text-slate-400 text-lg mb-10">I'm currently open for new opportunities and freelance projects. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
+            <a href="mailto:hello@example.com" class="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-indigo-500 text-white rounded-full font-bold text-lg transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:-translate-y-1">
+                <i class="fa-regular fa-envelope"></i> Say Hello
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 border-t border-slate-800 text-center">
+        <div class="flex justify-center gap-6 mb-6">
+            <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary transition"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary transition"><i class="fa-brands fa-github"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary transition"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary transition"><i class="fa-brands fa-dribbble"></i></a>
+        </div>
+        <p class="text-slate-500 text-sm">&copy; 2026 {$name}. Designed with TailwindCSS.</p>
+    </footer>
+
 </body>
 </html>
 HTML
         );
     }
-
     private function scaffoldTailwindLanding(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
         file_put_contents("{$dir}/index.html", <<<HTML
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$name} - SaaS Landing Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brand: '#2563eb', secondary: '#1e293b' }
+                }
+            }
+        }
+    </script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');</style>
 </head>
-<body class="bg-white text-slate-800 antialiased">
-    <header class="bg-slate-50 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
-            <div class="font-black text-2xl text-indigo-600 tracking-tighter">{$name}</div>
-            <nav class="hidden md:flex gap-8 font-medium text-slate-600">
-                <a href="#" class="hover:text-indigo-600">Features</a>
-                <a href="#" class="hover:text-indigo-600">Pricing</a>
-                <a href="#" class="hover:text-indigo-600">Testimonials</a>
+<body class="bg-white text-slate-800 font-sans antialiased overflow-x-hidden">
+    <!-- Navbar -->
+    <header class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-100 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="font-black text-2xl tracking-tighter flex items-center gap-2">
+                <div class="w-8 h-8 bg-brand rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-cube"></i></div>
+                {$name}
+            </div>
+            <nav class="hidden md:flex gap-8 font-medium text-slate-500">
+                <a href="#features" class="hover:text-slate-900 transition">Features</a>
+                <a href="#testimonials" class="hover:text-slate-900 transition">Testimonials</a>
+                <a href="#pricing" class="hover:text-slate-900 transition">Pricing</a>
             </nav>
-            <a href="#" class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-indigo-700 transition">Get Started</a>
+            <div class="flex gap-4 items-center">
+                <a href="#" class="hidden lg:block font-medium text-slate-600 hover:text-slate-900">Sign in</a>
+                <a href="#" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">Get Started</a>
+            </div>
         </div>
     </header>
-    <main>
-        <section class="py-24 text-center px-4 max-w-4xl mx-auto">
-            <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-8">Build faster. Scale infinitely.</h1>
-            <p class="text-xl text-slate-500 mb-10 leading-relaxed">The ultimate platform for modern teams to collaborate, design, and ship products at lightning speed.</p>
-            <div class="flex justify-center gap-4">
-                <input type="email" placeholder="Enter your email" class="px-5 py-3 bg-slate-100 border-none rounded-lg w-64 focus:ring-2 focus:ring-indigo-600 outline-none">
-                <button class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-indigo-700">Try for free</button>
+
+    <!-- Hero -->
+    <section class="pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 text-center max-w-5xl mx-auto relative">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/10 rounded-full blur-3xl -z-10"></div>
+        <a href="#" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-sm font-medium text-brand mb-8 hover:bg-blue-100 transition">
+            <span class="bg-brand text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">New</span> Introducing AI Features <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-slate-900 leading-[1.1]">
+            Build faster. <br class="hidden md:block">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-cyan-500">Scale infinitely.</span>
+        </h1>
+        <p class="text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+            The ultimate platform for modern teams to collaborate, design, and ship products at lightning speed. Start for free today.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#" class="bg-brand text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-xl shadow-brand/30 flex items-center justify-center gap-2 text-lg">
+                Start your free trial <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition flex items-center justify-center gap-2 text-lg">
+                <i class="fa-solid fa-play"></i> Watch Demo
+            </a>
+        </div>
+        
+        <!-- Dashboard Mockup -->
+        <div class="mt-20 relative mx-auto max-w-5xl">
+            <div class="rounded-2xl border border-slate-200/50 bg-slate-50 p-2 shadow-2xl relative">
+                <div class="absolute -top-4 -left-4 w-32 h-32 bg-blue-400 rounded-full mix-blend-multiply filter blur-2xl opacity-70"></div>
+                <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-purple-400 rounded-full mix-blend-multiply filter blur-2xl opacity-70"></div>
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Dashboard" class="rounded-xl border border-slate-200 shadow-sm w-full relative z-10">
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+
+    <!-- Trusted By -->
+    <section class="py-10 border-y border-slate-100 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Trusted by innovative teams worldwide</p>
+            <div class="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                <i class="fa-brands fa-aws text-4xl"></i>
+                <i class="fa-brands fa-google text-4xl"></i>
+                <i class="fa-brands fa-microsoft text-4xl"></i>
+                <i class="fa-brands fa-stripe text-4xl"></i>
+                <i class="fa-brands fa-figma text-4xl"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Everything you need to succeed</h2>
+                <p class="text-lg text-slate-500 max-w-2xl mx-auto">Our platform provides all the tools you need to build, scale, and manage your projects efficiently.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+                    <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Lightning Fast</h3>
+                    <p class="text-slate-500 leading-relaxed">Built on edge infrastructure to deliver content to your users in milliseconds, anywhere in the world.</p>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+                    <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Enterprise Security</h3>
+                    <p class="text-slate-500 leading-relaxed">Bank-grade encryption, role-based access control, and automated compliance out of the box.</p>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+                    <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Real-time Analytics</h3>
+                    <p class="text-slate-500 leading-relaxed">Gain deep insights into user behavior and system performance with our intuitive dashboards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-24 bg-slate-50 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Simple, transparent pricing</h2>
+                <p class="text-lg text-slate-500 max-w-2xl mx-auto">No hidden fees. No surprise charges. Choose the plan that fits your needs.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto gap-8">
+                <!-- Basic Plan -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Starter</h3>
+                    <p class="text-slate-500 text-sm mb-6">Perfect for individuals and small projects.</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-black text-slate-900">$0</span>
+                        <span class="text-slate-500 font-medium">/month</span>
+                    </div>
+                    <a href="#" class="block w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-center rounded-xl transition">Get Started</a>
+                    <ul class="mt-8 space-y-4 text-sm text-slate-600">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Up to 3 projects</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Community support</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> 1GB Storage</li>
+                    </ul>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="bg-slate-900 p-8 rounded-3xl shadow-xl relative overflow-hidden text-white">
+                    <div class="absolute top-0 right-0 bg-brand text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-3xl">POPULAR</div>
+                    <h3 class="text-xl font-bold mb-2">Professional</h3>
+                    <p class="text-slate-400 text-sm mb-6">For growing teams and businesses.</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-black">$29</span>
+                        <span class="text-slate-400 font-medium">/month</span>
+                    </div>
+                    <a href="#" class="block w-full py-3 px-4 bg-brand hover:bg-blue-500 text-white font-bold text-center rounded-xl transition shadow-lg shadow-brand/30">Start 14-day Free Trial</a>
+                    <ul class="mt-8 space-y-4 text-sm text-slate-300">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Unlimited projects</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 24/7 Priority support</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> 100GB Storage</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-brand"></i> Advanced Analytics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-brand">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Ready to transform your workflow?</h2>
+            <p class="text-lg text-blue-100 mb-10">Join thousands of teams who are already building the future on our platform.</p>
+            <a href="#" class="bg-white text-brand px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition shadow-lg text-lg inline-block">Get Started for Free</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+            <div>
+                <div class="font-black text-xl tracking-tighter flex items-center gap-2 mb-6 text-white">
+                    <div class="w-6 h-6 bg-brand rounded flex items-center justify-center text-white text-xs"><i class="fa-solid fa-cube"></i></div>
+                    {$name}
+                </div>
+                <p class="text-slate-500 text-sm">Building the future of web development, one block at a time.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4">Product</h4>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li><a href="#" class="hover:text-white transition">Features</a></li>
+                    <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                    <li><a href="#" class="hover:text-white transition">Changelog</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4">Company</h4>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                    <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                    <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4">Legal</h4>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-sm text-slate-500">&copy; 2026 {$name} Inc. All rights reserved.</p>
+            <div class="flex gap-4 text-slate-500">
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-github"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-discord"></i></a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
 HTML
         );
     }
-
     private function scaffoldTailwindBlog(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -750,22 +1126,138 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$name} - Blog</title>
+    <title>{$name} - Blog & Journal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap');
+    </style>
 </head>
-<body class="bg-stone-50 text-stone-800 antialiased font-serif">
-    <header class="max-w-3xl mx-auto px-6 py-12 border-b border-stone-200">
-        <h1 class="text-4xl font-black tracking-tight mb-2">{$name} Journal</h1>
-        <p class="text-stone-500 italic">Thoughts on design, code, and life.</p>
+<body class="bg-stone-50 text-stone-900 antialiased font-sans">
+    
+    <!-- Header -->
+    <header class="border-b border-stone-200 bg-white sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-20 items-center">
+            <a href="#" class="font-serif font-black text-2xl tracking-tight">{$name}<span class="text-orange-500">.</span></a>
+            <nav class="hidden md:flex gap-6 font-medium text-sm text-stone-600">
+                <a href="#" class="hover:text-stone-900 transition">Design</a>
+                <a href="#" class="hover:text-stone-900 transition">Technology</a>
+                <a href="#" class="hover:text-stone-900 transition">Life</a>
+                <a href="#" class="hover:text-stone-900 transition">About</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button class="w-10 h-10 rounded-full flex items-center justify-center text-stone-500 hover:bg-stone-100 transition"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <a href="#" class="bg-stone-900 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-stone-800 transition shadow-md">Subscribe</a>
+            </div>
+        </div>
     </header>
-    <main class="max-w-3xl mx-auto px-6 py-12">
-        <article class="mb-16">
-            <div class="text-sm text-stone-400 mb-2 font-sans tracking-widest uppercase">October 12, 2026</div>
-            <h2 class="text-3xl font-bold mb-4 hover:text-stone-600 cursor-pointer transition">The Art of Minimalism in UI Design</h2>
-            <p class="text-lg leading-relaxed text-stone-600 mb-6">Minimalism isn't just about removing things; it's about making sure everything that remains has a clear purpose. In modern web development, this translates to faster load times and clearer user flows...</p>
-            <a href="#" class="text-stone-900 font-bold border-b border-stone-900 pb-1 hover:text-stone-500 hover:border-stone-500 transition">Read article &rarr;</a>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Featured Post -->
+        <article class="mb-20 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center group cursor-pointer">
+            <div class="overflow-hidden rounded-2xl shadow-lg relative aspect-[4/3] lg:aspect-auto lg:h-[450px]">
+                <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="Featured">
+                <div class="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition duration-700"></div>
+            </div>
+            <div class="flex flex-col justify-center">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-orange-600 font-bold text-xs tracking-widest uppercase">Design</span>
+                    <span class="text-stone-400 text-sm">Oct 12, 2026</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-serif font-bold mb-6 leading-tight group-hover:text-orange-600 transition">The Art of Minimalism in Modern UI Design</h1>
+                <p class="text-lg text-stone-600 font-serif leading-relaxed mb-8">Minimalism isn't just about removing things; it's about making sure everything that remains has a clear purpose. In modern web development, this translates to faster load times and clearer user flows.</p>
+                <div class="flex items-center gap-3">
+                    <img src="https://ui-avatars.com/api/?name=Alex+Carter&background=f97316&color=fff" class="w-10 h-10 rounded-full shadow-sm">
+                    <div>
+                        <p class="text-sm font-bold">Alex Carter</p>
+                        <p class="text-xs text-stone-500">Lead Designer</p>
+                    </div>
+                </div>
+            </div>
         </article>
+
+        <div class="flex items-center justify-between border-b border-stone-200 pb-4 mb-10">
+            <h2 class="text-2xl font-bold font-serif">Latest Articles</h2>
+            <a href="#" class="text-sm font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1">View All <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Grid Posts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-20">
+            <!-- Article 1 -->
+            <article class="group cursor-pointer">
+                <div class="overflow-hidden rounded-xl mb-5 aspect-[4/3] shadow-md relative">
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <span class="text-blue-600 font-bold text-xs tracking-widest uppercase mb-2 block">Technology</span>
+                <h3 class="text-xl font-serif font-bold mb-3 leading-snug group-hover:text-blue-600 transition">Why you should learn Rust in 2026</h3>
+                <p class="text-stone-600 line-clamp-3 font-serif text-sm leading-relaxed mb-4">Memory safety without garbage collection is just the beginning of why developers love Rust.</p>
+                <p class="text-xs text-stone-400 font-medium">Oct 10, 2026 &middot; 5 min read</p>
+            </article>
+
+            <!-- Article 2 -->
+            <article class="group cursor-pointer">
+                <div class="overflow-hidden rounded-xl mb-5 aspect-[4/3] shadow-md relative">
+                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <span class="text-green-600 font-bold text-xs tracking-widest uppercase mb-2 block">Life</span>
+                <h3 class="text-xl font-serif font-bold mb-3 leading-snug group-hover:text-green-600 transition">Balancing remote work and mental health</h3>
+                <p class="text-stone-600 line-clamp-3 font-serif text-sm leading-relaxed mb-4">Tips and strategies for maintaining boundaries when your office is also your living room.</p>
+                <p class="text-xs text-stone-400 font-medium">Oct 08, 2026 &middot; 8 min read</p>
+            </article>
+
+            <!-- Article 3 -->
+            <article class="group cursor-pointer">
+                <div class="overflow-hidden rounded-xl mb-5 aspect-[4/3] shadow-md relative">
+                    <img src="https://images.unsplash.com/photo-1618761714954-0b8cd0026356?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <span class="text-purple-600 font-bold text-xs tracking-widest uppercase mb-2 block">AI</span>
+                <h3 class="text-xl font-serif font-bold mb-3 leading-snug group-hover:text-purple-600 transition">The future of generative AI in software development</h3>
+                <p class="text-stone-600 line-clamp-3 font-serif text-sm leading-relaxed mb-4">How AI agents are changing the way we write, debug, and deploy code in production.</p>
+                <p class="text-xs text-stone-400 font-medium">Oct 05, 2026 &middot; 12 min read</p>
+            </article>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="bg-stone-900 rounded-3xl p-10 md:p-16 text-center text-white relative overflow-hidden shadow-2xl">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl"></div>
+            
+            <i class="fa-regular fa-envelope-open text-4xl text-orange-500 mb-6 relative z-10"></i>
+            <h2 class="text-3xl font-serif font-bold mb-4 relative z-10">Get the latest articles in your inbox</h2>
+            <p class="text-stone-400 mb-8 max-w-lg mx-auto relative z-10">Join 5,000+ subscribers who receive our weekly newsletter on design, code, and startups. No spam.</p>
+            <form class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto relative z-10">
+                <input type="email" placeholder="Your email address" class="px-6 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent flex-grow transition">
+                <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg shadow-orange-500/30">Subscribe</button>
+            </form>
+        </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-stone-200 py-12 mt-10">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="font-serif font-black text-xl tracking-tight">{$name}<span class="text-orange-500">.</span></div>
+            <p class="text-stone-500 text-sm font-medium">&copy; 2026 {$name}. All rights reserved.</p>
+            <div class="flex gap-4 text-stone-400">
+                <a href="#" class="hover:text-stone-900 transition"><i class="fa-brands fa-twitter text-lg"></i></a>
+                <a href="#" class="hover:text-stone-900 transition"><i class="fa-brands fa-github text-lg"></i></a>
+                <a href="#" class="hover:text-stone-900 transition"><i class="fa-brands fa-dribbble text-lg"></i></a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
 HTML
@@ -780,57 +1272,240 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$name} - E-Commerce</title>
+    <title>{$name} - Modern E-Commerce</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: { brand: '#0f172a', accent: '#f43f5e' }
+                }
+            }
+        }
+    </script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');</style>
 </head>
-<body class="bg-gray-50 font-sans antialiased text-gray-900">
-    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+<body class="bg-white font-sans antialiased text-slate-900 selection:bg-accent selection:text-white overflow-x-hidden">
+    <!-- Topbar -->
+    <div class="bg-brand text-white text-xs font-semibold text-center py-2.5 tracking-wide">
+        Diskon Hingga 50% untuk Pengguna Baru! Gunakan kode: <span class="font-black text-accent ml-1 px-2 py-0.5 bg-white/10 rounded">NEW50</span>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex-shrink-0 flex items-center">
-                    <span class="text-2xl font-black text-pink-600 tracking-tighter">Shop<span class="text-gray-900">App</span></span>
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center text-white text-xl shadow-lg shadow-accent/30">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <span class="text-2xl font-black tracking-tighter uppercase">{$name}</span>
                 </div>
-                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <a href="#" class="border-pink-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Home</a>
-                    <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Katalog</a>
-                    <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Promo</a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-10">
+                    <a href="#" class="text-slate-900 font-bold border-b-2 border-brand py-1">Pria</a>
+                    <a href="#" class="text-slate-500 hover:text-slate-900 font-medium py-1 transition">Wanita</a>
+                    <a href="#" class="text-slate-500 hover:text-slate-900 font-medium py-1 transition">Anak</a>
+                    <a href="#" class="text-accent font-bold py-1 flex items-center gap-1 transition">Sale <i class="fa-solid fa-tag text-xs"></i></a>
+                </div>
+
+                <!-- Icons -->
+                <div class="flex items-center gap-6">
+                    <button class="text-slate-500 hover:text-brand transition text-xl"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button class="text-slate-500 hover:text-brand transition text-xl hidden sm:block"><i class="fa-regular fa-user"></i></button>
+                    <button class="text-slate-500 hover:text-brand transition text-xl relative">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="absolute -top-2 -right-2 bg-accent text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">3</span>
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="bg-pink-600 rounded-3xl overflow-hidden shadow-xl mb-16 relative">
-            <div class="px-8 py-16 sm:px-12 sm:py-24 relative z-10">
-                <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">Koleksi Musim Panas 2026</h1>
-                <p class="text-pink-100 text-lg sm:text-xl max-w-2xl mb-8">Diskon hingga 50% untuk produk terpilih. Belanja sekarang sebelum kehabisan!</p>
-                <a href="#" class="inline-block bg-white text-pink-600 font-bold px-8 py-3 rounded-full hover:bg-gray-50 transition shadow-md">Belanja Sekarang</a>
-            </div>
-        </div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-8">Produk Terbaru</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="group">
-                <div class="w-full aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden mb-4 relative">
-                    <img src="https://placehold.co/400x500/e2e8f0/64748b?text=Product+1" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    <span class="absolute top-3 left-3 bg-white px-2 py-1 text-xs font-bold uppercase rounded text-gray-900 shadow-sm">Baru</span>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-slate-100 rounded-[2rem] overflow-hidden relative shadow-xl">
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/50 to-transparent z-10"></div>
+                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Hero Banner" class="w-full h-[500px] object-cover object-center absolute inset-0">
+                
+                <div class="relative z-20 h-[500px] flex items-center px-8 md:px-16 w-full max-w-2xl">
+                    <div>
+                        <span class="bg-accent text-white text-xs font-bold uppercase px-4 py-1.5 rounded-full mb-6 inline-block tracking-wider shadow-lg shadow-accent/40">Koleksi Musim Panas 2026</span>
+                        <h1 class="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-[1.1] mb-6 tracking-tight">Tampil Gaya<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Sepanjang Hari</span></h1>
+                        <p class="text-slate-300 text-lg md:text-xl mb-10 max-w-lg leading-relaxed">Temukan gaya terbaikmu dengan koleksi pakaian eksklusif kami. Desain premium dengan kenyamanan maksimal.</p>
+                        <a href="#" class="inline-flex items-center gap-3 bg-white text-brand font-bold px-8 py-4 rounded-full hover:bg-slate-100 hover:scale-105 transition-all shadow-xl text-lg group">
+                            Belanja Sekarang <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
                 </div>
-                <h3 class="text-sm font-medium text-gray-900 mb-1">Sepatu Sneakers Klasik</h3>
-                <p class="text-lg font-bold text-gray-900">Rp 450.000</p>
             </div>
-            <div class="group">
-                <div class="w-full aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden mb-4 relative">
-                    <img src="https://placehold.co/400x500/e2e8f0/64748b?text=Product+2" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+        </section>
+
+        <!-- Product Grid -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-3xl font-black tracking-tight">Produk Terlaris</h2>
+                <a href="#" class="font-bold text-slate-500 hover:text-brand flex items-center gap-2 group transition">
+                    Lihat Semua <i class="fa-solid fa-arrow-right-long group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+                <!-- Product 1 -->
+                <div class="group relative cursor-pointer">
+                    <div class="w-full aspect-[3/4] bg-slate-100 rounded-3xl overflow-hidden relative mb-5 shadow-sm group-hover:shadow-xl transition-shadow duration-500">
+                        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="T-Shirt" class="w-full h-full object-cover object-center group-hover:scale-110 transition duration-700">
+                        <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                            <span class="bg-white text-brand text-[10px] font-black tracking-widest px-3 py-1.5 rounded-md shadow-md uppercase">BARU</span>
+                        </div>
+                        <!-- Hover Overlay -->
+                        <div class="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <button class="absolute bottom-5 left-1/2 -translate-x-1/2 bg-brand text-white w-[85%] py-3.5 rounded-2xl font-bold opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-slate-800 shadow-xl flex items-center justify-center gap-2 z-20">
+                            <i class="fa-solid fa-cart-plus"></i> Masukkan Keranjang
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-900 group-hover:text-accent transition truncate">Essential Premium T-Shirt</h3>
+                            <p class="text-sm font-medium text-slate-500">Kapas Organik</p>
+                        </div>
+                    </div>
+                    <p class="font-black text-xl text-slate-900 mt-2">Rp 250.000</p>
                 </div>
-                <h3 class="text-sm font-medium text-gray-900 mb-1">Kemeja Flanel Premium</h3>
-                <p class="text-lg font-bold text-gray-900">Rp 250.000</p>
+
+                <!-- Product 2 -->
+                <div class="group relative cursor-pointer">
+                    <div class="w-full aspect-[3/4] bg-slate-100 rounded-3xl overflow-hidden relative mb-5 shadow-sm group-hover:shadow-xl transition-shadow duration-500">
+                        <img src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Jeans" class="w-full h-full object-cover object-center group-hover:scale-110 transition duration-700">
+                        <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                            <span class="bg-accent text-white text-[10px] font-black tracking-widest px-3 py-1.5 rounded-md shadow-md uppercase">-20%</span>
+                        </div>
+                        <div class="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <button class="absolute bottom-5 left-1/2 -translate-x-1/2 bg-brand text-white w-[85%] py-3.5 rounded-2xl font-bold opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-slate-800 shadow-xl flex items-center justify-center gap-2 z-20">
+                            <i class="fa-solid fa-cart-plus"></i> Masukkan Keranjang
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-900 group-hover:text-accent transition truncate">Classic Denim Jeans</h3>
+                            <p class="text-sm font-medium text-slate-500">Slim Fit</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2">
+                        <p class="font-black text-xl text-accent">Rp 480.000</p>
+                        <p class="text-sm font-semibold text-slate-400 line-through">Rp 600.000</p>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="group relative cursor-pointer">
+                    <div class="w-full aspect-[3/4] bg-slate-100 rounded-3xl overflow-hidden relative mb-5 shadow-sm group-hover:shadow-xl transition-shadow duration-500">
+                        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Jacket" class="w-full h-full object-cover object-center group-hover:scale-110 transition duration-700">
+                        <div class="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <button class="absolute bottom-5 left-1/2 -translate-x-1/2 bg-brand text-white w-[85%] py-3.5 rounded-2xl font-bold opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-slate-800 shadow-xl flex items-center justify-center gap-2 z-20">
+                            <i class="fa-solid fa-cart-plus"></i> Masukkan Keranjang
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-900 group-hover:text-accent transition truncate">Waterproof Jacket</h3>
+                            <p class="text-sm font-medium text-slate-500">Outerwear</p>
+                        </div>
+                    </div>
+                    <p class="font-black text-xl text-slate-900 mt-2">Rp 750.000</p>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="group relative cursor-pointer">
+                    <div class="w-full aspect-[3/4] bg-slate-100 rounded-3xl overflow-hidden relative mb-5 shadow-sm group-hover:shadow-xl transition-shadow duration-500">
+                        <img src="https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Shoes" class="w-full h-full object-cover object-center group-hover:scale-110 transition duration-700">
+                        <div class="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <button class="absolute bottom-5 left-1/2 -translate-x-1/2 bg-brand text-white w-[85%] py-3.5 rounded-2xl font-bold opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-slate-800 shadow-xl flex items-center justify-center gap-2 z-20">
+                            <i class="fa-solid fa-cart-plus"></i> Masukkan Keranjang
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-900 group-hover:text-accent transition truncate">Retro Sneakers</h3>
+                            <p class="text-sm font-medium text-slate-500">Sepatu</p>
+                        </div>
+                    </div>
+                    <p class="font-black text-xl text-slate-900 mt-2">Rp 890.000</p>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Banner -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-10">
+            <div class="bg-brand rounded-[2.5rem] p-10 md:p-16 text-center text-white flex flex-col items-center relative overflow-hidden shadow-2xl">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-accent/20 rounded-full blur-3xl"></div>
+                <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
+                
+                <i class="fa-solid fa-truck-fast text-5xl mb-6 text-accent relative z-10 drop-shadow-lg"></i>
+                <h2 class="text-3xl md:text-5xl font-black mb-4 relative z-10 tracking-tight">Gratis Ongkir Seluruh Indonesia</h2>
+                <p class="text-slate-300 text-lg mb-8 max-w-xl relative z-10">Minimal pembelanjaan Rp 500.000. Berlaku untuk semua produk tanpa syarat dan ketentuan tersembunyi.</p>
+                <a href="#" class="bg-white text-brand font-bold px-10 py-4 rounded-full hover:bg-slate-100 transition hover:scale-105 shadow-xl relative z-10">Cek Info Detail</a>
+            </div>
+        </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-50 border-t border-slate-200 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white text-sm shadow-md">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <span class="text-xl font-black tracking-tighter uppercase text-slate-900">{$name}</span>
+                </div>
+                <p class="text-slate-500 max-w-sm mb-8 leading-relaxed font-medium">Toko baju online terpercaya dengan ribuan koleksi terbaru setiap minggunya. Kualitas premium, harga terjangkau.</p>
+                <div class="flex gap-3">
+                    <div class="w-12 h-8 bg-white shadow-sm border border-slate-200 rounded flex items-center justify-center text-brand"><i class="fa-brands fa-cc-visa text-xl"></i></div>
+                    <div class="w-12 h-8 bg-white shadow-sm border border-slate-200 rounded flex items-center justify-center text-brand"><i class="fa-brands fa-cc-mastercard text-xl"></i></div>
+                    <div class="w-12 h-8 bg-white shadow-sm border border-slate-200 rounded flex items-center justify-center text-brand"><i class="fa-brands fa-cc-paypal text-xl"></i></div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-bold text-slate-900 mb-6 text-lg">Bantuan</h4>
+                <ul class="space-y-4 text-slate-500 font-medium">
+                    <li><a href="#" class="hover:text-accent transition">Status Pesanan</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Pengembalian Barang</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Panduan Ukuran</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Hubungi CS Kami</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-slate-900 mb-6 text-lg">Perusahaan</h4>
+                <ul class="space-y-4 text-slate-500 font-medium">
+                    <li><a href="#" class="hover:text-accent transition">Tentang Kami</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Karir</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Syarat & Ketentuan</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Kebijakan Privasi</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-sm font-semibold text-slate-500">
+                &copy; 2026 {$name}. Hak Cipta Dilindungi.
+            </p>
+            <div class="flex gap-4">
+                <a href="#" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition shadow-sm"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition shadow-sm"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition shadow-sm"><i class="fa-brands fa-facebook-f"></i></a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
 HTML
         );
     }
-
     private function scaffoldTailwindAdmin(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -842,36 +1517,267 @@ HTML
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$name} - Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { primary: '#4f46e5', sidebar: '#0f172a' }
+                }
+            }
+        }
+    </script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');</style>
 </head>
-<body class="bg-gray-100 font-sans antialiased text-gray-800 h-screen flex overflow-hidden">
-    <aside class="bg-gray-900 w-64 flex-shrink-0 flex flex-col hidden md:flex">
-        <div class="h-16 flex items-center px-6 border-b border-gray-800">
-            <span class="text-white text-xl font-bold tracking-wider uppercase">Admin<span class="text-emerald-500">Panel</span></span>
+<body class="bg-slate-50 font-sans antialiased text-slate-800 h-screen flex overflow-hidden selection:bg-primary selection:text-white">
+    
+    <!-- Sidebar -->
+    <aside class="bg-sidebar w-72 flex-shrink-0 flex-col hidden lg:flex h-full shadow-2xl relative z-20">
+        <div class="h-20 flex items-center px-8 border-b border-white/5 bg-black/10">
+            <div class="flex items-center gap-3 text-white">
+                <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30">
+                    <i class="fa-solid fa-bolt text-sm"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight">Admin<span class="text-slate-400 font-normal">Panel</span></span>
+            </div>
         </div>
-        <div class="flex-1 overflow-y-auto py-4">
-            <nav class="px-3 space-y-1">
-                <a href="#" class="bg-gray-800 text-white px-3 py-2 rounded-md flex items-center gap-3 text-sm font-medium">Dashboard</a>
-                <a href="#" class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md flex items-center gap-3 text-sm font-medium">Users</a>
-                <a href="#" class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md flex items-center gap-3 text-sm font-medium">Analytics</a>
-            </nav>
+        <div class="flex-1 overflow-y-auto py-8 flex flex-col gap-8 scrollbar-hide">
+            <div class="px-6">
+                <p class="px-3 text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3">Overview</p>
+                <nav class="space-y-1.5">
+                    <a href="#" class="bg-primary/10 text-primary border border-primary/20 px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold transition">
+                        <i class="fa-solid fa-table-cells-large w-5 text-center"></i> Dashboard
+                    </a>
+                    <a href="#" class="text-slate-400 hover:bg-white/5 hover:text-white px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition">
+                        <i class="fa-solid fa-chart-line w-5 text-center"></i> Analytics
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="px-6">
+                <p class="px-3 text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3">Management</p>
+                <nav class="space-y-1.5">
+                    <a href="#" class="text-slate-400 hover:bg-white/5 hover:text-white px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition flex justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Orders
+                        </div>
+                        <span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">12</span>
+                    </a>
+                    <a href="#" class="text-slate-400 hover:bg-white/5 hover:text-white px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition">
+                        <i class="fa-solid fa-box-open w-5 text-center"></i> Products
+                    </a>
+                    <a href="#" class="text-slate-400 hover:bg-white/5 hover:text-white px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition">
+                        <i class="fa-solid fa-users w-5 text-center"></i> Customers
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="px-6 mt-auto pb-4">
+                <nav class="space-y-1.5 border-t border-white/5 pt-6">
+                    <a href="#" class="text-slate-400 hover:bg-white/5 hover:text-white px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition">
+                        <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+                    </a>
+                    <a href="#" class="text-slate-400 hover:bg-red-500/10 hover:text-red-400 px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition">
+                        <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i> Logout
+                    </a>
+                </nav>
+            </div>
         </div>
     </aside>
-    <div class="flex-1 flex flex-col w-full h-full">
-        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6">
-            <h1 class="text-xl font-bold text-gray-800">Dashboard Overview</h1>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col w-full h-full min-w-0 bg-slate-50">
+        
+        <!-- Top Header -->
+        <header class="h-20 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-6 lg:px-10 z-10 flex-shrink-0">
+            <div class="flex items-center gap-6">
+                <button class="lg:hidden text-slate-500 hover:text-slate-700 bg-slate-100 w-10 h-10 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="relative hidden md:block">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" placeholder="Search orders, customers..." class="pl-11 pr-4 py-2.5 bg-slate-100 border-transparent rounded-xl text-sm font-medium focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none w-80 transition-all shadow-sm">
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-5">
+                <button class="relative text-slate-400 hover:text-primary transition w-10 h-10 rounded-xl hover:bg-primary/5 flex items-center justify-center">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <div class="h-8 w-px bg-slate-200 mx-1"></div>
+                <div class="flex items-center gap-3 cursor-pointer hover:bg-slate-50 p-1.5 rounded-xl transition pr-3">
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=4f46e5&color=fff&size=100" class="w-9 h-9 rounded-full shadow-sm border border-slate-200">
+                    <div class="hidden md:block text-sm text-left">
+                        <p class="font-bold text-slate-800 leading-none mb-1">Jane Doe</p>
+                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Super Admin</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-xs text-slate-400 ml-2 hidden md:block"></i>
+                </div>
+            </div>
         </header>
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-                    <p class="text-sm font-medium text-gray-500">Total Users</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">12,543</p>
+
+        <!-- Dashboard Content -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 lg:p-10">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Dashboard Overview</h1>
+                    <p class="text-slate-500 mt-2 font-medium">Welcome back, Jane! Here's what's happening today.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition flex items-center gap-2">
+                        <i class="fa-regular fa-calendar"></i> Last 30 Days <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <button class="bg-primary hover:bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-primary/30 transition flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> Export
+                    </button>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="text-lg font-bold text-gray-800">Recent Transactions</h2>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden group hover:border-primary/30 transition">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2.5 py-1 rounded-lg">
+                            <i class="fa-solid fa-arrow-trend-up"></i> +12.5%
+                        </span>
+                    </div>
+                    <h3 class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Users</h3>
+                    <p class="text-3xl font-black text-slate-900">12,543</p>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden group hover:border-primary/30 transition">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                        <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2.5 py-1 rounded-lg">
+                            <i class="fa-solid fa-arrow-trend-up"></i> +8.2%
+                        </span>
+                    </div>
+                    <h3 class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Orders</h3>
+                    <p class="text-3xl font-black text-slate-900">8,234</p>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden group hover:border-primary/30 transition">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                        </div>
+                        <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2.5 py-1 rounded-lg">
+                            <i class="fa-solid fa-arrow-trend-up"></i> +24.1%
+                        </span>
+                    </div>
+                    <h3 class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Revenue</h3>
+                    <p class="text-3xl font-black text-slate-900">$124.5K</p>
+                </div>
+                
+                <!-- Card 4 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden group hover:border-primary/30 transition">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-eye"></i>
+                        </div>
+                        <span class="flex items-center gap-1.5 text-xs font-bold text-red-700 bg-red-100/80 px-2.5 py-1 rounded-lg">
+                            <i class="fa-solid fa-arrow-trend-down"></i> -2.4%
+                        </span>
+                    </div>
+                    <h3 class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Page Views</h3>
+                    <p class="text-3xl font-black text-slate-900">1.2M</p>
                 </div>
             </div>
+
+            <!-- Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-6 border-b border-slate-200 flex justify-between items-center bg-white">
+                    <h2 class="text-lg font-bold text-slate-900">Recent Transactions</h2>
+                    <button class="text-primary text-sm font-bold hover:text-indigo-700 transition px-3 py-1.5 bg-primary/5 rounded-lg">View All Report</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+                        <thead class="bg-slate-50/80 text-slate-500 font-bold text-xs uppercase tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4 rounded-tl-lg">Order ID</th>
+                                <th class="px-6 py-4">Customer</th>
+                                <th class="px-6 py-4">Date</th>
+                                <th class="px-6 py-4">Amount</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/80 transition group">
+                                <td class="px-6 py-4 font-mono text-slate-900 font-medium">#ORD-001</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">JD</div>
+                                        <span class="font-bold text-slate-900">John Doe</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-slate-500">Oct 12, 2026</td>
+                                <td class="px-6 py-4 font-bold text-slate-900">$129.00</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold border border-emerald-200 bg-emerald-50 text-emerald-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Completed
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="text-slate-400 hover:text-primary transition p-2 bg-slate-50 rounded-lg opacity-0 group-hover:opacity-100"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition group">
+                                <td class="px-6 py-4 font-mono text-slate-900 font-medium">#ORD-002</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">AS</div>
+                                        <span class="font-bold text-slate-900">Alice Smith</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-slate-500">Oct 12, 2026</td>
+                                <td class="px-6 py-4 font-bold text-slate-900">$89.50</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold border border-amber-200 bg-amber-50 text-amber-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Processing
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="text-slate-400 hover:text-primary transition p-2 bg-slate-50 rounded-lg opacity-0 group-hover:opacity-100"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition group">
+                                <td class="px-6 py-4 font-mono text-slate-900 font-medium">#ORD-003</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs">BJ</div>
+                                        <span class="font-bold text-slate-900">Bob Johnson</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-slate-500">Oct 11, 2026</td>
+                                <td class="px-6 py-4 font-bold text-slate-900">$249.99</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold border border-red-200 bg-red-50 text-red-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Cancelled
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="text-slate-400 hover:text-primary transition p-2 bg-slate-50 rounded-lg opacity-0 group-hover:opacity-100"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <footer class="mt-10 text-center text-sm font-medium text-slate-400">
+                &copy; 2026 {$name} Dashboard. Designed with TailwindCSS.
+            </footer>
         </main>
     </div>
 </body>
@@ -879,7 +1785,6 @@ HTML
 HTML
         );
     }
-
     private function scaffoldTailwindLinkinbio(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -891,27 +1796,116 @@ HTML
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$name} - Link in Bio</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+        .bg-animated {
+            background: linear-gradient(-45deg, #4f46e5, #ec4899, #8b5cf6, #06b6d4);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .glass-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .btn-link { background: rgba(255, 255, 255, 0.95); }
+        .btn-link:hover { transform: scale(1.02) translateY(-2px); background: #ffffff; }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen font-sans antialiased flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white/20 backdrop-blur-xl rounded-3xl p-8 border border-white/30 shadow-2xl">
-        <div class="text-center mb-8">
-            <div class="w-24 h-24 mx-auto bg-white p-1 rounded-full shadow-lg mb-4">
-                <img src="https://ui-avatars.com/api/?name=Jane+Doe&background=random&size=128" alt="Profile" class="w-full h-full object-cover rounded-full">
+<body class="bg-animated min-h-screen font-sans antialiased flex flex-col items-center py-10 px-4 sm:px-6 selection:bg-white selection:text-pink-500">
+    
+    <!-- Share Button -->
+    <div class="absolute top-6 right-6">
+        <button class="w-10 h-10 rounded-full glass-card text-white flex items-center justify-center hover:bg-white/30 transition shadow-lg backdrop-blur-md">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </button>
+    </div>
+
+    <div class="w-full max-w-[440px] glass-card rounded-[3rem] p-8 sm:p-10 shadow-2xl relative mt-8">
+        
+        <!-- Profile Info -->
+        <div class="text-center mb-10 relative">
+            <div class="w-32 h-32 mx-auto bg-white/20 p-2 rounded-full shadow-2xl mb-6 relative backdrop-blur-sm border border-white/30">
+                <img src="https://ui-avatars.com/api/?name=Creator+Name&background=random&size=200" alt="Profile" class="w-full h-full object-cover rounded-full">
+                <!-- Verified Badge -->
+                <div class="absolute bottom-2 right-2 bg-blue-500 text-white w-8 h-8 rounded-full border-[3px] border-white flex items-center justify-center text-[10px] shadow-lg">
+                    <i class="fa-solid fa-check"></i>
+                </div>
             </div>
-            <h1 class="text-2xl font-bold text-white mb-1">@janedoe</h1>
-            <p class="text-indigo-100 text-sm">Designer & Content Creator 🎨✨</p>
+            <h1 class="text-3xl font-black text-white mb-2 tracking-tight">@{$name}</h1>
+            <p class="text-white/90 text-sm font-medium leading-relaxed max-w-xs mx-auto mb-6">
+                Digital Creator & Developer 💻✨<br>Helping you build better websites.
+            </p>
+            
+            <!-- Social Icons -->
+            <div class="flex justify-center gap-3">
+                <a href="#" class="w-11 h-11 rounded-full glass-card text-white flex items-center justify-center text-lg hover:bg-white hover:text-pink-500 transition-all hover:scale-110 shadow-md"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="w-11 h-11 rounded-full glass-card text-white flex items-center justify-center text-lg hover:bg-white hover:text-blue-400 transition-all hover:scale-110 shadow-md"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="w-11 h-11 rounded-full glass-card text-white flex items-center justify-center text-lg hover:bg-white hover:text-red-500 transition-all hover:scale-110 shadow-md"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" class="w-11 h-11 rounded-full glass-card text-white flex items-center justify-center text-lg hover:bg-white hover:text-black transition-all hover:scale-110 shadow-md"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="#" class="w-11 h-11 rounded-full glass-card text-white flex items-center justify-center text-lg hover:bg-white hover:text-blue-600 transition-all hover:scale-110 shadow-md"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
         </div>
+
+        <!-- Links -->
         <div class="space-y-4">
-            <a href="#" class="block w-full bg-white text-indigo-900 text-center font-bold py-4 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-all duration-300">My Portfolio Website</a>
-            <a href="#" class="block w-full bg-white text-indigo-900 text-center font-bold py-4 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-all duration-300">Latest YouTube Video 📺</a>
+            <a href="#" class="btn-link block w-full text-slate-800 text-center font-bold py-4 px-6 rounded-2xl shadow-xl transition-all duration-300 relative group overflow-hidden border border-white/50">
+                <div class="absolute inset-0 w-0 bg-gradient-to-r from-pink-500/10 to-transparent transition-all duration-500 group-hover:w-full"></div>
+                <div class="relative flex items-center justify-between z-10">
+                    <div class="w-10 h-10 rounded-xl bg-pink-100 text-pink-500 flex items-center justify-center text-lg"><i class="fa-solid fa-globe"></i></div>
+                    <span class="flex-1 px-4 text-lg">My Personal Website</span>
+                    <div class="w-6 text-slate-300 group-hover:text-pink-500 transition"><i class="fa-solid fa-chevron-right text-sm"></i></div>
+                </div>
+            </a>
+            
+            <a href="#" class="btn-link block w-full text-slate-800 text-center font-bold py-4 px-6 rounded-2xl shadow-xl transition-all duration-300 relative group overflow-hidden border border-white/50">
+                <div class="absolute inset-0 w-0 bg-gradient-to-r from-red-500/10 to-transparent transition-all duration-500 group-hover:w-full"></div>
+                <div class="relative flex items-center justify-between z-10">
+                    <div class="w-10 h-10 rounded-xl bg-red-100 text-red-500 flex items-center justify-center text-lg"><i class="fa-brands fa-youtube"></i></div>
+                    <span class="flex-1 px-4 text-lg">Latest YouTube Video</span>
+                    <div class="w-6 text-slate-300 group-hover:text-red-500 transition"><i class="fa-solid fa-chevron-right text-sm"></i></div>
+                </div>
+            </a>
+            
+            <a href="#" class="btn-link block w-full text-slate-800 text-center font-bold py-4 px-6 rounded-2xl shadow-xl transition-all duration-300 relative group overflow-hidden border border-white/50">
+                <div class="absolute inset-0 w-0 bg-gradient-to-r from-blue-500/10 to-transparent transition-all duration-500 group-hover:w-full"></div>
+                <div class="relative flex items-center justify-between z-10">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-500 flex items-center justify-center text-lg"><i class="fa-brands fa-discord"></i></div>
+                    <span class="flex-1 px-4 text-lg">Join Discord Community</span>
+                    <div class="w-6 text-slate-300 group-hover:text-blue-500 transition"><i class="fa-solid fa-chevron-right text-sm"></i></div>
+                </div>
+            </a>
+            
+            <a href="#" class="btn-link block w-full text-slate-800 text-center font-bold py-4 px-6 rounded-2xl shadow-xl transition-all duration-300 relative group overflow-hidden border border-white/50">
+                <div class="absolute inset-0 w-0 bg-gradient-to-r from-yellow-500/10 to-transparent transition-all duration-500 group-hover:w-full"></div>
+                <div class="relative flex items-center justify-between z-10">
+                    <div class="w-10 h-10 rounded-xl bg-yellow-100 text-yellow-500 flex items-center justify-center text-lg"><i class="fa-solid fa-mug-hot"></i></div>
+                    <span class="flex-1 px-4 text-lg">Buy me a Coffee</span>
+                    <div class="w-6 text-slate-300 group-hover:text-yellow-500 transition"><i class="fa-solid fa-chevron-right text-sm"></i></div>
+                </div>
+            </a>
         </div>
+    </div>
+    
+    <div class="mt-8 text-white/80 text-sm font-bold tracking-wide">
+        Powered by <a href="#" class="hover:text-white underline decoration-white/30 hover:decoration-white transition">Ryaze Hosting</a>
     </div>
 </body>
 </html>
 HTML
         );
     }
-
     private function scaffoldHtml(string $dir, string $name, string $domain): void
     {
         file_put_contents("{$dir}/index.html", <<<HTML
@@ -923,16 +1917,17 @@ HTML
     <title>{$name}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .card { background: white; border-radius: 20px; padding: 60px 50px; text-align: center; max-width: 500px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); position: relative; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border-radius: 24px; padding: 60px 50px; text-align: center; max-width: 500px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); position: relative; }
         .badge { background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 50px; display: inline-block; margin-bottom: 24px; letter-spacing: 1px; text-transform: uppercase; }
-        h1 { font-size: 2.5rem; font-weight: 800; color: #1a1a2e; margin-bottom: 16px; }
-        p { color: #6b7280; line-height: 1.8; margin-bottom: 32px; }
-        .btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 14px 36px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; transition: transform 0.2s, box-shadow 0.2s; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102,126,234,0.4); }
-        .domain { margin-top: 24px; font-size: 12px; color: #9ca3af; }
-        .watermark { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 13px; }
-        .watermark a { color: #667eea; text-decoration: none; font-weight: 600; }
+        h1 { font-size: 2.5rem; font-weight: 900; color: #1a1a2e; margin-bottom: 16px; line-height: 1.2; }
+        p { color: #6b7280; line-height: 1.8; margin-bottom: 32px; font-size: 1.1rem; }
+        .btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 16px 40px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(102,126,234,0.3); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(102,126,234,0.4); }
+        .domain { margin-top: 30px; font-size: 14px; color: #9ca3af; font-family: monospace; font-weight: 600; padding: 10px; background: #f3f4f6; border-radius: 8px; }
+        .watermark { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.95); padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 13px; font-weight: 500; backdrop-filter: blur(10px); }
+        .watermark a { color: #667eea; text-decoration: none; font-weight: 700; transition: color 0.2s; }
+        .watermark a:hover { color: #764ba2; }
     </style>
 </head>
 <body>
@@ -940,20 +1935,16 @@ HTML
         <span class="badge">🚀 Ryaze Hosting</span>
         <h1>{$name}</h1>
         <p>Website Anda sudah live! Edit file <code>index.html</code> ini lewat <strong>File Manager</strong> untuk mulai kustomisasi tampilan.</p>
-        <a href="#" class="btn">Mulai Edit →</a>
-        <p class="domain">🌐 {$domain}</p>
+        <a href="#" class="btn">Mulai Mendesain →</a>
+        <div class="domain">🌐 {$domain}</div>
     </div>
     <div class="watermark">
-        Power by <a href="https://ryaze.my.id" target="_blank">Ryaze.my.id</a> | Email: <a href="mailto:bimaryan046@gmail.com">bimaryan046@gmail.com</a>
+        Powered by <a href="https://ryaze.my.id" target="_blank">Ryaze.my.id</a>
     </div>
 </body>
 </html>
 HTML
         );
-
-        file_put_contents("{$dir}/style.css", "/* Tambahkan style kustom di sini */\n");
-        file_put_contents("{$dir}/script.js", "/* Tambahkan script kustom di sini */\nconsole.log('Hello from {$name}!');\n");
-        file_put_contents("{$dir}/.htaccess", "Options -Indexes\nRewriteEngine On\n");
     }
 
     private function scaffoldPhp(string $dir, string $name): void
