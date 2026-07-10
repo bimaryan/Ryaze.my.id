@@ -4,7 +4,6 @@
 
 @section('content')
 <x-ui.page-layout>
-<div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
     <!-- Page header -->
     <div class="sm:flex sm:justify-between sm:items-center mb-8">
         <div class="mb-4 sm:mb-0">
@@ -14,7 +13,7 @@
     </div>
 
     <!-- Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         
         {{-- Tailwind Portfolio --}}
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden relative">
@@ -33,8 +32,8 @@
                     <input type="hidden" name="template_key" value="tailwind_portfolio">
                     <div class="flex gap-2">
                         <input type="text" name="project_name" placeholder="Nama Proyek" required class="flex-1 text-sm px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center shrink-0" title="Gunakan Desain Ini">
-                            <i class="fa-solid fa-magic mr-2"></i> Gunakan
+                        <button type="submit" class="bg-slate-900 hover:bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center shrink-0" title="Deploy Now">
+                            <i class="fa-solid fa-play"></i>
                         </button>
                     </div>
                 </form>
@@ -58,8 +57,8 @@
                     <input type="hidden" name="template_key" value="tailwind_landing">
                     <div class="flex gap-2">
                         <input type="text" name="project_name" placeholder="Nama Proyek" required class="flex-1 text-sm px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center shrink-0" title="Gunakan Desain Ini">
-                            <i class="fa-solid fa-magic mr-2"></i> Gunakan
+                        <button type="submit" class="bg-slate-900 hover:bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center shrink-0" title="Deploy Now">
+                            <i class="fa-solid fa-play"></i>
                         </button>
                     </div>
                 </form>
@@ -83,8 +82,8 @@
                     <input type="hidden" name="template_key" value="tailwind_blog">
                     <div class="flex gap-2">
                         <input type="text" name="project_name" placeholder="Nama Proyek" required class="flex-1 text-sm px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center shrink-0" title="Gunakan Desain Ini">
-                            <i class="fa-solid fa-magic mr-2"></i> Gunakan
+                        <button type="submit" class="bg-slate-900 hover:bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center shrink-0" title="Deploy Now">
+                            <i class="fa-solid fa-play"></i>
                         </button>
                     </div>
                 </form>
@@ -92,6 +91,5 @@
         </div>
 
     </div>
-</div>
 </x-ui.page-layout>
 @endsection
