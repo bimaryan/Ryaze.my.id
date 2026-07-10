@@ -296,6 +296,106 @@
                             </div>
                         </label>
 
+                        {{-- Vue 3 --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="vue_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-vuejs text-xl text-emerald-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Vue 3 + Vite</p>
+                                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Vue JS</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Framework progresif JavaScript untuk membangun antarmuka pengguna yang interaktif dan cepat.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Nuxt --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="nuxt_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                        <svg viewBox="0 0 128 128" class="w-6 h-6 fill-current text-emerald-600"><path d="M72.9 22L45.4 69.5h16.6l10.9-18.8 24.6 42.6H128L72.9 22zM28.4 46.2L0 95.3h33.2l16.1-27.9 10.9 18.8h33.2L28.4 46.2z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Nuxt.js</p>
+                                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Vue JS</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Framework intuitif berbasis Vue.js untuk membangun aplikasi web SSR.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- SvelteKit --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="svelte_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                        <svg viewBox="0 0 128 128" class="w-6 h-6 fill-current text-orange-600"><path d="M125.7 66.8c-.5 5.5-2.2 10.9-4.9 15.7-3.8 6.7-9.3 12.3-15.9 16.3-6.6 4-14.2 6.1-21.9 6.1-4 0-8-.6-11.8-1.7-8.1-2.4-15.3-7.5-20.4-14.5-3.3-4.5-5.6-9.8-6.6-15.4-1.2-6.5-.4-13.1 2.2-19.1 2-4.5 4.9-8.5 8.5-11.8.6-.6 1.4-1.1 2.3-1.1 1.7 0 2.5 2 1.4 3.2-1.9 2-3.5 4.3-4.7 6.7-2.1 4.2-3.1 8.9-2.7 13.7.6 7 4.1 13.5 9.6 18.2 4.4 3.7 10.2 5.9 16.2 5.9 5.6 0 11.2-1.8 15.9-5.3 4.7-3.5 8.1-8.5 9.7-14.2 1.6-5.8 1.4-11.9-.6-17.6-2.1-5.7-6.2-10.5-11.5-13.4-5.4-3-11.7-4.1-17.8-3.3-6.1.8-11.9 3.5-16.3 7.8l-9.8 9.8c-7.3 7.3-11.4 17.2-11.4 27.5s4.1 20.2 11.4 27.5c7.3 7.3 17.2 11.4 27.5 11.4 9 0 17.8-3 24.8-8.5 4.6-3.6 8.5-8.2 11-13.6.5-1.1-1.3-2.1-1.8-1-1.4 2.8-3.4 5.3-5.8 7.5-6.7 6.1-15.6 9.4-24.8 9.4-9.2 0-18.1-3.6-24.6-10.1-6.5-6.5-10.1-15.3-10.1-24.6 0-9.2 3.6-18.1 10.1-24.6l9.8-9.8c5.4-5.4 12.7-8.7 20.4-9.4 7.7-.7 15.5.9 22.1 4.5 6.6 3.6 11.9 9.3 14.9 16.2 2.8 6.5 3.5 13.8 1.9 20.6z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">SvelteKit</p>
+                                        <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">Node.js</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Framework super cepat karena tidak menggunakan virtual DOM.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Ghost CMS --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="ghost_cms" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
+                                        <svg viewBox="0 0 128 128" class="w-6 h-6 fill-current text-white"><path d="M64 0C28.7 0 0 28.7 0 64c0 14.1 4.6 27.2 12.4 37.7 2.3 3.1 6.8 3.5 9.7.9l12-10.8c2.4-2.2 6.1-2.2 8.5 0l9.8 8.8c3.2 2.9 8 2.9 11.2 0l9.8-8.8c2.4-2.2 6.1-2.2 8.5 0l12 10.8c2.8 2.6 7.3 2.1 9.7-.9C123.4 91.2 128 78.1 128 64 128 28.7 99.3 0 64 0zM42.7 58.7c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm42.6 0c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">Ghost CMS</p>
+                                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-medium">Node.js</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Platform CMS profesional dan modern berbasis Node.js untuk blog & newsletter.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-bolt"></i> Auto setup
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- PHP Basic --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="php_basic" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-php text-xl text-indigo-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm">PHP Basic</p>
+                                        <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">PHP Native</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">Boilerplate PHP dasar tanpa framework khusus. Sangat ringan.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <i class="fa-solid fa-bolt"></i> Instan
+                                </div>
+                            </div>
+                        </label>
+
                     </div>
                 </div>
 

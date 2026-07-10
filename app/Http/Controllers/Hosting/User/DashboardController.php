@@ -135,6 +135,7 @@ class DashboardController extends Controller
         'html_landing'        => ['framework' => 'html'],
         'php_basic'           => ['framework' => 'php'],
         'wordpress'           => ['framework' => 'php'],
+        'ghost_cms'           => ['framework' => 'node'],
         'laravel_starter'     => ['framework' => 'laravel'],
         'laravel_starter_10'  => ['framework' => 'laravel'],
         'laravel_starter_11'  => ['framework' => 'laravel'],
@@ -142,6 +143,9 @@ class DashboardController extends Controller
         'laravel_starter_13'  => ['framework' => 'laravel'],
         'react_starter'       => ['framework' => 'react'],
         'nextjs_starter'      => ['framework' => 'nextjs'],
+        'vue_starter'         => ['framework' => 'vue'],
+        'nuxt_starter'        => ['framework' => 'vue'],
+        'svelte_starter'      => ['framework' => 'node'],
         'node_express'        => ['framework' => 'node'],
     ];
 
