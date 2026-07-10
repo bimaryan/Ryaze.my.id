@@ -49,7 +49,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden relative">
             <div class="absolute top-4 right-4 text-xs font-black bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full z-20 uppercase tracking-wide shadow-sm">LANDING PAGE</div>
             
-            <a href="javascript:void(0)" onclick="Swal.fire('Coming Soon 🚀', 'Fitur Live Preview sedang dalam pengembangan MVP. Silakan buat project dengan template ini untuk melihatnya secara langsung!', 'info')" class="relative h-48 overflow-hidden block border-b border-slate-100">
+            <a href="{{ route('user_hosting.template.preview', 'tailwind_landing') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100">
                 <img src="https://placehold.co/600x400/2563eb/ffffff?text=Landing+Page" alt="Landing Page" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-colors flex items-center justify-center">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2 px-4 rounded-lg shadow-lg transition-all transform translate-y-4 group-hover:translate-y-0 flex items-center">
@@ -81,7 +81,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden relative">
             <div class="absolute top-4 right-4 text-xs font-black bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full z-20 uppercase tracking-wide shadow-sm">BLOG</div>
             
-            <a href="javascript:void(0)" onclick="Swal.fire('Coming Soon 🚀', 'Fitur Live Preview sedang dalam pengembangan MVP. Silakan buat project dengan template ini untuk melihatnya secara langsung!', 'info')" class="relative h-48 overflow-hidden block border-b border-slate-100">
+            <a href="{{ route('user_hosting.template.preview', 'tailwind_blog') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100">
                 <img src="https://placehold.co/600x400/ea580c/ffffff?text=Blog+Template" alt="Blog" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-colors flex items-center justify-center">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2 px-4 rounded-lg shadow-lg transition-all transform translate-y-4 group-hover:translate-y-0 flex items-center">
@@ -113,7 +113,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden relative">
             <div class="absolute top-4 right-4 text-xs font-black bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full z-20 uppercase tracking-wide shadow-sm">E-COMMERCE</div>
             
-            <a href="javascript:void(0)" onclick="Swal.fire('Coming Soon 🚀', 'Fitur Live Preview sedang dalam pengembangan MVP. Silakan buat project dengan template ini untuk melihatnya secara langsung!', 'info')" class="relative h-48 overflow-hidden block border-b border-slate-100">
+            <a href="{{ route('user_hosting.template.preview', 'tailwind_ecommerce') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100">
                 <img src="https://placehold.co/600x400/db2777/ffffff?text=E-Commerce" alt="E-Commerce" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-colors flex items-center justify-center">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2 px-4 rounded-lg shadow-lg transition-all transform translate-y-4 group-hover:translate-y-0 flex items-center">
@@ -145,7 +145,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden relative">
             <div class="absolute top-4 right-4 text-xs font-black bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full z-20 uppercase tracking-wide shadow-sm">DASHBOARD</div>
             
-            <a href="javascript:void(0)" onclick="Swal.fire('Coming Soon 🚀', 'Fitur Live Preview sedang dalam pengembangan MVP. Silakan buat project dengan template ini untuk melihatnya secara langsung!', 'info')" class="relative h-48 overflow-hidden block border-b border-slate-100">
+            <a href="{{ route('user_hosting.template.preview', 'tailwind_admin') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100">
                 <img src="https://placehold.co/600x400/059669/ffffff?text=Admin+Dashboard" alt="Admin Dashboard" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-colors flex items-center justify-center">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2 px-4 rounded-lg shadow-lg transition-all transform translate-y-4 group-hover:translate-y-0 flex items-center">
@@ -177,7 +177,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden relative">
             <div class="absolute top-4 right-4 text-xs font-black bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full z-20 uppercase tracking-wide shadow-sm">LINK IN BIO</div>
             
-            <a href="javascript:void(0)" onclick="Swal.fire('Coming Soon 🚀', 'Fitur Live Preview sedang dalam pengembangan MVP. Silakan buat project dengan template ini untuk melihatnya secara langsung!', 'info')" class="relative h-48 overflow-hidden block border-b border-slate-100">
+            <a href="{{ route('user_hosting.template.preview', 'tailwind_linkinbio') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100">
                 <img src="https://placehold.co/600x400/7c3aed/ffffff?text=Link+in+Bio" alt="Link in Bio" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-colors flex items-center justify-center">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2 px-4 rounded-lg shadow-lg transition-all transform translate-y-4 group-hover:translate-y-0 flex items-center">
