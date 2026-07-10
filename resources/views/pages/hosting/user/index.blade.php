@@ -31,12 +31,15 @@
                     </div>
                     <p class="text-xs text-slate-500 mb-5">Saldo aktif yang dapat digunakan untuk transaksi.</p>
                 </div>
-                <div class="flex gap-3 mt-auto">
-                    <a href="{{ route('user.wallet.history') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm flex-1 text-center">
-                        <i class="fa-solid fa-plus mr-1"></i> Top Up
+                <div class="flex gap-2 mt-auto">
+                    <a href="{{ route('user.wallet.history') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold py-2.5 px-3 rounded-xl transition shadow-sm flex-1 text-center flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Top Up
                     </a>
-                    <a href="{{ route('user.wallet.history') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm flex-1 text-center">
-                        Riwayat
+                    <a href="{{ route('user.wallet.withdraw') }}" class="bg-amber-100 hover:bg-amber-200 text-amber-700 border border-amber-200 text-[11px] font-bold py-2.5 px-3 rounded-xl transition shadow-sm flex-1 text-center flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-money-bill-transfer"></i> Tarik
+                    </a>
+                    <a href="{{ route('user.wallet.history') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold py-2.5 px-3 rounded-xl transition shadow-sm flex-1 text-center flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-history"></i> Riwayat
                     </a>
                 </div>
             </x-ui.card>

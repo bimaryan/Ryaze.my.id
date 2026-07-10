@@ -224,6 +224,13 @@
                         <span class="ms-3 whitespace-nowrap">Sistem Backup</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('superadmin.withdrawals.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.withdrawals*')) }}">
+                        <i class="fa-solid fa-money-bill-transfer {{ $iconClass(request()->routeIs('superadmin.withdrawals*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Kelola Penarikan</span>
+                    </a>
+                </li>
 
             @endif
 
@@ -373,6 +380,14 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('user_hosting.marketplace') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.marketplace')) }}">
+                            <i
+                                class="fa-solid fa-store {{ $iconClass(request()->routeIs('user_hosting.marketplace')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">App Marketplace</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('user_hosting.projects') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}">
                             <i
@@ -430,6 +445,27 @@
                         </a>
                     </li>
                 @endif
+
+                {{-- Wallet & Affiliate (Semua User) --}}
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pendapatan</span>
+                </li>
+                <li>
+                    <a href="{{ route('user.wallet.history') }}"
+                        class="{{ $navLink(request()->routeIs('user.wallet*')) }}">
+                        <i
+                            class="fa-solid fa-wallet {{ $iconClass(request()->routeIs('user.wallet*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Wallet Saya</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('user.affiliate.dashboard') }}"
+                        class="{{ $navLink(request()->routeIs('user.affiliate*')) }}">
+                        <i
+                            class="fa-solid fa-users-viewfinder {{ $iconClass(request()->routeIs('user.affiliate*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Program Affiliate</span>
+                    </a>
+                </li>
             @endif
 
         </ul>
