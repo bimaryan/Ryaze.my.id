@@ -163,6 +163,7 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
         Route::get('user/hosting/marketplace', [DashboardController::class, 'marketplace'])->name('user_hosting.marketplace');
         Route::get('user/hosting/templates', [DashboardController::class, 'templates'])->name('user_hosting.templates');
+        Route::get('user/hosting/template/{key}/preview', [DashboardController::class, 'previewTemplate'])->name('user_hosting.template.preview');
         Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
         Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
         Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');

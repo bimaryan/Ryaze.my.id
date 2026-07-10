@@ -124,19 +124,33 @@ class DashboardController extends Controller
         return view('pages.hosting.user.marketplace', compact('templates'));
     }
 
-    public function templates()
-    {
-        $templates = $this->availableTemplates;
-        return view('pages.hosting.user.templates', compact('templates'));
-    }
-
     // Menampilkan halaman dokumentasi
     public function docs()
     {
         return view('pages.hosting.user.docs');
     }
 
-    // Daftar template yang tersedia beserta metadata-nya
+    public function templates()
+    {
+        return view('pages.hosting.user.templates', [
+            'availableTemplates' => $this->availableTemplates,
+        ]);
+    }
+
+    public function previewTemplate($key)
+    {
+        if (!array_key_exists($key, $this->availableTemplates)) {
+            abort(404, 'Template not found');
+        }
+        
+        // This expects the view to be stored in resources/views/previews/{key}.blade.php
+        if (view()->exists('previews.' . $key)) {
+            return view('previews.' . $key);
+        }
+        
+        abort(404, 'Preview not available for this template yet.');
+    }
+
     private array $availableTemplates = [
         'html_landing'        => ['framework' => 'html'],
         'php_basic'           => ['framework' => 'php'],
