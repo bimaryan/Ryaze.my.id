@@ -1121,4 +1121,202 @@ HTML
         
         $this->log($deploy, "✅ WordPress berhasil dipasang! Silakan buat database dan buka website untuk instalasi.");
     }
+
+    private function scaffoldVue(string $dir, string $name): void
+    {
+        $safeName = preg_replace('/[^a-z0-9-]/', '-', strtolower($name));
+        @mkdir($dir, 0755, true);
+        @mkdir("{$dir}/src", 0755, true);
+
+        file_put_contents("{$dir}/package.json", json_encode([
+            'name' => $safeName,
+            'version' => '1.0.0',
+            'private' => true,
+            'scripts' => ['dev' => 'vite', 'build' => 'vite build', 'preview' => 'vite preview'],
+            'dependencies' => ['vue' => '^3.3.4'],
+            'devDependencies' => ['@vitejs/plugin-vue' => '^4.2.3', 'vite' => '^4.4.5']
+        ], JSON_PRETTY_PRINT));
+
+        file_put_contents("{$dir}/vite.config.js", <<<JS
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+export default defineConfig({
+  plugins: [vue()],
+})
+JS
+        );
+
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{$name}</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+HTML
+        );
+
+        file_put_contents("{$dir}/src/main.js", <<<JS
+import { createApp } from 'vue'
+import App from './App.vue'
+
+createApp(App).mount('#app')
+JS
+        );
+
+        file_put_contents("{$dir}/src/App.vue", <<<VUE
+<template>
+  <div style="font-family: sans-serif; text-align: center; margin-top: 50px;">
+    <h1 style="color: #42b883;">Welcome to Vue 3</h1>
+    <p>Your Vue application is running successfully on Ryaze.</p>
+  </div>
+</template>
+VUE
+        );
+    }
+
+    private function scaffoldNuxt(string $dir, string $name): void
+    {
+        $safeName = preg_replace('/[^a-z0-9-]/', '-', strtolower($name));
+        @mkdir($dir, 0755, true);
+
+        file_put_contents("{$dir}/package.json", json_encode([
+            'name' => $safeName,
+            'private' => true,
+            'type' => 'module',
+            'scripts' => [
+                'build' => 'nuxt build',
+                'dev' => 'nuxt dev',
+                'generate' => 'nuxt generate',
+                'preview' => 'nuxt preview',
+                'postinstall' => 'nuxt prepare'
+            ],
+            'dependencies' => [
+                'nuxt' => '^3.12.0',
+                'vue' => '^3.4.0',
+                'vue-router' => '^4.4.0'
+            ]
+        ], JSON_PRETTY_PRINT));
+
+        file_put_contents("{$dir}/app.vue", <<<VUE
+<template>
+  <div style="font-family: sans-serif; padding: 20px;">
+    <h1 style="color: #00DC82;">Welcome to Nuxt 3</h1>
+    <p>Your Nuxt SSR application is running successfully.</p>
+  </div>
+</template>
+VUE
+        );
+        
+        file_put_contents("{$dir}/nuxt.config.ts", <<<TS
+export default defineNuxtConfig({
+  compatibilityDate: '2024-04-03',
+  devtools: { enabled: true }
+})
+TS
+        );
+    }
+
+    private function scaffoldSvelte(string $dir, string $name): void
+    {
+        $safeName = preg_replace('/[^a-z0-9-]/', '-', strtolower($name));
+        @mkdir($dir, 0755, true);
+        @mkdir("{$dir}/src", 0755, true);
+        @mkdir("{$dir}/src/routes", 0755, true);
+        
+        file_put_contents("{$dir}/package.json", json_encode([
+            'name' => $safeName,
+            'private' => true,
+            'type' => 'module',
+            'scripts' => [
+                'dev' => 'vite dev',
+                'build' => 'vite build',
+                'preview' => 'vite preview'
+            ],
+            'devDependencies' => [
+                '@sveltejs/adapter-auto' => '^3.0.0',
+                '@sveltejs/kit' => '^2.0.0',
+                '@sveltejs/vite-plugin-svelte' => '^3.0.0',
+                'svelte' => '^4.2.7',
+                'vite' => '^5.0.3'
+            ]
+        ], JSON_PRETTY_PRINT));
+
+        file_put_contents("{$dir}/vite.config.js", <<<JS
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+	plugins: [sveltekit()]
+});
+JS
+        );
+
+        file_put_contents("{$dir}/svelte.config.js", <<<JS
+import adapter from '@sveltejs/adapter-auto';
+
+export default {
+	kit: {
+		adapter: adapter()
+	}
+};
+JS
+        );
+
+        file_put_contents("{$dir}/src/app.html", <<<HTML
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>
+HTML
+        );
+
+        file_put_contents("{$dir}/src/routes/+page.svelte", <<<SVELTE
+<h1 style="color: #ff3e00;">Welcome to SvelteKit</h1>
+<p>Your fast, compiled Svelte app is running on Ryaze.</p>
+SVELTE
+        );
+    }
+
+    private function scaffoldGhost(string $dir, string $name, $deploy): void
+    {
+        $this->log($deploy, "> Menyiapkan environment Ghost CMS (Placeholder)...");
+        $safeName = preg_replace('/[^a-z0-9-]/', '-', strtolower($name));
+        @mkdir($dir, 0755, true);
+        
+        file_put_contents("{$dir}/package.json", json_encode([
+            'name' => $safeName,
+            'version' => '1.0.0',
+            'private' => true,
+            'scripts' => [
+                'start' => 'node index.js'
+            ],
+            'dependencies' => [
+                'express' => '^4.18.2'
+            ]
+        ], JSON_PRETTY_PRINT));
+        
+        file_put_contents("{$dir}/index.js", <<<JS
+const express = require('express');
+const app = express();
+app.get('/', (req, res) => res.send('<div style="font-family: sans-serif; text-align: center; margin-top: 50px;"><h1>Ghost CMS Starter</h1><p>Membutuhkan konfigurasi database MySQL & Ghost-CLI secara manual lewat terminal.</p><p>Silakan akses Terminal di panel proyek Anda.</p></div>'));
+app.listen(process.env.PORT || 3000, () => console.log('Ghost placeholder running'));
+JS
+        );
+    }
 }
