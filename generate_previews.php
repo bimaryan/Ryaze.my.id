@@ -3,16 +3,8 @@ require __DIR__ . '/vendor/autoload.php';
 $app = require_once __DIR__ . '/bootstrap/app.php';
 $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
-$job = new \App\Jobs\AutoDeployProject(new \App\Models\HostingProject(), null, null); // Might fail constructor if it needs specific params. Wait, AutoDeployProject constructor: __construct(HostingProject $project, ?string $zipPath, ?string $githubRepoUrl)
-// Let's mock or fetch a dummy project
-$project = \App\Models\HostingProject::first();
-if (!$project) {
-    $project = new \App\Models\HostingProject();
-    $project->id = 1;
-}
-
-$job = new \App\Jobs\AutoDeployProject($project, null, null);
-$reflection = new ReflectionClass($job);
+$reflection = new ReflectionClass(\App\Jobs\AutoDeployProject::class);
+$job = $reflection->newInstanceWithoutConstructor();
 
 $templates = [
     'tailwind_portfolio' => 'scaffoldTailwindPortfolio',
