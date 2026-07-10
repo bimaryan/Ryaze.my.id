@@ -13,7 +13,7 @@
     <!-- Filter & Search Section -->
     <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <!-- Categories -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide w-full md:w-auto" id="category-filters">
+        <div class="flex items-center gap-2 overflow-x-auto py-2 px-1 scrollbar-hide w-full md:w-auto" id="category-filters">
             <button data-filter="all" class="filter-btn active px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-semibold whitespace-nowrap shadow-sm transition-all hover:bg-indigo-700">
                 Semua
             </button>
@@ -211,66 +211,50 @@
 </x-ui.page-layout>
 
 <!-- Deploy Modal -->
-<div id="deploy-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <!-- Backdrop -->
-    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0" id="deploy-modal-backdrop"></div>
+<div id="deploy-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div class="absolute inset-0 bg-slate-900 opacity-75 backdrop-blur-sm" id="deploy-modal-backdrop"></div>
+        </div>
 
-    <div class="fixed inset-0 z-10 overflow-y-auto">
-        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <!-- Modal Panel -->
-            <div id="deploy-modal-panel" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg opacity-0 scale-95">
+        <div id="deploy-modal-panel" class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full relative z-10 opacity-0 scale-95">
+            <form action="{{ route('user_hosting.store') }}" method="POST" id="deploy-form">
+                @csrf
+                <input type="hidden" name="source_type" value="template">
+                <input type="hidden" name="template_key" id="modal-template-key" value="">
                 
-                <!-- Close Button -->
-                <div class="absolute right-0 top-0 pr-4 pt-4 z-10">
-                    <button type="button" onclick="closeDeployModal()" class="rounded-full bg-white text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 p-1 transition-colors">
-                        <span class="sr-only">Close</span>
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
-                
-                <form action="{{ route('user_hosting.store') }}" method="POST" id="deploy-form">
-                    @csrf
-                    <input type="hidden" name="source_type" value="template">
-                    <input type="hidden" name="template_key" id="modal-template-key" value="">
+                <div class="px-6 pt-6 pb-4">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="text-xl leading-6 font-bold text-slate-800" id="modal-title">
+                            Gunakan Template
+                        </h3>
+                        <button type="button" onclick="closeDeployModal()" class="text-slate-400 hover:text-slate-500">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
                     
-                    <div class="bg-white px-6 pb-6 pt-8 sm:p-8 sm:pb-6 relative overflow-hidden">
-                        <!-- Decorative background element -->
-                        <div class="absolute -right-16 -top-16 w-32 h-32 bg-indigo-50 rounded-full blur-3xl opacity-50"></div>
-                        <div class="absolute -left-16 top-10 w-24 h-24 bg-blue-50 rounded-full blur-2xl opacity-50"></div>
+                    <div class="mt-2">
+                        <p class="text-sm text-slate-500 mb-4">Anda akan men-deploy template <strong id="modal-template-name" class="text-indigo-600 font-bold">Tailwind</strong>. Silakan masukkan nama untuk proyek Anda.</p>
                         
-                        <div class="sm:flex sm:items-start relative z-10">
-                            <div class="mx-auto flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-12 sm:w-12 shadow-inner">
-                                <i class="fa-solid fa-rocket text-indigo-600 text-xl"></i>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-folder text-slate-400"></i>
                             </div>
-                            <div class="mt-4 text-center sm:ml-4 sm:mt-0 sm:text-left flex-1">
-                                <h3 class="text-xl font-bold leading-6 text-slate-900" id="modal-title">Gunakan Template</h3>
-                                <div class="mt-2">
-                                    <p class="text-sm text-slate-500 mb-4">Anda akan men-deploy template <strong id="modal-template-name" class="text-indigo-600">Tailwind</strong>. Silakan masukkan nama untuk proyek Anda.</p>
-                                    
-                                    <div class="mt-5">
-                                        <label for="project_name" class="block text-sm font-semibold leading-6 text-slate-900 mb-2">Nama Proyek</label>
-                                        <div class="relative rounded-xl shadow-sm">
-                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                <i class="fa-solid fa-folder text-slate-400"></i>
-                                            </div>
-                                            <input type="text" name="project_name" id="project_name" class="block w-full rounded-xl border-0 py-3 pl-10 text-slate-900 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-all" placeholder="misal: my-awesome-website" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <input type="text" name="project_name" id="project_name" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none" placeholder="misal: my-awesome-website" required>
                         </div>
                     </div>
-                    
-                    <div class="bg-slate-50 px-6 py-4 sm:flex sm:flex-row-reverse sm:px-8">
-                        <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto transition-colors gap-2 items-center">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Deploy Sekarang
-                        </button>
-                        <button type="button" onclick="closeDeployModal()" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition-colors">
-                            Batal
-                        </button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                
+                <div class="px-6 py-4 bg-slate-50 flex justify-end gap-2 rounded-b-2xl">
+                    <button type="button" onclick="closeDeployModal()" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition shadow-sm">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Deploy Sekarang
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
