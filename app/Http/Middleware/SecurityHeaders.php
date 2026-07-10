@@ -38,7 +38,7 @@ class SecurityHeaders
             "default-src 'self'; ".
             "base-uri 'self'; ".
             "object-src 'none'; ".
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com http://127.0.0.1:5173 http://localhost:5173; ".
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com https://cdn.tailwindcss.com http://127.0.0.1:5173 http://localhost:5173; ".
             "script-src-attr 'unsafe-inline'; ".
             "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
             "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
