@@ -1222,6 +1222,34 @@ export default defineNuxtConfig({
 })
 TS
         );
+        
+        // Tambahkan index.html statis sebagai fallback sementara
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuxt 3 Starter - {$name}</title>
+    <style>
+        body { font-family: sans-serif; background: #f0fdf4; color: #333; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        .card { background: white; border-radius: 20px; padding: 50px; text-align: center; box-shadow: 0 10px 30px rgba(0, 220, 130, 0.15); border-top: 5px solid #00DC82; max-width: 600px; }
+        h1 { color: #00DC82; margin-bottom: 20px; font-size: 2.2rem; }
+        p { color: #666; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Nuxt 3 Starter Siap!</h1>
+        <p>File proyek Nuxt berhasil dibuat.</p>
+        <p style="margin-top:20px; font-size:14px;">
+            Silakan jalankan <strong>npm install</strong> & <strong>npm run build</strong> melalui Terminal, lalu jalankan server Nuxt Anda menggunakan fitur Server Node.
+        </p>
+    </div>
+</body>
+</html>
+HTML
+        );
     }
 
     private function scaffoldSvelte(string $dir, string $name): void
