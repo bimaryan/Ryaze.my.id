@@ -388,6 +388,14 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('user_hosting.templates') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.templates')) }}">
+                            <i
+                                class="fa-solid fa-layer-group {{ $iconClass(request()->routeIs('user_hosting.templates')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Galeri Template</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('user_hosting.projects') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}">
                             <i

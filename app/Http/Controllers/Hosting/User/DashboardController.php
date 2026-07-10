@@ -124,6 +124,12 @@ class DashboardController extends Controller
         return view('pages.hosting.user.marketplace', compact('templates'));
     }
 
+    public function templates()
+    {
+        $templates = $this->availableTemplates;
+        return view('pages.hosting.user.templates', compact('templates'));
+    }
+
     // Menampilkan halaman dokumentasi
     public function docs()
     {
