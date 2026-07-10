@@ -1291,6 +1291,33 @@ HTML
 <p>Your fast, compiled Svelte app is running on Ryaze.</p>
 SVELTE
         );
+        
+        // Tambahkan index.html sebagai fallback sementara (karena SvelteKit berjalan sebagai Node app)
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SvelteKit Starter - {$name}</title>
+    <style>
+        body { font-family: sans-serif; background: #fff4f1; color: #333; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .card { background: white; border-radius: 20px; padding: 50px; text-align: center; box-shadow: 0 10px 30px rgba(255,62,0,0.15); border-top: 5px solid #ff3e00; }
+        h1 { color: #ff3e00; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>SvelteKit Starter Siap!</h1>
+        <p>File proyek SvelteKit berhasil dibuat.</p>
+        <p style="margin-top:20px; font-size:14px; color:#666;">
+            Karena ini berbasis Node.js, silakan jalankan <strong>npm install</strong> & <strong>npm run dev/build</strong> melalui Terminal,<br>atau aktifkan Server Node via panel Ryaze.
+        </p>
+    </div>
+</body>
+</html>
+HTML
+        );
     }
 
     private function scaffoldGhost(string $dir, string $name, $deploy): void
@@ -1317,6 +1344,34 @@ const app = express();
 app.get('/', (req, res) => res.send('<div style="font-family: sans-serif; text-align: center; margin-top: 50px;"><h1>Ghost CMS Starter</h1><p>Membutuhkan konfigurasi database MySQL & Ghost-CLI secara manual lewat terminal.</p><p>Silakan akses Terminal di panel proyek Anda.</p></div>'));
 app.listen(process.env.PORT || 3000, () => console.log('Ghost placeholder running'));
 JS
+        );
+        
+        // Tambahkan index.html statis agar Nginx langsung menampilkan halaman
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost CMS - {$name}</title>
+    <style>
+        body { font-family: sans-serif; background: #15171A; color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .card { background: #1C1F24; border-radius: 12px; padding: 50px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid #2D3139; max-width: 600px; }
+        h1 { color: #fff; margin-bottom: 20px; font-size: 2.2rem; }
+        p { color: #A1A1AA; line-height: 1.6; }
+        code { background: #000; padding: 4px 8px; border-radius: 4px; color: #10B981; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>👻 Ghost CMS</h1>
+        <p>File dasar instalasi sudah siap!</p>
+        <p style="margin-bottom:20px;">Aplikasi Ghost membutuhkan koneksi database MySQL terpisah dan instalasi via <code>ghost-cli</code>.</p>
+        <p style="font-size: 0.9rem;">Silakan buka <strong>Terminal</strong> dari panel Ryaze Anda untuk melanjutkan instalasi.</p>
+    </div>
+</body>
+</html>
+HTML
         );
     }
 }
