@@ -584,6 +584,7 @@ PHP;
             'node_express' => $this->scaffoldNode($dir, $projectName),
             'ghost_cms' => $this->scaffoldGhost($dir, $projectName, $deploy),
             'wordpress' => $this->scaffoldWordpress($dir, $projectName, $deploy),
+            'tailwind_starter' => $this->scaffoldTailwind($dir, $projectName),
             default => throw new \RuntimeException("Unknown template key: {$key}"),
         };
     }

@@ -147,6 +147,7 @@ class DashboardController extends Controller
         'nuxt_starter'        => ['framework' => 'vue'],
         'svelte_starter'      => ['framework' => 'node'],
         'node_express'        => ['framework' => 'node'],
+        'tailwind_starter'    => ['framework' => 'html'],
     ];
 
     // Memproses data dan memulai Deploy Otomatis
