@@ -588,6 +588,9 @@ PHP;
             'tailwind_portfolio' => $this->scaffoldTailwindPortfolio($dir, $projectName),
             'tailwind_landing' => $this->scaffoldTailwindLanding($dir, $projectName),
             'tailwind_blog' => $this->scaffoldTailwindBlog($dir, $projectName),
+            'tailwind_ecommerce' => $this->scaffoldTailwindEcommerce($dir, $projectName),
+            'tailwind_admin' => $this->scaffoldTailwindAdmin($dir, $projectName),
+            'tailwind_linkinbio' => $this->scaffoldTailwindLinkinbio($dir, $projectName),
             default => throw new \RuntimeException("Unknown template key: {$key}"),
         };
     }
@@ -763,6 +766,146 @@ HTML
             <a href="#" class="text-stone-900 font-bold border-b border-stone-900 pb-1 hover:text-stone-500 hover:border-stone-500 transition">Read article &rarr;</a>
         </article>
     </main>
+</body>
+</html>
+HTML
+        );
+    }
+    private function scaffoldTailwindEcommerce(string $dir, string $name): void
+    {
+        @mkdir($dir, 0755, true);
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$name} - E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans antialiased text-gray-900">
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-2xl font-black text-pink-600 tracking-tighter">Shop<span class="text-gray-900">App</span></span>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <a href="#" class="border-pink-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Home</a>
+                    <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Katalog</a>
+                    <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Promo</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-pink-600 rounded-3xl overflow-hidden shadow-xl mb-16 relative">
+            <div class="px-8 py-16 sm:px-12 sm:py-24 relative z-10">
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">Koleksi Musim Panas 2026</h1>
+                <p class="text-pink-100 text-lg sm:text-xl max-w-2xl mb-8">Diskon hingga 50% untuk produk terpilih. Belanja sekarang sebelum kehabisan!</p>
+                <a href="#" class="inline-block bg-white text-pink-600 font-bold px-8 py-3 rounded-full hover:bg-gray-50 transition shadow-md">Belanja Sekarang</a>
+            </div>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-8">Produk Terbaru</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="group">
+                <div class="w-full aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden mb-4 relative">
+                    <img src="https://placehold.co/400x500/e2e8f0/64748b?text=Product+1" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <span class="absolute top-3 left-3 bg-white px-2 py-1 text-xs font-bold uppercase rounded text-gray-900 shadow-sm">Baru</span>
+                </div>
+                <h3 class="text-sm font-medium text-gray-900 mb-1">Sepatu Sneakers Klasik</h3>
+                <p class="text-lg font-bold text-gray-900">Rp 450.000</p>
+            </div>
+            <div class="group">
+                <div class="w-full aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden mb-4 relative">
+                    <img src="https://placehold.co/400x500/e2e8f0/64748b?text=Product+2" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <h3 class="text-sm font-medium text-gray-900 mb-1">Kemeja Flanel Premium</h3>
+                <p class="text-lg font-bold text-gray-900">Rp 250.000</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+HTML
+        );
+    }
+
+    private function scaffoldTailwindAdmin(string $dir, string $name): void
+    {
+        @mkdir($dir, 0755, true);
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$name} - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-800 h-screen flex overflow-hidden">
+    <aside class="bg-gray-900 w-64 flex-shrink-0 flex flex-col hidden md:flex">
+        <div class="h-16 flex items-center px-6 border-b border-gray-800">
+            <span class="text-white text-xl font-bold tracking-wider uppercase">Admin<span class="text-emerald-500">Panel</span></span>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4">
+            <nav class="px-3 space-y-1">
+                <a href="#" class="bg-gray-800 text-white px-3 py-2 rounded-md flex items-center gap-3 text-sm font-medium">Dashboard</a>
+                <a href="#" class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md flex items-center gap-3 text-sm font-medium">Users</a>
+                <a href="#" class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md flex items-center gap-3 text-sm font-medium">Analytics</a>
+            </nav>
+        </div>
+    </aside>
+    <div class="flex-1 flex flex-col w-full h-full">
+        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6">
+            <h1 class="text-xl font-bold text-gray-800">Dashboard Overview</h1>
+        </header>
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                    <p class="text-sm font-medium text-gray-500">Total Users</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">12,543</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-800">Recent Transactions</h2>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+HTML
+        );
+    }
+
+    private function scaffoldTailwindLinkinbio(string $dir, string $name): void
+    {
+        @mkdir($dir, 0755, true);
+        file_put_contents("{$dir}/index.html", <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$name} - Link in Bio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen font-sans antialiased flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white/20 backdrop-blur-xl rounded-3xl p-8 border border-white/30 shadow-2xl">
+        <div class="text-center mb-8">
+            <div class="w-24 h-24 mx-auto bg-white p-1 rounded-full shadow-lg mb-4">
+                <img src="https://ui-avatars.com/api/?name=Jane+Doe&background=random&size=128" alt="Profile" class="w-full h-full object-cover rounded-full">
+            </div>
+            <h1 class="text-2xl font-bold text-white mb-1">@janedoe</h1>
+            <p class="text-indigo-100 text-sm">Designer & Content Creator 🎨✨</p>
+        </div>
+        <div class="space-y-4">
+            <a href="#" class="block w-full bg-white text-indigo-900 text-center font-bold py-4 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-all duration-300">My Portfolio Website</a>
+            <a href="#" class="block w-full bg-white text-indigo-900 text-center font-bold py-4 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-all duration-300">Latest YouTube Video 📺</a>
+        </div>
+    </div>
 </body>
 </html>
 HTML
