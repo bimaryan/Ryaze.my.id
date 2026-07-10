@@ -53,7 +53,7 @@
             </div>
             
             <a href="{{ route('user_hosting.template.preview', 'tailwind_portfolio') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100 bg-slate-50">
-                <img src="https://placehold.co/600x400/4f46e5/ffffff?text=Portfolio+Template" alt="Portfolio" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="{{ asset('images/templates/portfolio_thumb.png') }}" alt="Portfolio" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-colors duration-300 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2.5 px-5 rounded-xl shadow-xl transition-all duration-300 transform translate-y-8 group-hover:translate-y-0 flex items-center gap-2 hover:bg-indigo-50">
                         <i class="fa-solid fa-expand text-indigo-600"></i> Live Preview
@@ -78,7 +78,7 @@
             </div>
             
             <a href="{{ route('user_hosting.template.preview', 'tailwind_landing') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100 bg-slate-50">
-                <img src="https://placehold.co/600x400/2563eb/ffffff?text=Landing+Page" alt="Landing Page" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="{{ asset('images/templates/landing_thumb.png') }}" alt="Landing Page" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-colors duration-300 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2.5 px-5 rounded-xl shadow-xl transition-all duration-300 transform translate-y-8 group-hover:translate-y-0 flex items-center gap-2 hover:bg-indigo-50">
                         <i class="fa-solid fa-expand text-indigo-600"></i> Live Preview
@@ -103,7 +103,7 @@
             </div>
             
             <a href="{{ route('user_hosting.template.preview', 'tailwind_blog') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100 bg-slate-50">
-                <img src="https://placehold.co/600x400/ea580c/ffffff?text=Blog+Template" alt="Blog" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="{{ asset('images/templates/blog_thumb.png') }}" alt="Blog" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-colors duration-300 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2.5 px-5 rounded-xl shadow-xl transition-all duration-300 transform translate-y-8 group-hover:translate-y-0 flex items-center gap-2 hover:bg-indigo-50">
                         <i class="fa-solid fa-expand text-indigo-600"></i> Live Preview
@@ -128,7 +128,7 @@
             </div>
             
             <a href="{{ route('user_hosting.template.preview', 'tailwind_ecommerce') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100 bg-slate-50">
-                <img src="https://placehold.co/600x400/db2777/ffffff?text=E-Commerce" alt="E-Commerce" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="{{ asset('images/templates/ecommerce_thumb.png') }}" alt="E-Commerce" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-colors duration-300 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2.5 px-5 rounded-xl shadow-xl transition-all duration-300 transform translate-y-8 group-hover:translate-y-0 flex items-center gap-2 hover:bg-indigo-50">
                         <i class="fa-solid fa-expand text-indigo-600"></i> Live Preview
@@ -153,7 +153,7 @@
             </div>
             
             <a href="{{ route('user_hosting.template.preview', 'tailwind_admin') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100 bg-slate-50">
-                <img src="https://placehold.co/600x400/059669/ffffff?text=Admin+Dashboard" alt="Admin Dashboard" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="{{ asset('images/templates/admin_thumb.png') }}" alt="Admin Dashboard" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-colors duration-300 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2.5 px-5 rounded-xl shadow-xl transition-all duration-300 transform translate-y-8 group-hover:translate-y-0 flex items-center gap-2 hover:bg-indigo-50">
                         <i class="fa-solid fa-expand text-indigo-600"></i> Live Preview
@@ -178,7 +178,7 @@
             </div>
             
             <a href="{{ route('user_hosting.template.preview', 'tailwind_linkinbio') }}" target="_blank" class="relative h-48 overflow-hidden block border-b border-slate-100 bg-slate-50">
-                <img src="https://placehold.co/600x400/7c3aed/ffffff?text=Link+in+Bio" alt="Link in Bio" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="{{ asset('images/templates/linkinbio_thumb.png') }}" alt="Link in Bio" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-colors duration-300 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
                     <span class="opacity-0 group-hover:opacity-100 bg-white text-slate-900 text-sm font-bold py-2.5 px-5 rounded-xl shadow-xl transition-all duration-300 transform translate-y-8 group-hover:translate-y-0 flex items-center gap-2 hover:bg-indigo-50">
                         <i class="fa-solid fa-expand text-indigo-600"></i> Live Preview
