@@ -579,6 +579,7 @@ PHP;
             'react_starter' => $this->scaffoldReact($dir, $projectName),
             'nextjs_starter' => $this->scaffoldNextjs($dir, $projectName),
             'node_express' => $this->scaffoldNode($dir, $projectName),
+            'wordpress' => $this->scaffoldWordpress($dir, $projectName, $deploy),
             default => throw new \RuntimeException("Unknown template key: {$key}"),
         };
     }
@@ -1092,5 +1093,28 @@ JS
 </html>
 HTML
         );
+    }
+
+    private function scaffoldWordpress(string $dir, string $name, $deploy): void
+    {
+        $this->log($deploy, "🚀 Mengunduh dan memasang WordPress terbaru...");
+
+        $parentDir = dirname($dir);
+        $baseName = basename($dir);
+        $tmpDir = "{$parentDir}/.tmp_{$baseName}_wp";
+
+        $this->exec("rm -rf {$tmpDir} 2>/dev/null || true", $deploy);
+        $this->exec("mkdir -p {$tmpDir}", $deploy);
+
+        $this->log($deploy, "> Mengunduh dan mengekstrak core WordPress...");
+        $this->exec("cd {$tmpDir} && curl -sL https://wordpress.org/latest.tar.gz | tar xz 2>&1", $deploy, true);
+        
+        $this->exec("rm -rf {$dir} 2>/dev/null || true", $deploy);
+        
+        $this->log($deploy, "> Memindahkan file ke direktori project...");
+        $this->exec("mv {$tmpDir}/wordpress {$dir}", $deploy, true);
+        $this->exec("rm -rf {$tmpDir}", $deploy);
+        
+        $this->log($deploy, "✅ WordPress berhasil dipasang! Silakan buat database dan buka website untuk instalasi.");
     }
 }
