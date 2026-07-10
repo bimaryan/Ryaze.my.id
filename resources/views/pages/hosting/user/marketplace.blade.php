@@ -172,7 +172,9 @@
                         </div>
                     </form>
                 </div>
-                {{-- Vue.js --}}
+            </div>
+
+            {{-- Vue.js --}}
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden relative">
                 <div class="absolute top-4 right-4 text-xs font-black bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full z-10 uppercase tracking-wide">FRONTEND</div>
                 <div class="p-6 pb-0 flex-1 relative z-10">
