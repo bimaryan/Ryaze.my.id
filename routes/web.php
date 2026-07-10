@@ -72,6 +72,8 @@ Route::middleware('auth')->group(function () {
     // ── WALLET & AFFILIATE ───────────────────────────────────────
     Route::get('/user/wallet', [\App\Http\Controllers\WalletController::class, 'history'])->name('user.wallet.history');
     Route::post('/user/wallet/topup', [\App\Http\Controllers\WalletController::class, 'topUp'])->name('user.wallet.topup');
+    Route::get('/user/wallet/withdraw', [\App\Http\Controllers\WalletController::class, 'withdrawForm'])->name('user.wallet.withdraw');
+    Route::post('/user/wallet/withdraw', [\App\Http\Controllers\WalletController::class, 'withdrawProcess'])->name('user.wallet.withdraw.process');
     Route::get('/user/affiliate', [\App\Http\Controllers\AffiliateController::class, 'dashboard'])->name('user.affiliate.dashboard');
 
     // ── LOGOUT ───────────────────────────────────────────────────
@@ -102,6 +104,8 @@ Route::middleware('auth')->group(function () {
         Route::get('superadmin/settings', [SettingController::class, 'index'])->name('superadmin.settings');
         Route::put('superadmin/settings', [SettingController::class, 'update'])->name('superadmin.settings.update');
         Route::get('superadmin/activity-logs', [ActivityLogController::class, 'index'])->name('superadmin.activity_logs');
+        Route::get('superadmin/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'index'])->name('superadmin.withdrawals.index');
+        Route::patch('superadmin/withdrawals/{id}/status', [\App\Http\Controllers\Admin\WithdrawalController::class, 'updateStatus'])->name('superadmin.withdrawals.update');
         Route::resource('superadmin/portfolios', \App\Http\Controllers\Admin\PortfolioController::class)->names('superadmin.portfolios');
         Route::patch('superadmin/portfolios/{hashid}/status', [\App\Http\Controllers\Admin\PortfolioController::class, 'toggleStatus'])->name('superadmin.portfolios.status.toggle');
 
@@ -157,6 +161,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:user_hosting,admin_hosting,superadmin', 'verified'])->group(function () {
         Route::get('user/hosting/dashboard', [DashboardController::class, 'index'])->name('user_hosting.dashboard');
         Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
+        Route::get('user/hosting/marketplace', [DashboardController::class, 'marketplace'])->name('user_hosting.marketplace');
         Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
         Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
         Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
