@@ -4,13 +4,16 @@
 
 @section('content')
 <x-ui.page-layout>
-    <!-- Page header -->
-    <div class="sm:flex sm:justify-between sm:items-center mb-8">
-        <div class="mb-4 sm:mb-0">
-            <h1 class="text-2xl md:text-3xl text-slate-800 font-bold">Galeri Template ✨</h1>
-            <p class="text-sm text-slate-500 mt-1">Pilih desain UI siap pakai berbasis Tailwind CSS untuk website Anda.</p>
-        </div>
-    </div>
+    <x-ui.page-header title="Galeri Template ✨">
+        <x-slot name="iconSlot">
+            <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-200">
+                <i class="fa-solid fa-layer-group text-xl"></i>
+            </div>
+        </x-slot>
+        <x-slot name="subtitle">
+            <p class="text-sm text-slate-500">Pilih desain UI siap pakai berbasis Tailwind CSS untuk website Anda.</p>
+        </x-slot>
+    </x-ui.page-header>
 
     <!-- Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
