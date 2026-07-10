@@ -12,6 +12,12 @@ class AffiliateController extends Controller
     {
         $user = Auth::user();
         
+        // Generate referral_code for existing users if missing
+        if (empty($user->referral_code)) {
+            $user->referral_code = \Illuminate\Support\Str::random(8);
+            $user->save();
+        }
+        
         // Count total referrals
         $totalReferrals = $user->referrals()->count();
         
