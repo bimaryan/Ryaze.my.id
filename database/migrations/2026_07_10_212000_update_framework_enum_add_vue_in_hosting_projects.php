@@ -10,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN framework ENUM('react', 'nextjs', 'python', 'html', 'laravel', 'node', 'php', 'vue') NOT NULL");
+        DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN framework ENUM('react', 'nextjs', 'python', 'html', 'laravel', 'node', 'php', 'vue', 'nuxtjs) NOT NULL");
     }
 
     /**
