@@ -90,7 +90,20 @@
                     const currentSidebar = document.getElementById('logo-sidebar');
                     const newSidebar = doc.getElementById('logo-sidebar');
                     if (currentSidebar && newSidebar) {
+                        // Find the scrollable container inside the sidebar
+                        const scrollContainer = currentSidebar.querySelector('.overflow-y-auto');
+                        let scrollPos = 0;
+                        if (scrollContainer) {
+                            scrollPos = scrollContainer.scrollTop;
+                        }
+                        
                         currentSidebar.innerHTML = newSidebar.innerHTML;
+                        
+                        // Restore scroll position
+                        const newScrollContainer = currentSidebar.querySelector('.overflow-y-auto');
+                        if (newScrollContainer) {
+                            newScrollContainer.scrollTop = scrollPos;
+                        }
                     }
                     
                     container.style.opacity = '1';
