@@ -1116,7 +1116,7 @@
         </div>
 
 
-    </x-ui.page-layout>
+
 
     {{-- SweetAlert2 --}}
     <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -2384,7 +2384,7 @@
     <!-- ApexCharts for Resource Monitoring -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        (function() {
             // Generate dummy 24h data for CPU & RAM
             const cpuData = [];
             const ramData = [];
@@ -2445,6 +2445,7 @@
 
             var chart = new ApexCharts(document.querySelector("#resourceChart"), options);
             chart.render();
-        });
+        })();
     </script>
+    </x-ui.page-layout>
 @endsection
