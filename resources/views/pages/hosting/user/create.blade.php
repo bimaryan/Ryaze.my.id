@@ -504,12 +504,9 @@
                 </div>
             </form>
         </div>
-    </x-ui.page-layout>
-@endsection
-
-@push('scripts')
+        
 <script nonce="{{ csp_nonce() }}">
-document.addEventListener('DOMContentLoaded', () => {
+(function() {
     const sectionRepo     = document.getElementById('section_repo');
     const sectionTemplate = document.getElementById('section_template');
     const frameworkSection= document.getElementById('framework_section');
@@ -518,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const domainPreview   = document.getElementById('domain_preview');
 
     // --- Domain preview live ---
-    projectName.addEventListener('input', () => {
+    projectName?.addEventListener('input', () => {
         const slug = projectName.value.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '');
         domainPreview.textContent = (slug || 'nama-proyek') + '.ryaze.my.id';
     });
@@ -529,16 +526,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const isTemplate = e.target.value === 'template';
 
             // Toggle visibility section
-            sectionRepo.classList.toggle('hidden', isTemplate);
-            sectionTemplate.classList.toggle('hidden', !isTemplate);
-            frameworkSection.classList.toggle('hidden', isTemplate);
+            if(sectionRepo) sectionRepo.classList.toggle('hidden', isTemplate);
+            if(sectionTemplate) sectionTemplate.classList.toggle('hidden', !isTemplate);
+            if(frameworkSection) frameworkSection.classList.toggle('hidden', isTemplate);
 
             // Toggle required attr untuk repo_source
             if (isTemplate) {
-                repoUrl.removeAttribute('required');
+                if(repoUrl) repoUrl.removeAttribute('required');
                 document.querySelectorAll('input[name="framework"]').forEach(r => r.removeAttribute('required'));
             } else {
-                repoUrl.setAttribute('required', 'required');
+                if(repoUrl) repoUrl.setAttribute('required', 'required');
                 const firstFramework = document.querySelector('input[name="framework"]');
                 if (firstFramework) firstFramework.setAttribute('required', 'required');
                 // Reset pilihan template
@@ -546,6 +543,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-});
+})();
 </script>
-@endpush
+
+    </x-ui.page-layout>
+@endsection

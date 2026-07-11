@@ -6,11 +6,13 @@
         {{-- SweetAlert2 --}}
         @if ($errors->any())
         <script nonce="{{ app('csp_nonce') }}">
-            document.addEventListener('DOMContentLoaded', () => Swal.fire({
-                icon: 'error', title: 'Validasi Gagal',
-                html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
-                confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
-            }));
+            (function() {
+                Swal.fire({
+                    icon: 'error', title: 'Validasi Gagal',
+                    html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
+                    confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
+                });
+            })();
         </script>
         @endif
 
@@ -142,60 +144,60 @@
         @method('DELETE')
     </form>
 
-    </x-ui.page-layout>
-@endsection
+    <script nonce="{{ app('csp_nonce') }}">
+        (function() {
+            const modal = document.getElementById('create-modal');
+            const modalInner = modal ? modal.querySelector('.bg-white') : null;
+            
+            function openModal() {
+                if(!modal) return;
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modalInner.classList.remove('scale-95');
+            }
+            
+            function closeModal() {
+                if(!modal) return;
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modalInner.classList.add('scale-95');
+                document.getElementById('create-form').reset();
+            }
 
-@push('scripts')
-<script nonce="{{ app('csp_nonce') }}">
-    document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('create-modal');
-        const modalInner = modal.querySelector('.bg-white');
-        
-        function openModal() {
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modalInner.classList.remove('scale-95');
-        }
-        
-        function closeModal() {
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modalInner.classList.add('scale-95');
-            document.getElementById('create-form').reset();
-        }
+            document.getElementById('btn-open-create-modal')?.addEventListener('click', openModal);
+            document.querySelectorAll('.btn-close-modal, .modal-overlay').forEach(el => el.addEventListener('click', closeModal));
 
-        document.getElementById('btn-open-create-modal')?.addEventListener('click', openModal);
-        document.querySelectorAll('.btn-close-modal, .modal-overlay').forEach(el => el.addEventListener('click', closeModal));
+            // Generate Password
+            document.getElementById('btn-generate-password')?.addEventListener('click', () => {
+                const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+                let pass = "";
+                for (let i = 0; i < 12; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+                document.getElementById('email-password').value = pass;
+            });
 
-        // Generate Password
-        document.getElementById('btn-generate-password')?.addEventListener('click', () => {
-            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-            let pass = "";
-            for (let i = 0; i < 12; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
-            document.getElementById('email-password').value = pass;
-        });
-
-        // Delete Confirm
-        document.querySelectorAll('.btn-delete-email').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const action = this.dataset.action;
-                Swal.fire({
-                    title: 'Hapus Akun Email?',
-                    text: "Semua pesan di dalam mailbox ini juga akan terhapus. Tindakan ini tidak bisa dibatalkan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#EF4444',
-                    cancelButtonColor: '#94A3B8',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal',
-                    customClass: { popup: 'rounded-xl text-sm' }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const form = document.getElementById('delete-form');
-                        form.action = action;
-                        form.submit();
-                    }
+            // Delete Confirm
+            document.querySelectorAll('.btn-delete-email').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    Swal.fire({
+                        title: 'Hapus Akun Email?',
+                        text: "Semua pesan di dalam mailbox ini juga akan terhapus. Tindakan ini tidak bisa dibatalkan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#EF4444',
+                        cancelButtonColor: '#94A3B8',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        customClass: { popup: 'rounded-xl text-sm' }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.getElementById('delete-form');
+                            form.action = action;
+                            form.submit();
+                        }
+                    });
                 });
             });
-        });
-    });
-</script>
-@endpush
+        })();
+    </script>
+
+    </x-ui.page-layout>
+@endsection
