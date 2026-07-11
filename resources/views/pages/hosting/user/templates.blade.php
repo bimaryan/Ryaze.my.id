@@ -208,7 +208,6 @@
         <button type="button" onclick="resetFilters()" class="mt-6 px-6 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium shadow-sm hover:bg-slate-50 transition-all">Reset Pencarian</button>
     </div>
 
-</x-ui.page-layout>
 
 <!-- Deploy Modal -->
 <div id="deploy-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
@@ -400,5 +399,7 @@
         }
     })();
 </script>
+
+</x-ui.page-layout>
 
 @endsection
