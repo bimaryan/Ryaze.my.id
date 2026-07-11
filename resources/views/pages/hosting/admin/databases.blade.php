@@ -1,4 +1,4 @@
-@extends('index')
+﻿@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -160,7 +160,7 @@
         </div>
 
         <script nonce="{{ app('csp_nonce') ?? '' }}">
-            document.addEventListener('DOMContentLoaded', () => {
+            (function() {
                 const clientSelect = document.querySelector('select[name="user_id"]');
                 if (clientSelect) {
                     clientSelect.addEventListener('change', function() {
@@ -191,8 +191,7 @@
                 });
             });
             document.querySelectorAll('.modal-content-stop').forEach(el => {
-                el.addEventListener('click', e => e.stopPropagation());
-            });
+                el.addEventListener('click', e => e.stopPropagation());        })();
         </script>
     </x-ui.page-layout>
 @endsection

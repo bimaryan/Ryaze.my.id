@@ -1,4 +1,4 @@
-@extends('index')
+﻿@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -104,7 +104,7 @@
         </div>
 
         <script nonce="{{ app('csp_nonce') ?? '' }}">
-            document.addEventListener('DOMContentLoaded', () => {
+            (function() {
                 const modal = document.getElementById('verifyModal');
                 const inner = modal.querySelector('div.bg-white');
                 const form = document.getElementById('verifyForm');
@@ -147,8 +147,7 @@
 
                 inner.addEventListener('click', (e) => {
                     e.stopPropagation();
-                });
-            });
+                });        })();
         </script>
     </x-ui.page-layout>
 @endsection

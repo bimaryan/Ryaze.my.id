@@ -1,4 +1,4 @@
-@extends('index')
+﻿@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -101,5 +101,3 @@
     </x-ui.page-layout>
 @endsection
 
-@push('scripts')
-@endpush

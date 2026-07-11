@@ -1,4 +1,4 @@
-@extends('index')
+﻿@extends('index')
 @section('content')
     <x-ui.page-layout>
         <x-ui.page-header 
@@ -63,7 +63,7 @@
     </x-ui.page-layout>
 
     <script nonce="{{ app('csp_nonce') }}">
-        document.addEventListener('DOMContentLoaded', function() {
+        (function() {
             const activateForms = document.querySelectorAll('.form-activate-project');
             activateForms.forEach(form => {
                 form.addEventListener('submit', function(e) {
@@ -84,7 +84,6 @@
                         }
                     });
                 });
-            });
-        });
+            });        })();
     </script>
 @endsection

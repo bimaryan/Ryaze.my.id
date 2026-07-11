@@ -1,4 +1,4 @@
-@extends('index')
+﻿@extends('index')
 
 @section('content')
 <x-ui.page-layout>
@@ -57,34 +57,3 @@
 
     <div class="mt-4">{{ $categories->links() }}</div>
 </x-ui.page-layout>
-@endsection
-
-@push('scripts')
-<script nonce="{{ app('csp_nonce') ?? '' }}">
-    document.addEventListener('DOMContentLoaded', function() {
-        const deleteBtns = document.querySelectorAll('.delete-btn');
-        deleteBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const form = this.closest('form');
-                
-                Swal.fire({
-                    title: 'Hapus Kategori?',
-                    text: "Artikel di kategori ini mungkin akan kehilangan kategorinya.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#4f46e5',
-                    cancelButtonColor: '#ef4444',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
-        });
-    });
-</script>
-@endpush

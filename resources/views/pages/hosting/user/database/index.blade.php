@@ -7,11 +7,13 @@
         {{-- Flash via SweetAlert --}}
         @if ($errors->any())
         <script nonce="{{ app('csp_nonce') }}">
-            document.addEventListener('DOMContentLoaded', () => Swal.fire({
-                icon: 'error', title: 'Validasi Gagal',
-                html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
-                confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
-            }));
+            (function() {
+                Swal.fire({
+                    icon: 'error', title: 'Validasi Gagal',
+                    html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
+                    confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
+                });
+            })();
         </script>
         @endif
 
@@ -116,9 +118,7 @@
         @endforelse
     </div>
 
-    </x-ui.page-layout>
 
-{{-- Modal Buat Database --}}
 <div id="createDbModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         {{-- Modal Header --}}
@@ -255,7 +255,9 @@
     @method('DELETE')
 </form>
 
+
 <script nonce="{{ app('csp_nonce') }}">
+    (function() {
     // ── Modal ──────────────────────────────────────────────────────────────────
     function openCreateModal() {
         document.getElementById('createDbModal').classList.remove('hidden');
@@ -266,7 +268,8 @@
         document.body.style.overflow = '';
     }
     // Klik luar modal → tutup
-    document.getElementById('createDbModal').addEventListener('click', function(e) {
+    var createDbModalEl = document.getElementById('createDbModal');
+    if (createDbModalEl) createDbModalEl.addEventListener('click', function(e) {
         if (e.target === this) closeCreateModal();
     });
 
@@ -284,7 +287,7 @@
             customClass: { popup: 'rounded-xl text-sm' }
         }).then(result => {
             if (result.isConfirmed) {
-                const form = document.getElementById('deleteForm');
+                var form = document.getElementById('deleteForm');
                 form.action = actionUrl;
                 form.submit();
             }
@@ -292,7 +295,7 @@
     }
 
     // ── Copy to clipboard dengan Toast ────────────────────────────────────────
-        function copyToClipboard(text) {
+    function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
             hotToast('Berhasil disalin!', 'success');
         }).catch(() => {
@@ -302,8 +305,8 @@
 
     // ── Toggle password visibility ─────────────────────────────────────────────
     function togglePass(inputId, btn) {
-        const input = document.getElementById(inputId);
-        const icon  = btn.querySelector('i');
+        var input = document.getElementById(inputId);
+        var icon  = btn.querySelector('i');
         if (input.type === 'password') {
             input.type = 'text';
             icon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -315,71 +318,73 @@
 
     // ── Generate random password ───────────────────────────────────────────────
     function generatePassword() {
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-        let pass = '';
-        for (let i = 0; i < 16; i++) pass += chars[Math.floor(Math.random() * chars.length)];
+        var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+        var pass = '';
+        for (var i = 0; i < 16; i++) pass += chars[Math.floor(Math.random() * chars.length)];
         document.getElementById('modalPassword').value = pass;
         hotToast('Password di-generate!', 'success');
     }
 
     // ── Copy password di modal ─────────────────────────────────────────────────
     function copyModalPassword() {
-        const pass = document.getElementById('modalPassword').value;
+        var pass = document.getElementById('modalPassword').value;
         if (!pass) { hotToast('Password masih kosong', 'warning'); return; }
         navigator.clipboard.writeText(pass).then(() => {
             hotToast('Password disalin!', 'success');
         });
     }
+
     // ── CSP Compliant Event Listeners ──────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-        // Create Modal Open
-        const btnOpenModal = document.getElementById('btn-open-create-modal');
-        if (btnOpenModal) btnOpenModal.addEventListener('click', openCreateModal);
+    // Create Modal Open
+    var btnOpenModal = document.getElementById('btn-open-create-modal');
+    if (btnOpenModal) btnOpenModal.addEventListener('click', openCreateModal);
 
-        // Create Modal Close
-        document.querySelectorAll('.btn-close-modal').forEach(btn => {
-            btn.addEventListener('click', closeCreateModal);
-        });
-
-        // Delete DB
-        document.querySelectorAll('.btn-delete-db').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                confirmDelete(e.currentTarget.getAttribute('data-action'));
-            });
-        });
-
-        // Copy
-        document.querySelectorAll('.btn-copy').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                copyToClipboard(e.currentTarget.getAttribute('data-copy'));
-            });
-        });
-
-        // Toggle Password
-        document.querySelectorAll('.btn-toggle-pass').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                togglePass(e.currentTarget.getAttribute('data-target'), e.currentTarget);
-            })
-        })
-
-        // Import Modal logic
-        window.openImportModal = function(hashid, dbName) {
-            document.getElementById('importDbNameDisplay').innerText = dbName;
-            let importUrl = "{{ route('user_hosting.databases.import', ':id') }}".replace(':id', hashid);
-            document.getElementById('importForm').action = importUrl;
-            document.getElementById('importDbModal').classList.remove('hidden');
-        }
-        window.closeImportModal = function() {
-            document.getElementById('importDbModal').classList.add('hidden');
-        }
-
-        // Delete DBPassword
-        const btnGenPass = document.getElementById('btn-generate-password');
-        if (btnGenPass) btnGenPass.addEventListener('click', generatePassword);
-
-        // Copy Modal Password
-        const btnCopyModalPass = document.getElementById('btn-copy-modal-password');
-        if (btnCopyModalPass) btnCopyModalPass.addEventListener('click', copyModalPassword);
+    // Create Modal Close
+    document.querySelectorAll('.btn-close-modal').forEach(function(btn) {
+        btn.addEventListener('click', closeCreateModal);
     });
+
+    // Delete DB
+    document.querySelectorAll('.btn-delete-db').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            confirmDelete(e.currentTarget.getAttribute('data-action'));
+        });
+    });
+
+    // Copy
+    document.querySelectorAll('.btn-copy').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            copyToClipboard(e.currentTarget.getAttribute('data-copy'));
+        });
+    });
+
+    // Toggle Password
+    document.querySelectorAll('.btn-toggle-pass').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            togglePass(e.currentTarget.getAttribute('data-target'), e.currentTarget);
+        });
+    });
+
+    // Import Modal logic
+    window.openImportModal = function(hashid, dbName) {
+        document.getElementById('importDbNameDisplay').innerText = dbName;
+        var importUrl = "{{ route('user_hosting.databases.import', ':id') }}".replace(':id', hashid);
+        document.getElementById('importForm').action = importUrl;
+        document.getElementById('importDbModal').classList.remove('hidden');
+    };
+    window.closeImportModal = function() {
+        document.getElementById('importDbModal').classList.add('hidden');
+    };
+
+    // Generate Password
+    var btnGenPass = document.getElementById('btn-generate-password');
+    if (btnGenPass) btnGenPass.addEventListener('click', generatePassword);
+
+    // Copy Modal Password
+    var btnCopyModalPass = document.getElementById('btn-copy-modal-password');
+    if (btnCopyModalPass) btnCopyModalPass.addEventListener('click', copyModalPassword);
+    })();
 </script>
+
+    </x-ui.page-layout>
 @endsection

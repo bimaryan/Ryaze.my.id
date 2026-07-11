@@ -7,11 +7,13 @@
         {{-- Flash via SweetAlert --}}
         @if ($errors->any())
         <script nonce="{{ app('csp_nonce') }}">
-            document.addEventListener('DOMContentLoaded', () => Swal.fire({
-                icon: 'error', title: 'Validasi Gagal',
-                html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
-                confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
-            }));
+            (function() {
+                Swal.fire({
+                    icon: 'error', title: 'Validasi Gagal',
+                    html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
+                    confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
+                });
+            })();
         </script>
         @endif
 

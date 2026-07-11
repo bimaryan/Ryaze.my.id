@@ -1,4 +1,4 @@
-@extends('index')
+﻿@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -135,25 +135,3 @@
             <div class="mt-4">{{ $portfolios->links() }}</div>
         </div>
     </x-ui.page-layout>
-@endsection
-
-@push('scripts')
-<script>
-    function confirmDelete(button) {
-        Swal.fire({
-            title: 'Hapus Portofolio?',
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Hapus',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                button.closest('form').submit();
-            }
-        })
-    }
-</script>
-@endpush

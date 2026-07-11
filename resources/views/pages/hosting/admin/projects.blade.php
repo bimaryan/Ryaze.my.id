@@ -1,4 +1,4 @@
-@extends('index')
+﻿@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -109,7 +109,7 @@
         </x-ui.table>
 
         <script nonce="{{ app('csp_nonce') ?? '' }}">
-            document.addEventListener('DOMContentLoaded', function() {
+            (function() {
                 document.querySelectorAll('.admin-action-form').forEach(form => {
                     form.addEventListener('submit', function(e) {
                         e.preventDefault();
@@ -125,8 +125,7 @@
                             if (result.isConfirmed) this.submit();
                         });
                     });
-                });
-            });
+                });        })();
         </script>
     </x-ui.page-layout>
 @endsection

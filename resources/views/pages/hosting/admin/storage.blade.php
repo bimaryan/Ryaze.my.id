@@ -94,19 +94,19 @@
         </div>
 
         <script nonce="{{ app('csp_nonce') ?? '' }}">
-            document.addEventListener('DOMContentLoaded', () => {
+            (function() {
                 document.querySelectorAll('.btn-edit-storage').forEach(button => {
                     button.addEventListener('click', function() {
-                        const form = document.getElementById('editStorageForm');
+                        var form = document.getElementById('editStorageForm');
                         form.action = `/admin/hosting/storage/${this.dataset.hashid}`;
                         document.getElementById('storageProjectName').textContent = this.dataset.name;
                         document.getElementById('storageLimitInput').value = this.dataset.limit;
                     });
                 });
-            });
-            document.querySelectorAll('.modal-content-stop').forEach(el => {
-                el.addEventListener('click', e => e.stopPropagation());
-            });
+                document.querySelectorAll('.modal-content-stop').forEach(el => {
+                    el.addEventListener('click', e => e.stopPropagation());
+                });
+            })();
         </script>
     </x-ui.page-layout>
 @endsection

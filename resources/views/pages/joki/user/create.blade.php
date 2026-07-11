@@ -84,23 +84,26 @@
 
     <!-- Script untuk menampilkan estimasi harga -->
     <script nonce="{{ app('csp_nonce') ?? '' }}">
-        document.addEventListener("DOMContentLoaded", function() {
-            const serviceSelect = document.getElementById('service_select');
-            const priceEstimateBox = document.getElementById('price_estimate');
-            const priceValue = document.getElementById('price_value');
+        (function() {
+            var serviceSelect = document.getElementById('service_select');
+            var priceEstimateBox = document.getElementById('price_estimate');
+            var priceValue = document.getElementById('price_value');
 
-            serviceSelect.addEventListener('change', function() {
-                // Ambil harga dari attribute data-price milik option yang dipilih
-                const selectedOption = this.options[this.selectedIndex];
-                const price = selectedOption.getAttribute('data-price');
+            if (serviceSelect) {
+                serviceSelect.addEventListener('change', function() {
+                    // Ambil harga dari attribute data-price milik option yang dipilih
+                    var selectedOption = this.options[this.selectedIndex];
+                    var price = selectedOption.getAttribute('data-price');
 
-                if (price) {
-                    priceValue.textContent = price;
-                    priceEstimateBox.classList.remove('hidden');
-                } else {
-                    priceEstimateBox.classList.add('hidden');
-                }
-            });
-        });
+                    if (price) {
+                        priceValue.textContent = price;
+                        priceEstimateBox.classList.remove('hidden');
+                    } else {
+                        priceEstimateBox.classList.add('hidden');
+                    }
+                });
+            }
+        })();
     </script>
+</x-ui.page-layout>
 @endsection

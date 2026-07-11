@@ -192,11 +192,9 @@
 
         </div>
     </x-ui.page-layout>
-@endsection
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+<script nonce="{{ csp_nonce() }}">
+(function() {
         // 1. Line Chart: Hosting Revenue (Billings)
         var optionsBillings = {
             series: [{
@@ -282,6 +280,8 @@
             }
         };
         new ApexCharts(document.querySelector("#chart-new-projects"), optionsProjects).render();
-    });
+})();
 </script>
-@endpush
+
+    </x-ui.page-layout>
+@endsection

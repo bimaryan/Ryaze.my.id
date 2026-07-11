@@ -158,11 +158,10 @@
         </div>
 
     </div>
-</x-ui.page-layout>
 
 <script type="module" src="https://unpkg.com/emoji-picker-element@1"></script>
 <script type="module">
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
     const chatArea = document.getElementById('chat-messages-area');
     const chatForm = document.getElementById('chat-form');
     
@@ -318,9 +317,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-});
+})();
 
-function previewAttachment(input) {
+window.previewAttachment = function(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
         reader.onload = function(e) {
@@ -329,15 +328,14 @@ function previewAttachment(input) {
         }
         reader.readAsDataURL(input.files[0]);
     }
-}
+};
 
-function removeAttachment() {
+window.removeAttachment = function() {
     document.getElementById('attachment-input').value = "";
     document.getElementById('attachment-preview-img').src = "";
     document.getElementById('attachment-preview-container').classList.add('hidden');
-}
-
-window.previewAttachment = previewAttachment;
-window.removeAttachment = removeAttachment;
+};
 </script>
+
+</x-ui.page-layout>
 @endsection

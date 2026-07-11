@@ -1,4 +1,4 @@
-@extends('index')
+﻿@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -161,7 +161,7 @@
     </div>
 
     <script nonce="{{ csp_nonce() ?? '' }}">
-        document.addEventListener('DOMContentLoaded', function () {
+        (function() {
             // Setup modals
             const createModal = document.getElementById('createModal');
             const editModal = document.getElementById('editModal');
@@ -239,8 +239,7 @@
                         }
                     });
                 });
-            });
-        });
+            });        })();
     </script>
     </x-ui.page-layout>
 @endsection
