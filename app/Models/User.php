@@ -63,6 +63,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasActiveHostingSubscription()
     {
+        if ($this->role === 'superadmin') {
+            return true;
+        }
+
         return $this->hostingBillings()
             ->where('status', 'active')
             ->where('next_due_date', '>', now())
