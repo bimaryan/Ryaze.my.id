@@ -1189,7 +1189,7 @@
 
     {{-- ── SCRIPT 2: Helpers & Build Log polling ────────────────────────────── --}}
     <script nonce="{{ csp_nonce() }}">
-        const fixUrl = u => window.location.protocol === 'https:' ?
+        var fixUrl = u => window.location.protocol === 'https:' ?
             u.replace(/^http:\/\//i, 'https://') :
             u;
 
@@ -1206,13 +1206,13 @@
                 .replace(/\u001b\[[0-9;]*m/g, '');
         }
 
-        const buildLogUrl = fixUrl('{{ route('user_hosting.build_logs', $project->hashid) }}');
-        const buildLogText = document.getElementById('build-log-text');
-        const buildLogStatus = document.getElementById('build-log-status');
-        const buildLogUpdated = document.getElementById('build-log-updated');
-        const websiteLogLink = document.getElementById('website-log-link');
-        const buildLogPulse = document.getElementById('build-log-pulse');
-        let buildLogInterval = null;
+        var buildLogUrl = fixUrl('{{ route('user_hosting.build_logs', $project->hashid) }}');
+        var buildLogText = document.getElementById('build-log-text');
+        var buildLogStatus = document.getElementById('build-log-status');
+        var buildLogUpdated = document.getElementById('build-log-updated');
+        var websiteLogLink = document.getElementById('website-log-link');
+        var buildLogPulse = document.getElementById('build-log-pulse');
+        var buildLogInterval = null;
 
         function refreshBuildLogs() {
             fetch(buildLogUrl, {
@@ -1275,16 +1275,16 @@
 
     {{-- ── SCRIPT 4: Terminal ───────────────────────────────────────────────── --}}
     <script nonce="{{ csp_nonce() }}">
-        const termOut = document.getElementById('terminal-output');
-        const termInput = document.getElementById('terminal-input');
-        const termPrompt = document.getElementById('terminal-prompt');
-        const cwdDisplay = document.getElementById('terminal-cwd-display');
-        const termUrl = fixUrl('{{ route('user_hosting.terminal', $project->hashid) }}');
-        const csrfToken = '{{ csrf_token() }}';
-        const projectRoot = '/www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
-        const projectSlug = '{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
+        var termOut = document.getElementById('terminal-output');
+        var termInput = document.getElementById('terminal-input');
+        var termPrompt = document.getElementById('terminal-prompt');
+        var cwdDisplay = document.getElementById('terminal-cwd-display');
+        var termUrl = fixUrl('{{ route('user_hosting.terminal', $project->hashid) }}');
+        var csrfToken = '{{ csrf_token() }}';
+        var projectRoot = '/www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
+        var projectSlug = '{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
 
-        let cmdHistory = [],
+        var cmdHistory = [],
             histIdx = -1,
             currentCwd = projectRoot,
             running = false;
@@ -1398,20 +1398,20 @@
 
     {{-- ── SCRIPT 5: File Manager ───────────────────────────────────────────── --}}
     <script nonce="{{ csp_nonce() }}">
-        let currentFolderPath = '';
-        let currentEditingFile = '';
+        var currentFolderPath = '';
+        var currentEditingFile = '';
 
-        const fileManagerUrl = fixUrl('{{ route('user_hosting.files', $project->hashid) }}');
-        const fileReadUrl = fixUrl('{{ route('user_hosting.files.read', $project->hashid) }}');
-        const fileSaveUrl = fixUrl('{{ route('user_hosting.files.save', $project->hashid) }}');
-        const fileUploadUrl = fixUrl('{{ route('user_hosting.files.upload', $project->hashid) }}');
-        const fileCreateUrl = fixUrl('{{ route('user_hosting.files.create', $project->hashid) }}');
-        const fileDeleteUrl = fixUrl('{{ route('user_hosting.files.delete', $project->hashid) }}');
-        const fileDownloadUrl = fixUrl('{{ route('user_hosting.files.download', $project->hashid) }}');
-        const ideChatUrl = fixUrl('{{ route('user_hosting.ide.chat', $project->hashid) }}');
+        var fileManagerUrl = fixUrl('{{ route('user_hosting.files', $project->hashid) }}');
+        var fileReadUrl = fixUrl('{{ route('user_hosting.files.read', $project->hashid) }}');
+        var fileSaveUrl = fixUrl('{{ route('user_hosting.files.save', $project->hashid) }}');
+        var fileUploadUrl = fixUrl('{{ route('user_hosting.files.upload', $project->hashid) }}');
+        var fileCreateUrl = fixUrl('{{ route('user_hosting.files.create', $project->hashid) }}');
+        var fileDeleteUrl = fixUrl('{{ route('user_hosting.files.delete', $project->hashid) }}');
+        var fileDownloadUrl = fixUrl('{{ route('user_hosting.files.download', $project->hashid) }}');
+        var ideChatUrl = fixUrl('{{ route('user_hosting.ide.chat', $project->hashid) }}');
 
-        const PROTECTED_FILES = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
-        const isProtected = name => PROTECTED_FILES.includes(name);
+        var PROTECTED_FILES = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
+        var isProtected = name => PROTECTED_FILES.includes(name);
 
         // ── Load direktori ─────────────────────────────────────────────────────
         function loadFileManager(path = '') {
@@ -1768,7 +1768,7 @@
             ?.addEventListener('click', confirmDelete);
 
         // ── Load Monaco Editor ──────────────────────────────────────────────────
-        let monacoScript = document.createElement('script');
+        var monacoScript = document.createElement('script');
         monacoScript.src = "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js";
         monacoScript.onload = function() {
             require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
@@ -1798,10 +1798,10 @@
         document.body.appendChild(monacoScript);
 
         // ── IDE Tab Logic ───────────────────────────────────────────────────────
-        let ideEditorInstance = null;
-        let ideCurrentPath = '';
-        let ideEditingFile = '';
-        let ideLoading = false;
+        var ideEditorInstance = null;
+        var ideCurrentPath = '';
+        var ideEditingFile = '';
+        var ideLoading = false;
 
         function loadIdeSidebar(path = '') {
             const treeEl = document.getElementById('ide-sidebar-tree');
@@ -1848,8 +1848,8 @@
         }
 
         function openIdeFile(path, filename) {
-            const loader = document.getElementById('ide-loader');
-            const saveBtn = document.getElementById('ide-save-btn');
+            var loader = document.getElementById('ide-loader');
+            var saveBtn = document.getElementById('ide-save-btn');
             const emptyState = document.getElementById('ide-empty-state');
             document.getElementById('ide-current-filename').textContent = filename;
             loader.classList.remove('hidden');
@@ -1938,7 +1938,7 @@
         }
         document.querySelector('[data-action="ide-save"]')?.addEventListener('click', () => {
             if (!ideEditingFile || !ideEditorInstance) return;
-            const loader = document.getElementById('ide-loader');
+            var loader = document.getElementById('ide-loader');
             loader.classList.remove('hidden');
             fetch(fileSaveUrl, {
                 method: 'POST',
@@ -2014,9 +2014,9 @@
             });
         }
         
-        let themesDefined = false;
+        var themesDefined = false;
         document.getElementById('ide-theme-selector')?.addEventListener('change', (e) => {
-            const theme = e.target.value;
+            var theme = e.target.value;
             if (typeof monaco !== 'undefined') {
                 if (!themesDefined) {
                     defineMonacoThemes();
@@ -2029,7 +2029,7 @@
         });
 
         // Terapkan tema tersimpan jika ada saat editor pertama kali dibuat
-        const savedTheme = localStorage.getItem('ryaze-ide-theme');
+        var savedTheme = localStorage.getItem('ryaze-ide-theme');
         if (savedTheme) {
             document.getElementById('ide-theme-selector').value = savedTheme;
             // monaco.editor.setTheme(savedTheme) will be called after editor is created.
@@ -2051,14 +2051,14 @@
         });
 
         // ── Search Logic ────────────────────────────────────────────────────────
-        const searchInput = document.getElementById('ide-search-input');
-        const searchCase = document.getElementById('ide-search-case');
-        const searchResults = document.getElementById('ide-search-results');
-        const searchUrl = '{{ route("user_hosting.ide.search", $project->hashid) }}';
+        var searchInput = document.getElementById('ide-search-input');
+        var searchCase = document.getElementById('ide-search-case');
+        var searchResults = document.getElementById('ide-search-results');
+        var searchUrl = '{{ route("user_hosting.ide.search", $project->hashid) }}';
 
         searchInput?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const query = searchInput.value.trim();
+                var query = searchInput.value.trim();
                 if (!query) {
                     searchResults.innerHTML = '<div class="text-slate-500 text-center mt-10">Ketik dan tekan Enter untuk mencari</div>';
                     return;
@@ -2098,10 +2098,10 @@
         });
 
         // ── Git Logic ───────────────────────────────────────────────────────────
-        const gitStatusUrl = '{{ route("user_hosting.ide.git.status", $project->hashid) }}';
-        const gitCommitUrl = '{{ route("user_hosting.ide.git.commit", $project->hashid) }}';
-        const gitPullUrl = '{{ route("user_hosting.ide.git.pull", $project->hashid) }}';
-        const gitPushUrl = '{{ route("user_hosting.ide.git.push", $project->hashid) }}';
+        var gitStatusUrl = '{{ route("user_hosting.ide.git.status", $project->hashid) }}';
+        var gitCommitUrl = '{{ route("user_hosting.ide.git.commit", $project->hashid) }}';
+        var gitPullUrl = '{{ route("user_hosting.ide.git.pull", $project->hashid) }}';
+        var gitPushUrl = '{{ route("user_hosting.ide.git.push", $project->hashid) }}';
         
         function loadGitStatus() {
             const container = document.getElementById('ide-git-changes');

@@ -261,139 +261,144 @@
 
 
 <script>
-    // Filtering and Search Logic
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const searchInput = document.getElementById('search-input');
-    const templateCards = document.querySelectorAll('.template-card');
-    const emptyState = document.getElementById('empty-state');
-    
-    let currentFilter = 'all';
-    let currentSearch = '';
-    
-    // Class definitions for active/inactive buttons
-    const activeBtnClass = ['bg-indigo-600', 'text-white'];
-    const inactiveBtnClass = ['bg-white', 'text-slate-600', 'hover:border-indigo-300', 'hover:text-indigo-600'];
-    
-    function updateGallery() {
-        let visibleCount = 0;
+    (function() {
+        // Filtering and Search Logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('search-input');
+        const templateCards = document.querySelectorAll('.template-card');
+        const emptyState = document.getElementById('empty-state');
         
-        templateCards.forEach(card => {
-            const category = card.getAttribute('data-category');
-            const name = card.getAttribute('data-name').toLowerCase();
+        let currentFilter = 'all';
+        let currentSearch = '';
+        
+        // Class definitions for active/inactive buttons
+        const activeBtnClass = ['bg-indigo-600', 'text-white'];
+        const inactiveBtnClass = ['bg-white', 'text-slate-600', 'hover:border-indigo-300', 'hover:text-indigo-600'];
+        
+        function updateGallery() {
+            let visibleCount = 0;
             
-            const matchesFilter = currentFilter === 'all' || category === currentFilter;
-            const matchesSearch = currentSearch === '' || name.includes(currentSearch);
+            templateCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const name = card.getAttribute('data-name').toLowerCase();
+                
+                const matchesFilter = currentFilter === 'all' || category === currentFilter;
+                const matchesSearch = currentSearch === '' || name.includes(currentSearch);
+                
+                if (matchesFilter && matchesSearch) {
+                    card.style.display = 'flex';
+                    // Add tiny animation
+                    card.style.animation = 'fadeIn 0.4s ease forwards';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
             
-            if (matchesFilter && matchesSearch) {
-                card.style.display = 'flex';
-                // Add tiny animation
-                card.style.animation = 'fadeIn 0.4s ease forwards';
-                visibleCount++;
+            if (visibleCount === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
             } else {
-                card.style.display = 'none';
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
             }
-        });
-        
-        if (visibleCount === 0) {
-            emptyState.classList.remove('hidden');
-            emptyState.classList.add('flex');
-        } else {
-            emptyState.classList.add('hidden');
-            emptyState.classList.remove('flex');
         }
-    }
-    
-    // Reset filters
-    window.resetFilters = function() {
-        currentFilter = 'all';
-        currentSearch = '';
-        searchInput.value = '';
         
-        filterBtns.forEach(b => {
-            b.classList.remove('active', ...activeBtnClass);
-            b.classList.add(...inactiveBtnClass);
-            if(b.getAttribute('data-filter') === 'all') {
-                b.classList.add('active', ...activeBtnClass);
-                b.classList.remove(...inactiveBtnClass);
-            }
-        });
-        
-        updateGallery();
-    };
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Update active state
+        // Reset filters
+        window.resetFilters = function() {
+            currentFilter = 'all';
+            currentSearch = '';
+            searchInput.value = '';
+            
             filterBtns.forEach(b => {
                 b.classList.remove('active', ...activeBtnClass);
                 b.classList.add(...inactiveBtnClass);
+                if(b.getAttribute('data-filter') === 'all') {
+                    b.classList.add('active', ...activeBtnClass);
+                    b.classList.remove(...inactiveBtnClass);
+                }
             });
-            btn.classList.add('active', ...activeBtnClass);
-            btn.classList.remove(...inactiveBtnClass);
             
-            currentFilter = btn.getAttribute('data-filter');
+            updateGallery();
+        };
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active state
+                filterBtns.forEach(b => {
+                    b.classList.remove('active', ...activeBtnClass);
+                    b.classList.add(...inactiveBtnClass);
+                });
+                btn.classList.add('active', ...activeBtnClass);
+                btn.classList.remove(...inactiveBtnClass);
+                
+                currentFilter = btn.getAttribute('data-filter');
+                updateGallery();
+            });
+        });
+
+        searchInput?.addEventListener('input', (e) => {
+            currentSearch = e.target.value.toLowerCase().trim();
             updateGallery();
         });
-    });
-
-    searchInput.addEventListener('input', (e) => {
-        currentSearch = e.target.value.toLowerCase().trim();
-        updateGallery();
-    });
-    
-    // Modal Logic
-    const modal = document.getElementById('deploy-modal');
-    const modalBackdrop = document.getElementById('deploy-modal-backdrop');
-    const modalPanel = document.getElementById('deploy-modal-panel');
-    const templateKeyInput = document.getElementById('modal-template-key');
-    const templateNameDisplay = document.getElementById('modal-template-name');
-    const projectNameInput = document.getElementById('project_name');
-    
-    window.openDeployModal = function(key, name) {
-        templateKeyInput.value = key;
-        templateNameDisplay.textContent = name;
-        projectNameInput.value = ''; // Reset input
         
-        // Show modal container
-        modal.classList.remove('hidden');
+        // Modal Logic
+        const modal = document.getElementById('deploy-modal');
+        const modalBackdrop = document.getElementById('deploy-modal-backdrop');
+        const modalPanel = document.getElementById('deploy-modal-panel');
+        const templateKeyInput = document.getElementById('modal-template-key');
+        const templateNameDisplay = document.getElementById('modal-template-name');
+        const projectNameInput = document.getElementById('project_name');
         
-        // Trigger animations
-        setTimeout(() => {
-            modalBackdrop.classList.remove('opacity-0');
-            modalPanel.classList.remove('opacity-0', 'scale-95');
-            modalPanel.classList.add('opacity-100', 'scale-100');
-            projectNameInput.focus();
-        }, 10);
-    };
-    
-    window.closeDeployModal = function() {
-        // Reverse animations
-        modalBackdrop.classList.add('opacity-0');
-        modalPanel.classList.remove('opacity-100', 'scale-100');
-        modalPanel.classList.add('opacity-0', 'scale-95');
+        window.openDeployModal = function(key, name) {
+            templateKeyInput.value = key;
+            templateNameDisplay.textContent = name;
+            projectNameInput.value = ''; // Reset input
+            
+            // Show modal container
+            modal.classList.remove('hidden');
+            
+            // Trigger animations
+            setTimeout(() => {
+                modalBackdrop.classList.remove('opacity-0');
+                modalPanel.classList.remove('opacity-0', 'scale-95');
+                modalPanel.classList.add('opacity-100', 'scale-100');
+                projectNameInput.focus();
+            }, 10);
+        };
         
-        // Hide modal after animation ends
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 300);
-    };
-    
-    // Add keyframes for fade in animation dynamically
-    const style = document.createElement('style');
-    style.innerHTML = `
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        window.closeDeployModal = function() {
+            // Reverse animations
+            modalBackdrop.classList.add('opacity-0');
+            modalPanel.classList.remove('opacity-100', 'scale-100');
+            modalPanel.classList.add('opacity-0', 'scale-95');
+            
+            // Hide modal after animation ends
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        };
+        
+        // Add keyframes for fade in animation dynamically
+        if (!document.getElementById('gallery-styles')) {
+            const style = document.createElement('style');
+            style.id = 'gallery-styles';
+            style.innerHTML = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `;
+            document.head.appendChild(style);
         }
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    `;
-    document.head.appendChild(style);
+    })();
 </script>
 
 @endsection
