@@ -87,6 +87,12 @@
                         container.innerHTML = newContainer.innerHTML;
                     }
                     
+                    const currentSidebar = document.getElementById('logo-sidebar');
+                    const newSidebar = doc.getElementById('logo-sidebar');
+                    if (currentSidebar && newSidebar) {
+                        currentSidebar.innerHTML = newSidebar.innerHTML;
+                    }
+                    
                     container.style.opacity = '1';
                     container.style.pointerEvents = 'auto';
                     
@@ -106,11 +112,11 @@
             // Intercept Clicks on Links (Pagination, Filters)
             document.body.addEventListener('click', function (e) {
                 const link = e.target.closest('a');
-                if (link && link.href && !link.href.includes('#')) {
+                if (link && link.href && !link.href.includes('#') && !link.hasAttribute('download') && link.target !== '_blank') {
                     try {
                         const urlObj = new URL(link.href);
-                        // If the base path is exactly the same, it's a filter/pagination
-                        if (urlObj.pathname === window.location.pathname) {
+                        // Intercept all same-origin links
+                        if (urlObj.origin === window.location.origin && !urlObj.pathname.startsWith('/storage/')) {
                             e.preventDefault();
                             fetchAndUpdate(link.href);
                         }
@@ -124,7 +130,7 @@
                 if (form && form.method.toUpperCase() === 'GET' && form.action) {
                     try {
                         const urlObj = new URL(form.action);
-                        if (urlObj.pathname === window.location.pathname) {
+                        if (urlObj.origin === window.location.origin) {
                             e.preventDefault();
                             const formData = new FormData(form);
                             const params = new URLSearchParams(formData);
