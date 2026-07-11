@@ -35,16 +35,16 @@
                 <table class="w-full text-sm text-left text-slate-500">
                     <thead class="text-xs text-slate-700 uppercase bg-slate-50/50">
                         <tr>
-                            <th scope="col" class="px-6 py-4 font-bold">Nama File</th>
-                            <th scope="col" class="px-6 py-4 font-bold">Ukuran</th>
-                            <th scope="col" class="px-6 py-4 font-bold">Tanggal Dibuat</th>
-                            <th scope="col" class="px-6 py-4 font-bold text-right">Aksi</th>
+                            <th scope="col" class="px-6 py-4 font-bold whitespace-nowrap">Nama File</th>
+                            <th scope="col" class="px-6 py-4 font-bold whitespace-nowrap">Ukuran</th>
+                            <th scope="col" class="px-6 py-4 font-bold whitespace-nowrap">Tanggal Dibuat</th>
+                            <th scope="col" class="px-6 py-4 font-bold text-right whitespace-nowrap">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($backups as $backup)
                             <tr class="bg-white border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                                <td class="px-6 py-4 font-medium text-slate-800">
+                                <td class="px-6 py-4 font-medium text-slate-800 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div
                                             class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500">
@@ -53,19 +53,19 @@
                                         {{ $backup['name'] }}
                                     </div>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold">
                                         <i class="fa-solid fa-hard-drive"></i> {{ $backup['size'] }} MB
                                     </span>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center gap-1.5 text-slate-500 text-sm">
                                         <i class="fa-regular fa-clock"></i>
                                         {{ \Carbon\Carbon::parse($backup['date'])->translatedFormat('d F Y, H:i') }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-right space-x-2">
+                                <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                                     <a href="{{ route('superadmin.backup.download', $backup['name']) }}"
                                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors"
                                         title="Download">
