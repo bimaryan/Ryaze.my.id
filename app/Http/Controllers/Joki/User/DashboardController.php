@@ -135,7 +135,7 @@ class DashboardController extends Controller
             $query->where('client_id', Auth::id());
         })->with('order')->orderBy('created_at', 'desc')->get();
 
-        return view('pages.joki.user.riwayat_tagihan', compact('payments'));
+        return view('pages.joki.user.billing', compact('payments'));
     }
 
     public function submitReview(Request $request, $hashid)
