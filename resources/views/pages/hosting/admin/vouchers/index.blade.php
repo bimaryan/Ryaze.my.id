@@ -54,7 +54,7 @@
                             <a href="{{ route('admin_hosting.vouchers.edit', $voucher->hashid) }}" class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all shadow-sm tooltip" title="Edit Voucher">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
-                            <form action="{{ route('admin_hosting.vouchers.destroy', $voucher->hashid) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus voucher ini?');">
+                            <form action="{{ route('admin_hosting.vouchers.destroy', $voucher->hashid) }}" method="POST" class="inline-block" onsubmit="event.preventDefault(); let f = this; Swal.fire({title: 'Hapus Voucher?', text: 'Apakah Anda yakin ingin menghapus voucher ini?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal', customClass: {popup: 'rounded-2xl text-sm'}}).then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="w-8 h-8 rounded-lg flex items-center justify-center text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white transition-all shadow-sm tooltip" title="Hapus Voucher">

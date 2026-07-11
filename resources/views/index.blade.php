@@ -85,6 +85,15 @@
                     
                     if (newContainer) {
                         container.innerHTML = newContainer.innerHTML;
+                        
+                        // Execute scripts inside the new container
+                        const scripts = container.querySelectorAll('script');
+                        scripts.forEach(oldScript => {
+                            const newScript = document.createElement('script');
+                            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                            oldScript.parentNode.replaceChild(newScript, oldScript);
+                        });
                     }
                     
                     const currentSidebar = document.getElementById('logo-sidebar');

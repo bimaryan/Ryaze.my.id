@@ -259,7 +259,7 @@
     </div>
 </div>
 
-@push('scripts')
+
 <script>
     // Filtering and Search Logic
     const filterBtns = document.querySelectorAll('.filter-btn');
@@ -395,5 +395,5 @@
     `;
     document.head.appendChild(style);
 </script>
-@endpush
+
 @endsection
