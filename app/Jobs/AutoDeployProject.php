@@ -219,17 +219,92 @@ class AutoDeployProject implements ShouldQueue
                 $this->log($deploy, '> Laravel+Inertia: Vite output is at public/build. No file move needed.');
                 $this->runLaravelPostSetup($deploy, $projectDir);
             } else {
-                $this->log($deploy, '> Memindahkan hasil build SPA ke root agar Nginx dapat melayani aset statis (/assets) dengan benar...');
-                $this->exec("
-                    if [ -d \"{$projectDir}/dist\" ]; then
-                        cp -a {$projectDir}/dist/* {$projectDir}/ 2>/dev/null || true
-                    elif [ -d \"{$projectDir}/build\" ]; then
-                        cp -a {$projectDir}/build/* {$projectDir}/ 2>/dev/null || true
-                    elif [ -d \"{$projectDir}/out\" ]; then
-                        cp -a {$projectDir}/out/* {$projectDir}/ 2>/dev/null || true
-                    fi
-                ", $deploy);
-                $this->log($deploy, '> Berhasil memindahkan output build ke root direktori.');
+                $this->log($deploy, '> Mengecek tipe output Node.js (Static vs SSR)...');
+                clearstatcache();
+                $hasStatic = false;
+                foreach (['dist', 'build', 'out'] as $staticDir) {
+                    if (is_dir("{$projectDir}/{$staticDir}")) {
+                        $hasStatic = true;
+                        $this->log($deploy, "> Memindahkan hasil build statis ({$staticDir}) ke root agar Nginx dapat melayaninya...");
+                        $this->exec("cp -a {$projectDir}/{$staticDir}/* {$projectDir}/ 2>/dev/null || true", $deploy);
+                        $this->log($deploy, "> Berhasil memindahkan output build {$staticDir} ke root direktori.");
+                        break;
+                    }
+                }
+
+                // Jika tidak ada folder statis (atau frameworknya adalah 'node'), jalankan mode Server (SSR) dengan PM2
+                if (!$hasStatic || $framework === 'node') {
+                    $this->log($deploy, '> Output statis tidak ditemukan. Mengasumsikan aplikasi berjalan di mode Server (SSR/API)...');
+                    
+                    // Assign port
+                    $port = null;
+                    for ($p = 8000; $p <= 9000; $p++) {
+                        $connection = @fsockopen('127.0.0.1', $p, $errCode, $errStr, 0.1);
+                        if (!is_resource($connection)) {
+                            $port = $p;
+                            break;
+                        }
+                        if (is_resource($connection)) fclose($connection);
+                    }
+
+                    if (!$port) {
+                        $this->log($deploy, '> [ERROR] Tidak ada port yang tersedia untuk Node Server.');
+                        return;
+                    }
+
+                    $pm2Name = "prod_{$this->project->id}";
+                    
+                    // Kill existing process if any
+                    $this->log($deploy, "> Menghentikan proses lama (jika ada)...");
+                    $this->exec("pm2 delete {$pm2Name} 2>/dev/null || true", $deploy);
+                    
+                    if ($this->project->dev_pid) {
+                        $this->exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true", $deploy);
+                        $this->exec("pm2 delete \"{$this->project->dev_pid}\" 2>/dev/null || true", $deploy);
+                    }
+
+                    $startCommand = "npm start";
+                    if ($framework === 'node') {
+                        // Jika ada ecosystem.config.js atau server.js, jalankan itu. Jika tidak, npm start
+                        if (file_exists("{$projectDir}/ecosystem.config.js")) {
+                            $startCommand = "ecosystem.config.js";
+                        } elseif (file_exists("{$projectDir}/server.js")) {
+                            $startCommand = "server.js";
+                        } elseif (file_exists("{$projectDir}/index.js")) {
+                            $startCommand = "index.js";
+                        } elseif (file_exists("{$projectDir}/app.js")) {
+                            $startCommand = "app.js";
+                        }
+                    }
+
+                    $this->log($deploy, "> Starting Node/SSR Server on port {$port} via PM2...");
+                    
+                    // PM2 assumes ecosystem file if passed, otherwise runs the script. If npm start, it's 'npm -- run start'
+                    if ($startCommand === 'npm start') {
+                        $pm2Cmd = "pm2 start npm --name \"{$pm2Name}\" -- run start";
+                    } else {
+                        $pm2Cmd = "pm2 start {$startCommand} --name \"{$pm2Name}\"";
+                    }
+                    
+                    $this->exec("cd {$projectDir} && PORT={$port} {$pm2Cmd}", $deploy);
+                    
+                    // Buat proxy script
+                    $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty...");
+                    $proxyScript = $this->generatePhpReverseProxy($port, 'Node.js Application Server');
+                    file_put_contents("{$projectDir}/index.php", $proxyScript);
+                    file_put_contents("{$projectDir}/.port", $port);
+                    $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
+                    
+                    // Kita gunakan dev_mode = true untuk mengindikasikan ada server yang berjalan di background
+                    // dan menyimpan ID PM2 di dev_pid
+                    $this->project->update([
+                        'dev_mode' => true,
+                        'dev_port' => $port,
+                        'dev_pid' => $pm2Name
+                    ]);
+                    
+                    $this->log($deploy, "> Server SSR berjalan dengan PM2 (ID: {$pm2Name}) pada port {$port}.");
+                }
             }
         }
     }
@@ -373,84 +448,7 @@ class AutoDeployProject implements ShouldQueue
         if ($pid) {
             $this->log($deploy, "> Python server running on PID: {$pid} (Port: {$port})");
             $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty (mengatasi isolasi Docker)...");
-            $proxyScript = <<<PHP
-<?php
-/**
- * Ryaze - Auto-generated PHP Reverse Proxy
- * Proxies traffic from OpenResty to the Python daemon.
- */
-\$port = {$port};
-\$host = '127.0.0.1';
-\$path = \$_SERVER['REQUEST_URI'];
-\$method = \$_SERVER['REQUEST_METHOD'];
-\$headers = getallheaders();
-
-\$url = "http://{\$host}:{\$port}{\$path}";
-
-\$ch = curl_init(\$url);
-curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$method);
-curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt(\$ch, CURLOPT_HEADER, true);
-curl_setopt(\$ch, CURLOPT_FOLLOWLOCATION, false);
-
-\$reqHeaders = [];
-foreach (\$headers as \$k => \$v) {
-    if (strtolower(\$k) === 'host') continue;
-    \$reqHeaders[] = "\$k: \$v";
-}
-curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$reqHeaders);
-
-if (\$method === 'POST' || \$method === 'PUT' || \$method === 'PATCH') {
-    \$body = file_get_contents('php://input');
-    if (empty(\$body) && !empty(\$_POST)) {
-        // Fallback for multipart/form-data if php://input is empty
-        \$postFields = \$_POST;
-        if (!empty(\$_FILES)) {
-            foreach (\$_FILES as \$key => \$file) {
-                if (is_array(\$file['tmp_name'])) {
-                    foreach (\$file['tmp_name'] as \$i => \$tmpName) {
-                        if (\$file['error'][\$i] === UPLOAD_ERR_OK) {
-                            \$postFields["{\$key}[\$i]"] = new \CURLFile(\$tmpName, \$file['type'][\$i], \$file['name'][\$i]);
-                        }
-                    }
-                } else {
-                    if (\$file['error'] === UPLOAD_ERR_OK) {
-                        \$postFields[\$key] = new \CURLFile(\$file['tmp_name'], \$file['type'], \$file['name']);
-                    }
-                }
-            }
-        }
-        curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$postFields);
-    } else {
-        curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$body);
-    }
-}
-
-\$response = curl_exec(\$ch);
-if (curl_errno(\$ch)) {
-    http_response_code(502);
-    echo "502 Bad Gateway - Python Application Server is down, crashed, or still starting up.";
-    exit;
-}
-
-\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
-\$resHeaders = substr(\$response, 0, \$headerSize);
-\$resBody = substr(\$response, \$headerSize);
-\$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
-
-http_response_code(\$httpCode);
-
-\$lines = explode("\\n", \$resHeaders);
-foreach (\$lines as \$line) {
-    \$line = trim(\$line);
-    if (empty(\$line)) continue;
-    if (strpos(strtolower(\$line), 'transfer-encoding:') === 0) continue;
-    header(\$line, false);
-}
-
-echo \$resBody;
-curl_close(\$ch);
-PHP;
+            $proxyScript = $this->generatePhpReverseProxy($port, 'Python Application Server');
             file_put_contents("{$projectDir}/index.php", $proxyScript);
             file_put_contents("{$projectDir}/.port", $port);
             $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
@@ -2771,5 +2769,87 @@ JS
 </html>
 HTML
         );
+    }
+
+    private function generatePhpReverseProxy(int $port, string $serverName): string
+    {
+        return <<<PHP
+<?php
+/**
+ * Ryaze - Auto-generated PHP Reverse Proxy
+ * Proxies traffic from OpenResty to the internal application daemon.
+ */
+\$port = {$port};
+\$host = '127.0.0.1';
+\$path = \$_SERVER['REQUEST_URI'];
+\$method = \$_SERVER['REQUEST_METHOD'];
+\$headers = getallheaders();
+
+\$url = "http://{\$host}:{\$port}{\$path}";
+
+\$ch = curl_init(\$url);
+curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$method);
+curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt(\$ch, CURLOPT_HEADER, true);
+curl_setopt(\$ch, CURLOPT_FOLLOWLOCATION, false);
+
+\$reqHeaders = [];
+foreach (\$headers as \$k => \$v) {
+    if (strtolower(\$k) === 'host') continue;
+    \$reqHeaders[] = "\$k: \$v";
+}
+curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$reqHeaders);
+
+if (\$method === 'POST' || \$method === 'PUT' || \$method === 'PATCH') {
+    \$body = file_get_contents('php://input');
+    if (empty(\$body) && !empty(\$_POST)) {
+        // Fallback for multipart/form-data if php://input is empty
+        \$postFields = \$_POST;
+        if (!empty(\$_FILES)) {
+            foreach (\$_FILES as \$key => \$file) {
+                if (is_array(\$file['tmp_name'])) {
+                    foreach (\$file['tmp_name'] as \$i => \$tmpName) {
+                        if (\$file['error'][\$i] === UPLOAD_ERR_OK) {
+                            \$postFields["{\$key}[\$i]"] = new \CURLFile(\$tmpName, \$file['type'][\$i], \$file['name'][\$i]);
+                        }
+                    }
+                } else {
+                    if (\$file['error'] === UPLOAD_ERR_OK) {
+                        \$postFields[\$key] = new \CURLFile(\$file['tmp_name'], \$file['type'], \$file['name']);
+                    }
+                }
+            }
+        }
+        curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$postFields);
+    } else {
+        curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$body);
+    }
+}
+
+\$response = curl_exec(\$ch);
+if (curl_errno(\$ch)) {
+    http_response_code(502);
+    echo "502 Bad Gateway - {$serverName} is down, crashed, or still starting up.";
+    exit;
+}
+
+\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
+\$resHeaders = substr(\$response, 0, \$headerSize);
+\$resBody = substr(\$response, \$headerSize);
+\$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
+
+http_response_code(\$httpCode);
+
+\$lines = explode("\\n", \$resHeaders);
+foreach (\$lines as \$line) {
+    \$line = trim(\$line);
+    if (empty(\$line)) continue;
+    if (strpos(strtolower(\$line), 'transfer-encoding:') === 0) continue;
+    header(\$line, false);
+}
+
+echo \$resBody;
+curl_close(\$ch);
+PHP;
     }
 }

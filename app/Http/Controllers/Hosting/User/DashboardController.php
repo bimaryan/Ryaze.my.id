@@ -1388,6 +1388,17 @@ PHP;
         // 1. Hapus Record DNS Cloudflare
         $this->deleteCloudflareDNS($project->ryaze_domain);
 
+        // 1.5. Hentikan Proses Background (PM2 / Python / Node)
+        if ($project->dev_pid) {
+            $pid = escapeshellarg($project->dev_pid);
+            if (is_numeric($project->dev_pid)) {
+                exec("kill -9 {$pid} 2>/dev/null || true");
+            } else {
+                exec("pm2 delete {$pid} 2>/dev/null || true");
+            }
+        }
+        exec("pm2 delete \"prod_{$project->id}\" 2>/dev/null || true");
+
         // 2. Hapus Folder Root
         if (is_dir($projectDir)) {
             exec('rm -rf '.escapeshellarg($projectDir));
