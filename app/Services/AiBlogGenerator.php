@@ -95,14 +95,14 @@ PROMPT
         }
 
         $validator = Validator::make($decoded, [
-            'title' => ['required', 'string', 'max:70'],
-            'excerpt' => ['required', 'string', 'min:80', 'max:500'],
-            'body' => ['required', 'string', 'min:1200', 'max:50000'],
-            'tags' => ['required', 'array', 'min:2', 'max:6'],
-            'tags.*' => ['string', 'max:40'],
-            'meta_title' => ['required', 'string', 'max:70'],
-            'meta_description' => ['required', 'string', 'max:160'],
-            'image_prompt' => ['required', 'string', 'max:1000'],
+            'title' => ['required', 'string', 'max:200'],
+            'excerpt' => ['required', 'string', 'max:1000'],
+            'body' => ['required', 'string', 'min:100', 'max:100000'],
+            'tags' => ['required', 'array', 'max:15'],
+            'tags.*' => ['string', 'max:100'],
+            'meta_title' => ['required', 'string', 'max:200'],
+            'meta_description' => ['required', 'string', 'max:500'],
+            'image_prompt' => ['required', 'string', 'max:2000'],
         ]);
 
         if ($validator->fails()) {
