@@ -1265,6 +1265,9 @@ PHP;
 
         exec($fullCommand, $outputArray, $exitCode);
         $outputString = implode("\n", $outputArray);
+        
+        // Hide absolute path in terminal output to make it look like root directory
+        $outputString = str_replace($projectDir, '/' . $subdomain, $outputString);
 
         return response()->json([
             'output' => $outputString,
