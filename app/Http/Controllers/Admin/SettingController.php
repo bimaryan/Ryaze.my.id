@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Models\ArticleCategory;
 use Illuminate\Http\Request;
 
 class SettingController extends Controller
@@ -11,7 +12,9 @@ class SettingController extends Controller
     public function index()
     {
         $settings = Setting::all()->pluck('value', 'key')->toArray();
-        return view('pages.admin.settings.index', compact('settings'));
+        $articleCategories = ArticleCategory::orderBy('name')->get();
+
+        return view('pages.admin.settings.index', compact('settings', 'articleCategories'));
     }
 
     public function update(Request $request)

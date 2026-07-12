@@ -187,6 +187,61 @@
                     </div>
                 </div>
 
+                {{-- Otomasi Blog AI --}}
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-wand-magic-sparkles text-violet-500 mr-2"></i>Otomasi Blog AI</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Daftar Topik</label>
+                            <textarea name="blog_ai_topics" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition" placeholder="Satu topik per baris, misalnya:&#10;Panduan deploy website Laravel&#10;Cara memilih hosting untuk UMKM">{{ $settings['blog_ai_topics'] ?? '' }}</textarea>
+                            <p class="text-xs text-slate-500 mt-1">Sistem memilih satu topik secara acak dan menghasilkan artikel beserta cover image.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Kategori Default</label>
+                            <select name="blog_ai_category_id" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                                <option value="">Tanpa kategori</option>
+                                @foreach ($articleCategories as $category)
+                                    <option value="{{ $category->id }}" {{ ($settings['blog_ai_category_id'] ?? '') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Frekuensi</label>
+                            <select name="blog_ai_frequency" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                                <option value="daily" {{ ($settings['blog_ai_frequency'] ?? 'daily') === 'daily' ? 'selected' : '' }}>Setiap hari</option>
+                                <option value="weekly" {{ ($settings['blog_ai_frequency'] ?? '') === 'weekly' ? 'selected' : '' }}>Setiap minggu</option>
+                            </select>
+                            <p class="text-xs text-slate-500 mt-1">Scheduler mengecek setiap jam dan membuat satu artikel saat jadwalnya tiba.</p>
+                        </div>
+                        <div class="p-4 bg-violet-50 border border-violet-100 rounded-xl">
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <h4 class="font-bold text-violet-800 text-sm">Aktifkan Otomasi</h4>
+                                    <p class="text-xs text-violet-700 mt-1">Butuh OPENAI_API_KEY dan queue worker yang aktif.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="hidden" name="blog_ai_enabled" value="0">
+                                    <input type="checkbox" name="blog_ai_enabled" value="1" class="sr-only peer" {{ ($settings['blog_ai_enabled'] ?? '0') === '1' ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-violet-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-violet-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <h4 class="font-bold text-amber-800 text-sm">Auto-publish</h4>
+                                    <p class="text-xs text-amber-700 mt-1">Matikan agar hasil otomatis selalu masuk draft untuk review.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="hidden" name="blog_ai_auto_publish" value="0">
+                                    <input type="checkbox" name="blog_ai_auto_publish" value="1" class="sr-only peer" {{ ($settings['blog_ai_auto_publish'] ?? '0') === '1' ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:border-amber-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- API & Integrasi 1Panel --}}
                 <div>
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-server text-indigo-500 mr-2"></i> API & Integrasi 1Panel</h3>

@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
         // Manajemen Artikel
         Route::post('superadmin/articles/upload-image', [\App\Http\Controllers\Admin\ArticleController::class, 'uploadImage'])->name('superadmin.articles.uploadImage');
         Route::post('superadmin/articles/import', [\App\Http\Controllers\Admin\ArticleController::class, 'import'])->name('superadmin.articles.import');
+        Route::post('superadmin/articles/generate-ai', [\App\Http\Controllers\Admin\ArticleController::class, 'generateAi'])->name('superadmin.articles.generate_ai');
         Route::get('superadmin/articles/template', [\App\Http\Controllers\Admin\ArticleController::class, 'downloadTemplate'])->name('superadmin.articles.template');
         Route::resource('superadmin/articles', \App\Http\Controllers\Admin\ArticleController::class)->names('superadmin.articles');
         Route::patch('superadmin/articles/{hashid}/featured', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleFeatured'])->name('superadmin.articles.featured');
@@ -277,4 +278,3 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/joki/finance', [JokiAdminDashboardController::class, 'financeReport'])->name('admin_joki.finance');
     });
 });
-

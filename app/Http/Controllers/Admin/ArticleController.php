@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Vinkla\Hashids\Facades\Hashids;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ArticleImport;
+use App\Jobs\GenerateAiBlogArticle;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ArticleController extends Controller
@@ -94,6 +95,29 @@ class ArticleController extends Controller
 
         return redirect()->route('superadmin.articles.index')
             ->with('success', 'Artikel berhasil dibuat.');
+    }
+
+    /** Queue generation so an admin request is never held open by the AI APIs. */
+    public function generateAi(Request $request)
+    {
+        $data = $request->validate([
+            'topic' => 'required|string|min:5|max:500',
+            'category_id' => 'nullable|exists:article_categories,id',
+            'publish' => 'nullable|boolean',
+        ]);
+
+        GenerateAiBlogArticle::dispatch(
+            topic: $data['topic'],
+            authorId: Auth::id(),
+            categoryId: $data['category_id'] ?? null,
+            publish: $request->boolean('publish'),
+        );
+
+        $message = $request->boolean('publish')
+            ? 'Artikel AI beserta gambar sampul telah masuk antrean untuk dipublikasikan.'
+            : 'Artikel AI beserta gambar sampul telah masuk antrean sebagai draft untuk direview.';
+
+        return redirect()->route('superadmin.articles.index')->with('success', $message);
     }
 
     public function edit($hashid)

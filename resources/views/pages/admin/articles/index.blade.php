@@ -15,6 +15,10 @@
                 class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 <i class="fa-solid fa-file-excel mr-2"></i> Import Excel
             </button>
+            <button type="button" onclick="document.getElementById('aiGenerateModal').classList.remove('hidden')"
+                class="inline-flex items-center bg-violet-600 hover:bg-violet-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Buat dengan AI
+            </button>
             <a href="{{ route('superadmin.articles.create') }}"
                 class="inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 <i class="fa-solid fa-plus mr-2"></i> Tulis Artikel
@@ -182,6 +186,49 @@
                     <div class="flex items-center p-4 md:p-5 border-t border-slate-100 rounded-b">
                         <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">Import Data</button>
                         <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-900 focus:outline-none bg-white rounded-lg border border-slate-200 hover:bg-slate-100 hover:text-indigo-700 transition">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Generate Modal -->
+    <div id="aiGenerateModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full flex bg-slate-900/50 backdrop-blur-sm">
+        <div class="relative p-4 w-full max-w-lg max-h-full m-auto">
+            <div class="relative bg-white rounded-xl shadow">
+                <div class="flex items-center justify-between p-4 md:p-5 border-b border-slate-100 rounded-t">
+                    <div>
+                        <h3 class="text-lg font-semibold text-slate-900">Buat Artikel dengan AI</h3>
+                        <p class="text-xs text-slate-500 mt-1">AI akan membuat isi, SEO, tag, dan gambar sampul.</p>
+                    </div>
+                    <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="text-slate-400 hover:bg-slate-100 hover:text-slate-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <form action="{{ route('superadmin.articles.generate_ai') }}" method="POST">
+                    @csrf
+                    <div class="p-4 md:p-5 space-y-4">
+                        <div>
+                            <label for="ai-topic" class="block mb-2 text-sm font-medium text-slate-700">Topik</label>
+                            <textarea id="ai-topic" name="topic" rows="3" required minlength="5" maxlength="500" class="block w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none" placeholder="Contoh: Panduan memilih hosting untuk website UMKM"></textarea>
+                        </div>
+                        <div>
+                            <label for="ai-category" class="block mb-2 text-sm font-medium text-slate-700">Kategori</label>
+                            <select id="ai-category" name="category_id" class="block w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg p-3">
+                                <option value="">Tanpa kategori</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <label class="flex items-start gap-3 text-sm text-slate-700">
+                            <input type="checkbox" name="publish" value="1" class="mt-0.5 rounded border-slate-300 text-violet-600 focus:ring-violet-500">
+                            <span><span class="font-medium">Langsung publikasikan</span><br><span class="text-xs text-slate-500">Jika tidak dicentang, artikel dibuat sebagai draft untuk direview.</span></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center p-4 md:p-5 border-t border-slate-100 rounded-b">
+                        <button type="submit" class="text-white bg-violet-600 hover:bg-violet-700 font-medium rounded-lg text-sm px-5 py-2.5 transition"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Masukkan ke Antrean</button>
+                        <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-700 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 transition">Batal</button>
                     </div>
                 </form>
             </div>

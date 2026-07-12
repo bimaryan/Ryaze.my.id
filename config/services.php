@@ -84,6 +84,16 @@ return [
         'secret_key' => env('TURNSTILE_SECRET_KEY'),
     ],
 
-];
+    /*
+    |--------------------------------------------------------------------------
+    | OpenAI - generator artikel dan gambar sampul
+    |--------------------------------------------------------------------------
+    */
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'text_model' => env('OPENAI_TEXT_MODEL', 'gpt-5.6'),
+        'image_model' => env('OPENAI_IMAGE_MODEL', 'gpt-image-2'),
+    ],
 
+];
 
