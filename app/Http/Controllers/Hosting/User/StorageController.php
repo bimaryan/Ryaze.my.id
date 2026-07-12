@@ -57,7 +57,7 @@ class StorageController extends Controller
                 'used_bytes' => $used,
                 'used_human' => $this->formatBytes($used),
                 'percent' => 0,
-                'dir' => $projectDir,
+                'dir' => '/' . $subdomain,
             ];
         }
 
@@ -137,7 +137,7 @@ class StorageController extends Controller
             'limit_human' => $limit === -1 ? 'Unlimited' : $this->formatBytes($limit),
             'percent' => $limit > 0 ? min(100, round(($totalUsed / $limit) * 100, 1)) : 0,
             'breakdown' => $breakdown,
-            'project_dir' => $projectDir,
+            'project_dir' => '/' . $subdomain,
         ]);
     }
 
