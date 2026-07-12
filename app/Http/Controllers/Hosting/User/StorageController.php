@@ -43,7 +43,7 @@ class StorageController extends Controller
 
         $totalUsed = 0;
         // Shared Hosting: Limit adalah jatah akun secara global
-        $totalLimit = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $totalLimit = $user->role === 'superadmin' ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
         $items = [];
 
         foreach ($projects as $project) {
@@ -83,7 +83,7 @@ class StorageController extends Controller
             'total_used' => $totalUsed,
             'total_human' => $this->formatBytes($totalUsed),
             'limit_bytes' => $totalLimit,
-            'limit_human' => $this->formatBytes($totalLimit),
+            'limit_human' => $totalLimit === -1 ? 'Unlimited' : $this->formatBytes($totalLimit),
             'percent' => $totalLimit > 0 ? min(100, round(($totalUsed / $totalLimit) * 100, 1)) : 0,
         ]);
     }
@@ -104,7 +104,7 @@ class StorageController extends Controller
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         
         // Shared Hosting: Limit yg ditampilkan adalah limit total akun
-        $limit = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $limit = $user->role === 'superadmin' ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         $totalUsed = $this->getFolderSize($projectDir);
 
@@ -134,7 +134,7 @@ class StorageController extends Controller
             'used_bytes' => $totalUsed,
             'used_human' => $this->formatBytes($totalUsed),
             'limit_bytes' => $limit,
-            'limit_human' => $this->formatBytes($limit),
+            'limit_human' => $limit === -1 ? 'Unlimited' : $this->formatBytes($limit),
             'percent' => $limit > 0 ? min(100, round(($totalUsed / $limit) * 100, 1)) : 0,
             'breakdown' => $breakdown,
             'project_dir' => $projectDir,
@@ -147,6 +147,10 @@ class StorageController extends Controller
     public function upgrade()
     {
         $user = Auth::user();
+
+        if ($user->role === 'superadmin') {
+            return back()->with('error', 'Superadmin memiliki storage unlimited.');
+        }
 
         if (($user->hosting_storage_limit_mb ?? 1024) >= 5120) { // Limit max 5GB misalnya
             return back()->with('error', 'Anda sudah mencapai kapasitas maksimal saat ini.');
@@ -182,6 +186,11 @@ class StorageController extends Controller
     public function check(HostingProject $project): bool
     {
         $user = $project->user;
+
+        if ($user->role === 'superadmin') {
+            return true;
+        }
+
         $projects = HostingProject::where('user_id', $user->id)->get();
         $totalUsed = 0;
 

@@ -35,7 +35,7 @@
                 ->first();
         @endphp
 
-        @if ($upgradeInvoice)
+        @if ($upgradeInvoice && Auth::user()->role !== 'superadmin')
             <div class="mt-6 bg-indigo-50 border border-indigo-200 rounded-xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
                 <div class="flex items-start sm:items-center gap-3">
                     <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
@@ -100,7 +100,7 @@
                 </div>
             @endif
 
-            @if ((Auth::user()->hosting_storage_limit_mb ?? 1024) < 3072 && !$upgradeInvoice)
+            @if (Auth::user()->role !== 'superadmin' && (Auth::user()->hosting_storage_limit_mb ?? 1024) < 3072 && !$upgradeInvoice)
                 <form action="{{ route('user_hosting.storage.upgrade') }}" method="POST" class="mt-6 pt-5 border-t border-slate-100">
                     @csrf
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
