@@ -273,6 +273,13 @@ class DashboardController extends Controller
             $envContent = file_get_contents($envPath);
         }
 
+        // Membaca konfigurasi WAF Blocked IPs
+        $wafPath = $projectDir.'/.waf_blocks';
+        $wafContent = '';
+        if (file_exists($wafPath)) {
+            $wafContent = file_get_contents($wafPath);
+        }
+
         // Monitoring (Disk & Visitors)
         $diskUsage = '0 MB';
         $visitorsCount = 0;
@@ -323,7 +330,7 @@ class DashboardController extends Controller
                 }
             })->get();
 
-        return view('pages.hosting.user.show', compact('project', 'envContent', 'diskUsage', 'visitorsCount', 'projectEmails'));
+        return view('pages.hosting.user.show', compact('project', 'envContent', 'wafContent', 'diskUsage', 'visitorsCount', 'projectEmails'));
     }
 
     public function createStaging($hashid)
@@ -1442,6 +1449,8 @@ PHP;
         $maintenanceMode = $request->has('maintenance_mode');
         $forceHttps = $request->has('force_https');
         $underAttack = $request->has('is_under_attack');
+        
+        $blockedIps = trim($request->input('blocked_ips', ''));
 
         // 1. Terapkan Maintenance Mode (Membuat file .maintenance untuk dibaca Nginx)
         $maintenanceFile = "{$projectDir}/.maintenance";
@@ -1464,6 +1473,19 @@ PHP;
         } else {
             if (file_exists($rateLimitFile)) {
                 @unlink($rateLimitFile);
+            }
+        }
+
+        // 1.75. Terapkan WAF Blocked IPs
+        $wafFile = "{$projectDir}/.waf_blocks";
+        if (!empty($blockedIps)) {
+            // Bersihkan input (hapus spasi ekstra)
+            $ips = array_filter(array_map('trim', explode("\n", $blockedIps)));
+            file_put_contents($wafFile, implode("\n", $ips));
+            @chmod($wafFile, 0666);
+        } else {
+            if (file_exists($wafFile)) {
+                @unlink($wafFile);
             }
         }
 

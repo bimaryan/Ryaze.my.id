@@ -749,6 +749,13 @@
                                 </div>
                             </label>
                         </div>
+                        <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
+                            <div class="mb-3">
+                                <h4 class="text-sm font-semibold text-slate-700">Blokir IP (WAF)</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Masukkan daftar alamat IP yang ingin diblokir (satu IP per baris). Pengunjung dengan IP ini akan mendapatkan pesan 403 Forbidden.</p>
+                            </div>
+                            <textarea name="blocked_ips" rows="4" class="w-full bg-white border border-slate-200 rounded-lg text-slate-700 font-mono text-sm p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="192.168.1.1&#10;10.0.0.5" spellcheck="false">{{ old('blocked_ips', $wafContent) }}</textarea>
+                        </div>
                     </div>
                     <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
                         <button type="submit"
