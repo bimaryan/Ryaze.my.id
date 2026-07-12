@@ -256,11 +256,11 @@ class AutoDeployProject implements ShouldQueue
                     
                     // Kill existing process if any
                     $this->log($deploy, "> Menghentikan proses lama (jika ada)...");
-                    $this->exec("pm2 delete {$pm2Name} 2>/dev/null || true", $deploy);
+                    $this->exec("npx -y pm2 delete {$pm2Name} 2>/dev/null || true", $deploy);
                     
                     if ($this->project->dev_pid) {
                         $this->exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true", $deploy);
-                        $this->exec("pm2 delete \"{$this->project->dev_pid}\" 2>/dev/null || true", $deploy);
+                        $this->exec("npx -y pm2 delete \"{$this->project->dev_pid}\" 2>/dev/null || true", $deploy);
                     }
 
                     $startCommand = "npm start";
@@ -281,9 +281,9 @@ class AutoDeployProject implements ShouldQueue
                     
                     // PM2 assumes ecosystem file if passed, otherwise runs the script. If npm start, it's 'npm -- run start'
                     if ($startCommand === 'npm start') {
-                        $pm2Cmd = "pm2 start npm --name \"{$pm2Name}\" -- run start";
+                        $pm2Cmd = "npx -y pm2 start npm --name \"{$pm2Name}\" -- run start";
                     } else {
-                        $pm2Cmd = "pm2 start {$startCommand} --name \"{$pm2Name}\"";
+                        $pm2Cmd = "npx -y pm2 start {$startCommand} --name \"{$pm2Name}\"";
                     }
                     
                     $this->exec("cd {$projectDir} && PORT={$port} {$pm2Cmd}", $deploy);
