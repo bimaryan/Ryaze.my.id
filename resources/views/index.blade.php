@@ -162,6 +162,31 @@
                     } catch(err) {}
                 }
             });
+
+            // Handle Delete Buttons
+            document.body.addEventListener('click', function (e) {
+                const btn = e.target.closest('.delete-btn');
+                if (btn) {
+                    const form = btn.closest('.delete-form');
+                    if (form) {
+                        Swal.fire({
+                            title: 'Apakah Anda yakin?',
+                            text: 'Data yang dihapus tidak dapat dikembalikan!',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#4f46e5',
+                            cancelButtonColor: '#f43f5e',
+                            confirmButtonText: 'Ya, hapus!',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    }
+                }
+            });
+
             
             // Handle browser Back/Forward buttons
             window.addEventListener('popstate', function (e) {
