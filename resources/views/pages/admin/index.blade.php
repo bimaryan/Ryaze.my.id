@@ -1,4 +1,4 @@
-﻿@extends('index')
+@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -513,5 +513,71 @@
                 </div>
             </div>
 
+            <!-- Chart Scripts (Inside layout for PJAX support) -->
+            <script nonce="{{ csp_nonce() }}">
+                (function() {
+                    // 1. Chart: User Registrations (Line)
+                    var optionsRegistrations = {
+                        chart: { type: 'area', height: 320, fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
+                        series: [{ name: 'Pendaftar Baru', data: @json($chartUserRegistrations['series']) }],
+                        xaxis: { categories: @json($chartUserRegistrations['labels']) },
+                        colors: ['#3b82f6'],
+                        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+                        dataLabels: { enabled: false },
+                        stroke: { curve: 'smooth', width: 2 }
+                    };
+                    var chartRegEl = document.querySelector("#chart-user-registrations");
+                    if(chartRegEl) {
+                        new ApexCharts(chartRegEl, optionsRegistrations).render();
+                    }
+
+                    // 2. Chart: User Roles (Pie/Donut)
+                    var optionsRoles = {
+                        chart: { type: 'donut', height: 320, fontFamily: 'Inter, sans-serif' },
+                        series: @json($chartUserRoles['series']),
+                        labels: @json($chartUserRoles['labels']),
+                        colors: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#64748b'],
+                        dataLabels: { enabled: true },
+                        legend: { position: 'bottom' }
+                    };
+                    var chartRolesEl = document.querySelector("#chart-user-roles");
+                    if(chartRolesEl) {
+                        new ApexCharts(chartRolesEl, optionsRoles).render();
+                    }
+
+                    // 3. Chart: Revenue (Bar)
+                    var optionsRevenue = {
+                        chart: { type: 'bar', height: 320, fontFamily: 'Inter, sans-serif', stacked: false, toolbar: { show: false } },
+                        series: [
+                            { name: 'Pendapatan Joki', data: @json($chartRevenue['joki']) },
+                            { name: 'Pendapatan Hosting', data: @json($chartRevenue['hosting']) }
+                        ],
+                        xaxis: { categories: @json($chartRevenue['labels']) },
+                        colors: ['#6366f1', '#10b981'],
+                        dataLabels: { enabled: false },
+                        stroke: { show: true, width: 2, colors: ['transparent'] },
+                        plotOptions: { bar: { horizontal: false, columnWidth: '55%', borderRadius: 4 } },
+                        yaxis: {
+                            labels: {
+                                formatter: function (val) {
+                                    return "Rp " + val.toLocaleString('id-ID');
+                                }
+                            }
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) {
+                                    return "Rp " + val.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    };
+                    var chartRevEl = document.querySelector("#chart-revenue");
+                    if(chartRevEl) {
+                        new ApexCharts(chartRevEl, optionsRevenue).render();
+                    }
+                })();
+            </script>
         </div>
     </x-ui.page-layout>
+@endsection
