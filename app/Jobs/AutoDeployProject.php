@@ -292,6 +292,9 @@ class AutoDeployProject implements ShouldQueue
                     $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty...");
                     $proxyScript = $this->generatePhpReverseProxy($port, 'Node.js Application Server');
                     file_put_contents("{$projectDir}/index.php", $proxyScript);
+                    if (is_dir("{$projectDir}/public")) {
+                        file_put_contents("{$projectDir}/public/index.php", $proxyScript);
+                    }
                     file_put_contents("{$projectDir}/.port", $port);
                     $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
                     
@@ -450,6 +453,9 @@ class AutoDeployProject implements ShouldQueue
             $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty (mengatasi isolasi Docker)...");
             $proxyScript = $this->generatePhpReverseProxy($port, 'Python Application Server');
             file_put_contents("{$projectDir}/index.php", $proxyScript);
+            if (is_dir("{$projectDir}/public")) {
+                file_put_contents("{$projectDir}/public/index.php", $proxyScript);
+            }
             file_put_contents("{$projectDir}/.port", $port);
             $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
             

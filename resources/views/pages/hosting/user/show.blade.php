@@ -621,12 +621,12 @@
                             </div>
                         </div>
                         <div class="p-3 border-t border-[#333] bg-[#252526]">
-                            <form id="grok-chat-form" class="flex flex-col gap-2">
-                                <textarea id="grok-chat-input" rows="2" class="w-full bg-[#3c3c3c] text-white text-xs px-3 py-2 rounded outline-none border border-[#444] focus:border-indigo-500 resize-none" placeholder="Tanya Ryaze AI..."></textarea>
-                                <button type="submit" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-xs hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
+                            <div id="grok-chat-form" class="flex flex-col gap-2">
+                                <textarea id="grok-chat-input" rows="2" class="w-full bg-[#3c3c3c] text-white text-xs px-3 py-2 rounded outline-none border border-[#444] focus:border-indigo-500 resize-none" placeholder="Tanya Ryaze AI... (Enter untuk kirim, Shift+Enter untuk baris baru)"></textarea>
+                                <button type="button" id="grok-chat-send-btn" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-xs hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-paper-plane"></i> Kirim
                                 </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
 
@@ -2187,8 +2187,7 @@
         });
 
         // ── Groq AI Logic ───────────────────────────────────────────────────────
-        document.getElementById('grok-chat-form')?.addEventListener('submit', (e) => {
-            e.preventDefault();
+        const sendGrokMessage = () => {
             const input = document.getElementById('grok-chat-input');
             const val = input.value.trim();
             if (!val) return;
@@ -2288,6 +2287,15 @@
                 `;
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             });
+        };
+
+        document.getElementById('grok-chat-send-btn')?.addEventListener('click', sendGrokMessage);
+        
+        document.getElementById('grok-chat-input')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendGrokMessage();
+            }
         });
 
     </script>
