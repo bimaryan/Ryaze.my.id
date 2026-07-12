@@ -95,5 +95,15 @@ return [
         'image_model' => env('OPENAI_IMAGE_MODEL', 'gpt-image-2'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Groq - generator artikel
+    |--------------------------------------------------------------------------
+    */
+    'groq' => [
+        'api_key' => env('GROQ_API_KEY'),
+        'text_model' => env('GROQ_TEXT_MODEL', 'llama3-70b-8192'),
+    ],
+
 ];
 

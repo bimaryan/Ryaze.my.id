@@ -26,7 +26,8 @@ class AiBlogGenerator
         }
 
         $content = $this->generateContent($topic, $category);
-        $coverImage = $this->generateCoverImage($content['image_prompt']);
+        // Cover image tidak di-generate karena Groq hanya model teks.
+        $coverImage = null; 
 
         return Article::create([
             'user_id' => $author->id,
@@ -48,9 +49,12 @@ class AiBlogGenerator
         $response = Http::withToken($this->apiKey())
             ->acceptJson()
             ->timeout(180)
-            ->post('https://api.openai.com/v1/responses', [
-                'model' => config('services.openai.text_model'),
-                'instructions' => <<<'PROMPT'
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                'model' => config('services.groq.text_model'),
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => <<<'PROMPT'
 Anda adalah editor blog berbahasa Indonesia untuk Ryaze, platform hosting dan jasa pembuatan website.
 Tulis artikel yang orisinal, akurat, bermanfaat, dan mudah dipahami. Jangan mengklaim fakta, harga,
 atau statistik yang tidak diberikan. Jangan menulis skrip, iframe, event handler HTML, atau URL javascript.
@@ -64,17 +68,23 @@ Kembalikan HANYA JSON valid tanpa markdown dengan struktur ini:
   "meta_description": "maksimal 160 karakter",
   "image_prompt": "prompt bahasa Inggris untuk cover artikel, tanpa teks/logo/watermark"
 }
-PROMPT,
-                'input' => sprintf(
-                    "Topik artikel: %s\nKategori: %s\nBuat artikel praktis dengan pembuka, beberapa subjudul, dan penutup.",
-                    $topic,
-                    $category?->name ?? 'Umum',
-                ),
+PROMPT
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => sprintf(
+                            "Topik artikel: %s\nKategori: %s\nBuat artikel praktis dengan pembuka, beberapa subjudul, dan penutup.",
+                            $topic,
+                            $category?->name ?? 'Umum',
+                        )
+                    ]
+                ],
+                'response_format' => ['type' => 'json_object'],
             ]);
 
         $response->throw();
 
-        $text = $response->json('output.0.content.0.text') ?? $response->json('output_text');
+        $text = $response->json('choices.0.message.content');
         if (! is_string($text) || trim($text) === '') {
             throw new RuntimeException('Respons AI tidak memuat konten artikel.');
         }
@@ -104,40 +114,13 @@ PROMPT,
         return $decoded;
     }
 
-    private function generateCoverImage(string $prompt): string
-    {
-        $response = Http::withToken($this->apiKey())
-            ->acceptJson()
-            ->timeout(180)
-            ->post('https://api.openai.com/v1/images/generations', [
-                'model' => config('services.openai.image_model'),
-                'prompt' => "Editorial blog cover image. {$prompt} Wide landscape composition, modern and professional. No text, no letters, no logos, no watermark.",
-            ]);
-
-        $response->throw();
-
-        $image = $response->json('data.0.b64_json');
-        if (! is_string($image) || $image === '') {
-            throw new RuntimeException('Respons AI tidak memuat gambar sampul.');
-        }
-
-        $binary = base64_decode($image, true);
-        if ($binary === false) {
-            throw new RuntimeException('Data gambar sampul AI tidak valid.');
-        }
-
-        $path = 'articles/generated/'.Str::uuid().'.png';
-        Storage::disk('public')->put($path, $binary);
-
-        return $path;
-    }
 
     private function apiKey(): string
     {
-        $key = config('services.openai.api_key');
+        $key = config('services.groq.api_key');
 
         if (! is_string($key) || $key === '') {
-            throw new RuntimeException('OPENAI_API_KEY belum diatur pada konfigurasi server.');
+            throw new RuntimeException('GROQ_API_KEY belum diatur pada konfigurasi server.');
         }
 
         return $key;
