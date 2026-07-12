@@ -279,14 +279,20 @@ class AutoDeployProject implements ShouldQueue
 
                     $this->log($deploy, "> Starting Node/SSR Server on port {$port} via PM2...");
                     
-                    // PM2 assumes ecosystem file if passed, otherwise runs the script. If npm start, it's 'npm -- run start'
+                    // Menggunakan file ecosystem config untuk PM2 agar environment variables (PORT, HOSTNAME) 
+                    // dijamin diteruskan ke dalam proses Node/Next.js dengan benar.
                     if ($startCommand === 'npm start') {
-                        $pm2Cmd = "npx -y pm2 start npm --name \"{$pm2Name}\" -- run start";
+                        $ecoConfig = "module.exports = { apps: [{ name: '{$pm2Name}', script: 'npm', args: 'run start', env: { PORT: {$port}, HOSTNAME: '127.0.0.1' } }] };";
+                        file_put_contents("{$projectDir}/.ryaze-pm2.js", $ecoConfig);
+                        $pm2Cmd = "npx -y pm2 start .ryaze-pm2.js";
                     } else {
                         $pm2Cmd = "npx -y pm2 start {$startCommand} --name \"{$pm2Name}\"";
                     }
                     
-                    $this->exec("cd {$projectDir} && PORT={$port} {$pm2Cmd}", $deploy);
+                    $this->exec("cd {$projectDir} && PORT={$port} HOSTNAME=127.0.0.1 {$pm2Cmd}", $deploy);
+                    
+                    // Tunggu sebentar agar SSR server (misal Next.js) sempat bootup dan mendengarkan port
+                    sleep(3);
                     
                     // Buat proxy script
                     $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty...");
