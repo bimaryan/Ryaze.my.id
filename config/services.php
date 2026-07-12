@@ -102,7 +102,7 @@ return [
     */
     'groq' => [
         'api_key' => env('GROQ_API_KEY'),
-        'text_model' => env('GROQ_TEXT_MODEL', 'llama3-70b-8192'),
+        'text_model' => env('GROQ_TEXT_MODEL', 'llama-3.1-70b-versatile'),
     ],
 
 ];
