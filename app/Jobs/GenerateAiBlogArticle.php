@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 class GenerateAiBlogArticle implements ShouldQueue
@@ -39,6 +40,7 @@ class GenerateAiBlogArticle implements ShouldQueue
 
         if ($this->scheduled) {
             Setting::setVal('blog_ai_last_generated_at', now()->toIso8601String());
+            Cache::forget('blog_ai_generation_queued');
         }
 
         Log::info('Artikel AI berhasil dibuat.', [
@@ -50,6 +52,10 @@ class GenerateAiBlogArticle implements ShouldQueue
 
     public function failed(Throwable $exception): void
     {
+        if ($this->scheduled) {
+            Cache::forget('blog_ai_generation_queued');
+        }
+
         Log::error('Pembuatan artikel AI gagal.', [
             'topic' => $this->topic,
             'scheduled' => $this->scheduled,

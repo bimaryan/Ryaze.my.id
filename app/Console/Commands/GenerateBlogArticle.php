@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 class GenerateBlogArticle extends Command
 {
@@ -27,18 +28,30 @@ class GenerateBlogArticle extends Command
             return self::SUCCESS;
         }
 
+        // Scheduler berjalan setiap menit. Kunci mencegah job duplikat saat
+        // pembuatan gambar masih berlangsung atau worker sedang sibuk.
+        if ($scheduled && ! Cache::add('blog_ai_generation_queued', true, now()->addMinutes(10))) {
+            return self::SUCCESS;
+        }
+
         $topic = trim((string) $this->option('topic'));
         if ($topic === '' && $scheduled) {
             $topic = $this->pickScheduledTopic();
         }
 
         if ($topic === '') {
+            if ($scheduled) {
+                Cache::forget('blog_ai_generation_queued');
+            }
             $this->error('Berikan --topic atau isi pengaturan topik blog AI.');
             return self::FAILURE;
         }
 
         $author = $this->resolveAuthor();
         if (! $author) {
+            if ($scheduled) {
+                Cache::forget('blog_ai_generation_queued');
+            }
             $this->error('Tidak ada akun superadmin untuk menjadi penulis artikel AI.');
             return self::FAILURE;
         }

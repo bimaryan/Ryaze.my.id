@@ -10,7 +10,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('hosting:suspend-expired')->dailyAt('00:00');
-Schedule::command('blog:generate --scheduled')->hourly();
+Schedule::command('blog:generate --scheduled')->everyMinute();
 
 // Load custom cron jobs from database
 try {
