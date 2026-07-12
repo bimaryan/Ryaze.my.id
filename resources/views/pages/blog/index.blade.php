@@ -101,7 +101,7 @@
     <div class="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div class="flex flex-col md:flex-row gap-8 lg:gap-12">
             {{-- Main Content --}}
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 min-w-0 order-2 md:order-1">
                 {{-- Featured Article --}}
                 @if(isset($featured) && $featured && !request('search') && !isset($currentCategory))
                     <a href="{{ route('blog.show', $featured->slug) }}" class="block mb-12 group">
@@ -166,7 +166,7 @@
             </div>
 
             {{-- Sidebar --}}
-            <aside class="w-full md:w-64 lg:w-72 shrink-0 space-y-6">
+            <aside class="w-full md:w-64 lg:w-72 shrink-0 space-y-6 order-1 md:order-2">
                 {{-- Search --}}
                 <form action="{{ route('blog.index') }}" method="GET" class="relative">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel..."
