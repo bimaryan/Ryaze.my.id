@@ -1,4 +1,4 @@
-﻿@extends('index')
+@extends('index')
 
 @section('content')
 <x-ui.page-layout>
@@ -126,4 +126,45 @@
             </div>
         </div>
     </form>
+
+    <!-- Quill Editor Initialization -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <style>
+        .ql-toolbar.ql-snow { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; background-color: #f8fafc; border-color: #e2e8f0; }
+        .ql-container.ql-snow { border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; border-color: #e2e8f0; font-family: inherit; font-size: 0.875rem; }
+        .ql-editor { min-height: 400px; }
+    </style>
+    <script nonce="{{ csp_nonce() }}">
+        (function() {
+            var editor = document.getElementById('editor-container');
+            if (!editor) return;
+            
+            var customToolbar = document.querySelector('.quill-toolbar-container');
+            if (customToolbar) customToolbar.remove();
+
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Tulis konten artikel di sini...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, 4, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'align': [] }],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            var form = document.getElementById('article-form');
+            var bodyInput = document.getElementById('body');
+
+            form.addEventListener('submit', function() {
+                bodyInput.value = quill.root.innerHTML;
+            });
+        })();
+    </script>
 </x-ui.page-layout>
