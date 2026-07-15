@@ -16,7 +16,16 @@ class CronController extends Controller
         $decoded = Hashids::decode($projectHashid);
         if (empty($decoded)) abort(404);
 
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $query = HostingProject::query();
+        if (!in_array(Auth::user()->role, ['superadmin', 'admin_hosting'])) {
+            $query->where(function($q) {
+                $q->where('user_id', Auth::id())
+                  ->orWhereHas('teamMembers', function($sq) {
+                      $sq->where('user_id', Auth::id());
+                  });
+            });
+        }
+        $project = $query->findOrFail($decoded[0]);
 
         $request->validate([
             'command' => 'required|string|max:255',
@@ -38,13 +47,21 @@ class CronController extends Controller
         $decoded = Hashids::decode($hashid);
         if (empty($decoded)) abort(404);
 
-        $cron = HostingCron::whereHas('project', function($q) {
-            $q->where('user_id', Auth::id());
-        })->findOrFail($decoded[0]);
+        $query = HostingCron::whereHas('project', function($q) {
+            if (!in_array(Auth::user()->role, ['superadmin', 'admin_hosting'])) {
+                $q->where(function($sq) {
+                    $sq->where('user_id', Auth::id())
+                      ->orWhereHas('teamMembers', function($tsq) {
+                          $tsq->where('user_id', Auth::id());
+                      });
+                });
+            }
+        });
+        
+        $cron = $query->findOrFail($decoded[0]);
 
-        $projectHashid = $cron->project->hashid;
         $cron->delete();
 
-        return redirect()->route('user_hosting.storage.show', $projectHashid)->with('success', 'Cron Job berhasil dihapus.');
+        return back()->with('success', 'Cron Job berhasil dihapus.');
     }
 }
