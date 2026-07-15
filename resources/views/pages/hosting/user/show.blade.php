@@ -2194,7 +2194,7 @@
         });
 
         // ── Groq AI Logic ───────────────────────────────────────────────────────
-        const sendGrokMessage = () => {
+        var sendGrokMessage = () => {
             const input = document.getElementById('grok-chat-input');
             const val = input.value.trim();
             if (!val) return;

@@ -94,6 +94,11 @@
                             newScript.appendChild(document.createTextNode(oldScript.innerHTML));
                             oldScript.parentNode.replaceChild(newScript, oldScript);
                         });
+
+                        // Re-initialize flowbite modals, dropdowns, tooltips, etc.
+                        if (typeof initFlowbite === 'function') {
+                            initFlowbite();
+                        }
                     }
                     
                     const currentSidebar = document.getElementById('logo-sidebar');
