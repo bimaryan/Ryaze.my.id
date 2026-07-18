@@ -14,12 +14,17 @@ class HostingDatabase extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'hashid', 'db_name', 'db_username', 'db_password', 'host', 'port',
+        'user_id', 'hashid', 'api_key', 'db_name', 'db_username', 'db_password', 'host', 'port',
     ];
 
     protected static function boot()
     {
         parent::boot();
+        static::creating(function ($database) {
+            if (empty($database->api_key)) {
+                $database->api_key = \Illuminate\Support\Str::random(40);
+            }
+        });
         static::created(function ($database) {
             $database->update(['hashid' => Hashids::encode($database->id)]);
         });

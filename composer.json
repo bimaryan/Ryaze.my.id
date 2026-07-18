@@ -13,6 +13,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "maatwebsite/excel": "*",
+        "mevdschee/php-crud-api": "^2.16",
         "midtrans/midtrans-php": "^2.6",
         "nativephp/desktop": "*",
         "predis/predis": "^3.3",
