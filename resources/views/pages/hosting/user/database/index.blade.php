@@ -379,45 +379,76 @@
     </div>
 </div>
 
-{{-- Modal API Tester --}}
-<div id="apiTesterModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.7)">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
-        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-                <i class="fa-solid fa-flask text-orange-500"></i> API Tester
+{{-- Modal API Tester (Postman UI Clone) --}}
+<div id="apiTesterModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.8)">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col h-[90vh]">
+        {{-- Header --}}
+        <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+            <h3 class="font-bold text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-rocket text-orange-500"></i> API Tester
             </h3>
-            <button onclick="closeApiTesterModal()" class="text-slate-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50">
+            <button onclick="closeApiTesterModal()" class="text-slate-400 hover:text-rose-500 transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-slate-200">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4">
-            <div class="flex flex-col sm:flex-row gap-2">
-                <select id="tester-method" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 w-full sm:w-auto">
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="DELETE">DELETE</option>
-                </select>
-                <div class="flex-1 flex border border-slate-300 rounded-lg overflow-hidden focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
-                    <span id="tester-base-url" class="bg-slate-100 px-3 py-2 text-sm text-slate-500 font-mono border-r border-slate-300 whitespace-nowrap hidden md:block"></span>
-                    <input type="text" id="tester-path" value="/records/users" class="flex-1 px-3 py-2 text-sm font-mono outline-none w-full bg-white" placeholder="/records/nama_tabel">
+
+        <div class="flex-1 flex flex-col overflow-hidden bg-white">
+            {{-- Top Bar (URL & Send) --}}
+            <div class="p-4 border-b border-slate-200 bg-slate-50 shrink-0">
+                <div class="flex gap-2">
+                    <div class="flex-1 flex border border-slate-300 rounded overflow-hidden bg-white shadow-sm focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500">
+                        <select id="tester-method" class="bg-slate-100 border-r border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 outline-none w-[100px] cursor-pointer text-emerald-600">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                        <span id="tester-base-url" class="px-2 py-2 text-sm text-slate-400 font-mono border-r border-slate-200 whitespace-nowrap bg-slate-50 flex items-center hidden md:flex"></span>
+                        <input type="text" id="tester-path" value="/records/users" class="flex-1 px-3 py-2 text-sm font-mono outline-none w-full" placeholder="Enter request URL">
+                    </div>
+                    <button id="tester-send-btn" class="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-2 rounded text-sm transition-colors flex items-center justify-center gap-2">
+                        Send
+                    </button>
                 </div>
-                <button id="tester-send-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">
-                    <i class="fa-solid fa-paper-plane"></i> Send
-                </button>
             </div>
             
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Request Body (JSON)</label>
-                <textarea id="tester-body" rows="4" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 opacity-50" placeholder='{"kolom":"nilai"}' disabled></textarea>
-            </div>
-
-            <div>
-                <div class="flex items-center justify-between mb-1">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Response</label>
-                    <span id="tester-status" class="text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            {{-- Main split area --}}
+            <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+                {{-- Request Area --}}
+                <div class="flex-1 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-200">
+                    {{-- Tabs --}}
+                    <div class="flex border-b border-slate-200 bg-slate-50 px-2 shrink-0">
+                        <button class="px-4 py-2 text-xs font-semibold text-orange-600 border-b-2 border-orange-500">Body</button>
+                        <button class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-500 cursor-not-allowed" title="Otomatis disisipkan x-api-key">Headers</button>
+                    </div>
+                    {{-- Body Content --}}
+                    <div class="flex-1 p-0 relative">
+                        <textarea id="tester-body" class="absolute inset-0 w-full h-full resize-none p-4 text-sm font-mono outline-none bg-slate-50 opacity-50" placeholder='{\n  "kolom": "nilai"\n}' disabled></textarea>
+                    </div>
                 </div>
-                <pre id="tester-response" class="w-full bg-slate-800 text-emerald-400 border border-slate-700 rounded-xl p-4 text-xs font-mono overflow-auto h-64 shadow-inner">Response akan tampil di sini...</pre>
+
+                {{-- Response Area --}}
+                <div class="flex-1 flex flex-col bg-slate-50">
+                    {{-- Tabs & Status --}}
+                    <div class="flex justify-between items-center border-b border-slate-200 bg-slate-100 px-2 shrink-0 h-[37px]">
+                        <div class="flex h-full">
+                            <button class="px-4 py-2 text-xs font-semibold text-slate-700 border-b-2 border-slate-400">Response</button>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs pr-2 hidden" id="tester-status-container">
+                            <span class="text-slate-500">Status: <span id="tester-status" class="font-bold"></span></span>
+                            <span class="text-slate-500">Time: <span id="tester-time" class="font-bold text-emerald-600"></span></span>
+                            <span class="text-slate-500">Size: <span id="tester-size" class="font-bold text-emerald-600"></span></span>
+                        </div>
+                    </div>
+                    {{-- Response Content --}}
+                    <div class="flex-1 p-0 relative bg-[#1e1e1e]">
+                        <div id="tester-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+                            <i class="fa-regular fa-paper-plane text-4xl mb-3 opacity-20"></i>
+                            <span class="text-sm">Hit Send to get a response</span>
+                        </div>
+                        <pre id="tester-response" class="absolute inset-0 w-full h-full overflow-auto p-4 text-xs font-mono text-emerald-400 hidden"></pre>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -610,8 +641,11 @@
         currentApiKey = apiKey || '';
         currentEndpoint = endpointUrl;
         document.getElementById('tester-base-url').textContent = endpointUrl;
-        document.getElementById('tester-response').textContent = "Response akan tampil di sini...";
-        document.getElementById('tester-status').classList.add('hidden');
+        
+        document.getElementById('tester-empty-state').classList.remove('hidden');
+        document.getElementById('tester-response').classList.add('hidden');
+        document.getElementById('tester-status-container').classList.add('hidden');
+        
         document.getElementById('apiTesterModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     };
@@ -624,14 +658,26 @@
     var testerMethodEl = document.getElementById('tester-method');
     if (testerMethodEl) testerMethodEl.addEventListener('change', function(e) {
         var bodyInput = document.getElementById('tester-body');
+        var methodColor = document.getElementById('tester-method');
+        
+        // Postman colors for select
+        methodColor.classList.remove('text-emerald-600', 'text-orange-500', 'text-blue-500', 'text-rose-600');
+        if (e.target.value === 'GET') methodColor.classList.add('text-emerald-600');
+        else if (e.target.value === 'POST') methodColor.classList.add('text-orange-500');
+        else if (e.target.value === 'PUT') methodColor.classList.add('text-blue-500');
+        else if (e.target.value === 'DELETE') methodColor.classList.add('text-rose-600');
+        
         if (e.target.value === 'GET' || e.target.value === 'DELETE') {
             bodyInput.disabled = true;
-            bodyInput.classList.add('opacity-50');
+            bodyInput.classList.add('opacity-50', 'bg-slate-50');
+            bodyInput.classList.remove('bg-white');
         } else {
             bodyInput.disabled = false;
-            bodyInput.classList.remove('opacity-50');
+            bodyInput.classList.remove('opacity-50', 'bg-slate-50');
+            bodyInput.classList.add('bg-white');
         }
     });
+    if (testerMethodEl) testerMethodEl.dispatchEvent(new Event('change'));
 
     var testerSendBtn = document.getElementById('tester-send-btn');
     if (testerSendBtn) testerSendBtn.addEventListener('click', async function() {
@@ -639,16 +685,28 @@
         var method = document.getElementById('tester-method').value;
         var path = document.getElementById('tester-path').value;
         var bodyStr = document.getElementById('tester-body').value;
+        
         var responseBox = document.getElementById('tester-response');
+        var emptyState = document.getElementById('tester-empty-state');
+        var statusContainer = document.getElementById('tester-status-container');
         var statusBadge = document.getElementById('tester-status');
+        var timeBadge = document.getElementById('tester-time');
+        var sizeBadge = document.getElementById('tester-size');
         
         var url = currentEndpoint + path;
         
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
         btn.disabled = true;
-        responseBox.classList.remove('text-rose-400');
-        responseBox.classList.add('text-emerald-400');
-        responseBox.textContent = "Loading...";
+        
+        emptyState.classList.add('hidden');
+        responseBox.classList.remove('hidden');
+        statusContainer.classList.add('hidden');
+        
+        responseBox.classList.remove('text-rose-400', 'text-emerald-400');
+        responseBox.classList.add('text-slate-400');
+        responseBox.textContent = "Sending request...";
+        
+        var startTime = performance.now();
         
         try {
             var options = {
@@ -667,14 +725,28 @@
             var res = await fetch(url, options);
             var data = await res.text();
             
-            statusBadge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-700', 'bg-rose-100', 'text-rose-700');
-            statusBadge.textContent = res.status + ' ' + res.statusText;
+            var endTime = performance.now();
+            var duration = Math.round(endTime - startTime) + ' ms';
+            var size = (new TextEncoder().encode(data).length / 1024).toFixed(2) + ' KB';
             
+            statusContainer.classList.remove('hidden');
+            statusBadge.textContent = res.status + ' ' + res.statusText;
+            timeBadge.textContent = duration;
+            sizeBadge.textContent = size;
+            
+            statusBadge.classList.remove('text-emerald-500', 'text-rose-500', 'text-orange-500');
             if (res.ok) {
-                statusBadge.classList.add('bg-emerald-100', 'text-emerald-700');
+                statusBadge.classList.add('text-emerald-500');
+            } else if (res.status >= 500) {
+                statusBadge.classList.add('text-rose-500');
             } else {
-                statusBadge.classList.add('bg-rose-100', 'text-rose-700');
-                responseBox.classList.remove('text-emerald-400');
+                statusBadge.classList.add('text-orange-500');
+            }
+            
+            responseBox.classList.remove('text-slate-400', 'text-emerald-400', 'text-rose-400');
+            if (res.ok) {
+                responseBox.classList.add('text-emerald-400');
+            } else {
                 responseBox.classList.add('text-rose-400');
             }
             
@@ -686,15 +758,18 @@
             }
             
         } catch (error) {
-            statusBadge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-700');
-            statusBadge.classList.add('bg-rose-100', 'text-rose-700');
-            statusBadge.textContent = "Network Error";
-            responseBox.classList.remove('text-emerald-400');
+            statusContainer.classList.remove('hidden');
+            statusBadge.textContent = "Error";
+            statusBadge.classList.add('text-rose-500');
+            timeBadge.textContent = "-";
+            sizeBadge.textContent = "-";
+            
+            responseBox.classList.remove('text-slate-400', 'text-emerald-400');
             responseBox.classList.add('text-rose-400');
-            responseBox.textContent = error.toString();
+            responseBox.textContent = "Failed to fetch: " + error.toString();
         }
         
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send';
+        btn.innerHTML = 'Send';
         btn.disabled = false;
     });
 
