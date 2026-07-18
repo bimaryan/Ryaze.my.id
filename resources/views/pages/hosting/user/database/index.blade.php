@@ -354,6 +354,21 @@
                 </div>
             </div>
 
+            {{-- Postman --}}
+            <div>
+                <h4 class="font-bold text-slate-700 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-rocket text-orange-500"></i> Penggunaan di Postman
+                </h4>
+                <div class="bg-orange-50/50 border border-orange-100 rounded-xl p-4 text-sm text-slate-700">
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Buka aplikasi Postman dan buat Request baru.</li>
+                        <li>Masukkan URL: <code class="bg-white border border-slate-200 px-1.5 py-0.5 rounded font-mono text-xs text-orange-600" id="postman-url"></code></li>
+                        <li>Buka tab <strong>Headers</strong>, tambahkan Key <code class="font-bold bg-white border border-slate-200 px-1 rounded">x-api-key</code> dengan Value API Key Anda.</li>
+                        <li>(Opsional) Jika POST/PUT, buka tab <strong>Body</strong> &rarr; pilih <strong>raw</strong> &rarr; pilih <strong>JSON</strong> untuk mengirim data.</li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="text-sm text-slate-500 border-t border-slate-100 pt-4">
                 <i class="fa-solid fa-circle-info"></i> Ganti <code>users</code> pada URL dengan nama tabel Anda sendiri.
             </div>
@@ -520,6 +535,7 @@
         document.getElementById('code-get').textContent = curlGet;
         document.getElementById('code-post').textContent = curlPost;
         document.getElementById('code-js').textContent = jsFetch;
+        document.getElementById('postman-url').textContent = endpointUrl + "/records/users";
         
         document.getElementById('apiDocsModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
