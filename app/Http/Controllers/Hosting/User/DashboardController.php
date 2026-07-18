@@ -194,6 +194,7 @@ class DashboardController extends Controller
             $request->validate([
                 'template_key' => 'required|in:' . implode(',', array_keys($this->availableTemplates)),
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
             ]);
 
             $templateKey = $request->input('template_key');
@@ -210,6 +211,7 @@ class DashboardController extends Controller
             $request->validate([
                 'repo_source'  => 'required|url',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
                 'framework'    => 'required|in:' . $allowedFrameworks,
                 'branch'       => 'required|string|max:50',
             ]);
@@ -220,7 +222,7 @@ class DashboardController extends Controller
         }
 
         $subdomain = trim(strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', trim($request->project_name))), '-');
-
+        $domainExtension = $request->input('domain_extension', '.ryaze.my.id');
         $user = Auth::user();
         $hasSubscription = $user->hasActiveHostingSubscription();
 
@@ -235,7 +237,7 @@ class DashboardController extends Controller
             'repo_source'  => $repoSource,
             'branch'       => $branch,
             'source_type'  => $sourceType,
-            'ryaze_domain' => $subdomain.'.ryaze.my.id',
+            'ryaze_domain' => $subdomain . $domainExtension,
             'status'       => 'building',
         ]);
 

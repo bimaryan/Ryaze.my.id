@@ -429,12 +429,20 @@
                     </h3>
 
                     <div class="mb-5">
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Proyek <span class="text-rose-500">*</span></label>
-                        <input type="text" name="project_name" required placeholder="my-awesome-app"
-                            id="input_project_name"
-                            class="rounded-t-lg transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
-                        <div class="bg-slate-100 border border-t-0 border-slate-200 rounded-b-lg px-4 py-2 text-xs text-slate-500 font-medium flex items-center">
-                            <i class="fa-solid fa-link mr-2"></i> Domain: <span id="domain_preview" class="text-indigo-600 ml-1">nama-proyek.ryaze.my.id</span>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Proyek & Domain <span class="text-rose-500">*</span></label>
+                        <div class="flex flex-col sm:flex-row shadow-sm">
+                            <input type="text" name="project_name" required placeholder="my-awesome-app"
+                                id="input_project_name"
+                                class="flex-1 w-full sm:rounded-l-xl sm:rounded-tr-none rounded-t-xl bg-slate-50 border border-slate-200 px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition z-10 relative">
+                            
+                            <select name="domain_extension" id="select_domain_ext" class="sm:rounded-r-xl sm:rounded-bl-none rounded-b-xl bg-slate-100 border border-slate-200 sm:border-l-0 px-4 py-2.5 text-sm font-medium text-slate-600 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition cursor-pointer">
+                                <option value=".ryaze.my.id">.ryaze.my.id</option>
+                                <option value=".ryz.my.id">.ryz.my.id</option>
+                                <option value=".safetalkai.my.id">.safetalkai.my.id</option>
+                            </select>
+                        </div>
+                        <div class="mt-2 text-[11px] text-slate-500 font-medium flex items-center">
+                            <i class="fa-solid fa-link mr-1.5"></i> Preview: <span id="domain_preview" class="text-indigo-600 ml-1 font-mono">my-awesome-app.ryaze.my.id</span>
                         </div>
                     </div>
 
@@ -511,14 +519,24 @@
     const sectionTemplate = document.getElementById('section_template');
     const frameworkSection= document.getElementById('framework_section');
     const repoUrl         = document.getElementById('input_repo_source');
-    const projectName     = document.getElementById('input_project_name');
+    const projectNameInput= document.getElementById('input_project_name');
     const domainPreview   = document.getElementById('domain_preview');
 
-    // --- Domain preview live ---
-    projectName?.addEventListener('input', () => {
-        const slug = projectName.value.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '');
-        domainPreview.textContent = (slug || 'nama-proyek') + '.ryaze.my.id';
-    });
+    function updateDomainPreview() {
+        var name = projectNameInput.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+        if (!name) name = 'my-awesome-app';
+        
+        var ext = document.getElementById('select_domain_ext');
+        var extVal = ext ? ext.value : '.ryaze.my.id';
+        
+        domainPreview.textContent = name + extVal;
+    }
+
+    projectNameInput.addEventListener('input', updateDomainPreview);
+    var selectDomainExt = document.getElementById('select_domain_ext');
+    if (selectDomainExt) {
+        selectDomainExt.addEventListener('change', updateDomainPreview);
+    }
 
     // --- Toggle antara mode Repo vs Template ---
     document.querySelectorAll('input[name="source_type"]').forEach(radio => {
