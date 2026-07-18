@@ -92,7 +92,6 @@
                 <div class="mt-3 flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                     <div class="flex items-center justify-between mb-1">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">REST API Key</span>
-                        <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100"><i class="fa-solid fa-bolt"></i> Supabase-like API</span>
                     </div>
                     <input type="password" readonly value="{{ $db->api_key ?? 'Generate API Key dulu...' }}"
                         id="apikey-{{ $db->hashid }}"
