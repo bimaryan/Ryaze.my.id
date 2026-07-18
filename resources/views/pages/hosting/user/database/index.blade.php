@@ -97,6 +97,9 @@
                         id="apikey-{{ $db->hashid }}"
                         class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full pr-16">
                     <div class="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white">
+                        <button onclick="event.preventDefault(); document.getElementById('gen-apikey-{{ $db->hashid }}').submit();" class="text-slate-300 hover:text-emerald-600 p-1 rounded" title="Regenerate API Key">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
                         <button class="text-slate-300 hover:text-slate-600 p-1 rounded btn-toggle-pass" data-target="apikey-{{ $db->hashid }}" title="Toggle Visibility">
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -104,6 +107,9 @@
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
+                    <form id="gen-apikey-{{ $db->hashid }}" action="{{ route('user_hosting.databases.apikey', $db->hashid) }}" method="POST" class="hidden">
+                        @csrf
+                    </form>
                 </div>
 
                 <hr class="border-slate-100">

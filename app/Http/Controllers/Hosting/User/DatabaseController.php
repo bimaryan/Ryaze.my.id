@@ -117,6 +117,20 @@ class DatabaseController extends Controller
         return back()->with('success', 'Database berhasil dihapus!');
     }
 
+    public function generateApiKey($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) {
+            abort(404);
+        }
+
+        $database = HostingDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $database->api_key = \Illuminate\Support\Str::random(40);
+        $database->save();
+
+        return back()->with('success', 'API Key berhasil di-generate ulang!');
+    }
+
     public function pmaLogin($hashid)
     {
         $decoded = Hashids::decode($hashid);
