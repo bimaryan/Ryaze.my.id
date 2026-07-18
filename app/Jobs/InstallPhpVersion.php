@@ -108,7 +108,7 @@ class InstallPhpVersion implements ShouldQueue
     private function applyVersion($deployment): void
     {
         $v          = $this->phpVersion;
-        $subdomain  = str_replace('.ryaze.my.id', '', $this->project->ryaze_domain);
+        $subdomain  = explode('.', $this->project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         $this->log($deployment, "> Applying PHP {$v} to project...");

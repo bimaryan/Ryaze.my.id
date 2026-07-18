@@ -47,7 +47,7 @@ class StorageController extends Controller
         $items = [];
 
         foreach ($projects as $project) {
-            $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+            $subdomain = explode('.', $project->ryaze_domain)[0];
             $projectDir = "/www/sites/hosting_clients/{$subdomain}";
             $used = $this->getFolderSize($projectDir);
             $totalUsed += $used;
@@ -100,7 +100,7 @@ class StorageController extends Controller
 
         $user = Auth::user();
         $project = HostingProject::where('user_id', $user->id)->findOrFail($decoded[0]);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         
         // Shared Hosting: Limit yg ditampilkan adalah limit total akun
@@ -195,7 +195,7 @@ class StorageController extends Controller
         $totalUsed = 0;
 
         foreach ($projects as $p) {
-            $subdomain = str_replace('.ryaze.my.id', '', $p->ryaze_domain);
+            $subdomain = explode('.', $p->ryaze_domain)[0];
             $totalUsed += $this->getFolderSize("/www/sites/hosting_clients/{$subdomain}");
         }
 

@@ -211,7 +211,7 @@ class DashboardController extends Controller
         $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
         $project->update(['status' => 'suspended']);
 
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $filePath = substr(base_path(), 0, 2) . str_replace('/', '\\', $filePath);
@@ -229,7 +229,7 @@ class DashboardController extends Controller
         $project = HostingProject::findOrFail(Hashids::decode($hashid)[0]);
         $project->update(['status' => 'active']);
 
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $filePath = substr(base_path(), 0, 2) . str_replace('/', '\\', $filePath);
@@ -260,7 +260,7 @@ class DashboardController extends Controller
         $this->deleteCloudflareDNS($project->ryaze_domain);
 
         // Hapus folder server (opsional, sesuaikan path)
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $projectDir = substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir);

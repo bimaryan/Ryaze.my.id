@@ -265,7 +265,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashed_id, true);
 
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         // Membaca file .env
@@ -339,7 +339,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $stagingSubdomain = 'staging-' . $subdomain;
         $stagingDomain = $stagingSubdomain . '.ryaze.my.id';
         
@@ -389,7 +389,7 @@ class DashboardController extends Controller
             return response()->json(['error' => 'Pesan tidak boleh kosong.'], 400);
         }
 
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         $envPath = $projectDir . '/.env';
         $userApiKey = null;
@@ -446,7 +446,7 @@ class DashboardController extends Controller
     public function ideSearch(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $query = $request->input('query', '');
@@ -500,7 +500,7 @@ class DashboardController extends Controller
     public function ideGitStatus(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         // Check if git is initialized
@@ -531,7 +531,7 @@ class DashboardController extends Controller
     public function ideGitCommit(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $msg = $request->input('message', 'Update');
@@ -546,7 +546,7 @@ class DashboardController extends Controller
     public function ideGitPull(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $cmd = "cd " . escapeshellarg($projectRootDir) . " && git pull 2>&1";
@@ -558,7 +558,7 @@ class DashboardController extends Controller
     public function ideGitPush(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $cmd = "cd " . escapeshellarg($projectRootDir) . " && git push 2>&1";
@@ -571,7 +571,7 @@ class DashboardController extends Controller
     public function getFiles(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
         $requestPath = trim($request->input('path', ''), '/');
 
@@ -628,7 +628,7 @@ class DashboardController extends Controller
     public function readFile(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $requestPath = trim($request->input('path', ''), '/');
@@ -647,7 +647,7 @@ class DashboardController extends Controller
     {
         \Log::info("saveFile route hit! hashid: {$hashid}, path: " . $request->input('path'));
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         $requestPath = trim($request->input('path', ''), '/');
@@ -840,7 +840,7 @@ class DashboardController extends Controller
 
     private function getValidTargetPath($project, $requestPath)
     {
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
 
         // Gabungkan path
@@ -871,7 +871,7 @@ class DashboardController extends Controller
     public function updateEnv(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
 
         $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -909,7 +909,7 @@ class DashboardController extends Controller
             return back()->with('error', 'Dev Server hanya tersedia untuk React, Next.js, Vue, dan Python!');
         }
 
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         // Cari port yang tersedia dengan start random (3000-4000) untuk mem-bypass DNS negative caching
@@ -1119,7 +1119,7 @@ PHP;
     {
         $project = $this->getValidProject($hashid);
         
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         if ($project->dev_pid) {
@@ -1216,7 +1216,7 @@ PHP;
         } catch (\Exception $e) {
             return response()->json(['error' => 'Project tidak ditemukan.'], 404);
         }
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
 
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         $command = trim($request->input('command', ''));
@@ -1391,7 +1391,7 @@ PHP;
     public function deleteProject(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         // 1. Hapus Record DNS Cloudflare
@@ -1444,7 +1444,7 @@ PHP;
     public function updateSettings(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         // Ambil data checkbox
@@ -1514,7 +1514,7 @@ PHP;
         $totalBytes = 0;
 
         foreach ($projects as $p) {
-            $subdomain = str_replace('.ryaze.my.id', '', $p->ryaze_domain);
+            $subdomain = explode('.', $p->ryaze_domain)[0];
             $dir = realpath("/www/sites/hosting_clients/{$subdomain}");
             if ($dir && is_dir($dir)) {
                 $output = shell_exec("du -sb " . escapeshellarg($dir) . " 2>/dev/null");
@@ -1545,7 +1545,7 @@ PHP;
     public function downloadBackup($hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         if (!is_dir($projectDir)) {
@@ -1588,7 +1588,7 @@ PHP;
         ]);
 
         $project = $this->getValidProject($hashid);
-        $subdomain = str_replace('.ryaze.my.id', '', $project->ryaze_domain);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
 
         if (!is_dir($projectDir)) {

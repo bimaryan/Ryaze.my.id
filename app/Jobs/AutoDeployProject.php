@@ -41,7 +41,7 @@ class AutoDeployProject implements ShouldQueue
         $deploy->update(['status' => 'building', 'build_logs' => '']);
 
         $baseDir = '/www/sites/hosting_clients';
-        $subdomain = str_replace('.ryaze.my.id', '', $this->project->ryaze_domain);
+        $subdomain = explode('.', $this->project->ryaze_domain)[0];
         $projectDir = $baseDir . '/' . $subdomain;
 
         try {
