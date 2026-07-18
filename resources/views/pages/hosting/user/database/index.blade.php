@@ -88,28 +88,46 @@
                     </div>
                 </div>
 
-                {{-- API Key --}}
-                <div class="mt-3 flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">REST API Key</span>
+                {{-- REST API Settings --}}
+                <div class="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    {{-- Endpoint URL --}}
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">API Endpoint</span>
+                            <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100"><i class="fa-solid fa-bolt"></i> Auto REST</span>
+                        </div>
+                        <input type="text" readonly value="{{ url('/api/v1/db/' . $db->hashid) }}"
+                            class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full pr-12">
+                        <div class="absolute bottom-2 right-2 bg-white">
+                            <button class="text-slate-400 hover:text-indigo-600 p-1.5 rounded btn-copy" data-copy="{{ url('/api/v1/db/' . $db->hashid) }}" title="Copy URL">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
                     </div>
-                    <input type="password" readonly value="{{ $db->api_key ?? 'Generate API Key dulu...' }}"
-                        id="apikey-{{ $db->hashid }}"
-                        class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full pr-16">
-                    <div class="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white">
-                        <button onclick="event.preventDefault(); document.getElementById('gen-apikey-{{ $db->hashid }}').submit();" class="text-slate-300 hover:text-emerald-600 p-1 rounded" title="Regenerate API Key">
-                            <i class="fa-solid fa-rotate-right"></i>
-                        </button>
-                        <button class="text-slate-300 hover:text-slate-600 p-1 rounded btn-toggle-pass" data-target="apikey-{{ $db->hashid }}" title="Toggle Visibility">
-                            <i class="fa-regular fa-eye"></i>
-                        </button>
-                        <button class="text-slate-300 hover:text-indigo-600 p-1 rounded btn-copy" data-copy="{{ $db->api_key }}" title="Copy API Key">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
+
+                    {{-- API Key --}}
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">REST API Key</span>
+                        </div>
+                        <input type="password" readonly value="{{ $db->api_key ?? 'Generate API Key dulu...' }}"
+                            id="apikey-{{ $db->hashid }}"
+                            class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full pr-24">
+                        <div class="absolute bottom-2 right-2 flex gap-1 bg-white">
+                            <button onclick="event.preventDefault(); document.getElementById('gen-apikey-{{ $db->hashid }}').submit();" class="text-slate-400 hover:text-emerald-600 p-1.5 rounded" title="Regenerate API Key">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                            <button class="text-slate-400 hover:text-slate-600 p-1.5 rounded btn-toggle-pass" data-target="apikey-{{ $db->hashid }}" title="Toggle Visibility">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button class="text-slate-400 hover:text-indigo-600 p-1.5 rounded btn-copy" data-copy="{{ $db->api_key }}" title="Copy API Key">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <form id="gen-apikey-{{ $db->hashid }}" action="{{ route('user_hosting.databases.apikey', $db->hashid) }}" method="POST" class="hidden">
+                            @csrf
+                        </form>
                     </div>
-                    <form id="gen-apikey-{{ $db->hashid }}" action="{{ route('user_hosting.databases.apikey', $db->hashid) }}" method="POST" class="hidden">
-                        @csrf
-                    </form>
                 </div>
 
                 <hr class="border-slate-100">
