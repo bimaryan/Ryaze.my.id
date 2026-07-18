@@ -276,10 +276,19 @@ class DashboardController extends Controller
 
     private function deleteCloudflareDNS($domainName)
     {
-        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
         $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
 
-        if (!$zoneId || !$apiToken) return;
+        if (!$apiToken) return;
+
+        $zoneName = explode('.', $domainName, 2)[1] ?? $domainName;
+        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        
+        $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
+        if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+            $zoneId = $zoneReq->json('result.0.id');
+        }
+
+        if (!$zoneId) return;
 
         // Cari Record ID
         $response = \Illuminate\Support\Facades\Http::withToken($apiToken)

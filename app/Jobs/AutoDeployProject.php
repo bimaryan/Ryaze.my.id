@@ -482,19 +482,31 @@ class AutoDeployProject implements ShouldQueue
     private function createCloudflareDNS($deploy): bool
     {
         $domainName = $this->project->ryaze_domain;
-        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
         $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
         $tunnelUrl = preg_replace('#^https?://#', '', rtrim(
             config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')),
             '/'
         ));
 
-        if (!$zoneId || !$apiToken || !$tunnelUrl) {
+        if (!$apiToken || !$tunnelUrl) {
             $this->log($deploy, '> [WARNING] Cloudflare credentials incomplete, skipping DNS setup.');
             return true;
         }
 
-        $existing = Http::withToken($apiToken)
+        // Ambil Zone ID secara dinamis
+        $zoneName = explode('.', $domainName, 2)[1] ?? $domainName;
+        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
+        if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+            $zoneId = $zoneReq->json('result.0.id');
+        }
+
+        if (!$zoneId) {
+            $this->log($deploy, '> [WARNING] Cloudflare Zone ID not found for ' . $zoneName);
+            return true;
+        }
+
+        $existing = \Illuminate\Support\Facades\Http::withToken($apiToken)
             ->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
                 'type' => 'CNAME',
                 'name' => $domainName,
