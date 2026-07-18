@@ -105,5 +105,4 @@
             }
         })();
     </script>
-</x-ui.page-layout>
 @endsection

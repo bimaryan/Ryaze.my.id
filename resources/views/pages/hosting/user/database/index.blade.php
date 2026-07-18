@@ -379,7 +379,7 @@
     </div>
 </div>
 
-{{-- Modal API Tester (Postman UI Clone) --}}
+{{-- Modal API Tester --}}
 <div id="apiTesterModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.8)">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col h-[90vh]">
         {{-- Header --}}
@@ -404,7 +404,7 @@
                             <option value="DELETE">DELETE</option>
                         </select>
                         <span id="tester-base-url" class="px-2 py-2 text-sm text-slate-400 font-mono border-r border-slate-200 whitespace-nowrap bg-slate-50 flex items-center hidden md:flex"></span>
-                        <input type="text" id="tester-path" value="/records/users" class="flex-1 px-3 py-2 text-sm font-mono outline-none w-full" placeholder="Enter request URL">
+                        <input type="text" id="tester-path" value="users" class="flex-1 px-3 py-2 text-sm font-mono outline-none w-full" placeholder="Enter request URL">
                     </div>
                     <button id="tester-send-btn" class="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-2 rounded text-sm transition-colors flex items-center justify-center gap-2">
                         Send

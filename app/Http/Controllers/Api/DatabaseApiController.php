@@ -53,6 +53,17 @@ class DatabaseApiController extends Controller
         // 3. Create the API instance and handle the request
         try {
             $api = new Api($config);
+            
+            // Auto-inject /records/ to make it implicit
+            $uri = $_SERVER['REQUEST_URI'];
+            $base = '/api/v1/db/' . $hashid;
+            
+            $relativePath = substr($uri, strlen($base));
+            if ($relativePath && !preg_match('#^/(records|openapi|status|columns|cache|login|register|me|password)#', $relativePath)) {
+                $newUri = $base . '/records' . ($relativePath[0] === '/' ? '' : '/') . ltrim($relativePath, '/');
+                $_SERVER['REQUEST_URI'] = $newUri;
+            }
+
             $psrRequest = RequestFactory::fromGlobals();
             $psrResponse = $api->handle($psrRequest);
             

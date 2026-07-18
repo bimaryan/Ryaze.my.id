@@ -1088,15 +1088,23 @@ PHP;
         ]);
 
         // Create Cloudflare DNS for Dev Server
-        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
         $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
         $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')), '/'));
+        
+        $domainExtension = str_replace($subdomain, '', $project->ryaze_domain);
+        $domainName = "dev{$port}" . $domainExtension;
+        
+        $zoneName = ltrim($domainExtension, '.');
+        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
+        if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+            $zoneId = $zoneReq->json('result.0.id');
+        }
         
         \Illuminate\Support\Facades\Log::info("CF Vars: zone=$zoneId, token=$apiToken, tunnel=$tunnelUrl");
         
         if ($zoneId && $apiToken && $tunnelUrl) {
-            $domainName = "dev{$port}.ryaze.my.id";
-            $existing = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", ['type' => 'CNAME', 'name' => $domainName]);
+            $existing = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", ['type' => 'CNAME', 'name' => $domainName]);
             if ($existing->successful() && empty($existing->json('result'))) {
                 $resp = Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
                     'type'    => 'CNAME',
@@ -1165,7 +1173,32 @@ PHP;
 
         // Hapus Cloudflare DNS for Dev Server
         if ($devPort) {
-            $this->deleteCloudflareDNS("dev{$devPort}.ryaze.my.id");
+            // Hapus dev server DNS jika ada
+            $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_TOKEN'));
+            if ($apiToken) {
+                $domainExtension = str_replace($subdomain, '', $project->ryaze_domain);
+                $zoneName = ltrim($domainExtension, '.');
+                $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+                
+                $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
+                if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+                    $zoneId = $zoneReq->json('result.0.id');
+                }
+
+                if ($zoneId) {
+                    $devDomain = "dev{$devPort}" . $domainExtension;
+                    $response = \Illuminate\Support\Facades\Http::withToken($apiToken)
+                        ->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
+                            'type' => 'CNAME',
+                            'name' => $devDomain,
+                        ]);
+
+                    if ($response->successful() && ! empty($response->json('result'))) {
+                        $recordId = $response->json('result.0.id');
+                        \Illuminate\Support\Facades\Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records/{$recordId}");
+                    }
+                }
+            }
         }
 
         return back()->with('success', 'Dev Server berhasil dihentikan!');
