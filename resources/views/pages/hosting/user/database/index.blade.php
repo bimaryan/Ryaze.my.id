@@ -139,6 +139,9 @@
                         <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-indigo-100 px-1 rounded">{{ $db->db_name }}</code>.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="openApiTesterModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="bg-orange-500 text-white hover:bg-orange-600 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-flask"></i> Test API
+                        </button>
                         <button onclick="openApiDocsModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="bg-slate-800 text-white hover:bg-slate-900 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-code"></i> API Docs
                         </button>
@@ -376,6 +379,50 @@
     </div>
 </div>
 
+{{-- Modal API Tester --}}
+<div id="apiTesterModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.7)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-flask text-orange-500"></i> API Tester
+            </h3>
+            <button onclick="closeApiTesterModal()" class="text-slate-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4">
+            <div class="flex flex-col sm:flex-row gap-2">
+                <select id="tester-method" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 w-full sm:w-auto">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+                <div class="flex-1 flex border border-slate-300 rounded-lg overflow-hidden focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
+                    <span id="tester-base-url" class="bg-slate-100 px-3 py-2 text-sm text-slate-500 font-mono border-r border-slate-300 whitespace-nowrap hidden md:block"></span>
+                    <input type="text" id="tester-path" value="/records/users" class="flex-1 px-3 py-2 text-sm font-mono outline-none w-full bg-white" placeholder="/records/nama_tabel">
+                </div>
+                <button id="tester-send-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">
+                    <i class="fa-solid fa-paper-plane"></i> Send
+                </button>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Request Body (JSON)</label>
+                <textarea id="tester-body" rows="4" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 opacity-50" placeholder='{"kolom":"nilai"}' disabled></textarea>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Response</label>
+                    <span id="tester-status" class="text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+                </div>
+                <pre id="tester-response" class="w-full bg-slate-800 text-emerald-400 border border-slate-700 rounded-xl p-4 text-xs font-mono overflow-auto h-64 shadow-inner">Response akan tampil di sini...</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- Form Delete (Hidden) --}}
 <form id="deleteForm" method="POST" class="hidden">
     @csrf
@@ -555,6 +602,102 @@
         });
     });
     
+    // API Tester Logic
+    let currentApiKey = '';
+    let currentEndpoint = '';
+
+    window.openApiTesterModal = function(endpointUrl, apiKey) {
+        currentApiKey = apiKey || '';
+        currentEndpoint = endpointUrl;
+        document.getElementById('tester-base-url').textContent = endpointUrl;
+        document.getElementById('tester-response').textContent = "Response akan tampil di sini...";
+        document.getElementById('tester-status').classList.add('hidden');
+        document.getElementById('apiTesterModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeApiTesterModal = function() {
+        document.getElementById('apiTesterModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    };
+
+    var testerMethodEl = document.getElementById('tester-method');
+    if (testerMethodEl) testerMethodEl.addEventListener('change', function(e) {
+        var bodyInput = document.getElementById('tester-body');
+        if (e.target.value === 'GET' || e.target.value === 'DELETE') {
+            bodyInput.disabled = true;
+            bodyInput.classList.add('opacity-50');
+        } else {
+            bodyInput.disabled = false;
+            bodyInput.classList.remove('opacity-50');
+        }
+    });
+
+    var testerSendBtn = document.getElementById('tester-send-btn');
+    if (testerSendBtn) testerSendBtn.addEventListener('click', async function() {
+        var btn = this;
+        var method = document.getElementById('tester-method').value;
+        var path = document.getElementById('tester-path').value;
+        var bodyStr = document.getElementById('tester-body').value;
+        var responseBox = document.getElementById('tester-response');
+        var statusBadge = document.getElementById('tester-status');
+        
+        var url = currentEndpoint + path;
+        
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+        btn.disabled = true;
+        responseBox.classList.remove('text-rose-400');
+        responseBox.classList.add('text-emerald-400');
+        responseBox.textContent = "Loading...";
+        
+        try {
+            var options = {
+                method: method,
+                headers: {
+                    'x-api-key': currentApiKey,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            };
+            
+            if ((method === 'POST' || method === 'PUT') && bodyStr) {
+                options.body = bodyStr;
+            }
+            
+            var res = await fetch(url, options);
+            var data = await res.text();
+            
+            statusBadge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-700', 'bg-rose-100', 'text-rose-700');
+            statusBadge.textContent = res.status + ' ' + res.statusText;
+            
+            if (res.ok) {
+                statusBadge.classList.add('bg-emerald-100', 'text-emerald-700');
+            } else {
+                statusBadge.classList.add('bg-rose-100', 'text-rose-700');
+                responseBox.classList.remove('text-emerald-400');
+                responseBox.classList.add('text-rose-400');
+            }
+            
+            try {
+                var json = JSON.parse(data);
+                responseBox.textContent = JSON.stringify(json, null, 2);
+            } catch(e) {
+                responseBox.textContent = data;
+            }
+            
+        } catch (error) {
+            statusBadge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-700');
+            statusBadge.classList.add('bg-rose-100', 'text-rose-700');
+            statusBadge.textContent = "Network Error";
+            responseBox.classList.remove('text-emerald-400');
+            responseBox.classList.add('text-rose-400');
+            responseBox.textContent = error.toString();
+        }
+        
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send';
+        btn.disabled = false;
+    });
+
     })();
 </script>
 
