@@ -142,7 +142,7 @@
                         <button onclick="openApiDocsModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="bg-slate-800 text-white hover:bg-slate-900 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-code"></i> API Docs
                         </button>
-                        <a href="{{ route('user_hosting.databases.export', $db->hashid) }}" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <a href="{{ route('user_hosting.databases.export', $db->hashid) }}" data-pjax="0" target="_blank" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-download"></i> Export (.sql)
                         </a>
                         <button onclick="openImportModal('{{ $db->hashid }}', '{{ $db->db_name }}')" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
@@ -321,7 +321,7 @@
                 </h4>
                 <p class="text-sm text-slate-600 mb-2">Contoh membaca semua baris dari tabel <code>users</code>:</p>
                 <div class="bg-slate-800 rounded-xl p-4 relative group">
-                    <pre class="text-xs text-emerald-400 font-mono overflow-x-auto"><code id="code-get"></code></pre>
+                    <pre class="text-xs font-mono overflow-x-auto"><code id="code-get" class="text-emerald-400"></code></pre>
                     <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-get">
                         <i class="fa-regular fa-copy"></i>
                     </button>
@@ -334,7 +334,7 @@
                     <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">POST</span> Menambah Data (Create)
                 </h4>
                 <div class="bg-slate-800 rounded-xl p-4 relative group">
-                    <pre class="text-xs text-blue-400 font-mono overflow-x-auto"><code id="code-post"></code></pre>
+                    <pre class="text-xs font-mono overflow-x-auto"><code id="code-post" class="text-blue-400"></code></pre>
                     <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-post">
                         <i class="fa-regular fa-copy"></i>
                     </button>
@@ -347,7 +347,7 @@
                     <i class="fa-brands fa-js text-yellow-500"></i> Contoh Javascript (Fetch)
                 </h4>
                 <div class="bg-slate-800 rounded-xl p-4 relative group">
-                    <pre class="text-xs text-yellow-400 font-mono overflow-x-auto"><code id="code-js"></code></pre>
+                    <pre class="text-xs font-mono overflow-x-auto"><code id="code-js" class="text-yellow-400"></code></pre>
                     <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-js">
                         <i class="fa-regular fa-copy"></i>
                     </button>
