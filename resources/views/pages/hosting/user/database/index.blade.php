@@ -139,6 +139,9 @@
                         <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-indigo-100 px-1 rounded">{{ $db->db_name }}</code>.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="openApiDocsModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="bg-slate-800 text-white hover:bg-slate-900 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-code"></i> API Docs
+                        </button>
                         <a href="{{ route('user_hosting.databases.export', $db->hashid) }}" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-download"></i> Export (.sql)
                         </a>
@@ -291,6 +294,73 @@
     </div>
 </div>
 
+{{-- Modal API Docs --}}
+<div id="apiDocsModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.7)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+        {{-- Header --}}
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-book-open text-indigo-500"></i> Dokumentasi API
+            </h3>
+            <button onclick="closeApiDocsModal()" class="text-slate-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        {{-- Body --}}
+        <div class="p-6 overflow-y-auto space-y-6">
+            <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-sm text-indigo-900">
+                <strong>REST API Siap Pakai!</strong><br>
+                Anda bisa menggunakan Endpoint ini untuk melakukan operasi CRUD (Create, Read, Update, Delete) pada tabel apapun di database Anda secara langsung.
+            </div>
+
+            {{-- GET Request --}}
+            <div>
+                <h4 class="font-bold text-slate-700 mb-2 flex items-center gap-2">
+                    <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs">GET</span> Membaca Data (Read)
+                </h4>
+                <p class="text-sm text-slate-600 mb-2">Contoh membaca semua baris dari tabel <code>users</code>:</p>
+                <div class="bg-slate-800 rounded-xl p-4 relative group">
+                    <pre class="text-xs text-emerald-400 font-mono overflow-x-auto"><code id="code-get"></code></pre>
+                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-get">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- POST Request --}}
+            <div>
+                <h4 class="font-bold text-slate-700 mb-2 flex items-center gap-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">POST</span> Menambah Data (Create)
+                </h4>
+                <div class="bg-slate-800 rounded-xl p-4 relative group">
+                    <pre class="text-xs text-blue-400 font-mono overflow-x-auto"><code id="code-post"></code></pre>
+                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-post">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Javascript Fetch --}}
+            <div>
+                <h4 class="font-bold text-slate-700 mb-2 flex items-center gap-2">
+                    <i class="fa-brands fa-js text-yellow-500"></i> Contoh Javascript (Fetch)
+                </h4>
+                <div class="bg-slate-800 rounded-xl p-4 relative group">
+                    <pre class="text-xs text-yellow-400 font-mono overflow-x-auto"><code id="code-js"></code></pre>
+                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-js">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-sm text-slate-500 border-t border-slate-100 pt-4">
+                <i class="fa-solid fa-circle-info"></i> Ganti <code>users</code> pada URL dengan nama tabel Anda sendiri.
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- Form Delete (Hidden) --}}
 <form id="deleteForm" method="POST" class="hidden">
     @csrf
@@ -425,6 +495,50 @@
     // Copy Modal Password
     var btnCopyModalPass = document.getElementById('btn-copy-modal-password');
     if (btnCopyModalPass) btnCopyModalPass.addEventListener('click', copyModalPassword);
+    
+    // API Docs Modal Logic
+    window.openApiDocsModal = function(endpointUrl, apiKey) {
+        if (!apiKey) apiKey = "API_KEY_ANDA";
+        
+        var curlGet = `curl -X GET "${endpointUrl}/records/users" \\
+     -H "x-api-key: ${apiKey}"`;
+        
+        var curlPost = `curl -X POST "${endpointUrl}/records/users" \\
+     -H "x-api-key: ${apiKey}" \\
+     -H "Content-Type: application/json" \\
+     -d '{"nama":"Bima", "email":"bima@example.com"}'`;
+
+        var jsFetch = `fetch("${endpointUrl}/records/users", {
+  method: "GET",
+  headers: {
+    "x-api-key": "${apiKey}"
+  }
+})
+.then(res => res.json())
+.then(data => console.log(data));`;
+
+        document.getElementById('code-get').textContent = curlGet;
+        document.getElementById('code-post').textContent = curlPost;
+        document.getElementById('code-js').textContent = jsFetch;
+        
+        document.getElementById('apiDocsModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    };
+    
+    window.closeApiDocsModal = function() {
+        document.getElementById('apiDocsModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    };
+
+    // Make copy button in modal work
+    document.querySelectorAll('[data-copy-target]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            var targetId = e.currentTarget.getAttribute('data-copy-target');
+            var text = document.getElementById(targetId).textContent;
+            copyToClipboard(text);
+        });
+    });
+    
     })();
 </script>
 
