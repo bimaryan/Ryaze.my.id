@@ -62,7 +62,6 @@ class BuildApkJob implements ShouldQueue
                 'appVersionCode'    => 1,
                 'shortcuts'         => [],
                 'generatorApp'      => 'ryaze-apk-builder',
-                'webManifestUrl'    => $this->build->app_url . '/manifest.json',
                 'metaquest'         => false,
                 'shareTarget'       => null,
                 'additionalTrustedOrigins' => [],
