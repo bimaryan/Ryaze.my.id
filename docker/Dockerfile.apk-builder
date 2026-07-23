@@ -1,14 +1,13 @@
 # =============================================================
-# Custom PHP 8 Image untuk Ryaze.my.id
-# Extends 1Panel PHP 8 Alpine dengan:
+# Custom PHP 8.4 Image untuk Ryaze.my.id
+# Extends 1Panel PHP 8.4.6 dengan:
 #   - OpenJDK 17
 #   - Android SDK Command-line Tools (API 34)
 #   - Node.js & Bubblewrap CLI
 # =============================================================
 
-# Sesuaikan dengan versi PHP 1Panel Anda
-# Cek nama image aslinya dengan: docker inspect 1Panel-php8-aJQI --format "{{.Config.Image}}"
-FROM php:8.2-fpm-alpine
+# Base image asli dari 1Panel (hasil docker inspect)
+FROM 1panel-php:8.4.6
 
 # ── System dependencies ────────────────────────────────────────────────────────
 RUN apk add --no-cache \
