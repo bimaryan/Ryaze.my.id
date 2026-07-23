@@ -106,11 +106,30 @@ class BuildApkJob implements ShouldQueue
             ]));
             $log .= "[INFO] Bubblewrap config written to {$bubblewrapConfigDir}/config.json\n";
 
-            // ── 3. Jalankan `bubblewrap build` ───────────────────────────
-            $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
-
             $pathEnv = getenv('PATH') ?: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
             $pathEnv .= ':/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:' . $jdkPath . '/bin';
+
+            // ── 2.5. Environment Preparation (Fix Alpine & Missing Tools) ────────
+            $log .= "[INFO] Preparing Alpine environment (installing gcompat & platform-tools)...\n";
+            $this->build->update(['log_output' => $log]);
+
+            $prepCmd = "apk add --no-cache gcompat libstdc++ libgcc && sdkmanager \"platform-tools\"";
+            $prepProcess = Process::fromShellCommandline($prepCmd, $workDir, [
+                'JAVA_HOME' => $jdkPath,
+                'PATH'      => $pathEnv,
+            ]);
+            $prepProcess->setTimeout(300);
+            $prepProcess->run(function($type, $buffer) use (&$log, &$lastUpdate) {
+                $log .= $buffer;
+                if (time() - $lastUpdate >= 2) {
+                    $this->build->update(['log_output' => $log]);
+                    $lastUpdate = time();
+                }
+            });
+            $log .= "[INFO] Environment preparation finished.\n";
+
+            // ── 3. Jalankan `bubblewrap build` ───────────────────────────
+            $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
 
             $process = new Process(
                 ['bubblewrap', 'build', '--manifest=twa-manifest.json'],
