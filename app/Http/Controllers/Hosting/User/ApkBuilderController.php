@@ -29,7 +29,13 @@ class ApkBuilderController extends Controller
             'app_name' => 'required|string|max:50',
             'app_url' => 'required|url',
             'package_name' => 'required|string|regex:/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$/i',
-            'icon' => 'nullable|image|mimes:png,jpg,jpeg|max:2048'
+            'icon' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'theme_color' => 'nullable|string|regex:/^#[a-fA-F0-9]{6}$/',
+            'background_color' => 'nullable|string|regex:/^#[a-fA-F0-9]{6}$/',
+            'display_mode' => 'nullable|in:standalone,fullscreen,minimal-ui',
+            'orientation' => 'nullable|in:default,portrait,landscape',
+            'version_name' => 'nullable|string|max:20',
+            'version_code' => 'nullable|integer|min:1'
         ]);
 
         $iconPath = null;
@@ -43,6 +49,12 @@ class ApkBuilderController extends Controller
             'app_url' => $request->app_url,
             'package_name' => strtolower($request->package_name),
             'icon_path' => $iconPath,
+            'theme_color' => $request->theme_color ?? '#FFFFFF',
+            'background_color' => $request->background_color ?? '#FFFFFF',
+            'display_mode' => $request->display_mode ?? 'standalone',
+            'orientation' => $request->orientation ?? 'default',
+            'version_name' => $request->version_name ?? '1.0.0',
+            'version_code' => $request->version_code ?? 1,
             'status' => 'pending'
         ]);
 
