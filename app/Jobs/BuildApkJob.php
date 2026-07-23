@@ -219,11 +219,16 @@ class BuildApkJob implements ShouldQueue
             $apkSource = $apkFiles[0];
             $apkDest   = 'apks/' . $this->build->id . '.apk';
             $absoluteDest = storage_path('app/private/' . $apkDest);
+            $apksDir = dirname($absoluteDest);
 
             // Pastikan folder apks ada dengan permission yang bisa dibaca www-data
-            if (!is_dir(dirname($absoluteDest))) {
-                mkdir(dirname($absoluteDest), 0755, true);
+            if (!is_dir($apksDir)) {
+                mkdir($apksDir, 0755, true);
             }
+
+            // Paksa izin akses untuk folder private dan apks agar www-data bisa masuk
+            @chmod(storage_path('app/private'), 0755);
+            @chmod($apksDir, 0755);
 
             copy($apkSource, $absoluteDest);
             chmod($absoluteDest, 0644); // pastikan www-data bisa membaca file
