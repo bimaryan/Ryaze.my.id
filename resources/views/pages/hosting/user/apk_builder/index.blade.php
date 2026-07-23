@@ -58,9 +58,12 @@
                                 <i class="fa-solid fa-spinner fa-spin mr-1"></i> Membangun...
                             </span>
                         @elseif($build->status === 'failed')
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-700">
-                                <i class="fa-solid fa-circle-xmark mr-1"></i> Gagal
-                            </span>
+                            <div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-700">
+                                    <i class="fa-solid fa-circle-xmark mr-1"></i> Gagal
+                                </span>
+                                <p class="text-xs text-slate-400 mt-1.5">Cek log untuk detail error</p>
+                            </div>
                         @else
                             <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
                                 <i class="fa-solid fa-hourglass-half mr-1"></i> Antrian
@@ -111,18 +114,51 @@
         </x-ui.table>
     </x-ui.page-layout>
 
-    <div id="logModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[80vh] flex flex-col">
-            <div class="flex items-center justify-between p-5 border-b border-slate-200">
-                <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-terminal text-indigo-600"></i> Build Log
-                </h3>
-                <button onclick="document.getElementById('logModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 transition">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
+    {{-- Modal Log (menggunakan pattern yang sama dengan templates.blade.php) --}}
+    <div id="logModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            {{-- Backdrop --}}
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-slate-900 opacity-75" id="log-modal-backdrop"></div>
             </div>
-            <pre id="logContent" class="overflow-y-auto p-5 text-xs font-mono bg-slate-950 text-green-400 rounded-b-2xl leading-relaxed whitespace-pre-wrap"></pre>
+            <div id="log-modal-panel" class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full sm:max-w-3xl relative z-10 opacity-0 scale-95">
+                <div class="px-6 pt-6 pb-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-indigo-600"></i> Build Log
+                        </h3>
+                        <button type="button" onclick="closeLogModal()" class="text-slate-400 hover:text-slate-500">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                    <pre id="logContent" class="overflow-y-auto max-h-96 p-4 text-xs font-mono bg-slate-950 text-green-400 rounded-xl leading-relaxed whitespace-pre-wrap"></pre>
+                </div>
+                <div class="px-6 py-4 bg-slate-50 flex justify-end rounded-b-2xl">
+                    <button type="button" onclick="closeLogModal()" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition shadow-sm">
+                        Tutup
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-    <script>function showLog(log){document.getElementById('logContent').textContent=log;document.getElementById('logModal').classList.remove('hidden');}</script>
+    <script>
+        const logModal = document.getElementById('logModal');
+        const logBackdrop = document.getElementById('log-modal-backdrop');
+        const logPanel = document.getElementById('log-modal-panel');
+        function showLog(log) {
+            document.getElementById('logContent').textContent = log;
+            logModal.classList.remove('hidden');
+            setTimeout(() => {
+                logBackdrop.classList.remove('opacity-0');
+                logPanel.classList.remove('opacity-0', 'scale-95');
+                logPanel.classList.add('opacity-100', 'scale-100');
+            }, 10);
+        }
+        function closeLogModal() {
+            logBackdrop.classList.add('opacity-0');
+            logPanel.classList.remove('opacity-100', 'scale-100');
+            logPanel.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => logModal.classList.add('hidden'), 300);
+        }
+    </script>
 @endsection
