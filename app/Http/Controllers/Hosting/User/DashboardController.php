@@ -299,6 +299,8 @@ class DashboardController extends Controller
                 "/www/sites/{$project->ryaze_domain}/log/access.log", // Dedicated 1Panel site
                 "/www/sites/hosting_clients/log/access.log", // Hosting clients shared log
                 "/www/sites/ryaze.my.id/log/access.log", // Wildcard site
+                "/www/sites/ryz.my.id/log/access.log",
+                "/www/sites/safetalkai.my.id/log/access.log",
             ];
             
             $validLogPath = null;
@@ -311,7 +313,7 @@ class DashboardController extends Controller
 
             if ($validLogPath) {
                 // If it's a shared log (ryaze.my.id or hosting_clients), we must grep for the specific subdomain first
-                if (str_contains($validLogPath, 'ryaze.my.id/log') || str_contains($validLogPath, 'hosting_clients/log')) {
+                if (str_contains($validLogPath, 'ryaze.my.id/log') || str_contains($validLogPath, 'ryz.my.id/log') || str_contains($validLogPath, 'safetalkai.my.id/log') || str_contains($validLogPath, 'hosting_clients/log')) {
                     $wcCommand = sprintf("grep %s %s | awk '{print $1}' | sort | uniq | wc -l", escapeshellarg($project->ryaze_domain), escapeshellarg($validLogPath));
                 } else {
                     $wcCommand = sprintf("awk '{print $1}' %s | sort | uniq | wc -l", escapeshellarg($validLogPath));
@@ -340,8 +342,9 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
         
         $subdomain = explode('.', $project->ryaze_domain)[0];
+        $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
         $stagingSubdomain = 'staging-' . $subdomain;
-        $stagingDomain = $stagingSubdomain . '.ryaze.my.id';
+        $stagingDomain = $stagingSubdomain . $domainExtension;
         
         if (HostingProject::where('ryaze_domain', $stagingDomain)->exists()) {
             return back()->with('error', 'Staging environment sudah ada (staging-' . $subdomain . ').');
@@ -1091,7 +1094,7 @@ PHP;
         $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
         $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')), '/'));
         
-        $domainExtension = str_replace($subdomain, '', $project->ryaze_domain);
+        $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
         $domainName = "dev{$port}" . $domainExtension;
         
         $zoneName = ltrim($domainExtension, '.');
@@ -1176,7 +1179,7 @@ PHP;
             // Hapus dev server DNS jika ada
             $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_TOKEN'));
             if ($apiToken) {
-                $domainExtension = str_replace($subdomain, '', $project->ryaze_domain);
+                $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
                 $zoneName = ltrim($domainExtension, '.');
                 $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
                 
