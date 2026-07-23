@@ -170,30 +170,38 @@ class BuildApkJob implements ShouldQueue
                 }
             });
 
+            $env = [
+                'HOME' => $homeDir,
+                'JAVA_HOME' => $jdkPath,
+                'ANDROID_SDK_ROOT' => $sdkPath,
+                'ANDROID_HOME' => $sdkPath,
+                'PATH' => $pathEnv,
+                'CI' => 'true',
+                'BUBBLEWRAP_KEYSTORE_PASSWORD' => 'password',
+                'BUBBLEWRAP_KEY_PASSWORD' => 'password',
+            ];
+
+            // Karena direktori sudah berisi icon.png dan keystore, Bubblewrap akan
+            // mengira ini project lama yang butuh update. Kita jalankan update dulu
+            // dengan skipVersionUpgrade agar tidak ada prompt interaktif.
+            $log .= "[CMD] Running: bubblewrap update --skipVersionUpgrade --manifest=twa-manifest.json\n";
+            $updateProcess = new Process(
+                ['bubblewrap', 'update', '--skipVersionUpgrade', '--manifest=twa-manifest.json'],
+                $workDir,
+                $env
+            );
+            $updateProcess->setInput("y\n");
+            $updateProcess->run();
+
             // ── 4. Jalankan `bubblewrap build` ───────────────────────────
             $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
-
             $process = new Process(
                 ['bubblewrap', 'build', '--manifest=twa-manifest.json'],
                 $workDir,
-                [
-                    'HOME' => $homeDir,
-                    'JAVA_HOME' => $jdkPath,
-                    'ANDROID_SDK_ROOT' => $sdkPath,
-                    'ANDROID_HOME' => $sdkPath,
-                    'PATH' => $pathEnv,
-                    'CI' => 'true', // hint ke beberapa CLI agar non-interaktif
-                    'BUBBLEWRAP_KEYSTORE_PASSWORD' => 'password',
-                    'BUBBLEWRAP_KEY_PASSWORD' => 'password',
-                ]
+                $env
             );
             $process->setTimeout(840);
-            // Karena password keystore sudah dipassing via argumen, Bubblewrap hanya
-            // akan bertanya: "would you like to regenerate your project? (Y/n)"
-            // dan berpotensi bertanya: "? versionName for the new App version:"
-            $vName = $this->build->version_name ?? '1.0.0';
-            $process->setInput("y\n{$vName}\n");
-
+            
             $lastUpdate = time();
             $process->run(function ($type, $buffer) use (&$log, &$lastUpdate) {
                 $log .= $buffer;
