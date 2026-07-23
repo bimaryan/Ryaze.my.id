@@ -339,7 +339,7 @@
                             class="{{ $navLink(request()->routeIs('user_joki.create')) }}">
                             <i
                                 class="fa-solid fa-cart-plus {{ $iconClass(request()->routeIs('user_joki.create')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Pesan Joki Baru</span>
+                            <span class="ms-3 whitespace-nowrap">Buat Pesanan</span>
                         </a>
                     </li>
                     <li>
@@ -347,7 +347,7 @@
                             class="{{ $navLink(request()->routeIs('user_joki.progress')) }}">
                             <i
                                 class="fa-solid fa-laptop-code {{ $iconClass(request()->routeIs('user_joki.progress')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Progres Joki Saya</span>
+                            <span class="ms-3 whitespace-nowrap">Progres Pengerjaan</span>
                         </a>
                     </li>
                     <li>
@@ -355,7 +355,7 @@
                             class="{{ $navLink(request()->routeIs('user_joki.riwayat')) }}">
                             <i
                                 class="fa-solid fa-history {{ $iconClass(request()->routeIs('user_joki.riwayat')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Riwayat Joki Saya</span>
+                            <span class="ms-3 whitespace-nowrap">Riwayat Selesai</span>
                         </a>
                     </li>
 
@@ -375,8 +375,8 @@
                         <a href="{{ route('user_hosting.create') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.create')) }}">
                             <i
-                                class="fa-brands fa-github {{ $iconClass(request()->routeIs('user_hosting.create')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Deploy Proyek Baru</span>
+                                class="fa-solid fa-rocket {{ $iconClass(request()->routeIs('user_hosting.create')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Deploy Aplikasi</span>
                         </a>
                     </li>
                     <li>
@@ -400,7 +400,7 @@
                             class="{{ $navLink(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}">
                             <i
                                 class="fa-solid fa-terminal {{ $iconClass(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Aplikasi Ter-deploy</span>
+                            <span class="ms-3 whitespace-nowrap">Proyek Aktif</span>
                         </a>
                     </li>
                     <li>
@@ -408,7 +408,7 @@
                             class="{{ $navLink(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }}">
                             <i
                                 class="fa-solid fa-database {{ $iconClass(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Database MySQL</span>
+                            <span class="ms-3 whitespace-nowrap">Database (MySQL)</span>
                         </a>
                     </li>
                     <li>
@@ -424,7 +424,7 @@
                             class="{{ $navLink(request()->routeIs('user_hosting.storage*')) }}">
                             <i
                                 class="fa-solid fa-hard-drive {{ $iconClass(request()->routeIs('user_hosting.storage*')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Penyimpanan / Storage</span>
+                            <span class="ms-3 whitespace-nowrap">File & Storage</span>
                         </a>
                     </li>
                     <li>
@@ -441,7 +441,7 @@
                             class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}">
                             <i
                                 class="fa-solid fa-file-invoice-dollar {{ $iconClass(request()->routeIs('user_hosting.billing')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Riwayat Tagihan</span>
+                            <span class="ms-3 whitespace-nowrap">Tagihan / Billing</span>
                         </a>
                     </li>
                     <li>
