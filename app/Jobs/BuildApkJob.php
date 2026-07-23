@@ -113,7 +113,7 @@ class BuildApkJob implements ShouldQueue
             $log .= "[INFO] Preparing Alpine environment (installing gcompat & platform-tools)...\n";
             $this->build->update(['log_output' => $log]);
 
-            $prepCmd = "apk add --no-cache gcompat libstdc++ libgcc && sdkmanager \"platform-tools\"";
+            $prepCmd = "apk add --no-cache gcompat libstdc++ libgcc && sdkmanager \"platform-tools\" && ln -sfn /opt/android-sdk/cmdline-tools/latest /opt/android-sdk/tools";
             $prepProcess = Process::fromShellCommandline($prepCmd, $workDir, [
                 'JAVA_HOME' => $jdkPath,
                 'PATH'      => $pathEnv,
