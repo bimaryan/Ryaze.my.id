@@ -40,10 +40,10 @@ class BuildApkJob implements ShouldQueue
             $packageParts = explode('.', $this->build->package_name);
             $appShortName = end($packageParts);
 
-            // Resolusi ikon — gunakan upload user, fallback ke favicon website
+            // Resolusi ikon — gunakan upload user, fallback ke UI-Avatars API (garansi PNG valid)
             $iconUrl = $this->build->icon_path
                 ? asset('storage/' . $this->build->icon_path)
-                : "https://{$host}/favicon.ico";
+                : "https://ui-avatars.com/api/?name=" . urlencode(mb_substr($this->build->app_name, 0, 1)) . "&size=512&background=000000&color=ffffff";
 
             $manifest = [
                 'packageId'         => $this->build->package_name,
