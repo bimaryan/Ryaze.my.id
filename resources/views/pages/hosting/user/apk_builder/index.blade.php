@@ -87,9 +87,11 @@
                                     <i class="fa-solid fa-download"></i> Download
                                 </a>
                             @endif
-                            <form action="{{ route('user_hosting.apk.destroy', $build->id) }}" method="POST" onsubmit="return confirm('Hapus aplikasi ini?')">
+                            <form action="{{ route('user_hosting.apk.destroy', $build->id) }}" method="POST"
+                                onsubmit="event.preventDefault(); let f = this; Swal.fire({title: 'Hapus Aplikasi?', text: 'Data build ini akan dihapus permanen.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: '<i class=\'fa-solid fa-trash-can mr-1\'></i> Ya, Hapus', cancelButtonText: 'Batal', customClass: {popup: 'rounded-2xl text-sm'}}).then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-lg transition text-xs font-medium">
+                                <button type="submit"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-lg transition text-xs font-medium">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </form>
