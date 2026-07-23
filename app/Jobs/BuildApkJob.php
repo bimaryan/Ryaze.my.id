@@ -163,12 +163,10 @@ class BuildApkJob implements ShouldQueue
                 ]
             );
             $process->setTimeout(840);
-            // Pipe jawaban interaktif Bubblewrap:
-            // 1. "n" (Jangan install JDK)
-            // 2. $jdkPath (Path JDK lokal)
-            // 3. "n" (Jangan install Android SDK)
-            // 4. $sdkPath (Path Android SDK lokal)
-            $process->setInput("n\n{$jdkPath}\nn\n{$sdkPath}\n");
+            // Karena SDK & JDK sekarang sudah valid, Bubblewrap tidak lagi bertanya path SDK.
+            // Ia hanya bertanya: "would you like to regenerate your project? (Y/n)"
+            // Kita harus jawab 'y' agar Bubblewrap me-generate folder proyek Androidnya.
+            $process->setInput("y\n");
 
             $lastUpdate = time();
             $process->run(function ($type, $buffer) use (&$log, &$lastUpdate) {
