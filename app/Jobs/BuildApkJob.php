@@ -94,7 +94,7 @@ class BuildApkJob implements ShouldQueue
                 'alphaDependencies' => ['enabled' => false],
                 'enableNotifications' => false,
                 'signingMode'       => 'none',
-                'minSdkVersion'     => 19,
+                'minSdkVersion'     => 21,
             ];
 
             file_put_contents($workDir . '/twa-manifest.json', json_encode($manifest, JSON_PRETTY_PRINT));
