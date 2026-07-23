@@ -80,7 +80,7 @@
                                 <i class="fa-solid fa-terminal"></i> {{ in_array($build->status, ['pending', 'building']) ? 'Lihat Proses' : 'Log' }}
                             </a>
                             @if($build->status === 'success' && $build->apk_path)
-                                <a href="{{ route('user_hosting.apk.download', $build->id) }}"
+                                <a href="{{ route('user_hosting.apk.download', $build->id) }}" data-pjax="false" download
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition text-xs font-medium">
                                     <i class="fa-solid fa-download"></i> Download
                                 </a>

@@ -39,7 +39,7 @@
             
             <div id="downloadSection" class="bg-slate-900 border-t border-slate-800 p-4 flex justify-between items-center {{ $build->status === 'success' ? '' : 'hidden' }}">
                 <p class="text-emerald-400 text-sm"><i class="fa-solid fa-party-horn mr-1"></i> Build berhasil! APK Anda siap diunduh.</p>
-                <a href="{{ route('user_hosting.apk.download', $build->id) }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold transition-colors">
+                <a href="{{ route('user_hosting.apk.download', $build->id) }}" data-pjax="false" download class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold transition-colors">
                     <i class="fa-solid fa-download"></i> Download APK
                 </a>
             </div>
