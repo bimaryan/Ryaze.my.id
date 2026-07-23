@@ -172,7 +172,7 @@ class BuildApkJob implements ShouldQueue
             $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
 
             $process = new Process(
-                ['bubblewrap', 'build', '--manifest=twa-manifest.json', '--keystorePassword=password', '--keyPassword=password'],
+                ['bubblewrap', 'build', '--manifest=twa-manifest.json'],
                 $workDir,
                 [
                     'HOME'             => $homeDir,
@@ -181,6 +181,8 @@ class BuildApkJob implements ShouldQueue
                     'ANDROID_HOME'     => $sdkPath,
                     'PATH'             => $pathEnv,
                     'CI'               => 'true', // hint ke beberapa CLI agar non-interaktif
+                    'BUBBLEWRAP_KEYSTORE_PASSWORD' => 'password',
+                    'BUBBLEWRAP_KEY_PASSWORD'      => 'password',
                 ]
             );
             $process->setTimeout(840);
