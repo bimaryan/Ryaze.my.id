@@ -77,7 +77,22 @@ class BuildApkJob implements ShouldQueue
             file_put_contents($workDir . '/twa-manifest.json', json_encode($manifest, JSON_PRETTY_PRINT));
             $log .= "[INFO] twa-manifest.json created.\n";
 
-            // ── 2. Jalankan `bubblewrap build` ───────────────────────────
+            // ── 2. Pre-konfigurasi Bubblewrap (hindari prompt interaktif) ──────────
+            $log .= "[INFO] Pre-configuring Bubblewrap...\n";
+            $homeDir = trim(shell_exec('echo $HOME') ?: '/root');
+            $bubblewrapConfigDir = $homeDir . '/.bubblewrap';
+            if (!is_dir($bubblewrapConfigDir)) {
+                mkdir($bubblewrapConfigDir, 0755, true);
+            }
+            $jdkPath = env('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk');
+            $sdkPath = env('ANDROID_SDK_ROOT', '/opt/android-sdk');
+            file_put_contents($bubblewrapConfigDir . '/llama.json', json_encode([
+                'jdkPath'        => $jdkPath,
+                'androidSdkPath' => $sdkPath,
+            ]));
+            $log .= "[INFO] Bubblewrap config written to {$bubblewrapConfigDir}/llama.json\n";
+
+            // ── 3. Jalankan `bubblewrap build` ───────────────────────────
             $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
 
             $process = new Process(
