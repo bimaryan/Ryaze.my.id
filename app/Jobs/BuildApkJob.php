@@ -172,7 +172,7 @@ class BuildApkJob implements ShouldQueue
             $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
 
             $process = new Process(
-                ['bubblewrap', 'build', '--manifest=twa-manifest.json'],
+                ['bubblewrap', 'build', '--manifest=twa-manifest.json', '--keystorePassword=password', '--keyPassword=password'],
                 $workDir,
                 [
                     'HOME'             => $homeDir,
@@ -184,11 +184,9 @@ class BuildApkJob implements ShouldQueue
                 ]
             );
             $process->setTimeout(840);
-            // Karena SDK & JDK sekarang sudah valid, Bubblewrap tidak lagi bertanya path SDK.
-            // Ia hanya bertanya: "would you like to regenerate your project? (Y/n)"
-            // Setelah itu, karena kita menambahkan konfigurasi `signingKey` dummy,
-            // ia akan meminta password keystore dan password alias (keduanya "password").
-            $process->setInput("y\npassword\npassword\n");
+            // Karena password keystore sudah dipassing via argumen, Bubblewrap hanya
+            // akan bertanya: "would you like to regenerate your project? (Y/n)"
+            $process->setInput("y\n");
 
             $lastUpdate = time();
             $process->run(function ($type, $buffer) use (&$log, &$lastUpdate) {
