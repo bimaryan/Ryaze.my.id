@@ -53,6 +53,11 @@ class BuildApkJob implements ShouldQueue
             }
             file_put_contents($workDir . '/icon.png', $iconContent);
 
+            // Buat android.keystore dummy agar build release bisa jalan
+            if (!file_exists($workDir . '/android.keystore')) {
+                shell_exec("keytool -genkey -v -keystore {$workDir}/android.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname \"CN=Ryaze, OU=Hosting, O=Ryaze, L=Jakarta, ST=DKI Jakarta, C=ID\"");
+            }
+
             $manifest = [
                 'packageId'         => $this->build->package_name,
                 'host'              => $host,
@@ -78,6 +83,11 @@ class BuildApkJob implements ShouldQueue
                 'additionalTrustedOrigins' => [],
                 'retainedBundles'   => [],
                 'features'          => [],
+                'fallbackType'      => 'customtabs',
+                'signingKey'        => [
+                    'path'  => 'android.keystore',
+                    'alias' => 'android'
+                ],
                 'alphaDependencies' => ['enabled' => false],
                 'enableNotifications' => false,
                 'signingMode'       => 'none',
