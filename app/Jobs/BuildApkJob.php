@@ -100,11 +100,11 @@ class BuildApkJob implements ShouldQueue
                 mkdir($bubblewrapConfigDir, 0755, true);
             }
             
-            file_put_contents($bubblewrapConfigDir . '/llama.json', json_encode([
+            file_put_contents($bubblewrapConfigDir . '/config.json', json_encode([
                 'jdkPath'        => $jdkPath,
                 'androidSdkPath' => $sdkPath,
             ]));
-            $log .= "[INFO] Bubblewrap config written to {$bubblewrapConfigDir}/llama.json\n";
+            $log .= "[INFO] Bubblewrap config written to {$bubblewrapConfigDir}/config.json\n";
 
             // ── 3. Jalankan `bubblewrap build` ───────────────────────────
             $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
@@ -125,9 +125,12 @@ class BuildApkJob implements ShouldQueue
                 ]
             );
             $process->setTimeout(840);
-            // Pipe jawaban "n" ke stdin untuk menjawab pertanyaan JDK secara otomatis
-            // "n" = Tidak install JDK baru, gunakan JDK yang sudah ada
-            $process->setInput("n\n");
+            // Pipe jawaban interaktif Bubblewrap:
+            // 1. "n" (Jangan install JDK)
+            // 2. $jdkPath (Path JDK lokal)
+            // 3. "n" (Jangan install Android SDK)
+            // 4. $sdkPath (Path Android SDK lokal)
+            $process->setInput("n\n{$jdkPath}\nn\n{$sdkPath}\n");
 
             $lastUpdate = time();
             $process->run(function ($type, $buffer) use (&$log, &$lastUpdate) {
