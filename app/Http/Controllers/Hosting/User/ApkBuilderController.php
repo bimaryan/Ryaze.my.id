@@ -64,6 +64,18 @@ class ApkBuilderController extends Controller
         return Storage::disk('local')->download($build->apk_path, Str::slug($build->app_name) . '.apk');
     }
 
+    public function log(ApkBuild $build)
+    {
+        if ($build->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return response()->json([
+            'status' => $build->status,
+            'log' => $build->log_output
+        ]);
+    }
+
     public function destroy(ApkBuild $build)
     {
         if ($build->user_id !== Auth::id()) {

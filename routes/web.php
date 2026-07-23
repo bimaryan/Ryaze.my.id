@@ -240,6 +240,7 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/apk/create', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'create'])->name('user_hosting.apk.create');
         Route::post('user/hosting/apk', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'store'])->name('user_hosting.apk.store');
         Route::get('user/hosting/apk/{build}/download', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'download'])->name('user_hosting.apk.download');
+        Route::get('user/hosting/apk/{build}/log', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'log'])->name('user_hosting.apk.log');
         Route::delete('user/hosting/apk/{build}', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'destroy'])->name('user_hosting.apk.destroy');
 
     });

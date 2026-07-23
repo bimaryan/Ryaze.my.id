@@ -129,8 +129,14 @@ class BuildApkJob implements ShouldQueue
             // "n" = Tidak install JDK baru, gunakan JDK yang sudah ada
             $process->setInput("n\n");
 
-            $process->run(function ($type, $buffer) use (&$log) {
+            $lastUpdate = time();
+            $process->run(function ($type, $buffer) use (&$log, &$lastUpdate) {
                 $log .= $buffer;
+                // Update ke database setiap 2 detik agar tidak spam DB
+                if (time() - $lastUpdate >= 2) {
+                    $this->build->update(['log_output' => $log]);
+                    $lastUpdate = time();
+                }
             });
 
             if (!$process->isSuccessful()) {

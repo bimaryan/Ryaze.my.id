@@ -75,12 +75,10 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            @if($build->log_output)
-                                <button onclick="showLog({{ json_encode($build->log_output) }})"
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200 rounded-lg transition text-xs font-medium">
-                                    <i class="fa-solid fa-terminal"></i> Log
-                                </button>
-                            @endif
+                            <button onclick="showLog({{ $build->id }}, {{ json_encode($build->log_output) }}, '{{ $build->status }}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200 rounded-lg transition text-xs font-medium">
+                                <i class="fa-solid fa-terminal"></i> {{ in_array($build->status, ['pending', 'building']) ? 'Lihat Proses' : 'Log' }}
+                            </button>
                             @if($build->status === 'success' && $build->apk_path)
                                 <a href="{{ route('user_hosting.apk.download', $build->id) }}"
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition text-xs font-medium">
@@ -147,16 +145,46 @@
         const logModal = document.getElementById('logModal');
         const logBackdrop = document.getElementById('log-modal-backdrop');
         const logPanel = document.getElementById('log-modal-panel');
-        function showLog(log) {
-            document.getElementById('logContent').textContent = log;
+        let logInterval = null;
+
+        function showLog(id, initialLog, status) {
+            const pre = document.getElementById('logContent');
+            pre.textContent = initialLog || 'Menyiapkan proses build...';
+            
             logModal.classList.remove('hidden');
             setTimeout(() => {
                 logBackdrop.classList.remove('opacity-0');
                 logPanel.classList.remove('opacity-0', 'scale-95');
                 logPanel.classList.add('opacity-100', 'scale-100');
             }, 10);
+
+            // Jika status masih berjalan, lakukan live polling
+            if (status === 'pending' || status === 'building') {
+                pre.textContent += '\n[LIVE] Mengambil update dari background worker...';
+                logInterval = setInterval(() => {
+                    fetch(`/user/hosting/apk/${id}/log`)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.log) {
+                                pre.textContent = data.log;
+                                pre.scrollTop = pre.scrollHeight; // Auto-scroll ke bawah
+                            }
+                            if (data.status === 'success' || data.status === 'failed') {
+                                clearInterval(logInterval);
+                                pre.textContent += `\n[LIVE] Proses selesai dengan status: ${data.status}. Merefresh halaman...`;
+                                setTimeout(() => window.location.reload(), 2000);
+                            }
+                        })
+                        .catch(err => console.error('Failed to fetch log', err));
+                }, 2000);
+            }
         }
+
         function closeLogModal() {
+            if (logInterval) {
+                clearInterval(logInterval);
+                logInterval = null;
+            }
             logBackdrop.classList.add('opacity-0');
             logPanel.classList.remove('opacity-100', 'scale-100');
             logPanel.classList.add('opacity-0', 'scale-95');
