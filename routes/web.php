@@ -235,6 +235,12 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/tickets/{hashid}', [\App\Http\Controllers\User\TicketController::class, 'show'])->name('user_hosting.tickets.show');
         Route::post('user/hosting/tickets/{hashid}/reply', [\App\Http\Controllers\User\TicketController::class, 'reply'])->name('user_hosting.tickets.reply');
 
+        // Apk Builder
+        Route::get('user/hosting/apk', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'index'])->name('user_hosting.apk.index');
+        Route::get('user/hosting/apk/create', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'create'])->name('user_hosting.apk.create');
+        Route::post('user/hosting/apk', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'store'])->name('user_hosting.apk.store');
+        Route::get('user/hosting/apk/{build}/download', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'download'])->name('user_hosting.apk.download');
+
     });
 
     // ═══════════════════════════════════════════════════════════════

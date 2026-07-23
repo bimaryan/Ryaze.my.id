@@ -388,6 +388,14 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('user_hosting.apk.index') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.apk*')) }}">
+                            <i
+                                class="fa-brands fa-android {{ $iconClass(request()->routeIs('user_hosting.apk*')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Web to APK</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('user_hosting.templates') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.templates')) }}">
                             <i
