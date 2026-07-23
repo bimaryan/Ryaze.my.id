@@ -63,4 +63,25 @@ class ApkBuilderController extends Controller
 
         return Storage::disk('local')->download($build->apk_path, Str::slug($build->app_name) . '.apk');
     }
+
+    public function destroy(ApkBuild $build)
+    {
+        if ($build->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Hapus file APK jika ada
+        if ($build->apk_path && Storage::disk('local')->exists($build->apk_path)) {
+            Storage::disk('local')->delete($build->apk_path);
+        }
+
+        // Hapus file ikon jika ada
+        if ($build->icon_path && Storage::disk('public')->exists($build->icon_path)) {
+            Storage::disk('public')->delete($build->icon_path);
+        }
+
+        $build->delete();
+
+        return redirect()->route('user_hosting.apk.index')->with('success', 'Aplikasi berhasil dihapus.');
+    }
 }
