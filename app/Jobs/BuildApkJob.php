@@ -185,8 +185,9 @@ class BuildApkJob implements ShouldQueue
             $process->setTimeout(840);
             // Karena SDK & JDK sekarang sudah valid, Bubblewrap tidak lagi bertanya path SDK.
             // Ia hanya bertanya: "would you like to regenerate your project? (Y/n)"
-            // Kita harus jawab 'y' agar Bubblewrap me-generate folder proyek Androidnya.
-            $process->setInput("y\n");
+            // Setelah itu, karena kita menambahkan konfigurasi `signingKey` dummy,
+            // ia akan meminta password keystore dan password alias (keduanya "password").
+            $process->setInput("y\npassword\npassword\n");
 
             $lastUpdate = time();
             $process->run(function ($type, $buffer) use (&$log, &$lastUpdate) {
