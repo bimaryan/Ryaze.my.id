@@ -218,7 +218,7 @@ class BuildApkJob implements ShouldQueue
 
             $apkSource = $apkFiles[0];
             $apkDest   = 'apks/' . $this->build->id . '.apk';
-            $absoluteDest = storage_path('app/' . $apkDest);
+            $absoluteDest = storage_path('app/private/' . $apkDest);
 
             // Pastikan folder apks ada dengan permission yang bisa dibaca www-data
             if (!is_dir(dirname($absoluteDest))) {
