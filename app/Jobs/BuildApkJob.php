@@ -76,6 +76,7 @@ class BuildApkJob implements ShouldQueue
                 'splashScreen' => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'splashScreenFadeOutDuration' => 300,
                 'appVersion' => $this->build->version_name ?? '1',
+                'appVersionName' => $this->build->version_name ?? '1',
                 'appVersionCode' => $this->build->version_code ?? 1,
                 'shortcuts' => [],
                 'generatorApp' => 'ryaze-apk-builder',
@@ -189,7 +190,9 @@ class BuildApkJob implements ShouldQueue
             $process->setTimeout(840);
             // Karena password keystore sudah dipassing via argumen, Bubblewrap hanya
             // akan bertanya: "would you like to regenerate your project? (Y/n)"
-            $process->setInput("y\n");
+            // dan berpotensi bertanya: "? versionName for the new App version:"
+            $vName = $this->build->version_name ?? '1.0.0';
+            $process->setInput("y\n{$vName}\n");
 
             $lastUpdate = time();
             $process->run(function ($type, $buffer) use (&$log, &$lastUpdate) {
