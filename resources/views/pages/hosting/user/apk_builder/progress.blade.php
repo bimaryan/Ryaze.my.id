@@ -47,20 +47,34 @@
     </x-ui.page-layout>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        (function() {
             const pre = document.getElementById('logContent');
             const statusBadge = document.getElementById('statusBadge');
             const downloadSection = document.getElementById('downloadSection');
+            
+            if (!pre) return;
+            
             let currentStatus = '{{ $build->status }}';
             let initialLog = {!! json_encode($build->log_output) !!};
             
             pre.textContent = initialLog || 'Menyiapkan proses build...';
             pre.scrollTop = pre.scrollHeight;
 
+            if (window.apkBuildInterval) {
+                clearInterval(window.apkBuildInterval);
+            }
+
             if (currentStatus === 'pending' || currentStatus === 'building') {
-                pre.textContent += '\n[LIVE] Menyambungkan ke worker...';
+                if (!initialLog) {
+                    pre.textContent += '\n[LIVE] Menyambungkan ke worker...';
+                }
                 
-                const logInterval = setInterval(() => {
+                window.apkBuildInterval = setInterval(() => {
+                    if (!document.getElementById('logContent')) {
+                        clearInterval(window.apkBuildInterval);
+                        return;
+                    }
+
                     fetch(`/user/hosting/apk/{{ $build->id }}/log`)
                         .then(r => r.json())
                         .then(data => {
@@ -70,7 +84,7 @@
                             }
                             
                             if (data.status === 'success' || data.status === 'failed') {
-                                clearInterval(logInterval);
+                                clearInterval(window.apkBuildInterval);
                                 pre.textContent += `\n\n[SISTEM] Proses selesai dengan status: ${data.status.toUpperCase()}`;
                                 pre.scrollTop = pre.scrollHeight;
                                 
@@ -85,6 +99,6 @@
                         .catch(err => console.error('Gagal fetch log', err));
                 }, 2000);
             }
-        });
+        })();
     </script>
 @endsection
