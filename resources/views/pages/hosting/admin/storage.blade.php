@@ -95,7 +95,7 @@
 
         <script nonce="{{ app('csp_nonce') ?? '' }}">
             (function() {
-                document.querySelectorAll('.btn-edit-storage').forEach(button => {
+                [].forEach.call(document.querySelectorAll('.btn-edit-storage'), button => {
                     button.addEventListener('click', function() {
                         var form = document.getElementById('editStorageForm');
                         form.action = `/admin/hosting/storage/${this.dataset.hashid}`;
@@ -103,7 +103,7 @@
                         document.getElementById('storageLimitInput').value = this.dataset.limit;
                     });
                 });
-                document.querySelectorAll('.modal-content-stop').forEach(el => {
+                [].forEach.call(document.querySelectorAll('.modal-content-stop'), el => {
                     el.addEventListener('click', e => e.stopPropagation());
                 });
             })();

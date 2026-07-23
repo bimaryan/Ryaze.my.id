@@ -109,7 +109,7 @@
                 const inner = modal.querySelector('div.bg-white');
                 const form = document.getElementById('verifyForm');
 
-                document.querySelectorAll('.btn-open-verify').forEach(btn => {
+                [].forEach.call(document.querySelectorAll('.btn-open-verify'), btn => {
                     btn.addEventListener('click', function() {
                         const hashid = this.getAttribute('data-hashid');
                         const invoice = this.getAttribute('data-invoice');
@@ -137,7 +137,7 @@
                     }, 300);
                 };
 
-                document.querySelectorAll('.btn-close-verify').forEach(btn => {
+                [].forEach.call(document.querySelectorAll('.btn-close-verify'), btn => {
                     btn.addEventListener('click', closeVerifyModal);
                 });
 

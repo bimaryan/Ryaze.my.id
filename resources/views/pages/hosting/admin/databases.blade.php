@@ -166,10 +166,10 @@
                     clientSelect.addEventListener('change', function() {
                         const id = this.value;
                         const prefix = id ? `ryz_${id}_` : `ryz_.._`;
-                        document.querySelectorAll('.prefix-addon').forEach(el => el.textContent = prefix);
+                        [].forEach.call(document.querySelectorAll('.prefix-addon'), el => el.textContent = prefix);
                     });
                 }
-                document.querySelectorAll('.btn-delete').forEach(button => {
+                [].forEach.call(document.querySelectorAll('.btn-delete'), button => {
                     button.addEventListener('click', function() {
                         const hashid = this.dataset.hashid;
                         Swal.fire({
@@ -190,7 +190,7 @@
                     });
                 });
             });
-            document.querySelectorAll('.modal-content-stop').forEach(el => {
+            [].forEach.call(document.querySelectorAll('.modal-content-stop'), el => {
                 el.addEventListener('click', e => e.stopPropagation());        })();
         </script>
     </x-ui.page-layout>

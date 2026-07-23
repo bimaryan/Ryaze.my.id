@@ -1258,8 +1258,8 @@
     {{-- ── SCRIPT 3: Tab switching ──────────────────────────────────────────── --}}
     <script nonce="{{ csp_nonce() }}">
         function switchTab(name) {
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => {
+            [].forEach.call(document.querySelectorAll('.tab-panel'), p => p.classList.add('hidden'));
+            [].forEach.call(document.querySelectorAll('.tab-btn'), b => {
                 b.classList.remove('bg-indigo-600', 'text-white', 'shadow');
                 b.classList.add('text-slate-500');
             });
@@ -1275,7 +1275,7 @@
         }
 
         // Event listener tab — TIDAK ada onclick di HTML
-        document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
+        [].forEach.call(document.querySelectorAll('.tab-btn[data-tab]'), btn => {
             btn.addEventListener('click', () => switchTab(btn.dataset.tab));
         });
     </script>
@@ -1393,7 +1393,7 @@
         });
 
         // Event listeners terminal — menggantikan semua onclick inline
-        document.querySelectorAll('[data-action="clear-terminal"]').forEach(el => {
+        [].forEach.call(document.querySelectorAll('[data-action="clear-terminal"]'), el => {
             el.addEventListener('click', clearTerminal);
         });
         document.getElementById('terminal-output').addEventListener('click', () => {
@@ -2043,16 +2043,16 @@
         }
 
         // ── Activity Bar Logic ──────────────────────────────────────────────────
-        document.querySelectorAll('.ide-activity-btn').forEach(btn => {
+        [].forEach.call(document.querySelectorAll('.ide-activity-btn'), btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.ide-activity-btn').forEach(b => {
+                [].forEach.call(document.querySelectorAll('.ide-activity-btn'), b => {
                     b.classList.remove('text-white', 'border-indigo-500');
                     b.classList.add('text-slate-500', 'border-transparent');
                 });
                 btn.classList.remove('text-slate-500', 'border-transparent');
                 btn.classList.add('text-white', 'border-indigo-500');
 
-                document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
+                [].forEach.call(document.querySelectorAll('.ide-sidebar-view'), v => v.classList.add('hidden'));
                 document.getElementById(btn.dataset.target).classList.remove('hidden');
             });
         });

@@ -163,7 +163,7 @@
             }
 
             document.getElementById('btn-open-create-modal')?.addEventListener('click', openModal);
-            document.querySelectorAll('.btn-close-modal, .modal-overlay').forEach(el => el.addEventListener('click', closeModal));
+            [].forEach.call(document.querySelectorAll('.btn-close-modal, .modal-overlay'), el => el.addEventListener('click', closeModal));
 
             // Generate Password
             document.getElementById('btn-generate-password')?.addEventListener('click', () => {
@@ -174,7 +174,7 @@
             });
 
             // Delete Confirm
-            document.querySelectorAll('.btn-delete-email').forEach(btn => {
+            [].forEach.call(document.querySelectorAll('.btn-delete-email'), btn => {
                 btn.addEventListener('click', function() {
                     const action = this.dataset.action;
                     Swal.fire({
