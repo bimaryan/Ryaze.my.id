@@ -1,15 +1,19 @@
 @extends('index')
 
 @section('content')
-<div class="p-4 sm:ml-64 pt-24 bg-slate-50 min-h-screen">
-    <div class="max-w-3xl mx-auto">
-        <div class="mb-8">
-            <a href="{{ route('user_hosting.apk.index') }}" class="text-sm text-slate-500 hover:text-indigo-600 font-medium flex items-center gap-2 mb-4 transition-colors">
-                <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar APK
-            </a>
-            <h1 class="text-2xl font-bold text-slate-800">Buat Aplikasi Android Baru</h1>
-            <p class="text-slate-500 text-sm mt-1">Isi detail di bawah ini untuk memulai proses *build* website Anda menjadi `.apk`.</p>
-        </div>
+    <x-ui.page-layout>
+        <x-ui.page-header
+            title="Buat Aplikasi Android Baru"
+            subtitle="Isi detail di bawah ini untuk memulai proses build website Anda menjadi .apk"
+            icon="fa-solid fa-hammer"
+            iconColor="indigo">
+            <x-slot:actions>
+                <a href="{{ route('user_hosting.apk.index') }}"
+                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    &larr; Kembali
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
             <form action="{{ route('user_hosting.apk.store') }}" method="POST" enctype="multipart/form-data">
@@ -58,6 +62,5 @@
                 </div>
             </form>
         </div>
-    </div>
-</div>
+    </x-ui.page-layout>
 @endsection

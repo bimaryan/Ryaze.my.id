@@ -1,17 +1,20 @@
 @extends('index')
 
 @section('content')
-<div class="p-4 sm:ml-64 pt-24 bg-slate-50 min-h-screen">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Web to APK Builder</h1>
-                <p class="text-slate-500 text-sm mt-1">Konversi website Anda menjadi aplikasi Android (APK) secara otomatis.</p>
-            </div>
-            <a href="{{ route('user_hosting.apk.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Buat Aplikasi Baru
-            </a>
-        </div>
+    <x-ui.page-layout>
+        {{-- Header --}}
+        <x-ui.page-header
+            title="Web to APK Builder"
+            subtitle="Konversi website Anda menjadi aplikasi Android (.apk) secara otomatis."
+            icon="fa-brands fa-android"
+            iconColor="indigo">
+            <x-slot:actions>
+                <a href="{{ route('user_hosting.apk.create') }}"
+                    class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    <i class="fa-solid fa-plus"></i> Buat Aplikasi Baru
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         @if(session('success'))
             <div class="p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200">
@@ -84,10 +87,9 @@
                 </tbody>
             </table>
         </div>
-        
+
         <div class="mt-4">
             {{ $builds->links() }}
         </div>
-    </div>
-</div>
+    </x-ui.page-layout>
 @endsection
