@@ -79,13 +79,27 @@ class BuildApkJob implements ShouldQueue
 
             // ── 2. Pre-konfigurasi Bubblewrap (hindari prompt interaktif) ──────────
             $log .= "[INFO] Pre-configuring Bubblewrap...\n";
-            $homeDir = trim(shell_exec('echo $HOME') ?: '/root');
+
+            // Deteksi path Java secara dinamis
+            $javaSymlink = trim(shell_exec('which java 2>/dev/null') ?: '');
+            $javaRealPath = $javaSymlink ? trim(shell_exec("readlink -f {$javaSymlink} 2>/dev/null") ?: $javaSymlink) : '';
+            // Naiki ke JAVA_HOME (biasanya: .../bin/java -> ...)
+            $jdkPath = $javaRealPath ? dirname(dirname($javaRealPath)) : env('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk');
+            $sdkPath = env('ANDROID_SDK_ROOT', '/opt/android-sdk');
+            $log .= "[INFO] Detected JAVA_HOME: {$jdkPath}\n";
+            $log .= "[INFO] Detected ANDROID_SDK_ROOT: {$sdkPath}\n";
+
+            // Tulis config ke home dir user yang menjalankan PHP
+            $homeDir = trim(shell_exec('echo $HOME 2>/dev/null') ?: '/tmp');
+            if ($homeDir === '/' || !is_writable($homeDir)) {
+                $homeDir = '/tmp'; // Fallback ke /tmp jika home tidak bisa ditulisi
+            }
+            
             $bubblewrapConfigDir = $homeDir . '/.bubblewrap';
             if (!is_dir($bubblewrapConfigDir)) {
                 mkdir($bubblewrapConfigDir, 0755, true);
             }
-            $jdkPath = env('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk');
-            $sdkPath = env('ANDROID_SDK_ROOT', '/opt/android-sdk');
+            
             file_put_contents($bubblewrapConfigDir . '/llama.json', json_encode([
                 'jdkPath'        => $jdkPath,
                 'androidSdkPath' => $sdkPath,
@@ -95,19 +109,25 @@ class BuildApkJob implements ShouldQueue
             // ── 3. Jalankan `bubblewrap build` ───────────────────────────
             $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
 
+            $pathEnv = getenv('PATH') ?: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
+            $pathEnv .= ':/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:' . $jdkPath . '/bin';
+
             $process = new Process(
                 ['bubblewrap', 'build', '--manifest=twa-manifest.json'],
                 $workDir,
                 [
-                    'JAVA_HOME' => env('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk-amd64'),
-                    'ANDROID_SDK_ROOT' => env('ANDROID_SDK_ROOT', '/opt/android-sdk'),
-                    'PATH' => env('PATH', '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin')
-                        . ':/opt/android-sdk/cmdline-tools/latest/bin'
-                        . ':/opt/android-sdk/platform-tools'
-                        . ':' . env('NODE_PATH', '/usr/bin'),
+                    'HOME'             => $homeDir,
+                    'JAVA_HOME'        => $jdkPath,
+                    'ANDROID_SDK_ROOT' => $sdkPath,
+                    'ANDROID_HOME'     => $sdkPath,
+                    'PATH'             => $pathEnv,
+                    'CI'               => 'true', // hint ke beberapa CLI agar non-interaktif
                 ]
             );
             $process->setTimeout(840);
+            // Pipe jawaban "n" ke stdin untuk menjawab pertanyaan JDK secara otomatis
+            // "n" = Tidak install JDK baru, gunakan JDK yang sudah ada
+            $process->setInput("n\n");
 
             $process->run(function ($type, $buffer) use (&$log) {
                 $log .= $buffer;

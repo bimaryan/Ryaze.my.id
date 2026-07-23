@@ -47,7 +47,8 @@
 
                     <div>
                         <label class="block mb-2 text-sm font-medium text-slate-900" for="icon">Ikon Aplikasi <span class="text-slate-400 font-normal">(Opsional)</span></label>
-                        <input class="block w-full text-sm text-slate-900 border border-slate-300 rounded-lg cursor-pointer bg-slate-50 focus:outline-none" id="icon" name="icon" type="file" accept="image/png, image/jpeg">
+                        <input type="file" id="icon" name="icon" accept="image/png, image/jpeg"
+                            class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-lg cursor-pointer bg-white transition">
                         <p class="mt-1.5 text-xs text-slate-500">Gunakan format PNG atau JPG dengan ukuran persegi (misal: 512x512px).</p>
                         @error('icon')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
