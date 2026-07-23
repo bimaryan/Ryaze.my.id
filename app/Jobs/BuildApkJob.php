@@ -73,6 +73,7 @@ class BuildApkJob implements ShouldQueue
                 'monochromeIconUrl' => $iconUrl,
                 'icon'              => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'maskableIcon'      => ['url' => $iconUrl, 'path' => 'icon.png'],
+                'monochromeIcon'    => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'splashScreen'      => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'appVersion'        => '1',
                 'appVersionCode'    => 1,
