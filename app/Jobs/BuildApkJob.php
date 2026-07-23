@@ -128,7 +128,26 @@ class BuildApkJob implements ShouldQueue
             });
             $log .= "[INFO] Environment preparation finished.\n";
 
-            // ── 3. Jalankan `bubblewrap build` ───────────────────────────
+            // ── 3. Jalankan `bubblewrap doctor` untuk diagnosa ───────────
+            $log .= "[CMD] Running: bubblewrap doctor\n";
+            $doctorProcess = new Process(['bubblewrap', 'doctor'], $workDir, [
+                'HOME'             => $homeDir,
+                'JAVA_HOME'        => $jdkPath,
+                'ANDROID_SDK_ROOT' => $sdkPath,
+                'ANDROID_HOME'     => $sdkPath,
+                'PATH'             => $pathEnv,
+                'CI'               => 'true',
+            ]);
+            $doctorProcess->setTimeout(60);
+            $doctorProcess->run(function($type, $buffer) use (&$log, &$lastUpdate) {
+                $log .= $buffer;
+                if (time() - $lastUpdate >= 2) {
+                    $this->build->update(['log_output' => $log]);
+                    $lastUpdate = time();
+                }
+            });
+
+            // ── 4. Jalankan `bubblewrap build` ───────────────────────────
             $log .= "[CMD] Running: bubblewrap build --manifest=twa-manifest.json\n";
 
             $process = new Process(
