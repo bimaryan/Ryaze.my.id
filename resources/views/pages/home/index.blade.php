@@ -244,9 +244,9 @@
                     <div class="w-12 h-12 bg-indigo-600 text-white rounded flex items-center justify-center mb-6">
                         <i class="fa-solid fa-laptop-code text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Custom Web Development</h3>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Joki Pembuatan Web & Aplikasi</h3>
                     <p class="text-slate-500 text-sm leading-relaxed mb-8 flex-1">
-                        Pembangunan sistem informasi terintegrasi, aplikasi SaaS, hingga prototipe fungsional untuk Tugas Akhir berbasis arsitektur modern yang bersih dan terdokumentasi.
+                        Layanan Joki untuk pembuatan sistem informasi, aplikasi SaaS, hingga prototipe fungsional Tugas Akhir (Skripsi). Berbasis arsitektur modern yang bersih, efisien, dan terdokumentasi dengan baik.
                     </p>
                     <ul class="space-y-3 mb-8 text-sm font-medium text-slate-600">
                         <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Backend & API Design</li>
@@ -263,14 +263,28 @@
                     <div class="w-12 h-12 bg-indigo-600 text-white rounded flex items-center justify-center mb-6">
                         <i class="fa-solid fa-server text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Cloud Application Hosting</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-8 flex-1">
-                        Deployment otomatis tanpa pusing. Eksekusi repositori kode Anda langsung ke server publik dengan dukungan web-terminal, proses manager, dan manajemen database bawaan.
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xl font-bold text-slate-900">Cloud Application Hosting</h3>
+                        @php
+                            $normalPrice = (int) \App\Models\Setting::val('hosting_price', 10000);
+                            $promoPrice = (int) \App\Models\Setting::val('hosting_promo_price', 0);
+                        @endphp
+                        <div class="text-right flex flex-col items-end leading-tight">
+                            @if($promoPrice > 0)
+                                <span class="text-[10px] text-slate-400 line-through">Rp {{ number_format($normalPrice, 0, ',', '.') }}</span>
+                                <span class="text-sm font-bold text-emerald-600">Rp {{ number_format($promoPrice, 0, ',', '.') }}<span class="text-[10px] text-slate-500 font-normal">/bln</span></span>
+                            @else
+                                <span class="text-sm font-bold text-indigo-600">Rp {{ number_format($normalPrice, 0, ',', '.') }}<span class="text-[10px] text-slate-500 font-normal">/bln</span></span>
+                            @endif
+                        </div>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-1">
+                        Deployment otomatis tanpa pusing. Eksekusi repositori kode langsung ke server publik dengan dukungan Web-Terminal, proses manager, dan database bawaan.
                     </p>
-                    <ul class="space-y-3 mb-8 text-sm font-medium text-slate-600">
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> 1-Click Deployment (Node/PHP/Python)</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Web Terminal & IDE Bawaan</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> SSL & Domain Management</li>
+                    <ul class="space-y-2 mb-8 text-sm font-medium text-slate-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Auto Deploy (Node, PHP, Python, React, Vue)</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Database (MySQL), Custom Domain & SSL Gratis</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> File Manager, Web Terminal & Email Domain</li>
                     </ul>
                     <a href="{{ route('register') }}" class="text-sm font-semibold text-indigo-600 inline-flex items-center gap-2 group-hover:underline">
                         Deploy Sekarang <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
