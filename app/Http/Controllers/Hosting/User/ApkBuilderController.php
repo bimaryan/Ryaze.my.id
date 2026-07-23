@@ -46,9 +46,19 @@ class ApkBuilderController extends Controller
             'status' => 'pending'
         ]);
 
+        // Jalankan background job
         BuildApkJob::dispatch($build);
 
-        return redirect()->route('user_hosting.apk.index')->with('success', 'Pesanan kompilasi APK berhasil dibuat dan sedang diproses di background.');
+        return redirect()->route('user_hosting.apk.progress', $build->id);
+    }
+
+    public function progress(ApkBuild $build)
+    {
+        if ($build->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('pages.hosting.user.apk_builder.progress', compact('build'));
     }
 
     public function download(ApkBuild $build)
