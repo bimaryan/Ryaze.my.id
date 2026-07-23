@@ -76,7 +76,7 @@ class BuildApkJob implements ShouldQueue
                 'monochromeIcon'    => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'splashScreen'      => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'splashScreenFadeOutDuration' => 300,
-                'appVersionName'    => '1',
+                'appVersion'        => '1',
                 'appVersionCode'    => 1,
                 'shortcuts'         => [],
                 'generatorApp'      => 'ryaze-apk-builder',
