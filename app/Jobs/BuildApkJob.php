@@ -45,6 +45,14 @@ class BuildApkJob implements ShouldQueue
                 ? asset('storage/' . $this->build->icon_path)
                 : "https://ui-avatars.com/api/?name=" . urlencode(mb_substr($this->build->app_name, 0, 1)) . "&size=512&background=000000&color=ffffff";
 
+            // Unduh ikon secara lokal untuk memenuhi syarat validasi path internal Bubblewrap
+            $iconContent = @file_get_contents($iconUrl);
+            if (!$iconContent) {
+                // Fallback darurat jika download gagal (PNG transparan 1x1)
+                $iconContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
+            }
+            file_put_contents($workDir . '/icon.png', $iconContent);
+
             $manifest = [
                 'packageId'         => $this->build->package_name,
                 'host'              => $host,
@@ -58,6 +66,9 @@ class BuildApkJob implements ShouldQueue
                 'iconUrl'           => $iconUrl,
                 'maskableIconUrl'   => $iconUrl,
                 'monochromeIconUrl' => $iconUrl,
+                'icon'              => ['url' => $iconUrl, 'path' => 'icon.png'],
+                'maskableIcon'      => ['url' => $iconUrl, 'path' => 'icon.png'],
+                'splashScreen'      => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'appVersion'        => '1',
                 'appVersionCode'    => 1,
                 'shortcuts'         => [],
