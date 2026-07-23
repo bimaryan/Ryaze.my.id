@@ -218,8 +218,16 @@ class BuildApkJob implements ShouldQueue
 
             $apkSource = $apkFiles[0];
             $apkDest   = 'apks/' . $this->build->id . '.apk';
+            $absoluteDest = storage_path('app/' . $apkDest);
 
-            Storage::disk('local')->put($apkDest, file_get_contents($apkSource));
+            // Pastikan folder apks ada dengan permission yang bisa dibaca www-data
+            if (!is_dir(dirname($absoluteDest))) {
+                mkdir(dirname($absoluteDest), 0755, true);
+            }
+
+            copy($apkSource, $absoluteDest);
+            chmod($absoluteDest, 0644); // pastikan www-data bisa membaca file
+            
             $log .= "[INFO] APK stored to: {$apkDest}\n";
 
             // ── 4. Bersihkan folder kerja ─────────────────────────────────
