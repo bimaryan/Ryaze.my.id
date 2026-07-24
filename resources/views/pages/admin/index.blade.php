@@ -207,40 +207,54 @@
             </div>
 
             <script nonce="{{ csp_nonce() }}">
-            document.addEventListener('alpine:init', () => {
-                Alpine.data('serverHealth', () => ({
-                    loading: true,
-                    error: false,
-                    data: {
-                        cpu: { load_1m: 0 },
-                        ram: { percentage: 0, used_mb: 0, total_mb: 0 },
-                        disk: { percentage: 0, free_gb: 0 },
-                        uptime: '...'
-                    },
-                    startMonitoring() {
-                        this.fetchData();
-                        setInterval(() => {
+            (function() {
+                const initServerHealth = () => {
+                    Alpine.data('serverHealth', () => ({
+                        loading: true,
+                        error: false,
+                        intervalId: null,
+                        data: {
+                            cpu: { load_1m: 0 },
+                            ram: { percentage: 0, used_mb: 0, total_mb: 0 },
+                            disk: { percentage: 0, free_gb: 0 },
+                            uptime: '...'
+                        },
+                        startMonitoring() {
                             this.fetchData();
-                        }, 5000); // Poll setiap 5 detik
-                    },
-                    fetchData() {
-                        fetch('{{ route("superadmin.server_status") }}')
-                            .then(res => {
-                                if(!res.ok) throw new Error('Network error');
-                                return res.json();
-                            })
-                            .then(data => {
-                                this.data = data;
-                                this.loading = false;
-                                this.error = false;
-                            })
-                            .catch(err => {
-                                console.error('Error fetching server status:', err);
-                                this.error = true;
-                            });
-                    }
-                }));
-            });
+                            this.intervalId = setInterval(() => {
+                                this.fetchData();
+                            }, 5000); // Poll setiap 5 detik
+                        },
+                        fetchData() {
+                            fetch('{{ route("superadmin.server_status") }}')
+                                .then(res => {
+                                    if(!res.ok) throw new Error('Network error');
+                                    return res.json();
+                                })
+                                .then(data => {
+                                    this.data = data;
+                                    this.loading = false;
+                                    this.error = false;
+                                })
+                                .catch(err => {
+                                    console.error('Error fetching server status:', err);
+                                    this.error = true;
+                                });
+                        },
+                        destroy() {
+                            if (this.intervalId) {
+                                clearInterval(this.intervalId);
+                            }
+                        }
+                    }));
+                };
+
+                if (window.Alpine) {
+                    initServerHealth();
+                } else {
+                    document.addEventListener('alpine:init', initServerHealth);
+                }
+            })();
             </script>
 
             <!-- Charts Section -->
