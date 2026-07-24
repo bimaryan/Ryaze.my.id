@@ -45,7 +45,8 @@ class SecurityHeaders
             "img-src 'self' data: blob: https://api.qrserver.com https://ui-avatars.com https://placehold.co https://www.google-analytics.com https://www.googletagmanager.com; ".
             "frame-src 'self' http://*.ryaze.my.id https://*.ryaze.my.id http://*.ryz.my.id https://*.ryz.my.id https://*.safetalkai.my.id challenges.cloudflare.com; ".
             "worker-src 'self' data: blob:; ".
-            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:;"
+            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:; ".
+            "upgrade-insecure-requests;"
         );
 
         return $response;
