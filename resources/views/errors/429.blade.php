@@ -1,0 +1,5 @@
+﻿@extends('errors.layout')
+@section('title', 'Too Many Requests')
+@section('code', '429')
+@section('message', 'Too Many Requests')
+@section('description', 'Server menerima terlalu banyak permintaan dari Anda. Harap tunggu beberapa saat lalu coba lagi.')

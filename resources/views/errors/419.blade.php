@@ -1,0 +1,5 @@
+﻿@extends('errors.layout')
+@section('title', 'Page Expired')
+@section('code', '419')
+@section('message', 'Page Expired')
+@section('description', 'Sesi halaman telah berakhir karena terlalu lama tidak ada aktivitas. Silakan muat ulang halaman.')

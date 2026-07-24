@@ -1,0 +1,5 @@
+﻿@extends('errors.layout')
+@section('title', 'Service Unavailable')
+@section('code', '503')
+@section('message', 'Service Unavailable')
+@section('description', 'Layanan sedang tidak tersedia saat ini, biasanya karena maintenance rutin. Silakan kembali nanti.')
