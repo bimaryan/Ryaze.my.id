@@ -53,14 +53,21 @@
 
             <div class="p-5 space-y-4">
                 {{-- Host & Port --}}
-                <div class="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50">
-                    <div>
-                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Host & Port</span>
-                        <code class="text-sm font-mono text-slate-700">{{ $db->host }}:{{ $db->port ?? 3306 }}</code>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Host</span>
+                        <code class="text-sm font-mono text-slate-800 break-all" id="host-{{ $db->hashid }}">{{ $db->host }}</code>
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
                     </div>
-                    <button class="text-slate-300 hover:text-indigo-500 p-1.5 rounded transition-colors btn-copy" data-copy="{{ $db->host }}:{{ $db->port ?? 3306 }}" title="Copy">
-                        <i class="fa-regular fa-copy text-sm"></i>
-                    </button>
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Port</span>
+                        <code class="text-sm font-mono text-slate-800 break-all" id="port-{{ $db->hashid }}">{{ $db->port ?? 3306 }}</code>
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->port ?? 3306 }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
                 </div>
 
                 {{-- Username & Password --}}
