@@ -206,83 +206,49 @@
     </section>
 
     <!-- ABOUT SECTION -->
-    <section id="about" class="py-24 bg-white relative overflow-hidden border-b border-slate-200">
-        <!-- Background Decor -->
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+    <section id="about" class="py-24 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                <!-- Text Content -->
+                <div class="pt-4">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-6">Di Balik Layar</h2>
+                    <div class="w-12 h-1 bg-indigo-600 mb-8"></div>
 
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-                <!-- Text Content (Left) -->
-                <div class="lg:col-span-7">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-6">
-                        <i class="fa-solid fa-code"></i> Founder & Developer
-                    </div>
-                    
-                    <h2 class="text-4xl lg:text-5xl font-black tracking-tight text-slate-900 mb-6 leading-tight">
-                        Di Balik Layar <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">Ryaze Ecosystem</span>
-                    </h2>
-
-                    <p class="text-lg text-slate-600 mb-6 leading-relaxed max-w-2xl">
+                    <p class="text-base text-slate-600 mb-6 leading-relaxed">
                         Saya <strong>Bima Ryan Alfarizi</strong>, mahasiswa D4 Rekayasa Perangkat Lunak di Politeknik
                         Negeri Indramayu. Visi utama saya adalah menciptakan standar rekayasa perangkat lunak yang
                         bersih, skalabel, dan fungsional.
                     </p>
-                    <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl">
+                    <p class="text-base text-slate-600 mb-8 leading-relaxed">
                         Ryaze dikembangkan bukan hanya sebagai penyedia layanan, tetapi sebagai ekosistem di mana kode
-                        dan infrastruktur berpadu dengan sempurna. Fokus kami ada pada efisiensi teknis dan keandalan sistem.
+                        dan infrastruktur berpadu dengan sempurna. Fokus kami ada pada efisiensi teknis dan keandalan
+                        sistem.
                     </p>
 
-                    <div class="flex flex-wrap gap-3">
-                        <span class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 shadow-sm hover:shadow-md transition-shadow">
-                            <i class="fa-solid fa-layer-group text-indigo-500 mr-2"></i> Fullstack Web
-                        </span>
-                        <span class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 shadow-sm hover:shadow-md transition-shadow">
-                            <i class="fa-solid fa-server text-blue-500 mr-2"></i> Cloud Server
-                        </span>
-                        <span class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 shadow-sm hover:shadow-md transition-shadow">
-                            <i class="fa-solid fa-rocket text-rose-500 mr-2"></i> CI/CD Pipeline
-                        </span>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">Fullstack Web</span>
+                        <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">Cloud Server</span>
+                        <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">CI/CD Pipeline</span>
+                        <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">Game Engine</span>
                     </div>
                 </div>
 
-                <!-- Modern Profile Card (Right) -->
-                <div class="lg:col-span-5 flex justify-center lg:justify-end">
-                    <div class="relative w-full max-w-sm group">
-                        <!-- Card Shadow/Glow -->
-                        <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-blue-400 rounded-3xl transform rotate-3 group-hover:rotate-6 transition-transform duration-500 opacity-20 blur-xl"></div>
-                        
-                        <!-- Main Card -->
-                        <div class="relative bg-white rounded-3xl p-3 shadow-xl border border-slate-100 transform transition-transform duration-500 group-hover:-translate-y-2">
-                            <div class="rounded-2xl overflow-hidden relative aspect-[4/5] bg-slate-100">
+                <!-- Clean Profile Card -->
+                <div class="flex justify-center lg:justify-end">
+                    <div class="w-full max-w-sm">
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                            <div class="aspect-[4/3] bg-slate-100 relative">
                                 <img src="{{ asset('profil/bima.jpeg') }}"
                                     alt="Bima Ryan"
                                     class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-6 border-t border-slate-100 bg-slate-50">
+                                <h3 class="font-bold text-slate-900 text-lg">Bima Ryan Alfarizi, S.Tr.Kom</h3>
+                                <p class="text-indigo-600 font-medium text-sm mb-4">Sarjana Terapan RPL Polindra</p>
                                 
-                                <!-- Overlay Gradient -->
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
-                                
-                                <!-- Info Inside Image -->
-                                <div class="absolute bottom-0 left-0 w-full p-6 text-white">
-                                    <h3 class="font-black text-2xl mb-1">Bima Ryan Alfarizi, S.Tr.Kom</h3>
-                                    <p class="text-indigo-200 font-medium text-sm mb-3">Sarjana Terapan RPL Polindra</p>
-                                    
-                                    <div class="flex items-center gap-2 text-xs font-semibold text-slate-300">
-                                        <i class="fa-solid fa-location-dot text-rose-400"></i> Indramayu, Indonesia
-                                    </div>
+                                <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                                    <i class="fa-solid fa-location-dot"></i> Indramayu, Indonesia
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Floating Badge -->
-                        <div class="absolute -left-6 top-10 bg-white p-3 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 transform -rotate-6 animate-bounce" style="animation-duration: 3s;">
-                            <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <div class="pr-2">
-                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Status</p>
-                                <p class="text-sm font-bold text-slate-800">Available</p>
                             </div>
                         </div>
                     </div>
