@@ -207,6 +207,7 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/databases/{hashid}/pma', [DatabaseController::class, 'pmaLogin'])->name('user_hosting.databases.pma.login');
         Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
         Route::post('user/hosting/billing/subscribe', [DashboardController::class, 'subscribe'])->name('user_hosting.billing.subscribe');
+        Route::post('user/hosting/billing/pay-wallet', [DashboardController::class, 'payWithWallet'])->name('user_hosting.billing.pay_wallet');
         Route::delete('user/hosting/projects/{hashid}/delete', [DashboardController::class, 'deleteProject'])->name('user_hosting.destroy');
         Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
         Route::post('user/hosting/projects/{hashid}/team', [DashboardController::class, 'inviteTeamMember'])->name('user_hosting.team.invite');

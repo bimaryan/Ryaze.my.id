@@ -1461,6 +1461,115 @@ PHP;
         return back()->with('success', $successMsg);
     }
 
+    public function payWithWallet(Request $request)
+    {
+        $request->validate([
+            'invoice_number' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+        $invoice = \App\Models\HostingPayment::where('invoice_number', $request->invoice_number)
+            ->where('user_id', $user->id)
+            ->where('status', 'unpaid')
+            ->firstOrFail();
+
+        $wallet = $user->wallet()->firstOrCreate(['user_id' => $user->id], ['balance' => 0]);
+        
+        if ($wallet->balance < $invoice->amount) {
+            return back()->with('error', 'Saldo Wallet Anda tidak mencukupi untuk membayar tagihan ini.');
+        }
+
+        // Potong saldo
+        $wallet->decrement('balance', $invoice->amount);
+
+        // Catat transaksi wallet
+        \App\Models\WalletTransaction::create([
+            'wallet_id' => $wallet->id,
+            'amount' => $invoice->amount,
+            'type' => 'debit',
+            'description' => 'Pembayaran Tagihan Hosting: ' . $invoice->invoice_number,
+            'status' => 'completed',
+        ]);
+
+        // Update status invoice
+        $invoice->update([
+            'status' => 'paid',
+            'payment_method' => 'Wallet',
+            'paid_at' => now(),
+        ]);
+
+        // Berikan komisi afiliasi (jika ada)
+        if ($user->referred_by) {
+            $referrer = $user->referrer;
+            if ($referrer) {
+                $commissionAmount = $invoice->amount * 0.10; // 10%
+                
+                \App\Models\AffiliateCommission::create([
+                    'user_id' => $referrer->id,
+                    'referred_user_id' => $user->id,
+                    'amount' => $commissionAmount,
+                    'description' => 'Pembayaran Langganan Hosting',
+                    'status' => 'paid',
+                ]);
+
+                $referrerWallet = $referrer->wallet()->firstOrCreate(['user_id' => $referrer->id], ['balance' => 0]);
+                $referrerWallet->increment('balance', $commissionAmount);
+
+                \App\Models\WalletTransaction::create([
+                    'wallet_id' => $referrerWallet->id,
+                    'amount' => $commissionAmount,
+                    'type' => 'credit',
+                    'description' => 'Komisi Affiliate: Pembayaran Langganan Hosting',
+                    'status' => 'completed',
+                ]);
+                
+                $referrer->notify(new \App\Notifications\SystemNotification('Anda mendapatkan komisi afiliasi sebesar Rp ' . number_format($commissionAmount, 0, ',', '.') . ' dari referal Anda.', 'success'));
+            }
+        }
+
+        // Update atau buat langganan
+        $billing = \App\Models\HostingBilling::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->first();
+
+        if ($billing) {
+            $billing->update([
+                'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
+            ]);
+        } else {
+            \App\Models\HostingBilling::create([
+                'user_id' => $user->id,
+                'hosting_project_id' => null,
+                'plan_name' => 'Bulanan Rp 10.000',
+                'amount' => 10000,
+                'billing_cycle' => 'monthly',
+                'next_due_date' => now()->addMonth(),
+                'status' => 'active'
+            ]);
+        }
+
+        // Cari semua project unpaid dan deploy
+        $unpaidProjects = \App\Models\HostingProject::where('user_id', $user->id)
+            ->where('status', 'unpaid')
+            ->get();
+
+        foreach ($unpaidProjects as $proj) {
+            $proj->update(['status' => 'building']);
+            $isTemplate = $proj->source_type === 'template';
+            $proj->deployments()->create([
+                'status' => 'queued',
+                'build_logs' => $isTemplate
+                    ? "> Payment received via Wallet!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil template starter code...\n> Menyiapkan environment ".strtoupper($proj->framework).'...'
+                    : "> Payment received via Wallet!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil repository dari ".$proj->repo_source."\n> Branch: ".$proj->branch."\n> Menyiapkan environment ".strtoupper($proj->framework).'...',
+            ]);
+            AutoDeployProject::dispatch($proj);
+        }
+
+        $user->notify(new \App\Notifications\SystemNotification('Pembayaran langganan hosting ('.$invoice->invoice_number.') menggunakan saldo wallet berhasil. ' . $unpaidProjects->count() . ' project sedang disiapkan.', 'success'));
+
+        return back()->with('success', 'Pembayaran berhasil menggunakan Saldo Wallet.');
+    }
+
     public function deleteProject(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);

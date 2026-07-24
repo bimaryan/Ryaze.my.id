@@ -81,11 +81,20 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if ($bill->status === 'unpaid')
-                            <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug', 'ryaze') }}/{{ $bill->amount }}?order_id={{ $bill->invoice_number }}" 
-                               target="_blank"
-                               class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded text-xs font-bold transition shadow-sm">
-                                <i class="fa-solid fa-credit-card"></i> Bayar
-                            </a>
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug', 'ryaze') }}/{{ $bill->amount }}?order_id={{ $bill->invoice_number }}" 
+                                   target="_blank"
+                                   class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded text-xs font-bold transition shadow-sm">
+                                    <i class="fa-solid fa-credit-card"></i> Pakasir
+                                </a>
+                                <form action="{{ route('user_hosting.billing.pay_wallet') }}" method="POST" class="m-0 p-0 inline-block" onsubmit="return confirm('Bayar tagihan ini menggunakan Saldo Wallet Anda?')">
+                                    @csrf
+                                    <input type="hidden" name="invoice_number" value="{{ $bill->invoice_number }}">
+                                    <button type="submit" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-bold transition shadow-sm">
+                                        <i class="fa-solid fa-wallet"></i> Saldo
+                                    </button>
+                                </form>
+                            </div>
                         @else
                             -
                         @endif
