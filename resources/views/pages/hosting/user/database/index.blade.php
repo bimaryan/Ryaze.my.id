@@ -567,26 +567,26 @@
     if (btnOpenModal) btnOpenModal.addEventListener('click', openCreateModal);
 
     // Create Modal Close
-    [].forEach.call(document.querySelectorAll('.btn-close-modal'), function(btn) {
+    document.querySelectorAll('.btn-close-modal').forEach(function(btn) {
         btn.addEventListener('click', closeCreateModal);
     });
 
     // Delete DB
-    [].forEach.call(document.querySelectorAll('.btn-delete-db'), function(btn) {
+    document.querySelectorAll('.btn-delete-db').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
             confirmDelete(e.currentTarget.getAttribute('data-action'));
         });
     });
 
     // Copy
-    [].forEach.call(document.querySelectorAll('.btn-copy'), function(btn) {
+    document.querySelectorAll('.btn-copy').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
             copyToClipboard(e.currentTarget.getAttribute('data-copy'));
         });
     });
 
     // Toggle Password
-    [].forEach.call(document.querySelectorAll('.btn-toggle-pass'), function(btn) {
+    document.querySelectorAll('.btn-toggle-pass').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
             togglePass(e.currentTarget.getAttribute('data-target'), e.currentTarget);
         });
@@ -647,7 +647,7 @@
     };
 
     // Make copy button in modal work
-    [].forEach.call(document.querySelectorAll('[data-copy-target]'), function(btn) {
+    document.querySelectorAll('[data-copy-target]').forEach(function(btn) {
         btn.addEventListener('click', function() {
             var targetId = this.getAttribute('data-copy-target');
             var text = document.getElementById(targetId).innerText;
