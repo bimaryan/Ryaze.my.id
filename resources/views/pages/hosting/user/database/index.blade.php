@@ -561,35 +561,58 @@
         });
     }
 
-    // ── CSP Compliant Event Listeners ──────────────────────────────────────────
-    // Create Modal Open
-    var btnOpenModal = document.getElementById('btn-open-create-modal');
-    if (btnOpenModal) btnOpenModal.addEventListener('click', openCreateModal);
+    // ── CSP Compliant Event Delegation ─────────────────────────────────────────
+    document.addEventListener('click', function(e) {
+        // Create Modal Open
+        if (e.target.closest('#btn-open-create-modal')) {
+            openCreateModal();
+            return;
+        }
 
-    // Create Modal Close
-    document.querySelectorAll('.btn-close-modal').forEach(function(btn) {
-        btn.addEventListener('click', closeCreateModal);
-    });
+        // Create Modal Close
+        if (e.target.closest('.btn-close-modal')) {
+            closeCreateModal();
+            return;
+        }
 
-    // Delete DB
-    document.querySelectorAll('.btn-delete-db').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            confirmDelete(e.currentTarget.getAttribute('data-action'));
-        });
-    });
+        // Delete DB
+        var deleteBtn = e.target.closest('.btn-delete-db');
+        if (deleteBtn) {
+            confirmDelete(deleteBtn.getAttribute('data-action'));
+            return;
+        }
 
-    // Copy
-    document.querySelectorAll('.btn-copy').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            copyToClipboard(e.currentTarget.getAttribute('data-copy'));
-        });
-    });
+        // Copy to Clipboard
+        var copyBtn = e.target.closest('.btn-copy');
+        if (copyBtn) {
+            var dataCopy = copyBtn.getAttribute('data-copy');
+            if (dataCopy) {
+                copyToClipboard(dataCopy);
+            } else {
+                var targetId = copyBtn.getAttribute('data-copy-target');
+                if (targetId) copyToClipboard(document.getElementById(targetId).innerText);
+            }
+            return;
+        }
 
-    // Toggle Password
-    document.querySelectorAll('.btn-toggle-pass').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            togglePass(e.currentTarget.getAttribute('data-target'), e.currentTarget);
-        });
+        // Toggle Password
+        var passBtn = e.target.closest('.btn-toggle-pass');
+        if (passBtn) {
+            togglePass(passBtn.getAttribute('data-target'), passBtn);
+            return;
+        }
+
+        // Generate Password
+        if (e.target.closest('#btn-generate-password')) {
+            generatePassword();
+            return;
+        }
+
+        // Copy Modal Password
+        if (e.target.closest('#btn-copy-modal-password')) {
+            copyModalPassword();
+            return;
+        }
     });
 
     // Import Modal logic
@@ -603,15 +626,8 @@
         document.getElementById('importDbModal').classList.add('hidden');
     };
 
-    // Generate Password
-    var btnGenPass = document.getElementById('btn-generate-password');
-    if (btnGenPass) btnGenPass.addEventListener('click', generatePassword);
-
-    // Copy Modal Password
-    var btnCopyModalPass = document.getElementById('btn-copy-modal-password');
-    if (btnCopyModalPass) btnCopyModalPass.addEventListener('click', copyModalPassword);
-    
     // API Docs Modal Logic
+
     window.openApiDocsModal = function(endpointUrl, apiKey) {
         if (!apiKey) apiKey = "API_KEY_ANDA";
         
