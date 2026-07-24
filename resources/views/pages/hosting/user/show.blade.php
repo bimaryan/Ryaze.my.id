@@ -1414,6 +1414,7 @@
         var fileUploadUrl = fixUrl('{{ route('user_hosting.files.upload', $project->hashid) }}');
         var fileCreateUrl = fixUrl('{{ route('user_hosting.files.create', $project->hashid) }}');
         var fileDeleteUrl = fixUrl('{{ route('user_hosting.files.delete', $project->hashid) }}');
+        var fileRenameUrl = fixUrl('{{ route('user_hosting.files.rename', $project->hashid) }}');
         var fileDownloadUrl = fixUrl('{{ route('user_hosting.files.download', $project->hashid) }}');
         var ideChatUrl = fixUrl('{{ route('user_hosting.ide.chat', $project->hashid) }}');
 
@@ -1463,6 +1464,9 @@
                                     `<span class="text-xs text-slate-300 italic select-none px-1">sistem</span>`;
                             } else if (isDir) {
                                 actions = `
+                                    <button class="file-action text-amber-400 hover:text-amber-600 px-1 transition-colors" data-op="rename" title="Rename">
+                                        <i class="fa-solid fa-i-cursor"></i>
+                                    </button>
                                     <button class="file-action text-rose-400 hover:text-rose-600 px-1 transition-colors" data-op="delete" title="Hapus">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>`;
@@ -1470,6 +1474,9 @@
                                 actions = `
                                     <button class="file-action text-sky-400 hover:text-sky-600 px-1 transition-colors" data-op="edit" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="file-action text-amber-400 hover:text-amber-600 px-1 transition-colors" data-op="rename" title="Rename">
+                                        <i class="fa-solid fa-i-cursor"></i>
                                     </button>
                                     <a href="${fileDownloadUrl}?path=${encodeURIComponent(item.path)}" target="_blank"
                                         class="text-emerald-400 hover:text-emerald-600 px-1 transition-colors" title="Download">
@@ -1545,6 +1552,7 @@
             if (!btn) return;
 
             if (btn.dataset.op === 'edit') openFileEditor(path, name);
+            if (btn.dataset.op === 'rename') renameItem(path, name);
             if (btn.dataset.op === 'delete') deleteItem(path, name);
         });
 
@@ -1583,6 +1591,43 @@
                 if (data.error) swAlert('error', 'Gagal', data.error);
                 else {
                     hotToast(`${label} berhasil dibuat!`, 'success');
+                    loadFileManager(currentFolderPath);
+                }
+            });
+        }
+
+        // ── Rename file / folder ───────────────────────────────────────────────
+        async function renameItem(path, name) {
+            if (isProtected(name)) {
+                swAlert('warning', 'File Terlindungi', 'File sistem ini tidak dapat diubah.');
+                return;
+            }
+            const { value: newName } = await Swal.fire({
+                title: 'Rename',
+                input: 'text',
+                inputValue: name,
+                inputLabel: 'Nama baru',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-solid fa-check mr-1"></i> Rename',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#4F46E5',
+                customClass: { popup: 'rounded-xl text-sm' },
+                inputValidator: (v) => {
+                    if (!v) return 'Nama tidak boleh kosong!';
+                    if (v === name) return 'Nama sama dengan sebelumnya!';
+                    if (/[^a-zA-Z0-9_.\-]/.test(v)) return 'Nama hanya boleh mengandung huruf, angka, titik, garis bawah, atau strip.';
+                }
+            });
+            if (!newName) return;
+
+            fetch(fileRenameUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({ path, new_name: newName })
+            }).then(r => r.json()).then(data => {
+                if (data.error) swAlert('error', 'Gagal', data.error);
+                else {
+                    hotToast(`Berhasil direname ke "${newName}"!`, 'success');
                     loadFileManager(currentFolderPath);
                 }
             });

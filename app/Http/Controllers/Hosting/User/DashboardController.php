@@ -742,7 +742,44 @@ class DashboardController extends Controller
         }
     }
 
-    // --- 3. BUAT FILE / FOLDER BARU ---
+    // --- 3. RENAME FILE / FOLDER ---
+    public function renameItem(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
+
+        if (! $targetPath) {
+            return response()->json(['error' => 'Akses ditolak.'], 403);
+        }
+
+        // ── PROTEKSI FILE SISTEM ──────────────────────────────────────
+        $basename = basename($targetPath);
+        if (in_array($basename, $this->protectedFiles)) {
+            return response()->json(['error' => 'File sistem ini tidak dapat diubah.'], 403);
+        }
+        // ─────────────────────────────────────────────────────────────
+
+        $newName = preg_replace('/[^a-zA-Z0-9_.\-]/', '', $request->input('new_name', ''));
+        if (! $newName) {
+            return response()->json(['error' => 'Nama baru tidak valid.'], 400);
+        }
+
+        $parentDir = dirname($targetPath);
+        $newPath = $parentDir . '/' . $newName;
+
+        if (file_exists($newPath)) {
+            return response()->json(['error' => 'Nama sudah digunakan oleh file/folder lain.'], 400);
+        }
+
+        try {
+            rename($targetPath, $newPath);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal rename: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // --- 4. BUAT FILE / FOLDER BARU ---
     public function createItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
