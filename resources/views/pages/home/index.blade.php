@@ -251,8 +251,8 @@
                                     class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
                             </div>
                             <div class="p-6 border-t border-slate-200">
-                                <h3 class="font-bold text-slate-900 text-lg">Bima Ryan Alfarizi</h3>
-                                <p class="text-slate-500 text-sm mb-4">Mahasiswa D4 RPL Polindra</p>
+                                <h3 class="font-bold text-slate-900 text-lg">Bima Ryan Alfarizi, S.Tr.Kom</h3>
+                                <p class="text-slate-500 text-sm mb-4">Sarjana Terapan RPL Polindra</p>
                                 <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
                                     <i class="fa-solid fa-location-dot"></i> Indramayu, Indonesia
                                 </div>
