@@ -492,9 +492,31 @@
             customClass: { popup: 'rounded-xl text-sm' }
         }).then(result => {
             if (result.isConfirmed) {
-                var form = document.getElementById('deleteForm');
-                form.action = actionUrl;
-                form.submit();
+                // Gunakan fetch() langsung agar tidak di-intercept oleh Pjax
+                var csrfToken = document.querySelector('meta[name="csrf-token"]') 
+                    ? document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    : '{{ csrf_token() }}';
+                
+                fetch(actionUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(function(response) {
+                    if (response.ok || response.redirected) {
+                        window.location.reload();
+                    } else {
+                        response.json().then(function(data) {
+                            Swal.fire({ icon: 'error', title: 'Gagal!', text: data.message || 'Terjadi kesalahan.', customClass: { popup: 'rounded-xl text-sm' } });
+                        }).catch(function() {
+                            window.location.reload();
+                        });
+                    }
+                }).catch(function() {
+                    Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Tidak bisa menghubungi server.', customClass: { popup: 'rounded-xl text-sm' } });
+                });
             }
         });
     }

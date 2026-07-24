@@ -114,6 +114,10 @@ class DatabaseController extends Controller
 
         $database->delete();
 
+        if (request()->expectsJson() || request()->header('Accept') === 'application/json') {
+            return response()->json(['success' => true, 'message' => 'Database berhasil dihapus!']);
+        }
+
         return back()->with('success', 'Database berhasil dihapus!');
     }
 
