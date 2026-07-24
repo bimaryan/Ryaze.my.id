@@ -25,6 +25,10 @@ class ApkBuilderController extends Controller
 
     public function store(Request $request)
     {
+        if (!Auth::user()->hasActiveHostingSubscription()) {
+            abort(403, 'Subscription required');
+        }
+
         $request->validate([
             'app_name' => 'required|string|max:50',
             'app_url' => 'required|url',
@@ -35,7 +39,14 @@ class ApkBuilderController extends Controller
             'display_mode' => 'nullable|in:standalone,fullscreen,minimal-ui',
             'orientation' => 'nullable|in:default,portrait,landscape',
             'version_name' => 'nullable|string|max:20',
-            'version_code' => 'nullable|integer|min:1'
+            'version_code' => 'nullable|integer|min:1',
+            'enable_notifications' => 'nullable|in:on,1,true',
+            'fallback_type' => 'nullable|in:customtabs,webview',
+            'splash_fade_duration' => 'nullable|integer|min:0|max:5000',
+            'navigation_color' => 'nullable|string|regex:/^#[a-fA-F0-9]{6}$/',
+            'keystore_alias' => 'nullable|string|max:100',
+            'keystore_password' => 'nullable|string|min:6|max:100',
+            'key_password' => 'nullable|string|min:6|max:100',
         ]);
 
         $iconPath = null;
@@ -55,6 +66,13 @@ class ApkBuilderController extends Controller
             'orientation' => $request->orientation ?? 'default',
             'version_name' => $request->version_name ?? '1.0.0',
             'version_code' => $request->version_code ?? 1,
+            'enable_notifications' => $request->has('enable_notifications'),
+            'fallback_type' => $request->fallback_type ?? 'customtabs',
+            'splash_fade_duration' => $request->splash_fade_duration ?? 300,
+            'navigation_color' => $request->navigation_color ?? $request->theme_color ?? '#000000',
+            'keystore_alias' => $request->keystore_alias,
+            'keystore_password' => $request->keystore_password,
+            'key_password' => $request->key_password,
             'status' => 'pending'
         ]);
 

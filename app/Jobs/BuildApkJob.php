@@ -52,9 +52,14 @@ class BuildApkJob implements ShouldQueue
             }
             file_put_contents($workDir.'/icon.png', $iconContent);
 
+            // Setup Keystore
+            $alias = $this->build->keystore_alias ?: 'android';
+            $keypass = $this->build->key_password ?: 'password';
+            $storepass = $this->build->keystore_password ?: 'password';
+            
             // Buat android.keystore dummy agar build release bisa jalan
             if (! file_exists($workDir.'/android.keystore')) {
-                shell_exec("keytool -genkey -v -keystore {$workDir}/android.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname \"CN=Ryaze, OU=Hosting, O=Ryaze, L=Jakarta, ST=DKI Jakarta, C=ID\"");
+                shell_exec("keytool -genkey -v -keystore {$workDir}/android.keystore -alias {$alias} -keyalg RSA -keysize 2048 -validity 10000 -storepass {$storepass} -keypass {$keypass} -dname \"CN=Ryaze, OU=Hosting, O=Ryaze, L=Jakarta, ST=DKI Jakarta, C=ID\"");
             }
 
             $manifest = [
@@ -64,7 +69,7 @@ class BuildApkJob implements ShouldQueue
                 'launcherName' => mb_substr($this->build->app_name, 0, 12),
                 'display' => $this->build->display_mode ?? 'standalone',
                 'themeColor' => $this->build->theme_color ?? '#000000',
-                'navigationColor' => $this->build->theme_color ?? '#000000',
+                'navigationColor' => $this->build->navigation_color ?? $this->build->theme_color ?? '#000000',
                 'backgroundColor' => $this->build->background_color ?? '#ffffff',
                 'startUrl' => $startPath,
                 'iconUrl' => $iconUrl,
@@ -74,7 +79,7 @@ class BuildApkJob implements ShouldQueue
                 'maskableIcon' => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'monochromeIcon' => ['url' => $iconUrl, 'path' => 'icon.png'],
                 'splashScreen' => ['url' => $iconUrl, 'path' => 'icon.png'],
-                'splashScreenFadeOutDuration' => 300,
+                'splashScreenFadeOutDuration' => $this->build->splash_fade_duration ?? 300,
                 'appVersion' => $this->build->version_name ?? '1',
                 'appVersionName' => $this->build->version_name ?? '1',
                 'appVersionCode' => $this->build->version_code ?? 1,
@@ -86,13 +91,13 @@ class BuildApkJob implements ShouldQueue
                 'additionalTrustedOrigins' => [],
                 'retainedBundles' => [],
                 'features' => [],
-                'fallbackType' => 'customtabs',
+                'fallbackType' => $this->build->fallback_type ?? 'customtabs',
                 'signingKey' => [
                     'path' => 'android.keystore',
-                    'alias' => 'android',
+                    'alias' => $alias,
                 ],
                 'alphaDependencies' => ['enabled' => false],
-                'enableNotifications' => false,
+                'enableNotifications' => (bool)$this->build->enable_notifications,
                 'signingMode' => 'none',
                 'minSdkVersion' => 21,
             ];
