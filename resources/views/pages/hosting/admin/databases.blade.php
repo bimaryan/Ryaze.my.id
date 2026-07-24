@@ -1,4 +1,4 @@
-﻿@extends('index')
+@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -166,12 +166,14 @@
                     clientSelect.addEventListener('change', function() {
                         const id = this.value;
                         const prefix = id ? `ryz_${id}_` : `ryz_.._`;
-                        [].forEach.call(document.querySelectorAll('.prefix-addon'), el => el.textContent = prefix);
+                        document.querySelectorAll('.prefix-addon').forEach(el => el.textContent = prefix);
                     });
                 }
-                [].forEach.call(document.querySelectorAll('.btn-delete'), button => {
-                    button.addEventListener('click', function() {
-                        const hashid = this.dataset.hashid;
+                
+                document.addEventListener('click', function(e) {
+                    const deleteBtn = e.target.closest('.btn-delete');
+                    if (deleteBtn) {
+                        const hashid = deleteBtn.dataset.hashid;
                         Swal.fire({
                             title: 'Yakin ingin menghapus?',
                             text: "Semua data di dalam database ini akan hilang permanen!",
@@ -187,11 +189,14 @@
                                 document.getElementById('delete-form-' + hashid).submit();
                             }
                         });
-                    });
+                    }
+                    
+                    const modalStop = e.target.closest('.modal-content-stop');
+                    if (modalStop) {
+                        e.stopPropagation();
+                    }
                 });
-            });
-            [].forEach.call(document.querySelectorAll('.modal-content-stop'), el => {
-                el.addEventListener('click', e => e.stopPropagation());        })();
+            })();
         </script>
     </x-ui.page-layout>
 @endsection

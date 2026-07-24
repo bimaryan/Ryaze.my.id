@@ -110,7 +110,7 @@
 
         <script nonce="{{ app('csp_nonce') ?? '' }}">
             (function() {
-                [].forEach.call(document.querySelectorAll('.admin-action-form'), form => {
+                document.querySelectorAll('.admin-action-form').forEach(form => {
                     form.addEventListener('submit', function(e) {
                         e.preventDefault();
                         Swal.fire({

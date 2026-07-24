@@ -539,7 +539,7 @@
     }
 
     // --- Toggle antara mode Repo vs Template ---
-    [].forEach.call(document.querySelectorAll('input[name="source_type"]'), radio => {
+    document.querySelectorAll('input[name="source_type"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
             const isTemplate = e.target.value === 'template';
 
@@ -551,13 +551,13 @@
             // Toggle required attr untuk repo_source
             if (isTemplate) {
                 if(repoUrl) repoUrl.removeAttribute('required');
-                [].forEach.call(document.querySelectorAll('input[name="framework"]'), r => r.removeAttribute('required'));
+                document.querySelectorAll('input[name="framework"]').forEach(r => r.removeAttribute('required'));
             } else {
                 if(repoUrl) repoUrl.setAttribute('required', 'required');
                 const firstFramework = document.querySelector('input[name="framework"]');
                 if (firstFramework) firstFramework.setAttribute('required', 'required');
                 // Reset pilihan template
-                [].forEach.call(document.querySelectorAll('input[name="template_key"]'), r => r.checked = false);
+                document.querySelectorAll('input[name="template_key"]').forEach(r => r.checked = false);
             }
         });
     });
