@@ -248,7 +248,7 @@
                             <div class="aspect-square bg-slate-200 relative">
                                 <img src="{{ asset('profil/bima.jpeg') }}"
                                     alt="Bima Ryan"
-                                    class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+                                    class="w-full h-full object-cover">
                             </div>
                             <div class="p-6 border-t border-slate-200">
                                 <h3 class="font-bold text-slate-900 text-lg">Bima Ryan Alfarizi, S.Tr.Kom</h3>
