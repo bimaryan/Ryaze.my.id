@@ -236,6 +236,19 @@
                         </div>
                     </div>
 
+                    {{-- QR Code Scan --}}
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mt-4 text-center">
+                        <h3 class="font-bold text-slate-800 mb-4 border-b pb-2 text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-qrcode text-indigo-500"></i> Scan QR Code
+                        </h3>
+                        <div class="flex justify-center">
+                            <div class="p-2 bg-white border border-slate-100 rounded-xl shadow-sm inline-block">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode('https://' . $project->ryaze_domain) }}" alt="QR Code" class="w-32 h-32" />
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-3">Scan untuk membuka di HP Anda</p>
+                    </div>
+
                     {{-- Resource Monitoring --}}
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mt-4">
                         <h3 class="font-bold text-slate-800 mb-4 border-b pb-2 text-sm flex items-center gap-2">
