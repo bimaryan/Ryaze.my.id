@@ -237,10 +237,10 @@
                 <div class="flex justify-center lg:justify-end">
                     <div class="w-full max-w-sm">
                         <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                            <div class="aspect-[4/3] bg-slate-100 relative">
+                            <div class="aspect-[3/4] bg-slate-100 relative">
                                 <img src="{{ asset('profil/bima.jpeg') }}"
                                     alt="Bima Ryan"
-                                    class="w-full h-full object-cover">
+                                    class="w-full h-full object-cover object-top">
                             </div>
                             <div class="p-6 border-t border-slate-100 bg-slate-50">
                                 <h3 class="font-bold text-slate-900 text-lg">Bima Ryan Alfarizi, S.Tr.Kom</h3>
