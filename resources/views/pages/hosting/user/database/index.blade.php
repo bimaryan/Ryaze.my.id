@@ -204,6 +204,7 @@
                 </div>
             </div>
 
+            @if ($databases->count() === 0)
             {{-- Username --}}
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1.5">
@@ -241,6 +242,12 @@
                     <i class="fa-solid fa-shield-halved"></i> Simpan password ini. Otomatis ditambah prefix.
                 </p>
             </div>
+            @else
+            <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-xl text-xs text-indigo-700 mt-2">
+                <i class="fa-solid fa-circle-info mr-1"></i>
+                Database baru akan secara otomatis menggunakan <strong>Username</strong> dan <strong>Password</strong> dari database Anda sebelumnya.
+            </div>
+            @endif
 
             {{-- Footer --}}
             <div class="pt-2 flex justify-end gap-3 border-t border-slate-100">

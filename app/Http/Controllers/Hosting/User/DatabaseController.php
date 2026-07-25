@@ -26,21 +26,36 @@ class DatabaseController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi input manual dari user
-        $request->validate([
-            'db_name' => 'required|string|alpha_dash|max:15',
-            'db_username' => 'required|string|alpha_dash|max:15',
-            'db_password' => 'required|string|max:32',
-        ], [
-            'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
-            'db_username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, strip, dan underscore.',
-        ]);
+        $existingDb = HostingDatabase::where('user_id', Auth::id())->first();
 
-        // 2. Terapkan Prefix (ryz_{id}_) agar tidak bentrok antar user di server MySQL
-        $prefix = 'ryz_'.Auth::id().'_';
-        $cleanDbName = $prefix.strtolower(trim($request->db_name));
-        $cleanUsername = $prefix.strtolower(trim($request->db_username));
-        $dbPassword = $prefix.trim($request->db_password);
+        // 1. Validasi input manual dari user
+        if ($existingDb) {
+            $request->validate([
+                'db_name' => 'required|string|alpha_dash|max:15',
+            ], [
+                'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
+            ]);
+
+            $prefix = 'ryz_'.Auth::id().'_';
+            $cleanDbName = $prefix.strtolower(trim($request->db_name));
+            $cleanUsername = $existingDb->db_username;
+            $dbPassword = Crypt::decryptString($existingDb->db_password);
+        } else {
+            $request->validate([
+                'db_name' => 'required|string|alpha_dash|max:15',
+                'db_username' => 'required|string|alpha_dash|max:15',
+                'db_password' => 'required|string|max:32',
+            ], [
+                'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
+                'db_username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, strip, dan underscore.',
+            ]);
+
+            // 2. Terapkan Prefix (ryz_{id}_) agar tidak bentrok antar user di server MySQL
+            $prefix = 'ryz_'.Auth::id().'_';
+            $cleanDbName = $prefix.strtolower(trim($request->db_name));
+            $cleanUsername = $prefix.strtolower(trim($request->db_username));
+            $dbPassword = $prefix.trim($request->db_password);
+        }
 
         // 3. Cek apakah nama database ini sudah ada (karena digabung prefix)
         if (HostingDatabase::where('db_name', $cleanDbName)->exists()) {
