@@ -65,6 +65,9 @@ class DatabaseController extends Controller
             // 2. Buat User — GUNAKAN PDO::quote() untuk mencegah SQL Injection pada password!
             $quotedPassword = $pdo->quote($dbPassword);
             $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY $quotedPassword");
+            
+            // 2.1 Update password in case user already exists
+            $pdo->exec("ALTER USER '$cleanUsername'@'%' IDENTIFIED BY $quotedPassword");
 
             // 3. Grant akses
             $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$cleanUsername'@'%'");
@@ -75,6 +78,11 @@ class DatabaseController extends Controller
         } catch (\PDOException $e) {
             return back()->with('error', 'Gagal membuat database: '.$e->getMessage());
         }
+
+        // Update password for other databases that might share this username
+        HostingDatabase::where('db_username', $cleanUsername)->update([
+            'db_password' => Crypt::encryptString($dbPassword),
+        ]);
 
         // Simpan ke database portal Ryaze — encrypt password!
         HostingDatabase::create([
@@ -105,7 +113,16 @@ class DatabaseController extends Controller
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
             $pdo->exec("DROP DATABASE IF EXISTS `$database->db_name`");
-            $pdo->exec("DROP USER IF EXISTS '$database->db_username'@'%'");
+            
+            // Check if there are other databases using this username
+            $otherDatabasesUsingSameUsername = HostingDatabase::where('db_username', $database->db_username)
+                ->where('id', '!=', $database->id)
+                ->exists();
+                
+            if (!$otherDatabasesUsingSameUsername) {
+                $pdo->exec("DROP USER IF EXISTS '$database->db_username'@'%'");
+            }
+            
             $pdo->exec('FLUSH PRIVILEGES');
 
         } catch (\PDOException $e) {
