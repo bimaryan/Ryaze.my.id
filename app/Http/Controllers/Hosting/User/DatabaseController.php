@@ -21,14 +21,24 @@ class DatabaseController extends Controller
 
     public function storeNosql(Request $request)
     {
-        $request->validate([
-            'db_username' => 'required|string|max:15|regex:/^[A-Za-z0-9_]+$/',
-            'db_password' => 'required|string|min:8'
-        ]);
+        $existingDb = \App\Models\HostingNosqlDatabase::where('user_id', Auth::id())->first();
+        $prefix = 'ryz_' . Auth::id() . '_';
 
-        // Untuk Redis, berikan prefix berdasarkan ID user
-        $prefix = 'ryz_' . Auth::id() . '_' . $request->db_username;
-        $password = $request->db_password;
+        if ($existingDb) {
+            $request->validate([
+                'db_username' => 'required|string|max:15|regex:/^[A-Za-z0-9_]+$/',
+            ]);
+            $username = $prefix . $request->db_username;
+            $password = \Illuminate\Support\Facades\Crypt::decryptString($existingDb->db_password);
+        } else {
+            $request->validate([
+                'db_username' => 'required|string|max:15|regex:/^[A-Za-z0-9_]+$/',
+                'db_password' => 'required|string|min:8'
+            ]);
+            $username = $prefix . $request->db_username;
+            $password = $prefix . trim($request->db_password);
+        }
+
         $redisHost = env('REDIS_HOST', '127.0.0.1');
         $redisPort = env('REDIS_PORT', 6379);
 
@@ -36,16 +46,16 @@ class DatabaseController extends Controller
         // $redis = new \Redis();
         // $redis->connect($redisHost, $redisPort);
         // $redis->auth(env('REDIS_PASSWORD'));
-        // $redis->rawCommand('ACL', 'SETUSER', $prefix, 'on', '>'.$password, '~'.$prefix.'*', '+@all');
+        // $redis->rawCommand('ACL', 'SETUSER', $username, 'on', '>'.$password, '~'.$username.'*', '+@all');
 
         \App\Models\HostingNosqlDatabase::create([
             'user_id' => Auth::id(),
             'nosql_type' => 'redis',
-            'db_username' => $prefix, // Nama ACL user atau identitas
+            'db_username' => $username, // Nama ACL user atau identitas
             'db_password' => \Illuminate\Support\Facades\Crypt::encryptString($password),
             'host' => $redisHost,
             'port' => $redisPort,
-            'keyspace_prefix' => $prefix,
+            'keyspace_prefix' => $username,
         ]);
 
         return back()->with('success', 'Database NoSQL (Redis) berhasil dibuat!');

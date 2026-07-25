@@ -404,16 +404,36 @@
                 </div>
             </div>
 
+            @if (!isset($nosqlDatabases) || $nosqlDatabases->count() === 0)
             {{-- Password --}}
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5">
-                    Password <span class="text-rose-500">*</span>
-                </label>
-                <div class="relative">
-                    <input type="password" name="db_password" required minlength="8" placeholder="Minimal 8 karakter"
-                        class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition">
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="text-sm font-semibold text-slate-700">Password <span class="text-rose-500">*</span></label>
+                    <button type="button" id="btn-generate-nosql-password" class="text-xs text-rose-600 hover:text-rose-800 flex items-center gap-1">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
+                    </button>
                 </div>
+                <div class="relative flex rounded-xl overflow-hidden border border-slate-300 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-slate-100 text-slate-500 text-sm font-mono border-r border-slate-300 whitespace-nowrap">
+                        ryz_{{ Auth::id() }}_
+                    </span>
+                    <input type="text" name="db_password" id="modalNosqlPassword" required minlength="8" maxlength="32"
+                        placeholder="Masukkan password kuat"
+                        class="flex-1 pr-10 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition">
+                    <button type="button" id="btn-copy-modal-nosql-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-rose-600" title="Copy">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <p class="mt-1.5 text-[11px] text-slate-400">
+                    <i class="fa-solid fa-shield-halved"></i> Simpan password ini. Otomatis ditambah prefix.
+                </p>
             </div>
+            @else
+            <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl text-xs text-rose-700 mt-2">
+                <i class="fa-solid fa-circle-info mr-1"></i>
+                Database baru akan secara otomatis menggunakan <strong>Password</strong> dari database Anda sebelumnya.
+            </div>
+            @endif
 
             {{-- Actions --}}
             <div class="pt-4 border-t border-slate-100 flex gap-3">
@@ -421,7 +441,7 @@
                     Batal
                 </button>
                 <button type="submit" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-medium py-2.5 rounded-xl transition shadow-sm shadow-rose-200 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-plus"></i> Buat Database Redis
+                    <i class="fa-solid fa-server"></i> Buat Database Redis
                 </button>
             </div>
         </form>
@@ -670,6 +690,50 @@
                 createNosqlDbModal?.classList.add('hidden');
             });
         });
+
+        // ── Password Generation & Copy ──────────────────────────────────────────
+        function generateRandomPassword(length = 16) {
+            var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+            var password = "";
+            for (var i = 0, n = charset.length; i < length; ++i) {
+                password += charset.charAt(Math.floor(Math.random() * n));
+            }
+            return password;
+        }
+
+        var btnGenPass = document.getElementById('btn-generate-password');
+        var inputPass = document.getElementById('modalPassword');
+        var btnCopyPass = document.getElementById('btn-copy-modal-password');
+
+        if (btnGenPass && inputPass) {
+            btnGenPass.addEventListener('click', function() {
+                var newPass = generateRandomPassword(16);
+                inputPass.value = newPass;
+                inputPass.type = 'text'; // Tampilkan sebentar
+            });
+        }
+        if (btnCopyPass && inputPass) {
+            btnCopyPass.addEventListener('click', function() {
+                copyToClipboard(inputPass.value);
+            });
+        }
+
+        var btnGenNosqlPass = document.getElementById('btn-generate-nosql-password');
+        var inputNosqlPass = document.getElementById('modalNosqlPassword');
+        var btnCopyNosqlPass = document.getElementById('btn-copy-modal-nosql-password');
+
+        if (btnGenNosqlPass && inputNosqlPass) {
+            btnGenNosqlPass.addEventListener('click', function() {
+                var newPass = generateRandomPassword(16);
+                inputNosqlPass.value = newPass;
+                inputNosqlPass.type = 'text';
+            });
+        }
+        if (btnCopyNosqlPass && inputNosqlPass) {
+            btnCopyNosqlPass.addEventListener('click', function() {
+                copyToClipboard(inputNosqlPass.value);
+            });
+        }
 
     // ── Delete dengan SweetAlert ───────────────────────────────────────────────
     function confirmDelete(actionUrl) {
