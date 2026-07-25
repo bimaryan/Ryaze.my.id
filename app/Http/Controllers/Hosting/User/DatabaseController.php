@@ -21,9 +21,14 @@ class DatabaseController extends Controller
 
     public function storeNosql(Request $request)
     {
+        $request->validate([
+            'db_username' => 'required|string|max:15|regex:/^[A-Za-z0-9_]+$/',
+            'db_password' => 'required|string|min:8'
+        ]);
+
         // Untuk Redis, berikan prefix berdasarkan ID user
-        $prefix = 'ryz_' . Auth::id() . '_';
-        $password = \Illuminate\Support\Str::random(16);
+        $prefix = 'ryz_' . Auth::id() . '_' . $request->db_username;
+        $password = $request->db_password;
         $redisHost = env('REDIS_HOST', '127.0.0.1');
         $redisPort = env('REDIS_PORT', 6379);
 
@@ -44,6 +49,22 @@ class DatabaseController extends Controller
         ]);
 
         return back()->with('success', 'Database NoSQL (Redis) berhasil dibuat!');
+    }
+
+    public function destroyNosql($hashid)
+    {
+        $database = \App\Models\HostingNosqlDatabase::where('hashid', $hashid)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Di sini Anda bisa menambahkan logika ACL DELUSER jika diperlukan
+        // $redis = new \Redis();
+        // ...
+        // $redis->rawCommand('ACL', 'DELUSER', $database->db_username);
+
+        $database->delete();
+
+        return back()->with('success', 'Database NoSQL (Redis) berhasil dihapus!');
     }
 
     public function pmaIndex()

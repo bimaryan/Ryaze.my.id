@@ -24,9 +24,14 @@
             icon="fa-database" 
             iconColor="purple">
             <x-slot:actions>
+            <x-slot:actions>
                 <button id="btn-open-create-modal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                    + Buat Database
+                    + Buat Database MySQL
                 </button>
+                <button id="btn-open-create-nosql-modal" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    + Buat Database Redis
+                </button>
+            </x-slot:actions>
             </x-slot:actions>
         </x-ui.page-header>
 
@@ -201,6 +206,10 @@
                         <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
                     </div>
                 </div>
+                <button data-action="{{ route('user_hosting.databases.nosql.destroy', $db->hashid) }}"
+                    class="btn-delete-db text-slate-400 hover:text-rose-500 p-2 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Database">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
             </div>
 
             <div class="p-5 space-y-4">
@@ -245,6 +254,21 @@
                         </div>
                     </div>
                 </div>
+
+                <hr class="border-slate-100">
+
+                {{-- Redis Actions --}}
+                <div class="bg-rose-50/50 border border-rose-100 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="text-sm text-rose-900">
+                        <strong>Manajemen Database</strong><br>
+                        <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-rose-100 px-1 rounded">{{ $db->db_username }}</code>.</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button class="bg-white border border-slate-200 text-slate-400 cursor-not-allowed text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap" disabled>
+                            <i class="fa-solid fa-code"></i> CLI (Segera)
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         @empty
@@ -254,12 +278,9 @@
             </div>
             <h3 class="text-lg font-bold text-slate-700 mb-1">Belum ada Database NoSQL</h3>
             <p class="text-slate-500 text-sm mb-4">Klik tombol di bawah untuk membuat database Redis.</p>
-            <form action="{{ route('user_hosting.databases.nosql.store') }}" method="POST">
-                @csrf
-                <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm px-4 py-2 rounded-xl transition shadow-sm">
-                    Buat Database Redis
-                </button>
-            </form>
+            <button id="btn-open-create-nosql-modal-empty" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm px-4 py-2 rounded-xl transition shadow-sm">
+                Buat Database Redis
+            </button>
         </div>
         @endforelse
     </div>
@@ -568,20 +589,34 @@
 
 <script nonce="{{ app('csp_nonce') }}">
     (function() {
-    // ── Modal ──────────────────────────────────────────────────────────────────
-    function openCreateModal() {
-        document.getElementById('createDbModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeCreateModal() {
-        document.getElementById('createDbModal').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-    // Klik luar modal → tutup
-    var createDbModalEl = document.getElementById('createDbModal');
-    if (createDbModalEl) createDbModalEl.addEventListener('click', function(e) {
-        if (e.target === this) closeCreateModal();
-    });
+        const createDbModal = document.getElementById('createDbModal');
+        const createNosqlDbModal = document.getElementById('createNosqlDbModal');
+        
+        document.getElementById('btn-open-create-modal')?.addEventListener('click', () => {
+            createDbModal.classList.remove('hidden');
+        });
+        document.getElementById('btn-open-create-modal-empty')?.addEventListener('click', () => {
+            createDbModal.classList.remove('hidden');
+        });
+        
+        document.getElementById('btn-open-create-nosql-modal')?.addEventListener('click', () => {
+            createNosqlDbModal.classList.remove('hidden');
+        });
+        document.getElementById('btn-open-create-nosql-modal-empty')?.addEventListener('click', () => {
+            createNosqlDbModal.classList.remove('hidden');
+        });
+
+        document.querySelectorAll('.btn-close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                createDbModal.classList.add('hidden');
+            });
+        });
+        
+        document.querySelectorAll('.btn-close-nosql-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                createNosqlDbModal.classList.add('hidden');
+            });
+        });
 
     // ── Delete dengan SweetAlert ───────────────────────────────────────────────
     function confirmDelete(actionUrl) {
@@ -668,18 +703,6 @@
 
     // ── CSP Compliant Event Delegation ─────────────────────────────────────────
     document.addEventListener('click', function(e) {
-        // Create Modal Open
-        if (e.target.closest('#btn-open-create-modal')) {
-            openCreateModal();
-            return;
-        }
-
-        // Create Modal Close
-        if (e.target.closest('.btn-close-modal')) {
-            closeCreateModal();
-            return;
-        }
-
         // Delete DB
         var deleteBtn = e.target.closest('.btn-delete-db');
         if (deleteBtn) {
@@ -781,15 +804,21 @@
         const btnNosql = document.getElementById('btn-tab-nosql');
         const tabMysql = document.getElementById('tab-mysql');
         const tabNosql = document.getElementById('tab-nosql');
+        const headerBtnMysql = document.getElementById('btn-open-create-modal');
+        const headerBtnNosql = document.getElementById('btn-open-create-nosql-modal');
 
         if (tab === 'mysql') {
             tabMysql.classList.remove('hidden');
             tabNosql.classList.add('hidden');
+            headerBtnMysql.classList.remove('hidden');
+            headerBtnNosql.classList.add('hidden');
             btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
             btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
         } else {
             tabMysql.classList.add('hidden');
             tabNosql.classList.remove('hidden');
+            headerBtnMysql.classList.add('hidden');
+            headerBtnNosql.classList.remove('hidden');
             btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
             btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
         }
