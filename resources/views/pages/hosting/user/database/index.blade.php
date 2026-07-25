@@ -7,25 +7,6 @@
         {{-- Flash via SweetAlert --}}
         @if ($errors->any())
         <script nonce="{{ app('csp_nonce') ?? '' }}">
-            function showTab(tab) {
-                const btnMysql = document.getElementById('btn-tab-mysql');
-                const btnNosql = document.getElementById('btn-tab-nosql');
-                const tabMysql = document.getElementById('tab-mysql');
-                const tabNosql = document.getElementById('tab-nosql');
-
-                if (tab === 'mysql') {
-                    tabMysql.classList.remove('hidden');
-                    tabNosql.classList.add('hidden');
-                    btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
-                    btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
-                } else {
-                    tabMysql.classList.add('hidden');
-                    tabNosql.classList.remove('hidden');
-                    btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
-                    btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
-                }
-            }
-
             (function() {
                 Swal.fire({
                     icon: 'error', title: 'Validasi Gagal',
