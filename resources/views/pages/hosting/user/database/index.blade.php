@@ -174,6 +174,9 @@
                         <button onclick="openImportModal('{{ $db->hashid }}', '{{ $db->db_name }}')" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-upload"></i> Import
                         </button>
+                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-slate-900 p-3 rounded-lg text-left mt-2\'><code class=\'text-emerald-400 text-xs font-mono break-all\'>mysql -h {{ $db->host }} -P {{ $db->port ?? 3306 }} -u {{ $db->db_username }} -p\'{{ $db->db_password }}\' {{ $db->db_name }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'rounded-xl text-sm' }})" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-terminal"></i> Connection String
+                        </button>
                     </div>
                 </div>
             </div>
@@ -224,30 +227,26 @@
                 </div>
 
                 {{-- Kredensial --}}
-                <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl space-y-3">
-                    <div class="flex justify-between items-center relative group">
-                        <div class="flex flex-col">
-                            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Prefix / Username</span>
-                            <code class="text-sm font-mono text-slate-800 font-semibold">{{ $db->db_username }}</code>
-                        </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Prefix / Username</span>
+                        <code class="text-sm font-mono text-slate-800 break-all" id="user-nosql-{{ $db->hashid }}">{{ $db->db_username }}</code>
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
                     </div>
                     
-                    <div class="h-px bg-slate-200"></div>
-                    
-                    <div class="flex justify-between items-center relative group">
-                        <div class="flex flex-col w-full pr-10">
-                            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Password</span>
-                            <div class="flex items-center gap-2">
-                                <input type="password" readonly value="{{ $db->db_password }}"
-                                    id="pass-nosql-{{ $db->hashid }}"
-                                    class="text-sm font-mono text-slate-800 bg-transparent border-none p-0 focus:ring-0 w-full cursor-text"
-                                    onclick="this.select()">
-                            </div>
-                        </div>
-                        <div class="absolute right-0 flex items-center gap-1">
-                            <button class="text-slate-400 hover:text-indigo-600 p-1.5 rounded bg-white border border-slate-200 shadow-sm transition-colors"
-                                onclick="const inp = document.getElementById('pass-nosql-{{ $db->hashid }}'); inp.type = inp.type === 'password' ? 'text' : 'password';" title="Lihat Password">
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Password</span>
+                        <input type="password" readonly value="{{ $db->db_password }}"
+                            id="pass-nosql-{{ $db->hashid }}"
+                            class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white">
+                            <button class="text-slate-300 hover:text-slate-600 p-1 rounded btn-toggle-pass" data-target="pass-nosql-{{ $db->hashid }}">
                                 <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button class="text-slate-300 hover:text-rose-600 p-1 rounded btn-copy" data-copy="{{ $db->db_password }}">
+                                <i class="fa-regular fa-copy"></i>
                             </button>
                         </div>
                     </div>
@@ -262,8 +261,8 @@
                         <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-rose-100 px-1 rounded">{{ $db->db_username }}</code>.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <button class="bg-white border border-slate-200 text-slate-400 cursor-not-allowed text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap" disabled>
-                            <i class="fa-solid fa-code"></i> CLI (Segera)
+                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-slate-900 p-3 rounded-lg text-left mt-2\'><code class=\'text-emerald-400 text-xs font-mono break-all\'>redis-cli -h {{ $db->host }} -p {{ $db->port }} --user {{ $db->db_username }} -a {{ $db->db_password }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'rounded-xl text-sm' }})" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-terminal"></i> Connection String
                         </button>
                     </div>
                 </div>
