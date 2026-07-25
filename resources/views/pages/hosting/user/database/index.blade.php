@@ -373,6 +373,61 @@
     </div>
 </div>
 
+{{-- Modal Create NoSQL (Redis) Database --}}
+<div id="createNosqlDbModal" class="hidden fixed inset-0 z-[55] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        {{-- Modal Header --}}
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-rose-50/50">
+            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-server text-rose-500"></i> Buat Database Redis
+            </h3>
+            <button class="btn-close-nosql-modal"
+                class="text-slate-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form action="{{ route('user_hosting.databases.nosql.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+
+            {{-- Username (Prefix) --}}
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                    Username / Nama Database <span class="text-rose-500">*</span>
+                </label>
+                <div class="flex rounded-xl overflow-hidden border border-slate-300 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-slate-100 text-slate-500 text-sm font-mono border-r border-slate-300 whitespace-nowrap">
+                        ryz_{{ Auth::id() }}_
+                    </span>
+                    <input type="text" name="db_username" required pattern="[A-Za-z0-9_]+" placeholder="redisapp" maxlength="15"
+                        class="flex-1 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition">
+                </div>
+            </div>
+
+            {{-- Password --}}
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                    Password <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                    <input type="password" name="db_password" required minlength="8" placeholder="Minimal 8 karakter"
+                        class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition">
+                </div>
+            </div>
+
+            {{-- Actions --}}
+            <div class="pt-4 border-t border-slate-100 flex gap-3">
+                <button type="button" class="btn-close-nosql-modal flex-1 bg-white border border-slate-300 text-slate-700 font-medium py-2.5 rounded-xl hover:bg-slate-50 transition">
+                    Batal
+                </button>
+                <button type="submit" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-medium py-2.5 rounded-xl transition shadow-sm shadow-rose-200 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Buat Database Redis
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- Modal Import Database --}}
 <div id="importDbModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -591,28 +646,28 @@
         const createNosqlDbModal = document.getElementById('createNosqlDbModal');
         
         document.getElementById('btn-open-create-modal')?.addEventListener('click', () => {
-            createDbModal.classList.remove('hidden');
+            createDbModal?.classList.remove('hidden');
         });
         document.getElementById('btn-open-create-modal-empty')?.addEventListener('click', () => {
-            createDbModal.classList.remove('hidden');
+            createDbModal?.classList.remove('hidden');
         });
         
         document.getElementById('btn-open-create-nosql-modal')?.addEventListener('click', () => {
-            createNosqlDbModal.classList.remove('hidden');
+            createNosqlDbModal?.classList.remove('hidden');
         });
         document.getElementById('btn-open-create-nosql-modal-empty')?.addEventListener('click', () => {
-            createNosqlDbModal.classList.remove('hidden');
+            createNosqlDbModal?.classList.remove('hidden');
         });
 
         document.querySelectorAll('.btn-close-modal').forEach(btn => {
             btn.addEventListener('click', () => {
-                createDbModal.classList.add('hidden');
+                createDbModal?.classList.add('hidden');
             });
         });
         
         document.querySelectorAll('.btn-close-nosql-modal').forEach(btn => {
             btn.addEventListener('click', () => {
-                createNosqlDbModal.classList.add('hidden');
+                createNosqlDbModal?.classList.add('hidden');
             });
         });
 
