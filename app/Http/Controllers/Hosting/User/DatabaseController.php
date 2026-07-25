@@ -39,7 +39,7 @@ class DatabaseController extends Controller
             $prefix = 'ryz_'.Auth::id().'_';
             $cleanDbName = $prefix.strtolower(trim($request->db_name));
             $cleanUsername = $existingDb->db_username;
-            $dbPassword = Crypt::decryptString($existingDb->db_password);
+            $dbPassword = $existingDb->db_password;
         } else {
             $request->validate([
                 'db_name' => 'required|string|alpha_dash|max:15',
