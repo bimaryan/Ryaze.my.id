@@ -192,6 +192,7 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.show');
         Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
         Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
+        Route::post('user/hosting/databases/nosql', [DatabaseController::class, 'storeNosql'])->name('user_hosting.databases.nosql.store');
         Route::post('user/hosting/databases/{hashid}/api-key', [DatabaseController::class, 'generateApiKey'])->name('user_hosting.databases.apikey');
         Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
 
@@ -203,8 +204,13 @@ Route::middleware('auth')->group(function () {
         // Billing & Vouchers
         Route::get('user/hosting/databases/{hashid}/export', [DatabaseController::class, 'export'])->name('user_hosting.databases.export');
         Route::post('user/hosting/databases/{hashid}/import', [DatabaseController::class, 'import'])->name('user_hosting.databases.import');
-        Route::get('user/hosting/pma', [DatabaseController::class, 'pmaIndex'])->name('user_hosting.databases.pma');
-        Route::get('user/hosting/databases/{hashid}/pma', [DatabaseController::class, 'pmaLogin'])->name('user_hosting.databases.pma.login');
+        Route::get('user/hosting/pma', [\App\Http\Controllers\Hosting\User\DatabaseController::class, 'pmaIndex'])->name('user_hosting.databases.pma');
+        Route::get('user/hosting/databases/{hashid}/pma', [\App\Http\Controllers\Hosting\User\DatabaseController::class, 'pmaLogin'])->name('user_hosting.databases.pma.login');
+        
+        // Custom Mini phpMyAdmin routes
+        Route::get('user/hosting/databases/{hashid}/manager', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'index'])->name('user_hosting.databases.manager');
+        Route::get('user/hosting/databases/{hashid}/manager/{table}', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'showTable'])->name('user_hosting.databases.manager.table');
+        Route::post('user/hosting/databases/{hashid}/manager/query', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'executeQuery'])->name('user_hosting.databases.manager.query');
         Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
         Route::post('user/hosting/billing/subscribe', [DashboardController::class, 'subscribe'])->name('user_hosting.billing.subscribe');
         Route::post('user/hosting/billing/pay-wallet', [DashboardController::class, 'payWithWallet'])->name('user_hosting.billing.pay_wallet');

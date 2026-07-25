@@ -14,8 +14,36 @@ class DatabaseController extends Controller
     public function index()
     {
         $databases = HostingDatabase::where('user_id', Auth::id())->latest()->get();
+        $nosqlDatabases = \App\Models\HostingNosqlDatabase::where('user_id', Auth::id())->latest()->get();
+        
+        return view('pages.hosting.user.database.index', compact('databases', 'nosqlDatabases'));
+    }
 
-        return view('pages.hosting.user.database.index', compact('databases'));
+    public function storeNosql(Request $request)
+    {
+        // Untuk Redis, berikan prefix berdasarkan ID user
+        $prefix = 'ryz_' . Auth::id() . '_';
+        $password = \Illuminate\Support\Str::random(16);
+        $redisHost = env('REDIS_HOST', '127.0.0.1');
+        $redisPort = env('REDIS_PORT', 6379);
+
+        // Jika Anda menggunakan Redis 6+ dengan ACL, Anda bisa menjalankan perintah ACL SETUSER di sini
+        // $redis = new \Redis();
+        // $redis->connect($redisHost, $redisPort);
+        // $redis->auth(env('REDIS_PASSWORD'));
+        // $redis->rawCommand('ACL', 'SETUSER', $prefix, 'on', '>'.$password, '~'.$prefix.'*', '+@all');
+
+        \App\Models\HostingNosqlDatabase::create([
+            'user_id' => Auth::id(),
+            'nosql_type' => 'redis',
+            'db_username' => $prefix, // Nama ACL user atau identitas
+            'db_password' => \Illuminate\Support\Facades\Crypt::encryptString($password),
+            'host' => $redisHost,
+            'port' => $redisPort,
+            'keyspace_prefix' => $prefix,
+        ]);
+
+        return back()->with('success', 'Database NoSQL (Redis) berhasil dibuat!');
     }
 
     public function pmaIndex()

@@ -6,7 +6,26 @@
         {{-- SweetAlert2 --}}
         {{-- Flash via SweetAlert --}}
         @if ($errors->any())
-        <script nonce="{{ app('csp_nonce') }}">
+        <script nonce="{{ app('csp_nonce') ?? '' }}">
+            function showTab(tab) {
+                const btnMysql = document.getElementById('btn-tab-mysql');
+                const btnNosql = document.getElementById('btn-tab-nosql');
+                const tabMysql = document.getElementById('tab-mysql');
+                const tabNosql = document.getElementById('tab-nosql');
+
+                if (tab === 'mysql') {
+                    tabMysql.classList.remove('hidden');
+                    tabNosql.classList.add('hidden');
+                    btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
+                    btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
+                } else {
+                    tabMysql.classList.add('hidden');
+                    tabNosql.classList.remove('hidden');
+                    btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
+                    btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
+                }
+            }
+
             (function() {
                 Swal.fire({
                     icon: 'error', title: 'Validasi Gagal',
@@ -30,8 +49,18 @@
             </x-slot:actions>
         </x-ui.page-header>
 
-    {{-- Database Cards --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {{-- Tabs --}}
+    <div class="mb-6 flex space-x-1 bg-slate-100 p-1 rounded-xl max-w-fit">
+        <button id="btn-tab-mysql" class="px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800" onclick="showTab('mysql')">
+            <i class="fa-solid fa-database mr-1.5 text-indigo-500"></i> MySQL
+        </button>
+        <button id="btn-tab-nosql" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition" onclick="showTab('nosql')">
+            <i class="fa-solid fa-server mr-1.5 text-rose-500"></i> Redis (NoSQL)
+        </button>
+    </div>
+
+    {{-- Database Cards (MySQL) --}}
+    <div id="tab-mysql" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         @forelse ($databases as $db)
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
             {{-- Card Header --}}
@@ -146,6 +175,9 @@
                         <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-indigo-100 px-1 rounded">{{ $db->db_name }}</code>.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
+                        <a href="{{ route('user_hosting.databases.manager', $db->hashid) }}" class="bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-table-list"></i> Database Manager
+                        </a>
                         <button onclick="openApiTesterModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="bg-orange-500 text-white hover:bg-orange-600 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-flask"></i> Test API
                         </button>
@@ -165,10 +197,88 @@
         @empty
         <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-16 text-center flex flex-col items-center">
             <div class="w-16 h-16 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mb-4">
+                <i class="fa-solid fa-database text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-700 mb-1">Belum ada Database MySQL</h3>
+            <p class="text-slate-500 text-sm">Klik "Buat Database" untuk memulai.</p>
+        </div>
+        @endforelse
+    </div>
+
+    {{-- Database Cards (NoSQL / Redis) --}}
+    <div id="tab-nosql" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
+        @forelse ($nosqlDatabases ?? [] as $db)
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+            {{-- Card Header --}}
+            <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center">
+                        <i class="fa-solid fa-server text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base">Redis <span class="text-xs text-slate-400 font-normal">({{ $db->db_username }})</span></h3>
+                        <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-5 space-y-4">
+                {{-- Host & Port --}}
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Host</span>
+                        <code class="text-sm font-mono text-slate-800 break-all">{{ $db->host }}</code>
+                    </div>
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Port</span>
+                        <code class="text-sm font-mono text-slate-800 break-all">{{ $db->port }}</code>
+                    </div>
+                </div>
+
+                {{-- Kredensial --}}
+                <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl space-y-3">
+                    <div class="flex justify-between items-center relative group">
+                        <div class="flex flex-col">
+                            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Prefix / Username</span>
+                            <code class="text-sm font-mono text-slate-800 font-semibold">{{ $db->db_username }}</code>
+                        </div>
+                    </div>
+                    
+                    <div class="h-px bg-slate-200"></div>
+                    
+                    <div class="flex justify-between items-center relative group">
+                        <div class="flex flex-col w-full pr-10">
+                            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Password</span>
+                            <div class="flex items-center gap-2">
+                                <input type="password" readonly value="{{ $db->db_password }}"
+                                    id="pass-nosql-{{ $db->hashid }}"
+                                    class="text-sm font-mono text-slate-800 bg-transparent border-none p-0 focus:ring-0 w-full cursor-text"
+                                    onclick="this.select()">
+                            </div>
+                        </div>
+                        <div class="absolute right-0 flex items-center gap-1">
+                            <button class="text-slate-400 hover:text-indigo-600 p-1.5 rounded bg-white border border-slate-200 shadow-sm transition-colors"
+                                onclick="const inp = document.getElementById('pass-nosql-{{ $db->hashid }}'); inp.type = inp.type === 'password' ? 'text' : 'password';" title="Lihat Password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-16 text-center flex flex-col items-center">
+            <div class="w-16 h-16 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mb-4">
                 <i class="fa-solid fa-server text-3xl"></i>
             </div>
-            <h3 class="text-lg font-bold text-slate-700 mb-1">Belum ada Database</h3>
-            <p class="text-slate-500 text-sm">Klik "Buat Database" untuk memulai.</p>
+            <h3 class="text-lg font-bold text-slate-700 mb-1">Belum ada Database NoSQL</h3>
+            <p class="text-slate-500 text-sm mb-4">Klik tombol di bawah untuk membuat database Redis.</p>
+            <form action="{{ route('user_hosting.databases.nosql.store') }}" method="POST">
+                @csrf
+                <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm px-4 py-2 rounded-xl transition shadow-sm">
+                    Buat Database Redis
+                </button>
+            </form>
         </div>
         @endforelse
     </div>
