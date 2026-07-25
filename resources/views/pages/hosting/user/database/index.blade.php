@@ -24,14 +24,12 @@
             icon="fa-database" 
             iconColor="purple">
             <x-slot:actions>
-            <x-slot:actions>
                 <button id="btn-open-create-modal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     + Buat Database MySQL
                 </button>
                 <button id="btn-open-create-nosql-modal" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     + Buat Database Redis
                 </button>
-            </x-slot:actions>
             </x-slot:actions>
         </x-ui.page-header>
 
@@ -808,19 +806,19 @@
         const headerBtnNosql = document.getElementById('btn-open-create-nosql-modal');
 
         if (tab === 'mysql') {
-            tabMysql.classList.remove('hidden');
-            tabNosql.classList.add('hidden');
-            headerBtnMysql.classList.remove('hidden');
-            headerBtnNosql.classList.add('hidden');
-            btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
-            btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
+            tabMysql?.classList.remove('hidden');
+            tabNosql?.classList.add('hidden');
+            headerBtnMysql?.classList.remove('hidden');
+            headerBtnNosql?.classList.add('hidden');
+            if(btnMysql) btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
+            if(btnNosql) btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
         } else {
-            tabMysql.classList.add('hidden');
-            tabNosql.classList.remove('hidden');
-            headerBtnMysql.classList.add('hidden');
-            headerBtnNosql.classList.remove('hidden');
-            btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
-            btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
+            tabMysql?.classList.add('hidden');
+            tabNosql?.classList.remove('hidden');
+            headerBtnMysql?.classList.add('hidden');
+            headerBtnNosql?.classList.remove('hidden');
+            if(btnNosql) btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
+            if(btnMysql) btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
         }
     };
 
