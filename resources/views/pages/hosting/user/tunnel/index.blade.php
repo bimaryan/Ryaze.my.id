@@ -22,26 +22,7 @@
         </x-ui.page-header>
 
         <div class="space-y-6">
-            @if(session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-check text-emerald-600"></i>
-                    </div>
-                    <div class="text-sm font-medium">{{ session('success') }}</div>
-                </div>
-            @endif
-            @if($errors->any())
-                <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
-                    </div>
-                    <ul class="text-sm font-medium list-disc list-inside">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+
 
             <x-ui.card>
                 <div class="overflow-x-auto">
