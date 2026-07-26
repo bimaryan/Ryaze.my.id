@@ -101,8 +101,8 @@ curl_close(\$ch);
 http_response_code(\$status);
 \$headerStr = substr(\$response, 0, \$headerSize);
 \$bodyStr = substr(\$response, \$headerSize);
-foreach (explode("\\r\\n", \$headerStr) as \$line) {
-    if (strpos(\$line, ': ') !== false && stripos(\$line, 'Transfer-Encoding') === false) {
+foreach (explode("\\n", str_replace("\\r\\n", "\\n", \$headerStr)) as \$line) {
+    if (strpos(\$line, ':') !== false && stripos(\$line, 'Transfer-Encoding') === false) {
         \$isSetCookie = stripos(\$line, 'Set-Cookie:') === 0;
         header(\$line, !\$isSetCookie);
     }
