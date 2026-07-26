@@ -60,7 +60,16 @@
                         <div class="flex flex-col {{ $isSelf ? 'items-end' : 'items-start' }}">
                             <div class="{{ $isSelf ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
                                 <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 pb-1 {{ $isSelf ? 'text-right' : 'text-left' }}">
-                                    {{ $isSelf ? 'Anda' : 'Admin Support' }} &bull; {{ $reply->created_at->format('H:i') }}
+                                    {{ $isSelf ? 'Anda' : $reply->user->name }} &bull; {{ $reply->created_at->format('H:i') }}
+                                    @if($isSelf)
+                                        <span class="ml-1 ticket-read-status" data-reply-id="{{ $reply->id }}">
+                                            @if($reply->read_at)
+                                                <i class="fa-solid fa-check-double text-blue-500"></i>
+                                            @else
+                                                <i class="fa-solid fa-check-double text-slate-400"></i>
+                                            @endif
+                                        </span>
+                                    @endif
                                 </div>
                                 @if($reply->attachment_path)
                                     <div class="mb-2">
@@ -230,7 +239,12 @@
                             <div class="flex flex-col ${isSelf ? 'items-end' : 'items-start'}">
                                 <div class="${isSelf ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm'} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
                                     <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 pb-1 ${isSelf ? 'text-right' : 'text-left'}">
-                                        ${isSelf ? 'Anda' : 'Admin Support'} &bull; ${e.created_at.split(', ')[1] || e.created_at}
+                                        ${isSelf ? 'Anda' : e.user_name} &bull; ${e.created_at.split(', ')[1] || e.created_at}
+                                        ${isSelf ? `
+                                            <span class="ml-1 ticket-read-status" data-reply-id="${e.id}">
+                                                <i class="fa-solid fa-check-double text-slate-400"></i>
+                                            </span>
+                                        ` : ''}
                                     </div>
                                     ${e.attachment_url ? `
                                         <div class="mb-2">
@@ -254,8 +268,34 @@
                 if (isScrolledToBottom || isSelf) {
                     chatArea.scrollTop = chatArea.scrollHeight;
                 }
+
+                if (e.is_admin && document.hasFocus()) {
+                    fetch('{{ route("user_hosting.tickets.markAsRead", $ticket->hashid) }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+                }
+            })
+            .listen('TicketRepliesRead', (e) => {
+                document.querySelectorAll('.ticket-read-status i.text-slate-400').forEach(icon => {
+                    icon.classList.remove('text-slate-400');
+                    icon.classList.add('text-blue-500');
+                });
             });
     }
+
+    window.addEventListener('focus', () => {
+        fetch('{{ route("user_hosting.tickets.markAsRead", $ticket->hashid) }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        });
+    });
 
     // Kirim pesan tanpa reload (AJAX)
     if (chatForm) {

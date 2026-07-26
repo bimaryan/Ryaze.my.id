@@ -255,6 +255,12 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/apk/{build}/log', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'log'])->name('user_hosting.apk.log');
         Route::delete('user/hosting/apk/{build}', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'destroy'])->name('user_hosting.apk.destroy');
 
+        // Tunnel Manager
+        Route::get('user/hosting/tunnels', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'index'])->name('user_hosting.tunnels.index');
+        Route::post('user/hosting/tunnels', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'store'])->name('user_hosting.tunnels.store');
+        Route::delete('user/hosting/tunnels/{id}', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'destroy'])->name('user_hosting.tunnels.destroy');
+        Route::get('user/hosting/tunnels/{id}/client', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'downloadClient'])->name('user_hosting.tunnels.client');
+
     });
 
     // ═══════════════════════════════════════════════════════════════

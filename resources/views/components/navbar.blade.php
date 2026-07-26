@@ -396,6 +396,15 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('user_hosting.tunnels.index') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.tunnels*')) }}">
+                            <i
+                                class="fa-solid fa-network-wired {{ $iconClass(request()->routeIs('user_hosting.tunnels*')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Local Tunnels</span>
+                            <span class="ms-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-100 text-purple-600">Beta</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('user_hosting.templates') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.templates')) }}">
                             <i
