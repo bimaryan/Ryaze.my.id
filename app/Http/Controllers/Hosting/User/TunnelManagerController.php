@@ -316,7 +316,7 @@ echo "Connection closed.\n";
 PHP;
         
         $serverUrl = rtrim(env('APP_URL', 'http://ryaze.my.id'), '/');
-        $websocketUrl = env('REVERB_SCHEME', 'http') . '://' . env('REVERB_HOST', '127.0.0.1') . ':' . env('REVERB_PORT', '8080');
+        $websocketUrl = str_replace(['http://', 'https://'], ['ws://', 'wss://'], $serverUrl);
         $appKey = env('REVERB_APP_KEY');
         
         $clientCode = str_replace(
