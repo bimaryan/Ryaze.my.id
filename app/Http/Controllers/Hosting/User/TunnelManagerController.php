@@ -32,12 +32,61 @@ class TunnelManagerController extends Controller
             'status' => 'inactive',
         ]);
 
+        // Create Cloudflare DNS Record
+        try {
+            $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+            $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')), '/'));
+            $domainName = $tunnel->subdomain . '.ryaze.my.id';
+            $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+
+            if ($zoneId && $apiToken && $tunnelUrl) {
+                $existing = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
+                    'type' => 'CNAME',
+                    'name' => $domainName
+                ]);
+                if ($existing->successful() && empty($existing->json('result'))) {
+                    $resp = \Illuminate\Support\Facades\Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
+                        'type'    => 'CNAME',
+                        'name'    => $domainName,
+                        'content' => $tunnelUrl,
+                        'proxied' => true,
+                        'ttl'     => 1,
+                    ]);
+                    \Illuminate\Support\Facades\Log::info("Cloudflare Tunnel DNS created: " . $resp->body());
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to create CF DNS for tunnel: " . $e->getMessage());
+        }
+
         return redirect()->route('user_hosting.tunnels.index')->with('success', 'Tunnel berhasil dibuat.');
     }
 
     public function destroy($id)
     {
         $tunnel = Tunnel::where('user_id', Auth::id())->findOrFail($id);
+        
+        // Delete Cloudflare DNS Record
+        try {
+            $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+            $domainName = $tunnel->subdomain . '.ryaze.my.id';
+            $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+
+            if ($zoneId && $apiToken) {
+                $existing = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
+                    'type' => 'CNAME',
+                    'name' => $domainName
+                ]);
+                if ($existing->successful() && !empty($existing->json('result'))) {
+                    $recordId = $existing->json('result.0.id');
+                    \Illuminate\Support\Facades\Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records/{$recordId}");
+                    \Illuminate\Support\Facades\Log::info("Cloudflare Tunnel DNS deleted: " . $domainName);
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to delete CF DNS for tunnel: " . $e->getMessage());
+        }
+
         $tunnel->delete();
 
         return redirect()->route('user_hosting.tunnels.index')->with('success', 'Tunnel berhasil dihapus.');
