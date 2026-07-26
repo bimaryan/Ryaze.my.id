@@ -59,6 +59,66 @@ class TunnelManagerController extends Controller
             \Illuminate\Support\Facades\Log::error("Failed to create CF DNS for tunnel: " . $e->getMessage());
         }
 
+        // Create OpenResty Proxy Script
+        try {
+            $subdomain = $tunnel->subdomain;
+            $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+            
+            if ($isWindows) {
+                // Local dev mockup
+                $projectDir = storage_path("app/hosting_clients/{$subdomain}");
+                if (!file_exists($projectDir)) mkdir($projectDir, 0755, true);
+            } else {
+                if (!file_exists($projectDir)) exec("mkdir -p \"{$projectDir}\"");
+            }
+
+            $relayApiUrl = rtrim(env('APP_URL', 'http://ryaze.my.id'), '/') . '/api/tunnel/relay';
+            $proxyScript = <<<PHP
+<?php
+// Ryaze Tunnel Relay Proxy
+\$url = "{$relayApiUrl}?_subdomain={$subdomain}&_path=" . urlencode(\$_SERVER['REQUEST_URI']);
+\$ch = curl_init();
+curl_setopt(\$ch, CURLOPT_URL, \$url);
+curl_setopt(\$ch, CURLOPT_CUSTOMREQUEST, \$_SERVER['REQUEST_METHOD']);
+curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt(\$ch, CURLOPT_HEADER, true);
+\$headers = [];
+foreach (getallheaders() as \$key => \$val) {
+    if (strtolower(\$key) !== 'host') {
+        \$headers[] = "\$key: \$val";
+    }
+}
+curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$headers);
+\$body = file_get_contents('php://input');
+if (\$body) curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$body);
+
+\$response = curl_exec(\$ch);
+\$headerSize = curl_getinfo(\$ch, CURLINFO_HEADER_SIZE);
+\$status = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
+curl_close(\$ch);
+
+http_response_code(\$status);
+\$headerStr = substr(\$response, 0, \$headerSize);
+\$bodyStr = substr(\$response, \$headerSize);
+foreach (explode("\\r\\n", \$headerStr) as \$line) {
+    if (strpos(\$line, ': ') !== false && stripos(\$line, 'Transfer-Encoding') === false) {
+        header(\$line, false);
+    }
+}
+echo \$bodyStr;
+PHP;
+            if ($isWindows) {
+                file_put_contents("{$projectDir}/index.php", $proxyScript);
+            } else {
+                file_put_contents("/tmp/tunnel_{$subdomain}_index.php", $proxyScript);
+                exec("mv /tmp/tunnel_{$subdomain}_index.php \"{$projectDir}/index.php\"");
+                exec("chown -R www-data:www-data \"{$projectDir}\" 2>/dev/null");
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to create OpenResty proxy script for tunnel: " . $e->getMessage());
+        }
+
         return redirect()->route('user_hosting.tunnels.index')->with('success', 'Tunnel berhasil dibuat.');
     }
 
@@ -85,6 +145,25 @@ class TunnelManagerController extends Controller
             }
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error("Failed to delete CF DNS for tunnel: " . $e->getMessage());
+        }
+
+        // Delete OpenResty Proxy Script
+        try {
+            $subdomain = $tunnel->subdomain;
+            $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+            
+            if ($isWindows) {
+                $projectDir = storage_path("app/hosting_clients/{$subdomain}");
+                if (file_exists($projectDir)) {
+                    if (file_exists("{$projectDir}/index.php")) unlink("{$projectDir}/index.php");
+                    rmdir($projectDir);
+                }
+            } else {
+                if (file_exists($projectDir)) exec("rm -rf \"{$projectDir}\"");
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to delete OpenResty proxy script for tunnel: " . $e->getMessage());
         }
 
         $tunnel->delete();
@@ -249,6 +328,64 @@ PHP;
         return response($clientCode)
             ->header('Content-Type', 'text/plain')
             ->header('Content-Disposition', 'attachment; filename="ryaze-tunnel-' . $tunnel->subdomain . '.php"');
+    }
+
+    public function relay(Request $request)
+    {
+        $subdomain = $request->query('_subdomain');
+        $path = $request->query('_path', '/');
+        
+        $requestId = Str::uuid()->toString();
+        $method = $request->method();
+        $headers = $request->headers->all();
+        $body = $request->getContent();
+
+        // Broadcast to WebSocket Client
+        event(new \App\Events\TunnelRequestReceived(
+            $subdomain,
+            $requestId,
+            $method,
+            $path,
+            $headers,
+            base64_encode($body)
+        ));
+
+        // Long Polling (Wait for response from PHP CLI Client)
+        $cacheKey = "tunnel_response:{$requestId}";
+        $maxAttempts = 300; // 30 seconds (100ms * 300)
+        
+        for ($i = 0; $i < $maxAttempts; $i++) {
+            if (\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+                $response = \Illuminate\Support\Facades\Cache::pull($cacheKey);
+                
+                $httpResponse = response(base64_decode($response['body']), $response['status']);
+                foreach ($response['headers'] as $key => $val) {
+                    if (strtolower($key) !== 'transfer-encoding') {
+                        $httpResponse->header($key, $val);
+                    }
+                }
+                
+                return $httpResponse;
+            }
+            usleep(100000); // 100ms
+        }
+
+        return response("Gateway Timeout: Tunnel client offline or took too long to respond.", 504);
+    }
+
+    public function response(Request $request)
+    {
+        $request->validate([
+            'request_id' => 'required|string',
+            'status' => 'required|integer',
+            'headers' => 'array',
+            'body' => 'nullable|string'
+        ]);
+
+        $cacheKey = "tunnel_response:{$request->request_id}";
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $request->all(), 60);
+
+        return response()->json(['status' => 'ok']);
     }
 }
 

@@ -17,19 +17,19 @@ class TunnelRequestReceived implements ShouldBroadcastNow
     public string $subdomain;
     public string $requestId;
     public string $method;
-    public string $url;
+    public string $path;
     public array $headers;
     public $body;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(string $subdomain, string $requestId, string $method, string $url, array $headers, $body)
+    public function __construct(string $subdomain, string $requestId, string $method, string $path, array $headers, $body)
     {
         $this->subdomain = $subdomain;
         $this->requestId = $requestId;
         $this->method = $method;
-        $this->url = $url;
+        $this->path = $path;
         $this->headers = $headers;
         $this->body = $body;
     }

@@ -76,7 +76,8 @@
                                             <button type="button" onclick="showInstruction('{{ $tunnel->subdomain }}')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 hover:text-blue-700 transition-colors tooltip" data-tip="Cara Penggunaan">
                                                 <i class="fa-solid fa-book"></i>
                                             </button>
-                                            <form action="{{ route('user_hosting.tunnels.destroy', $tunnel->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus tunnel ini? Subdomain akan dilepas.')">
+                                            <form action="{{ route('user_hosting.tunnels.destroy', $tunnel->id) }}" method="POST"
+                                            onsubmit="event.preventDefault(); let f = this; Swal.fire({title: 'Hapus Tunnel?', text: 'Apakah Anda yakin ingin menghapus tunnel ini? Subdomain akan dilepas permanen.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: '<i class=\'fa-solid fa-trash-can mr-1\'></i> Ya, Hapus', cancelButtonText: 'Batal', customClass: {popup: 'rounded-2xl text-sm'}}).then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100 hover:text-red-700 transition-colors tooltip" data-tip="Hapus Tunnel">

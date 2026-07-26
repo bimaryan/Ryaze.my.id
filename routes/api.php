@@ -11,5 +11,6 @@ Route::post('pakasir/webhook', [PaymentCallbackController::class, 'handleWebhook
 Route::any('/v1/db/{hashid}/{path?}', [\App\Http\Controllers\Api\DatabaseApiController::class, 'handle'])
     ->where('path', '.*');
 
-// Tunnel Response API
-Route::post('/tunnel/response', [\App\Http\Controllers\TunnelController::class, 'submitResponse']);
+// Tunnel Relay & Response API
+Route::any('/tunnel/relay', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'relay']);
+Route::post('/tunnel/response', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'response']);
