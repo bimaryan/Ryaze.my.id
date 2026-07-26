@@ -287,7 +287,12 @@ stream_set_timeout($sock, 300);
 $key = base64_encode(openssl_random_pseudo_bytes(16));
 $header = "GET $path HTTP/1.1\r\nHost: $host:$port\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: $key\r\nSec-WebSocket-Version: 13\r\n\r\n";
 fwrite($sock, $header);
-$response = fread($sock, 1500);
+
+// Parse HTTP Headers properly so we don't consume WS frames
+while (!feof($sock)) {
+    $line = fgets($sock);
+    if ($line === "\r\n") break;
+}
 
 echo "Connected to Ryaze Tunnel Server.\nWaiting for requests...\n";
 
