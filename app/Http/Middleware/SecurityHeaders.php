@@ -28,6 +28,11 @@ class SecurityHeaders
 
         $response = $next($request);
 
+        // Bypass security headers for tunnel endpoints as they need to relay origin headers intact
+        if ($request->is('api/tunnel/*')) {
+            return $response;
+        }
+
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
