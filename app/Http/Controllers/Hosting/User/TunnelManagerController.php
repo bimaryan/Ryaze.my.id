@@ -311,6 +311,17 @@ while (true) {
 
     echo "[" . date('H:i:s') . "] Connected to Ryaze Tunnel Server.\nWaiting for requests...\n";
 
+    // Send Initial Heartbeat
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "{$serverUrl}/api/tunnel/heartbeat");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['subdomain' => $subdomain]));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+    curl_exec($ch);
+    curl_close($ch);
+
     // Pusher protocol: subscribe to channel
     $subscribeMsg = json_encode(['event' => 'pusher:subscribe', 'data' => ['channel' => 'tunnel.' . $subdomain]]);
     writeWebSocketFrame($sock, $subscribeMsg);
@@ -332,6 +343,17 @@ while (true) {
                     processRequest($data, $targetPort, $serverUrl);
                 } elseif ($msg['event'] === 'pusher:ping') {
                     writeWebSocketFrame($sock, json_encode(['event' => 'pusher:pong', 'data' => []]));
+                    
+                    // Send Heartbeat on ping
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, "{$serverUrl}/api/tunnel/heartbeat");
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['subdomain' => $subdomain]));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+                    curl_exec($ch);
+                    curl_close($ch);
                 }
             }
         }
@@ -363,6 +385,11 @@ PHP;
         $subdomain = $request->query('_subdomain');
         $path = $request->query('_path', '/');
         
+        // Fast-fail if tunnel client is definitely offline
+        if (!\Illuminate\Support\Facades\Cache::has("tunnel_online_{$subdomain}")) {
+            return response(view('pages.hosting.user.tunnel.offline', ['subdomain' => $subdomain]), 503);
+        }
+
         $requestId = Str::uuid()->toString();
         $method = $request->method();
         $headers = $request->headers->all();
@@ -404,7 +431,15 @@ PHP;
             usleep(100000); // 100ms
         }
 
-        return response("Gateway Timeout: Tunnel client offline or took too long to respond.", 504);
+        return response(view('pages.hosting.user.tunnel.offline', ['subdomain' => $subdomain]), 504);
+    }
+
+    public function heartbeat(Request $request)
+    {
+        $request->validate(['subdomain' => 'required|string']);
+        // Tunnel is marked online for 90 seconds (client sends heartbeat every ~60s)
+        \Illuminate\Support\Facades\Cache::put("tunnel_online_{$request->subdomain}", true, 90);
+        return response()->json(['status' => 'ok']);
     }
 
     public function response(Request $request)
