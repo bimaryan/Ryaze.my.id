@@ -10,3 +10,6 @@ Route::post('pakasir/webhook', [PaymentCallbackController::class, 'handleWebhook
 // Supabase-like Database API
 Route::any('/v1/db/{hashid}/{path?}', [\App\Http\Controllers\Api\DatabaseApiController::class, 'handle'])
     ->where('path', '.*');
+
+// Tunnel Response API
+Route::post('/tunnel/response', [\App\Http\Controllers\TunnelController::class, 'submitResponse']);

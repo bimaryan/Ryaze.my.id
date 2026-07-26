@@ -297,3 +297,8 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/joki/finance', [JokiAdminDashboardController::class, 'financeReport'])->name('admin_joki.finance');
     });
 });
+
+// ── TUNNEL ROUTE (Catch-all for tunneling) ───────────────────
+Route::any('/t/{subdomain}/{path?}', [\App\Http\Controllers\TunnelController::class, 'handleProxyRequest'])
+    ->where('path', '.*')
+    ->name('tunnel.proxy');
