@@ -101,6 +101,15 @@
                                 <div class="{{ $isAdmin ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
                                     <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 pb-1 {{ $isAdmin ? 'text-right' : 'text-left' }}">
                                         {{ $isAdmin ? 'Anda (Support)' : $reply->user->name }} &bull; {{ $reply->created_at->format('H:i') }}
+                                        @if($isAdmin)
+                                            <span class="ml-1 ticket-read-status" data-reply-id="{{ $reply->id }}">
+                                                @if($reply->read_at)
+                                                    <i class="fa-solid fa-check-double text-blue-500"></i>
+                                                @else
+                                                    <i class="fa-solid fa-check-double text-slate-400"></i>
+                                                @endif
+                                            </span>
+                                        @endif
                                     </div>
                                     @if($reply->attachment_path)
                                         <div class="mb-2">
@@ -272,6 +281,11 @@
                                 <div class="${e.is_admin ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm'} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
                                     <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 pb-1 ${e.is_admin ? 'text-right' : 'text-left'}">
                                         ${e.is_admin ? 'Anda (Support)' : e.user_name} &bull; ${e.created_at.split(', ')[1] || e.created_at}
+                                        ${e.is_admin ? `
+                                            <span class="ml-1 ticket-read-status" data-reply-id="${e.id}">
+                                                <i class="fa-solid fa-check-double text-slate-400"></i>
+                                            </span>
+                                        ` : ''}
                                     </div>
                                     ${e.attachment_url ? `
                                         <div class="mb-2">
@@ -295,8 +309,35 @@
                 if (isScrolledToBottom || isSelf) {
                     chatArea.scrollTop = chatArea.scrollHeight;
                 }
+
+                // If user sent a message and we are focused, mark as read
+                if (!e.is_admin && document.hasFocus()) {
+                    fetch('{{ route("admin_hosting.tickets.markAsRead", $ticket->hashid) }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+                }
+            })
+            .listen('TicketRepliesRead', (e) => {
+                document.querySelectorAll('.ticket-read-status i.text-slate-400').forEach(icon => {
+                    icon.classList.remove('text-slate-400');
+                    icon.classList.add('text-blue-500');
+                });
             });
     }
+
+    window.addEventListener('focus', () => {
+        fetch('{{ route("admin_hosting.tickets.markAsRead", $ticket->hashid) }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        });
+    });
 
     // Kirim pesan tanpa reload (AJAX)
     if (chatForm) {

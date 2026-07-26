@@ -153,6 +153,7 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/hosting/tickets', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'index'])->name('admin_hosting.tickets.index');
         Route::get('admin/hosting/tickets/{hashid}', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'show'])->name('admin_hosting.tickets.show');
         Route::post('admin/hosting/tickets/{hashid}/reply', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'reply'])->name('admin_hosting.tickets.reply');
+        Route::post('admin/hosting/tickets/{hashid}/mark-read', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'markAsRead'])->name('admin_hosting.tickets.markAsRead');
         Route::post('admin/hosting/tickets/{hashid}/close', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'close'])->name('admin_hosting.tickets.close');
     });
 
@@ -243,6 +244,7 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/tickets', [\App\Http\Controllers\User\TicketController::class, 'store'])->name('user_hosting.tickets.store');
         Route::get('user/hosting/tickets/{hashid}', [\App\Http\Controllers\User\TicketController::class, 'show'])->name('user_hosting.tickets.show');
         Route::post('user/hosting/tickets/{hashid}/reply', [\App\Http\Controllers\User\TicketController::class, 'reply'])->name('user_hosting.tickets.reply');
+        Route::post('user/hosting/tickets/{hashid}/mark-read', [\App\Http\Controllers\User\TicketController::class, 'markAsRead'])->name('user_hosting.tickets.markAsRead');
 
         // Apk Builder
         Route::get('user/hosting/apk', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'index'])->name('user_hosting.apk.index');

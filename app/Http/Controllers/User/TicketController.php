@@ -56,7 +56,27 @@ class TicketController extends Controller
     {
         $ticket = Ticket::with(['replies.user'])->where('user_id', Auth::id())->findByHashidOrFail($hashid);
         
+        $unreadReplies = $ticket->replies()->where('user_id', '!=', Auth::id())->whereNull('read_at')->get();
+        if ($unreadReplies->count() > 0) {
+            $now = now();
+            $ticket->replies()->where('user_id', '!=', Auth::id())->whereNull('read_at')->update(['read_at' => $now]);
+            broadcast(new \App\Events\TicketRepliesRead($ticket->hashid, $now));
+        }
+
         return view('pages.tickets.user.show', compact('ticket'));
+    }
+
+    public function markAsRead($hashid)
+    {
+        $ticket = Ticket::where('user_id', Auth::id())->findByHashidOrFail($hashid);
+        $now = now();
+        $updated = $ticket->replies()->where('user_id', '!=', Auth::id())->whereNull('read_at')->update(['read_at' => $now]);
+        
+        if ($updated) {
+            broadcast(new \App\Events\TicketRepliesRead($ticket->hashid, $now));
+        }
+        
+        return response()->json(['success' => true]);
     }
 
     public function reply(Request $request, $hashid)

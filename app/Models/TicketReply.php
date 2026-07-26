@@ -11,6 +11,11 @@ class TicketReply extends Model
         'user_id',
         'message',
         'attachment_path',
+        'read_at',
+    ];
+
+    protected $casts = [
+        'read_at' => 'datetime',
     ];
 
     public function ticket()
