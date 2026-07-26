@@ -290,44 +290,57 @@ $port = parse_url($websocketUrl, PHP_URL_PORT) ?: (parse_url($websocketUrl, PHP_
 $path = "/app/{$appKey}?protocol=7&client=js&version=8.4.0-rc2&flash=false";
 $scheme = parse_url($websocketUrl, PHP_URL_SCHEME) === 'wss' ? 'ssl://' : 'tcp://';
 
-$sock = fsockopen($scheme . $host, $port, $errno, $errstr, 10);
-if (!$sock) die("Error connecting to WebSocket server: $errstr ($errno)\n");
-stream_set_timeout($sock, 300);
-
-$key = base64_encode(openssl_random_pseudo_bytes(16));
-$header = "GET $path HTTP/1.1\r\nHost: $host:$port\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: $key\r\nSec-WebSocket-Version: 13\r\n\r\n";
-fwrite($sock, $header);
-
-// Parse HTTP Headers properly so we don't consume WS frames
-while (!feof($sock)) {
-    $line = fgets($sock);
-    if ($line === "\r\n") break;
-}
-
-echo "Connected to Ryaze Tunnel Server.\nWaiting for requests...\n";
-
-// Pusher protocol: subscribe to channel
-$subscribeMsg = json_encode(['event' => 'pusher:subscribe', 'data' => ['channel' => 'tunnel.' . $subdomain]]);
-writeWebSocketFrame($sock, $subscribeMsg);
-
-while (!feof($sock)) {
-    $frame = readWebSocketFrame($sock);
-    if ($frame === false) break;
-    if ($frame['opcode'] == 9) { // Ping
-        writeWebSocketFrame($sock, $frame['payload'], 10); // Pong
+while (true) {
+    $sock = @fsockopen($scheme . $host, $port, $errno, $errstr, 10);
+    if (!$sock) {
+        echo "[" . date('H:i:s') . "] Reconnecting in 5 seconds...\n";
+        sleep(5);
         continue;
     }
-    if ($frame['opcode'] == 8) break; // Close
-    if ($frame['opcode'] == 1 || $frame['opcode'] == 2) {
-        $msg = json_decode($frame['payload'], true);
-        if ($msg && $msg['event'] === 'App\Events\TunnelRequestReceived') {
-            $data = json_decode($msg['data'], true);
-            // Process request async-like or blocking (for simple script blocking is fine)
-            processRequest($data, $targetPort, $serverUrl);
+    stream_set_timeout($sock, 300);
+
+    $key = base64_encode(openssl_random_pseudo_bytes(16));
+    $header = "GET $path HTTP/1.1\r\nHost: $host:$port\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: $key\r\nSec-WebSocket-Version: 13\r\n\r\n";
+    fwrite($sock, $header);
+
+    // Parse HTTP Headers properly so we don't consume WS frames
+    while (!feof($sock)) {
+        $line = fgets($sock);
+        if ($line === "\r\n") break;
+    }
+
+    echo "[" . date('H:i:s') . "] Connected to Ryaze Tunnel Server.\nWaiting for requests...\n";
+
+    // Pusher protocol: subscribe to channel
+    $subscribeMsg = json_encode(['event' => 'pusher:subscribe', 'data' => ['channel' => 'tunnel.' . $subdomain]]);
+    writeWebSocketFrame($sock, $subscribeMsg);
+
+    while (!feof($sock)) {
+        $frame = readWebSocketFrame($sock);
+        if ($frame === false) break;
+        if ($frame['opcode'] == 9) { // Ping
+            writeWebSocketFrame($sock, $frame['payload'], 10); // Pong
+            continue;
+        }
+        if ($frame['opcode'] == 8) break; // Close
+        if ($frame['opcode'] == 1 || $frame['opcode'] == 2) {
+            $msg = json_decode($frame['payload'], true);
+            if ($msg) {
+                if ($msg['event'] === 'App\Events\TunnelRequestReceived') {
+                    $data = json_decode($msg['data'], true);
+                    // Process request async-like or blocking (for simple script blocking is fine)
+                    processRequest($data, $targetPort, $serverUrl);
+                } elseif ($msg['event'] === 'pusher:ping') {
+                    writeWebSocketFrame($sock, json_encode(['event' => 'pusher:pong', 'data' => []]));
+                }
+            }
         }
     }
+    
+    echo "[" . date('H:i:s') . "] Connection closed. Reconnecting...\n";
+    if (is_resource($sock)) fclose($sock);
+    sleep(2);
 }
-echo "Connection closed.\n";
 PHP;
         
         $serverUrl = rtrim(env('APP_URL', 'http://ryaze.my.id'), '/');

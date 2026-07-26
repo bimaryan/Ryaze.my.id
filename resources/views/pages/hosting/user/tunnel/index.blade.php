@@ -8,11 +8,6 @@
             icon="fa-network-wired"
             iconColor="purple">
             <x-slot:actions>
-                <a href="{{ route('user_hosting.dashboard') }}"
-                   class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors border border-slate-200 shadow-sm group">
-                    <i class="fa-solid fa-arrow-left text-slate-400 group-hover:text-slate-600 transition-colors"></i>
-                    Kembali
-                </a>
                 <button type="button" onclick="document.getElementById('createTunnelModal').classList.remove('hidden')"
                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-medium rounded-lg transition-all shadow-sm shadow-purple-500/20 group hover:shadow-md hover:shadow-purple-500/30">
                     <i class="fa-solid fa-plus text-purple-200 group-hover:text-white transition-colors"></i>
