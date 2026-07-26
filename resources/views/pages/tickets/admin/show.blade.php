@@ -98,11 +98,18 @@
 
                             {{-- Bubble --}}
                             <div class="flex flex-col {{ $isAdmin ? 'items-end' : 'items-start' }}">
-                                <div class="{{ $isAdmin ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed whitespace-pre-wrap break-words break-all">
-                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold block border-b border-black/5 pb-1">
-                                        {{ $isAdmin ? 'Anda (Support)' : $reply->user->name }} &bull; {{ $reply->created_at->format('d M Y, H:i') }}
+                                <div class="{{ $isAdmin ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
+                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 pb-1 {{ $isAdmin ? 'text-right' : 'text-left' }}">
+                                        {{ $isAdmin ? 'Anda (Support)' : $reply->user->name }} &bull; {{ $reply->created_at->format('H:i') }}
                                     </div>
-                                    @if($reply->attachment_path)<div class="mb-2"><a href="{{ asset('storage/' . $reply->attachment_path) }}" target="_blank"><img src="{{ asset('storage/' . $reply->attachment_path) }}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment"></a></div>@endif{{ $reply->message }}
+                                    @if($reply->attachment_path)
+                                        <div class="mb-2">
+                                            <a href="{{ asset('storage/' . $reply->attachment_path) }}" target="_blank">
+                                                <img src="{{ asset('storage/' . $reply->attachment_path) }}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment">
+                                            </a>
+                                        </div>
+                                    @endif
+                                    <div class="whitespace-pre-wrap">{{ $reply->message }}</div>
                                 </div>
                             </div>
 
@@ -262,11 +269,18 @@
 
                             <!-- Bubble -->
                             <div class="flex flex-col ${e.is_admin ? 'items-end' : 'items-start'}">
-                                <div class="${e.is_admin ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm'} px-4 py-2 text-[15px] leading-relaxed whitespace-pre-wrap break-words break-all">
-                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold block border-b border-black/5 pb-1">
-                                        ${e.is_admin ? 'Anda (Support)' : e.user_name} &bull; ${e.created_at}
+                                <div class="${e.is_admin ? 'bg-[#d9fdd3] text-slate-800 rounded-l-xl rounded-br-xl' : 'bg-white border border-slate-200 text-slate-800 rounded-r-xl rounded-bl-xl shadow-sm'} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
+                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 pb-1 ${e.is_admin ? 'text-right' : 'text-left'}">
+                                        ${e.is_admin ? 'Anda (Support)' : e.user_name} &bull; ${e.created_at.split(', ')[1] || e.created_at}
                                     </div>
-                                    ${e.attachment_url ? `<div class="mb-2"><a href="${e.attachment_url}" target="_blank"><img src="${e.attachment_url}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment"></a></div>` : ''}${e.message}
+                                    ${e.attachment_url ? `
+                                        <div class="mb-2">
+                                            <a href="${e.attachment_url}" target="_blank">
+                                                <img src="${e.attachment_url}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment">
+                                            </a>
+                                        </div>
+                                    ` : ''}
+                                    <div class="whitespace-pre-wrap">${e.message}</div>
                                 </div>
                             </div>
 
