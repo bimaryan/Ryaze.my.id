@@ -103,7 +103,8 @@ http_response_code(\$status);
 \$bodyStr = substr(\$response, \$headerSize);
 foreach (explode("\\r\\n", \$headerStr) as \$line) {
     if (strpos(\$line, ': ') !== false && stripos(\$line, 'Transfer-Encoding') === false) {
-        header(\$line, false);
+        \$isSetCookie = stripos(\$line, 'Set-Cookie:') === 0;
+        header(\$line, !\$isSetCookie);
     }
 }
 echo \$bodyStr;
@@ -224,9 +225,18 @@ function processRequest($data, $targetPort, $serverUrl) {
     
     $responseHeaders = [];
     foreach (explode("\r\n", $headerStr) as $line) {
-        if (strpos($line, ': ') !== false) {
-            list($key, $val) = explode(': ', $line, 2);
-            $responseHeaders[$key] = $val;
+        if (strpos($line, ':') !== false) {
+            $parts = explode(':', $line, 2);
+            $key = trim($parts[0]);
+            $val = trim($parts[1]);
+            if (isset($responseHeaders[$key])) {
+                if (!is_array($responseHeaders[$key])) {
+                    $responseHeaders[$key] = [$responseHeaders[$key]];
+                }
+                $responseHeaders[$key][] = $val;
+            } else {
+                $responseHeaders[$key] = $val;
+            }
         }
     }
     
@@ -366,7 +376,13 @@ PHP;
                 $httpResponse = response(base64_decode($response['body']), $response['status']);
                 foreach ($response['headers'] as $key => $val) {
                     if (strtolower($key) !== 'transfer-encoding') {
-                        $httpResponse->header($key, $val);
+                        if (is_array($val)) {
+                            foreach ($val as $v) {
+                                $httpResponse->header($key, $v, false);
+                            }
+                        } else {
+                            $httpResponse->header($key, $val);
+                        }
                     }
                 }
                 
