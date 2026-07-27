@@ -181,9 +181,6 @@
                 </div>
             </div>
         </div>
-    </x-ui.page-layout>
-
-    @push('scripts')
     <script>
         function showInstruction(subdomain) {
             document.getElementById('insSubdomain').innerText = subdomain;
@@ -193,5 +190,5 @@
             document.getElementById('instructionModal').classList.remove('hidden');
         }
     </script>
-    @endpush
+    </x-ui.page-layout>
 @endsection
