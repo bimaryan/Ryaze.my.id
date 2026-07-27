@@ -203,78 +203,49 @@
                     <div>
                         <h4 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">1. Apa itu Ryaze Local Tunnel?</h4>
                         <p class="text-sm text-slate-600 leading-relaxed">
-                            Ryaze Local Tunnel adalah layanan yang memungkinkan Anda mempublikasikan aplikasi atau website yang berjalan di localhost komputer Anda ke internet tanpa harus mengatur port forwarding pada router atau memiliki IP Publik. Fungsinya mirip dengan Ngrok, namun diintegrasikan langsung dengan akun Ryaze Anda.
+                            Ryaze Local Tunnel adalah layanan eksklusif yang memungkinkan Anda mempublikasikan aplikasi atau website yang berjalan di localhost komputer Anda ke internet secara instan, tanpa perlu ribet mengatur port forwarding router atau menyewa IP Publik. Fitur premium ini kami hadirkan <strong>100% GRATIS</strong> khusus untuk mempermudah alur kerja (workflow) seluruh client dan pengguna setia Ryaze!
                         </p>
                     </div>
 
                     <!-- Section 2 -->
                     <div>
-                        <h4 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">2. Komponen & Arsitektur</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:border-indigo-100 transition-colors">
-                                <div class="font-semibold text-slate-800 mb-1 flex items-center"><i class="fa-brands fa-cloudflare text-[#f38020] mr-2 text-lg"></i> Cloudflare DNS</div>
-                                <p class="text-sm text-slate-600">Mengatur routing domain <code class="text-xs bg-slate-200 px-1 py-0.5 rounded text-slate-700">*.ryaze.my.id</code> ke server Ryaze dan menyediakan enkripsi SSL/HTTPS secara otomatis.</p>
-                            </div>
-                            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:border-indigo-100 transition-colors">
-                                <div class="font-semibold text-slate-800 mb-1 flex items-center"><i class="fa-solid fa-server text-indigo-500 mr-2 text-lg"></i> OpenResty Proxy</div>
-                                <p class="text-sm text-slate-600">Menerima trafik publik dari Cloudflare dan meneruskannya (forward) ke sistem Relay API internal Ryaze.</p>
-                            </div>
-                            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:border-indigo-100 transition-colors">
-                                <div class="font-semibold text-slate-800 mb-1 flex items-center"><i class="fa-brands fa-laravel text-[#ff2d20] mr-2 text-lg"></i> Laravel Reverb (WebSockets)</div>
-                                <p class="text-sm text-slate-600">Menjaga koneksi real-time antara server Ryaze dengan komputer Anda. Begitu ada request, server akan langsung memberitahu (broadcast) komputer Anda.</p>
-                            </div>
-                            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:border-indigo-100 transition-colors">
-                                <div class="font-semibold text-slate-800 mb-1 flex items-center"><i class="fa-brands fa-php text-[#777bb3] mr-2 text-lg"></i> PHP CLI Client</div>
-                                <p class="text-sm text-slate-600">Script yang Anda jalankan di terminal. Bertugas mendengarkan event WebSocket dan meneruskan HTTP request ke localhost Anda.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 3 -->
-                    <div>
-                        <h4 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">3. Alur Kerja (Bagaimana Data Mengalir)</h4>
+                        <h4 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">2. Alur Kerja (Bagaimana Ini Bekerja?)</h4>
                         <div class="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-indigo-100">
                             
                             <div class="relative">
                                 <div class="absolute -left-[30px] top-0 w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold border-4 border-white shadow-sm">1</div>
-                                <div class="font-semibold text-slate-800 mb-1">Pengunjung Mengakses URL</div>
-                                <p class="text-sm text-slate-600">Seseorang membuka <code class="text-xs bg-slate-100 px-1 py-0.5 rounded text-slate-700">https://subdomain.ryaze.my.id</code> di browser mereka.</p>
+                                <div class="font-semibold text-slate-800 mb-1">Pengunjung Mengakses Link Anda</div>
+                                <p class="text-sm text-slate-600">Seseorang membuka link publik Anda (contoh: <code class="text-xs bg-slate-100 px-1 py-0.5 rounded text-slate-700">https://subdomain.ryaze.my.id</code>) di browser mereka.</p>
                             </div>
 
                             <div class="relative">
                                 <div class="absolute -left-[30px] top-0 w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold border-4 border-white shadow-sm">2</div>
-                                <div class="font-semibold text-slate-800 mb-1">Server Menerima Request (Relay API)</div>
-                                <p class="text-sm text-slate-600">Request masuk ke server Ryaze. Server kemudian membekukan (long-polling) HTTP request tersebut maksimal hingga 30 detik sambil menunggu respon dari komputer Anda.</p>
+                                <div class="font-semibold text-slate-800 mb-1">Server Ryaze Meneruskan Request</div>
+                                <p class="text-sm text-slate-600">Sistem Ryaze secara instan dan aman akan meneruskan permintaan (request) tersebut langsung ke terminal/CMD komputer Anda yang sedang menjalankan script client.</p>
                             </div>
 
                             <div class="relative">
                                 <div class="absolute -left-[30px] top-0 w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold border-4 border-white shadow-sm">3</div>
-                                <div class="font-semibold text-slate-800 mb-1">Notifikasi via WebSocket</div>
-                                <p class="text-sm text-slate-600">Secara instan, server mengirimkan detail request (Method, URL, Headers, Body) ke terminal Anda menggunakan koneksi WebSocket yang sudah terhubung.</p>
-                            </div>
-
-                            <div class="relative">
-                                <div class="absolute -left-[30px] top-0 w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold border-4 border-white shadow-sm">4</div>
-                                <div class="font-semibold text-slate-800 mb-1">Client Mengeksekusi Request ke Localhost</div>
-                                <p class="text-sm text-slate-600">Script <code class="text-xs bg-slate-100 px-1 py-0.5 rounded text-slate-700">ryaze-tunnel.php</code> di terminal Anda menerima notifikasi tersebut, lalu melakukan HTTP cURL ke <code class="text-xs bg-slate-100 px-1 py-0.5 rounded text-slate-700">http://127.0.0.1:{Port}</code> sesuai dengan request aslinya.</p>
+                                <div class="font-semibold text-slate-800 mb-1">Script Mengakses Localhost</div>
+                                <p class="text-sm text-slate-600">Script di komputer Anda secara otomatis akan memproses permintaan tersebut ke aplikasi localhost Anda (misal ke port 8000).</p>
                             </div>
 
                             <div class="relative">
                                 <div class="absolute -left-[30px] top-0 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold border-4 border-white shadow-sm"><i class="fa-solid fa-check"></i></div>
-                                <div class="font-semibold text-slate-800 mb-1">Upload Response & Tampilkan ke Pengunjung</div>
-                                <p class="text-sm text-slate-600">Localhost Anda membalas request tersebut. Script kemudian meng-upload hasil balasan (HTML/JSON, Headers, Status Code) kembali ke server Ryaze, dan server menampilkannya ke browser pengunjung.</p>
+                                <div class="font-semibold text-slate-800 mb-1">Tampil di Browser Pengunjung</div>
+                                <p class="text-sm text-slate-600">Setelah aplikasi localhost Anda merespon, script mengirimkan hasilnya kembali ke jaringan Ryaze dan langsung ditampilkan di layar pengunjung dengan sangat cepat.</p>
                             </div>
 
                         </div>
                     </div>
 
-                    <!-- Section 4 -->
+                    <!-- Section 3 -->
                     <div class="bg-blue-50/50 rounded-xl p-5 border border-blue-100">
                         <h4 class="text-sm font-bold text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-circle-info mr-2"></i> Limitasi & Catatan Penting</h4>
                         <ul class="list-disc list-outside pl-5 text-sm text-blue-700/80 space-y-1.5 marker:text-blue-400">
-                            <li><strong>Timeout 30 Detik:</strong> Jika aplikasi localhost Anda membutuhkan waktu lebih dari 30 detik untuk merespon, server Ryaze akan memutuskan koneksi (Timeout 504) karena limitasi long-polling.</li>
-                            <li><strong>Offline Detection:</strong> Script client mengirimkan "heartbeat" setiap ~60 detik. Jika Anda menutup terminal, dalam waktu 90 detik server akan menandai tunnel Anda sebagai "Offline" (503 Service Unavailable).</li>
-                            <li><strong>Prasyarat:</strong> Pastikan Anda telah menginstall ekstensi <code class="bg-blue-100/50 px-1 rounded">php-curl</code> dan <code class="bg-blue-100/50 px-1 rounded">php-openssl</code> (WebSocket) di komputer Anda agar script berjalan lancar.</li>
+                            <li><strong>Timeout 30 Detik:</strong> Pastikan aplikasi localhost Anda merespon dalam waktu kurang dari 30 detik. Jika lebih dari itu, pengunjung akan melihat halaman error karena batas tunggu waktu maksimal telah tercapai.</li>
+                            <li><strong>Tetap Buka Terminal:</strong> Selama Anda ingin link publik Anda dapat diakses, pastikan terminal atau CMD yang menjalankan script tidak ditutup. Jika ditutup, link akan otomatis berstatus Offline.</li>
+                            <li><strong>Prasyarat:</strong> Pastikan Anda telah menginstall ekstensi <code class="bg-blue-100/50 px-1 rounded">php-curl</code> dan <code class="bg-blue-100/50 px-1 rounded">php-openssl</code> di komputer Anda.</li>
                         </ul>
                     </div>
                 </div>
