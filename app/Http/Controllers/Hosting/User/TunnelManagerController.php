@@ -375,9 +375,11 @@ PHP;
             $clientCode
         );
 
-        return response($clientCode)
-            ->header('Content-Type', 'text/plain')
-            ->header('Content-Disposition', 'attachment; filename="ryaze-tunnel-' . $tunnel->subdomain . '.php"');
+        return response()->streamDownload(function () use ($clientCode) {
+            echo $clientCode;
+        }, 'ryaze-tunnel-' . $tunnel->subdomain . '.php', [
+            'Content-Type' => 'text/plain'
+        ]);
     }
 
     public function downloadClientExe($id)
@@ -588,11 +590,12 @@ PHP;
             return redirect()->back()->with('error', 'File micro.sfx belum tersedia di server (storage/app/micro.sfx). Hubungi admin untuk mengaktifkan fitur EXE.');
         }
 
-        $sfx = file_get_contents($sfxPath);
-
-        return response($sfx . $clientCode)
-            ->header('Content-Type', 'application/x-msdownload')
-            ->header('Content-Disposition', 'attachment; filename="ryaze-tunnel-' . $tunnel->subdomain . '.exe"');
+        return response()->streamDownload(function () use ($sfxPath, $clientCode) {
+            readfile($sfxPath);
+            echo $clientCode;
+        }, 'ryaze-tunnel-' . $tunnel->subdomain . '.exe', [
+            'Content-Type' => 'application/x-msdownload'
+        ]);
     }
 
     public function relay(Request $request)
