@@ -527,34 +527,78 @@ while (true) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['subdomain' => $subdomain]));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 2);
-    curl_exec($ch);
-    curl_close($ch);
-
-    // Pusher protocol: subscribe to channel
-    $subscribeMsg = json_encode(['event' => 'pusher:subscribe', 'data' => ['channel' => 'tunnel.' . $subdomain]]);
-    writeWebSocketFrame($sock, $subscribeMsg);
-
-    while (!feof($sock)) {
-        $frame = readWebSocketFrame($sock);
-        if ($frame === false) break;
-        if ($frame['opcode'] == 9) { // Ping
-            writeWebSocketFrame($sock, $frame['payload'], 10); // Pong
-            continue;
-        }
-        if ($frame['opcode'] == 8) break; // Close
-        if ($frame['opcode'] == 1 || $frame['opcode'] == 2) {
-            $msg = json_decode($frame['payload'], true);
-            if ($msg) {
-                if ($msg['event'] === 'App\Events\TunnelRequestReceived') {
-                    $data = json_decode($msg['data'], true);
-                    // Process request async-like or blocking (for simple script blocking is fine)
-                    processRequest($data, $targetPort, $serverUrl);
-                } elseif ($msg['event'] === 'pusher:ping') {
-                    writeWebSocketFrame($sock, json_encode(['event' => 'pusher:pong', 'data' => []]));
+    $sock = @fsockopen(parse_url($websocketUrl, PHP_URL_HOST), parse_url($websocketUrl, PHP_URL_PORT) ?: (strpos($websocketUrl, 'wss') === 0 ? 443 : 80), $errno, $errstr, 2);
+    
+    if ($sock) {
+        $key = base64_encode(random_bytes(16));
+        $host = parse_url($websocketUrl, PHP_URL_HOST);
+        $path = "/app/{$appKey}?protocol=7&client=js&version=8.4.0-rc2&flash=false";
+        
+        $header = "GET {$path} HTTP/1.1\r\n";
+        $header.= "Host: {$host}\r\n";
+        $header.= "Upgrade: websocket\r\n";
+        $header.= "Connection: Upgrade\r\n";
+        $header.= "Sec-WebSocket-Key: {$key}\r\n";
+        $header.= "Sec-WebSocket-Version: 13\r\n\r\n";
+        
+        fwrite($sock, $header);
+        $response = fread($sock, 1500);
+        
+        if (strpos($response, '101 Switching Protocols') !== false) {
+            echo "[" . date('H:i:s') . "] Connected to Ryaze Tunnel Server.\n";
+            
+            $subscribeMsg = json_encode([
+                'event' => 'pusher:subscribe',
+                'data' => ['channel' => "tunnel-{$subdomain}"]
+            ]);
+            
+            $b1 = 0x80 | (0x1 & 0x0f);
+            $length = strlen($subscribeMsg);
+            $header = chr($b1);
+            if ($length <= 125) {
+                $header .= chr($length | 0x80);
+            } elseif ($length > 125 && $length < 65536) {
+                $header .= chr(126 | 0x80) . pack('n', $length);
+            }
+            $mask = random_bytes(4);
+            $header .= $mask;
+            $data = '';
+            for ($i = 0; $i < $length; $i++) {
+                $data .= $subscribeMsg[$i] ^ $mask[$i % 4];
+            }
+            fwrite($sock, $header . $data);
+            
+            while (!feof($sock)) {
+                $read = [$sock];
+                $write = null;
+                $except = null;
+                
+                if (stream_select($read, $write, $except, 1) > 0) {
+                    $header = fread($sock, 2);
+                    if (empty($header)) break;
                     
-                    // Send Heartbeat on ping
+                    $opcode = ord($header[0]) & 0x0F;
+                    $payloadLen = ord($header[1]) & 0x7F;
+                    
+                    if ($payloadLen == 126) {
+                        $payloadLen = unpack('n', fread($sock, 2))[1];
+                    } elseif ($payloadLen == 127) {
+                        $payloadLen = unpack('J', fread($sock, 8))[1];
+                    }
+                    
+                    $payload = '';
+                    if ($payloadLen > 0) {
+                        $payload = fread($sock, $payloadLen);
+                    }
+                    
+                    if ($opcode == 1 && !empty($payload)) {
+                        $msg = json_decode($payload, true);
+                        if (isset($msg['event']) && $msg['event'] === 'App\\Events\\TunnelRequestEvent') {
+                            $data = json_decode($msg['data'], true);
+                            processRequest($data['request'], $targetPort, $serverUrl);
+                        }
+                    }
+                } else {
                     $ch = curl_init();
                     curl_setopt($ch, CURLOPT_URL, "{$serverUrl}/api/tunnel/heartbeat");
                     curl_setopt($ch, CURLOPT_POST, true);
@@ -585,16 +629,26 @@ PHP;
             $clientCode
         );
 
-        $sfxPath = storage_path('app/micro.sfx');
-        if (!file_exists($sfxPath)) {
-            return redirect()->back()->with('error', 'File micro.sfx belum tersedia di server (storage/app/micro.sfx). Hubungi admin untuk mengaktifkan fitur EXE.');
-        }
+        $batContent = <<<BAT
+@echo off
+title Ryaze Tunnel - {$tunnel->subdomain}
+where php >nul 2>nul
+if %errorlevel% neq 0 (
+    echo [ERROR] PHP tidak terdeteksi di komputer Anda!
+    echo Harap pastikan PHP sudah terinstall dan masuk dalam Environment Variables (PATH).
+    pause
+    exit /b 1
+)
+php "%~f0"
+pause
+exit /b 0
+BAT;
+        $batContent .= "\n" . $clientCode;
 
-        return response()->streamDownload(function () use ($sfxPath, $clientCode) {
-            readfile($sfxPath);
-            echo $clientCode;
-        }, 'ryaze-tunnel-' . $tunnel->subdomain . '.exe', [
-            'Content-Type' => 'application/x-msdownload'
+        return response()->streamDownload(function () use ($batContent) {
+            echo $batContent;
+        }, 'ryaze-tunnel-' . $tunnel->subdomain . '.bat', [
+            'Content-Type' => 'application/bat'
         ]);
     }
 

@@ -260,7 +260,7 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/tunnels', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'store'])->name('user_hosting.tunnels.store');
         Route::delete('user/hosting/tunnels/{id}', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'destroy'])->name('user_hosting.tunnels.destroy');
         Route::get('user/hosting/tunnels/{id}/client', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'downloadClient'])->name('user_hosting.tunnels.client');
-        Route::get('user/hosting/tunnels/{id}/client/exe', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'downloadClientExe'])->name('user_hosting.tunnels.client_exe');
+        Route::get('user/hosting/tunnels/{id}/client/bat', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'downloadClientBat'])->name('user_hosting.tunnels.client_bat');
 
     });
 
