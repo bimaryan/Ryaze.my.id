@@ -51,8 +51,11 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-2">
-                                            <a href="{{ route('user_hosting.tunnels.client', $tunnel->id) }}" target="_blank" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 hover:text-emerald-700 transition-colors tooltip" data-tip="Download Client Script">
-                                                <i class="fa-solid fa-download"></i>
+                                            <a href="{{ route('user_hosting.tunnels.client', $tunnel->id) }}" target="_blank" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 hover:text-emerald-700 transition-colors tooltip" data-tip="Download Script (.php)">
+                                                <i class="fa-brands fa-php text-lg"></i>
+                                            </a>
+                                            <a href="{{ route('user_hosting.tunnels.client_exe', $tunnel->id) }}" target="_blank" class="w-8 h-8 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center hover:bg-cyan-100 hover:text-cyan-700 transition-colors tooltip" data-tip="Download Client (.exe)">
+                                                <i class="fa-brands fa-windows"></i>
                                             </a>
                                             <button type="button" onclick="showInstruction('{{ $tunnel->subdomain }}')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 hover:text-blue-700 transition-colors tooltip" data-tip="Cara Penggunaan">
                                                 <i class="fa-solid fa-book"></i>
@@ -152,16 +155,16 @@
                     <div class="flex items-start gap-4">
                         <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 font-bold flex items-center justify-center shrink-0">1</div>
                         <div>
-                            <h4 class="font-semibold text-slate-800 mb-1">Download Client Script</h4>
-                            <p class="text-sm text-slate-600">Klik ikon download (warna hijau) pada tabel untuk mengunduh file <code class="bg-slate-100 px-1 py-0.5 rounded text-slate-800 font-mono text-xs">ryaze-tunnel-<span id="insSubdomain"></span>.php</code></p>
+                            <h4 class="font-semibold text-slate-800 mb-1">Download Client</h4>
+                            <p class="text-sm text-slate-600">Klik ikon <i class="fa-brands fa-php text-emerald-600"></i> atau <i class="fa-brands fa-windows text-cyan-600"></i> pada tabel untuk mengunduh versi PHP atau EXE.</p>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-4">
                         <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 font-bold flex items-center justify-center shrink-0">2</div>
                         <div class="w-full">
-                            <h4 class="font-semibold text-slate-800 mb-1">Jalankan di Terminal Local</h4>
-                            <p class="text-sm text-slate-600 mb-3">Buka terminal / CMD di folder tempat Anda menyimpan file tersebut, lalu ketik perintah ini:</p>
+                            <h4 class="font-semibold text-slate-800 mb-1">Jalankan Tunnel</h4>
+                            <p class="text-sm text-slate-600 mb-3">Jika Anda mengunduh file <strong>.exe</strong>, cukup <strong>klik 2x (Double Click)</strong> file tersebut.<br>Namun, jika Anda menggunakan versi <strong>.php</strong>, jalankan perintah ini di terminal:</p>
                             <div class="relative group">
                                 <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-sm font-mono overflow-x-auto border border-slate-700"><code>php ryaze-tunnel-<span id="insSubdomainCode"></span>.php</code></pre>
                             </div>
@@ -202,9 +205,18 @@
                     <!-- Section 1 -->
                     <div>
                         <h4 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">1. Apa itu Ryaze Local Tunnel?</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">
+                        <p class="text-sm text-slate-600 leading-relaxed mb-3">
                             Ryaze Local Tunnel adalah layanan eksklusif yang memungkinkan Anda mempublikasikan aplikasi atau website yang berjalan di localhost komputer Anda ke internet secara instan, tanpa perlu ribet mengatur port forwarding router atau menyewa IP Publik. Fitur premium ini kami hadirkan <strong>100% GRATIS</strong> khusus untuk mempermudah alur kerja (workflow) seluruh client dan pengguna setia Ryaze!
                         </p>
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-4 flex items-start gap-3">
+                            <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5"></i>
+                            <div>
+                                <h5 class="text-sm font-semibold text-indigo-900 mb-1">Lebih Praktis dari ngrok!</h5>
+                                <p class="text-sm text-indigo-800/80 leading-relaxed">
+                                    Secara fungsi, layanan ini sangat mirip dengan <strong>ngrok</strong>. Bedanya, versi <strong>.exe</strong> kami dirancang jauh lebih instan. Anda tidak perlu repot mengetik perintah di terminal atau setup auth token. Cukup klik 2x file <code>.exe</code> yang diunduh, dan localhost Anda langsung online dengan perlindungan SSL (HTTPS) dari Ryaze!
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Section 2 -->
@@ -240,6 +252,27 @@
                     </div>
 
                     <!-- Section 3 -->
+                    <div class="bg-blue-50/50 rounded-xl p-5 border border-blue-100">
+                        <h4 class="text-sm font-bold text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-circle-info mr-2"></i> Cara Penggunaan</h4>
+                        <div class="space-y-4 mt-4">
+                            <div class="flex items-start">
+                                <span class="inline-flex w-6 h-6 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold text-sm mr-2 shrink-0">1</span>
+                                <div>
+                                    <h4 class="font-medium text-slate-800">Download Client</h4>
+                                    <p class="text-sm text-slate-600 mt-1">Klik tombol <strong>Download (.php)</strong> <i class="fa-brands fa-php text-emerald-600 mx-1"></i> atau <strong>Download (.exe)</strong> <i class="fa-brands fa-windows text-cyan-600 mx-1"></i> pada baris tunnel yang Anda buat.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <span class="inline-flex w-6 h-6 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold text-sm mr-2 shrink-0">2</span>
+                                <div>
+                                    <h4 class="font-medium text-slate-800">Jalankan Client</h4>
+                                    <p class="text-sm text-slate-600 mt-1">Jika menggunakan versi <strong>.exe</strong>, Anda hanya perlu klik 2x pada file tersebut. Jika menggunakan <strong>.php</strong>, jalankan perintah ini di terminal komputer Anda:</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="bg-blue-50/50 rounded-xl p-5 border border-blue-100">
                         <h4 class="text-sm font-bold text-blue-800 mb-2 flex items-center"><i class="fa-solid fa-circle-info mr-2"></i> Limitasi & Catatan Penting</h4>
                         <ul class="list-disc list-outside pl-5 text-sm text-blue-700/80 space-y-1.5 marker:text-blue-400">
