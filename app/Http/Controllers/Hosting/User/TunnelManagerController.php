@@ -382,7 +382,7 @@ PHP;
         ]);
     }
 
-    public function downloadClientExe($id)
+    public function downloadClientBat($id)
     {
         $tunnel = Tunnel::where('user_id', Auth::id())->findOrFail($id);
         
