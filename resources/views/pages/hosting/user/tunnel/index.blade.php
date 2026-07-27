@@ -293,7 +293,8 @@
         </div>
     <script>
         function showInstruction(subdomain) {
-            document.getElementById('insSubdomain').innerText = subdomain;
+            let el = document.getElementById('insSubdomain');
+            if(el) el.innerText = subdomain;
             document.getElementById('insSubdomainCode').innerText = subdomain;
             document.getElementById('insLink').innerText = 'https://' + subdomain + '.ryaze.my.id';
             document.getElementById('insLink').href = 'https://' + subdomain + '.ryaze.my.id';
