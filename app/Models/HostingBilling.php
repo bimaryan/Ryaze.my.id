@@ -9,7 +9,7 @@ class HostingBilling extends Model
     use \App\Traits\HasHashid;
 
     protected $fillable = [
-        'user_id', 'hosting_project_id', 'plan_name', 'amount',
+        'user_id', 'hosting_project_id', 'plan_name', 'plan', 'amount',
         'billing_cycle', 'next_due_date', 'status'
     ];
 

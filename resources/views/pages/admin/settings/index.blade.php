@@ -172,17 +172,22 @@
 
                 {{-- Harga & Langganan Hosting --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-tags text-indigo-500 mr-2"></i> Harga Langganan Hosting</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-tags text-indigo-500 mr-2"></i> Harga Langganan Hosting (Paket)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Harga Normal (Rp / Bulan)</label>
-                            <input type="number" name="hosting_price" value="{{ $settings['hosting_price'] ?? '10000' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
-                            <p class="text-xs text-slate-500 mt-1">Biaya langganan normal untuk setiap *akun* pengguna.</p>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Paket Starter (Rp/Bulan)</label>
+                            <input type="number" name="plan_starter_price" value="{{ $settings['plan_starter_price'] ?? '15000' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                            <p class="text-xs text-slate-500 mt-1">Harga paket Starter.</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Harga Promo (Rp / Bulan)</label>
-                            <input type="number" name="hosting_promo_price" value="{{ $settings['hosting_promo_price'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tidak ada promo">
-                            <p class="text-xs text-slate-500 mt-1">Jika diisi, user akan mendapatkan harga promo ini (harga normal akan dicoret).</p>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Paket Pro (Rp/Bulan)</label>
+                            <input type="number" name="plan_pro_price" value="{{ $settings['plan_pro_price'] ?? '30000' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                            <p class="text-xs text-slate-500 mt-1">Harga paket Pro.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Paket Business (Rp/Bulan)</label>
+                            <input type="number" name="plan_business_price" value="{{ $settings['plan_business_price'] ?? '75000' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                            <p class="text-xs text-slate-500 mt-1">Harga paket Business.</p>
                         </div>
                     </div>
                 </div>

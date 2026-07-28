@@ -10,7 +10,7 @@ class HostingPayment extends Model
 
     protected $fillable = [
         'user_id', 'hosting_project_id', 'invoice_number', 'amount',
-        'status', 'payment_method', 'paid_at'
+        'status', 'payment_method', 'notes', 'paid_at'
     ];
 
     protected $casts = [

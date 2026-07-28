@@ -124,4 +124,86 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(AffiliateCommission::class, 'user_id');
     }
+
+    /**
+     * Hosting Plan Definitions.
+     * Keys: plan slug. Values: ['storage_mb', 'max_projects', 'price_key', 'default_price', 'label']
+     */
+    public static function hostingPlans(): array
+    {
+        return [
+            'starter'  => [
+                'label'         => 'Starter',
+                'storage_mb'    => 1024,
+                'max_projects'  => 3,
+                'price_key'     => 'plan_starter_price',
+                'default_price' => 15000,
+                'color'         => 'indigo',
+                'features'      => ['1 GB Storage', 'Maks. 3 Project', 'MySQL & PostgreSQL', 'Custom Domain + SSL', 'Email Hosting'],
+            ],
+            'pro' => [
+                'label'         => 'Pro',
+                'storage_mb'    => 3072,
+                'max_projects'  => 10,
+                'price_key'     => 'plan_pro_price',
+                'default_price' => 30000,
+                'color'         => 'violet',
+                'features'      => ['3 GB Storage', 'Maks. 10 Project', 'MySQL, PostgreSQL & Redis', 'Custom Domain + SSL', 'Email Hosting', 'Prioritas Support'],
+            ],
+            'business' => [
+                'label'         => 'Business',
+                'storage_mb'    => 10240,
+                'max_projects'  => -1, // -1 = unlimited
+                'price_key'     => 'plan_business_price',
+                'default_price' => 75000,
+                'color'         => 'amber',
+                'features'      => ['10 GB Storage', 'Project Unlimited', 'Semua Database', 'Custom Domain + SSL', 'Email Hosting', 'Prioritas Support', 'Dedicated Resources'],
+            ],
+        ];
+    }
+
+    /**
+     * Get the limits for a specific plan.
+     */
+    public static function getPlanLimits(string $plan): array
+    {
+        return static::hostingPlans()[$plan] ?? static::hostingPlans()['starter'];
+    }
+
+    /**
+     * Get the price for a specific plan (reads from Settings, falls back to default).
+     */
+    public static function getPlanPrice(string $plan): int
+    {
+        $plans = static::hostingPlans();
+        if (!isset($plans[$plan])) return 15000;
+        $def = $plans[$plan];
+        return (int) \App\Models\Setting::val($def['price_key'], $def['default_price']);
+    }
+
+    /**
+     * Get the max project count for the current user's plan.
+     * Reads plan from the active billing. Returns -1 for unlimited.
+     */
+    public function getMaxProjects(): int
+    {
+        if ($this->role === 'superadmin') return -1;
+        $activeBilling = $this->hostingBillings()
+            ->where('status', 'active')
+            ->where('next_due_date', '>', now())
+            ->latest()
+            ->first();
+        $plan = $activeBilling->plan ?? 'starter';
+        return static::getPlanLimits($plan)['max_projects'];
+    }
+
+    /**
+     * Check if user can create more projects.
+     */
+    public function canCreateMoreProjects(): bool
+    {
+        $max = $this->getMaxProjects();
+        if ($max === -1) return true;
+        return $this->hostingProjects()->count() < $max;
+    }
 }

@@ -107,15 +107,27 @@ class PaymentCallbackController extends Controller
                                     'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
                                 ]);
                             } else {
+                                // Read selected plan from invoice notes
+                                $selectedPlan = $payment->notes ?? 'starter';
+                                if (!in_array($selectedPlan, ['starter', 'pro', 'business'])) {
+                                    $selectedPlan = 'starter';
+                                }
+                                $planLimits = \App\Models\User::getPlanLimits($selectedPlan);
+                                $planPrice  = \App\Models\User::getPlanPrice($selectedPlan);
+
                                 \App\Models\HostingBilling::create([
-                                    'user_id' => $user->id,
+                                    'user_id'            => $user->id,
                                     'hosting_project_id' => null,
-                                    'plan_name' => 'Bulanan Rp 10.000',
-                                    'amount' => 10000,
-                                    'billing_cycle' => 'monthly',
-                                    'next_due_date' => now()->addMonth(),
-                                    'status' => 'active'
+                                    'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
+                                    'plan'               => $selectedPlan,
+                                    'amount'             => $planPrice,
+                                    'billing_cycle'      => 'monthly',
+                                    'next_due_date'      => now()->addMonth(),
+                                    'status'             => 'active',
                                 ]);
+
+                                // Update storage limit according to plan
+                                $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb']]);
                             }
 
                             // Cari semua project unpaid dan deploy

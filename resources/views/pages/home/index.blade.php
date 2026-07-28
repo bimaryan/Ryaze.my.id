@@ -374,7 +374,66 @@
         </div>
     </section>
 
-    <!-- PORTFOLIO SECTION -->
+    <!-- PRICING SECTION -->
+    <section id="pricing" class="py-24 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="mb-14 text-center">
+                <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-3 block">Harga Transparan</span>
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Pilih Paket Hosting</h2>
+                <p class="text-slate-500 text-base max-w-xl mx-auto">Deploy project Anda sekarang. Mulai dari harga terjangkau dengan fitur lengkap, siap scale sesuai kebutuhan.</p>
+            </div>
+            @php
+                $homePlans = \App\Models\User::hostingPlans();
+                $homeColorMap = [
+                    'indigo' => ['accent' => 'border-t-indigo-500', 'icon' => 'bg-indigo-600', 'price' => 'text-indigo-600', 'btn' => 'bg-indigo-600 hover:bg-indigo-700 text-white', 'check' => 'text-indigo-500'],
+                    'violet' => ['accent' => 'border-t-violet-500', 'icon' => 'bg-violet-600', 'price' => 'text-violet-600', 'btn' => 'bg-violet-600 hover:bg-violet-700 text-white', 'check' => 'text-violet-500'],
+                    'amber'  => ['accent' => 'border-t-amber-400',  'icon' => 'bg-amber-500',  'price' => 'text-amber-600',  'btn' => 'bg-amber-500 hover:bg-amber-600 text-white',   'check' => 'text-amber-500'],
+                ];
+            @endphp
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach ($homePlans as $slug => $plan)
+                    @php
+                        $price = \App\Models\User::getPlanPrice($slug);
+                        $hc = $homeColorMap[$plan['color']];
+                        $isPopular = $slug === 'pro';
+                    @endphp
+                    <div class="relative flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all {{ $isPopular ? 'ring-2 ring-violet-500 scale-105 z-10' : '' }}">
+                        <div class="h-1 w-full {{ $hc['accent'] }} border-t-4"></div>
+                        @if ($isPopular)
+                            <div class="absolute top-4 right-4">
+                                <span class="text-[10px] font-bold bg-violet-100 text-violet-700 border border-violet-200 px-2.5 py-1 rounded-full">⭐ POPULER</span>
+                            </div>
+                        @endif
+                        <div class="p-8 flex-1">
+                            <div class="w-11 h-11 {{ $hc['icon'] }} rounded-xl flex items-center justify-center mb-5">
+                                <i class="fa-solid fa-server text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-1">{{ $plan['label'] }}</h3>
+                            <div class="flex items-baseline gap-1 mb-6">
+                                <span class="text-4xl font-extrabold {{ $hc['price'] }}">Rp {{ number_format($price, 0, ',', '.') }}</span>
+                                <span class="text-slate-400 text-sm">/bulan</span>
+                            </div>
+                            <ul class="space-y-3">
+                                @foreach ($plan['features'] as $feat)
+                                    <li class="flex items-center gap-2.5 text-sm text-slate-600">
+                                        <i class="fa-solid fa-check {{ $hc['check'] }} text-xs flex-shrink-0"></i>
+                                        {{ $feat }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <div class="px-8 pb-8">
+                            <a href="{{ route('register') }}" class="block w-full text-center {{ $hc['btn'] }} font-bold py-3 rounded-xl transition-all shadow-sm text-sm">
+                                Mulai Sekarang <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+        <!-- PORTFOLIO SECTION -->
     <section id="portfolio" class="py-24 bg-slate-50 border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="mb-12 flex justify-between items-end">
