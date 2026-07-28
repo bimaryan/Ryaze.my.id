@@ -22,6 +22,11 @@ class DatabaseController extends Controller
 
     public function storeNosql(Request $request)
     {
+        $check = Auth::user()->canCreateDatabase('nosql');
+        if (!$check['allowed']) {
+            return back()->with('error', $check['message']);
+        }
+
         $existingDb = \App\Models\HostingNosqlDatabase::where('user_id', Auth::id())->first();
         $prefix = 'ryz_' . Auth::id() . '_';
 
@@ -87,6 +92,11 @@ class DatabaseController extends Controller
 
     public function store(Request $request)
     {
+        $check = Auth::user()->canCreateDatabase('mysql');
+        if (!$check['allowed']) {
+            return back()->with('error', $check['message']);
+        }
+
         $existingDb = HostingDatabase::where('user_id', Auth::id())->first();
 
         // 1. Validasi input manual dari user
@@ -453,6 +463,11 @@ class DatabaseController extends Controller
 
     public function storePgsql(Request $request)
     {
+        $check = Auth::user()->canCreateDatabase('pgsql');
+        if (!$check['allowed']) {
+            return back()->with('error', $check['message']);
+        }
+
         $existingDb = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->first();
         $prefix = 'ryz_' . Auth::id() . '_';
 

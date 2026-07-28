@@ -860,16 +860,33 @@
                     </button>
                 </div>
                 <div class="p-6">
-                    <form action="{{ route('user_hosting.domains.store', $project->hashid) }}" method="POST" class="flex gap-4">
-                        @csrf
-                        <div class="flex-1">
-                            <input type="text" name="domain_name" placeholder="example.com" required
-                                class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                    @php
+                        $userPlan = Auth::user()->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first()->plan ?? 'free';
+                    @endphp
+
+                    @if ($userPlan === 'free')
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-5 text-center mb-6">
+                            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fa-solid fa-crown text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-indigo-900 mb-1">Fitur Premium</h4>
+                            <p class="text-sm text-indigo-700 mb-4">Fitur Custom Domain hanya tersedia untuk paket Starter, Pro, dan Business.</p>
+                            <a href="{{ route('user_hosting.subscription') }}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-5 rounded-lg text-sm transition-all shadow-sm">
+                                Upgrade Paket
+                            </a>
                         </div>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
-                            Tambah Domain
-                        </button>
-                    </form>
+                    @else
+                        <form action="{{ route('user_hosting.domains.store', $project->hashid) }}" method="POST" class="flex gap-4">
+                            @csrf
+                            <div class="flex-1">
+                                <input type="text" name="domain_name" placeholder="example.com" required
+                                    class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                            </div>
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
+                                Tambah Domain
+                            </button>
+                        </form>
+                    @endif
 
                     <div class="mt-6 border border-slate-200 rounded-xl overflow-x-auto">
                         <table class="w-full text-sm text-left text-slate-500 whitespace-nowrap min-w-[600px]">

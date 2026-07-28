@@ -385,12 +385,13 @@
             @php
                 $homePlans = \App\Models\User::hostingPlans();
                 $homeColorMap = [
+                    'slate'  => ['accent' => 'border-t-slate-500', 'icon' => 'bg-slate-600', 'price' => 'text-slate-600', 'btn' => 'bg-slate-600 hover:bg-slate-700 text-white', 'check' => 'text-slate-500'],
                     'indigo' => ['accent' => 'border-t-indigo-500', 'icon' => 'bg-indigo-600', 'price' => 'text-indigo-600', 'btn' => 'bg-indigo-600 hover:bg-indigo-700 text-white', 'check' => 'text-indigo-500'],
                     'violet' => ['accent' => 'border-t-violet-500', 'icon' => 'bg-violet-600', 'price' => 'text-violet-600', 'btn' => 'bg-violet-600 hover:bg-violet-700 text-white', 'check' => 'text-violet-500'],
                     'amber'  => ['accent' => 'border-t-amber-400',  'icon' => 'bg-amber-500',  'price' => 'text-amber-600',  'btn' => 'bg-amber-500 hover:bg-amber-600 text-white',   'check' => 'text-amber-500'],
                 ];
             @endphp
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach ($homePlans as $slug => $plan)
                     @php
                         $price = \App\Models\User::getPlanPrice($slug);
@@ -534,7 +535,7 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @forelse($articles as $article)
                     <a href="{{ route('blog.show', $article->slug) }}"
                         class="group card-brutal overflow-hidden flex flex-col">

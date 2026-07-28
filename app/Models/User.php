@@ -139,7 +139,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'price_key'     => 'plan_free_price',
                 'default_price' => 0,
                 'color'         => 'slate',
-                'features'      => ['256 MB Storage', 'Maks. 1 Project', '1 MySQL Database', 'Subdomain Bawaan', 'Support Komunitas'],
+                'features'      => ['256 MB Storage', 'Maks. 1 Project', '1 MySQL Database', 'Subdomain Bawaan', 'Prioritas Support'],
             ],
             'starter'  => [
                 'label'         => 'Starter',
@@ -214,5 +214,33 @@ class User extends Authenticatable implements MustVerifyEmail
         $max = $this->getMaxProjects();
         if ($max === -1) return true;
         return $this->hostingProjects()->count() < $max;
+    }
+
+    public function canCreateDatabase(string $type = 'mysql'): array
+    {
+        $hasActive = $this->hasActiveHostingSubscription();
+        $activeBilling = $hasActive ? $this->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first() : null;
+        $currentPlan = $activeBilling->plan ?? 'free';
+
+        $mysqlCount = \App\Models\HostingDatabase::where('user_id', $this->id)->count();
+        $pgsqlCount = \App\Models\HostingPgsqlDatabase::where('user_id', $this->id)->count();
+        $nosqlCount = \App\Models\HostingNosqlDatabase::where('user_id', $this->id)->count();
+
+        if ($currentPlan === 'free') {
+            if ($type !== 'mysql') {
+                return ['allowed' => false, 'message' => 'Paket Free hanya mendukung MySQL Database. Silakan upgrade ke Starter/Pro/Business untuk menggunakan ' . strtoupper($type) . '.'];
+            }
+            if ($mysqlCount >= 1) {
+                return ['allowed' => false, 'message' => 'Paket Free hanya mengizinkan maksimal 1 MySQL Database. Silakan upgrade paket untuk membuat database lebih banyak.'];
+            }
+        }
+
+        if ($currentPlan === 'starter') {
+            if ($type === 'redis' || $type === 'nosql') {
+                return ['allowed' => false, 'message' => 'Paket Starter tidak mendukung Redis/NoSQL Database. Silakan upgrade ke Pro atau Business.'];
+            }
+        }
+
+        return ['allowed' => true, 'message' => ''];
     }
 }
