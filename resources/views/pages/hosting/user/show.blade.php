@@ -968,7 +968,7 @@
                                         <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">IPv4 Address</th></tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td class="py-2 px-3 font-mono font-bold text-emerald-600">A</td><td class="py-2 px-3 font-mono">@ <em>(atau kosongkan)</em></td><td class="py-2 px-3 font-mono">103.x.x.x <em>(Ubah jadi IP Anda)</em></td></tr>
+                                        <tr><td class="py-2 px-3 font-mono font-bold text-emerald-600">A</td><td class="py-2 px-3 font-mono">@ <em>(atau kosongkan)</em></td><td class="py-2 px-3 font-mono">{{ env('SERVER_IP', '123.45.67.89 (Ubah di .env)') }}</td></tr>
                                     </tbody>
                                 </table>
                             </div>
