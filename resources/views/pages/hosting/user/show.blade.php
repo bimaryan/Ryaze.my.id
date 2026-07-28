@@ -78,35 +78,35 @@
 
         {{-- Tab Navigation --}}
         <div class="flex flex-wrap gap-2 mb-6 mt-6 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm w-full">
-            <button data-tab="overview" id="tab-overview"
+            <button data-tab="overview" id="tab-overview" onclick="switchTab('overview')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow">
                 <i class="fa-solid fa-chart-simple"></i> <span>Overview</span>
             </button>
-            <button data-tab="logs" id="tab-logs"
+            <button data-tab="logs" id="tab-logs" onclick="switchTab('logs')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-scroll"></i> <span>Build Logs</span>
             </button>
-            <button data-tab="terminal" id="tab-terminal"
+            <button data-tab="terminal" id="tab-terminal" onclick="switchTab('terminal')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-terminal"></i> <span>Terminal</span>
             </button>
-            <button data-tab="files" id="tab-files"
+            <button data-tab="files" id="tab-files" onclick="switchTab('files')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-folder-tree"></i> <span>Root Files</span>
             </button>
-            <button data-tab="ide" id="tab-ide"
+            <button data-tab="ide" id="tab-ide" onclick="switchTab('ide')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-laptop-code"></i> <span>IDE VS Code</span>
             </button>
-            <button data-tab="env" id="tab-env"
+            <button data-tab="env" id="tab-env" onclick="switchTab('env')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-key"></i> <span>.env</span>
             </button>
-            <button data-tab="settings" id="tab-settings"
+            <button data-tab="settings" id="tab-settings" onclick="switchTab('settings')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-gears"></i> <span>Settings</span>
             </button>
-            <button data-tab="domains" id="tab-domains"
+            <button data-tab="domains" id="tab-domains" onclick="switchTab('domains')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-globe"></i> <span>Domains</span>
             </button>
@@ -114,11 +114,11 @@
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-envelope"></i> <span>Email</span>
             </button> --}}
-            <button data-tab="crons" id="tab-crons"
+            <button data-tab="crons" id="tab-crons" onclick="switchTab('crons')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-clock"></i> <span>Cron Jobs</span>
             </button>
-            <button data-tab="team" id="tab-team"
+            <button data-tab="team" id="tab-team" onclick="switchTab('team')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-users"></i> <span>Team Access</span>
             </button>
@@ -1354,7 +1354,7 @@
 
     {{-- ── SCRIPT 3: Tab switching ──────────────────────────────────────────── --}}
     <script nonce="{{ csp_nonce() }}">
-        function switchTab(name) {
+        window.switchTab = function(name) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => {
                 b.classList.remove('bg-indigo-600', 'text-white', 'shadow');
@@ -1362,19 +1362,16 @@
             });
             document.getElementById('panel-' + name).classList.remove('hidden');
             const btn = document.getElementById('tab-' + name);
-            btn.classList.add('bg-indigo-600', 'text-white', 'shadow');
-            btn.classList.remove('text-slate-500');
-            if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input').focus(), 80);
-            // Auto-load file manager saat pertama dibuka (dipindah ke sini dari listener terpisah)
-            if (name === 'files' && !document.getElementById('file-manager-body').innerHTML.trim()) {
-                loadFileManager();
+            if(btn) {
+                btn.classList.add('bg-indigo-600', 'text-white', 'shadow');
+                btn.classList.remove('text-slate-500');
             }
-        }
-
-        // Event listener tab — TIDAK ada onclick di HTML
-        document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
-            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-        });
+            if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input').focus(), 80);
+            // Auto-load file manager saat pertama dibuka
+            if (name === 'files' && !document.getElementById('file-manager-body').innerHTML.trim()) {
+                if(typeof window.loadFileManager === 'function') window.loadFileManager();
+            }
+        };
     </script>
 
     {{-- ── SCRIPT 4: Terminal ───────────────────────────────────────────────── --}}
@@ -2542,66 +2539,76 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         (function() {
-            // Generate dummy 24h data for CPU & RAM
-            const cpuData = [];
-            const ramData = [];
-            const categories = [];
-            let now = new Date();
-            for(let i = 24; i >= 0; i--) {
-                let d = new Date(now.getTime() - (i * 60 * 60 * 1000));
-                categories.push(d.getHours() + ':00');
-                cpuData.push(Math.floor(Math.random() * (80 - 10 + 1)) + 10);
-                ramData.push(Math.floor(Math.random() * (90 - 40 + 1)) + 40);
+            function renderChart() {
+                // Polling for ApexCharts to ensure it's loaded before rendering (Fix for PJAX)
+                if (typeof ApexCharts === 'undefined') {
+                    setTimeout(renderChart, 100);
+                    return;
+                }
+                
+                // Generate dummy 24h data for CPU & RAM
+                const cpuData = [];
+                const ramData = [];
+                const categories = [];
+                let now = new Date();
+                for(let i = 24; i >= 0; i--) {
+                    let d = new Date(now.getTime() - (i * 60 * 60 * 1000));
+                    categories.push(d.getHours() + ':00');
+                    cpuData.push(Math.floor(Math.random() * (80 - 10 + 1)) + 10);
+                    ramData.push(Math.floor(Math.random() * (90 - 40 + 1)) + 40);
+                }
+
+                var options = {
+                    series: [{
+                        name: 'CPU Usage (%)',
+                        data: cpuData
+                    }, {
+                        name: 'RAM Usage (%)',
+                        data: ramData
+                    }],
+                    chart: {
+                        height: 250,
+                        type: 'area',
+                        toolbar: { show: false },
+                        fontFamily: 'inherit'
+                    },
+                    colors: ['#6366f1', '#34d399'], // indigo-500, emerald-400
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'smooth', width: 2 },
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.4,
+                            opacityTo: 0.05,
+                            stops: [0, 100]
+                        }
+                    },
+                    xaxis: {
+                        categories: categories,
+                        labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
+                        axisBorder: { show: false },
+                        axisTicks: { show: false }
+                    },
+                    yaxis: {
+                        min: 0,
+                        max: 100,
+                        labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
+                    },
+                    grid: {
+                        borderColor: '#f1f5f9',
+                        strokeDashArray: 4,
+                        yaxis: { lines: { show: true } }
+                    },
+                    legend: { show: false },
+                    tooltip: { theme: 'light' }
+                };
+
+                var chart = new ApexCharts(document.querySelector("#resourceChart"), options);
+                chart.render();
             }
-
-            var options = {
-                series: [{
-                    name: 'CPU Usage (%)',
-                    data: cpuData
-                }, {
-                    name: 'RAM Usage (%)',
-                    data: ramData
-                }],
-                chart: {
-                    height: 250,
-                    type: 'area',
-                    toolbar: { show: false },
-                    fontFamily: 'inherit'
-                },
-                colors: ['#6366f1', '#34d399'], // indigo-500, emerald-400
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 2 },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.4,
-                        opacityTo: 0.05,
-                        stops: [0, 100]
-                    }
-                },
-                xaxis: {
-                    categories: categories,
-                    labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
-                },
-                yaxis: {
-                    min: 0,
-                    max: 100,
-                    labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
-                },
-                grid: {
-                    borderColor: '#f1f5f9',
-                    strokeDashArray: 4,
-                    yaxis: { lines: { show: true } }
-                },
-                legend: { show: false },
-                tooltip: { theme: 'light' }
-            };
-
-            var chart = new ApexCharts(document.querySelector("#resourceChart"), options);
-            chart.render();
+            
+            renderChart();
         })();
     </script>
     </x-ui.page-layout>
