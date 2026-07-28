@@ -74,6 +74,9 @@ EOF
         docker exec $CONTAINER_NGINX nginx -s reload
         
     elif [ "$ACTION" == "ssl" ]; then
+        # Pastikan folder webroot ada sebelum menjalankan certbot
+        mkdir -p "$CERTBOT_WEBROOT"
+        
         # Jalankan Certbot
         OUTPUT=$(certbot certonly --webroot -w "$CERTBOT_WEBROOT" -d "$DOMAIN" --non-interactive --agree-tos -m admin@ryaze.my.id 2>&1)
         
