@@ -34,14 +34,14 @@
     }
 
     @if(session('success'))
-        document.addEventListener('DOMContentLoaded', () => hotToast('{!! addslashes(session("success")) !!}', 'success'));
+        document.addEventListener('DOMContentLoaded', () => hotToast(@json(session("success")), 'success'));
     @endif
 
     @if(session('error'))
-        document.addEventListener('DOMContentLoaded', () => hotToast('{!! addslashes(session("error")) !!}', 'error'));
+        document.addEventListener('DOMContentLoaded', () => hotToast(@json(session("error")), 'error'));
     @endif
     
     @if($errors->any())
-        document.addEventListener('DOMContentLoaded', () => hotToast('{!! addslashes($errors->first()) !!}', 'error'));
+        document.addEventListener('DOMContentLoaded', () => hotToast(@json($errors->first()), 'error'));
     @endif
 </script>
