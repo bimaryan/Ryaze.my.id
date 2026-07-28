@@ -41,6 +41,9 @@ class DomainController extends Controller
         $nginxConfig = "server {\n"
             . "    listen 80;\n"
             . "    server_name {$domainName};\n\n"
+            . "    location /.well-known/acme-challenge/ {\n"
+            . "        root /www/letsencrypt;\n"
+            . "    }\n\n"
             . "    location / {\n"
             . "        proxy_pass http://127.0.0.1;\n"
             . "        proxy_set_header Host {$project->ryaze_domain};\n"
@@ -50,17 +53,21 @@ class DomainController extends Controller
             . "    }\n"
             . "}\n";
             
-        $configPath = "/etc/nginx/conf.d/custom_domains/{$domainName}.conf";
+        $configDir = "/opt/1panel/apps/openresty/openresty/conf/conf.d/custom_domains";
+        $configPath = "{$configDir}/{$domainName}.conf";
+        $webrootDir = "/opt/1panel/apps/openresty/openresty/www/letsencrypt";
         
         // Buat folder jika belum ada dan tulis config
-        shell_exec("sudo mkdir -p /etc/nginx/conf.d/custom_domains");
+        shell_exec("sudo mkdir -p {$configDir}");
+        shell_exec("sudo mkdir -p {$webrootDir}");
+        
         $tmpFile = tempnam(sys_get_temp_dir(), 'nginx_');
         file_put_contents($tmpFile, $nginxConfig);
         shell_exec("sudo mv {$tmpFile} {$configPath}");
         shell_exec("sudo chown root:root {$configPath}");
         
-        // Reload Nginx
-        shell_exec("sudo systemctl reload nginx");
+        // Reload Nginx via Docker 1Panel
+        shell_exec("sudo docker exec 1panel-openresty nginx -s reload");
 
         return back()->with('success', 'Custom Domain berhasil ditambahkan! Silakan arahkan DNS (CNAME/A Record) domain Anda ke server ini.');
     }
@@ -79,12 +86,17 @@ class DomainController extends Controller
 
         $projectHashid = $domain->project->hashid;
         $domainName = $domain->domain_name;
-        $configPath = "/etc/nginx/conf.d/custom_domains/{$domainName}.conf";
+        $configDir = "/opt/1panel/apps/openresty/openresty/conf/conf.d/custom_domains";
+        $configPath = "{$configDir}/{$domainName}.conf";
+        $sslDirHost = "/opt/1panel/apps/openresty/openresty/www/ssl/{$domainName}";
         
-        // Hapus konfigurasi Nginx dan SSL
+        // Hapus konfigurasi Nginx dan folder SSL
         shell_exec("sudo rm -f {$configPath}");
+        shell_exec("sudo rm -rf {$sslDirHost}");
         shell_exec("sudo certbot delete --cert-name {$domainName} --non-interactive 2>/dev/null");
-        shell_exec("sudo systemctl reload nginx");
+        
+        // Reload Nginx via Docker
+        shell_exec("sudo docker exec 1panel-openresty nginx -s reload");
 
         $domain->delete();
 
@@ -104,11 +116,55 @@ class DomainController extends Controller
         })->findOrFail($decoded[0]);
 
         $domainName = $domain->domain_name;
+        $webrootDir = "/opt/1panel/apps/openresty/openresty/www/letsencrypt";
         
-        // Eksekusi request SSL via Certbot Nginx plugin
-        $output = shell_exec("sudo certbot --nginx -d {$domainName} --non-interactive --agree-tos -m admin@ryaze.my.id --redirect 2>&1");
+        // Eksekusi request SSL via Certbot webroot plugin
+        $output = shell_exec("sudo certbot certonly --webroot -w {$webrootDir} -d {$domainName} --non-interactive --agree-tos -m admin@ryaze.my.id 2>&1");
         
-        if (strpos($output, 'Congratulations') !== false || strpos($output, 'Successfully') !== false) {
+        if (strpos($output, 'Congratulations') !== false || strpos($output, 'Successfully') !== false || strpos($output, 'Certificate not yet due for renewal') !== false) {
+            
+            // Salin certs ke folder www agar bisa dibaca Docker OpenResty
+            $sslDirHost = "/opt/1panel/apps/openresty/openresty/www/ssl/{$domainName}";
+            shell_exec("sudo mkdir -p {$sslDirHost}");
+            shell_exec("sudo cp /etc/letsencrypt/live/{$domainName}/fullchain.pem {$sslDirHost}/fullchain.pem");
+            shell_exec("sudo cp /etc/letsencrypt/live/{$domainName}/privkey.pem {$sslDirHost}/privkey.pem");
+            
+            // Update Nginx config to HTTPS
+            $nginxConfig = "server {\n"
+                . "    listen 80;\n"
+                . "    server_name {$domainName};\n\n"
+                . "    location /.well-known/acme-challenge/ {\n"
+                . "        root /www/letsencrypt;\n"
+                . "    }\n\n"
+                . "    location / {\n"
+                . "        return 301 https://\$host\$request_uri;\n"
+                . "    }\n"
+                . "}\n\n"
+                . "server {\n"
+                . "    listen 443 ssl http2;\n"
+                . "    server_name {$domainName};\n\n"
+                . "    ssl_certificate /www/ssl/{$domainName}/fullchain.pem;\n"
+                . "    ssl_certificate_key /www/ssl/{$domainName}/privkey.pem;\n\n"
+                . "    location / {\n"
+                . "        proxy_pass http://127.0.0.1;\n"
+                . "        proxy_set_header Host {$domain->project->ryaze_domain};\n"
+                . "        proxy_set_header X-Real-IP \$remote_addr;\n"
+                . "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n"
+                . "        proxy_set_header X-Forwarded-Proto \$scheme;\n"
+                . "    }\n"
+                . "}\n";
+                
+            $configDir = "/opt/1panel/apps/openresty/openresty/conf/conf.d/custom_domains";
+            $configPath = "{$configDir}/{$domainName}.conf";
+            
+            $tmpFile = tempnam(sys_get_temp_dir(), 'nginx_');
+            file_put_contents($tmpFile, $nginxConfig);
+            shell_exec("sudo mv {$tmpFile} {$configPath}");
+            shell_exec("sudo chown root:root {$configPath}");
+            
+            // Reload Nginx via Docker
+            shell_exec("sudo docker exec 1panel-openresty nginx -s reload");
+
             $domain->update([
                 'ssl_status' => 'active'
             ]);
