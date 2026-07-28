@@ -3,19 +3,7 @@
 @section('content')
     <x-ui.page-layout>
 
-        {{-- SweetAlert2 --}}
-        {{-- Flash via SweetAlert --}}
-        @if ($errors->any())
-        <script nonce="{{ app('csp_nonce') ?? '' }}">
-            (function() {
-                Swal.fire({
-                    icon: 'error', title: 'Validasi Gagal',
-                    html: '{!! implode('<br>', array_map('addslashes', $errors->all())) !!}',
-                    confirmButtonColor: '#4F46E5', customClass: { popup: 'rounded-xl text-sm' }
-                });
-            })();
-        </script>
-        @endif
+        {{-- SweetAlert2 (Removed, handled by global toast) --}}
 
         {{-- Header --}}
         <x-ui.page-header 

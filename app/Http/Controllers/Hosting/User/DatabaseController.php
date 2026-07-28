@@ -81,7 +81,8 @@ class DatabaseController extends Controller
     public function pmaIndex()
     {
         $databases = HostingDatabase::where('user_id', Auth::id())->latest()->get();
-        return view('pages.hosting.user.database.pma', compact('databases'));
+        $pgsqlDatabases = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->latest()->get();
+        return view('pages.hosting.user.database.pma', compact('databases', 'pgsqlDatabases'));
     }
 
     public function store(Request $request)
@@ -455,36 +456,26 @@ class DatabaseController extends Controller
         $existingDb = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->first();
         $prefix = 'ryz_' . Auth::id() . '_';
 
+        // We use db_username from the form as the base for both DB name and DB user
         if ($existingDb) {
             $request->validate([
                 'db_username' => 'required|string|alpha_dash|max:15',
-            ]);
-            $cleanDbName = $prefix . strtolower(trim($request->db_username)); // For simplicity, in PG we'll make DB name same as username if they just want 1 DB per user, or allow multiple. Let's allow multiple by accepting db_name.
-            // Wait, looking at NoSQL it used db_username. For PGSQL it's like MySQL.
-        }
-
-        // Let's implement full like MySQL
-        if ($existingDb) {
-            $request->validate([
-                'db_name' => 'required|string|alpha_dash|max:15',
             ], [
-                'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
+                'db_username.alpha_dash' => 'Nama database & username hanya boleh berisi huruf, angka, strip, dan underscore.',
             ]);
 
-            $cleanDbName = $prefix.strtolower(trim($request->db_name));
+            $cleanDbName = $prefix.strtolower(trim($request->db_username));
             $cleanUsername = $existingDb->db_username;
             $dbPassword = \Illuminate\Support\Facades\Crypt::decryptString($existingDb->db_password);
         } else {
             $request->validate([
-                'db_name' => 'required|string|alpha_dash|max:15',
                 'db_username' => 'required|string|alpha_dash|max:15',
                 'db_password' => 'required|string|max:32',
             ], [
-                'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
-                'db_username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, strip, dan underscore.',
+                'db_username.alpha_dash' => 'Nama database & username hanya boleh berisi huruf, angka, strip, dan underscore.',
             ]);
 
-            $cleanDbName = $prefix.strtolower(trim($request->db_name));
+            $cleanDbName = $prefix.strtolower(trim($request->db_username));
             $cleanUsername = $prefix.strtolower(trim($request->db_username));
             $dbPassword = trim($request->db_password);
         }

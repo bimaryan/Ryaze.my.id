@@ -433,7 +433,7 @@
                             class="{{ $navLink(request()->routeIs('user_hosting.databases.pma')) }}">
                             <i
                                 class="fa-solid fa-server {{ $iconClass(request()->routeIs('user_hosting.databases.pma')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">phpMyAdmin</span>
+                            <span class="ms-3 whitespace-nowrap">DB Manager</span>
                         </a>
                     </li>
                     <li>
