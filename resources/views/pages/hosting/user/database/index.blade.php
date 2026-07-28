@@ -858,24 +858,33 @@
         const createNosqlDbModal = document.getElementById('createNosqlDbModal');
         const createPgsqlDbModal = document.getElementById('createPgsqlDbModal');
         
-        document.getElementById('btn-open-create-modal')?.addEventListener('click', () => {
+        // Helper function to check if locked
+        const isLocked = (el) => el && el.hasAttribute('data-locked');
+
+        document.getElementById('btn-open-create-modal')?.addEventListener('click', function() {
+            if (isLocked(this)) return;
             createDbModal?.classList.remove('hidden');
         });
-        document.getElementById('btn-open-create-modal-empty')?.addEventListener('click', () => {
+        document.getElementById('btn-open-create-modal-empty')?.addEventListener('click', function() {
+            if (isLocked(this)) return;
             createDbModal?.classList.remove('hidden');
         });
         
-        document.getElementById('btn-open-create-nosql-modal')?.addEventListener('click', () => {
+        document.getElementById('btn-open-create-nosql-modal')?.addEventListener('click', function() {
+            if (isLocked(this)) return;
             createNosqlDbModal?.classList.remove('hidden');
         });
-        document.getElementById('btn-open-create-nosql-modal-empty')?.addEventListener('click', () => {
+        document.getElementById('btn-open-create-nosql-modal-empty')?.addEventListener('click', function() {
+            if (isLocked(this)) return;
             createNosqlDbModal?.classList.remove('hidden');
         });
 
-        document.getElementById('btn-open-create-pgsql-modal')?.addEventListener('click', () => {
+        document.getElementById('btn-open-create-pgsql-modal')?.addEventListener('click', function() {
+            if (isLocked(this)) return;
             createPgsqlDbModal?.classList.remove('hidden');
         });
-        document.getElementById('btn-open-create-pgsql-modal-empty')?.addEventListener('click', () => {
+        document.getElementById('btn-open-create-pgsql-modal-empty')?.addEventListener('click', function() {
+            if (isLocked(this)) return;
             createPgsqlDbModal?.classList.remove('hidden');
         });
 

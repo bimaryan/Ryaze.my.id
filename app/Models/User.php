@@ -137,6 +137,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'storage_mb'    => 256,
                 'max_projects'  => 1,
                 'price_key'     => 'plan_free_price',
+                'promo_key'     => 'plan_free_promo',
                 'default_price' => 0,
                 'color'         => 'slate',
                 'features'      => ['256 MB Storage', 'Maks. 1 Project', '1 MySQL Database', 'Subdomain Bawaan', 'Prioritas Support'],
@@ -146,6 +147,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'storage_mb'    => 1024,
                 'max_projects'  => 3,
                 'price_key'     => 'plan_starter_price',
+                'promo_key'     => 'plan_starter_promo',
                 'default_price' => 15000,
                 'color'         => 'indigo',
                 'features'      => ['1 GB Storage', 'Maks. 3 Project', 'MySQL & PostgreSQL', 'Custom Domain + SSL', 'Prioritas Support'],
@@ -155,6 +157,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'storage_mb'    => 3072,
                 'max_projects'  => 10,
                 'price_key'     => 'plan_pro_price',
+                'promo_key'     => 'plan_pro_promo',
                 'default_price' => 30000,
                 'color'         => 'violet',
                 'features'      => ['3 GB Storage', 'Maks. 10 Project', 'MySQL, PostgreSQL & Redis', 'Custom Domain + SSL', 'Prioritas Support'],
@@ -164,6 +167,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'storage_mb'    => 10240,
                 'max_projects'  => -1, // -1 = unlimited
                 'price_key'     => 'plan_business_price',
+                'promo_key'     => 'plan_business_promo',
                 'default_price' => 75000,
                 'color'         => 'amber',
                 'features'      => ['10 GB Storage', 'Project Unlimited', 'Semua Database', 'Custom Domain + SSL', 'Prioritas Support'],
@@ -179,15 +183,37 @@ class User extends Authenticatable implements MustVerifyEmail
         return static::hostingPlans()[$plan] ?? static::hostingPlans()['starter'];
     }
 
+    public static function getPlanPricing(string $plan): array
+    {
+        $plans = static::hostingPlans();
+        if (!isset($plans[$plan])) return ['normal' => 0, 'promo' => null, 'active' => 0];
+        
+        $p = $plans[$plan];
+        $normal_price = isset($p['price_key']) 
+            ? (int) \App\Models\Setting::val($p['price_key'], $p['default_price'] ?? 0)
+            : ($p['default_price'] ?? 0);
+
+        $promo_price = null;
+        if (isset($p['promo_key'])) {
+            $promo = \App\Models\Setting::val($p['promo_key'], '');
+            if ($promo !== '') {
+                $promo_price = (int) $promo;
+            }
+        }
+
+        return [
+            'normal' => $normal_price,
+            'promo' => $promo_price,
+            'active' => $promo_price !== null ? $promo_price : $normal_price,
+        ];
+    }
+
     /**
      * Get the price for a specific plan (reads from Settings, falls back to default).
      */
     public static function getPlanPrice(string $plan): int
     {
-        $plans = static::hostingPlans();
-        if (!isset($plans[$plan])) return 15000;
-        $def = $plans[$plan];
-        return (int) \App\Models\Setting::val($def['price_key'], $def['default_price']);
+        return static::getPlanPricing($plan)['active'];
     }
 
     /**
