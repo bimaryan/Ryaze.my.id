@@ -1,4 +1,4 @@
-﻿@extends('index')
+@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -31,8 +31,12 @@
                         <p class="font-medium text-slate-700">{{ $project->client?->name ?? '—' }}</p>
                     </td>
                     <td class="px-6 py-4">
-                        <a href="https://{{ $project->ryaze_domain }}" target="_blank"
-                            class="text-indigo-600 hover:underline text-xs font-mono">{{ $project->ryaze_domain }}</a>
+                        @php
+                            $activeDomain = $project->domains()->where('ssl_status', 'active')->first();
+                            $displayUrl = $activeDomain ? $activeDomain->domain_name : $project->ryaze_domain;
+                        @endphp
+                        <a href="https://{{ $displayUrl }}" target="_blank"
+                            class="text-indigo-600 hover:underline text-xs font-mono">{{ $displayUrl }}</a>
                     </td>
                     <td class="px-6 py-4 text-center">
                         @php

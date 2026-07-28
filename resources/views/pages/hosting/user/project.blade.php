@@ -74,11 +74,17 @@
                                             class="font-bold text-slate-800 hover:text-indigo-600 text-lg line-clamp-1">
                                             {{ $project->project_name }}
                                         </a>
-                                        <a href="https://{{ $project->ryaze_domain }}" target="_blank"
-                                            class="text-xs text-slate-500 hover:text-indigo-600 flex items-center gap-1 mt-0.5">
-                                            {{ $project->ryaze_domain }} <i
-                                                class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
-                                        </a>
+                                        @php
+                                            $activeDomain = $project->domains()->where('ssl_status', 'active')->first();
+                                            $displayUrl = $activeDomain ? $activeDomain->domain_name : $project->ryaze_domain;
+                                        @endphp
+                                        <div class="mt-2 text-sm text-slate-500 flex items-center">
+                                            <a href="https://{{ $displayUrl }}" target="_blank"
+                                                class="hover:text-indigo-600 hover:underline transition-colors flex items-center">
+                                                {{ $displayUrl }} <i
+                                                    class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

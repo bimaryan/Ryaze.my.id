@@ -148,9 +148,13 @@
             @forelse ($projects as $project)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-slate-800">
-                                    <a href="https://{{ $project->ryaze_domain }}" target="_blank"
-                                        class="text-indigo-600 hover:underline">
-                                        {{ $project->ryaze_domain }}
+                                    @php
+                                        $activeDomain = $project->domains()->where('ssl_status', 'active')->first();
+                                        $displayUrl = $activeDomain ? $activeDomain->domain_name : $project->ryaze_domain;
+                                    @endphp
+                                    <a href="https://{{ $displayUrl }}" target="_blank"
+                                        class="text-xs font-medium text-slate-500 hover:text-indigo-600 transition-colors flex items-center gap-1.5 mt-1">
+                                        <i class="fa-solid fa-link text-[10px]"></i> {{ $displayUrl }}
                                     </a>
                                 </td>
                                 <td class="px-6 py-4 uppercase">{{ $project->framework }}</td>
