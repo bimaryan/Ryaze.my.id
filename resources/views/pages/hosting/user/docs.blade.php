@@ -9,7 +9,7 @@
             iconColor="indigo">
         </x-ui.page-header>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
             
             <!-- Content Body -->
             <div class="space-y-16 text-slate-700 leading-relaxed max-w-5xl">
