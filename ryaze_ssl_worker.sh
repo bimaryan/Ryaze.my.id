@@ -129,10 +129,7 @@ server {
             return 301 https://\$host\$request_uri;
         }
 
-        proxy_pass https://127.0.0.1;
-        proxy_ssl_server_name on;
-        proxy_ssl_name $PROJECT_DOMAIN;
-        proxy_ssl_verify off;
+        proxy_pass http://127.0.0.1;
         
         proxy_set_header Host $PROJECT_DOMAIN;
         proxy_set_header X-Real-IP \$remote_addr;
@@ -150,10 +147,7 @@ server {
     ssl_certificate_key /www/ssl/$DOMAIN/privkey.pem;
 
     location / {
-        proxy_pass https://127.0.0.1;
-        proxy_ssl_server_name on;
-        proxy_ssl_name $PROJECT_DOMAIN;
-        proxy_ssl_verify off;
+        proxy_pass http://127.0.0.1;
         
         proxy_set_header Host $PROJECT_DOMAIN;
         proxy_set_header X-Real-IP \$remote_addr;
