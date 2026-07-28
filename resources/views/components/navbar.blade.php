@@ -454,6 +454,19 @@
                     </li>
 
                     <li>
+                        <a href="{{ route('user_hosting.subscription') }}"
+                            class="{{ $navLink(request()->routeIs('user_hosting.subscription')) }}">
+                            <i
+                                class="fa-solid fa-crown {{ $iconClass(request()->routeIs('user_hosting.subscription')) }}"></i>
+                            <span class="ms-3 whitespace-nowrap">Langganan Paket</span>
+                            @if(!Auth::user()->hasActiveHostingSubscription())
+                                <span class="ms-auto inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-bold text-rose-500 bg-rose-100 rounded-full">
+                                    Beli
+                                </span>
+                            @endif
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('user_hosting.billing') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}">
                             <i

@@ -1365,6 +1365,11 @@ PHP;
         ]);
     }
 
+    public function subscription()
+    {
+        return view('pages.hosting.user.subscription');
+    }
+
     public function billingHistory()
     {
         // Mengambil semua invoice/tagihan milik user yang sedang login

@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Role-based authorization alias
         $middleware->alias([
             'role' => CheckRole::class,
+            'active_hosting' => \App\Http\Middleware\EnsureActiveHostingSubscription::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

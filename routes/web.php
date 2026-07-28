@@ -181,85 +181,14 @@ Route::middleware('auth')->group(function () {
     // USER HOSTING (+ admin_hosting, superadmin)
     // ═══════════════════════════════════════════════════════════════
     Route::middleware(['role:user_hosting,admin_hosting,superadmin', 'verified'])->group(function () {
+        // Bebas Akses
+        Route::get('user/hosting/subscription', [DashboardController::class, 'subscription'])->name('user_hosting.subscription');
         Route::get('user/hosting/dashboard', [DashboardController::class, 'index'])->name('user_hosting.dashboard');
-        Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
-        Route::get('user/hosting/marketplace', [DashboardController::class, 'marketplace'])->name('user_hosting.marketplace');
-        Route::get('user/hosting/templates', [DashboardController::class, 'templates'])->name('user_hosting.templates');
-        Route::get('user/hosting/template/{key}/preview', [DashboardController::class, 'previewTemplate'])->name('user_hosting.template.preview');
-        Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
-        Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
-        Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
-        Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
-        Route::get('user/hosting/server-status', [DashboardController::class, 'getServerStatus'])->name('user_hosting.server_status');
-        Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
-        Route::get('user/hosting/projects/{hashid}/logs', [DashboardController::class, 'buildLogs'])->name('user_hosting.build_logs');
-        Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');
-        Route::get('user/hosting/projects/{hashid}/files', [DashboardController::class, 'getFiles'])->name('user_hosting.files');
-        Route::get('user/hosting/projects/{hashid}/files/read', [DashboardController::class, 'readFile'])->name('user_hosting.files.read');
-        Route::post('user/hosting/projects/{hashid}/files/save', [DashboardController::class, 'saveFile'])->name('user_hosting.files.save');
-        Route::post('user/hosting/projects/{hashid}/files/upload', [DashboardController::class, 'uploadFile'])->name('user_hosting.files.upload');
-        Route::post('user/hosting/projects/{hashid}/files/create', [DashboardController::class, 'createItem'])->name('user_hosting.files.create');
-        Route::post('user/hosting/projects/{hashid}/files/delete', [DashboardController::class, 'deleteItem'])->name('user_hosting.files.delete');
-        Route::post('user/hosting/projects/{hashid}/files/rename', [DashboardController::class, 'renameItem'])->name('user_hosting.files.rename');
-        Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
-        Route::post('user/hosting/projects/{hashid}/ide/chat', [DashboardController::class, 'ideChat'])->name('user_hosting.ide.chat');
-        Route::post('user/hosting/projects/{hashid}/ide/search', [DashboardController::class, 'ideSearch'])->name('user_hosting.ide.search');
-        Route::post('user/hosting/projects/{hashid}/ide/git/status', [DashboardController::class, 'ideGitStatus'])->name('user_hosting.ide.git.status');
-        Route::post('user/hosting/projects/{hashid}/ide/git/commit', [DashboardController::class, 'ideGitCommit'])->name('user_hosting.ide.git.commit');
-        Route::post('user/hosting/projects/{hashid}/ide/git/pull', [DashboardController::class, 'ideGitPull'])->name('user_hosting.ide.git.pull');
-        Route::post('user/hosting/projects/{hashid}/ide/git/push', [DashboardController::class, 'ideGitPush'])->name('user_hosting.ide.git.push');
-        Route::get('user/hosting/storage', [StorageController::class, 'index'])->name('user_hosting.storage');
-        Route::post('user/hosting/storage/upgrade', [StorageController::class, 'upgrade'])->name('user_hosting.storage.upgrade');
-        Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.show');
-        Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
-        Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
-        Route::post('user/hosting/databases/nosql', [DatabaseController::class, 'storeNosql'])->name('user_hosting.databases.nosql.store');
-        Route::delete('user/hosting/databases/nosql/{hashid}', [DatabaseController::class, 'destroyNosql'])->name('user_hosting.databases.nosql.destroy');
-        Route::post('user/hosting/databases/pgsql', [DatabaseController::class, 'storePgsql'])->name('user_hosting.databases.pgsql.store');
-        Route::delete('user/hosting/databases/pgsql/{hashid}', [DatabaseController::class, 'destroyPgsql'])->name('user_hosting.databases.pgsql.destroy');
-        Route::post('user/hosting/databases/{hashid}/api-key', [DatabaseController::class, 'generateApiKey'])->name('user_hosting.databases.apikey');
-        Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
-
-        // Email Management (disabled)
-        // Route::get('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'index'])->name('user_hosting.emails.index');
-        // Route::post('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'store'])->name('user_hosting.emails.store');
-        // Route::delete('user/hosting/emails/{hashid}', [\App\Http\Controllers\Hosting\User\EmailController::class, 'destroy'])->name('user_hosting.emails.destroy');
-
         // Billing & Vouchers
-        Route::get('user/hosting/databases/{hashid}/export', [DatabaseController::class, 'export'])->name('user_hosting.databases.export');
-        Route::post('user/hosting/databases/{hashid}/import', [DatabaseController::class, 'import'])->name('user_hosting.databases.import');
-        Route::get('user/hosting/pma', [\App\Http\Controllers\Hosting\User\DatabaseController::class, 'pmaIndex'])->name('user_hosting.databases.pma');
-        Route::get('user/hosting/databases/{hashid}/pma', [\App\Http\Controllers\Hosting\User\DatabaseController::class, 'pmaLogin'])->name('user_hosting.databases.pma.login');
-        
-        // Custom Mini phpMyAdmin routes
-        Route::get('user/hosting/databases/{hashid}/manager', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'index'])->name('user_hosting.databases.manager');
-        Route::get('user/hosting/databases/{hashid}/manager/{table}', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'showTable'])->name('user_hosting.databases.manager.table');
-        Route::post('user/hosting/databases/{hashid}/manager/query', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'executeQuery'])->name('user_hosting.databases.manager.query');
         Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
         Route::post('user/hosting/billing/subscribe', [DashboardController::class, 'subscribe'])->name('user_hosting.billing.subscribe');
         Route::post('user/hosting/billing/pay-wallet', [DashboardController::class, 'payWithWallet'])->name('user_hosting.billing.pay_wallet');
-        Route::delete('user/hosting/projects/{hashid}/delete', [DashboardController::class, 'deleteProject'])->name('user_hosting.destroy');
-        Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
-        Route::post('user/hosting/projects/{hashid}/team', [DashboardController::class, 'inviteTeamMember'])->name('user_hosting.team.invite');
-        Route::delete('user/hosting/projects/{hashid}/team/{user_id}', [DashboardController::class, 'removeTeamMember'])->name('user_hosting.team.remove');
-        Route::post('user/hosting/projects/{hashid}/dev/start', [DashboardController::class, 'startDevServer'])->name('user_hosting.dev.start');
-        Route::post('user/hosting/projects/{hashid}/dev/stop', [DashboardController::class, 'stopDevServer'])->name('user_hosting.dev.stop');
-        Route::post('user/hosting/projects/{hashid}/staging', [DashboardController::class, 'createStaging'])->name('user_hosting.staging.create');
-        Route::post('user/hosting/projects/{hashid}/domains', [DomainController::class, 'store'])->name('user_hosting.domains.store');
-        Route::post('user/hosting/domains/{hashid}/ssl', [DomainController::class, 'requestSsl'])->name('user_hosting.domains.ssl');
-        Route::delete('user/hosting/domains/{hashid}', [DomainController::class, 'destroy'])->name('user_hosting.domains.destroy');
-        Route::post('user/hosting/projects/{hashid}/crons', [CronController::class, 'store'])->name('user_hosting.crons.store');
-        Route::delete('user/hosting/crons/{hashid}', [CronController::class, 'destroy'])->name('user_hosting.crons.destroy');
         Route::get('user/hosting/docs', [DashboardController::class, 'docs'])->name('user_hosting.docs');
-
-        // Backup & Restore
-        Route::get('user/hosting/projects/{hashid}/backup', [DashboardController::class, 'downloadBackup'])->name('user_hosting.backup.download');
-        Route::post('user/hosting/projects/{hashid}/restore', [DashboardController::class, 'uploadBackup'])->name('user_hosting.backup.upload');
-
-        // Env Manager
-        Route::get('user/hosting/projects/{hashid}/env', [DashboardController::class, 'editEnv'])->name('user_hosting.env.edit');
-        Route::put('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
-
         // Tiket Bantuan (User)
         Route::get('user/hosting/tickets', [\App\Http\Controllers\User\TicketController::class, 'index'])->name('user_hosting.tickets.index');
         Route::get('user/hosting/tickets/create', [\App\Http\Controllers\User\TicketController::class, 'create'])->name('user_hosting.tickets.create');
@@ -267,22 +196,90 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/tickets/{hashid}', [\App\Http\Controllers\User\TicketController::class, 'show'])->name('user_hosting.tickets.show');
         Route::post('user/hosting/tickets/{hashid}/reply', [\App\Http\Controllers\User\TicketController::class, 'reply'])->name('user_hosting.tickets.reply');
         Route::post('user/hosting/tickets/{hashid}/mark-read', [\App\Http\Controllers\User\TicketController::class, 'markAsRead'])->name('user_hosting.tickets.markAsRead');
-
-        // Apk Builder
-        Route::get('user/hosting/apk', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'index'])->name('user_hosting.apk.index');
-        Route::get('user/hosting/apk/create', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'create'])->name('user_hosting.apk.create');
-        Route::post('user/hosting/apk', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'store'])->name('user_hosting.apk.store');
-        Route::get('user/hosting/apk/{build}/progress', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'progress'])->name('user_hosting.apk.progress');
-        Route::get('user/hosting/apk/{build}/download', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'download'])->name('user_hosting.apk.download');
-        Route::get('user/hosting/apk/{build}/log', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'log'])->name('user_hosting.apk.log');
-        Route::delete('user/hosting/apk/{build}', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'destroy'])->name('user_hosting.apk.destroy');
-
-        // Tunnel Manager
         Route::get('user/hosting/tunnels', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'index'])->name('user_hosting.tunnels.index');
         Route::post('user/hosting/tunnels', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'store'])->name('user_hosting.tunnels.store');
         Route::delete('user/hosting/tunnels/{id}', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'destroy'])->name('user_hosting.tunnels.destroy');
         Route::get('user/hosting/tunnels/{id}/client', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'downloadClient'])->name('user_hosting.tunnels.client');
 
+        // Butuh Langganan Aktif
+        Route::middleware(['active_hosting'])->group(function () {
+            Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
+            Route::get('user/hosting/marketplace', [DashboardController::class, 'marketplace'])->name('user_hosting.marketplace');
+            Route::get('user/hosting/templates', [DashboardController::class, 'templates'])->name('user_hosting.templates');
+            Route::get('user/hosting/template/{key}/preview', [DashboardController::class, 'previewTemplate'])->name('user_hosting.template.preview');
+            Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
+            Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
+            Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
+            Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
+            Route::get('user/hosting/server-status', [DashboardController::class, 'getServerStatus'])->name('user_hosting.server_status');
+            Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
+            Route::get('user/hosting/projects/{hashid}/logs', [DashboardController::class, 'buildLogs'])->name('user_hosting.build_logs');
+            Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');
+            Route::get('user/hosting/projects/{hashid}/files', [DashboardController::class, 'getFiles'])->name('user_hosting.files');
+            Route::get('user/hosting/projects/{hashid}/files/read', [DashboardController::class, 'readFile'])->name('user_hosting.files.read');
+            Route::post('user/hosting/projects/{hashid}/files/save', [DashboardController::class, 'saveFile'])->name('user_hosting.files.save');
+            Route::post('user/hosting/projects/{hashid}/files/upload', [DashboardController::class, 'uploadFile'])->name('user_hosting.files.upload');
+            Route::post('user/hosting/projects/{hashid}/files/create', [DashboardController::class, 'createItem'])->name('user_hosting.files.create');
+            Route::post('user/hosting/projects/{hashid}/files/delete', [DashboardController::class, 'deleteItem'])->name('user_hosting.files.delete');
+            Route::post('user/hosting/projects/{hashid}/files/rename', [DashboardController::class, 'renameItem'])->name('user_hosting.files.rename');
+            Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
+            Route::post('user/hosting/projects/{hashid}/ide/chat', [DashboardController::class, 'ideChat'])->name('user_hosting.ide.chat');
+            Route::post('user/hosting/projects/{hashid}/ide/search', [DashboardController::class, 'ideSearch'])->name('user_hosting.ide.search');
+            Route::post('user/hosting/projects/{hashid}/ide/git/status', [DashboardController::class, 'ideGitStatus'])->name('user_hosting.ide.git.status');
+            Route::post('user/hosting/projects/{hashid}/ide/git/commit', [DashboardController::class, 'ideGitCommit'])->name('user_hosting.ide.git.commit');
+            Route::post('user/hosting/projects/{hashid}/ide/git/pull', [DashboardController::class, 'ideGitPull'])->name('user_hosting.ide.git.pull');
+            Route::post('user/hosting/projects/{hashid}/ide/git/push', [DashboardController::class, 'ideGitPush'])->name('user_hosting.ide.git.push');
+            Route::get('user/hosting/storage', [StorageController::class, 'index'])->name('user_hosting.storage');
+            Route::post('user/hosting/storage/upgrade', [StorageController::class, 'upgrade'])->name('user_hosting.storage.upgrade');
+            Route::get('user/hosting/storage/{hashid}', [StorageController::class, 'show'])->name('user_hosting.storage.show');
+            Route::get('user/hosting/databases', [DatabaseController::class, 'index'])->name('user_hosting.databases');
+            Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
+            Route::post('user/hosting/databases/nosql', [DatabaseController::class, 'storeNosql'])->name('user_hosting.databases.nosql.store');
+            Route::delete('user/hosting/databases/nosql/{hashid}', [DatabaseController::class, 'destroyNosql'])->name('user_hosting.databases.nosql.destroy');
+            Route::post('user/hosting/databases/pgsql', [DatabaseController::class, 'storePgsql'])->name('user_hosting.databases.pgsql.store');
+            Route::delete('user/hosting/databases/pgsql/{hashid}', [DatabaseController::class, 'destroyPgsql'])->name('user_hosting.databases.pgsql.destroy');
+            Route::post('user/hosting/databases/{hashid}/api-key', [DatabaseController::class, 'generateApiKey'])->name('user_hosting.databases.apikey');
+            Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
+        // Email Management (disabled)
+        // Route::get('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'index'])->name('user_hosting.emails.index');
+        // Route::post('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'store'])->name('user_hosting.emails.store');
+        // Route::delete('user/hosting/emails/{hashid}', [\App\Http\Controllers\Hosting\User\EmailController::class, 'destroy'])->name('user_hosting.emails.destroy');
+            Route::get('user/hosting/databases/{hashid}/export', [DatabaseController::class, 'export'])->name('user_hosting.databases.export');
+            Route::post('user/hosting/databases/{hashid}/import', [DatabaseController::class, 'import'])->name('user_hosting.databases.import');
+            Route::get('user/hosting/pma', [\App\Http\Controllers\Hosting\User\DatabaseController::class, 'pmaIndex'])->name('user_hosting.databases.pma');
+            Route::get('user/hosting/databases/{hashid}/pma', [\App\Http\Controllers\Hosting\User\DatabaseController::class, 'pmaLogin'])->name('user_hosting.databases.pma.login');
+        // Custom Mini phpMyAdmin routes
+            Route::get('user/hosting/databases/{hashid}/manager', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'index'])->name('user_hosting.databases.manager');
+            Route::get('user/hosting/databases/{hashid}/manager/{table}', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'showTable'])->name('user_hosting.databases.manager.table');
+            Route::post('user/hosting/databases/{hashid}/manager/query', [\App\Http\Controllers\Hosting\User\DatabaseManagerController::class, 'executeQuery'])->name('user_hosting.databases.manager.query');
+            Route::delete('user/hosting/projects/{hashid}/delete', [DashboardController::class, 'deleteProject'])->name('user_hosting.destroy');
+            Route::patch('user/hosting/projects/{hashid}/settings', [DashboardController::class, 'updateSettings'])->name('user_hosting.settings.update');
+            Route::post('user/hosting/projects/{hashid}/team', [DashboardController::class, 'inviteTeamMember'])->name('user_hosting.team.invite');
+            Route::delete('user/hosting/projects/{hashid}/team/{user_id}', [DashboardController::class, 'removeTeamMember'])->name('user_hosting.team.remove');
+            Route::post('user/hosting/projects/{hashid}/dev/start', [DashboardController::class, 'startDevServer'])->name('user_hosting.dev.start');
+            Route::post('user/hosting/projects/{hashid}/dev/stop', [DashboardController::class, 'stopDevServer'])->name('user_hosting.dev.stop');
+            Route::post('user/hosting/projects/{hashid}/staging', [DashboardController::class, 'createStaging'])->name('user_hosting.staging.create');
+            Route::post('user/hosting/projects/{hashid}/domains', [DomainController::class, 'store'])->name('user_hosting.domains.store');
+            Route::post('user/hosting/domains/{hashid}/ssl', [DomainController::class, 'requestSsl'])->name('user_hosting.domains.ssl');
+            Route::delete('user/hosting/domains/{hashid}', [DomainController::class, 'destroy'])->name('user_hosting.domains.destroy');
+            Route::post('user/hosting/projects/{hashid}/crons', [CronController::class, 'store'])->name('user_hosting.crons.store');
+            Route::delete('user/hosting/crons/{hashid}', [CronController::class, 'destroy'])->name('user_hosting.crons.destroy');
+        // Backup & Restore
+            Route::get('user/hosting/projects/{hashid}/backup', [DashboardController::class, 'downloadBackup'])->name('user_hosting.backup.download');
+            Route::post('user/hosting/projects/{hashid}/restore', [DashboardController::class, 'uploadBackup'])->name('user_hosting.backup.upload');
+        // Env Manager
+            Route::get('user/hosting/projects/{hashid}/env', [DashboardController::class, 'editEnv'])->name('user_hosting.env.edit');
+            Route::put('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
+        // Apk Builder
+            Route::get('user/hosting/apk', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'index'])->name('user_hosting.apk.index');
+            Route::get('user/hosting/apk/create', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'create'])->name('user_hosting.apk.create');
+            Route::post('user/hosting/apk', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'store'])->name('user_hosting.apk.store');
+            Route::get('user/hosting/apk/{build}/progress', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'progress'])->name('user_hosting.apk.progress');
+            Route::get('user/hosting/apk/{build}/download', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'download'])->name('user_hosting.apk.download');
+            Route::get('user/hosting/apk/{build}/log', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'log'])->name('user_hosting.apk.log');
+            Route::delete('user/hosting/apk/{build}', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'destroy'])->name('user_hosting.apk.destroy');
+        // Tunnel Manager
+        });
     });
 
     // ═══════════════════════════════════════════════════════════════
