@@ -185,6 +185,12 @@ class StorageController extends Controller
             $amount -= $discount;
         }
 
+        $adminFeePercentage = (float) \App\Models\Setting::val('admin_fee_percentage', '0');
+        if ($adminFeePercentage > 0 && $amount > 0) {
+            $adminFee = $amount * ($adminFeePercentage / 100);
+            $amount += $adminFee;
+        }
+
         $payment = \App\Models\HostingPayment::create([
             'user_id' => $user->id,
             'hosting_project_id' => null,

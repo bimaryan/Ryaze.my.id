@@ -1415,6 +1415,12 @@ PHP;
         }
 
         $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : $planPrice;
+        
+        $adminFeePercentage = (float) \App\Models\Setting::val('admin_fee_percentage', '0');
+        if ($adminFeePercentage > 0 && $invoiceAmount > 0) {
+            $adminFee = $invoiceAmount * ($adminFeePercentage / 100);
+            $invoiceAmount += $adminFee;
+        }
 
         if ($invoiceAmount <= 0) {
             // Activate immediately

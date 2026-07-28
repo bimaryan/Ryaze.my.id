@@ -165,6 +165,13 @@ class DashboardController extends Controller
             'payment_name' => 'required|string|max:255',
             'amount' => 'required|integer|min:1000',
         ]);
+        
+        $amount = $validated['amount'];
+        $adminFeePercentage = (float) \App\Models\Setting::val('admin_fee_percentage', '0');
+        if ($adminFeePercentage > 0 && $amount > 0) {
+            $adminFee = $amount * ($adminFeePercentage / 100);
+            $amount += $adminFee;
+        }
 
         $invoiceNumber = 'INV-'.strtoupper(uniqid());
 
@@ -172,7 +179,7 @@ class DashboardController extends Controller
         $order->payments()->create([
             'invoice_number' => $invoiceNumber,
             'payment_name' => $validated['payment_name'],
-            'amount' => $validated['amount'],
+            'amount' => $amount,
             'status' => 'unpaid',
             'snap_token' => null, // Tidak dibutuhkan untuk Pakasir
         ]);
