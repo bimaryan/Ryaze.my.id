@@ -157,7 +157,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'price_key'     => 'plan_business_price',
                 'default_price' => 75000,
                 'color'         => 'amber',
-                'features'      => ['10 GB Storage', 'Project Unlimited', 'Semua Database', 'Custom Domain + SSL', 'Prioritas Support', 'Dedicated Resources'],
+                'features'      => ['10 GB Storage', 'Project Unlimited', 'Semua Database', 'Custom Domain + SSL', 'Prioritas Support'],
             ],
         ];
     }
