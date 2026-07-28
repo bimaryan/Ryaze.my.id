@@ -1369,13 +1369,20 @@
             if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input').focus(), 80);
             
             // Auto-load file manager saat pertama dibuka
-            if (name === 'files' && !document.getElementById('file-manager-body').innerHTML.trim()) {
-                if(typeof window.loadFileManager === 'function') window.loadFileManager();
+            if (name === 'files') {
+                const fmBody = document.getElementById('file-manager-body');
+                if (fmBody && fmBody.children.length === 0) {
+                    if(typeof window.loadFileManager === 'function') window.loadFileManager();
+                }
             }
             
             // Auto-load IDE saat pertama dibuka
-            if (name === 'ide' && document.getElementById('ide-sidebar-tree').innerHTML.trim() === '') {
-                if(typeof window.loadIdeSidebar === 'function') window.loadIdeSidebar('');
+            if (name === 'ide') {
+                const ideTree = document.getElementById('ide-sidebar-tree');
+                // check if it only contains the HTML comment
+                if (ideTree && !ideTree.querySelector('div')) {
+                    if(typeof window.loadIdeSidebar === 'function') window.loadIdeSidebar('');
+                }
             }
         };
     </script>
