@@ -103,9 +103,21 @@ class PaymentCallbackController extends Controller
                                 ->first();
 
                             if ($billing) {
+                                $selectedPlan = $payment->notes ?? $billing->plan;
+                                if (!in_array($selectedPlan, ['starter', 'pro', 'business'])) {
+                                    $selectedPlan = $billing->plan ?? 'starter';
+                                }
+                                $planLimits = \App\Models\User::getPlanLimits($selectedPlan);
+                                $planPrice  = \App\Models\User::getPlanPrice($selectedPlan);
+
                                 $billing->update([
+                                    'plan' => $selectedPlan,
+                                    'plan_name' => 'Paket ' . ucfirst($selectedPlan),
+                                    'amount' => $planPrice,
                                     'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
                                 ]);
+                                
+                                $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb']]);
                             } else {
                                 // Read selected plan from invoice notes
                                 $selectedPlan = $payment->notes ?? 'starter';

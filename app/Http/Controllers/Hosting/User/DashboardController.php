@@ -1380,11 +1380,14 @@ PHP;
     {
         $user = Auth::user();
 
-        if ($user->hasActiveHostingSubscription()) {
-            return back()->with('error', 'Anda sudah memiliki langganan hosting yang aktif.');
-        }
-
         $request->validate(['plan' => 'required|in:starter,pro,business']);
+        
+        if ($user->hasActiveHostingSubscription()) {
+            $activeBilling = $user->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first();
+            if ($activeBilling && $activeBilling->plan === $request->plan) {
+                return back()->with('error', 'Anda sudah berlangganan paket ini.');
+            }
+        }
         $selectedPlan = $request->plan;
         $planLimits   = \App\Models\User::getPlanLimits($selectedPlan);
         $planPrice    = \App\Models\User::getPlanPrice($selectedPlan);
