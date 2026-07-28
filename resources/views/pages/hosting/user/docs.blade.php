@@ -11,8 +11,8 @@
 
         <div class="flex flex-col md:flex-row gap-8 items-start relative">
             
-            <!-- Sidebar Table of Contents (Sticky) -->
-            <aside class="w-full md:w-64 flex-shrink-0 sticky top-24 bg-white md:bg-transparent rounded-2xl md:rounded-none shadow-sm md:shadow-none border border-slate-200 md:border-none p-4 md:p-0 z-10">
+            <!-- Sidebar Table of Contents (Sticky on Desktop) -->
+            <aside class="w-full md:w-64 flex-shrink-0 md:sticky top-24 bg-white md:bg-transparent rounded-2xl md:rounded-none shadow-sm md:shadow-none border border-slate-200 md:border-none p-4 md:p-0 z-10 mb-6 md:mb-0">
                 <h3 class="font-bold text-slate-800 mb-4 px-2 flex items-center gap-2">
                     <i class="fa-solid fa-list-ul text-indigo-500"></i> Daftar Isi
                 </h3>
@@ -274,36 +274,47 @@
         </div>
         
         <script nonce="{{ csp_nonce() }}">
-            // Script untuk highlight TOC otomatis saat scrolling
-            document.addEventListener('DOMContentLoaded', function() {
-                const sections = document.querySelectorAll('section[id]');
-                const navLinks = document.querySelectorAll('aside nav a');
-                
-                function highlightNav() {
-                    let scrollY = window.scrollY;
+            // Script untuk highlight TOC otomatis saat scrolling (Mendukung PJAX)
+            (function() {
+                const initDocsScroll = function() {
+                    const sections = document.querySelectorAll('section[id]');
+                    const navLinks = document.querySelectorAll('aside nav a');
+                    if (sections.length === 0) return;
                     
-                    sections.forEach(current => {
-                        const sectionHeight = current.offsetHeight;
-                        const sectionTop = current.offsetTop - 150;
-                        const sectionId = current.getAttribute('id');
+                    function highlightNav() {
+                        let scrollY = window.scrollY;
                         
-                        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-                            navLinks.forEach(link => {
-                                link.classList.remove('text-indigo-600', 'bg-indigo-50');
-                                link.classList.add('text-slate-600');
-                            });
-                            const activeLink = document.querySelector('aside nav a[href*=' + sectionId + ']');
-                            if(activeLink) {
-                                activeLink.classList.remove('text-slate-600');
-                                activeLink.classList.add('text-indigo-600', 'bg-indigo-50');
+                        sections.forEach(current => {
+                            const sectionHeight = current.offsetHeight;
+                            const sectionTop = current.offsetTop - 150;
+                            const sectionId = current.getAttribute('id');
+                            
+                            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                                navLinks.forEach(link => {
+                                    link.classList.remove('text-indigo-600', 'bg-indigo-50');
+                                    link.classList.add('text-slate-600');
+                                });
+                                const activeLink = document.querySelector('aside nav a[href*=' + sectionId + ']');
+                                if(activeLink) {
+                                    activeLink.classList.remove('text-slate-600');
+                                    activeLink.classList.add('text-indigo-600', 'bg-indigo-50');
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                    
+                    // Hapus event listener lama agar tidak menumpuk saat navigasi PJAX
+                    if (window._docsScrollHandler) {
+                        window.removeEventListener('scroll', window._docsScrollHandler);
+                    }
+                    window._docsScrollHandler = highlightNav;
+                    window.addEventListener('scroll', window._docsScrollHandler);
+                    highlightNav(); // Trigger pertama kali
+                };
                 
-                window.addEventListener('scroll', highlightNav);
-                highlightNav(); // Trigger on load
-            });
+                // Eksekusi langsung (untuk PJAX)
+                initDocsScroll();
+            })();
         </script>
     </x-ui.page-layout>
 @endsection
