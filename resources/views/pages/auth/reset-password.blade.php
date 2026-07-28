@@ -30,9 +30,17 @@
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password
                             Baru</label>
-                        <input type="password" name="password" id="password"
-                            class="py-3 transition-all duration-200 focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
-                            placeholder="••••••••" required autofocus>
+                        <div class="relative">
+                            <input type="password" name="password" id="password"
+                                class="py-3 pr-10 transition-all duration-200 focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
+                                placeholder="••••••••" required autofocus>
+                            <button type="button" onclick="togglePassword('password', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <p class="mt-2 text-xs text-slate-500">
+                            Gunakan minimal 8 karakter dengan kombinasi huruf besar & kecil, angka, dan simbol.
+                        </p>
                         @error('password')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
@@ -41,9 +49,14 @@
                     <div>
                         <label for="password_confirmation"
                             class="block text-sm font-medium text-slate-700 mb-2">Konfirmasi Password Baru</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation"
-                            class="py-3 transition-all duration-200 focus:bg-white w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
-                            placeholder="••••••••" required>
+                        <div class="relative">
+                            <input type="password" name="password_confirmation" id="password_confirmation"
+                                class="py-3 pr-10 transition-all duration-200 focus:bg-white w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
+                                placeholder="••••••••" required>
+                            <button type="button" onclick="togglePassword('password_confirmation', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="flex justify-center">
@@ -66,6 +79,26 @@
 
     @include('components.hot-toast')
 
+    @include('components.hot-toast')
+
+    <!-- FontAwesome for the eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 
 </html>
