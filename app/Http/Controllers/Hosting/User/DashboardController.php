@@ -1389,7 +1389,7 @@ PHP;
     {
         $user = Auth::user();
 
-        $request->validate(['plan' => 'required|in:starter,pro,business']);
+        $request->validate(['plan' => 'required|in:free,starter,pro,business']);
         
         if ($user->hasActiveHostingSubscription()) {
             $activeBilling = $user->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first();
@@ -1411,34 +1411,42 @@ PHP;
             }
             $voucherFinalPrice = $planPrice - $voucher->calculateDiscount($planPrice);
             $voucher->increment('uses');
-            if ($voucherFinalPrice <= 0) {
-                \App\Models\HostingBilling::create([
-                    'user_id'            => $user->id,
-                    'hosting_project_id' => null,
-                    'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
-                    'plan'               => $selectedPlan,
-                    'amount'             => 0,
-                    'billing_cycle'      => 'monthly',
-                    'status'             => 'active',
-                    'next_due_date'      => now()->addMonth(),
-                ]);
-                $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb']]);
-                \App\Models\HostingPayment::where('user_id', $user->id)->where('invoice_number', 'like', 'HST-INV-%')->where('status', 'unpaid')->delete();
-                \App\Models\HostingPayment::create([
-                    'user_id' => $user->id, 'hosting_project_id' => null,
-                    'invoice_number' => 'HST-INV-' . strtoupper(uniqid()),
-                    'amount' => 0, 'status' => 'paid', 'payment_method' => 'Voucher',
-                    'paid_at' => now(), 'notes' => $selectedPlan,
-                ]);
-                return back()->with('success', 'Voucher berhasil! Langganan Paket ' . ucfirst($selectedPlan) . ' aktif gratis 1 bulan.');
-            } else {
-                $voucherMessage = 'Voucher berhasil! Anda mendapatkan potongan harga.';
-            }
+            $voucherMessage = 'Voucher berhasil! Anda mendapatkan potongan harga.';
         }
 
+        $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : $planPrice;
+
+        if ($invoiceAmount <= 0) {
+            // Activate immediately
+            \App\Models\HostingBilling::create([
+                'user_id'            => $user->id,
+                'hosting_project_id' => null,
+                'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
+                'plan'               => $selectedPlan,
+                'amount'             => 0,
+                'billing_cycle'      => 'monthly',
+                'status'             => 'active',
+                'next_due_date'      => now()->addYears(10), // Paket gratis / free berlaku panjang
+            ]);
+            $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb']]);
+            
+            // Hapus tagihan unpaid sebelumnya jika ada
+            \App\Models\HostingPayment::where('user_id', $user->id)->where('invoice_number', 'like', 'HST-INV-%')->where('status', 'unpaid')->delete();
+            
+            \App\Models\HostingPayment::create([
+                'user_id' => $user->id, 'hosting_project_id' => null,
+                'invoice_number' => 'HST-INV-' . strtoupper(uniqid()),
+                'amount' => 0, 'status' => 'paid', 'payment_method' => $planPrice == 0 ? 'Free Plan' : 'Voucher',
+                'paid_at' => now(), 'notes' => $selectedPlan,
+            ]);
+            
+            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket ' . ucfirst($selectedPlan) . ' aktif secara gratis.';
+            return back()->with('success', $msg);
+        }
+
+        // Kalau tidak gratis, buat tagihan
         $existingInvoice = \App\Models\HostingPayment::where('user_id', $user->id)
             ->where('invoice_number', 'like', 'HST-INV-%')->where('status', 'unpaid')->first();
-        $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : $planPrice;
 
         if (!$existingInvoice) {
             \App\Models\HostingPayment::create([

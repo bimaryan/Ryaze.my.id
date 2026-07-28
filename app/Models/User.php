@@ -132,6 +132,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function hostingPlans(): array
     {
         return [
+            'free'  => [
+                'label'         => 'Free',
+                'storage_mb'    => 256,
+                'max_projects'  => 1,
+                'price_key'     => 'plan_free_price',
+                'default_price' => 0,
+                'color'         => 'slate',
+                'features'      => ['256 MB Storage', 'Maks. 1 Project', '1 MySQL Database', 'Subdomain Bawaan', 'Support Komunitas'],
+            ],
             'starter'  => [
                 'label'         => 'Starter',
                 'storage_mb'    => 1024,
