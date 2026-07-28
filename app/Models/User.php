@@ -195,8 +195,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $promo_price = null;
         if (isset($p['promo_key'])) {
-            $promo = \App\Models\Setting::val($p['promo_key'], '');
-            if ($promo !== '') {
+            $promo = \App\Models\Setting::val($p['promo_key'], null);
+            if ($promo !== null && $promo !== '') {
                 $promo_price = (int) $promo;
             }
         }
