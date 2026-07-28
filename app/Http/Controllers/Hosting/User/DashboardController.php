@@ -1342,6 +1342,14 @@ PHP;
         // ════════ MANTRA ANTI-BLEEDING ════════
         $unsetEnv = 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
 
+        // ════════ PYTHON VENV ALIAS ════════
+        if ($project->framework === 'python') {
+            $command = preg_replace('/^python3\b/', 'venv/bin/python3', $command);
+            $command = preg_replace('/^python\b/', 'venv/bin/python', $command);
+            $command = preg_replace('/^pip3\b/', 'venv/bin/pip3', $command);
+            $command = preg_replace('/^pip\b/', 'venv/bin/pip', $command);
+        }
+
         $fullCommand = $unsetEnv.'cd '.escapeshellarg($projectDir).' && '.$command.' 2>&1';
         // ══════════════════════════════════════
 

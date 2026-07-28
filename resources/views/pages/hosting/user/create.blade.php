@@ -469,11 +469,11 @@
                                 @php
                                     $fwKey = strtolower($fw);
                                     $info = $frameworkIcons[$fwKey] ?? ['icon' => 'fa-solid fa-code', 'color' => 'text-slate-500', 'name' => strtoupper($fw)];
-                                    $isDisabled = ($fwKey == 'python'); // Python always manual contact
+                                    $isDisabled = false; // Python is now fully supported automatically!
                                 @endphp
                                 
                                 @if($isDisabled)
-                                    <label class="relative cursor-pointer opacity-60" onclick="Swal.fire({icon: 'info', title: 'Informasi', text: 'Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.'})">
+                                    <label class="relative cursor-pointer opacity-60" onclick="Swal.fire({icon: 'info', title: 'Informasi', text: 'Framework ini sedang dalam maintenance.'})">
                                         <input type="radio" name="framework" value="{{ $fw }}" class="peer hidden" disabled>
                                         <div class="p-3 border-2 border-slate-200 rounded-xl bg-slate-50 transition-all text-center cursor-not-allowed">
                                             <i class="{{ $info['icon'] }} text-2xl {{ $info['color'] }} mb-1.5 block opacity-60"></i>
