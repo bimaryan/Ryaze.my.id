@@ -16,9 +16,13 @@
                 </div>
             </x-slot:iconSlot>
             <x-slot:subtitle>
-                <a href="https://{{ $project->ryaze_domain }}" target="_blank"
+                @php
+                    $activeDomain = $project->domains()->where('ssl_status', 'active')->first();
+                    $displayUrl = $activeDomain ? $activeDomain->domain_name : $project->ryaze_domain;
+                @endphp
+                <a href="https://{{ $displayUrl }}" target="_blank"
                     class="text-sm font-medium text-indigo-600 hover:underline flex items-center gap-1 mt-1">
-                    {{ $project->ryaze_domain }}
+                    {{ $displayUrl }}
                     <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                 </a>
             </x-slot:subtitle>
@@ -135,9 +139,9 @@
                                 <div
                                     class="ml-2 bg-white px-3 py-1 rounded-md text-xs text-slate-500 w-full max-w-md flex items-center gap-2 border border-slate-200 shadow-sm">
                                     <i class="fa-solid fa-lock text-[10px] text-emerald-600"></i>
-                                    https://{{ $project->ryaze_domain }}
+                                    https://{{ $displayUrl }}
                                 </div>
-                                <a href="https://{{ $project->ryaze_domain }}" target="_blank"
+                                <a href="https://{{ $displayUrl }}" target="_blank"
                                     class="ml-auto text-slate-400 hover:text-indigo-600 transition-colors">
                                     <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
                                 </a>
@@ -146,7 +150,7 @@
                                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                                     <i class="fa-solid fa-circle-notch fa-spin text-slate-300 text-3xl"></i>
                                 </div>
-                                <iframe src="https://{{ $project->ryaze_domain }}"
+                                <iframe src="https://{{ $displayUrl }}"
                                     class="w-full h-full border-0 relative z-10 bg-white"></iframe>
                             </div>
                             <div class="bg-amber-50 border-t border-amber-100 px-4 py-3 flex items-start gap-3">
