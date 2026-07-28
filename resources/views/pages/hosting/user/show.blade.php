@@ -1367,9 +1367,15 @@
                 btn.classList.remove('text-slate-500');
             }
             if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input').focus(), 80);
+            
             // Auto-load file manager saat pertama dibuka
             if (name === 'files' && !document.getElementById('file-manager-body').innerHTML.trim()) {
                 if(typeof window.loadFileManager === 'function') window.loadFileManager();
+            }
+            
+            // Auto-load IDE saat pertama dibuka
+            if (name === 'ide' && document.getElementById('ide-sidebar-tree').innerHTML.trim() === '') {
+                if(typeof window.loadIdeSidebar === 'function') window.loadIdeSidebar('');
             }
         };
     </script>
@@ -1617,6 +1623,7 @@
                     loader.classList.add('hidden');
                 });
         }
+        window.loadFileManager = loadFileManager;
 
         // ── Event delegation tbody — satu listener untuk semua baris dinamis ──
         document.getElementById('file-manager-body').addEventListener('click', e => {
@@ -1992,6 +1999,7 @@
                     treeEl.innerHTML = '<div class="px-4 py-2 text-rose-500">Gagal load explorer</div>';
                 });
         }
+        window.loadIdeSidebar = loadIdeSidebar;
 
         function openIdeFile(path, filename) {
             var loader = document.getElementById('ide-loader');
