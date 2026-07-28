@@ -342,7 +342,7 @@
                         <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-blue-100 px-1 rounded">{{ $db->db_username }}</code>.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <a href="{{ route('user_hosting.databases.manager', $db->hashid) }}" class="bg-blue-600 text-white hover:bg-blue-700 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <a href="{{ route('user_hosting.databases.manager', $db->hashid) }}?type=pgsql" class="bg-blue-600 text-white hover:bg-blue-700 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-table-list"></i> Database Manager
                         </a>
                         <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-slate-900 p-3 rounded-lg text-left mt-2\'><code class=\'text-emerald-400 text-xs font-mono break-all\'>PGPASSWORD=\'{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}\' psql -h {{ $db->host }} -p {{ $db->port }} -U {{ $db->db_username }} -d {{ $db->db_username }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'rounded-xl text-sm' }})" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
@@ -516,11 +516,11 @@
             @endif
 
             {{-- Actions --}}
-            <div class="pt-4 border-t border-slate-100 flex gap-3">
-                <button type="button" class="btn-close-nosql-modal flex-1 bg-white border border-slate-300 text-slate-700 font-medium py-2.5 rounded-xl hover:bg-slate-50 transition">
+            <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
+                <button type="button" class="btn-close-nosql-modal text-slate-600 bg-white border border-slate-300 rounded-xl px-5 py-2.5 text-sm font-medium hover:bg-slate-50 transition-colors">
                     Batal
                 </button>
-                <button type="submit" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-medium py-2.5 rounded-xl transition shadow-sm shadow-rose-200 flex items-center justify-center gap-2">
+                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-rose-600 rounded-xl hover:bg-rose-700 shadow-sm transition-all flex items-center gap-2">
                     <i class="fa-solid fa-server"></i> Buat Database Redis
                 </button>
             </div>
@@ -531,6 +531,7 @@
 {{-- Modal Create PostgreSQL --}}
 <div id="createPgsqlDbModal" class="hidden fixed inset-0 z-[55] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        {{-- Modal Header --}}
         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-blue-50/50">
             <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
                 <i class="fa-solid fa-database text-blue-500"></i> Buat Database PostgreSQL
@@ -542,25 +543,60 @@
 
         <form action="{{ route('user_hosting.databases.pgsql.store') }}" method="POST" class="p-6 space-y-4">
             @csrf
+
+            {{-- Username (Prefix) --}}
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Database & Username <span class="text-blue-500">*</span></label>
-                <div class="flex rounded-xl overflow-hidden border border-slate-300 focus-within:border-blue-500 focus-within:ring-2 transition-all">
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                    Nama Database & Username <span class="text-blue-500">*</span>
+                </label>
+                <div class="flex rounded-xl overflow-hidden border border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-slate-100 text-slate-500 text-sm font-mono border-r border-slate-300 whitespace-nowrap">
+                        ryz_{{ Auth::id() }}_
+                    </span>
                     <input type="text" name="db_username" required pattern="[A-Za-z0-9_]+" placeholder="myapp" maxlength="15"
-                        class="flex-1 font-mono w-full bg-slate-50 border-none px-4 py-2.5 text-sm focus:ring-0 outline-none">
+                        class="flex-1 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition">
                 </div>
             </div>
 
             @if (!isset($pgsqlDatabases) || $pgsqlDatabases->count() === 0)
+            {{-- Password --}}
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Password <span class="text-blue-500">*</span></label>
-                <input type="text" name="db_password" required minlength="8" maxlength="32" placeholder="Password aman"
-                    class="w-full font-mono bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 outline-none">
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="text-sm font-semibold text-slate-700">Password <span class="text-blue-500">*</span></label>
+                    <button type="button" id="btn-generate-pgsql-password" class="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
+                    </button>
+                </div>
+                <div class="relative flex rounded-xl overflow-hidden border border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-slate-100 text-slate-500 text-sm font-mono border-r border-slate-300 whitespace-nowrap">
+                        ryz_{{ Auth::id() }}_
+                    </span>
+                    <input type="text" name="db_password" id="modalPgsqlPassword" required minlength="8" maxlength="32"
+                        placeholder="Masukkan password kuat"
+                        class="flex-1 pr-10 font-mono w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition">
+                    <button type="button" id="btn-copy-modal-pgsql-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-blue-600" title="Copy">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+                <p class="mt-1.5 text-[11px] text-slate-400">
+                    <i class="fa-solid fa-shield-halved"></i> Simpan password ini. Otomatis ditambah prefix.
+                </p>
+            </div>
+            @else
+            <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl text-xs text-blue-700 mt-2">
+                <i class="fa-solid fa-circle-info mr-1"></i>
+                Database baru akan secara otomatis menggunakan <strong>Password</strong> dari database Anda sebelumnya.
             </div>
             @endif
 
-            <div class="pt-4 flex gap-3">
-                <button type="button" class="btn-close-pgsql-modal flex-1 bg-white border border-slate-300 py-2.5 rounded-xl hover:bg-slate-50">Batal</button>
-                <button type="submit" class="flex-1 bg-blue-600 text-white py-2.5 rounded-xl hover:bg-blue-700">Buat Database</button>
+            {{-- Actions --}}
+            <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
+                <button type="button" class="btn-close-pgsql-modal text-slate-600 bg-white border border-slate-300 rounded-xl px-5 py-2.5 text-sm font-medium hover:bg-slate-50 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-sm transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-database"></i> Buat Database PostgreSQL
+                </button>
             </div>
         </form>
     </div>
@@ -950,17 +986,17 @@
     }
 
     // ── Generate random password ───────────────────────────────────────────────
-    function generatePassword() {
+    function generatePassword(targetId) {
         var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
         var pass = '';
         for (var i = 0; i < 16; i++) pass += chars[Math.floor(Math.random() * chars.length)];
-        document.getElementById('modalPassword').value = pass;
+        document.getElementById(targetId).value = pass;
         hotToast('Password di-generate!', 'success');
     }
 
     // ── Copy password di modal ─────────────────────────────────────────────────
-    function copyModalPassword() {
-        var pass = document.getElementById('modalPassword').value;
+    function copyModalPassword(targetId) {
+        var pass = document.getElementById(targetId).value;
         if (!pass) { hotToast('Password masih kosong', 'warning'); return; }
         navigator.clipboard.writeText(pass).then(() => {
             hotToast('Password disalin!', 'success');
@@ -1000,14 +1036,24 @@
 
             // Generate Password
             if (e.target.closest('#btn-generate-password')) {
-                generatePassword();
-                return;
+                generatePassword('modalPassword'); return;
+            }
+            if (e.target.closest('#btn-generate-nosql-password')) {
+                generatePassword('modalNosqlPassword'); return;
+            }
+            if (e.target.closest('#btn-generate-pgsql-password')) {
+                generatePassword('modalPgsqlPassword'); return;
             }
 
             // Copy Modal Password
             if (e.target.closest('#btn-copy-modal-password')) {
-                copyModalPassword();
-                return;
+                copyModalPassword('modalPassword'); return;
+            }
+            if (e.target.closest('#btn-copy-modal-nosql-password')) {
+                copyModalPassword('modalNosqlPassword'); return;
+            }
+            if (e.target.closest('#btn-copy-modal-pgsql-password')) {
+                copyModalPassword('modalPgsqlPassword'); return;
             }
         });
     }
