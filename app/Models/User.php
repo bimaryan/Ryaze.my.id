@@ -139,7 +139,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'price_key'     => 'plan_starter_price',
                 'default_price' => 15000,
                 'color'         => 'indigo',
-                'features'      => ['1 GB Storage', 'Maks. 3 Project', 'MySQL & PostgreSQL', 'Custom Domain + SSL'],
+                'features'      => ['1 GB Storage', 'Maks. 3 Project', 'MySQL & PostgreSQL', 'Custom Domain + SSL', 'Prioritas Support'],
             ],
             'pro' => [
                 'label'         => 'Pro',
