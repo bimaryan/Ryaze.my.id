@@ -8,7 +8,7 @@ fi
 
 APP_DIR="/opt/1panel/apps/openresty/openresty/www/sites/ryaze.my.id/index"
 QUEUE_FILE="$APP_DIR/storage/app/ssl_queue.json"
-NGINX_CONF_DIR="/opt/1panel/apps/openresty/openresty/conf/conf.d/custom_domains"
+NGINX_CONF_DIR="/opt/1panel/apps/openresty/openresty/conf/conf.d"
 NGINX_SSL_DIR="/opt/1panel/apps/openresty/openresty/www/ssl"
 CERTBOT_WEBROOT="/opt/1panel/apps/openresty/openresty/www/letsencrypt"
 CONTAINER_PHP="1Panel-php8-aJQI"
