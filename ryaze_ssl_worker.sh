@@ -74,8 +74,32 @@ EOF
         docker exec $CONTAINER_NGINX nginx -s reload
         
     elif [ "$ACTION" == "ssl" ]; then
-        # Pastikan folder webroot ada sebelum menjalankan certbot
+        # Pastikan folder webroot dan conf ada sebelum menjalankan certbot
         mkdir -p "$CERTBOT_WEBROOT"
+        mkdir -p "$NGINX_CONF_DIR"
+        
+        # Regenerate HTTP block agar Nginx siap menerima request Let's Encrypt
+        cat <<EOF > "$CONF_FILE"
+server {
+    listen 80;
+    server_name $DOMAIN;
+
+    location /.well-known/acme-challenge/ {
+        root /www/letsencrypt;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1;
+        proxy_set_header Host $PROJECT_DOMAIN;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
+        chown root:root "$CONF_FILE"
+        docker exec $CONTAINER_NGINX nginx -s reload
+        sleep 2
         
         # Jalankan Certbot
         OUTPUT=$(certbot certonly --webroot -w "$CERTBOT_WEBROOT" -d "$DOMAIN" --non-interactive --agree-tos -m admin@ryaze.my.id 2>&1)
