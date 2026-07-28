@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HostingProject;
 use Illuminate\Support\Facades\Auth;
 use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Http\Request;
 
 class StorageController extends Controller
 {
@@ -144,7 +145,7 @@ class StorageController extends Controller
     /**
      * Endpoint untuk membeli upgrade storage 1GB.
      */
-    public function upgrade()
+    public function upgrade(Request $request)
     {
         $user = Auth::user();
 
@@ -163,16 +164,50 @@ class StorageController extends Controller
             ->first();
 
         if ($existing) {
-            return redirect()->route('user_hosting.storage')->with('success', 'Silakan lunasi tagihan upgrade storage Anda.');
+            if ($existing->created_at < now()->subHours(24)) {
+                $existing->update(['status' => 'cancelled']);
+            } else {
+                return redirect()->route('user_hosting.storage')->with('error', 'Silakan lunasi tagihan upgrade storage Anda terlebih dahulu.');
+            }
+        }
+
+        $amount = 15000;
+        $voucherCode = $request->input('voucher_code');
+        $voucher = null;
+
+        if ($voucherCode) {
+            $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+            if (!$voucher || !$voucher->isValid()) {
+                return back()->with('error', 'Kode voucher tidak valid atau sudah kadaluarsa.');
+            }
+            
+            $discount = $voucher->calculateDiscount($amount);
+            $amount -= $discount;
         }
 
         $payment = \App\Models\HostingPayment::create([
             'user_id' => $user->id,
             'hosting_project_id' => null,
             'invoice_number' => 'HST-UPG-'. strtoupper(uniqid()),
-            'amount' => 15000,
+            'amount' => max(0, $amount),
             'status' => 'unpaid',
         ]);
+
+        if ($voucher) {
+            $voucher->increment('uses');
+        }
+
+        if ($payment->amount <= 0) {
+            $payment->update([
+                'status' => 'paid',
+                'payment_method' => 'Voucher',
+                'paid_at' => now(),
+            ]);
+
+            $user->increment('hosting_storage_limit_mb', 1024);
+            $user->notify(new \App\Notifications\SystemNotification('Upgrade storage 1GB berhasil menggunakan voucher.', 'success'));
+            return redirect()->route('user_hosting.storage')->with('success', 'Upgrade storage 1GB berhasil (Gratis via Voucher).');
+        }
 
         $user->notify(new \App\Notifications\SystemNotification('Tagihan upgrade storage 1GB berhasil dibuat: ' . $payment->invoice_number, 'info'));
 
