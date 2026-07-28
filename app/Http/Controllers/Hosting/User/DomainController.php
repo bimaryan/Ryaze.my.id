@@ -33,6 +33,30 @@ class DomainController extends Controller
             'ssl_status' => 'pending',
         ]);
 
+        $nginxConfig = "server {\n"
+            . "    listen 80;\n"
+            . "    server_name {$domainName};\n\n"
+            . "    location / {\n"
+            . "        proxy_pass http://127.0.0.1;\n"
+            . "        proxy_set_header Host {$project->ryaze_domain};\n"
+            . "        proxy_set_header X-Real-IP \$remote_addr;\n"
+            . "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n"
+            . "        proxy_set_header X-Forwarded-Proto \$scheme;\n"
+            . "    }\n"
+            . "}\n";
+            
+        $configPath = "/etc/nginx/conf.d/custom_domains/{$domainName}.conf";
+        
+        // Buat folder jika belum ada dan tulis config
+        shell_exec("sudo mkdir -p /etc/nginx/conf.d/custom_domains");
+        $tmpFile = tempnam(sys_get_temp_dir(), 'nginx_');
+        file_put_contents($tmpFile, $nginxConfig);
+        shell_exec("sudo mv {$tmpFile} {$configPath}");
+        shell_exec("sudo chown root:root {$configPath}");
+        
+        // Reload Nginx
+        shell_exec("sudo systemctl reload nginx");
+
         return back()->with('success', 'Custom Domain berhasil ditambahkan! Silakan arahkan DNS (CNAME/A Record) domain Anda ke server ini.');
     }
 
@@ -46,6 +70,14 @@ class DomainController extends Controller
         })->findOrFail($decoded[0]);
 
         $projectHashid = $domain->project->hashid;
+        $domainName = $domain->domain_name;
+        $configPath = "/etc/nginx/conf.d/custom_domains/{$domainName}.conf";
+        
+        // Hapus konfigurasi Nginx dan SSL
+        shell_exec("sudo rm -f {$configPath}");
+        shell_exec("sudo certbot delete --cert-name {$domainName} --non-interactive 2>/dev/null");
+        shell_exec("sudo systemctl reload nginx");
+
         $domain->delete();
 
         return redirect()->route('user_hosting.storage.show', $projectHashid)->with('success', 'Custom Domain berhasil dihapus.');
@@ -60,12 +92,22 @@ class DomainController extends Controller
             $q->where('user_id', Auth::id());
         })->findOrFail($decoded[0]);
 
-        // Simulasi request SSL (Certbot)
-        // Jika di production, di sini eksekusi shell command certbot nginx/apache
-        $domain->update([
-            'ssl_status' => 'active'
-        ]);
+        $domainName = $domain->domain_name;
+        
+        // Eksekusi request SSL via Certbot Nginx plugin
+        $output = shell_exec("sudo certbot --nginx -d {$domainName} --non-interactive --agree-tos -m admin@ryaze.my.id --redirect 2>&1");
+        
+        if (strpos($output, 'Congratulations') !== false || strpos($output, 'Successfully') !== false) {
+            $domain->update([
+                'ssl_status' => 'active'
+            ]);
+            return back()->with('success', 'Sertifikat SSL (Let\'s Encrypt) berhasil di-generate dan dipasang untuk ' . $domainName);
+        }
 
-        return back()->with('success', 'Sertifikat SSL (Let\'s Encrypt) berhasil di-generate dan dipasang untuk ' . $domain->domain_name);
+        $domain->update([
+            'ssl_status' => 'failed'
+        ]);
+        
+        return back()->with('error', 'Gagal request SSL. Output: ' . substr($output, 0, 200));
     }
 }
