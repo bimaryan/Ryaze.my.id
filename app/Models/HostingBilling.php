@@ -13,6 +13,10 @@ class HostingBilling extends Model
         'billing_cycle', 'next_due_date', 'status'
     ];
 
+    protected $casts = [
+        'next_due_date' => 'datetime',
+    ];
+
     public function project()
     {
         return $this->belongsTo(HostingProject::class, 'hosting_project_id');
