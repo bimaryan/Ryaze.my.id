@@ -290,13 +290,10 @@
                         <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
                     </div>
                 </div>
-                <form action="{{ route('user_hosting.databases.pgsql.destroy', $db->hashid) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus database PostgreSQL ini?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-slate-400 hover:text-blue-500 p-2 hover:bg-blue-50 rounded-lg transition-colors" title="Hapus Database">
-                        <i class="fa-regular fa-trash-can"></i>
-                    </button>
-                </form>
+                <button data-action="{{ route('user_hosting.databases.pgsql.destroy', $db->hashid) }}"
+                    class="btn-delete-db text-slate-400 hover:text-blue-500 p-2 hover:bg-blue-50 rounded-lg transition-colors" title="Hapus Database">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
             </div>
 
             <div class="p-5 space-y-4">
@@ -333,6 +330,24 @@
                                 <i class="fa-regular fa-copy"></i>
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100">
+
+                {{-- PostgreSQL Management Actions --}}
+                <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="text-sm text-blue-900">
+                        <strong>Manajemen Database</strong><br>
+                        <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-blue-100 px-1 rounded">{{ $db->db_username }}</code>.</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a href="{{ route('user_hosting.databases.manager', $db->hashid) }}" class="bg-blue-600 text-white hover:bg-blue-700 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-table-list"></i> Database Manager
+                        </a>
+                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-slate-900 p-3 rounded-lg text-left mt-2\'><code class=\'text-emerald-400 text-xs font-mono break-all\'>PGPASSWORD=\'{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}\' psql -h {{ $db->host }} -p {{ $db->port }} -U {{ $db->db_username }} -d {{ $db->db_username }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'rounded-xl text-sm' }})" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-terminal"></i> Connection String
+                        </button>
                     </div>
                 </div>
             </div>
@@ -953,46 +968,49 @@
     }
 
     // ── CSP Compliant Event Delegation ─────────────────────────────────────────
-    document.addEventListener('click', function(e) {
-        // Delete DB
-        var deleteBtn = e.target.closest('.btn-delete-db');
-        if (deleteBtn) {
-            confirmDelete(deleteBtn.getAttribute('data-action'));
-            return;
-        }
-
-        // Copy to Clipboard
-        var copyBtn = e.target.closest('.btn-copy');
-        if (copyBtn) {
-            var dataCopy = copyBtn.getAttribute('data-copy');
-            if (dataCopy) {
-                copyToClipboard(dataCopy);
-            } else {
-                var targetId = copyBtn.getAttribute('data-copy-target');
-                if (targetId) copyToClipboard(document.getElementById(targetId).innerText);
+    if (!window.dbEventsAttached) {
+        window.dbEventsAttached = true;
+        document.addEventListener('click', function(e) {
+            // Delete DB
+            var deleteBtn = e.target.closest('.btn-delete-db');
+            if (deleteBtn) {
+                confirmDelete(deleteBtn.getAttribute('data-action'));
+                return;
             }
-            return;
-        }
 
-        // Toggle Password
-        var passBtn = e.target.closest('.btn-toggle-pass');
-        if (passBtn) {
-            togglePass(passBtn.getAttribute('data-target'), passBtn);
-            return;
-        }
+            // Copy to Clipboard
+            var copyBtn = e.target.closest('.btn-copy');
+            if (copyBtn) {
+                var dataCopy = copyBtn.getAttribute('data-copy');
+                if (dataCopy) {
+                    copyToClipboard(dataCopy);
+                } else {
+                    var targetId = copyBtn.getAttribute('data-copy-target');
+                    if (targetId) copyToClipboard(document.getElementById(targetId).innerText);
+                }
+                return;
+            }
 
-        // Generate Password
-        if (e.target.closest('#btn-generate-password')) {
-            generatePassword();
-            return;
-        }
+            // Toggle Password
+            var passBtn = e.target.closest('.btn-toggle-pass');
+            if (passBtn) {
+                togglePass(passBtn.getAttribute('data-target'), passBtn);
+                return;
+            }
 
-        // Copy Modal Password
-        if (e.target.closest('#btn-copy-modal-password')) {
-            copyModalPassword();
-            return;
-        }
-    });
+            // Generate Password
+            if (e.target.closest('#btn-generate-password')) {
+                generatePassword();
+                return;
+            }
+
+            // Copy Modal Password
+            if (e.target.closest('#btn-copy-modal-password')) {
+                copyModalPassword();
+                return;
+            }
+        });
+    }
 
     // Import Modal logic
     window.openImportModal = function(hashid, dbName) {

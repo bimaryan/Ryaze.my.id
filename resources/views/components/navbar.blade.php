@@ -425,7 +425,7 @@
                             class="{{ $navLink(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }}">
                             <i
                                 class="fa-solid fa-database {{ $iconClass(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Database (MySQL)</span>
+                            <span class="ms-3 whitespace-nowrap">Database</span>
                         </a>
                     </li>
                     <li>
