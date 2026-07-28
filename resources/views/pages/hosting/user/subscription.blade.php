@@ -20,6 +20,7 @@
         @php
             $plans = \App\Models\User::hostingPlans();
             $colorMap = [
+                'slate'  => ['bg' => 'bg-slate-600', 'text' => 'text-slate-600', 'btn' => 'bg-slate-600 hover:bg-slate-700', 'badge' => 'bg-slate-100 text-slate-700 border-slate-200'],
                 'indigo' => ['bg' => 'bg-indigo-600', 'text' => 'text-indigo-600', 'btn' => 'bg-indigo-600 hover:bg-indigo-700', 'badge' => 'bg-indigo-100 text-indigo-700 border-indigo-200'],
                 'violet' => ['bg' => 'bg-violet-600', 'text' => 'text-violet-600', 'btn' => 'bg-violet-600 hover:bg-violet-700', 'badge' => 'bg-violet-100 text-violet-700 border-violet-200'],
                 'amber'  => ['bg' => 'bg-amber-500',  'text' => 'text-amber-600',  'btn' => 'bg-amber-500 hover:bg-amber-600',   'badge' => 'bg-amber-100 text-amber-700 border-amber-200'],
