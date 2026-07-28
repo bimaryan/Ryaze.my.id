@@ -940,7 +940,6 @@
                     </div>
                 </div>
             </div>
-            </div>
 
             {{-- MODAL PANDUAN DOMAIN --}}
             <dialog id="docsModal" class="backdrop:bg-slate-900/60 p-0 rounded-2xl shadow-2xl border-0 w-full max-w-2xl bg-white m-auto">
