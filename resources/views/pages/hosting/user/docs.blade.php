@@ -2,319 +2,216 @@
 
 @section('content')
     <x-ui.page-layout>
-        <x-ui.page-header 
-            title="Panduan & Dokumentasi" 
-            subtitle="Pelajari cara menggunakan seluruh fitur hosting Ryaze dengan optimal." 
-            icon="fa-book-open" 
-            iconColor="indigo">
-        </x-ui.page-header>
-
-        <div class="flex flex-col md:flex-row gap-8 items-start relative">
+        <div class="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
             
-            <!-- Sidebar Table of Contents (Sticky on Desktop) -->
-            <aside class="w-full md:w-64 flex-shrink-0 md:sticky top-24 bg-white md:bg-transparent rounded-2xl md:rounded-none shadow-sm md:shadow-none border border-slate-200 md:border-none p-4 md:p-0 z-10 mb-6 md:mb-0">
-                <h3 class="font-bold text-slate-800 mb-4 px-2 flex items-center gap-2">
-                    <i class="fa-solid fa-list-ul text-indigo-500"></i> Daftar Isi
-                </h3>
-                <nav class="flex flex-col space-y-1 overflow-y-auto max-h-[70vh] custom-scrollbar pr-2">
-                    <a href="#deploy" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-rocket w-4 text-center"></i> Deploy Project
-                    </a>
-                    <a href="#filemanager" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-regular fa-folder-open w-4 text-center"></i> File Manager
-                    </a>
-                    <a href="#env" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-sliders w-4 text-center"></i> Environment Variables
-                    </a>
-                    <a href="#settings" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved w-4 text-center"></i> Keamanan & Settings
-                    </a>
-                    <a href="#terminal" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-terminal w-4 text-center"></i> Web Terminal
-                    </a>
-                    <a href="#storage" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-hard-drive w-4 text-center"></i> Manajemen Storage
-                    </a>
-                    <a href="#redeploy" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-rotate w-4 text-center"></i> Redeploy Manual
-                    </a>
-                    <a href="#devserver" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-laptop-code w-4 text-center"></i> Dev Server
-                    </a>
-                    <a href="#python" class="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-brands fa-python w-4 text-center"></i> Aturan Khusus Python
-                    </a>
-                </nav>
-            </aside>
+            <!-- Hero / Header -->
+            <div class="mb-20 pb-12 border-b border-slate-200">
+                <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-6">
+                    Dokumentasi Ryaze
+                </h1>
+                <p class="text-lg sm:text-xl text-slate-500 leading-relaxed max-w-2xl font-light">
+                    Panduan esensial untuk mendeploy, mengelola, dan menskalakan aplikasi modern Anda di atas infrastruktur berkinerja tinggi kami.
+                </p>
+            </div>
 
-            <!-- Main Content -->
-            <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-10 w-full">
-                
-                <div class="prose prose-slate prose-indigo max-w-none">
+            <!-- Content Body -->
+            <div class="space-y-24 text-slate-700 leading-relaxed">
+
+                <!-- Section 1: Deploy -->
+                <section>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-6">1. Deploy Project</h2>
+                    <p class="mb-6 text-slate-600 text-lg font-light">
+                        Ryaze mendukung deployment otomatis dari Git maupun penggunaan template instan. Proses deployment berlangsung dalam hitungan detik menggunakan teknologi isolasi container yang aman.
+                    </p>
                     
-                    <div class="text-slate-500 text-lg leading-relaxed mb-10 pb-6 border-b border-slate-100">
-                        Selamat datang di dokumentasi resmi Hosting Ryaze! Referensi lengkap untuk membantu Anda membangun, mendeploy, dan mengelola aplikasi modern dengan infrastruktur berkinerja tinggi kami.
+                    <div class="bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-200">
+                        <h3 class="font-semibold text-slate-900 mb-4">Langkah Deployment</h3>
+                        <ul class="space-y-4 text-slate-600">
+                            <li class="flex items-start">
+                                <span class="bg-slate-200 text-slate-700 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-4 shrink-0 mt-0.5">1</span>
+                                <span>Buka menu <strong>Dashboard Hosting</strong> lalu klik <strong>Deploy Proyek Baru</strong>.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-slate-200 text-slate-700 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-4 shrink-0 mt-0.5">2</span>
+                                <span>Pilih metode <strong>Git Repository</strong> (untuk kode Anda sendiri) atau <strong>Template Instan</strong>.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-slate-200 text-slate-700 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-4 shrink-0 mt-0.5">3</span>
+                                <span>Masukkan Nama Project yang akan menjadi subdomain (contoh: <code class="font-mono bg-white border border-slate-200 text-slate-800 px-1.5 py-0.5 rounded text-sm mx-1">app.ryaze.my.id</code>).</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-slate-200 text-slate-700 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-4 shrink-0 mt-0.5">4</span>
+                                <span>Klik <strong>Deploy Sekarang</strong> dan pantau log instalasi.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Section 2: File Manager -->
+                <section>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-6">2. File Manager</h2>
+                    <p class="mb-8 text-slate-600 text-lg font-light">
+                        Akses dan ubah kode Anda secara langsung tanpa aplikasi FTP pihak ketiga. File manager Ryaze dilengkapi dengan editor kode mutakhir terintegrasi.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        <div class="p-6 border border-slate-200 rounded-2xl hover:border-slate-300 transition-colors">
+                            <h4 class="font-semibold text-slate-900 mb-2">Code Editor</h4>
+                            <p class="text-sm text-slate-500 leading-relaxed">Edit file teks, sesuaikan konfigurasi, dan tulis baris kode langsung dari browser Anda.</p>
+                        </div>
+                        <div class="p-6 border border-slate-200 rounded-2xl hover:border-slate-300 transition-colors">
+                            <h4 class="font-semibold text-slate-900 mb-2">Quick Upload</h4>
+                            <p class="text-sm text-slate-500 leading-relaxed">Unggah aset dan file pendukung dengan mudah (Maksimal 10MB per file).</p>
+                        </div>
                     </div>
 
-                    <!-- Section 1 -->
-                    <section id="deploy" class="mb-14 scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-solid fa-rocket text-indigo-500"></i> Menambahkan & Deploy Project
-                        </h2>
-                        <p class="text-slate-600 mb-4">Ryaze mendukung deployment otomatis dari Git maupun penggunaan template instan. Proses deployment berlangsung dalam hitungan detik menggunakan teknologi isolasi container.</p>
-                        
-                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
-                            <h3 class="font-bold text-slate-700 mb-3 text-sm">Langkah Deployment:</h3>
-                            <ul class="space-y-2 text-slate-600 text-sm">
-                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> Buka menu <strong>Dashboard Hosting</strong> lalu klik <strong>Deploy Proyek Baru</strong>.</li>
-                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> Pilih metode <strong>Git Repository</strong> (untuk kode Anda sendiri) atau <strong>Template Instan</strong>.</li>
-                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> Masukkan <strong>Nama Project</strong> yang akan menjadi alamat subdomain (contoh: <code class="bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded text-xs mx-1 font-mono">app-saya.ryaze.my.id</code>).</li>
-                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> Klik <strong>Deploy Sekarang</strong> dan pantau log instalasi secara real-time.</li>
-                            </ul>
+                    <div class="flex items-start bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                        <i class="fa-solid fa-lock text-slate-400 mt-1 mr-4"></i>
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-900 mb-1">Keamanan Server Terpusat</h4>
+                            <p class="text-sm text-slate-600">Untuk mencegah kerentanan sistem, ekstensi <i>executable</i> tertentu (seperti .php, .sh) diblokir dari antarmuka unggah web. Harap gunakan <strong>Git</strong> untuk mendorong perubahan struktural.</p>
                         </div>
-                    </section>
+                    </div>
+                </section>
 
-                    <!-- Section 2 -->
-                    <section id="filemanager" class="mb-14 scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-regular fa-folder-open text-sky-500"></i> Mengelola File Manager
-                        </h2>
-                        <p class="text-slate-600 mb-4">Akses dan ubah kode Anda langsung dari browser. File manager Ryaze dilengkapi dengan code editor terintegrasi.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div class="border border-slate-200 rounded-xl p-4 flex items-start gap-3">
-                                <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg"><i class="fa-solid fa-code"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-slate-700">Code Editor</h4>
-                                    <p class="text-xs text-slate-500 mt-1">Edit file teks langsung di browser tanpa aplikasi tambahan.</p>
-                                </div>
-                            </div>
-                            <div class="border border-slate-200 rounded-xl p-4 flex items-start gap-3">
-                                <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-slate-700">Quick Upload</h4>
-                                    <p class="text-xs text-slate-500 mt-1">Upload file pendukung maksimal 10MB per file dengan aman.</p>
-                                </div>
+                <!-- Section 3: Environment -->
+                <section>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-6">3. Environment Variables</h2>
+                    <p class="mb-6 text-slate-600 text-lg font-light">
+                        Simpan data rahasia seperti <i>API Keys</i>, *tokens*, dan kredensial basis data menggunakan antarmuka Environment Variable (.env) kami yang aman dan terenkripsi.
+                    </p>
+                    <p class="text-slate-600">
+                        Buka tab <strong>Pengaturan .env</strong> pada detail project. Setiap perubahan yang Anda simpan akan langsung disuntikkan ke dalam <i>runtime</i> aplikasi Anda secara <i>real-time</i>.
+                    </p>
+                </section>
+
+                <!-- Section 4: Settings -->
+                <section>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-6">4. Keamanan & Pengaturan</h2>
+                    <p class="mb-8 text-slate-600 text-lg font-light">
+                        Lindungi dan optimalkan kinerja proyek Anda hanya dengan mengaktifkan tuas konfigurasi di tab <strong>Settings</strong>.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center p-5 border border-slate-200 rounded-2xl">
+                            <div class="flex-shrink-0 mr-5 text-slate-400"><i class="fa-solid fa-tools text-xl"></i></div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900">Maintenance Mode</h4>
+                                <p class="text-sm text-slate-500 mt-1">Mengalihkan pengunjung ke halaman perbaikan statis saat Anda melakukan pembaruan krusial.</p>
                             </div>
                         </div>
-
-                        <div class="bg-amber-50/50 border-l-4 border-amber-400 p-4 rounded-r-xl">
-                            <div class="flex items-center gap-2 text-amber-800 font-bold mb-1 text-sm">
-                                <i class="fa-solid fa-shield-cat"></i> Keamanan Server
-                            </div>
-                            <p class="text-sm text-amber-700">Untuk mencegah injeksi malware, kami memblokir upload ekstensi executable tertentu (seperti .php, .sh) via File Manager. Gunakan push via <strong>Git</strong> untuk file tersebut.</p>
-                        </div>
-                    </section>
-
-                    <!-- Section 3 -->
-                    <section id="env" class="mb-14 scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-solid fa-sliders text-emerald-500"></i> Environment Variables (.env)
-                        </h2>
-                        <p class="text-slate-600 mb-3">Amankan rahasia aplikasi Anda seperti API Keys dan kredensial Database melalui antarmuka Environment Variable.</p>
-                        <ul class="list-disc list-inside text-sm text-slate-600 space-y-1.5 ml-2">
-                            <li>Variabel ini dienkripsi dengan aman di server kami.</li>
-                            <li>Buka tab <strong>Pengaturan .env</strong> pada dashboard project Anda.</li>
-                            <li>Perubahan akan langsung diterapkan ke aplikasi Anda setelah disimpan (beberapa framework Node.js/Python mungkin memerlukan restart server).</li>
-                        </ul>
-                    </section>
-
-                    <!-- Section 4 -->
-                    <section id="settings" class="mb-14 scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-solid fa-shield-halved text-rose-500"></i> Keamanan & Settings
-                        </h2>
-                        <p class="text-slate-600 mb-4">Tingkatkan keamanan dan kontrol akses website Anda dengan satu klik di tab <strong>Settings</strong>.</p>
-                        
-                        <div class="space-y-3">
-                            <div class="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm hover:border-indigo-300 transition-colors">
-                                <div class="bg-slate-100 p-2 rounded-lg text-slate-600"><i class="fa-solid fa-tools w-5 text-center"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-slate-700">Maintenance Mode</h4>
-                                    <p class="text-xs text-slate-500">Mengalihkan pengunjung ke halaman perbaikan yang elegan saat Anda mengupdate sistem.</p>
-                                </div>
-                            </div>
-                            <div class="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm hover:border-indigo-300 transition-colors">
-                                <div class="bg-slate-100 p-2 rounded-lg text-slate-600"><i class="fa-solid fa-lock w-5 text-center"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-slate-700">Force HTTPS</h4>
-                                    <p class="text-xs text-slate-500">Memaksa semua lalu lintas menggunakan enkripsi SSL tingkat tinggi (otomatis terpasang).</p>
-                                </div>
-                            </div>
-                            <div class="bg-white border border-slate-200 p-3 rounded-xl flex items-center gap-3 shadow-sm hover:border-indigo-300 transition-colors">
-                                <div class="bg-slate-100 p-2 rounded-lg text-slate-600"><i class="fa-solid fa-bolt w-5 text-center"></i></div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-slate-700">Under Attack Mode</h4>
-                                    <p class="text-xs text-slate-500">Rate-limiting agresif untuk menangkis serangan bot atau DDoS skala kecil.</p>
-                                </div>
+                        <div class="flex items-center p-5 border border-slate-200 rounded-2xl">
+                            <div class="flex-shrink-0 mr-5 text-slate-400"><i class="fa-solid fa-shield-halved text-xl"></i></div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900">Under Attack Mode</h4>
+                                <p class="text-sm text-slate-500 mt-1">Mengaktifkan pembatasan laju agresif (Rate-Limiting) untuk memitigasi serangan DDoS skala kecil dan lalu lintas bot yang berbahaya.</p>
                             </div>
                         </div>
-                    </section>
+                    </div>
+                </section>
 
-                    <!-- Section 5 -->
-                    <section id="terminal" class="mb-14 scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-solid fa-terminal text-slate-700"></i> Web Terminal
-                        </h2>
-                        <p class="text-slate-600 mb-4">Ryaze menyediakan Cloud Terminal bagi developer untuk mengeksekusi perintah langsung di root aplikasi.</p>
+                <!-- Section 5: Web Terminal -->
+                <section>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-6">5. Web Terminal</h2>
+                    <p class="mb-8 text-slate-600 text-lg font-light">
+                        Eksekusi perintah tingkat lanjut langsung dari peramban Anda. Terminal bawaan kami diisolasi dengan cermat untuk memastikan keamanan ekosistem.
+                    </p>
+
+                    <div class="bg-black text-slate-300 font-mono text-sm p-6 sm:p-8 rounded-3xl shadow-xl overflow-hidden relative">
+                        <!-- Terminal header -->
+                        <div class="flex gap-2 absolute top-5 left-5">
+                            <div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                            <div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                            <div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                        </div>
                         
-                        <div class="bg-slate-900 rounded-xl p-5 shadow-inner">
-                            <div class="flex items-center gap-2 mb-3 border-b border-slate-700 pb-2">
-                                <div class="w-3 h-3 rounded-full bg-rose-500"></div>
-                                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                <span class="text-slate-400 text-xs ml-2 font-mono">Allowed Commands</span>
-                            </div>
-                            <div class="font-mono text-sm text-emerald-400 leading-relaxed">
+                        <div class="mt-6">
+                            <div class="text-slate-500 mb-2"># Perintah yang didukung (Whitelist):</div>
+                            <div class="leading-loose text-slate-200">
                                 ls, cat, grep, mkdir, rm, cp, mv, touch <br>
                                 npm, node, npx, yarn <br>
-                                composer, php artisan ... <br>
+                                composer, php artisan <br>
                                 python, python3, pip, pip3 <br>
                                 git, curl
                             </div>
                         </div>
-                        
-                        <p class="text-sm text-slate-500 mt-3"><i class="fa-solid fa-circle-info text-sky-500 mr-1"></i> <strong>Sistem Keamanan:</strong> Perintah berbahaya, chain (&&), pipe (|), dan ekskalasi hak istimewa (sudo) akan diblokir otomatis oleh Firewall kami.</p>
-                    </section>
+                    </div>
+                </section>
 
-                    <!-- Section 6 -->
-                    <section id="storage" class="mb-14 scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-solid fa-hard-drive text-amber-500"></i> Manajemen Storage
-                        </h2>
-                        <p class="text-slate-600 mb-4">Kapasitas penyimpanan (Storage) dihitung secara <strong>Global per Akun</strong>. Anda dapat mendeploy berapapun project selama batas storage belum terpenuhi.</p>
-                        
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
-                            <h3 class="font-bold text-slate-700 mb-2 flex items-center gap-2 text-sm">
-                                <i class="fa-regular fa-lightbulb text-amber-500"></i> Praktik Terbaik Menghemat Storage
-                            </h3>
-                            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1.5 ml-2">
-                                <li><strong>Abaikan Vendor/Node Modules:</strong> Jangan *commit* folder <code class="font-mono text-xs bg-slate-200 px-1 rounded">node_modules</code> ke Git. Biarkan Ryaze menginstalnya secara optimal.</li>
-                                <li><strong>Hapus Log Berlebihan:</strong> Pantau dan hapus file log di direktori <code class="font-mono text-xs bg-slate-200 px-1 rounded">storage/logs</code> Anda.</li>
-                                <li><strong>Optimasi Aset:</strong> Kompres ukuran gambar dan video sebelum didorong ke server.</li>
-                            </ul>
+                <!-- Section 6: Storage -->
+                <section>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-6">6. Manajemen Penyimpanan</h2>
+                    <p class="mb-6 text-slate-600 text-lg font-light">
+                        Penyimpanan dihitung secara <strong>Global per Akun</strong>. Anda bebas meluncurkan proyek tanpa batas selama kuota penyimpanan akun Anda masih mencukupi.
+                    </p>
+                    
+                    <div class="bg-slate-50 p-6 sm:p-8 rounded-2xl border border-slate-200">
+                        <h4 class="font-semibold text-slate-900 mb-4">Praktik Terbaik Efisiensi</h4>
+                        <ul class="list-disc list-inside space-y-3 text-slate-600">
+                            <li>Jangan *commit* pustaka dependensi (seperti <code class="font-mono text-sm bg-white border border-slate-200 px-1.5 py-0.5 rounded">node_modules</code> atau <code class="font-mono text-sm bg-white border border-slate-200 px-1.5 py-0.5 rounded">vendor</code>). Ryaze akan merakitnya secara otomatis.</li>
+                            <li>Terapkan kebijakan rotasi atau penghapusan log berkala pada aplikasi Anda.</li>
+                            <li>Kompres aset media statis sebelum tahap *deployment*.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Section 7: Live Preview -->
+                <section>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-6">7. Development Server</h2>
+                    <p class="mb-6 text-slate-600 text-lg font-light">
+                        Jalankan *development server* spesifik kerangka kerja (Vite, Next.js, Artisan Serve) di komputasi awan dan dapatkan tautan pratinjau instan.
+                    </p>
+                    <p class="text-slate-600">
+                        Cukup klik tombol <strong>Dev Server (Play)</strong> pada dasbor proyek Anda. Server akan beroperasi di latar belakang, memberikan Anda URL iterasi instan (misal: <code class="font-mono text-sm text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded">devX.ryaze.my.id</code>) tanpa perlu repot membangun ulang (rebuild) secara manual di setiap perubahan kode.
+                    </p>
+                </section>
+
+                <!-- Section 8: Python -->
+                <section>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-6">8. Arsitektur Python</h2>
+                    <p class="mb-8 text-slate-600 text-lg font-light">
+                        Ryaze merancang lingkungan komputasi khusus untuk mengeksekusi aplikasi Python, Flask, Django, hingga model Machine Learning dengan latensi ultra-rendah dan isolasi *enterprise*.
+                    </p>
+
+                    <div class="space-y-12">
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-900 mb-2">Virtual Environment Otomatis</h4>
+                            <p class="text-slate-600">Selama siklus *deployment*, <i>Virtual Environment</i> (<code class="font-mono text-sm bg-slate-100 px-1 rounded">venv</code>) akan dibuat dan meresolusi <code class="font-mono text-sm bg-slate-100 px-1 rounded">requirements.txt</code> Anda sepenuhnya secara otonom.</p>
                         </div>
-                    </section>
-
-                    <!-- Section 7 -->
-                    <section id="redeploy" class="mb-14 scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-solid fa-rotate text-blue-500"></i> Redeploy Manual
-                        </h2>
-                        <p class="text-slate-600">Ketika Anda melakukan pembaruan <i>(push)</i> kode baru ke repositori GitHub/GitLab Anda, Anda cukup masuk ke detail project dan menekan tombol <strong>Redeploy</strong>. Ryaze akan secara cerdas menarik perubahan terbaru tanpa waktu henti (Zero Downtime).</p>
-                    </section>
-
-                    <!-- Section 8 -->
-                    <section id="devserver" class="mb-14 scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-solid fa-laptop-code text-teal-500"></i> Development Server (Live Preview)
-                        </h2>
-                        <p class="text-slate-600 mb-4">Ucapkan selamat tinggal pada localhost! Anda dapat menjalankan development server (seperti Vite, Next.js Dev, Artisan Serve) langsung di cloud.</p>
                         
-                        <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 flex items-start gap-4">
-                            <div class="bg-teal-100 text-teal-600 p-2.5 rounded-full"><i class="fa-solid fa-play"></i></div>
-                            <div>
-                                <h4 class="font-bold text-sm text-teal-800">Cara Menggunakan:</h4>
-                                <ol class="list-decimal list-inside text-sm text-teal-700 mt-2 space-y-1 ml-1">
-                                    <li>Klik tombol <strong>Dev Server</strong> (ikon Play) di atas dashboard.</li>
-                                    <li>Server pengembangan akan berjalan di background.</li>
-                                    <li>Akses link unik yang diberikan (misal: <code class="font-mono font-bold bg-teal-100 px-1 rounded">devX.ryaze.my.id</code>).</li>
-                                    <li>Lakukan perubahan file via File Manager/Terminal, web akan refresh seketika!</li>
-                                </ol>
-                            </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-900 mb-2">Inteligensi Terminal Auto-Alias</h4>
+                            <p class="text-slate-600">Mengeksekusi <code class="font-mono text-sm bg-slate-100 px-1 rounded">pip install X</code> di Web Terminal akan dicegat dengan aman dan diteruskan secara transparan ke dalam ruang lingkup <i>venv</i> proyek Anda.</p>
                         </div>
-                    </section>
 
-                    <!-- Section 9 -->
-                    <section id="python" class="scroll-mt-28">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                            <i class="fa-brands fa-python text-yellow-500"></i> Panduan & Aturan Khusus Python
-                        </h2>
-                        <p class="text-slate-600 mb-4">Ryaze mendukung deployment tingkat lanjut untuk ekosistem Python (Flask, Django, FastAPI, AI/ML) dengan arsitektur isolasi kelas enterprise.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div class="border border-slate-200 rounded-xl p-4">
-                                <h4 class="font-bold text-sm text-slate-700 flex items-center gap-2 mb-2">
-                                    <i class="fa-solid fa-box text-indigo-500"></i> Isolasi Virtual Env (Venv)
-                                </h4>
-                                <p class="text-xs text-slate-500">Saat deploy, sistem otomatis membuat <code class="font-mono bg-slate-100 px-1 rounded">venv</code> dan menginstal <code class="font-mono bg-slate-100 px-1 rounded">requirements.txt</code>. Anda tidak perlu setup manual.</p>
-                            </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-900 mb-2">Pre-compiled Data Science Engine</h4>
+                            <p class="text-slate-600">Kami menginjeksi <i>binaries</i> bawan untuk <strong>Numpy, Pandas, dan Scikit-Learn</strong> untuk menghindari *overhead* kompilasi CPU yang sangat mahal pada arsitektur Alpine.</p>
+                        </div>
+
+                        <div class="pt-6 border-t border-slate-200">
+                            <h4 class="text-lg font-semibold text-slate-900 mb-4">Port Binding Kontrak (Kritis)</h4>
+                            <p class="text-slate-600 mb-6">Layanan Python tidak diizinkan untuk mengikat port secara absolut. Proyek Anda <strong>harus</strong> mengekstrak nomor port melalui variabel lingkungan <code class="font-mono text-sm bg-slate-100 px-1 rounded">PORT</code> untuk mematuhi aturan <i>reverse proxy</i>.</p>
                             
-                            <div class="border border-slate-200 rounded-xl p-4">
-                                <h4 class="font-bold text-sm text-slate-700 flex items-center gap-2 mb-2">
-                                    <i class="fa-solid fa-magic text-fuchsia-500"></i> Terminal Auto-Alias
-                                </h4>
-                                <p class="text-xs text-slate-500">Jika Anda mengetik <code class="font-mono bg-slate-100 px-1 rounded text-indigo-600">pip install X</code> di Web Terminal, kami mengalihkannya diam-diam ke dalam <i>venv</i> Anda. 100% aman.</p>
+                            <div class="bg-black text-slate-300 font-mono text-sm p-6 sm:p-8 rounded-3xl shadow-lg">
+                                <div class="text-slate-500 mb-3"># app.py (Contoh Flask)</div>
+                                <div class="leading-loose">
+                                    <span class="text-fuchsia-400">import</span> os<br><br>
+                                    <span class="text-sky-400">port</span> = <span class="text-yellow-200">int</span>(os.environ.get(<span class="text-emerald-400">'PORT'</span>, <span class="text-orange-300">8080</span>))<br>
+                                    app.run(host=<span class="text-emerald-400">'0.0.0.0'</span>, port=port)
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </section>
 
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-5">
-                            <h4 class="font-bold text-sm text-slate-700 flex items-center gap-2 mb-2">
-                                <i class="fa-solid fa-rocket text-sky-500"></i> Pre-compiled Data Science Library
-                            </h4>
-                            <p class="text-sm text-slate-600">Untuk memastikan performa deployment yang optimal, kami telah menyediakan <i>pre-compiled binaries</i> (bawaan sistem) untuk library data science utama seperti <strong>Numpy, Pandas, dan Scikit-Learn</strong>. Proses instalasi environment Anda dijamin efisien tanpa membuat CPU bekerja keras.</p>
-                        </div>
-
-                        <div class="bg-rose-50/50 border-l-4 border-rose-500 p-5 rounded-r-xl">
-                            <div class="flex items-center gap-2 text-rose-800 font-bold mb-2 text-sm">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Aturan Binding PORT (Sangat Penting)
-                            </div>
-                            <p class="text-sm text-rose-700 mb-3">Aplikasi Python Anda <strong>TIDAK BOLEH</strong> mengikat (binding) ke port statis seperti 5000. Anda <strong>wajib</strong> mendengarkan port dinamis yang diberikan dari Environment Variable <code class="font-mono font-bold bg-rose-100 px-1 rounded">PORT</code>.</p>
-                            <div class="bg-rose-900 rounded-lg p-3 text-rose-200 font-mono text-xs overflow-x-auto">
-                                # Contoh implementasi pada framework Flask:<br>
-                                import os<br>
-                                port = int(os.environ.get('PORT', 8080))<br>
-                                app.run(host='0.0.0.0', port=port)
-                            </div>
-                        </div>
-                    </section>
-
-                </div>
             </div>
+
+            <!-- Footer -->
+            <div class="mt-24 pt-8 border-t border-slate-200 text-center">
+                <p class="text-slate-500 text-sm">Masih mengalami kendala? Silakan hubungi tim dukungan teknis kami.</p>
+            </div>
+
         </div>
-        
-        <script nonce="{{ csp_nonce() }}">
-            // Script untuk highlight TOC otomatis saat scrolling (Mendukung PJAX)
-            (function() {
-                const initDocsScroll = function() {
-                    const sections = document.querySelectorAll('section[id]');
-                    const navLinks = document.querySelectorAll('aside nav a');
-                    if (sections.length === 0) return;
-                    
-                    function highlightNav() {
-                        let scrollY = window.scrollY;
-                        
-                        sections.forEach(current => {
-                            const sectionHeight = current.offsetHeight;
-                            const sectionTop = current.offsetTop - 150;
-                            const sectionId = current.getAttribute('id');
-                            
-                            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-                                navLinks.forEach(link => {
-                                    link.classList.remove('text-indigo-600', 'bg-indigo-50');
-                                    link.classList.add('text-slate-600');
-                                });
-                                const activeLink = document.querySelector('aside nav a[href*=' + sectionId + ']');
-                                if(activeLink) {
-                                    activeLink.classList.remove('text-slate-600');
-                                    activeLink.classList.add('text-indigo-600', 'bg-indigo-50');
-                                }
-                            }
-                        });
-                    }
-                    
-                    // Hapus event listener lama agar tidak menumpuk saat navigasi PJAX
-                    if (window._docsScrollHandler) {
-                        window.removeEventListener('scroll', window._docsScrollHandler);
-                    }
-                    window._docsScrollHandler = highlightNav;
-                    window.addEventListener('scroll', window._docsScrollHandler);
-                    highlightNav(); // Trigger pertama kali
-                };
-                
-                // Eksekusi langsung (untuk PJAX)
-                initDocsScroll();
-            })();
-        </script>
     </x-ui.page-layout>
 @endsection
