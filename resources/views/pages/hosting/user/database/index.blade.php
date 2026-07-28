@@ -30,6 +30,9 @@
                 <button id="btn-open-create-nosql-modal" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     + Buat Database Redis
                 </button>
+                <button id="btn-open-create-pgsql-modal" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    + Buat Database PostgreSQL
+                </button>
             </x-slot:actions>
         </x-ui.page-header>
 
@@ -40,6 +43,9 @@
         </button>
         <button id="btn-tab-nosql" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition" onclick="showTab('nosql')">
             <i class="fa-solid fa-server mr-1.5 text-rose-500"></i> Redis (NoSQL)
+        </button>
+        <button id="btn-tab-pgsql" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition" onclick="showTab('pgsql')">
+            <i class="fa-solid fa-database mr-1.5 text-blue-500"></i> PostgreSQL
         </button>
     </div>
 
@@ -282,6 +288,78 @@
         @endforelse
     </div>
 
+    {{-- Database Cards (PostgreSQL) --}}
+    <div id="tab-pgsql" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
+        @forelse ($pgsqlDatabases ?? [] as $db)
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+            <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center">
+                        <i class="fa-solid fa-database text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base">{{ $db->db_name }}</h3>
+                        <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Active</span>
+                    </div>
+                </div>
+                <form action="{{ route('user_hosting.databases.pgsql.destroy', $db->hashid) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus database PostgreSQL ini?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="text-slate-400 hover:text-blue-500 p-2 hover:bg-blue-50 rounded-lg transition-colors" title="Hapus Database">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="p-5 space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Host</span>
+                        <code class="text-sm font-mono text-slate-800 break-all">{{ $db->host }}</code>
+                    </div>
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Port</span>
+                        <code class="text-sm font-mono text-slate-800 break-all">{{ $db->port }}</code>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Username/DB</span>
+                        <code class="text-sm font-mono text-slate-800 break-all" id="user-pgsql-{{ $db->hashid }}">{{ $db->db_username }}</code>
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
+                        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Password</span>
+                        <input type="password" readonly value="{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}"
+                            id="pass-pgsql-{{ $db->hashid }}"
+                            class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white">
+                            <button class="text-slate-300 hover:text-slate-600 p-1 rounded btn-toggle-pass" data-target="pass-pgsql-{{ $db->hashid }}">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button class="text-slate-300 hover:text-blue-600 p-1 rounded btn-copy" data-copy="{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-16 text-center flex flex-col items-center">
+            <div class="w-16 h-16 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mb-4">
+                <i class="fa-solid fa-database text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-700 mb-1">Belum ada Database PostgreSQL</h3>
+            <p class="text-slate-500 text-sm mb-4">Klik tombol di atas untuk membuat database PostgreSQL.</p>
+        </div>
+        @endforelse
+    </div>
+
 
 <div id="createDbModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -442,6 +520,44 @@
                 <button type="submit" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-medium py-2.5 rounded-xl transition shadow-sm shadow-rose-200 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-server"></i> Buat Database Redis
                 </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Modal Create PostgreSQL --}}
+<div id="createPgsqlDbModal" class="hidden fixed inset-0 z-[55] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-blue-50/50">
+            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-database text-blue-500"></i> Buat Database PostgreSQL
+            </h3>
+            <button class="btn-close-pgsql-modal text-slate-400 hover:text-blue-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-blue-50">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form action="{{ route('user_hosting.databases.pgsql.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Database & Username <span class="text-blue-500">*</span></label>
+                <div class="flex rounded-xl overflow-hidden border border-slate-300 focus-within:border-blue-500 focus-within:ring-2 transition-all">
+                    <input type="text" name="db_username" required pattern="[A-Za-z0-9_]+" placeholder="myapp" maxlength="15"
+                        class="flex-1 font-mono w-full bg-slate-50 border-none px-4 py-2.5 text-sm focus:ring-0 outline-none">
+                </div>
+            </div>
+
+            @if (!isset($pgsqlDatabases) || $pgsqlDatabases->count() === 0)
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Password <span class="text-blue-500">*</span></label>
+                <input type="text" name="db_password" required minlength="8" maxlength="32" placeholder="Password aman"
+                    class="w-full font-mono bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 outline-none">
+            </div>
+            @endif
+
+            <div class="pt-4 flex gap-3">
+                <button type="button" class="btn-close-pgsql-modal flex-1 bg-white border border-slate-300 py-2.5 rounded-xl hover:bg-slate-50">Batal</button>
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2.5 rounded-xl hover:bg-blue-700">Buat Database</button>
             </div>
         </form>
     </div>
@@ -663,6 +779,7 @@
     (function() {
         const createDbModal = document.getElementById('createDbModal');
         const createNosqlDbModal = document.getElementById('createNosqlDbModal');
+        const createPgsqlDbModal = document.getElementById('createPgsqlDbModal');
         
         document.getElementById('btn-open-create-modal')?.addEventListener('click', () => {
             createDbModal?.classList.remove('hidden');
@@ -678,6 +795,13 @@
             createNosqlDbModal?.classList.remove('hidden');
         });
 
+        document.getElementById('btn-open-create-pgsql-modal')?.addEventListener('click', () => {
+            createPgsqlDbModal?.classList.remove('hidden');
+        });
+        document.getElementById('btn-open-create-pgsql-modal-empty')?.addEventListener('click', () => {
+            createPgsqlDbModal?.classList.remove('hidden');
+        });
+
         document.querySelectorAll('.btn-close-modal').forEach(btn => {
             btn.addEventListener('click', () => {
                 createDbModal?.classList.add('hidden');
@@ -687,6 +811,12 @@
         document.querySelectorAll('.btn-close-nosql-modal').forEach(btn => {
             btn.addEventListener('click', () => {
                 createNosqlDbModal?.classList.add('hidden');
+            });
+        });
+
+        document.querySelectorAll('.btn-close-pgsql-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                createPgsqlDbModal?.classList.add('hidden');
             });
         });
 
@@ -731,6 +861,23 @@
         if (btnCopyNosqlPass && inputNosqlPass) {
             btnCopyNosqlPass.addEventListener('click', function() {
                 copyToClipboard(inputNosqlPass.value);
+            });
+        }
+
+        var btnGenPgsqlPass = document.getElementById('btn-generate-pgsql-password');
+        var inputPgsqlPass = document.getElementById('modalPgsqlPassword');
+        var btnCopyPgsqlPass = document.getElementById('btn-copy-modal-pgsql-password');
+
+        if (btnGenPgsqlPass && inputPgsqlPass) {
+            btnGenPgsqlPass.addEventListener('click', function() {
+                var newPass = generateRandomPassword(16);
+                inputPgsqlPass.value = newPass;
+                inputPgsqlPass.type = 'text';
+            });
+        }
+        if (btnCopyPgsqlPass && inputPgsqlPass) {
+            btnCopyPgsqlPass.addEventListener('click', function() {
+                copyToClipboard(inputPgsqlPass.value);
             });
         }
 
@@ -918,25 +1065,33 @@
     window.showTab = function(tab) {
         const btnMysql = document.getElementById('btn-tab-mysql');
         const btnNosql = document.getElementById('btn-tab-nosql');
+        const btnPgsql = document.getElementById('btn-tab-pgsql');
         const tabMysql = document.getElementById('tab-mysql');
         const tabNosql = document.getElementById('tab-nosql');
+        const tabPgsql = document.getElementById('tab-pgsql');
         const headerBtnMysql = document.getElementById('btn-open-create-modal');
         const headerBtnNosql = document.getElementById('btn-open-create-nosql-modal');
+        const headerBtnPgsql = document.getElementById('btn-open-create-pgsql-modal');
+
+        // Reset all tabs
+        [tabMysql, tabNosql, tabPgsql].forEach(el => el?.classList.add('hidden'));
+        [headerBtnMysql, headerBtnNosql, headerBtnPgsql].forEach(el => el?.classList.add('hidden'));
+        [btnMysql, btnNosql, btnPgsql].forEach(el => {
+            if(el) el.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
+        });
 
         if (tab === 'mysql') {
             tabMysql?.classList.remove('hidden');
-            tabNosql?.classList.add('hidden');
             headerBtnMysql?.classList.remove('hidden');
-            headerBtnNosql?.classList.add('hidden');
             if(btnMysql) btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
-            if(btnNosql) btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
-        } else {
-            tabMysql?.classList.add('hidden');
+        } else if (tab === 'nosql') {
             tabNosql?.classList.remove('hidden');
-            headerBtnMysql?.classList.add('hidden');
             headerBtnNosql?.classList.remove('hidden');
             if(btnNosql) btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
-            if(btnMysql) btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-700 transition";
+        } else if (tab === 'pgsql') {
+            tabPgsql?.classList.remove('hidden');
+            headerBtnPgsql?.classList.remove('hidden');
+            if(btnPgsql) btnPgsql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white shadow-sm text-slate-800";
         }
     };
 

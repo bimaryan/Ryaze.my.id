@@ -195,6 +195,8 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/databases', [DatabaseController::class, 'store'])->name('user_hosting.databases.store');
         Route::post('user/hosting/databases/nosql', [DatabaseController::class, 'storeNosql'])->name('user_hosting.databases.nosql.store');
         Route::delete('user/hosting/databases/nosql/{hashid}', [DatabaseController::class, 'destroyNosql'])->name('user_hosting.databases.nosql.destroy');
+        Route::post('user/hosting/databases/pgsql', [DatabaseController::class, 'storePgsql'])->name('user_hosting.databases.pgsql.store');
+        Route::delete('user/hosting/databases/pgsql/{hashid}', [DatabaseController::class, 'destroyPgsql'])->name('user_hosting.databases.pgsql.destroy');
         Route::post('user/hosting/databases/{hashid}/api-key', [DatabaseController::class, 'generateApiKey'])->name('user_hosting.databases.apikey');
         Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
 

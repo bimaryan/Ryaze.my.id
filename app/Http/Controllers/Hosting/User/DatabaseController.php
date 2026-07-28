@@ -15,8 +15,9 @@ class DatabaseController extends Controller
     {
         $databases = HostingDatabase::where('user_id', Auth::id())->latest()->get();
         $nosqlDatabases = \App\Models\HostingNosqlDatabase::where('user_id', Auth::id())->latest()->get();
+        $pgsqlDatabases = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->latest()->get();
         
-        return view('pages.hosting.user.database.index', compact('databases', 'nosqlDatabases'));
+        return view('pages.hosting.user.database.index', compact('databases', 'nosqlDatabases', 'pgsqlDatabases'));
     }
 
     public function storeNosql(Request $request)
@@ -447,5 +448,132 @@ class DatabaseController extends Controller
         }
 
         return back()->with('success', 'Database berhasil diimpor!');
+    }
+
+    public function storePgsql(Request $request)
+    {
+        $existingDb = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->first();
+        $prefix = 'ryz_' . Auth::id() . '_';
+
+        if ($existingDb) {
+            $request->validate([
+                'db_username' => 'required|string|alpha_dash|max:15',
+            ]);
+            $cleanDbName = $prefix . strtolower(trim($request->db_username)); // For simplicity, in PG we'll make DB name same as username if they just want 1 DB per user, or allow multiple. Let's allow multiple by accepting db_name.
+            // Wait, looking at NoSQL it used db_username. For PGSQL it's like MySQL.
+        }
+
+        // Let's implement full like MySQL
+        if ($existingDb) {
+            $request->validate([
+                'db_name' => 'required|string|alpha_dash|max:15',
+            ], [
+                'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
+            ]);
+
+            $cleanDbName = $prefix.strtolower(trim($request->db_name));
+            $cleanUsername = $existingDb->db_username;
+            $dbPassword = \Illuminate\Support\Facades\Crypt::decryptString($existingDb->db_password);
+        } else {
+            $request->validate([
+                'db_name' => 'required|string|alpha_dash|max:15',
+                'db_username' => 'required|string|alpha_dash|max:15',
+                'db_password' => 'required|string|max:32',
+            ], [
+                'db_name.alpha_dash' => 'Nama database hanya boleh berisi huruf, angka, strip, dan underscore.',
+                'db_username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, strip, dan underscore.',
+            ]);
+
+            $cleanDbName = $prefix.strtolower(trim($request->db_name));
+            $cleanUsername = $prefix.strtolower(trim($request->db_username));
+            $dbPassword = trim($request->db_password);
+        }
+
+        if (\App\Models\HostingPgsqlDatabase::where('db_name', $cleanDbName)->exists()) {
+            return back()->with('error', 'Nama database "'.$cleanDbName.'" sudah digunakan.');
+        }
+
+        $pgHost = env('PANEL_PGSQL_HOST', '172.18.0.12');
+        $pgPort = env('PANEL_PGSQL_PORT', '5432');
+        $pgUser = env('PANEL_PGSQL_USER', 'Bimaryan');
+        $pgPass = env('PANEL_PGSQL_PASSWORD', '@Bimaryan2329');
+
+        try {
+            $pdo = new \PDO("pgsql:host={$pgHost};port={$pgPort};dbname=postgres", $pgUser, $pgPass);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+            // 1. Create Role (User) if not exists
+            $stmt = $pdo->prepare("SELECT 1 FROM pg_roles WHERE rolname = ?");
+            $stmt->execute([$cleanUsername]);
+            if (!$stmt->fetchColumn()) {
+                // PDO prepare doesn't work for CREATE ROLE names
+                $pdo->exec("CREATE ROLE \"{$cleanUsername}\" WITH LOGIN PASSWORD '{$dbPassword}'");
+            } else {
+                $pdo->exec("ALTER ROLE \"{$cleanUsername}\" WITH PASSWORD '{$dbPassword}'");
+            }
+
+            // 2. Create Database
+            $stmt = $pdo->prepare("SELECT 1 FROM pg_database WHERE datname = ?");
+            $stmt->execute([$cleanDbName]);
+            if (!$stmt->fetchColumn()) {
+                $pdo->exec("CREATE DATABASE \"{$cleanDbName}\" OWNER \"{$cleanUsername}\"");
+            }
+
+            // 3. Grant Privileges
+            $pdo->exec("GRANT ALL PRIVILEGES ON DATABASE \"{$cleanDbName}\" TO \"{$cleanUsername}\"");
+
+        } catch (\PDOException $e) {
+            return back()->with('error', 'Gagal membuat database PostgreSQL: '.$e->getMessage());
+        }
+
+        // Simpan ke portal
+        \App\Models\HostingPgsqlDatabase::create([
+            'user_id' => Auth::id(),
+            'db_name' => $cleanDbName,
+            'db_username' => $cleanUsername,
+            'db_password' => \Illuminate\Support\Facades\Crypt::encryptString($dbPassword),
+            'host' => $pgHost,
+            'port' => $pgPort,
+        ]);
+
+        return back()->with('success', 'Database PostgreSQL '.$cleanDbName.' berhasil dibuat!');
+    }
+
+    public function destroyPgsql($hashid)
+    {
+        $decoded = Hashids::decode($hashid);
+        if (empty($decoded)) abort(404);
+
+        $database = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
+
+        $pgHost = env('PANEL_PGSQL_HOST', '172.18.0.12');
+        $pgPort = env('PANEL_PGSQL_PORT', '5432');
+        $pgUser = env('PANEL_PGSQL_USER', 'Bimaryan');
+        $pgPass = env('PANEL_PGSQL_PASSWORD', '@Bimaryan2329');
+
+        try {
+            $pdo = new \PDO("pgsql:host={$pgHost};port={$pgPort};dbname=postgres", $pgUser, $pgPass);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+            // Cannot drop db if there are active connections. We can try to terminate them first.
+            $pdo->exec("SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '{$database->db_name}' AND pid <> pg_backend_pid()");
+            
+            $pdo->exec("DROP DATABASE IF EXISTS \"{$database->db_name}\"");
+
+            // Check if user has other databases
+            $otherDb = \App\Models\HostingPgsqlDatabase::where('db_username', $database->db_username)
+                ->where('id', '!=', $database->id)
+                ->exists();
+                
+            if (!$otherDb) {
+                $pdo->exec("DROP ROLE IF EXISTS \"{$database->db_username}\"");
+            }
+
+        } catch (\PDOException $e) {
+            \Log::error('Gagal hapus DB di server PostgreSQL: '.$e->getMessage());
+        }
+
+        $database->delete();
+        return back()->with('success', 'Database PostgreSQL berhasil dihapus!');
     }
 }
