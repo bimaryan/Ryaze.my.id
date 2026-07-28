@@ -477,7 +477,7 @@ class DatabaseController extends Controller
 
             $cleanDbName = $prefix.strtolower(trim($request->db_username));
             $cleanUsername = $prefix.strtolower(trim($request->db_username));
-            $dbPassword = trim($request->db_password);
+            $dbPassword = $prefix.trim($request->db_password);
         }
 
         if (\App\Models\HostingPgsqlDatabase::where('db_name', $cleanDbName)->exists()) {
@@ -509,6 +509,9 @@ class DatabaseController extends Controller
             if (!$stmt->fetchColumn()) {
                 $pdo->exec("CREATE DATABASE \"{$cleanDbName}\" OWNER \"{$cleanUsername}\"");
             }
+            
+            // Revoke connect from PUBLIC to hide it from others
+            $pdo->exec("REVOKE ALL ON DATABASE \"{$cleanDbName}\" FROM PUBLIC");
 
             // 3. Grant Privileges
             $pdo->exec("GRANT ALL PRIVILEGES ON DATABASE \"{$cleanDbName}\" TO \"{$cleanUsername}\"");

@@ -20,6 +20,26 @@ use App\Http\Controllers\Joki\User\RiwayatController;
 use App\Http\Controllers\Blog\BlogController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/fix-pg', function () {
+    $pgHost = env('PANEL_PGSQL_HOST', '172.18.0.12');
+    $pgPort = env('PANEL_PGSQL_PORT', '5432');
+    $pgUser = env('PANEL_PGSQL_USER', 'Bimaryan');
+    $pgPass = env('PANEL_PGSQL_PASSWORD', '@Bimaryan2329');
+    
+    try {
+        $pdo = new PDO("pgsql:host={$pgHost};port={$pgPort};dbname=postgres", $pgUser, $pgPass);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        $dbs = $pdo->query("SELECT datname FROM pg_database")->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($dbs as $db) {
+            $pdo->exec("REVOKE ALL ON DATABASE \"$db\" FROM PUBLIC");
+        }
+        return "Fix PG Success!";
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // ── BLOG PUBLIK ─────────────────────────────────────────────

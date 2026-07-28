@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use PDO;
+
+class FixPgsql extends Command
+{
+    protected $signature = 'app:fix-pgsql';
+    protected $description = 'Fix PostgreSQL database permissions to hide from other users';
+
+    public function handle()
+    {
+        $pgHost = env('PANEL_PGSQL_HOST', '172.18.0.12');
+        $pgPort = env('PANEL_PGSQL_PORT', '5432');
+        $pgUser = env('PANEL_PGSQL_USER', 'Bimaryan');
+        $pgPass = env('PANEL_PGSQL_PASSWORD', '@Bimaryan2329');
+
+        try {
+            $pdo = new PDO("pgsql:host={$pgHost};port={$pgPort};dbname=postgres", $pgUser, $pgPass);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $dbs = $pdo->query("SELECT datname FROM pg_database")->fetchAll(PDO::FETCH_COLUMN);
+            foreach ($dbs as $db) {
+                $this->info("Revoking PUBLIC access from $db...");
+                $pdo->exec("REVOKE ALL ON DATABASE \"$db\" FROM PUBLIC");
+            }
+            $this->info("All databases hidden from PUBLIC successfully.");
+        } catch (\Exception $e) {
+            $this->error("Error: " . $e->getMessage());
+        }
+    }
+}

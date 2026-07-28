@@ -212,11 +212,17 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Host</span>
-                        <code class="text-sm font-mono text-slate-800 break-all">{{ $db->host }}</code>
+                        <code class="text-sm font-mono text-slate-800 break-all" id="host-nosql-{{ $db->hashid }}">{{ $db->host }}</code>
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
                     </div>
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Port</span>
-                        <code class="text-sm font-mono text-slate-800 break-all">{{ $db->port }}</code>
+                        <code class="text-sm font-mono text-slate-800 break-all" id="port-nosql-{{ $db->hashid }}">{{ $db->port }}</code>
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->port }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -300,11 +306,17 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Host</span>
-                        <code class="text-sm font-mono text-slate-800 break-all">{{ $db->host }}</code>
+                        <code class="text-sm font-mono text-slate-800 break-all" id="host-pgsql-{{ $db->hashid }}">{{ $db->host }}</code>
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
                     </div>
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Port</span>
-                        <code class="text-sm font-mono text-slate-800 break-all">{{ $db->port }}</code>
+                        <code class="text-sm font-mono text-slate-800 break-all" id="port-pgsql-{{ $db->hashid }}">{{ $db->port }}</code>
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->port }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
                     </div>
                 </div>
 

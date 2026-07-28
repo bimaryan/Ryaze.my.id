@@ -104,7 +104,7 @@
                             <span class="opacity-80 text-xs">Gunakan kredensial database Anda untuk login ke antarmuka pgAdmin.</span>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
-                            <a href="{{ env('PGA_URL', 'https://postgres.ryaze.my.id') }}" target="_blank"
+                            <a href="{{ env('PGA_URL', 'https://pgadmin.ryaze.my.id') }}" target="_blank"
                                 class="bg-blue-600 border border-blue-600 text-white hover:bg-blue-700 hover:border-blue-700 transition-all text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm flex items-center gap-2 whitespace-nowrap">
                                 <i class="fa-solid fa-server"></i>
                                 Buka pgAdmin
