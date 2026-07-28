@@ -16,7 +16,12 @@ class DomainController extends Controller
         $decoded = Hashids::decode($projectHashid);
         if (empty($decoded)) abort(404);
 
-        $project = HostingProject::where('user_id', Auth::id())->findOrFail($decoded[0]);
+        $project = HostingProject::where(function($q) {
+            $q->where('user_id', Auth::id())
+              ->orWhereHas('teamMembers', function($sq) {
+                  $sq->where('user_id', Auth::id());
+              });
+        })->findOrFail($decoded[0]);
 
         $request->validate([
             'domain_name' => 'required|string|max:255|unique:hosting_domains,domain_name',
@@ -66,7 +71,10 @@ class DomainController extends Controller
         if (empty($decoded)) abort(404);
 
         $domain = HostingDomain::whereHas('project', function($q) {
-            $q->where('user_id', Auth::id());
+            $q->where('user_id', Auth::id())
+              ->orWhereHas('teamMembers', function($sq) {
+                  $sq->where('user_id', Auth::id());
+              });
         })->findOrFail($decoded[0]);
 
         $projectHashid = $domain->project->hashid;
@@ -80,7 +88,7 @@ class DomainController extends Controller
 
         $domain->delete();
 
-        return redirect()->route('user_hosting.storage.show', $projectHashid)->with('success', 'Custom Domain berhasil dihapus.');
+        return redirect()->route('user_hosting.show', $projectHashid)->with('success', 'Custom Domain berhasil dihapus.');
     }
 
     public function requestSsl($hashid)
@@ -89,7 +97,10 @@ class DomainController extends Controller
         if (empty($decoded)) abort(404);
 
         $domain = HostingDomain::whereHas('project', function($q) {
-            $q->where('user_id', Auth::id());
+            $q->where('user_id', Auth::id())
+              ->orWhereHas('teamMembers', function($sq) {
+                  $sq->where('user_id', Auth::id());
+              });
         })->findOrFail($decoded[0]);
 
         $domainName = $domain->domain_name;
