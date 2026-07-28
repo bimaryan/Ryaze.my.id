@@ -854,6 +854,10 @@
                         <h3 class="font-bold text-slate-800">Custom Domains</h3>
                         <p class="text-xs text-slate-500">Tambahkan domain kustom untuk project Anda.</p>
                     </div>
+                    <button type="button" onclick="document.getElementById('docsModal').showModal()"
+                        class="bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-book"></i> Panduan Setup
+                    </button>
                 </div>
                 <div class="p-6">
                     <form action="{{ route('user_hosting.domains.store', $project->hashid) }}" method="POST" class="flex gap-4">
@@ -918,6 +922,81 @@
                     </div>
                 </div>
             </div>
+            </div>
+
+            {{-- MODAL PANDUAN DOMAIN --}}
+            <dialog id="docsModal" class="backdrop:bg-slate-900/60 p-0 rounded-2xl shadow-2xl border-0 w-full max-w-2xl bg-white m-auto">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-book text-indigo-500"></i> Panduan Setup Custom Domain
+                    </h3>
+                    <button onclick="document.getElementById('docsModal').close()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6 max-h-[70vh] overflow-y-auto">
+                    <div class="space-y-6 text-sm text-slate-600">
+                        <!-- Skenario 1 -->
+                        <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-5">
+                            <h4 class="font-bold text-indigo-800 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-1"></i> Menggunakan Subdomain (Disarankan)
+                            </h4>
+                            <p class="mb-3">Gunakan opsi ini jika Anda ingin menggunakan subdomain seperti <strong>www.domainAnda.com</strong> atau <strong>app.domainAnda.com</strong>.</p>
+                            <p class="mb-2">Di panel DNS provider Anda (Rumahweb, Niagahoster, dll), buat record berikut:</p>
+                            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
+                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">Target / Value</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="py-2 px-3 font-mono font-bold text-indigo-600">CNAME</td><td class="py-2 px-3 font-mono">www</td><td class="py-2 px-3 font-mono">{{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Skenario 2 -->
+                        <div class="bg-emerald-50/50 border border-emerald-100 rounded-xl p-5">
+                            <h4 class="font-bold text-emerald-800 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-2"></i> Menggunakan Domain Utama (Tanpa WWW)
+                            </h4>
+                            <p class="mb-3">Gunakan opsi ini jika Anda ingin menggunakan domain root seperti <strong>domainAnda.com</strong>.</p>
+                            <p class="mb-2">Buat sebuah <strong>A Record</strong> yang mengarah ke IP Server Ryaze:</p>
+                            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden mb-3">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
+                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">IPv4 Address</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="py-2 px-3 font-mono font-bold text-emerald-600">A</td><td class="py-2 px-3 font-mono">@ <em>(atau kosongkan)</em></td><td class="py-2 px-3 font-mono">103.x.x.x <em>(Ubah jadi IP Anda)</em></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="bg-amber-50 text-amber-800 p-3 rounded-lg text-xs flex gap-2">
+                                <i class="fa-solid fa-lightbulb mt-0.5"></i>
+                                <p><strong>Alternatif Terbaik:</strong> Hubungkan domain Anda ke <strong>Cloudflare</strong>, lalu buat CNAME record dari <code>@</code> menuju <code>{{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}</code>.</p>
+                            </div>
+                        </div>
+
+                        <!-- Langkah Selanjutnya -->
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Langkah Selanjutnya</h4>
+                            <ul class="list-decimal list-inside space-y-1.5 text-slate-600">
+                                <li>Pastikan Anda sudah menyimpan pengaturan DNS di provider Anda.</li>
+                                <li>Masukkan nama domain Anda ke form di halaman ini, lalu klik <strong>Tambah Domain</strong>.</li>
+                                <li>Klik tombol <span class="text-emerald-600 font-bold"><i class="fa-solid fa-lock"></i> Aktifkan SSL</span>.</li>
+                                <li>Tunggu sekitar 1-2 menit hingga sistem memverifikasi dan mengaktifkan sertifikat otomatis.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 text-right rounded-b-2xl">
+                    <button onclick="document.getElementById('docsModal').close()" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors shadow-sm">
+                        Mengerti
+                    </button>
+                </div>
+            </dialog>
+
         </div>
 
         {{-- TAB: CRON JOBS --}}
