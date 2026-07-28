@@ -174,20 +174,49 @@
                 <div>
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-tags text-indigo-500 mr-2"></i> Harga Langganan Hosting (Paket)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Paket Starter (Rp/Bulan)</label>
-                            <input type="number" name="plan_starter_price" value="{{ $settings['plan_starter_price'] ?? '15000' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
-                            <p class="text-xs text-slate-500 mt-1">Harga paket Starter.</p>
+                        <!-- Starter -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                            <h4 class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Paket Starter</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_starter_price" value="{{ $settings['plan_starter_price'] ?? '15000' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_starter_promo" value="{{ $settings['plan_starter_promo'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Paket Pro (Rp/Bulan)</label>
-                            <input type="number" name="plan_pro_price" value="{{ $settings['plan_pro_price'] ?? '30000' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
-                            <p class="text-xs text-slate-500 mt-1">Harga paket Pro.</p>
+
+                        <!-- Pro -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                            <h4 class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Paket Pro</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_pro_price" value="{{ $settings['plan_pro_price'] ?? '30000' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_pro_promo" value="{{ $settings['plan_pro_promo'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Paket Business (Rp/Bulan)</label>
-                            <input type="number" name="plan_business_price" value="{{ $settings['plan_business_price'] ?? '75000' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
-                            <p class="text-xs text-slate-500 mt-1">Harga paket Business.</p>
+
+                        <!-- Business -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                            <h4 class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Paket Business</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_business_price" value="{{ $settings['plan_business_price'] ?? '75000' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_business_promo" value="{{ $settings['plan_business_promo'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
