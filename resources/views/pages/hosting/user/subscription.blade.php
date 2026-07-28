@@ -58,7 +58,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 @foreach ($plans as $slug => $plan)
                     @php 
-                        $price = \App\Models\User::getPlanPrice($slug); 
+                        $pricing = \App\Models\User::getPlanPricing($slug); 
                         $c = $colorMap[$plan['color']]; 
                         $isPopular = $slug === 'pro';
                         $isCurrent = $slug === $currentPlan;
@@ -79,9 +79,14 @@
                                 <i class="fa-solid fa-server text-white text-base"></i>
                             </div>
                             <h4 class="font-bold text-slate-800 text-lg mb-1">{{ $plan['label'] }}</h4>
-                            <div class="flex items-baseline gap-1 mb-4">
-                                <span class="text-2xl font-bold {{ $c['text'] }}">Rp {{ number_format($price, 0, ',', '.') }}</span>
-                                <span class="text-xs text-slate-400 font-normal">/bulan</span>
+                            <div class="flex flex-col mb-4">
+                                @if($pricing['promo'] !== null)
+                                    <span class="text-xs font-semibold text-slate-400 line-through decoration-rose-500 decoration-2">Rp {{ number_format($pricing['normal'], 0, ',', '.') }}</span>
+                                @endif
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-2xl font-bold {{ $c['text'] }}">Rp {{ number_format($pricing['active'], 0, ',', '.') }}</span>
+                                    <span class="text-xs text-slate-400 font-normal">/bulan</span>
+                                </div>
                             </div>
                             <ul class="space-y-2 mb-6">
                                 @foreach ($plan['features'] as $feat)

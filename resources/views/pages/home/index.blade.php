@@ -394,7 +394,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach ($homePlans as $slug => $plan)
                     @php
-                        $price = \App\Models\User::getPlanPrice($slug);
+                        $pricing = \App\Models\User::getPlanPricing($slug);
                         $hc = $homeColorMap[$plan['color']];
                         $isPopular = $slug === 'pro';
                     @endphp
@@ -410,9 +410,14 @@
                                 <i class="fa-solid fa-server text-white"></i>
                             </div>
                             <h3 class="text-xl font-bold text-slate-900 mb-1">{{ $plan['label'] }}</h3>
-                            <div class="flex items-baseline gap-1 mb-6">
-                                <span class="text-4xl font-extrabold {{ $hc['price'] }}">Rp {{ number_format($price, 0, ',', '.') }}</span>
-                                <span class="text-slate-400 text-sm">/bulan</span>
+                            <div class="flex flex-col mb-6">
+                                @if($pricing['promo'] !== null)
+                                    <span class="text-sm font-semibold text-slate-400 line-through decoration-rose-500 decoration-2">Rp {{ number_format($pricing['normal'], 0, ',', '.') }}</span>
+                                @endif
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-4xl font-extrabold {{ $hc['price'] }}">Rp {{ number_format($pricing['active'], 0, ',', '.') }}</span>
+                                    <span class="text-slate-400 text-sm">/bulan</span>
+                                </div>
                             </div>
                             <ul class="space-y-3">
                                 @foreach ($plan['features'] as $feat)
