@@ -2438,11 +2438,11 @@
             document.getElementById('modalPaymentAmount').innerText = formattedAmount;
             document.getElementById('modalPaymentInvoice').innerText = invoice;
             
-            let pakasirSlug = "{{ config('services.pakasir.slug', 'ryaze') }}";
+            let pakasirSlug = @json(config('services.pakasir.slug', 'ryaze'));
             let pakasirUrl = `https://app.pakasir.com/pay/${pakasirSlug}/${amount}?order_id=${invoice}`;
             document.getElementById('btnPakasir').href = pakasirUrl;
 
-            let adminWa = "{{ \App\Models\Setting::val('contact_whatsapp', '') }}";
+            let adminWa = @json(\App\Models\Setting::val('contact_whatsapp', ''));
             let waMessage = `Halo Admin, saya ingin konfirmasi pembayaran untuk Invoice *${invoice}* sebesar *Rp ${formattedAmount}* via DANA. Berikut lampiran buktinya:`;
             let waUrl = `https://wa.me/62${adminWa}?text=${encodeURIComponent(waMessage)}`;
             document.getElementById('btnWA').href = waUrl;
