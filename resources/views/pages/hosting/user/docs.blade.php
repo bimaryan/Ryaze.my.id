@@ -215,13 +215,15 @@
             <div>
                 <h2 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
                     <span class="bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center text-xs">9</span>
-                    Batasan Deploy Python
+                    Panduan & Aturan Khusus Python 🐍
                 </h2>
-                <p class="text-sm text-slate-600 mb-3">Bagi Anda yang ingin mendeploy aplikasi atau skrip berbasis Python, harap perhatikan beberapa batasan server berikut:</p>
-                <ul class="list-disc list-inside text-sm text-slate-600 space-y-1.5 ml-1 mb-4">
-                    <li><strong>Service Persistent:</strong> Server tidak menyediakan process manager otomatis (seperti Supervisor) untuk Python. Jika Anda menjalankan server Flask/Django/FastAPI via Terminal, prosesnya bisa terhenti sewaktu-waktu (kecuali Anda menjalankannya di background).</li>
-                    <li><strong>Port Akses:</strong> Untuk mengekspos aplikasi Python ke web, aplikasi Anda mungkin memerlukan reverse proxy tambahan. Sebaiknya Python dijalankan sebagai service backend/API dan bukan sebagai aplikasi utama yang melayani permintaan HTTP secara langsung jika tidak didukung penuh.</li>
-                    <li><strong>Virtual Environment:</strong> Sangat disarankan untuk membuat Virtual Environment (<code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-200">python3 -m venv venv</code>) di dalam folder project Anda sebelum menginstall library via pip agar tidak merusak sistem.</li>
+                <p class="text-sm text-slate-600 mb-3">Ekosistem Hosting Ryaze telah dirancang khusus agar sangat tangguh untuk mendeploy aplikasi Python (Flask, Django, FastAPI, AI/ML). Berikut adalah cara kerjanya:</p>
+                <ul class="list-disc list-inside text-sm text-slate-600 space-y-2 ml-1 mb-4">
+                    <li><strong>Isolasi Virtual Environment (Otomatis):</strong> Saat Anda mendeploy proyek, sistem kami akan secara otomatis membuat <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-200">venv</code> dan menginstal semua library dari <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-200">requirements.txt</code> Anda. Tidak perlu pusing mengatur env!</li>
+                    <li><strong>Terminal Auto-Alias:</strong> Jika Anda ingin menginstal library baru secara manual via <strong>Web Terminal</strong>, cukup ketikkan <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-200 text-indigo-600">pip install nama_library</code>. Sistem cerdas kami akan diam-diam memasukkannya ke dalam <i>venv</i> Anda secara otomatis, 100% aman!</li>
+                    <li><strong>Pre-compiled Data Science Library:</strong> Mengingat server menggunakan Alpine Linux yang ringan, kami telah menginjeksi library berat seperti <strong>Numpy, Pandas, dan Scikit-Learn</strong> secara sistem. Sehingga instalasi tidak akan meledakkan CPU server Anda.</li>
+                    <li><strong class="text-rose-600">ATURAN PORT (SANGAT PENTING):</strong> Aplikasi Anda <strong>TIDAK BOLEH</strong> di-hardcode berjalan di port statis (misal: port 5000). Aplikasi Anda <strong>WAJIB</strong> mendengarkan port dari Environment Variable <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-200 text-rose-600">PORT</code>. <br>
+                    <span class="ml-5 text-xs text-slate-500">Contoh di Flask: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-600">app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))</code></span></li>
                 </ul>
             </div>
 
