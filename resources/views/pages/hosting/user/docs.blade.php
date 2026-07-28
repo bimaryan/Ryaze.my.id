@@ -174,7 +174,7 @@
                 <!-- Section 8: Python -->
                 <section>
                     <h2 class="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <i class="fa-brands fa-python text-amber-500"></i> Panduan Khusus Deployment Python
+                        8. Panduan Khusus Deployment Python
                     </h2>
                     <p class="mb-5 text-slate-600 text-sm">
                         Infrastruktur Ryaze telah dioptimasi secara mendalam untuk mendukung deployment aplikasi berbasis Python seperti Flask, Django, FastAPI, hingga model Machine Learning. Kami menerapkan tingkat isolasi dan efisiensi sekelas *enterprise* agar aplikasi Anda berjalan stabil.
