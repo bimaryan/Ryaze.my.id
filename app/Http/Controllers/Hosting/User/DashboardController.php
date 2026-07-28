@@ -227,7 +227,11 @@ class DashboardController extends Controller
         $hasSubscription = $user->hasActiveHostingSubscription();
 
         if (!$hasSubscription) {
-            return redirect()->route('user_hosting.billing')->with('error', 'Anda harus berlangganan hosting terlebih dahulu untuk mendeploy aplikasi.');
+            return redirect()->route('user_hosting.subscription')->with('error', 'Anda harus berlangganan hosting terlebih dahulu untuk mendeploy aplikasi.');
+        }
+
+        if (!$user->canCreateMoreProjects()) {
+            return redirect()->back()->with('error', 'Batas maksimal pembuatan project untuk paket langganan Anda telah tercapai. Silakan upgrade paket.');
         }
 
         $project = HostingProject::create([
