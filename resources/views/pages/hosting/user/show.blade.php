@@ -150,7 +150,7 @@
                                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                                     <i class="fa-solid fa-circle-notch fa-spin text-slate-300 text-3xl"></i>
                                 </div>
-                                <iframe src="https://{{ $displayUrl }}"
+                                <iframe src="https://{{ $displayUrl }}?v={{ time() }}"
                                     class="w-full h-full border-0 relative z-10 bg-white"></iframe>
                             </div>
                             <div class="bg-amber-50 border-t border-amber-100 px-4 py-3 flex items-start gap-3">
