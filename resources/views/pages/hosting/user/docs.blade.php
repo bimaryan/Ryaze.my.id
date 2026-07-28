@@ -12,7 +12,7 @@
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
             
             <!-- Content Body -->
-            <div class="space-y-16 text-slate-700 leading-relaxed max-w-5xl">
+            <div class="space-y-10 text-slate-700 leading-relaxed max-w-5xl">
 
                 <!-- Intro -->
                 <div class="text-slate-500 text-lg leading-relaxed mb-6">
