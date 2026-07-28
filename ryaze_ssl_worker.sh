@@ -12,7 +12,7 @@ NGINX_CONF_DIR="/opt/1panel/apps/openresty/openresty/conf/conf.d/custom_domains"
 NGINX_SSL_DIR="/opt/1panel/apps/openresty/openresty/www/ssl"
 CERTBOT_WEBROOT="/opt/1panel/apps/openresty/openresty/www/letsencrypt"
 CONTAINER_PHP="1Panel-php8-aJQI"
-CONTAINER_NGINX="1panel-openresty"
+CONTAINER_NGINX="1Panel-openresty-iLJL"
 
 if [ ! -f "$QUEUE_FILE" ]; then
     exit 0
