@@ -895,7 +895,8 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 font-mono text-xs">
-                                            {{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}
+                                            CNAME: {{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }} <br>
+                                            A: {{ env('SERVER_IP', '123.45.67.89') }}
                                         </td>
                                         <td class="px-6 py-4 text-right flex items-center justify-end gap-3">
                                             @if($domain->ssl_status != 'active')
