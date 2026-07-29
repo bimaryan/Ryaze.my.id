@@ -12,7 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN status ENUM('active', 'building', 'suspended', 'error', 'unpaid') DEFAULT 'unpaid'");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN status ENUM('active', 'building', 'suspended', 'error', 'unpaid') DEFAULT 'unpaid'");
+        }
     }
 
     /**
@@ -20,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN status ENUM('active', 'building', 'suspended', 'error') DEFAULT 'building'");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN status ENUM('active', 'building', 'suspended', 'error') DEFAULT 'building'");
+        }
     }
 };

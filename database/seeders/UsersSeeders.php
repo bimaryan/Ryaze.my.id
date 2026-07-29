@@ -42,24 +42,24 @@ class UsersSeeders extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            // [
-            //     'name' => 'Dea',
-            //     'email' => 'dea@gmail.com',
-            //     'email_verified_at' => Carbon::now(),
-            //     'password' => Hash::make('User123!@#'),
-            //     'role' => 'user_joki',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            // ],
-            // [
-            //     'name' => 'Client Hosting',
-            //     'email' => 'client.hosting@gmail.com',
-            //     'email_verified_at' => Carbon::now(),
-            //     'password' => Hash::make('User123!@#'),
-            //     'role' => 'user_hosting',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            // ],
+            [
+                'name' => 'Dea',
+                'email' => 'dea@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('User123!@#'),
+                'role' => 'user_joki',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'Client Hosting',
+                'email' => 'client.hosting@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('User123!@#'),
+                'role' => 'user_hosting',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
         ];
 
         // Insert semua data array ke tabel users

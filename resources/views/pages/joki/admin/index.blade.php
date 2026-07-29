@@ -109,7 +109,6 @@
                 </x-ui.table>
             </div>
         </div>
-    </x-ui.page-layout>
 
 <script nonce="{{ csp_nonce() }}">
 (function() {

@@ -12,7 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE hosting_billings MODIFY COLUMN plan ENUM('free', 'starter', 'pro', 'business') NOT NULL DEFAULT 'free'");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE hosting_billings MODIFY COLUMN plan ENUM('free', 'starter', 'pro', 'business') NOT NULL DEFAULT 'free'");
+        }
     }
 
     /**
@@ -20,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE hosting_billings MODIFY COLUMN plan ENUM('starter', 'pro', 'business') NOT NULL DEFAULT 'starter'");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE hosting_billings MODIFY COLUMN plan ENUM('starter', 'pro', 'business') NOT NULL DEFAULT 'starter'");
+        }
     }
 };

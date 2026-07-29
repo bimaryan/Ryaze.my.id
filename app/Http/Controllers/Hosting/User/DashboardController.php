@@ -1550,8 +1550,9 @@ PHP;
             \App\Models\HostingBilling::create([
                 'user_id' => $user->id,
                 'hosting_project_id' => null,
-                'plan_name' => 'Bulanan Rp 10.000',
-                'amount' => 10000,
+                'plan_name' => 'Paket ' . ucfirst($invoice->notes),
+                'plan' => $invoice->notes,
+                'amount' => $invoice->amount,
                 'billing_cycle' => 'monthly',
                 'next_due_date' => now()->addMonth(),
                 'status' => 'active'

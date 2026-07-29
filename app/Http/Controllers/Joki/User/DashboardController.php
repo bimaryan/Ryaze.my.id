@@ -96,10 +96,10 @@ class DashboardController extends Controller
 
         $payment->update([
             'proof_image' => $path,
-            'status' => 'pending_verification', // Ubah status agar admin mengecek
+            'status' => 'paid',
         ]);
 
-        return back()->with('success', 'Bukti pembayaran berhasil diunggah! Menunggu verifikasi admin.');
+        return back()->with('success', 'Bukti pembayaran berhasil diunggah.');
     }
 
     /**

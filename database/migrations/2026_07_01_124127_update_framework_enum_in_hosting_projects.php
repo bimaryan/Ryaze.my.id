@@ -12,7 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN framework ENUM('react', 'nextjs', 'python', 'html', 'laravel', 'node', 'php') NOT NULL");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN framework ENUM('react', 'nextjs', 'python', 'html', 'laravel', 'node', 'php') NOT NULL");
+        }
     }
 
     /**
@@ -20,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN framework ENUM('react', 'nextjs', 'python', 'html', 'laravel', 'node') NOT NULL");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE hosting_projects MODIFY COLUMN framework ENUM('react', 'nextjs', 'python', 'html', 'laravel', 'node') NOT NULL");
+        }
     }
 };

@@ -191,7 +191,6 @@
             </a>
 
         </div>
-    </x-ui.page-layout>
 
 <script nonce="{{ csp_nonce() }}">
 (function() {
