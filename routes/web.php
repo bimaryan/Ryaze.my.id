@@ -42,6 +42,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/sitemap.xml', function () {
+    $articles = \App\Models\Article::where('status', 'published')->orderBy('created_at', 'desc')->get();
+    return response()->view('sitemap', compact('articles'))->header('Content-Type', 'text/xml');
+});
+
 // ── BLOG PUBLIK ─────────────────────────────────────────────
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/kategori/{slug}', [BlogController::class, 'category'])->name('blog.category');
