@@ -16,6 +16,20 @@
     @if($siteFavicon)
         <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
     @endif
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ isset($currentCategory) ? $currentCategory->name . ' - ' : '' }}Blog - {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}">
+    <meta property="og:description" content="{{ $siteDescription ?? 'Artikel terbaru seputar teknologi, web development, dan tips hosting dari tim Ryaze.' }}">
+    @if($siteFavicon)<meta property="og:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="{{ isset($currentCategory) ? $currentCategory->name . ' - ' : '' }}Blog - {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}">
+    <meta property="twitter:description" content="{{ $siteDescription ?? 'Artikel terbaru seputar teknologi, web development, dan tips hosting dari tim Ryaze.' }}">
+    @if($siteFavicon)<meta property="twitter:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
 
     @if($gaId)
         <!-- Google tag (gtag.js) -->

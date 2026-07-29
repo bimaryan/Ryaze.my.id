@@ -5,17 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'RYAZE PORTAL' }}</title>
-    
     @php
-        $siteDescription = \App\Models\Setting::where('key', 'site_description')->value('value');
+        $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'RYAZE PORTAL';
+        $siteDescription = \App\Models\Setting::where('key', 'site_description')->value('value') ?? 'Platform Layanan Joki dan Web Hosting Profesional Terpercaya.';
         $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value');
         $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
     @endphp
 
-    @if($siteDescription)
-        <meta name="description" content="{{ $siteDescription }}">
-    @endif
+    <title>@hasSection('title')@yield('title') - {{ $siteName }}@else{{ $siteName }}@endif</title>
+    
+    <meta name="description" content="@hasSection('seo_description')@yield('seo_description')@else{{ $siteDescription }}@endif">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@hasSection('title')@yield('title') - {{ $siteName }}@else{{ $siteName }}@endif">
+    <meta property="og:description" content="@hasSection('seo_description')@yield('seo_description')@else{{ $siteDescription }}@endif">
+    @if($siteFavicon)<meta property="og:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="@hasSection('title')@yield('title') - {{ $siteName }}@else{{ $siteName }}@endif">
+    <meta property="twitter:description" content="@hasSection('seo_description')@yield('seo_description')@else{{ $siteDescription }}@endif">
+    @if($siteFavicon)<meta property="twitter:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
+
+    <link rel="canonical" href="{{ url()->current() }}">
     
     @if($siteFavicon)
         <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
