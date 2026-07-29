@@ -44,7 +44,7 @@ class StorageController extends Controller
 
         $totalUsed = 0;
         // Shared Hosting: Limit adalah jatah akun secara global
-        $totalLimit = $user->role === 'superadmin' ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $totalLimit = in_array($user->role, ['superadmin', 'admin_hosting']) ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
         $items = [];
 
         foreach ($projects as $project) {
@@ -105,7 +105,7 @@ class StorageController extends Controller
         $projectDir = "/www/sites/hosting_clients/{$subdomain}";
         
         // Shared Hosting: Limit yg ditampilkan adalah limit total akun
-        $limit = $user->role === 'superadmin' ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $limit = in_array($user->role, ['superadmin', 'admin_hosting']) ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         $totalUsed = $this->getFolderSize($projectDir);
 
@@ -241,7 +241,7 @@ class StorageController extends Controller
         }
 
         // Shared Hosting: Bandingkan total penggunaan dengan jatah global akun
-        $limit = $user->role === 'superadmin' ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $limit = in_array($user->role, ['superadmin', 'admin_hosting']) ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         return $totalUsed < $limit;
     }

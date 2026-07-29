@@ -237,7 +237,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getMaxProjects(): int
     {
-        if ($this->role === 'superadmin') return -1;
+        if (in_array($this->role, ['superadmin', 'admin_hosting'])) return -1;
         $activeBilling = $this->hostingBillings()
             ->where('status', 'active')
             ->where('next_due_date', '>', now())

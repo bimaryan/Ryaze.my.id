@@ -47,7 +47,7 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <span class="font-semibold text-slate-800">
-                            @if($user->role === 'superadmin')
+                            @if(in_array($user->role, ['superadmin', 'admin_hosting']))
                                 <span class="text-xl leading-none" style="vertical-align: middle;">&infin;</span> <span class="text-sm">(Unlimited)</span>
                             @else
                                 {{ $user->hosting_storage_limit_mb >= 1024 ? number_format($user->hosting_storage_limit_mb / 1024, 1) . ' GB' : number_format($user->hosting_storage_limit_mb) . ' MB' }}
