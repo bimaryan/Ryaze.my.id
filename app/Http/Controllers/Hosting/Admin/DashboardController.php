@@ -131,7 +131,7 @@ class DashboardController extends Controller
     public function storage()
     {
         $users = User::whereHas('hostingProjects')
-            ->with('hostingProjects')
+            ->with(['hostingProjects.domains'])
             ->withCount('hostingProjects')
             ->orderBy('hosting_storage_limit_mb', 'desc')
             ->paginate(15);

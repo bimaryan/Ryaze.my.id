@@ -27,7 +27,9 @@
                             <div class="mt-3 space-y-1.5 border-t border-slate-100 pt-3">
                                 @foreach($user->hostingProjects as $project)
                                     @php
-                                        $displayDomain = $project->custom_domain ?: $project->ryaze_domain;
+                                        // Cek domain kustom dari relasi (jika ada)
+                                        $customDomainObj = $project->domains->first();
+                                        $displayDomain = $customDomainObj ? $customDomainObj->domain_name : ($project->custom_domain ?: $project->ryaze_domain);
                                         $url = 'https://' . $displayDomain;
                                     @endphp
                                     <div class="flex flex-col">
