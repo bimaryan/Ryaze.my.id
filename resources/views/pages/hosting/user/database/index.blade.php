@@ -20,7 +20,7 @@
 
                 @if($canMysql['allowed'])
                     <button id="btn-open-create-modal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                        + Buat Database MySQL
+                        + MySQL
                     </button>
                 @else
                     <button id="btn-open-create-modal" data-locked="true" onclick="Swal.fire('Batas Tercapai', '{{ $canMysql['message'] }}', 'warning')" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-slate-200 text-slate-500 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
@@ -30,7 +30,7 @@
 
                 @if($canNosql['allowed'])
                     <button id="btn-open-create-nosql-modal" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                        + Buat Database Redis
+                        + Redis
                     </button>
                 @else
                     <button id="btn-open-create-nosql-modal" data-locked="true" onclick="Swal.fire('Fitur Terkunci', '{{ $canNosql['message'] }}', 'warning')" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-slate-200 text-slate-500 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
@@ -40,7 +40,7 @@
 
                 @if($canPgsql['allowed'])
                     <button id="btn-open-create-pgsql-modal" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                        + Buat Database PostgreSQL
+                        + PostgreSQL
                     </button>
                 @else
                     <button id="btn-open-create-pgsql-modal" data-locked="true" onclick="Swal.fire('Fitur Terkunci', '{{ $canPgsql['message'] }}', 'warning')" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-slate-200 text-slate-500 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
