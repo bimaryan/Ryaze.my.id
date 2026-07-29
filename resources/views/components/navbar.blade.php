@@ -490,6 +490,7 @@
                 @endif
 
                 {{-- Wallet & Affiliate (Semua User) --}}
+                @if ($isUser)
                 <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
                     <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pendapatan</span>
                 </li>
