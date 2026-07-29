@@ -161,7 +161,7 @@
                 $isAdminHosting = in_array($role, ['superadmin', 'admin_hosting']);
                 $isAdminJoki = in_array($role, ['superadmin', 'admin_joki']);
                 $isUserHosting = in_array($role, ['superadmin', 'user_hosting', 'admin_hosting']);
-                $isUserJoki = in_array($role, ['superadmin', 'user_joki', 'admin_joki', 'admin_hosting']);
+                $isUserJoki = in_array($role, ['superadmin', 'user_joki', 'admin_joki']);
                 $isUser = in_array($role, ['superadmin', 'user_joki', 'user_hosting', 'admin_hosting', 'admin_joki']);
 
                 $navLink = fn(
