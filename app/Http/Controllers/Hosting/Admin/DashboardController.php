@@ -100,6 +100,16 @@ class DashboardController extends Controller
         $databases = HostingDatabase::with('user')
             ->latest()
             ->paginate(15);
+            
+        $databases->getCollection()->transform(function ($db) {
+            try {
+                $db->db_password_decrypted = \Illuminate\Support\Facades\Crypt::decryptString($db->db_password);
+            } catch (\Exception $e) {
+                $db->db_password_decrypted = 'Encrypted (old)';
+            }
+            return $db;
+        });
+
         $users = User::select('id', 'name', 'email')->orderBy('name')->get();
 
         return view('pages.hosting.admin.databases', compact('databases', 'users'));
@@ -130,19 +140,36 @@ class DashboardController extends Controller
 
     public function storeDatabase(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'db_name' => 'required|string|alpha_dash|max:15',
-            'db_username' => 'required|string|alpha_dash|max:15',
-            'db_password' => 'required|string|max:32',
-        ]);
-
         $user = User::findOrFail($request->user_id);
-        
-        $prefix = 'ryz_'.$user->id.'_';
-        $cleanDbName = $prefix.strtolower(trim($request->db_name));
-        $cleanUsername = $prefix.strtolower(trim($request->db_username));
-        $dbPassword = $prefix.trim($request->db_password);
+        $existingDb = HostingDatabase::where('user_id', $user->id)->first();
+
+        if ($existingDb) {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'db_name' => 'required|string|alpha_dash|max:15',
+            ]);
+
+            $prefix = 'ryz_'.$user->id.'_';
+            $cleanDbName = $prefix.strtolower(trim($request->db_name));
+            $cleanUsername = $existingDb->db_username;
+            try {
+                $dbPassword = \Illuminate\Support\Facades\Crypt::decryptString($existingDb->db_password);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Gagal mendekripsi password database lama. Silakan hapus database lama atau hubungi teknisi.');
+            }
+        } else {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'db_name' => 'required|string|alpha_dash|max:15',
+                'db_username' => 'required|string|alpha_dash|max:15',
+                'db_password' => 'required|string|max:32',
+            ]);
+
+            $prefix = 'ryz_'.$user->id.'_';
+            $cleanDbName = $prefix.strtolower(trim($request->db_name));
+            $cleanUsername = $prefix.strtolower(trim($request->db_username));
+            $dbPassword = $prefix.trim($request->db_password);
+        }
 
         if (HostingDatabase::where('db_name', $cleanDbName)->exists()) {
             return back()->with('error', 'Nama database "'.$cleanDbName.'" sudah digunakan.');
@@ -163,7 +190,7 @@ class DashboardController extends Controller
             $quotedPassword = $pdo->quote($dbPassword);
             $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY $quotedPassword");
             
-            // 2.1 Update password in case user already exists
+            // Update password in case user already exists
             $pdo->exec("ALTER USER '$cleanUsername'@'%' IDENTIFIED BY $quotedPassword");
 
             $pdo->exec("GRANT ALL PRIVILEGES ON `$cleanDbName`.* TO '$cleanUsername'@'%'");
