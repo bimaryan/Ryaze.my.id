@@ -26,13 +26,17 @@
                         @if($user->hostingProjects->isNotEmpty())
                             <div class="mt-3 space-y-1.5 border-t border-slate-100 pt-3">
                                 @foreach($user->hostingProjects as $project)
+                                    @php
+                                        $displayDomain = $project->custom_domain ?: $project->ryaze_domain;
+                                        $url = 'https://' . $displayDomain;
+                                    @endphp
                                     <div class="flex flex-col">
                                         <div class="flex items-center gap-1.5">
                                             <div class="w-1.5 h-1.5 rounded-full {{ $project->status === 'active' ? 'bg-emerald-500' : 'bg-rose-500' }}"></div>
                                             <span class="text-xs font-medium text-slate-700">{{ $project->name }}</span>
                                         </div>
-                                        <a href="https://{{ $project->ryaze_domain }}" target="_blank" class="text-[10px] text-slate-500 hover:text-indigo-600 truncate max-w-[200px] ml-3 transition-colors">
-                                            <i class="fa-solid fa-link mr-1"></i>{{ $project->ryaze_domain }}
+                                        <a href="{{ $url }}" target="_blank" class="text-[10px] text-slate-500 hover:text-indigo-600 truncate max-w-[200px] ml-3 transition-colors">
+                                            <i class="fa-solid fa-link mr-1"></i>{{ $displayDomain }}
                                         </a>
                                     </div>
                                 @endforeach

@@ -95,6 +95,18 @@
                             oldScript.parentNode.replaceChild(newScript, oldScript);
                         });
 
+                        // Cleanup Flowbite backdrops and classes
+                        document.querySelectorAll('[modal-backdrop], [drawer-backdrop]').forEach(el => el.remove());
+                        document.body.classList.remove('overflow-hidden');
+                        
+                        // Force Flowbite to re-initialize
+                        document.querySelectorAll('[data-modal-target], [data-modal-toggle], [data-drawer-target], [data-drawer-toggle], [data-dropdown-toggle], [data-tooltip-target]').forEach(el => {
+                            el.removeAttribute('data-modal-initialized');
+                            el.removeAttribute('data-drawer-initialized');
+                            el.removeAttribute('data-dropdown-initialized');
+                            el.removeAttribute('data-tooltip-initialized');
+                        });
+
                         // Re-initialize flowbite modals, dropdowns, tooltips, etc.
                         if (typeof initFlowbite === 'function') {
                             initFlowbite();

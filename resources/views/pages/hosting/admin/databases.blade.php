@@ -221,32 +221,23 @@
                     });
                 }
                 
-                document.addEventListener('click', function(e) {
-                    const deleteBtn = e.target.closest('.btn-delete');
-                    if (deleteBtn) {
-                        const hashid = deleteBtn.dataset.hashid;
-                        Swal.fire({
-                            title: 'Yakin ingin menghapus?',
-                            text: "Semua data di dalam database ini akan hilang permanen!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#ef4444',
-                            cancelButtonColor: '#94a3b8',
-                            confirmButtonText: 'Ya, Hapus!',
-                            cancelButtonText: 'Batal',
-                            reverseButtons: true
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                document.getElementById('delete-form-' + hashid).submit();
-                            }
-                        });
-                    }
-                    
-                    const modalStop = e.target.closest('.modal-content-stop');
-                    if (modalStop) {
-                        e.stopPropagation();
-                    }
-                });
+                window.confirmDatabaseDelete = function(btn) {
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus?',
+                        text: "Semua data di dalam database ini akan hilang permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#94a3b8',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            btn.closest('form').submit();
+                        }
+                    });
+                };
             })();
         </script>
     </x-ui.page-layout>
