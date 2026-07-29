@@ -94,25 +94,29 @@ class DashboardController extends Controller
         return view('pages.hosting.admin.projects', compact('projects'));
     }
 
-    // 5. Halaman Semua Database
     public function databases()
     {
-        $databases = HostingDatabase::with('user')
+        $usersWithDatabases = User::whereHas('hostingDatabases')
+            ->with('hostingDatabases')
             ->latest()
             ->paginate(15);
             
-        $databases->getCollection()->transform(function ($db) {
-            try {
-                $db->db_password_decrypted = \Illuminate\Support\Facades\Crypt::decryptString($db->db_password);
-            } catch (\Exception $e) {
-                $db->db_password_decrypted = 'Encrypted (old)';
+        $usersWithDatabases->getCollection()->transform(function ($user) {
+            if ($user->hostingDatabases->isNotEmpty()) {
+                $firstDb = $user->hostingDatabases->first();
+                $user->db_username = $firstDb->db_username;
+                try {
+                    $user->db_password_decrypted = \Illuminate\Support\Facades\Crypt::decryptString($firstDb->db_password);
+                } catch (\Exception $e) {
+                    $user->db_password_decrypted = 'Encrypted (old)';
+                }
             }
-            return $db;
+            return $user;
         });
 
         $users = User::select('id', 'name', 'email')->orderBy('name')->get();
 
-        return view('pages.hosting.admin.databases', compact('databases', 'users'));
+        return view('pages.hosting.admin.databases', compact('usersWithDatabases', 'users'));
     }
 
     // 6. Halaman Storage (Penyimpanan Akun)

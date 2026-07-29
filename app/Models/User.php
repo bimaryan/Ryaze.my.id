@@ -61,6 +61,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(HostingBilling::class, 'user_id');
     }
 
+    public function hostingDatabases()
+    {
+        return $this->hasMany(HostingDatabase::class, 'user_id');
+    }
+
     public function hasActiveHostingSubscription()
     {
         if ($this->role === 'superadmin') {

@@ -299,6 +299,22 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin_hosting.databases') }}"
+                        class="{{ $navLink(request()->routeIs('admin_hosting.databases')) }}">
+                        <i
+                            class="fa-solid fa-database {{ $iconClass(request()->routeIs('admin_hosting.databases')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Semua Database</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin_hosting.storage') }}"
+                        class="{{ $navLink(request()->routeIs('admin_hosting.storage')) }}">
+                        <i
+                            class="fa-solid fa-hard-drive {{ $iconClass(request()->routeIs('admin_hosting.storage')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Limit Penyimpanan</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin_hosting.billing') }}"
                         class="{{ $navLink(request()->routeIs('admin_hosting.billing')) }}">
                         <i

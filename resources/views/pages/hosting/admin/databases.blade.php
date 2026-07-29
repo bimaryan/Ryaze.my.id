@@ -14,66 +14,75 @@
 
         <x-ui.table>
             <x-slot:head>
-                <th class="px-6 py-4">Informasi Database</th>
-                <th class="px-6 py-4">Host & Password</th>
-                <th class="px-6 py-4">Pemilik (Klien)</th>
-                <th class="px-6 py-4 text-center">Dibuat Pada</th>
-                <th class="px-6 py-4 text-center">Aksi</th>
+                <th class="px-6 py-4 w-1/3">Informasi Klien & Kredensial</th>
+                <th class="px-6 py-4">Daftar Database</th>
             </x-slot:head>
-            @forelse($databases as $db)
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="font-bold text-slate-800">{{ $db->db_name }}</div>
-                        <div class="text-xs text-slate-500 mt-1">User: <span class="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded border border-slate-200">{{ $db->db_username }}</span></div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm text-slate-700">{{ $db->host }}<span class="text-slate-400">:{{ $db->port }}</span></div>
-                        <div class="text-xs text-slate-500 mt-1 flex items-center gap-1 group">
-                            Pass: 
-                            <span class="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded border border-slate-200 filter blur-[4px] group-hover:blur-none transition-all duration-300 cursor-pointer" title="Arahkan kursor untuk melihat">
-                                {{ $db->db_password_decrypted ?? 'Error' }}
-                            </span>
+            @forelse($usersWithDatabases as $user)
+                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                    <td class="px-6 py-4 align-top border-r border-slate-100">
+                        <div class="font-bold text-slate-800">{{ $user->name }}</div>
+                        <div class="text-xs text-slate-500 mb-3">{{ $user->email }}</div>
+                        
+                        <div class="bg-indigo-50/50 rounded-xl p-3 border border-indigo-100">
+                            <div class="text-[11px] font-bold text-indigo-800 uppercase tracking-wider mb-2">Kredensial Database</div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-500">User:</span>
+                                    <span class="font-mono bg-white text-slate-700 px-1.5 py-0.5 rounded border border-slate-200">{{ $user->db_username }}</span>
+                                </div>
+                                <div class="flex justify-between items-center group">
+                                    <span class="text-slate-500">Pass:</span>
+                                    <span class="font-mono bg-white text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 filter blur-[4px] group-hover:blur-none transition-all duration-300 cursor-pointer" title="Arahkan kursor untuk melihat">
+                                        {{ $user->db_password_decrypted ?? 'Error' }}
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-500">Host:</span>
+                                    <span class="font-mono bg-white text-slate-700 px-1.5 py-0.5 rounded border border-slate-200">{{ $user->hostingDatabases->first()->host }}:3306</span>
+                                </div>
+                            </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        @if ($db->user)
-                            <div class="font-medium text-slate-800">{{ $db->user->name }}</div>
-                            <div class="text-xs text-slate-500">{{ $db->user->email }}</div>
-                        @else
-                            <span class="text-slate-400 italic">Unknown</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4 text-center text-slate-500">
-                        {{ $db->created_at->format('d M Y') }}
-                    </td>
-                    <td class="px-6 py-4 flex items-center justify-center gap-2">
-                        <form method="POST" action="{{ rtrim(env('PMA_URL', '#'), '/') }}/index.php" target="_blank" class="inline-block">
-                            <input type="hidden" name="pma_username" value="{{ $db->db_username }}">
-                            <input type="hidden" name="pma_password" value="{{ $db->db_password_decrypted ?? '' }}">
-                            <input type="hidden" name="server" value="1">
-                            <input type="hidden" name="pma_servername" value="{{ $db->host }}">
-                            <button type="submit"
-                                class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
-                                title="Buka phpMyAdmin">
-                                <i class="fa-solid fa-server"></i>
-                            </button>
-                        </form>
+                    <td class="px-6 py-4 align-top">
+                        <div class="space-y-2">
+                            @foreach($user->hostingDatabases as $db)
+                                <div class="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all">
+                                    <div>
+                                        <div class="font-mono font-semibold text-slate-700">{{ $db->db_name }}</div>
+                                        <div class="text-[11px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> {{ $db->created_at->format('d M Y') }}</div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <form method="POST" action="{{ rtrim(env('PMA_URL', '#'), '/') }}/index.php" target="_blank" class="inline-block">
+                                            <input type="hidden" name="pma_username" value="{{ $user->db_username }}">
+                                            <input type="hidden" name="pma_password" value="{{ $user->db_password_decrypted ?? '' }}">
+                                            <input type="hidden" name="server" value="1">
+                                            <input type="hidden" name="pma_servername" value="{{ $db->host }}">
+                                            <button type="submit"
+                                                class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                                title="Buka phpMyAdmin">
+                                                <i class="fa-solid fa-server"></i>
+                                            </button>
+                                        </form>
 
-                        <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST"
-                            class="inline-block" id="delete-form-{{ $db->hashid }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button"
-                                class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
-                                title="Hapus Database" data-hashid="{{ $db->hashid }}">
-                                <i class="fa-regular fa-trash-can"></i>
-                            </button>
-                        </form>
+                                        <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST"
+                                            class="inline-block" id="delete-form-{{ $db->hashid }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button"
+                                                class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                                title="Hapus Database" data-hashid="{{ $db->hashid }}">
+                                                <i class="fa-regular fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                    <td colspan="2" class="px-6 py-12 text-center text-slate-500">
                         <div class="flex flex-col items-center justify-center gap-2">
                             <i class="fa-solid fa-database text-3xl text-slate-300"></i>
                             <p>Belum ada database yang dibuat.</p>
@@ -81,9 +90,9 @@
                     </td>
                 </tr>
             @endforelse
-            @if ($databases->hasPages())
+            @if ($usersWithDatabases->hasPages())
                 <x-slot:pagination>
-                    {{ $databases->links() }}
+                    {{ $usersWithDatabases->links() }}
                 </x-slot:pagination>
             @endif
         </x-ui.table>
