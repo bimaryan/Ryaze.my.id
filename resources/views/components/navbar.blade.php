@@ -325,52 +325,57 @@
             @endif
 
 
-            {{-- ══ LAYANAN KLIEN ════════════════════════════════════ --}}
-            @if ($isUser)
+            {{-- ══ LAYANAN KLIEN JOKI ════════════════════════════════════ --}}
+            @if ($isUserJoki)
                 <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
                     <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Layanan
-                        Klien</span>
+                        Klien Joki</span>
                 </li>
 
                 {{-- Menu User Joki --}}
-                @if ($isUserJoki)
-                    <li>
-                        <a href="{{ route('user_joki.create') }}"
-                            class="{{ $navLink(request()->routeIs('user_joki.create')) }}">
-                            <i
-                                class="fa-solid fa-cart-plus {{ $iconClass(request()->routeIs('user_joki.create')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Buat Pesanan</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('user_joki.progress') }}"
-                            class="{{ $navLink(request()->routeIs('user_joki.progress')) }}">
-                            <i
-                                class="fa-solid fa-laptop-code {{ $iconClass(request()->routeIs('user_joki.progress')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Progres Pengerjaan</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('user_joki.riwayat') }}"
-                            class="{{ $navLink(request()->routeIs('user_joki.riwayat')) }}">
-                            <i
-                                class="fa-solid fa-history {{ $iconClass(request()->routeIs('user_joki.riwayat')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Riwayat Selesai</span>
-                        </a>
-                    </li>
+                <li>
+                    <a href="{{ route('user_joki.create') }}"
+                        class="{{ $navLink(request()->routeIs('user_joki.create')) }}">
+                        <i
+                            class="fa-solid fa-cart-plus {{ $iconClass(request()->routeIs('user_joki.create')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Buat Pesanan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('user_joki.progress') }}"
+                        class="{{ $navLink(request()->routeIs('user_joki.progress')) }}">
+                        <i
+                            class="fa-solid fa-laptop-code {{ $iconClass(request()->routeIs('user_joki.progress')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Progres Pengerjaan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('user_joki.riwayat') }}"
+                        class="{{ $navLink(request()->routeIs('user_joki.riwayat')) }}">
+                        <i
+                            class="fa-solid fa-history {{ $iconClass(request()->routeIs('user_joki.riwayat')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Riwayat Selesai</span>
+                    </a>
+                </li>
 
-                    <li>
-                        <a href="{{ route('user_joki.billing') }}"
-                            class="{{ $navLink(request()->routeIs('user_joki.billing')) }}">
-                            <i
-                                class="fa-solid fa-file-invoice-dollar {{ $iconClass(request()->routeIs('user_joki.billing')) }}"></i>
-                            <span class="ms-3 whitespace-nowrap">Riwayat Tagihan</span>
-                        </a>
-                    </li>
-                @endif
+                <li>
+                    <a href="{{ route('user_joki.billing') }}"
+                        class="{{ $navLink(request()->routeIs('user_joki.billing')) }}">
+                        <i
+                            class="fa-solid fa-file-invoice-dollar {{ $iconClass(request()->routeIs('user_joki.billing')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Riwayat Tagihan</span>
+                    </a>
+                </li>
+            @endif
+
+            {{-- ══ LAYANAN KLIEN HOSTING ════════════════════════════════════ --}}
+            @if ($isUserHosting)
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Layanan
+                        Klien Hosting</span>
+                </li>
 
                 {{-- Menu User Hosting --}}
-                @if ($isUserHosting)
                     <li>
                         <a href="{{ route('user_hosting.create') }}"
                             class="{{ $navLink(request()->routeIs('user_hosting.create')) }}">
