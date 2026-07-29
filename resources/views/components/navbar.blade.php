@@ -160,9 +160,9 @@
                 $isAdmin = in_array($role, ['superadmin', 'admin_joki', 'admin_hosting']);
                 $isAdminHosting = in_array($role, ['superadmin', 'admin_hosting']);
                 $isAdminJoki = in_array($role, ['superadmin', 'admin_joki']);
-                $isUserHosting = in_array($role, ['superadmin', 'user_hosting']);
+                $isUserHosting = in_array($role, ['superadmin', 'user_hosting', 'admin_hosting']);
                 $isUserJoki = in_array($role, ['superadmin', 'user_joki']);
-                $isUser = in_array($role, ['superadmin', 'user_joki', 'user_hosting']);
+                $isUser = in_array($role, ['superadmin', 'user_joki', 'user_hosting', 'admin_hosting']);
 
                 $navLink = fn(
                     $active,
@@ -238,7 +238,7 @@
             @if ($isAdminJoki)
                 <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
                     <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        {{ $role === 'superadmin' ? 'Manajemen Joki' : 'Manajemen Admin' }}
+                        {{ $role === 'superadmin' ? 'Manajemen Joki' : 'Manajemen Hosting' }}
                     </span>
                 </li>
 
