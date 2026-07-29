@@ -78,7 +78,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasActiveHostingSubscription()
     {
-        if ($this->role === 'superadmin') {
+        if (in_array($this->role, ['superadmin', 'admin_hosting'])) {
             return true;
         }
 

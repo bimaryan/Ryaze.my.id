@@ -149,8 +149,8 @@ class StorageController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'superadmin') {
-            return back()->with('error', 'Superadmin memiliki storage unlimited.');
+        if (in_array($user->role, ['superadmin', 'admin_hosting'])) {
+            return back()->with('error', 'Admin tidak perlu upgrade storage.');
         }
 
         if (($user->hosting_storage_limit_mb ?? 1024) >= 5120) { // Limit max 5GB misalnya
@@ -228,7 +228,7 @@ class StorageController extends Controller
     {
         $user = $project->user;
 
-        if ($user->role === 'superadmin') {
+        if (in_array($user->role, ['superadmin', 'admin_hosting'])) {
             return true;
         }
 
