@@ -19,10 +19,25 @@
                         <div class="font-medium text-slate-800">{{ $user->name }}</div>
                         <div class="text-xs text-slate-500">{{ $user->email }}</div>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-4">
                         <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 text-indigo-700">
                             {{ $user->hosting_projects_count }} Proyek
                         </span>
+                        @if($user->hostingProjects->isNotEmpty())
+                            <div class="mt-3 space-y-1.5 border-t border-slate-100 pt-3">
+                                @foreach($user->hostingProjects as $project)
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center gap-1.5">
+                                            <div class="w-1.5 h-1.5 rounded-full {{ $project->status === 'active' ? 'bg-emerald-500' : 'bg-rose-500' }}"></div>
+                                            <span class="text-xs font-medium text-slate-700">{{ $project->name }}</span>
+                                        </div>
+                                        <a href="https://{{ $project->ryaze_domain }}" target="_blank" class="text-[10px] text-slate-500 hover:text-indigo-600 truncate max-w-[200px] ml-3 transition-colors">
+                                            <i class="fa-solid fa-link mr-1"></i>{{ $project->ryaze_domain }}
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-right">
                         <span class="font-semibold text-slate-800">

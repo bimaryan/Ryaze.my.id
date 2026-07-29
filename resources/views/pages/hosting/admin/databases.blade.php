@@ -45,10 +45,14 @@
                     </td>
                     <td class="px-6 py-4 align-top">
                         <div class="space-y-2">
+                            {{-- MySQL Databases --}}
                             @foreach($user->hostingDatabases as $db)
                                 <div class="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all">
                                     <div>
-                                        <div class="font-mono font-semibold text-slate-700">{{ $db->db_name }}</div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="font-mono font-semibold text-slate-700">{{ $db->db_name }}</div>
+                                            <span class="text-[10px] bg-blue-50 text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded font-bold">MySQL</span>
+                                        </div>
                                         <div class="text-[11px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> {{ $db->created_at->format('d M Y') }}</div>
                                     </div>
                                     <div class="flex items-center gap-2">
@@ -63,14 +67,51 @@
                                                 <i class="fa-solid fa-server"></i>
                                             </button>
                                         </form>
+                                        <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block">
+                                            @csrf @method('DELETE')
+                                            <button type="button" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
+                                                <i class="fa-regular fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
 
-                                        <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST"
-                                            class="inline-block" id="delete-form-{{ $db->hashid }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button"
-                                                class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
-                                                title="Hapus Database" data-hashid="{{ $db->hashid }}">
+                            {{-- PostgreSQL Databases --}}
+                            @foreach($user->hostingPgsqlDatabases as $db)
+                                <div class="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all">
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="font-mono font-semibold text-slate-700">{{ $db->db_name }}</div>
+                                            <span class="text-[10px] bg-indigo-50 text-indigo-600 border border-indigo-200 px-1.5 py-0.5 rounded font-bold">PostgreSQL</span>
+                                        </div>
+                                        <div class="text-[11px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> {{ $db->created_at->format('d M Y') }}</div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block">
+                                            @csrf @method('DELETE')
+                                            <button type="button" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
+                                                <i class="fa-regular fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            {{-- Redis Databases --}}
+                            @foreach($user->hostingNosqlDatabases as $db)
+                                <div class="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all">
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="font-mono font-semibold text-slate-700">{{ $db->db_name }}</div>
+                                            <span class="text-[10px] bg-rose-50 text-rose-600 border border-rose-200 px-1.5 py-0.5 rounded font-bold">Redis</span>
+                                        </div>
+                                        <div class="text-[11px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> {{ $db->created_at->format('d M Y') }}</div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block">
+                                            @csrf @method('DELETE')
+                                            <button type="button" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
                                                 <i class="fa-regular fa-trash-can"></i>
                                             </button>
                                         </form>

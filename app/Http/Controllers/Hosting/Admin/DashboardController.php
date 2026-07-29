@@ -96,14 +96,22 @@ class DashboardController extends Controller
 
     public function databases()
     {
-        $usersWithDatabases = User::whereHas('hostingDatabases')
-            ->with('hostingDatabases')
+        $usersWithDatabases = User::where(function ($q) {
+                $q->has('hostingDatabases')
+                  ->orHas('hostingNosqlDatabases')
+                  ->orHas('hostingPgsqlDatabases');
+            })
+            ->with(['hostingDatabases', 'hostingNosqlDatabases', 'hostingPgsqlDatabases'])
             ->latest()
             ->paginate(15);
             
         $usersWithDatabases->getCollection()->transform(function ($user) {
-            if ($user->hostingDatabases->isNotEmpty()) {
-                $firstDb = $user->hostingDatabases->first();
+            // Priority: MySQL > PgSQL > NoSQL to get the general credentials
+            $firstDb = $user->hostingDatabases->first() 
+                    ?? $user->hostingPgsqlDatabases->first() 
+                    ?? $user->hostingNosqlDatabases->first();
+
+            if ($firstDb) {
                 $user->db_username = $firstDb->db_username;
                 try {
                     $user->db_password_decrypted = \Illuminate\Support\Facades\Crypt::decryptString($firstDb->db_password);
@@ -123,6 +131,7 @@ class DashboardController extends Controller
     public function storage()
     {
         $users = User::whereHas('hostingProjects')
+            ->with('hostingProjects')
             ->withCount('hostingProjects')
             ->orderBy('hosting_storage_limit_mb', 'desc')
             ->paginate(15);

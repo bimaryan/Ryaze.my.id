@@ -90,14 +90,14 @@
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Host</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="host-{{ $db->hashid }}">{{ $db->host }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->host }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Port</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="port-{{ $db->hashid }}">{{ $db->port ?? 3306 }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->port ?? 3306 }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->port ?? 3306 }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -108,7 +108,7 @@
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Username</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="user-{{ $db->hashid }}">{{ $db->db_username }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-indigo-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -117,7 +117,7 @@
                         <input type="password" readonly value="{{ $db->db_password }}"
                             id="pass-{{ $db->hashid }}"
                             class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full">
-                        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-slate-400 transition-opacity bg-white">
                             <button class="text-slate-300 hover:text-slate-600 p-1 rounded btn-toggle-pass" data-target="pass-{{ $db->hashid }}">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
@@ -239,14 +239,14 @@
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Host</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="host-nosql-{{ $db->hashid }}">{{ $db->host }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->host }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Port</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="port-nosql-{{ $db->hashid }}">{{ $db->port }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->port }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->port }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -257,7 +257,7 @@
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Prefix / Username</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="user-nosql-{{ $db->hashid }}">{{ $db->db_username }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-rose-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -267,7 +267,7 @@
                         <input type="password" readonly value="{{ $db->db_password }}"
                             id="pass-nosql-{{ $db->hashid }}"
                             class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full">
-                        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-slate-400 transition-opacity bg-white">
                             <button class="text-slate-300 hover:text-slate-600 p-1 rounded btn-toggle-pass" data-target="pass-nosql-{{ $db->hashid }}">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
@@ -333,14 +333,14 @@
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Host</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="host-pgsql-{{ $db->hashid }}">{{ $db->host }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->host }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Port</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="port-pgsql-{{ $db->hashid }}">{{ $db->port }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->port }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->port }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -350,7 +350,7 @@
                     <div class="flex flex-col border border-slate-100 rounded-xl p-3 bg-white relative group">
                         <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-1">Username/DB</span>
                         <code class="text-sm font-mono text-slate-800 break-all" id="user-pgsql-{{ $db->hashid }}">{{ $db->db_username }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
+                        <button class="absolute top-2 right-2 text-slate-300 hover:text-blue-600 bg-white rounded p-1 opacity-100 text-slate-400 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -360,7 +360,7 @@
                         <input type="password" readonly value="{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}"
                             id="pass-pgsql-{{ $db->hashid }}"
                             class="text-sm font-mono text-slate-800 bg-transparent outline-none w-full">
-                        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-slate-400 transition-opacity bg-white">
                             <button class="text-slate-300 hover:text-slate-600 p-1 rounded btn-toggle-pass" data-target="pass-pgsql-{{ $db->hashid }}">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
@@ -716,7 +716,7 @@
                 <p class="text-sm text-slate-600 mb-2">Contoh membaca semua baris dari tabel <code>users</code>:</p>
                 <div class="bg-slate-800 rounded-xl p-4 relative group">
                     <pre class="text-xs font-mono overflow-x-auto"><code id="code-get" class="text-emerald-400"></code></pre>
-                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-get">
+                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-100 text-slate-400 transition-opacity bg-slate-700/50" data-copy-target="code-get">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
@@ -729,7 +729,7 @@
                 </h4>
                 <div class="bg-slate-800 rounded-xl p-4 relative group">
                     <pre class="text-xs font-mono overflow-x-auto"><code id="code-post" class="text-blue-400"></code></pre>
-                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-post">
+                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-100 text-slate-400 transition-opacity bg-slate-700/50" data-copy-target="code-post">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
@@ -742,7 +742,7 @@
                 </h4>
                 <div class="bg-slate-800 rounded-xl p-4 relative group">
                     <pre class="text-xs font-mono overflow-x-auto"><code id="code-js" class="text-yellow-400"></code></pre>
-                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700/50" data-copy-target="code-js">
+                    <button class="absolute top-2 right-2 text-slate-400 hover:text-white p-1 rounded btn-copy opacity-100 text-slate-400 transition-opacity bg-slate-700/50" data-copy-target="code-js">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
