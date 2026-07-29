@@ -241,7 +241,7 @@ class StorageController extends Controller
         }
 
         // Shared Hosting: Bandingkan total penggunaan dengan jatah global akun
-        $limit = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $limit = $user->role === 'superadmin' ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
         return $totalUsed < $limit;
     }

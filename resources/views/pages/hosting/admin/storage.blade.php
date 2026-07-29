@@ -47,7 +47,11 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <span class="font-semibold text-slate-800">
-                            {{ $user->hosting_storage_limit_mb >= 1024 ? number_format($user->hosting_storage_limit_mb / 1024, 1) . ' GB' : number_format($user->hosting_storage_limit_mb) . ' MB' }}
+                            @if($user->role === 'superadmin')
+                                <span class="text-xl leading-none" style="vertical-align: middle;">&infin;</span> <span class="text-sm">(Unlimited)</span>
+                            @else
+                                {{ $user->hosting_storage_limit_mb >= 1024 ? number_format($user->hosting_storage_limit_mb / 1024, 1) . ' GB' : number_format($user->hosting_storage_limit_mb) . ' MB' }}
+                            @endif
                         </span>
                     </td>
                     <td class="px-6 py-4 text-center flex items-center justify-center gap-2">

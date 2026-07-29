@@ -1732,9 +1732,9 @@ PHP;
         $totalBytes += $additionalBytes;
         
         // Shared Hosting: Limit global per akun (bukan per project)
-        $limitBytes = ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
+        $limitBytes = $user->role === 'superadmin' ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
-        if ($totalBytes > $limitBytes) {
+        if ($limitBytes !== -1 && $totalBytes > $limitBytes) {
             return false;
         }
 
