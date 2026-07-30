@@ -89,7 +89,12 @@ class DomainController extends Controller
             Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}");
         }
 
+        $domainName = $domain->domain_name;
         $domain->delete();
+        
+        $mapDir = '/www/sites/hosting_clients/.domains';
+        if (file_exists("{$mapDir}/{$domainName}")) @unlink("{$mapDir}/{$domainName}");
+        if (file_exists("{$mapDir}/www.{$domainName}")) @unlink("{$mapDir}/www.{$domainName}");
 
         return redirect()->route('user_hosting.show', $projectHashid)->with('success', 'Custom Domain berhasil dihapus dari sistem & Cloudflare.');
     }
@@ -141,6 +146,15 @@ class DomainController extends Controller
                         'proxied' => true
                     ]);
                 }
+
+                // [FIX CUSTOM DOMAIN 1Panel] Tulis mapping subdomain
+                $subdomain = $domain->project->subdomain;
+                $mapDir = '/www/sites/hosting_clients/.domains';
+                if (!file_exists($mapDir)) {
+                    mkdir($mapDir, 0755, true);
+                }
+                file_put_contents("{$mapDir}/{$domain->domain_name}", $subdomain);
+                file_put_contents("{$mapDir}/www.{$domain->domain_name}", $subdomain);
 
                 return back()->with('success', 'Nameserver berhasil tersambung! DNS Record telah dibuat otomatis.');
             }

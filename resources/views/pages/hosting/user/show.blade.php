@@ -931,10 +931,10 @@
                                                     </button>
                                                 </form>
                                             @endif
-                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" class="inline">
+                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" class="inline" id="form-delete-domain-{{ $domain->hashid }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded text-xs font-bold transition" onclick="return confirm('Yakin ingin menghapus domain ini?')">
+                                                <button type="button" onclick="confirmDeleteDomain('{{ $domain->hashid }}')" class="text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded text-xs font-bold transition">
                                                     Hapus
                                                 </button>
                                             </form>
@@ -1278,6 +1278,26 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) document.getElementById('delete-form').submit();
+            });
+        }
+
+        function confirmDeleteDomain(hashid) {
+            Swal.fire({
+                title: 'Hapus Custom Domain?',
+                text: 'Domain ini akan dihapus dari Cloudflare dan sistem Ryaze.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus Domain',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-xl text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('form-delete-domain-' + hashid).submit();
+                }
             });
         }
     </script>
