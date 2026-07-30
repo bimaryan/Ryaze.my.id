@@ -912,8 +912,7 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 font-mono text-xs space-y-1">
-                                            <div class="text-blue-600 font-bold">NS 1: ns1.ryaze.my.id</div>
-                                            <div class="text-blue-600 font-bold">NS 2: ns2.ryaze.my.id</div>
+                                            <div class="text-blue-600 font-bold">DNS Target: 165.101.230.119</div>
                                         </td>
                                         <td class="px-6 py-4 text-right flex items-center justify-end gap-3">
                                             @if($domain->ssl_status != 'active')
@@ -953,21 +952,33 @@
                 </div>
                 <div class="p-6 max-h-[70vh] overflow-y-auto">
                     <div class="space-y-6 text-sm text-slate-600">
-                        <!-- Panduan Nameserver -->
+                        <!-- Panduan DNS -->
                         <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-5 mb-6">
                             <h4 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-server"></i> Konfigurasi Nameserver
+                                <i class="fa-solid fa-globe"></i> Arahkan DNS (Pilih Salah Satu)
                             </h4>
-                            <p class="mb-3">Untuk menggunakan domain kustom, Anda wajib mengarahkan Nameserver domain Anda ke server kami.</p>
-                            <p class="mb-2">Di panel registrar domain Anda (Niagahoster, Rumahweb, dll), ubah konfigurasi Nameserver menjadi:</p>
+                            <p class="mb-3">Untuk menggunakan domain kustom, Anda harus membuat DNS record di tempat Anda membeli domain yang mengarah ke server kami.</p>
+                            
+                            <h5 class="font-bold text-slate-800 text-xs mb-1">Opsi 1: Menggunakan A Record (Disarankan untuk Root Domain)</h5>
+                            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden mb-4">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
+                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">Value / Target</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">A</td><td class="py-2 px-3 font-mono">@</td><td class="py-2 px-3 font-mono">165.101.230.119</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5 class="font-bold text-slate-800 text-xs mb-1">Opsi 2: Menggunakan CNAME (Disarankan untuk Subdomain)</h5>
                             <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
                                 <table class="w-full text-left text-xs">
                                     <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
-                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Value</th></tr>
+                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">Value / Target</th></tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="border-b border-slate-100"><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver 1</td><td class="py-2 px-3 font-mono">ns1.ryaze.my.id</td></tr>
-                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver 2</td><td class="py-2 px-3 font-mono">ns2.ryaze.my.id</td></tr>
+                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">CNAME</td><td class="py-2 px-3 font-mono">www</td><td class="py-2 px-3 font-mono">{{ $project->ryaze_domain }}</td></tr>
                                     </tbody>
                                 </table>
                             </div>
