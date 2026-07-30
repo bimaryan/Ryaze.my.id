@@ -995,6 +995,26 @@
                             </div>
                         </div>
 
+                        <!-- Skenario 3 -->
+                        <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-5 mb-6">
+                            <h4 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-3"></i> Menggunakan Nameserver
+                            </h4>
+                            <p class="mb-3">Gunakan opsi ini jika Anda ingin mengarahkan Nameserver domain Anda secara penuh.</p>
+                            <p class="mb-2">Di panel domain Anda, ubah konfigurasi Nameserver menjadi:</p>
+                            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
+                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Value</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-100"><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver 1</td><td class="py-2 px-3 font-mono">ns1.ryaze.my.id</td></tr>
+                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver 2</td><td class="py-2 px-3 font-mono">ns2.ryaze.my.id</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                         <!-- Langkah Selanjutnya -->
                         <div>
                             <h4 class="font-bold text-slate-800 mb-2">Langkah Selanjutnya</h4>
