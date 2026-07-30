@@ -912,7 +912,8 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 font-mono text-xs space-y-1">
-                                            <div class="text-blue-600 font-bold">Nameserver: ns1.ryaze.my.id</div>
+                                            <div class="text-blue-600 font-bold">NS 1: ns1.ryaze.my.id</div>
+                                            <div class="text-blue-600 font-bold">NS 2: ns2.ryaze.my.id</div>
                                         </td>
                                         <td class="px-6 py-4 text-right flex items-center justify-end gap-3">
                                             @if($domain->ssl_status != 'active')
@@ -965,7 +966,8 @@
                                         <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Value</th></tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver</td><td class="py-2 px-3 font-mono">ns1.ryaze.my.id</td></tr>
+                                        <tr class="border-b border-slate-100"><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver 1</td><td class="py-2 px-3 font-mono">ns1.ryaze.my.id</td></tr>
+                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver 2</td><td class="py-2 px-3 font-mono">ns2.ryaze.my.id</td></tr>
                                     </tbody>
                                 </table>
                             </div>
