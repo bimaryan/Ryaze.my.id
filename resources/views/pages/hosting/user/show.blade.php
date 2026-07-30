@@ -894,7 +894,7 @@
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Nama Domain</th>
                                     <th scope="col" class="px-6 py-3">Status SSL</th>
-                                    <th scope="col" class="px-6 py-3">DNS Target (CNAME/A)</th>
+                                    <th scope="col" class="px-6 py-3">DNS Target</th>
                                     <th scope="col" class="px-6 py-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
@@ -911,9 +911,8 @@
                                                 <span class="text-rose-600 bg-rose-100 px-2 py-1 rounded text-xs font-bold">Failed</span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 font-mono text-xs">
-                                            CNAME: {{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }} <br>
-                                            A: {{ env('SERVER_IP', '123.45.67.89') }}
+                                        <td class="px-6 py-4 font-mono text-xs space-y-1">
+                                            <div class="text-blue-600 font-bold">Nameserver: ns1.ryaze.my.id</div>
                                         </td>
                                         <td class="px-6 py-4 text-right flex items-center justify-end gap-3">
                                             @if($domain->ssl_status != 'active')
@@ -953,63 +952,20 @@
                 </div>
                 <div class="p-6 max-h-[70vh] overflow-y-auto">
                     <div class="space-y-6 text-sm text-slate-600">
-                        <!-- Skenario 1 -->
-                        <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-5">
-                            <h4 class="font-bold text-indigo-800 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-1"></i> Menggunakan Subdomain (Disarankan)
-                            </h4>
-                            <p class="mb-3">Gunakan opsi ini jika Anda ingin menggunakan subdomain seperti <strong>www.domainAnda.com</strong> atau <strong>app.domainAnda.com</strong>.</p>
-                            <p class="mb-2">Di panel DNS provider Anda (Rumahweb, Niagahoster, dll), buat record berikut:</p>
-                            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
-                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">Target / Value</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td class="py-2 px-3 font-mono font-bold text-indigo-600">CNAME</td><td class="py-2 px-3 font-mono">www</td><td class="py-2 px-3 font-mono">{{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Skenario 2 -->
-                        <div class="bg-emerald-50/50 border border-emerald-100 rounded-xl p-5">
-                            <h4 class="font-bold text-emerald-800 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-2"></i> Menggunakan Domain Utama (Tanpa WWW)
-                            </h4>
-                            <p class="mb-3">Gunakan opsi ini jika Anda ingin menggunakan domain root seperti <strong>domainAnda.com</strong>.</p>
-                            <p class="mb-2">Buat sebuah <strong>A Record</strong> yang mengarah ke IP Server Ryaze:</p>
-                            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden mb-3">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
-                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">IPv4 Address</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td class="py-2 px-3 font-mono font-bold text-emerald-600">A</td><td class="py-2 px-3 font-mono">@ <em>(atau kosongkan)</em></td><td class="py-2 px-3 font-mono">{{ env('SERVER_IP', '123.45.67.89 (Ubah di .env)') }}</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="bg-amber-50 text-amber-800 p-3 rounded-lg text-xs flex gap-2">
-                                <i class="fa-solid fa-lightbulb mt-0.5"></i>
-                                <p><strong>Alternatif Terbaik:</strong> Hubungkan domain Anda ke <strong>Cloudflare</strong>, lalu buat CNAME record dari <code>@</code> menuju <code>{{ env('APP_URL') ? parse_url(env('APP_URL'), PHP_URL_HOST) : 'ryaze.my.id' }}</code>.</p>
-                            </div>
-                        </div>
-
-                        <!-- Skenario 3 -->
+                        <!-- Panduan Nameserver -->
                         <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-5 mb-6">
                             <h4 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-3"></i> Menggunakan Nameserver
+                                <i class="fa-solid fa-server"></i> Konfigurasi Nameserver
                             </h4>
-                            <p class="mb-3">Gunakan opsi ini jika Anda ingin mengarahkan Nameserver domain Anda secara penuh.</p>
-                            <p class="mb-2">Di panel domain Anda, ubah konfigurasi Nameserver menjadi:</p>
+                            <p class="mb-3">Untuk menggunakan domain kustom, Anda wajib mengarahkan Nameserver domain Anda ke server kami.</p>
+                            <p class="mb-2">Di panel registrar domain Anda (Niagahoster, Rumahweb, dll), ubah konfigurasi Nameserver menjadi:</p>
                             <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
                                 <table class="w-full text-left text-xs">
                                     <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
                                         <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Value</th></tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="border-b border-slate-100"><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver 1</td><td class="py-2 px-3 font-mono">ns1.ryaze.my.id</td></tr>
-                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver 2</td><td class="py-2 px-3 font-mono">ns2.ryaze.my.id</td></tr>
+                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">Nameserver</td><td class="py-2 px-3 font-mono">ns1.ryaze.my.id</td></tr>
                                     </tbody>
                                 </table>
                             </div>

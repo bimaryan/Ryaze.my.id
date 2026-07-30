@@ -31,6 +31,53 @@ class DomainController extends Controller
 
         $domainName = strtolower(trim($request->domain_name));
         $domainName = preg_replace('#^https?://#', '', $domainName);
+        $domainName = preg_replace('#^www\.#', '', $domainName);
+
+        // --- Cloudflare Integration ---
+        $apiToken = env('CLOUDFLARE_API_TOKEN');
+        $accountId = env('CLOUDFLARE_ACCOUNT_ID', '231fac24faa0de7973bd12e50cd578bb');
+        $serverIp = env('SERVER_IP', '165.101.230.119');
+
+        if ($apiToken && $accountId) {
+            $resZone = \Illuminate\Support\Facades\Http::withToken($apiToken)
+                ->post('https://api.cloudflare.com/client/v4/zones', [
+                    'name' => $domainName,
+                    'account' => ['id' => $accountId],
+                    'type' => 'full'
+                ]);
+
+            $newZoneId = null;
+            if ($resZone->successful() && !empty($resZone->json('result.id'))) {
+                $newZoneId = $resZone->json('result.id');
+            } else {
+                $resSearch = \Illuminate\Support\Facades\Http::withToken($apiToken)
+                    ->get('https://api.cloudflare.com/client/v4/zones', [
+                        'name' => $domainName
+                    ]);
+                $newZoneId = $resSearch->json('result.0.id');
+            }
+
+            if ($newZoneId) {
+                \Illuminate\Support\Facades\Http::withToken($apiToken)
+                    ->post("https://api.cloudflare.com/client/v4/zones/{$newZoneId}/dns_records", [
+                        'type' => 'A',
+                        'name' => $domainName,
+                        'content' => $serverIp,
+                        'proxied' => false,
+                        'ttl' => 1
+                    ]);
+
+                \Illuminate\Support\Facades\Http::withToken($apiToken)
+                    ->post("https://api.cloudflare.com/client/v4/zones/{$newZoneId}/dns_records", [
+                        'type' => 'CNAME',
+                        'name' => 'www',
+                        'content' => $domainName,
+                        'proxied' => false,
+                        'ttl' => 1
+                    ]);
+            }
+        }
+        // ------------------------------
 
         HostingDomain::create([
             'project_id' => $project->id,
@@ -50,9 +97,7 @@ class DomainController extends Controller
         ];
         file_put_contents($queuePath, json_encode($queue));
 
-        return back()->with('success', 'Custom Domain berhasil ditambahkan! Silakan arahkan DNS (CNAME/A Record) domain Anda ke server ini.');
-
-        return back()->with('success', 'Custom Domain berhasil ditambahkan! Silakan arahkan DNS (CNAME/A Record) domain Anda ke server ini.');
+        return back()->with('success', 'Custom Domain berhasil ditambahkan! Silakan arahkan Nameserver domain Anda ke server kami.');
     }
 
     public function destroy($hashid)
@@ -69,6 +114,23 @@ class DomainController extends Controller
 
         $projectHashid = $domain->project->hashid;
         $domainName = $domain->domain_name;
+        
+        // --- Cloudflare Cleanup ---
+        $apiToken = env('CLOUDFLARE_API_TOKEN');
+        if ($apiToken) {
+            $resSearch = \Illuminate\Support\Facades\Http::withToken($apiToken)
+                ->get('https://api.cloudflare.com/client/v4/zones', [
+                    'name' => $domainName
+                ]);
+            $zoneIdToDelete = $resSearch->json('result.0.id');
+            
+            if ($zoneIdToDelete) {
+                \Illuminate\Support\Facades\Http::withToken($apiToken)
+                    ->delete("https://api.cloudflare.com/client/v4/zones/{$zoneIdToDelete}");
+            }
+        }
+        // --------------------------
+
         $queuePath = storage_path('app/ssl_queue.json');
         $queue = [];
         if (file_exists($queuePath)) {
