@@ -893,8 +893,8 @@
                             <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Nama Domain</th>
-                                    <th scope="col" class="px-6 py-3">Status SSL</th>
-                                    <th scope="col" class="px-6 py-3">DNS Target</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                    <th scope="col" class="px-6 py-3">Nameserver</th>
                                     <th scope="col" class="px-6 py-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
@@ -904,28 +904,39 @@
                                         <td class="px-6 py-4 font-semibold text-slate-800">{{ $domain->domain_name }}</td>
                                         <td class="px-6 py-4">
                                             @if($domain->ssl_status == 'active')
-                                                <span class="text-emerald-600 bg-emerald-100 px-2 py-1 rounded text-xs font-bold">Active</span>
-                                            @elseif($domain->ssl_status == 'pending')
-                                                <span class="text-amber-600 bg-amber-100 px-2 py-1 rounded text-xs font-bold">Pending</span>
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                                                    <i class="fa-solid fa-check-circle mr-1"></i> Aktif (SSL OK)
+                                                </span>
                                             @else
-                                                <span class="text-rose-600 bg-rose-100 px-2 py-1 rounded text-xs font-bold">Failed</span>
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 animate-pulse">
+                                                    <i class="fa-solid fa-spinner fa-spin mr-1"></i> Menunggu NS
+                                                </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 font-mono text-xs space-y-1">
-                                            <div class="text-blue-600 font-bold">DNS Target: 165.101.230.119</div>
+                                        <td class="px-6 py-4 font-mono text-xs space-y-1 text-slate-600">
+                                            @if($domain->nameservers && is_array($domain->nameservers))
+                                                @foreach($domain->nameservers as $ns)
+                                                    <div class="bg-slate-100 px-2 py-1 rounded inline-block">{{ $ns }}</div>
+                                                @endforeach
+                                            @else
+                                                -
+                                            @endif
                                         </td>
-                                        <td class="px-6 py-4 text-right flex items-center justify-end gap-3">
+                                        <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
                                             @if($domain->ssl_status != 'active')
-                                                <form action="{{ route('user_hosting.domains.ssl', $domain->hashid) }}" method="POST">
+                                                <form action="{{ route('user_hosting.domains.status', $domain->hashid) }}" method="POST" class="inline">
                                                     @csrf
-                                                    <button type="submit" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold bg-emerald-50 px-2 py-1 rounded">
-                                                        <i class="fa-solid fa-lock"></i> Aktifkan SSL
+                                                    <button type="submit" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded text-xs font-bold transition">
+                                                        Cek Status
                                                     </button>
                                                 </form>
                                             @endif
-                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Domain?', 'Apakah Anda yakin ingin menghapus domain ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="text-rose-600 hover:text-rose-800 text-xs font-bold bg-rose-50 px-2 py-1 rounded"><i class="fa-solid fa-trash"></i> Hapus</button>
+                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded text-xs font-bold transition" onclick="return confirm('Yakin ingin menghapus domain ini?')">
+                                                    Hapus
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>
@@ -952,47 +963,22 @@
                 </div>
                 <div class="p-6 max-h-[70vh] overflow-y-auto">
                     <div class="space-y-6 text-sm text-slate-600">
-                        <!-- Panduan DNS -->
-                        <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-5 mb-6">
-                            <h4 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-globe"></i> Arahkan DNS (Pilih Salah Satu)
+                        <!-- Panduan NS -->
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-5 mb-6">
+                            <h4 class="font-bold text-indigo-800 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-globe"></i> Arahkan Nameserver (NS)
                             </h4>
-                            <p class="mb-3">Untuk menggunakan domain kustom, Anda harus membuat DNS record di tempat Anda membeli domain yang mengarah ke server kami.</p>
+                            <p class="mb-3 text-indigo-700">Untuk menggunakan domain kustom, Anda harus memindahkan Nameserver domain Anda ke server Cloudflare kami.</p>
                             
-                            <h5 class="font-bold text-slate-800 text-xs mb-1">Opsi 1: Menggunakan A Record (Disarankan untuk Root Domain)</h5>
-                            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden mb-4">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
-                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">Value / Target</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">A</td><td class="py-2 px-3 font-mono">@</td><td class="py-2 px-3 font-mono">165.101.230.119</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <h5 class="font-bold text-slate-800 text-xs mb-1">Opsi 2: Menggunakan CNAME (Disarankan untuk Subdomain)</h5>
-                            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-700">
-                                        <tr><th class="py-2 px-3">Type</th><th class="py-2 px-3">Name</th><th class="py-2 px-3">Value / Target</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td class="py-2 px-3 font-mono font-bold text-blue-600">CNAME</td><td class="py-2 px-3 font-mono">www</td><td class="py-2 px-3 font-mono">{{ $project->ryaze_domain }}</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Langkah Selanjutnya -->
-                        <div>
-                            <h4 class="font-bold text-slate-800 mb-2">Langkah Selanjutnya</h4>
-                            <ul class="list-decimal list-inside space-y-1.5 text-slate-600">
-                                <li>Pastikan Anda sudah menyimpan pengaturan DNS di provider Anda.</li>
-                                <li>Masukkan nama domain Anda ke form di halaman ini, lalu klik <strong>Tambah Domain</strong>.</li>
-                                <li>Klik tombol <span class="text-emerald-600 font-bold"><i class="fa-solid fa-lock"></i> Aktifkan SSL</span>.</li>
-                                <li>Tunggu sekitar 1-2 menit hingga sistem memverifikasi dan mengaktifkan sertifikat otomatis.</li>
-                            </ul>
+                            <h5 class="font-bold text-slate-800 text-xs mb-1">Langkah-langkah:</h5>
+                            <ol class="list-decimal list-inside space-y-2 text-slate-600">
+                                <li>Masukkan nama domain Anda (misal: <code>tokosaya.com</code>) lalu klik <strong>Tambah Domain</strong>.</li>
+                                <li>Sistem akan memberikan <strong>2 (Dua) Nameserver</strong> khusus (contoh: <code>nelly.ns.cloudflare.com</code>).</li>
+                                <li>Login ke tempat Anda membeli domain (Niagahoster, Rumahweb, dll).</li>
+                                <li>Ubah <strong>Nameserver</strong> bawaan (biasanya ns1/ns2) menjadi 2 Nameserver yang kami berikan.</li>
+                                <li>Tunggu proses propagasi (bisa 10 menit hingga 24 jam).</li>
+                                <li>Klik tombol <strong>Cek Status</strong>. Jika sudah nyambung, SSL akan aktif otomatis!</li>
+                            </ol>
                         </div>
                     </div>
                 </div>

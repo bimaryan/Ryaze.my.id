@@ -7,6 +7,7 @@ use App\Models\HostingProject;
 use App\Models\HostingDomain;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Vinkla\Hashids\Facades\Hashids;
 
 class DomainController extends Controller
@@ -31,25 +32,41 @@ class DomainController extends Controller
 
         $domainName = strtolower(trim($request->domain_name));
         $domainName = preg_replace('#^https?://#', '', $domainName);
+
+        $apiToken = env('CLOUDFLARE_API_TOKEN');
+        $primaryZoneId = env('CLOUDFLARE_ZONE_ID');
+
+        // 1. Get Account ID from Primary Zone
+        $zoneInfoRes = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$primaryZoneId}");
+        if (!$zoneInfoRes->successful()) {
+            return back()->with('error', 'Gagal memverifikasi akun Cloudflare.');
+        }
+        $accountId = $zoneInfoRes->json('result.account.id');
+
+        // 2. Create New Zone
+        $createZoneRes = Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones", [
+            'name' => $domainName,
+            'account' => ['id' => $accountId],
+            'type' => 'full'
+        ]);
+
+        if (!$createZoneRes->successful()) {
+            $errorMsg = $createZoneRes->json('errors.0.message') ?? 'Unknown error';
+            return back()->with('error', 'Gagal mendaftarkan domain di Cloudflare: ' . $errorMsg);
+        }
+
+        $newZoneId = $createZoneRes->json('result.id');
+        $nameservers = $createZoneRes->json('result.name_servers');
+
         HostingDomain::create([
             'project_id' => $project->id,
             'domain_name' => $domainName,
             'ssl_status' => 'pending',
+            'cf_zone_id' => $newZoneId,
+            'nameservers' => $nameservers,
         ]);
 
-        $queuePath = storage_path('app/ssl_queue.json');
-        $queue = [];
-        if (file_exists($queuePath)) {
-            $queue = json_decode(file_get_contents($queuePath), true) ?? [];
-        }
-        $queue[] = [
-            'action' => 'add',
-            'domain' => $domainName,
-            'project_domain' => $project->ryaze_domain
-        ];
-        file_put_contents($queuePath, json_encode($queue));
-
-        return back()->with('success', 'Custom Domain berhasil ditambahkan! Silakan arahkan DNS (CNAME/A Record) domain Anda ke server ini.');
+        return back()->with('success', 'Domain berhasil didaftarkan! Silakan arahkan Nameserver domain Anda ke yang tertera di bawah ini.');
     }
 
     public function destroy($hashid)
@@ -65,24 +82,19 @@ class DomainController extends Controller
         })->findOrFail($decoded[0]);
 
         $projectHashid = $domain->project->hashid;
-        $domainName = $domain->domain_name;
-        $queuePath = storage_path('app/ssl_queue.json');
-        $queue = [];
-        if (file_exists($queuePath)) {
-            $queue = json_decode(file_get_contents($queuePath), true) ?? [];
+        
+        $apiToken = env('CLOUDFLARE_API_TOKEN');
+
+        if ($domain->cf_zone_id) {
+            Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}");
         }
-        $queue[] = [
-            'action' => 'delete',
-            'domain' => $domainName
-        ];
-        file_put_contents($queuePath, json_encode($queue));
 
         $domain->delete();
 
-        return redirect()->route('user_hosting.show', $projectHashid)->with('success', 'Custom Domain berhasil dihapus.');
+        return redirect()->route('user_hosting.show', $projectHashid)->with('success', 'Custom Domain berhasil dihapus dari sistem & Cloudflare.');
     }
 
-    public function requestSsl($hashid)
+    public function checkStatus($hashid)
     {
         $decoded = Hashids::decode($hashid);
         if (empty($decoded)) abort(404);
@@ -94,23 +106,41 @@ class DomainController extends Controller
               });
         })->findOrFail($decoded[0]);
 
-        $domainName = $domain->domain_name;
-        $domain->update([
-            'ssl_status' => 'processing'
-        ]);
-
-        $queuePath = storage_path('app/ssl_queue.json');
-        $queue = [];
-        if (file_exists($queuePath)) {
-            $queue = json_decode(file_get_contents($queuePath), true) ?? [];
+        if (!$domain->cf_zone_id) {
+            return back()->with('error', 'Zone ID tidak ditemukan.');
         }
-        $queue[] = [
-            'action' => 'ssl',
-            'domain' => $domainName,
-            'project_domain' => $domain->project->ryaze_domain
-        ];
-        file_put_contents($queuePath, json_encode($queue));
-        
-        return back()->with('success', 'Permintaan SSL sedang diproses di latar belakang. Silakan refresh halaman ini dalam 1-2 menit.');
+
+        $apiToken = env('CLOUDFLARE_API_TOKEN');
+        $res = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}");
+
+        if ($res->successful()) {
+            $status = $res->json('result.status');
+            if ($status === 'active') {
+                $domain->update(['ssl_status' => 'active']);
+
+                // Create CNAME records to tunnel
+                $tunnelUrl = env('CLOUDFLARE_TUNNEL_URL');
+                if ($tunnelUrl) {
+                    // Create @ record
+                    Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}/dns_records", [
+                        'type' => 'CNAME',
+                        'name' => '@',
+                        'content' => $tunnelUrl,
+                        'proxied' => true
+                    ]);
+                    // Create www record
+                    Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}/dns_records", [
+                        'type' => 'CNAME',
+                        'name' => 'www',
+                        'content' => $tunnelUrl,
+                        'proxied' => true
+                    ]);
+                }
+
+                return back()->with('success', 'Nameserver berhasil tersambung! DNS Record telah dibuat otomatis.');
+            }
+        }
+
+        return back()->with('error', 'Nameserver belum tersambung. Biasanya butuh waktu propagasi hingga 24 jam setelah Anda mengubah NS di tempat pembelian domain.');
     }
 }

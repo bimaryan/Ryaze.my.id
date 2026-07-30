@@ -13,6 +13,12 @@ class HostingDomain extends Model
         'project_id',
         'domain_name',
         'ssl_status',
+        'cf_zone_id',
+        'nameservers',
+    ];
+
+    protected $casts = [
+        'nameservers' => 'array',
     ];
 
     public function project()
