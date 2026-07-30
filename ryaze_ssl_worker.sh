@@ -43,6 +43,8 @@ for i in $(seq 0 $(($LENGTH - 1))); do
     DOMAIN=$(echo "$QUEUE_CONTENT" | jq -r ".[$i].domain")
     PROJECT_DOMAIN=$(echo "$QUEUE_CONTENT" | jq -r ".[$i].project_domain")
     
+    LOG_FILE="$APP_DIR/storage/logs/ssl_worker.log"
+    echo "[$(date)] Memproses task: $ACTION untuk domain $DOMAIN" >> "$LOG_FILE"
     echo "[$(date)] Memproses task: $ACTION untuk domain $DOMAIN"
     
     CONF_FILE="$NGINX_CONF_DIR/$DOMAIN.conf"
@@ -106,6 +108,7 @@ EOF
         
         if echo "$OUTPUT" | grep -E "Congratulations|Successfully|Certificate not yet due for renewal"; then
             # SSL Sukses
+            echo "[$(date)] Certbot BERHASIL untuk $DOMAIN. Output: $OUTPUT" >> "$LOG_FILE"
             mkdir -p "$NGINX_SSL_DIR/$DOMAIN"
             cp "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" "$NGINX_SSL_DIR/$DOMAIN/fullchain.pem"
             cp "/etc/letsencrypt/live/$DOMAIN/privkey.pem" "$NGINX_SSL_DIR/$DOMAIN/privkey.pem"
@@ -163,6 +166,7 @@ EOF
             docker exec $CONTAINER_PHP php /www/sites/ryaze.my.id/index/artisan domain:ssl-status "$DOMAIN" active
         else
             # SSL Gagal
+            echo "[$(date)] Certbot GAGAL untuk $DOMAIN. Output: $OUTPUT" >> "$LOG_FILE"
             echo "[$(date)] Certbot gagal untuk $DOMAIN. Output: $OUTPUT"
             docker exec $CONTAINER_PHP php /www/sites/ryaze.my.id/index/artisan domain:ssl-status "$DOMAIN" failed
         fi
