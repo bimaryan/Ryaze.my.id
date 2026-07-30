@@ -111,6 +111,11 @@ class DomainController extends Controller
         }
 
         $apiToken = env('CLOUDFLARE_API_TOKEN');
+        
+        // Force Cloudflare to re-check nameservers immediately
+        Http::withToken($apiToken)->put("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}/activation_check");
+        sleep(2); // Wait a moment for Cloudflare to process
+
         $res = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}");
 
         if ($res->successful()) {
