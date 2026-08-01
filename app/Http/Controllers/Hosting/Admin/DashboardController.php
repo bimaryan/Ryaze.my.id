@@ -116,7 +116,7 @@ class DashboardController extends Controller
                 try {
                     $user->db_password_decrypted = \Illuminate\Support\Facades\Crypt::decryptString($firstDb->db_password);
                 } catch (\Exception $e) {
-                    $user->db_password_decrypted = 'Encrypted (old)';
+                    $user->db_password_decrypted = $firstDb->db_password;
                 }
             }
             return $user;
