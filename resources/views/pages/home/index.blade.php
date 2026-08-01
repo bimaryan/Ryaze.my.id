@@ -360,7 +360,7 @@
                         <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Auto
                             Deploy (Node, PHP, Python, React, Vue)</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Database
-                            (MySQL), Custom Domain & SSL Gratis</li>
+                            (MySQL) & SSL Gratis</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> File
                             Manager, Web Terminal</li>
                     </ul>
@@ -661,6 +661,187 @@
             </div>
         </div>
     </footer>
+
+    <!-- Chatbot Widget -->
+    <div id="ryaze-chatbot-widget" class="fixed bottom-6 right-6 z-50 font-sans">
+        <!-- Chat Window -->
+        <div id="ryaze-chat-window" class="hidden flex-col bg-white border border-slate-200 shadow-2xl rounded-2xl w-80 h-96 mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right">
+            <div class="bg-indigo-600 px-4 py-3 text-white flex justify-between items-center shadow-sm">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                    <span class="font-bold text-sm">Ryaze Assistant</span>
+                </div>
+                <button id="ryaze-chat-close" class="text-indigo-100 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="ryaze-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-sm flex flex-col">
+                <!-- Welcome Message -->
+                <div class="flex items-start gap-2">
+                    <div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
+                        <i class="fa-solid fa-robot text-[10px] text-indigo-600"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200 px-3 py-2 rounded-2xl rounded-tl-sm text-slate-700 shadow-sm max-w-[85%]">
+                        Halo! Saya asisten AI Ryaze. Ada yang bisa saya bantu hari ini?
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 bg-white border-t border-slate-100">
+                <form id="ryaze-chat-form" class="flex items-center gap-2">
+                    <input type="text" id="ryaze-chat-input" placeholder="Ketik pesan..." required class="flex-1 bg-slate-50 border border-slate-200 text-sm rounded-full px-4 py-2 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+                    <button type="submit" class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition-colors shrink-0 shadow-sm disabled:opacity-50">
+                        <i class="fa-solid fa-paper-plane text-[10px] -ml-0.5"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toggle Button -->
+        <button id="ryaze-chat-toggle" class="w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-indigo-200 transition-all hover:scale-105 ml-auto relative">
+            <i class="fa-solid fa-message text-xl"></i>
+            <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-rose-500 border-2 border-white rounded-full"></span>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('ryaze-chat-toggle');
+            const closeBtn = document.getElementById('ryaze-chat-close');
+            const chatWindow = document.getElementById('ryaze-chat-window');
+            const chatForm = document.getElementById('ryaze-chat-form');
+            const chatInput = document.getElementById('ryaze-chat-input');
+            const messagesContainer = document.getElementById('ryaze-chat-messages');
+            
+            // Notification dot
+            const notifDot = toggleBtn.querySelector('span');
+
+            let chatHistory = [];
+
+            // Toggle window
+            const toggleChat = () => {
+                chatWindow.classList.toggle('hidden');
+                chatWindow.classList.toggle('flex');
+                if(!chatWindow.classList.contains('hidden')) {
+                    chatInput.focus();
+                    if(notifDot) notifDot.style.display = 'none';
+                }
+            };
+
+            toggleBtn.addEventListener('click', toggleChat);
+            closeBtn.addEventListener('click', toggleChat);
+
+            function addMessage(text, isUser = false) {
+                const wrapper = document.createElement('div');
+                wrapper.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''}`;
+                
+                let avatar = '';
+                if(isUser) {
+                    avatar = `<div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-solid fa-user text-[10px] text-slate-500"></i>
+                              </div>`;
+                } else {
+                    avatar = `<div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-solid fa-robot text-[10px] text-indigo-600"></i>
+                              </div>`;
+                }
+
+                const msgBubble = document.createElement('div');
+                msgBubble.className = isUser 
+                    ? 'bg-indigo-600 text-white px-3 py-2 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] break-words'
+                    : 'bg-white border border-slate-200 px-3 py-2 rounded-2xl rounded-tl-sm text-slate-700 shadow-sm max-w-[85%] break-words';
+                
+                const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                          .replace(/\n/g, '<br>');
+                msgBubble.innerHTML = formattedText;
+
+                wrapper.innerHTML = avatar;
+                wrapper.appendChild(msgBubble);
+                messagesContainer.appendChild(wrapper);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function addTypingIndicator() {
+                const id = 'typing-' + Date.now();
+                const wrapper = document.createElement('div');
+                wrapper.id = id;
+                wrapper.className = 'flex items-start gap-2';
+                wrapper.innerHTML = `
+                    <div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
+                        <i class="fa-solid fa-robot text-[10px] text-indigo-600"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
+                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                `;
+                messagesContainer.appendChild(wrapper);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                return id;
+            }
+
+            function removeElement(id) {
+                const el = document.getElementById(id);
+                if (el) el.remove();
+            }
+
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const text = chatInput.value.trim();
+                if(!text) return;
+
+                const submitBtn = chatForm.querySelector('button');
+                
+                // Add user message to UI
+                addMessage(text, true);
+                chatInput.value = '';
+                chatInput.disabled = true;
+                submitBtn.disabled = true;
+
+                // Add loading
+                const typingId = addTypingIndicator();
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            message: text,
+                            history: chatHistory
+                        })
+                    });
+
+                    removeElement(typingId);
+                    
+                    if(response.ok) {
+                        const data = await response.json();
+                        if(data.reply) {
+                            addMessage(data.reply, false);
+                            
+                            chatHistory.push({ role: 'user', content: text });
+                            chatHistory.push({ role: 'assistant', content: data.reply });
+                            
+                            if(chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+                        } else {
+                            addMessage("Maaf, terjadi kesalahan.", false);
+                        }
+                    } else {
+                        addMessage("Maaf, gagal terhubung ke server.", false);
+                    }
+                } catch(err) {
+                    removeElement(typingId);
+                    addMessage("Terjadi kesalahan jaringan.", false);
+                } finally {
+                    chatInput.disabled = false;
+                    submitBtn.disabled = false;
+                    chatInput.focus();
+                }
+            });
+        });
+    </script>
 
     @include('components.hot-toast')
 </body>

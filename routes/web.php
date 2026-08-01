@@ -330,6 +330,9 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// ── CHATBOT ROUTE ────────────────────────────────────────────
+Route::post('/chat', [\App\Http\Controllers\ChatbotController::class, 'chat'])->name('chat.send');
+
 // ── TUNNEL ROUTE (Catch-all for tunneling) ───────────────────
 Route::any('/t/{subdomain}/{path?}', [\App\Http\Controllers\TunnelController::class, 'handleProxyRequest'])
     ->where('path', '.*')

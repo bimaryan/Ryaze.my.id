@@ -106,10 +106,7 @@
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-gears"></i> <span>Settings</span>
             </button>
-            <button data-tab="domains" id="tab-domains" onclick="switchTab('domains')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-                <i class="fa-solid fa-globe"></i> <span>Domains</span>
-            </button>
+
             {{-- <button data-tab="email" id="tab-email"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50">
                 <i class="fa-solid fa-envelope"></i> <span>Email</span>
@@ -846,150 +843,6 @@
             </div>
         </div>
 
-        {{-- TAB: DOMAINS --}}
-        <div id="panel-domains" class="tab-panel hidden space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-slate-800">Custom Domains</h3>
-                        <p class="text-xs text-slate-500">Tambahkan domain kustom untuk project Anda.</p>
-                    </div>
-                    <button type="button" onclick="document.getElementById('docsModal').showModal()"
-                        class="bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5">
-                        <i class="fa-solid fa-book"></i> Panduan Setup
-                    </button>
-                </div>
-                <div class="p-6">
-                    @php
-                        $userPlan = Auth::user()->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first()->plan ?? 'free';
-                    @endphp
-
-                    @if ($userPlan === 'free')
-                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-5 text-center mb-6">
-                            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fa-solid fa-crown text-xl"></i>
-                            </div>
-                            <h4 class="font-bold text-indigo-900 mb-1">Fitur Premium</h4>
-                            <p class="text-sm text-indigo-700 mb-4">Fitur Custom Domain hanya tersedia untuk paket Starter, Pro, dan Business.</p>
-                            <a href="{{ route('user_hosting.subscription') }}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-5 rounded-lg text-sm transition-all shadow-sm">
-                                Upgrade Paket
-                            </a>
-                        </div>
-                    @else
-                        <form action="{{ route('user_hosting.domains.store', $project->hashid) }}" method="POST" class="flex gap-4">
-                            @csrf
-                            <div class="flex-1">
-                                <input type="text" name="domain_name" placeholder="example.com" required
-                                    class="transition-all w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                            </div>
-                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
-                                Tambah Domain
-                            </button>
-                        </form>
-                    @endif
-
-                    <div class="mt-6 border border-slate-200 rounded-xl overflow-x-auto">
-                        <table class="w-full text-sm text-left text-slate-500 whitespace-nowrap min-w-[600px]">
-                            <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">Nama Domain</th>
-                                    <th scope="col" class="px-6 py-3">Status</th>
-                                    <th scope="col" class="px-6 py-3">Nameserver</th>
-                                    <th scope="col" class="px-6 py-3 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($project->domains as $domain)
-                                    <tr class="bg-white border-b border-slate-100 hover:bg-slate-50">
-                                        <td class="px-6 py-4 font-semibold text-slate-800">{{ $domain->domain_name }}</td>
-                                        <td class="px-6 py-4">
-                                            @if($domain->ssl_status == 'active')
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
-                                                    <i class="fa-solid fa-check-circle mr-1"></i> Aktif (SSL OK)
-                                                </span>
-                                            @else
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 animate-pulse">
-                                                    <i class="fa-solid fa-spinner fa-spin mr-1"></i> Menunggu NS
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 font-mono text-xs space-y-1 text-slate-600">
-                                            @if($domain->nameservers && is_array($domain->nameservers))
-                                                @foreach($domain->nameservers as $ns)
-                                                    <div class="bg-slate-100 px-2 py-1 rounded inline-block">{{ $ns }}</div>
-                                                @endforeach
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
-                                            @if($domain->ssl_status != 'active')
-                                                <form action="{{ route('user_hosting.domains.status', $domain->hashid) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    <button type="submit" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded text-xs font-bold transition">
-                                                        Cek Status
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" class="inline" id="form-delete-domain-{{ $domain->hashid }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" onclick="confirmDeleteDomain('{{ $domain->hashid }}')" class="text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded text-xs font-bold transition">
-                                                    Hapus
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="px-6 py-4 text-center text-slate-500">Belum ada domain kustom yang didaftarkan.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            {{-- MODAL PANDUAN DOMAIN --}}
-            <dialog id="docsModal" class="backdrop:bg-slate-900/60 p-0 rounded-2xl shadow-2xl border-0 w-full max-w-2xl bg-white m-auto">
-                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-                        <i class="fa-solid fa-book text-indigo-500"></i> Panduan Setup Custom Domain
-                    </h3>
-                    <button onclick="document.getElementById('docsModal').close()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-                <div class="p-6 max-h-[70vh] overflow-y-auto">
-                    <div class="space-y-6 text-sm text-slate-600">
-                        <!-- Panduan NS -->
-                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-5 mb-6">
-                            <h4 class="font-bold text-indigo-800 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-globe"></i> Arahkan Nameserver (NS)
-                            </h4>
-                            <p class="mb-3 text-indigo-700">Untuk menggunakan domain kustom, Anda harus memindahkan Nameserver domain Anda ke server Cloudflare kami.</p>
-                            
-                            <h5 class="font-bold text-slate-800 text-xs mb-1">Langkah-langkah:</h5>
-                            <ol class="list-decimal list-inside space-y-2 text-slate-600">
-                                <li>Masukkan nama domain Anda (misal: <code>tokosaya.com</code>) lalu klik <strong>Tambah Domain</strong>.</li>
-                                <li>Sistem akan memberikan <strong>2 (Dua) Nameserver</strong> khusus (contoh: <code>nelly.ns.cloudflare.com</code>).</li>
-                                <li>Login ke tempat Anda membeli domain (Niagahoster, Rumahweb, dll).</li>
-                                <li>Ubah <strong>Nameserver</strong> bawaan (biasanya ns1/ns2) menjadi 2 Nameserver yang kami berikan.</li>
-                                <li>Tunggu proses propagasi (bisa 10 menit hingga 24 jam).</li>
-                                <li>Klik tombol <strong>Cek Status</strong>. Jika sudah nyambung, SSL akan aktif otomatis!</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 text-right rounded-b-2xl">
-                    <button onclick="document.getElementById('docsModal').close()" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors shadow-sm">
-                        Mengerti
-                    </button>
-                </div>
-            </dialog>
-
-        </div>
 
         {{-- TAB: CRON JOBS --}}
         {{-- TAB: EMAIL --}}
@@ -1278,26 +1131,6 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) document.getElementById('delete-form').submit();
-            });
-        }
-
-        function confirmDeleteDomain(hashid) {
-            Swal.fire({
-                title: 'Hapus Custom Domain?',
-                text: 'Domain ini akan dihapus dari Cloudflare dan sistem Ryaze.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e11d48',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'Ya, Hapus Domain',
-                cancelButtonText: 'Batal',
-                customClass: {
-                    popup: 'rounded-xl text-sm'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('form-delete-domain-' + hashid).submit();
-                }
             });
         }
     </script>

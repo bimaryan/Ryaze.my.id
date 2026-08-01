@@ -40,7 +40,7 @@
                             <li class="flex items-start">
                                 <span class="bg-slate-200 text-slate-700 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold mr-3 shrink-0 mt-0.5">2</span>
                                 <div>
-                                    <strong>Tentukan Subdomain:</strong> Nama proyek Anda akan langsung menjadi alamat akses (contoh: jika nama proyek adalah <code>app</code>, maka web dapat diakses di <code class="font-mono bg-white border border-slate-200 text-slate-800 px-1 py-0.5 rounded text-xs mx-1">app.ryaze.my.id</code>). Anda juga dapat menambahkan Custom Domain Anda sendiri nanti.
+                                    <strong>Tentukan Subdomain:</strong> Nama proyek Anda akan langsung menjadi alamat akses (contoh: jika nama proyek adalah <code>app</code>, maka web dapat diakses di <code class="font-mono bg-white border border-slate-200 text-slate-800 px-1 py-0.5 rounded text-xs mx-1">app.ryaze.my.id</code>).
                                 </div>
                             </li>
                             <li class="flex items-start">

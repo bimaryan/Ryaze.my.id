@@ -165,7 +165,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'promo_key'     => 'plan_starter_promo',
                 'default_price' => 15000,
                 'color'         => 'indigo',
-                'features'      => ['1 GB Storage', 'Maks. 3 Project', 'MySQL & PostgreSQL', 'Custom Domain + SSL', 'Prioritas Support'],
+                'features'      => ['1 GB Storage', 'Maks. 3 Project', 'MySQL & PostgreSQL', 'Subdomain Bawaan', 'Prioritas Support'],
             ],
             'pro' => [
                 'label'         => 'Pro',
@@ -175,7 +175,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'promo_key'     => 'plan_pro_promo',
                 'default_price' => 30000,
                 'color'         => 'violet',
-                'features'      => ['3 GB Storage', 'Maks. 10 Project', 'MySQL, PostgreSQL & Redis', 'Custom Domain + SSL', 'Prioritas Support'],
+                'features'      => ['3 GB Storage', 'Maks. 10 Project', 'MySQL, PostgreSQL & Redis', 'Subdomain Bawaan', 'Prioritas Support'],
             ],
             'business' => [
                 'label'         => 'Business',
@@ -185,7 +185,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'promo_key'     => 'plan_business_promo',
                 'default_price' => 75000,
                 'color'         => 'amber',
-                'features'      => ['10 GB Storage', 'Project Unlimited', 'Semua Database', 'Custom Domain + SSL', 'Prioritas Support'],
+                'features'      => ['10 GB Storage', 'Project Unlimited', 'Semua Database', 'Subdomain Bawaan', 'Prioritas Support'],
             ],
         ];
     }
