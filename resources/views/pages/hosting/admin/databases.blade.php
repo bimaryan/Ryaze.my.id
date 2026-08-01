@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-500">Host:</span>
-                                    <span class="font-mono bg-white text-slate-700 px-1.5 py-0.5 rounded border border-slate-200">{{ $user->hostingDatabases->first()->host }}:3306</span>
+                                    <span class="font-mono bg-white text-slate-700 px-1.5 py-0.5 rounded border border-slate-200">{{ $user->hostingDatabases->first()?->host ?? 'localhost' }}:3306</span>
                                 </div>
                             </div>
                         </div>
