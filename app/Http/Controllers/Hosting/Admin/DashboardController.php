@@ -113,6 +113,8 @@ class DashboardController extends Controller
 
             if ($firstDb) {
                 $user->db_username = $firstDb->db_username;
+                $user->db_host = $firstDb->host ?? 'localhost';
+                $user->db_port = $firstDb->port ?? 3306;
                 try {
                     $user->db_password_decrypted = \Illuminate\Support\Facades\Crypt::decryptString($firstDb->db_password);
                 } catch (\Exception $e) {
