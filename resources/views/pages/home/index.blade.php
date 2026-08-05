@@ -496,13 +496,13 @@
                     <div class="flex items-center gap-3 flex-wrap mt-auto pt-4 border-t border-slate-100">
                         @if ($portfolio->link_github)
                             <a href="{{ $portfolio->link_github }}" target="_blank" rel="noopener noreferrer"
-                                class="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1.5">
+                                class="text-xs font-semibold text-slate-900 hover:text-indigo-600 transition-colors flex items-center gap-1.5">
                                 <i class="fa-brands fa-github text-sm"></i> Code
                             </a>
                         @endif
                         @if ($portfolio->link_journal)
                             <a href="{{ $portfolio->link_journal }}" target="_blank" rel="noopener noreferrer"
-                                class="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1.5">
+                                class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1.5">
                                 <i class="fa-solid fa-book-open text-sm"></i> Jurnal
                             </a>
                         @endif
@@ -512,9 +512,15 @@
                                 <i class="fa-solid fa-certificate text-sm"></i> Sertifikat
                             </a>
                         @endif
+                        @if ($portfolio->link_copyright)
+                            <a href="{{ $portfolio->link_copyright }}" target="_blank" rel="noopener noreferrer"
+                                class="text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-halved text-sm"></i> Hak Cipta
+                            </a>
+                        @endif
                         @if ($portfolio->link_preview)
                             <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer"
-                                class="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1.5 ml-auto">
+                                class="text-xs font-semibold text-slate-900 hover:text-indigo-600 transition-colors flex items-center gap-1.5 ml-auto">
                                 Visit <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                             </a>
                         @endif

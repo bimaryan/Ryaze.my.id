@@ -19,6 +19,7 @@ class Portfolio extends Model
         'link_journal',
         'image_path',
         'certificate_path',
+        'link_copyright',
         'is_active',
     ];
 
