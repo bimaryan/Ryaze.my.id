@@ -12,7 +12,7 @@ class FixPgsql extends Command
 
     public function handle()
     {
-        $pgHost = env('PANEL_PGSQL_HOST', '172.18.0.12');
+        $pgHost = env('PANEL_PGSQL_HOST', '1Panel-postgresql-cmXb');
         $pgPort = env('PANEL_PGSQL_PORT', '5432');
         $pgUser = env('PANEL_PGSQL_USER', 'Bimaryan');
         $pgPass = env('PANEL_PGSQL_PASSWORD', '@Bimaryan2329');
