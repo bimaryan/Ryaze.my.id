@@ -493,11 +493,23 @@
                     <p class="text-slate-500 text-sm line-clamp-3 mb-4 flex-1 leading-relaxed">
                         {{ $portfolio->description }}</p>
 
-                    <div class="flex items-center gap-4 mt-auto pt-4 border-t border-slate-100">
+                    <div class="flex items-center gap-3 flex-wrap mt-auto pt-4 border-t border-slate-100">
                         @if ($portfolio->link_github)
                             <a href="{{ $portfolio->link_github }}" target="_blank" rel="noopener noreferrer"
                                 class="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1.5">
                                 <i class="fa-brands fa-github text-sm"></i> Code
+                            </a>
+                        @endif
+                        @if ($portfolio->link_journal)
+                            <a href="{{ $portfolio->link_journal }}" target="_blank" rel="noopener noreferrer"
+                                class="text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-open text-sm"></i> Jurnal
+                            </a>
+                        @endif
+                        @if ($portfolio->certificate_path)
+                            <a href="{{ Storage::url($portfolio->certificate_path) }}" target="_blank" rel="noopener noreferrer"
+                                class="text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-certificate text-sm"></i> Sertifikat
                             </a>
                         @endif
                         @if ($portfolio->link_preview)
