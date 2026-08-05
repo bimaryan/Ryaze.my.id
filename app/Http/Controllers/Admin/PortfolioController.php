@@ -36,11 +36,13 @@ class PortfolioController extends Controller
             'tags' => 'nullable|string', // Comma separated
             'link_preview' => 'nullable|url',
             'link_github' => 'nullable|url',
+            'link_journal' => 'nullable|url',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'certificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'is_active' => 'boolean',
         ]);
 
-        $data = $request->except(['image', 'tags']);
+        $data = $request->except(['image', 'tags', 'certificate']);
         
         if ($request->filled('tags')) {
             $tagsArray = array_map('trim', explode(',', $request->tags));
@@ -50,6 +52,11 @@ class PortfolioController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('portfolios', 'public');
             $data['image_path'] = $path;
+        }
+
+        if ($request->hasFile('certificate')) {
+            $certPath = $request->file('certificate')->store('portfolios/certificates', 'public');
+            $data['certificate_path'] = $certPath;
         }
 
         $data['is_active'] = $request->has('is_active');
@@ -81,11 +88,13 @@ class PortfolioController extends Controller
             'tags' => 'nullable|string',
             'link_preview' => 'nullable|url',
             'link_github' => 'nullable|url',
+            'link_journal' => 'nullable|url',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'certificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'is_active' => 'boolean',
         ]);
 
-        $data = $request->except(['image', 'tags']);
+        $data = $request->except(['image', 'tags', 'certificate']);
         
         if ($request->filled('tags')) {
             $tagsArray = array_map('trim', explode(',', $request->tags));
@@ -100,6 +109,14 @@ class PortfolioController extends Controller
             }
             $path = $request->file('image')->store('portfolios', 'public');
             $data['image_path'] = $path;
+        }
+
+        if ($request->hasFile('certificate')) {
+            if ($portfolio->certificate_path) {
+                Storage::disk('public')->delete($portfolio->certificate_path);
+            }
+            $certPath = $request->file('certificate')->store('portfolios/certificates', 'public');
+            $data['certificate_path'] = $certPath;
         }
 
         $data['is_active'] = $request->has('is_active');

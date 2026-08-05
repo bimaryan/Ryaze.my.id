@@ -16,7 +16,9 @@ class Portfolio extends Model
         'tags',
         'link_preview',
         'link_github',
+        'link_journal',
         'image_path',
+        'certificate_path',
         'is_active',
     ];
 

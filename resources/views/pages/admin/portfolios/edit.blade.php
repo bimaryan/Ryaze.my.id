@@ -51,6 +51,15 @@
                     </div>
 
                     <div>
+                        <label for="link_journal" class="block text-sm font-medium text-slate-700 mb-2">
+                            <i class="fa-solid fa-book-open mr-1 text-indigo-500"></i> Link Jurnal
+                        </label>
+                        <input type="url" name="link_journal" id="link_journal" class="transition-all @error('link_journal') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_journal', $portfolio->link_journal) }}" placeholder="https://journal.example.com/...">
+                        <p class="text-xs text-slate-500 mt-1">Opsional. Isi jika portofolio ini dipublikasikan di jurnal ilmiah.</p>
+                        @error('link_journal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
                         <label for="image" class="block text-sm font-medium text-slate-700 mb-2">Gambar / Thumbnail</label>
                         @if($portfolio->image_path)
                             <div class="mb-3">
@@ -61,6 +70,26 @@
                         <input type="file" name="image" id="image" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-lg">
                         <p class="text-xs text-slate-500 mt-2">Format: JPG, PNG, WEBP (Max 2MB). Kosongkan jika tidak ingin mengubah gambar.</p>
                         @error('image') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label for="certificate" class="block text-sm font-medium text-slate-700 mb-2">
+                            <i class="fa-solid fa-certificate mr-1 text-amber-500"></i> Sertifikat Hak Cipta
+                        </label>
+                        @if($portfolio->certificate_path)
+                            <div class="mb-3 flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                <i class="fa-solid fa-file-certificate text-amber-500 text-xl"></i>
+                                <div>
+                                    <p class="text-xs text-slate-500 mb-1">Sertifikat saat ini:</p>
+                                    <a href="{{ Storage::url($portfolio->certificate_path) }}" target="_blank" class="text-sm text-amber-700 font-medium hover:underline">
+                                        <i class="fa-solid fa-external-link mr-1"></i> Lihat Sertifikat
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+                        <input type="file" name="certificate" id="certificate" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 border border-slate-200 rounded-lg">
+                        <p class="text-xs text-slate-500 mt-2">Format: PDF, JPG, PNG (Max 5MB). Kosongkan jika tidak ingin mengubah sertifikat.</p>
+                        @error('certificate') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
