@@ -466,7 +466,7 @@
 
                         @if ($portfolio->image_path)
                             <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}"
-                                class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-300">
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-slate-300 bg-slate-50">
                                 <i class="fa-solid fa-image text-3xl"></i>
