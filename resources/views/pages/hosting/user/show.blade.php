@@ -374,7 +374,7 @@
                 <div class="flex items-center bg-[#090b10] border-t border-slate-800/80 px-5 py-3.5 gap-3 relative overflow-hidden focus-within:bg-[#0f121a] transition-colors duration-300 group/input">
                     <div class="absolute left-0 top-0 w-[3px] h-full bg-emerald-500/80 transform scale-y-0 group-focus-within/input:scale-y-100 transition-transform duration-300 ease-out origin-bottom shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
                     <span id="terminal-prompt" class="font-mono text-sm font-bold select-none shrink-0 flex items-center gap-2">
-                        <span class="text-indigo-400/90">{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}</span>
+                        <span class="text-indigo-400/90">{{ $project->ryaze_domain }}</span>
                         <i class="fa-solid fa-angle-right text-emerald-400/80 text-xs"></i>
                     </span>
                     <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off"
@@ -1240,24 +1240,23 @@
         var termUrl = fixUrl('{{ route('user_hosting.terminal', $project->hashid) }}');
         var csrfToken = '{{ csrf_token() }}';
         var projectRoot = '{{ hosting_clients_dir() }}/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
-        var projectSlug = '{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
+        var projectSlug = '{{ $project->ryaze_domain }}';
 
         var cmdHistory = [],
             histIdx = -1,
             currentCwd = projectRoot,
             running = false;
 
-        function getPromptLabel(cwd) {
-            const rel = cwd.startsWith(projectRoot) ? (cwd.slice(projectRoot.length) || '') : cwd;
-            return projectSlug + rel;
+        function getPromptLabel() {
+            return projectSlug;
         }
 
         function updatePrompt(cwd) {
             currentCwd = cwd;
             const relPath = cwd.startsWith(projectRoot) ? cwd.slice(projectRoot.length) : '';
-            cwdDisplay.textContent = '/' + projectSlug + relPath;
+            cwdDisplay.textContent = projectSlug + relPath;
             termPrompt.innerHTML =
-                `<span class="text-indigo-400">${getPromptLabel(cwd)}</span><span class="text-slate-400"> $</span>`;
+                `<span class="text-indigo-400">${getPromptLabel()}</span><span class="text-slate-400"> $</span>`;
         }
 
         function appendRaw(html) {
