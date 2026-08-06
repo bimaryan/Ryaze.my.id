@@ -80,101 +80,142 @@
             // Find the global PJAX container
             const container = document.getElementById('pjax-container');
             if (!container) return; // Only run on pages that use the page-layout
-            
+
             let currentUrl = window.location.href;
-            
-            function fetchAndUpdate(url) {
+            const loadedScripts = new Set();
+
+            function isSameOrigin(url) {
+                try {
+                    const urlObj = new URL(url);
+                    return urlObj.origin === window.location.origin && !urlObj.pathname.startsWith('/storage/');
+                } catch (err) {
+                    return false;
+                }
+            }
+
+            async function fetchAndUpdate(url) {
                 container.style.opacity = '0.5';
                 container.style.pointerEvents = 'none';
-                
-                fetch(url, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+
+                try {
+                    const response = await fetch(url, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    // Redirect (login/session expired), error (419/500), or maintenance
+                    // page must do a full navigation, otherwise the user gets stuck.
+                    if (!response.ok || response.redirected) {
+                        window.location.href = url;
+                        return;
                     }
-                })
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
+
+                    const html = await response.text();
+                    const doc = new DOMParser().parseFromString(html, 'text/html');
                     const newContainer = doc.getElementById('pjax-container');
-                    
-                    if (newContainer) {
-                        container.innerHTML = newContainer.innerHTML;
-                        
-                        // Execute scripts inside the new container
-                        const scripts = container.querySelectorAll('script');
-                        scripts.forEach(oldScript => {
-                            const newScript = document.createElement('script');
-                            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                            oldScript.parentNode.replaceChild(newScript, oldScript);
-                        });
 
-                        // Cleanup Flowbite backdrops and classes
-                        document.querySelectorAll('[modal-backdrop], [drawer-backdrop]').forEach(el => el.remove());
-                        document.body.classList.remove('overflow-hidden');
-                        
-                        // Force Flowbite to re-initialize
-                        document.querySelectorAll('[data-modal-target], [data-modal-toggle], [data-drawer-target], [data-drawer-toggle], [data-dropdown-toggle], [data-tooltip-target]').forEach(el => {
-                            el.removeAttribute('data-modal-initialized');
-                            el.removeAttribute('data-drawer-initialized');
-                            el.removeAttribute('data-dropdown-initialized');
-                            el.removeAttribute('data-tooltip-initialized');
-                        });
-
-                        // Re-initialize flowbite modals, dropdowns, tooltips, etc.
-                        if (typeof initFlowbite === 'function') {
-                            initFlowbite();
-                        }
+                    // Target page doesn't use PJAX (public/home/auth page) -> full navigation
+                    if (!newContainer) {
+                        window.location.href = url;
+                        return;
                     }
-                    
+
+                    // Update page title & meta description
+                    const newTitle = doc.querySelector('title');
+                    if (newTitle) document.title = newTitle.textContent;
+                    const newDesc = doc.querySelector('meta[name="description"]');
+                    if (newDesc && newDesc.getAttribute('content')) {
+                        let desc = document.querySelector('meta[name="description"]');
+                        if (!desc) {
+                            desc = document.createElement('meta');
+                            desc.setAttribute('name', 'description');
+                            document.head.appendChild(desc);
+                        }
+                        desc.setAttribute('content', newDesc.getAttribute('content'));
+                    }
+
+                    // Swap container content
+                    container.innerHTML = newContainer.innerHTML;
+
+                    // Swap sidebar while preserving scroll position
                     const currentSidebar = document.getElementById('logo-sidebar');
                     const newSidebar = doc.getElementById('logo-sidebar');
                     if (currentSidebar && newSidebar) {
-                        // Find the scrollable container inside the sidebar
                         const scrollContainer = currentSidebar.querySelector('.overflow-y-auto');
-                        let scrollPos = 0;
-                        if (scrollContainer) {
-                            scrollPos = scrollContainer.scrollTop;
-                        }
-                        
+                        const scrollPos = scrollContainer ? scrollContainer.scrollTop : 0;
                         currentSidebar.innerHTML = newSidebar.innerHTML;
-                        
-                        // Restore scroll position
                         const newScrollContainer = currentSidebar.querySelector('.overflow-y-auto');
-                        if (newScrollContainer) {
-                            newScrollContainer.scrollTop = scrollPos;
-                        }
+                        if (newScrollContainer) newScrollContainer.scrollTop = scrollPos;
                     }
-                    
-                    container.style.opacity = '1';
-                    container.style.pointerEvents = 'auto';
-                    
+
+                    // Cleanup stale modal/drawer backdrops and body lock
+                    document.querySelectorAll('[modal-backdrop], [drawer-backdrop]').forEach(el => el.remove());
+                    document.body.classList.remove('overflow-hidden');
+
+                    // Re-run scripts inside the container (page-level init code)
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        // External scripts already loaded don't need to be re-downloaded
+                        if (oldScript.src) {
+                            if (loadedScripts.has(oldScript.src)) return;
+                            if (document.querySelector('script[src="' + oldScript.src + '"]')) {
+                                loadedScripts.add(oldScript.src);
+                                return;
+                            }
+                            loadedScripts.add(oldScript.src);
+                        }
+                        const newScript = document.createElement('script');
+                        Array.from(oldScript.attributes).forEach(attr => {
+                            newScript.setAttribute(attr.name, attr.value);
+                        });
+                        newScript.appendChild(document.createTextNode(oldScript.textContent));
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    });
+
+                    // Re-initialize Alpine components inside the new content
+                    if (window.Alpine && typeof Alpine.initTree === 'function') {
+                        container.querySelectorAll('[x-data]').forEach(root => {
+                            try { Alpine.initTree(root); } catch (e) { console.error('Alpine init failed:', e); }
+                        });
+                    }
+
+                    // Force Flowbite to re-initialize
+                    document.querySelectorAll('[data-modal-target], [data-modal-toggle], [data-drawer-target], [data-drawer-toggle], [data-dropdown-toggle], [data-tooltip-target]').forEach(el => {
+                        el.removeAttribute('data-modal-initialized');
+                        el.removeAttribute('data-drawer-initialized');
+                        el.removeAttribute('data-dropdown-initialized');
+                        el.removeAttribute('data-tooltip-initialized');
+                    });
+                    if (typeof initFlowbite === 'function') {
+                        initFlowbite();
+                    }
+
+                    // Scroll back to top
+                    window.scrollTo(0, 0);
+
                     // Update the URL without reloading the page
                     if (url !== window.location.href) {
-                        window.history.pushState({path: url}, '', url);
+                        window.history.pushState({ path: url }, '', url);
                         currentUrl = url;
                     }
-                })
-                .catch(err => {
+
+                    // Let page-level code react to PJAX navigation
+                    document.dispatchEvent(new CustomEvent('pjax:end', { detail: { url: url } }));
+                } catch (err) {
                     console.error('Error fetching data:', err);
+                    window.location.href = url; // Fallback: full navigation
+                } finally {
                     container.style.opacity = '1';
                     container.style.pointerEvents = 'auto';
-                });
+                }
             }
 
             // Intercept Clicks on Links (Pagination, Filters)
             document.body.addEventListener('click', function (e) {
                 const link = e.target.closest('a');
                 if (link && link.href && !link.href.includes('#') && !link.hasAttribute('download') && link.target !== '_blank') {
-                    try {
-                        const urlObj = new URL(link.href);
-                        // Intercept all same-origin links
-                        if (urlObj.origin === window.location.origin && !urlObj.pathname.startsWith('/storage/')) {
-                            e.preventDefault();
-                            fetchAndUpdate(link.href);
-                        }
-                    } catch(err) {}
+                    if (isSameOrigin(link.href)) {
+                        e.preventDefault();
+                        fetchAndUpdate(link.href);
+                    }
                 }
             });
 
@@ -182,16 +223,14 @@
             document.body.addEventListener('submit', function (e) {
                 const form = e.target.closest('form');
                 if (form && form.method.toUpperCase() === 'GET' && form.action) {
-                    try {
+                    if (isSameOrigin(form.action)) {
+                        e.preventDefault();
+                        const formData = new FormData(form);
+                        const params = new URLSearchParams(formData);
                         const urlObj = new URL(form.action);
-                        if (urlObj.origin === window.location.origin) {
-                            e.preventDefault();
-                            const formData = new FormData(form);
-                            const params = new URLSearchParams(formData);
-                            urlObj.search = params.toString();
-                            fetchAndUpdate(urlObj.toString());
-                        }
-                    } catch(err) {}
+                        urlObj.search = params.toString();
+                        fetchAndUpdate(urlObj.toString());
+                    }
                 }
             });
 
@@ -219,7 +258,6 @@
                 }
             });
 
-            
             // Handle browser Back/Forward buttons
             window.addEventListener('popstate', function (e) {
                 if (window.location.href !== currentUrl) {
