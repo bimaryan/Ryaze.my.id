@@ -32,7 +32,7 @@ class DashboardController extends Controller
      * Command prefix yang diizinkan di web terminal.
      */
     private array $allowedCommands = [
-        'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date', 'df', 'du',
+        'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date',
         'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
         'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'apk', 'source', 'chmod', 'clear', 'chown',
         'tar', 'unzip', 'zip'
