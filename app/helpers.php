@@ -1,5 +1,23 @@
 <?php
 
+if (!function_exists('hosting_clients_dir')) {
+    /**
+     * Direktori utama penyimpanan project hosting user.
+     * Baca dari config/hosting.php (env HOSTING_CLIENTS_DIR).
+     * Di Windows (dev) fallback ke storage/app/hosting_clients.
+     */
+    function hosting_clients_dir(): string
+    {
+        $dir = rtrim((string) config('hosting.client_dir', '/www/sites/hosting_clients'), '/\\');
+
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            return rtrim((string) storage_path('app/hosting_clients'), '/\\');
+        }
+
+        return $dir;
+    }
+}
+
 if (!function_exists('csp_nonce')) {
     function csp_nonce(): string
     {

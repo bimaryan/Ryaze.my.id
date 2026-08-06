@@ -52,12 +52,12 @@ class SuspendExpiredHosting extends Command
 
                 // Buat file .suspended di root directory (Nginx akan mendeteksinya)
                 $subdomain = explode('.', $project->ryaze_domain)[0];
-                $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+                $projectDir = hosting_clients_dir() . "/{$subdomain}";
                 $suspendFile = "{$projectDir}/.suspended";
 
                 if (is_dir($projectDir)) {
                     touch($suspendFile);
-                    @chmod($suspendFile, 0666);
+                    @chmod($suspendFile, 0660);
                 }
 
                 // Catat log

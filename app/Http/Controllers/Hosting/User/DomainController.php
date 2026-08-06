@@ -92,7 +92,7 @@ class DomainController extends Controller
         $domainName = $domain->domain_name;
         $domain->delete();
         
-        $mapDir = '/www/sites/hosting_clients/.domains';
+        $mapDir = hosting_clients_dir() . '/.domains';
         if (file_exists("{$mapDir}/{$domainName}")) @unlink("{$mapDir}/{$domainName}");
         if (file_exists("{$mapDir}/www.{$domainName}")) @unlink("{$mapDir}/www.{$domainName}");
 
@@ -149,7 +149,7 @@ class DomainController extends Controller
 
                 // [FIX CUSTOM DOMAIN 1Panel] Tulis mapping subdomain
                 $subdomain = $domain->project->subdomain;
-                $mapDir = '/www/sites/hosting_clients/.domains';
+                $mapDir = hosting_clients_dir() . '/.domains';
                 if (!file_exists($mapDir)) {
                     mkdir($mapDir, 0755, true);
                 }

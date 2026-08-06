@@ -176,27 +176,76 @@ class DashboardController extends Controller
             return back()->with('error', 'Pesanan ini sudah pernah di-deploy ke Hosting.');
         }
 
-        // Create a new Hosting Project from this Joki Order
+        // ── Buat Hosting Project dari Joki Order ──────────────────────
+        // Mengikuti pola Hosting\User\DashboardController::store agar field
+        // sesuai $fillable HostingProject dan deploy berjalan via AutoDeployProject.
+
+        $techStack = strtolower(trim((string) $order->tech_stack));
+
+        // Framework diizinkan: html, php, laravel, react, nextjs, node, vue
+        $frameworkMap = [
+            'laravel' => 'laravel',
+            'react' => 'react',
+            'nextjs' => 'nextjs',
+            'next.js' => 'nextjs',
+            'vue' => 'vue',
+            'nuxt' => 'vue',
+            'node' => 'node',
+            'nodejs' => 'node',
+            'html' => 'html',
+            'php' => 'php',
+        ];
+        $framework = $frameworkMap[$techStack] ?? 'php';
+
+        $templateMap = [
+            'html' => 'html_landing',
+            'php' => 'php_basic',
+            'laravel' => 'laravel_starter_13',
+            'react' => 'react_starter',
+            'nextjs' => 'nextjs_starter',
+            'vue' => 'vue_starter',
+            'node' => 'node_express',
+        ];
+
+        $repoLink = trim((string) $order->repo_link);
+        if (filter_var($repoLink, FILTER_VALIDATE_URL) && preg_match('#^https?://#i', $repoLink)) {
+            $repoSource = $repoLink;
+            $sourceType = 'repo';
+            $branch = 'main';
+        } else {
+            // Tidak ada repo link → gunakan template starter bawaan
+            $repoSource = 'template:' . ($templateMap[$framework] ?? 'php_basic');
+            $sourceType = 'template';
+            $branch = 'main';
+        }
+
+        $baseName = 'joki-' . strtolower(str_replace(' ', '-', trim($order->project_name)));
+        $baseName = trim(preg_replace('/[^a-z0-9-]+/', '-', $baseName), '-');
+        $projectName = $baseName . '-' . $order->order_number;
+
         $project = \App\Models\HostingProject::create([
-            'user_id' => Auth::id(),
-            'name' => 'joki-' . strtolower(str_replace(' ', '-', $order->project_name)) . '-' . rand(100,999),
-            'description' => 'Deployed from Joki Order: ' . $order->order_number,
-            'status' => 'active',
-            'type' => 'php', 
-            'directory' => 'joki-' . $order->order_number . '-' . time(),
-            'port' => rand(8000, 9000), 
+            'user_id'      => Auth::id(),
+            'project_name' => $projectName,
+            'framework'    => $framework,
+            'repo_source'  => $repoSource,
+            'branch'       => $branch,
+            'source_type'  => $sourceType,
+            'ryaze_domain' => $baseName . '-d' . $order->id . '.ryaze.my.id',
+            'status'       => 'building',
             'storage_limit_mb' => Auth::user()->hosting_storage_limit_mb ?? 512,
         ]);
-        
-        // Buat folder project
-        $clientDir = env('HOSTING_CLIENTS_DIR', storage_path('app/hosting_clients'));
-        $projectPath = $clientDir . DIRECTORY_SEPARATOR . $project->directory;
-        if (!file_exists($projectPath)) {
-            mkdir($projectPath, 0777, true);
-        }
+
+        $project->deployments()->create([
+            'status'     => 'queued',
+            'build_logs' => $sourceType === 'template'
+                ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
+                : "> Memulai proses Deploy awal...\n> Mengambil repository...",
+        ]);
+
+        \App\Jobs\AutoDeployProject::dispatch($project);
 
         $order->update(['is_deployed_to_hosting' => true]);
 
-        return redirect()->route('user_hosting.projects')->with('success', 'Project Joki berhasil di-deploy ke Hosting Anda!');
+        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project Joki berhasil di-deploy ke Hosting Anda!');
     }
 }

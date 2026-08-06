@@ -40,7 +40,7 @@ class AutoDeployProject implements ShouldQueue
 
         $deploy->update(['status' => 'building', 'build_logs' => '']);
 
-        $baseDir = '/www/sites/hosting_clients';
+        $baseDir = hosting_clients_dir();
         $subdomain = explode('.', $this->project->ryaze_domain)[0];
         $projectDir = $baseDir . '/' . $subdomain;
 
@@ -334,11 +334,11 @@ class AutoDeployProject implements ShouldQueue
         if (!file_exists($envPath)) {
             if (file_exists($envExamplePath)) {
                 $this->log($deploy, '> Creating .env from .env.example...');
-                $this->exec("cp {$envExamplePath} {$envPath} && chmod 666 {$envPath}", $deploy, true);
+                $this->exec("cp {$envExamplePath} {$envPath} && chmod 660 {$envPath}", $deploy, true);
             }
         }
 
-        $this->exec("chown www-data:www-data {$envPath} && chmod 666 {$envPath} 2>/dev/null || true", $deploy);
+        $this->exec("chown www-data:www-data {$envPath} && chmod 660 {$envPath} 2>/dev/null || true", $deploy);
     }
 
     private function runLaravelPostSetup($deploy, string $projectDir): void

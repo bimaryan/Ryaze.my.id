@@ -109,7 +109,7 @@ class InstallPhpVersion implements ShouldQueue
     {
         $v          = $this->phpVersion;
         $subdomain  = explode('.', $this->project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
         $this->log($deployment, "> Applying PHP {$v} to project...");
 

@@ -503,10 +503,14 @@ class DatabaseController extends Controller
             return back()->with('error', 'Nama database "'.$cleanDbName.'" sudah digunakan.');
         }
 
-        $pgHost = env('PANEL_PGSQL_HOST', '1Panel-postgresql-cmXb');
+        $pgHost = env('PANEL_PGSQL_HOST');
         $pgPort = env('PANEL_PGSQL_PORT', '5432');
-        $pgUser = env('PANEL_PGSQL_USER', 'Bimaryan');
-        $pgPass = env('PANEL_PGSQL_PASSWORD', '@Bimaryan2329');
+        $pgUser = env('PANEL_PGSQL_USER');
+        $pgPass = env('PANEL_PGSQL_PASSWORD');
+
+        if (empty($pgHost) || empty($pgUser) || empty($pgPass)) {
+            return back()->with('error', 'Konfigurasi PostgreSQL panel belum diatur di .env.');
+        }
 
         try {
             $pdo = new \PDO("pgsql:host={$pgHost};port={$pgPort};dbname=postgres", $pgUser, $pgPass);
@@ -559,10 +563,14 @@ class DatabaseController extends Controller
 
         $database = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
 
-        $pgHost = env('PANEL_PGSQL_HOST', '1Panel-postgresql-cmXb');
+        $pgHost = env('PANEL_PGSQL_HOST');
         $pgPort = env('PANEL_PGSQL_PORT', '5432');
-        $pgUser = env('PANEL_PGSQL_USER', 'Bimaryan');
-        $pgPass = env('PANEL_PGSQL_PASSWORD', '@Bimaryan2329');
+        $pgUser = env('PANEL_PGSQL_USER');
+        $pgPass = env('PANEL_PGSQL_PASSWORD');
+
+        if (empty($pgHost) || empty($pgUser) || empty($pgPass)) {
+            return back()->with('error', 'Konfigurasi PostgreSQL panel belum diatur di .env.');
+        }
 
         try {
             $pdo = new \PDO("pgsql:host={$pgHost};port={$pgPort};dbname=postgres", $pgUser, $pgPass);

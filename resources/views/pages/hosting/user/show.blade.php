@@ -1239,7 +1239,7 @@
         var cwdDisplay = document.getElementById('terminal-cwd-display');
         var termUrl = fixUrl('{{ route('user_hosting.terminal', $project->hashid) }}');
         var csrfToken = '{{ csrf_token() }}';
-        var projectRoot = '/www/sites/hosting_clients/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
+        var projectRoot = '{{ hosting_clients_dir() }}/{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
         var projectSlug = '{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}';
 
         var cmdHistory = [],

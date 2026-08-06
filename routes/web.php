@@ -9,7 +9,6 @@ use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Hosting\Admin\DashboardController as HostingAdminDashboardController;
 use App\Http\Controllers\Hosting\User\DashboardController;
 use App\Http\Controllers\Hosting\User\DatabaseController;
-use App\Http\Controllers\Hosting\User\PhpVersionController;
 use App\Http\Controllers\Hosting\User\StorageController;
 use App\Http\Controllers\Hosting\User\DomainController;
 use App\Http\Controllers\Hosting\User\CronController;

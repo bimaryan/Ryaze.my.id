@@ -51,7 +51,7 @@ class AdminHostingFeatureTest extends TestCase
         $hashid = Hashids::encode($project->id);
 
         // Ensure directory exists for touch() in controller
-        @mkdir(base_path('../www/sites/hosting_clients/suspend'), 0777, true);
+        @mkdir(hosting_clients_dir() . '/suspend', 0777, true);
 
         $response = $this->actingAs($this->admin)->patch("/admin/hosting/{$hashid}/suspend");
         

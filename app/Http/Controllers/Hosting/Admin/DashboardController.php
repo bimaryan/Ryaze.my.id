@@ -272,14 +272,14 @@ class DashboardController extends Controller
         $project->update(['status' => 'suspended']);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
+        $filePath = hosting_clients_dir() . "/{$subdomain}/.suspended";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $filePath = substr(base_path(), 0, 2) . str_replace('/', '\\', $filePath);
         }
 
         // Buat file marker agar Nginx 503
         touch($filePath);
-        chmod($filePath, 0666);
+        chmod($filePath, 0660);
 
         return back()->with('success', "Project '{$project->project_name}' telah disuspend.");
     }
@@ -290,7 +290,7 @@ class DashboardController extends Controller
         $project->update(['status' => 'active']);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $filePath = "/www/sites/hosting_clients/{$subdomain}/.suspended";
+        $filePath = hosting_clients_dir() . "/{$subdomain}/.suspended";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $filePath = substr(base_path(), 0, 2) . str_replace('/', '\\', $filePath);
         }
@@ -321,7 +321,7 @@ class DashboardController extends Controller
 
         // Hapus folder server (opsional, sesuaikan path)
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $projectDir = substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir);
         }

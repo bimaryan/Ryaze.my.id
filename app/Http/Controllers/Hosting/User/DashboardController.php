@@ -270,7 +270,7 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashed_id, true);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
         // Membaca file .env
         $envPath = $projectDir.'/.env';
@@ -301,7 +301,7 @@ class DashboardController extends Controller
             // Visitors (Unique IPs in access log)
             $logPaths = [
                 "/www/sites/{$project->ryaze_domain}/log/access.log", // Dedicated 1Panel site
-                "/www/sites/hosting_clients/log/access.log", // Hosting clients shared log
+                hosting_clients_dir() . "/log/access.log", // Hosting clients shared log
                 "/www/sites/ryaze.my.id/log/access.log", // Wildcard site
                 "/www/sites/ryz.my.id/log/access.log",
                 "/www/sites/safetalkai.my.id/log/access.log",
@@ -367,8 +367,8 @@ class DashboardController extends Controller
             'status'       => 'active',
         ]);
 
-        $liveDir = "/www/sites/hosting_clients/{$subdomain}";
-        $stagingDir = "/www/sites/hosting_clients/{$stagingSubdomain}";
+        $liveDir = hosting_clients_dir() . "/{$subdomain}";
+        $stagingDir = hosting_clients_dir() . "/{$stagingSubdomain}";
 
         if (is_dir($liveDir)) {
             $command = sprintf("cp -a %s %s", escapeshellarg($liveDir), escapeshellarg($stagingDir));
@@ -397,7 +397,7 @@ class DashboardController extends Controller
         }
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
         $envPath = $projectDir . '/.env';
         $userApiKey = null;
         if (file_exists($envPath)) {
@@ -454,7 +454,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
         $query = $request->input('query', '');
         $matchCase = filter_var($request->input('matchCase', false), FILTER_VALIDATE_BOOLEAN);
@@ -508,7 +508,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
         // Check if git is initialized
         if (!is_dir($projectRootDir . '/.git')) {
@@ -539,7 +539,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
         $msg = $request->input('message', 'Update');
         $msg = escapeshellarg($msg);
@@ -554,7 +554,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
         $cmd = "cd " . escapeshellarg($projectRootDir) . " && git pull 2>&1";
         $output = shell_exec($cmd);
@@ -566,7 +566,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
         $cmd = "cd " . escapeshellarg($projectRootDir) . " && git push 2>&1";
         $output = shell_exec($cmd);
@@ -579,7 +579,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
         $requestPath = trim($request->input('path', ''), '/');
 
         $targetDir = $projectRootDir;
@@ -636,7 +636,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
         $requestPath = trim($request->input('path', ''), '/');
         $targetFile = realpath($projectRootDir.'/'.$requestPath);
@@ -655,7 +655,7 @@ class DashboardController extends Controller
         \Log::info("saveFile route hit! hashid: {$hashid}, path: " . $request->input('path'));
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
         $requestPath = trim($request->input('path', ''), '/');
         $targetFile = realpath($projectRootDir.'/'.$requestPath);
@@ -679,7 +679,7 @@ class DashboardController extends Controller
             }
         }
 
-        @chmod($targetFile, 0666);
+        @chmod($targetFile, 0660);
         $result = @file_put_contents($targetFile, $newContent);
 
         if ($result === false) {
@@ -809,7 +809,7 @@ class DashboardController extends Controller
             mkdir($targetPath, 0755);
         } else {
             touch($targetPath);
-            chmod($targetPath, 0666);
+            chmod($targetPath, 0660);
         }
 
         return response()->json(['success' => true]);
@@ -885,7 +885,7 @@ class DashboardController extends Controller
     private function getValidTargetPath($project, $requestPath)
     {
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath("/www/sites/hosting_clients/{$subdomain}");
+        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
         // Gabungkan path
         $fullPath = $projectRootDir.'/'.trim($requestPath, '/');
@@ -917,7 +917,7 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
 
-        $envPath = "/www/sites/hosting_clients/{$subdomain}/.env";
+        $envPath = hosting_clients_dir() . "/{$subdomain}/.env";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $envPath = substr(base_path(), 0, 2) . str_replace('/', '\\', $envPath);
         }
@@ -926,7 +926,7 @@ class DashboardController extends Controller
         try {
             // Coba paksakan write permission jika file ada
             if (file_exists($envPath)) {
-                @chmod($envPath, 0666);
+                @chmod($envPath, 0660);
             }
 
             // Tulis isi textarea langsung ke file .env di server dengan peredam error (@)
@@ -954,7 +954,7 @@ class DashboardController extends Controller
         }
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
         // Cari port yang tersedia dengan start random (3000-4000) untuk mem-bypass DNS negative caching
         $port = null;
@@ -1172,7 +1172,7 @@ PHP;
         $project = $this->getValidProject($hashid);
         
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
         if ($project->dev_pid) {
             $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
@@ -1218,7 +1218,7 @@ PHP;
         // Hapus Cloudflare DNS for Dev Server
         if ($devPort) {
             // Hapus dev server DNS jika ada
-            $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_TOKEN'));
+            $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
             if ($apiToken) {
                 $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
                 $zoneName = ltrim($domainExtension, '.');
@@ -1295,7 +1295,7 @@ PHP;
         }
         $subdomain = explode('.', $project->ryaze_domain)[0];
 
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
         $command = trim($request->input('command', ''));
 
         if (empty($command)) {
@@ -1585,7 +1585,7 @@ PHP;
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
         // 1. Hapus Record DNS Cloudflare
         $this->deleteCloudflareDNS($project->ryaze_domain);
@@ -1647,7 +1647,7 @@ PHP;
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
         // Ambil data checkbox
         $maintenanceMode = $request->has('maintenance_mode');
@@ -1661,7 +1661,7 @@ PHP;
         if ($maintenanceMode) {
             // Buat file penanda
             file_put_contents($maintenanceFile, "MAINTENANCE MODE ACTIVE\nFile ini digunakan oleh server Nginx sebagai penanda bahwa Maintenance Mode sedang aktif. Tolong jangan dihapus manual.");
-            @chmod($maintenanceFile, 0666);
+            @chmod($maintenanceFile, 0660);
         } else {
             // Hapus file penanda jika dinonaktifkan
             if (file_exists($maintenanceFile)) {
@@ -1673,7 +1673,7 @@ PHP;
         $rateLimitFile = "{$projectDir}/.rate_limit";
         if ($underAttack) {
             file_put_contents($rateLimitFile, "UNDER ATTACK MODE ACTIVE\nFile ini digunakan oleh server Nginx sebagai penanda bahwa perlindungan Rate Limiting sedang aktif. Tolong jangan dihapus manual.");
-            @chmod($rateLimitFile, 0666);
+            @chmod($rateLimitFile, 0660);
         } else {
             if (file_exists($rateLimitFile)) {
                 @unlink($rateLimitFile);
@@ -1686,7 +1686,7 @@ PHP;
             // Bersihkan input (hapus spasi ekstra)
             $ips = array_filter(array_map('trim', explode("\n", $blockedIps)));
             file_put_contents($wafFile, implode("\n", $ips));
-            @chmod($wafFile, 0666);
+            @chmod($wafFile, 0660);
         } else {
             if (file_exists($wafFile)) {
                 @unlink($wafFile);
@@ -1717,7 +1717,7 @@ PHP;
 
         foreach ($projects as $p) {
             $subdomain = explode('.', $p->ryaze_domain)[0];
-            $dir = realpath("/www/sites/hosting_clients/{$subdomain}");
+            $dir = realpath(hosting_clients_dir() . "/{$subdomain}");
             if ($dir && is_dir($dir)) {
                 $output = shell_exec("du -sb " . escapeshellarg($dir) . " 2>/dev/null");
                 if ($output) {
@@ -1748,7 +1748,7 @@ PHP;
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
         if (!is_dir($projectDir)) {
             return back()->with('error', 'Direktori proyek tidak ditemukan.');
@@ -1791,7 +1791,7 @@ PHP;
 
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+        $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
         if (!is_dir($projectDir)) {
             return back()->with('error', 'Direktori proyek tidak ditemukan.');

@@ -12,10 +12,15 @@ class FixPgsql extends Command
 
     public function handle()
     {
-        $pgHost = env('PANEL_PGSQL_HOST', '1Panel-postgresql-cmXb');
+        $pgHost = env('PANEL_PGSQL_HOST');
         $pgPort = env('PANEL_PGSQL_PORT', '5432');
-        $pgUser = env('PANEL_PGSQL_USER', 'Bimaryan');
-        $pgPass = env('PANEL_PGSQL_PASSWORD', '@Bimaryan2329');
+        $pgUser = env('PANEL_PGSQL_USER');
+        $pgPass = env('PANEL_PGSQL_PASSWORD');
+
+        if (empty($pgHost) || empty($pgUser) || empty($pgPass)) {
+            $this->error('PANEL_PGSQL_HOST / PANEL_PGSQL_USER / PANEL_PGSQL_PASSWORD harus diatur di .env');
+            return 1;
+        }
 
         try {
             $pdo = new PDO("pgsql:host={$pgHost};port={$pgPort};dbname=postgres", $pgUser, $pgPass);

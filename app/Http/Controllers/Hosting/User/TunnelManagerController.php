@@ -63,7 +63,7 @@ class TunnelManagerController extends Controller
         // Create OpenResty Proxy Script
         try {
             $subdomain = $tunnel->subdomain;
-            $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+            $projectDir = hosting_clients_dir() . "/{$subdomain}";
             $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             
             if ($isWindows) {
@@ -153,7 +153,7 @@ PHP;
         // Delete OpenResty Proxy Script
         try {
             $subdomain = $tunnel->subdomain;
-            $projectDir = "/www/sites/hosting_clients/{$subdomain}";
+            $projectDir = hosting_clients_dir() . "/{$subdomain}";
             $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             
             if ($isWindows) {
