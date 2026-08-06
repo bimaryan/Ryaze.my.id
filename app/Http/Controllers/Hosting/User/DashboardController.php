@@ -32,9 +32,10 @@ class DashboardController extends Controller
      * Command prefix yang diizinkan di web terminal.
      */
     private array $allowedCommands = [
-        'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date',
+        'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date', 'df', 'du',
         'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
-        'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'apk', 'source', 'chmod', 'clear', 'chown', 'sudo', 'nano'
+        'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'apk', 'source', 'chmod', 'clear', 'chown',
+        'tar', 'unzip', 'zip'
     ];
 
     /**
@@ -1298,13 +1299,48 @@ PHP;
         $projectDir = hosting_clients_dir() . "/{$subdomain}";
         $command = trim($request->input('command', ''));
 
+        if (mb_strlen($command) > 500) {
+            return response()->json([
+                'output' => "⛔ Perintah terlalu panjang (maksimal 500 karakter).",
+                'exit_code' => 1,
+                'cwd' => null,
+            ]);
+        }
+
+        // ── Sesi direktori aktif per project (persistent antar perintah) ──
+        $sessionKey = 'terminal_cwd_' . $project->id;
+        $cwd = session($sessionKey, $projectDir);
+        $baseDir = rtrim(str_replace('\\', '/', $projectDir), '/');
+        $normCwd = str_replace('\\', '/', $cwd);
+        if (!is_dir($cwd) || !str_starts_with($normCwd . '/', $baseDir . '/')) {
+            $cwd = $baseDir;
+        }
+
         if (empty($command)) {
-            return response()->json(['output' => '', 'exit_code' => 0]);
+            return response()->json(['output' => '', 'exit_code' => 0, 'cwd' => $cwd]);
+        }
+
+        // ── Perintah 'cd' ditangani khusus (resolusi path aman di PHP) ──
+        $firstWord = explode(' ', $command)[0];
+        if ($firstWord === 'cd') {
+            $newCwd = $this->resolveTerminalCwd($cwd, $command, $baseDir);
+            if ($newCwd === null) {
+                return response()->json([
+                    'output' => "cd: tidak dapat berpindah ke lokasi tersebut (di luar direktori project).",
+                    'exit_code' => 1,
+                    'cwd' => $cwd,
+                ]);
+            }
+            session([$sessionKey => $newCwd]);
+
+            return response()->json([
+                'output' => '',
+                'exit_code' => 0,
+                'cwd' => $newCwd,
+            ]);
         }
 
         // ════════ SECURITY: Command Whitelist ════════
-        $firstWord = explode(' ', $command)[0];
-
         // Izinkan 'php artisan ...' sebagai satu command prefix
         if ($firstWord === 'php' && str_starts_with($command, 'php artisan')) {
             // Auto-append --force untuk menghindari prompt yes/no (karena terminal non-interactive)
@@ -1344,7 +1380,9 @@ PHP;
         // ══════════════════════════════════════════════════════════
 
         // ════════ MANTRA ANTI-BLEEDING ════════
-        $unsetEnv = 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
+        $unsetEnv = (PHP_OS_FAMILY === 'Windows')
+            ? ''
+            : 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
 
         // ════════ PYTHON VENV ALIAS ════════
         if ($project->framework === 'python') {
@@ -1354,19 +1392,143 @@ PHP;
             $command = preg_replace('/^pip\b/', 'venv/bin/pip', $command);
         }
 
-        $fullCommand = $unsetEnv.'cd '.escapeshellarg($projectDir).' && '.$command.' 2>&1';
-        // ══════════════════════════════════════
+        $fullCommand = $unsetEnv . $command . ' 2>&1';
 
-        exec($fullCommand, $outputArray, $exitCode);
-        $outputString = implode("\n", $outputArray);
-        
-        // Hide absolute path in terminal output to make it look like root directory
-        $outputString = str_replace($projectDir, '/' . $subdomain, $outputString);
+        @set_time_limit(630);
+        $result = $this->runTerminalCommand($fullCommand, $cwd, 600);
+
+        // Sembunyikan path absolut agar terlihat seperti root direktori project
+        $output = str_replace($projectDir, '/' . $subdomain, $result['output']);
+        if (str_starts_with(str_replace('\\', '/', $cwd), str_replace('\\', '/', $projectDir))) {
+            $relative = ltrim(substr(str_replace('\\', '/', $cwd), strlen(str_replace('\\', '/', $projectDir))), '/');
+            $output = str_replace($cwd, '/' . $subdomain . ($relative !== '' ? '/' . $relative : ''), $output);
+        }
 
         return response()->json([
-            'output' => $outputString,
-            'exit_code' => $exitCode,
+            'output' => $output,
+            'exit_code' => $result['exit_code'],
+            'timed_out' => $result['timed_out'],
+            'cwd' => $cwd,
         ]);
+    }
+
+    /**
+     * Resolusi path untuk perintah 'cd' — murni di PHP, tanpa shell.
+     * Hanya memperbolehkan direktori di dalam folder project.
+     */
+    private function resolveTerminalCwd(string $current, string $command, string $baseDir): ?string
+    {
+        $target = trim(substr($command, 2));
+        $target = trim($target, " \t\n\r\0\x0B\"'");
+
+        if ($target === '' || $target === '~' || $target === '/') {
+            return $baseDir;
+        }
+
+        $path = str_starts_with($target, '/')
+            ? $target
+            : rtrim(str_replace('\\', '/', $current), '/') . '/' . $target;
+
+        $normalized = $this->normalizeTerminalPath($path);
+
+        if ($normalized === $baseDir) {
+            return $baseDir;
+        }
+        if (!str_starts_with($normalized . '/', $baseDir . '/')) {
+            return null;
+        }
+        if (!is_dir($normalized)) {
+            return null;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Normalisasi path (resolve . dan ..) tanpa menyentuh filesystem.
+     */
+    private function normalizeTerminalPath(string $path): string
+    {
+        $isAbsolute = str_starts_with($path, '/');
+        $stack = [];
+        foreach (explode('/', $path) as $part) {
+            if ($part === '' || $part === '.') {
+                continue;
+            }
+            if ($part === '..') {
+                if (!empty($stack)) {
+                    array_pop($stack);
+                }
+                continue;
+            }
+            $stack[] = $part;
+        }
+        return ($isAbsolute ? '/' : '') . implode('/', $stack);
+    }
+
+    /**
+     * Jalankan perintah dengan timeout dan tetap kembalikan output parsial.
+     */
+    private function runTerminalCommand(string $command, string $cwd, int $timeout = 600): array
+    {
+        $descriptors = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+
+        $process = proc_open($command, $descriptors, $pipes, $cwd);
+        if (!is_resource($process)) {
+            return ['output' => 'Gagal menjalankan perintah.', 'exit_code' => 1, 'timed_out' => false];
+        }
+
+        fclose($pipes[0]);
+        stream_set_blocking($pipes[1], false);
+        stream_set_blocking($pipes[2], false);
+
+        $output = '';
+        $start = microtime(true);
+
+        while (true) {
+            foreach ([1, 2] as $fd) {
+                $chunk = stream_get_contents($pipes[$fd]);
+                if ($chunk !== false && $chunk !== '') {
+                    $output .= $chunk;
+                }
+            }
+
+            $status = proc_get_status($process);
+            if (!$status['running']) {
+                break;
+            }
+            if ((microtime(true) - $start) > $timeout) {
+                proc_terminate($process, 9);
+                foreach ([1, 2] as $fd) {
+                    $chunk = stream_get_contents($pipes[$fd]);
+                    if ($chunk !== false && $chunk !== '') {
+                        $output .= $chunk;
+                    }
+                }
+                fclose($pipes[1]);
+                fclose($pipes[2]);
+                proc_close($process);
+
+                return [
+                    'output' => $output . "\n\n⏱ Perintah dihentikan karena melebihi batas waktu ({$timeout}s).",
+                    'exit_code' => 124,
+                    'timed_out' => true,
+                ];
+            }
+
+            usleep(50000);
+        }
+
+        $exitCode = proc_get_status($process)['exitcode'];
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+
+        return ['output' => $output, 'exit_code' => $exitCode, 'timed_out' => false];
     }
 
     public function subscription()
