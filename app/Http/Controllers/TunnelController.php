@@ -16,22 +16,28 @@ class TunnelController extends Controller
     {
         $requestId = (string) Str::uuid();
 
-        // 1. Broadcast the request to the client listening on tunnel.{subdomain}
+        // 1. Simpan request lengkap di cache; broadcast hanya metadata (anti-eavesdrop)
         $headers = $request->headers->all();
         // Remove some headers that shouldn't be proxied blindly
         unset($headers['host']);
-        
+
         $body = $request->getContent();
         // Encode body to base64 to safely transmit binary or raw data over JSON/WebSocket
         $bodyBase64 = base64_encode($body);
 
+        Cache::put("tunnel_request_{$requestId}", [
+            'subdomain' => $subdomain,
+            'request_id' => $requestId,
+            'method' => $request->method(),
+            'path' => $request->path() . ($request->getQueryString() ? '?' . $request->getQueryString() : ''),
+            'headers' => $headers,
+            'body' => $bodyBase64,
+        ], 60);
+
         event(new TunnelRequestReceived(
             $subdomain,
             $requestId,
-            $request->method(),
-            $request->path() . ($request->getQueryString() ? '?' . $request->getQueryString() : ''),
-            $headers,
-            $bodyBase64
+            $request->method()
         ));
 
         // 2. Poll the cache for a response with a timeout (e.g. 30 seconds)
@@ -39,7 +45,7 @@ class TunnelController extends Controller
         $startTime = time();
 
         while (time() - $startTime < $timeout) {
-            $responseKey = "tunnel_response_{$requestId}";
+            $responseKey = "tunnel_response:{$requestId}";
             if (Cache::has($responseKey)) {
                 $responseData = Cache::get($responseKey);
                 Cache::forget($responseKey);

@@ -231,7 +231,12 @@ class AuthController extends Controller
         $secret = config('services.turnstile.secret_key');
 
         if (empty($secret)) {
-            // Jika secret key belum diatur, anggap valid untuk mencegah form mati saat development
+            // Fail-closed di production: tanpa secret key, CAPTCHA tidak boleh dianggap valid.
+            if (app()->environment('production')) {
+                return false;
+            }
+
+            // Dev convenience: biarkan lolos agar form tidak mati saat development
             return true;
         }
 

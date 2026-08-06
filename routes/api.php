@@ -15,3 +15,4 @@ Route::any('/v1/db/{hashid}/{path?}', [\App\Http\Controllers\Api\DatabaseApiCont
 Route::any('/tunnel/relay', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'relay']);
 Route::post('/tunnel/response', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'response']);
 Route::post('/tunnel/heartbeat', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'heartbeat']);
+Route::post('/tunnel/fetch', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'fetchRequest']);

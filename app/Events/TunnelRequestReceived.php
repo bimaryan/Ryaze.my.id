@@ -17,21 +17,20 @@ class TunnelRequestReceived implements ShouldBroadcastNow
     public string $subdomain;
     public string $requestId;
     public string $method;
-    public string $path;
-    public array $headers;
-    public $body;
 
     /**
      * Create a new event instance.
+     *
+     * Catatan keamanan: request di-broadcast hanya berisi metadata (subdomain, requestId, method).
+     * Header/body request disimpan di cache dan diambil client via endpoint /api/tunnel/fetch
+     * yang dilindungi secret per-tunnel, sehingga pengintai channel WebSocket publik
+     * tidak bisa membaca cookie, token, atau body request.
      */
-    public function __construct(string $subdomain, string $requestId, string $method, string $path, array $headers, $body)
+    public function __construct(string $subdomain, string $requestId, string $method)
     {
         $this->subdomain = $subdomain;
         $this->requestId = $requestId;
         $this->method = $method;
-        $this->path = $path;
-        $this->headers = $headers;
-        $this->body = $body;
     }
 
     /**

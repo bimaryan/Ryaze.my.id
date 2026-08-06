@@ -10,6 +10,7 @@ class Tunnel extends Model
         'user_id',
         'name',
         'subdomain',
+        'secret',
         'target_port',
         'status',
         'last_connected_at',

@@ -28,6 +28,7 @@ class TunnelManagerController extends Controller
             'user_id' => Auth::id(),
             'name' => $request->name,
             'subdomain' => strtolower($request->subdomain),
+            'secret' => Str::random(32),
             'target_port' => $request->target_port,
             'status' => 'inactive',
         ]);
@@ -73,7 +74,7 @@ class TunnelManagerController extends Controller
                 if (!file_exists($projectDir)) exec("mkdir -p \"{$projectDir}\"");
             }
 
-            $relayApiUrl = rtrim(env('APP_URL', 'http://ryaze.my.id'), '/') . '/api/tunnel/relay';
+            $relayApiUrl = rtrim(env('APP_URL', 'https://ryaze.my.id'), '/') . '/api/tunnel/relay';
             $proxyScript = <<<PHP
 <?php
 // Ryaze Tunnel Relay Proxy
@@ -89,6 +90,7 @@ foreach (getallheaders() as \$key => \$val) {
         \$headers[] = "\$key: \$val";
     }
 }
+\$headers[] = 'X-Tunnel-Secret: {$tunnel->secret}';
 curl_setopt(\$ch, CURLOPT_HTTPHEADER, \$headers);
 \$body = file_get_contents('php://input');
 if (\$body) curl_setopt(\$ch, CURLOPT_POSTFIELDS, \$body);
@@ -188,6 +190,7 @@ $targetPort = {PORT};
 $serverUrl = '{SERVER_URL}';
 $websocketUrl = '{WEBSOCKET_URL}';
 $appKey = '{APP_KEY}';
+$tunnelSecret = '{SECRET}';
 
 echo "========================================\n";
 echo "🚀 Ryaze Tunnel Client Started\n";
@@ -197,7 +200,7 @@ echo "========================================\n\n";
 
 if (!extension_loaded('curl')) die("Error: cURL extension is required.\n");
 
-function processRequest($data, $targetPort, $serverUrl) {
+function processRequest($data, $targetPort, $serverUrl, $tunnelSecret) {
     echo "[" . date('H:i:s') . "] ⚡ Request: {$data['method']} {$data['path']}\n";
     $ch = curl_init();
     $url = "http://127.0.0.1:{$targetPort}{$data['path']}";
@@ -244,9 +247,10 @@ function processRequest($data, $targetPort, $serverUrl) {
     curl_setopt($ch, CURLOPT_URL, "{$serverUrl}/api/tunnel/response");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json']);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', 'X-Tunnel-Secret: ' . $tunnelSecret]);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-        'request_id' => $data['requestId'],
+        'request_id' => $data['request_id'],
+        'subdomain' => $data['subdomain'],
         'status' => $status,
         'headers' => $responseHeaders,
         'body' => base64_encode($body)
@@ -254,6 +258,20 @@ function processRequest($data, $targetPort, $serverUrl) {
     curl_exec($ch);
     curl_close($ch);
     echo "[" . date('H:i:s') . "] ✅ Response: {$status}\n";
+}
+
+function fetchRequest($requestId, $subdomain, $secret, $serverUrl) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "{$serverUrl}/api/tunnel/fetch");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', 'X-Tunnel-Secret: ' . $secret]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['request_id' => $requestId, 'subdomain' => $subdomain]));
+    $resp = curl_exec($ch);
+    curl_close($ch);
+    $parsed = json_decode($resp, true);
+    return $parsed['request'] ?? null;
 }
 
 function writeWebSocketFrame($sock, $payload, $opcode = 1) {
@@ -317,7 +335,7 @@ while (true) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['subdomain' => $subdomain]));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'X-Tunnel-Secret: ' . $tunnelSecret]);
     curl_setopt($ch, CURLOPT_TIMEOUT, 2);
     curl_exec($ch);
     curl_close($ch);
@@ -338,9 +356,12 @@ while (true) {
             $msg = json_decode($frame['payload'], true);
             if ($msg) {
                 if ($msg['event'] === 'App\Events\TunnelRequestReceived') {
-                    $data = json_decode($msg['data'], true);
-                    // Process request async-like or blocking (for simple script blocking is fine)
-                    processRequest($data, $targetPort, $serverUrl);
+                    $meta = json_decode($msg['data'], true);
+                    // Ambil request lengkap via endpoint ter-autentikasi (anti-eavesdrop)
+                    $data = fetchRequest($meta['requestId'], $subdomain, $tunnelSecret, $serverUrl);
+                    if ($data) {
+                        processRequest($data, $targetPort, $serverUrl, $tunnelSecret);
+                    }
                 } elseif ($msg['event'] === 'pusher:ping') {
                     writeWebSocketFrame($sock, json_encode(['event' => 'pusher:pong', 'data' => []]));
                     
@@ -350,7 +371,7 @@ while (true) {
                     curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['subdomain' => $subdomain]));
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'X-Tunnel-Secret: ' . $tunnelSecret]);
                     curl_setopt($ch, CURLOPT_TIMEOUT, 2);
                     curl_exec($ch);
                     curl_close($ch);
@@ -365,13 +386,13 @@ while (true) {
 }
 PHP;
         
-        $serverUrl = rtrim(env('APP_URL', 'http://ryaze.my.id'), '/');
+        $serverUrl = rtrim(env('APP_URL', 'https://ryaze.my.id'), '/');
         $websocketUrl = str_replace(['http://', 'https://'], ['ws://', 'wss://'], $serverUrl);
         $appKey = env('REVERB_APP_KEY');
         
         $clientCode = str_replace(
-            ['{SUBDOMAIN}', '{PORT}', '{SERVER_URL}', '{WEBSOCKET_URL}', '{APP_KEY}'],
-            [$tunnel->subdomain, $tunnel->target_port, $serverUrl, $websocketUrl, $appKey],
+            ['{SUBDOMAIN}', '{PORT}', '{SERVER_URL}', '{WEBSOCKET_URL}', '{APP_KEY}', '{SECRET}'],
+            [$tunnel->subdomain, $tunnel->target_port, $serverUrl, $websocketUrl, $appKey, $tunnel->secret],
             $clientCode
         );
 
@@ -398,6 +419,7 @@ $targetPort = {PORT};
 $serverUrl = '{SERVER_URL}';
 $websocketUrl = '{WEBSOCKET_URL}';
 $appKey = '{APP_KEY}';
+$tunnelSecret = '{SECRET}';
 
 echo "========================================\n";
 echo "🚀 Ryaze Tunnel Client Started\n";
@@ -407,7 +429,7 @@ echo "========================================\n\n";
 
 if (!extension_loaded('curl')) die("Error: cURL extension is required.\n");
 
-function processRequest($data, $targetPort, $serverUrl) {
+function processRequest($data, $targetPort, $serverUrl, $tunnelSecret) {
     echo "[" . date('H:i:s') . "] ⚡ Request: {$data['method']} {$data['path']}\n";
     $ch = curl_init();
     $url = "http://127.0.0.1:{$targetPort}{$data['path']}";
@@ -454,9 +476,10 @@ function processRequest($data, $targetPort, $serverUrl) {
     curl_setopt($ch, CURLOPT_URL, "{$serverUrl}/api/tunnel/response");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json']);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', 'X-Tunnel-Secret: ' . $tunnelSecret]);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-        'request_id' => $data['requestId'],
+        'request_id' => $data['request_id'],
+        'subdomain' => $data['subdomain'],
         'status' => $status,
         'headers' => $responseHeaders,
         'body' => base64_encode($body)
@@ -464,6 +487,20 @@ function processRequest($data, $targetPort, $serverUrl) {
     curl_exec($ch);
     curl_close($ch);
     echo "[" . date('H:i:s') . "] ✅ Response: {$status}\n";
+}
+
+function fetchRequest($requestId, $subdomain, $secret, $serverUrl) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "{$serverUrl}/api/tunnel/fetch");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', 'X-Tunnel-Secret: ' . $secret]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['request_id' => $requestId, 'subdomain' => $subdomain]));
+    $resp = curl_exec($ch);
+    curl_close($ch);
+    $parsed = json_decode($resp, true);
+    return $parsed['request'] ?? null;
 }
 
 function writeWebSocketFrame($sock, $payload, $opcode = 1) {
@@ -593,9 +630,12 @@ while (true) {
                     
                     if ($opcode == 1 && !empty($payload)) {
                         $msg = json_decode($payload, true);
-                        if (isset($msg['event']) && $msg['event'] === 'App\\Events\\TunnelRequestEvent') {
-                            $data = json_decode($msg['data'], true);
-                            processRequest($data['request'], $targetPort, $serverUrl);
+                        if (isset($msg['event']) && $msg['event'] === 'App\\Events\\TunnelRequestReceived') {
+                            $meta = json_decode($msg['data'], true);
+                            $data = fetchRequest($meta['requestId'], $subdomain, $tunnelSecret, $serverUrl);
+                            if ($data) {
+                                processRequest($data, $targetPort, $serverUrl, $tunnelSecret);
+                            }
                         }
                     }
                 } else {
@@ -604,7 +644,7 @@ while (true) {
                     curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['subdomain' => $subdomain]));
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'X-Tunnel-Secret: ' . $tunnelSecret]);
                     curl_setopt($ch, CURLOPT_TIMEOUT, 2);
                     curl_exec($ch);
                     curl_close($ch);
@@ -619,13 +659,13 @@ while (true) {
 }
 PHP;
         
-        $serverUrl = rtrim(env('APP_URL', 'http://ryaze.my.id'), '/');
+        $serverUrl = rtrim(env('APP_URL', 'https://ryaze.my.id'), '/');
         $websocketUrl = str_replace(['http://', 'https://'], ['ws://', 'wss://'], $serverUrl);
         $appKey = env('REVERB_APP_KEY');
         
         $clientCode = str_replace(
-            ['{SUBDOMAIN}', '{PORT}', '{SERVER_URL}', '{WEBSOCKET_URL}', '{APP_KEY}'],
-            [$tunnel->subdomain, $tunnel->target_port, $serverUrl, $websocketUrl, $appKey],
+            ['{SUBDOMAIN}', '{PORT}', '{SERVER_URL}', '{WEBSOCKET_URL}', '{APP_KEY}', '{SECRET}'],
+            [$tunnel->subdomain, $tunnel->target_port, $serverUrl, $websocketUrl, $appKey, $tunnel->secret],
             $clientCode
         );
 
@@ -652,11 +692,28 @@ BAT;
         ]);
     }
 
+    /**
+     * Verifikasi bahwa secret cocok dengan tunnel pada subdomain tersebut.
+     */
+    private function validTunnel(?string $subdomain, ?string $secret): bool
+    {
+        if (!$subdomain || !$secret) {
+            return false;
+        }
+
+        return Tunnel::where('subdomain', $subdomain)->where('secret', $secret)->exists();
+    }
+
     public function relay(Request $request)
     {
         $subdomain = $request->query('_subdomain');
+        $secret = $request->header('X-Tunnel-Secret');
         $path = $request->query('_path', '/');
-        
+
+        if (!$this->validTunnel($subdomain, $secret)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         // Fast-fail if tunnel client is definitely offline
         if (!\Illuminate\Support\Facades\Cache::has("tunnel_online_{$subdomain}")) {
             return response(view('pages.hosting.user.tunnel.offline', ['subdomain' => $subdomain]), 503);
@@ -667,15 +724,18 @@ BAT;
         $headers = $request->headers->all();
         $body = $request->getContent();
 
-        // Broadcast to WebSocket Client
-        event(new \App\Events\TunnelRequestReceived(
-            $subdomain,
-            $requestId,
-            $method,
-            $path,
-            $headers,
-            base64_encode($body)
-        ));
+        // Simpan request lengkap di cache; broadcast hanya metadata (anti-eavesdrop)
+        \Illuminate\Support\Facades\Cache::put("tunnel_request_{$requestId}", [
+            'subdomain' => $subdomain,
+            'request_id' => $requestId,
+            'method' => $method,
+            'path' => $path,
+            'headers' => $headers,
+            'body' => base64_encode($body),
+        ], 60);
+
+        // Broadcast metadata saja (client mengambil request via /api/tunnel/fetch)
+        event(new \App\Events\TunnelRequestReceived($subdomain, $requestId, $method));
 
         // Long Polling (Wait for response from PHP CLI Client)
         $cacheKey = "tunnel_response:{$requestId}";
@@ -709,6 +769,11 @@ BAT;
     public function heartbeat(Request $request)
     {
         $request->validate(['subdomain' => 'required|string']);
+
+        if (!$this->validTunnel($request->subdomain, $request->header('X-Tunnel-Secret'))) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         // Tunnel is marked online for 90 seconds (client sends heartbeat every ~60s)
         \Illuminate\Support\Facades\Cache::put("tunnel_online_{$request->subdomain}", true, 90);
         return response()->json(['status' => 'ok']);
@@ -718,15 +783,43 @@ BAT;
     {
         $request->validate([
             'request_id' => 'required|string',
+            'subdomain' => 'required|string',
             'status' => 'required|integer',
             'headers' => 'array',
             'body' => 'nullable|string'
         ]);
 
+        if (!$this->validTunnel($request->subdomain, $request->header('X-Tunnel-Secret'))) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         $cacheKey = "tunnel_response:{$request->request_id}";
         \Illuminate\Support\Facades\Cache::put($cacheKey, $request->all(), 60);
 
         return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * Mengambil request lengkap yang disimpan server (dilindungi secret per-tunnel).
+     */
+    public function fetchRequest(Request $request)
+    {
+        $request->validate([
+            'request_id' => 'required|string',
+            'subdomain' => 'required|string',
+        ]);
+
+        if (!$this->validTunnel($request->subdomain, $request->header('X-Tunnel-Secret'))) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $payload = \Illuminate\Support\Facades\Cache::get("tunnel_request_{$request->request_id}");
+
+        if (!$payload) {
+            return response()->json(['error' => 'Request not found or expired'], 404);
+        }
+
+        return response()->json(['request' => $payload]);
     }
 }
 

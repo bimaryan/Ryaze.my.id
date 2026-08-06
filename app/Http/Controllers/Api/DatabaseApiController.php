@@ -47,6 +47,7 @@ class DatabaseApiController extends Controller
             'database' => $database->db_name,
             'basePath' => '/api/v1/db/' . $hashid,
             'middlewares' => 'cors',
+            'cors.allowedOrigins' => env('API_CORS_ALLOWED_ORIGINS', 'https://ryaze.my.id'),
             'debug' => env('APP_DEBUG', false),
         ]);
 
@@ -72,7 +73,10 @@ class DatabaseApiController extends Controller
             exit;
 
         } catch (\Exception $e) {
-            return response()->json(['error' => 'API Error: ' . $e->getMessage()], 500);
+            // Jangan bocorkan detail error ke client
+            \Illuminate\Support\Facades\Log::error('Database API error: ' . $e->getMessage());
+
+            return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
 }
