@@ -1,16 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>VERIFIKASI EMAIL - RYAZE.MY.ID</title>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 font-sans antialiased text-slate-900">
+<x-public-layout
+    title="Verifikasi Email"
+    :with-nav="false"
+    :with-footer="false"
+    body-class="bg-slate-50 font-sans antialiased text-slate-900">
 
     <div class="min-h-screen flex items-center justify-center p-6">
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
@@ -47,22 +39,22 @@
         </div>
     </div>
 
-    @include('components.hot-toast')
-
     @if (session('success'))
-        <script nonce="{{ app('csp_nonce') ?? '' }}">
-            document.addEventListener('DOMContentLoaded', () => {
-                hotToast('{{ session('success') }}', 'success');
-            });
-        </script>
+        @push('scripts')
+            <script nonce="{{ csp_nonce() }}">
+                document.addEventListener('DOMContentLoaded', () => {
+                    hotToast('{{ session('success') }}', 'success');
+                });
+            </script>
+        @endpush
     @endif
     @if (session('message'))
-        <script nonce="{{ app('csp_nonce') ?? '' }}">
-            document.addEventListener('DOMContentLoaded', () => {
-                hotToast('{{ session('message') }}', 'success');
-            });
-        </script>
+        @push('scripts')
+            <script nonce="{{ csp_nonce() }}">
+                document.addEventListener('DOMContentLoaded', () => {
+                    hotToast('{{ session('message') }}', 'success');
+                });
+            </script>
+        @endpush
     @endif
-</body>
-
-</html>
+</x-public-layout>

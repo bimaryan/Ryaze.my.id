@@ -1,195 +1,57 @@
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<x-public-layout
+    title="Cloud Hosting & Web Development"
+    description="{{ \App\Models\Setting::where('key', 'site_description')->value('value') ?? 'Layanan web hosting canggih dan jasa development profesional.' }}"
+    body-class="antialiased selection:bg-indigo-600 selection:text-white relative"
+    og-image="https://ui-avatars.com/api/?name={{ urlencode(\App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal') }}&size=600&background=4f46e5&color=fff"
+    :links="[
+        ['label' => 'Tentang', 'href' => '#about'],
+        ['label' => 'Layanan', 'href' => '#services'],
+        ['label' => 'Portofolio', 'href' => '#portfolio'],
+        ['label' => 'Blog', 'href' => route('blog.index')],
+    ]">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="theme-color" content="#ffffff">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url('/') }}">
-    @php
-        $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal';
-        $siteDescription =
-            \App\Models\Setting::where('key', 'site_description')->value('value') ??
-            'Layanan web hosting canggih dan jasa development profesional.';
-        $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value');
-        $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
-    @endphp
-
-    <title>{{ $siteName }} - Cloud Hosting & Web Development</title>
-
-    @if ($siteFavicon)
-        <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
-    @endif
-
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="{{ $siteDescription }}">
-    <meta name="keywords" content="hosting, web development, ryaze, server, cloud">
-    <meta name="author" content="{{ $siteName }}">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="{{ $siteName }} - Cloud Hosting & Web Development">
-    <meta property="og:description" content="{{ $siteDescription }}">
-    <meta property="og:image"
-        content="https://ui-avatars.com/api/?name={{ urlencode($siteName) }}&size=600&background=4f46e5&color=fff">
-
-    @if ($gaId)
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-
-            function gtag() {
-                dataLayer.push(arguments);
+    @push('head')
+        <meta name="theme-color" content="#ffffff">
+        <meta name="robots" content="index, follow">
+        <meta name="keywords" content="hosting, web development, ryaze, server, cloud">
+        <meta name="author" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}">
+        <style nonce="{{ csp_nonce() }}">
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #ffffff;
+                color: #111827;
             }
-            gtag('js', new Date());
-            gtag('config', '{{ $gaId }}');
-        </script>
-    @endif
 
-    <!-- Vite Config -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+            /* Subtle grid pattern background */
+            .bg-grid {
+                background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px),
+                    linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
+                background-size: 40px 40px;
+                background-position: center top;
+            }
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"
-        nonce="{{ app('csp_nonce') ?? '' }}">
+            /* Strict borders for cards */
+            .card-brutal {
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                transition: all 0.2s ease;
+            }
 
-    <!-- AlpineJS -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js" nonce="{{ app('csp_nonce') ?? '' }}"></script>
+            .card-brutal:hover {
+                border-color: #4f46e5;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ app('csp_nonce') ?? '' }}">
-
-    <style nonce="{{ app('csp_nonce') ?? '' }}">
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #ffffff;
-            color: #111827;
-        }
-
-        /* Subtle grid pattern background */
-        .bg-grid {
-            background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px),
-                linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: center top;
-        }
-
-        /* Strict borders for cards */
-        .card-brutal {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .card-brutal:hover {
-            border-color: #4f46e5;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Gradient text but strictly monochrome/subtle */
-        .text-gradient-mono {
-            background: linear-gradient(to right, #4f46e5, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-    </style>
-</head>
-
-<body class="antialiased selection:bg-indigo-600 selection:text-white relative">
-
-    <!-- NAVBAR -->
-    <nav x-data="{ mobileMenuOpen: false }"
-        class="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 transition-all duration-200">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                    <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
-                        <i class="fa-solid fa-code text-sm"></i>
-                    </div>
-                    <span
-                        class="text-xl font-bold tracking-tight text-indigo-600">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
-                </a>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-                    <a href="#about" class="hover:text-indigo-600 transition-colors">Tentang</a>
-                    <a href="#services" class="hover:text-indigo-600 transition-colors">Layanan</a>
-                    <a href="#portfolio" class="hover:text-indigo-600 transition-colors">Portofolio</a>
-                    <a href="{{ route('blog.index') }}" class="hover:text-indigo-600 transition-colors">Blog</a>
-                </div>
-
-                <!-- Auth Buttons & Mobile Toggle -->
-                <div class="flex items-center gap-4">
-                    @auth
-                        @php
-                            $dashboardUrl = match (Auth::user()->role ?? '') {
-                                'superadmin' => route('superadmin.dashboard'),
-                                'admin_joki' => route('admin_joki.dashboard'),
-                                'admin_hosting' => route('admin_hosting.dashboard'),
-                                'user_joki' => route('user_joki.dashboard'),
-                                'user_hosting' => route('user_hosting.dashboard'),
-                                default => url('/'),
-                            };
-                        @endphp
-                        <a href="{{ $dashboardUrl }}"
-                            class="hidden sm:inline-flex text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}"
-                            class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden sm:block">
-                            Masuk
-                        </a>
-                        <a href="{{ route('register') }}"
-                            class="hidden sm:inline-flex text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-                            Daftar
-                        </a>
-                    @endauth
-
-                    <!-- Hamburger Button -->
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none">
-                        <i class="fa-solid fa-bars text-xl" x-show="!mobileMenuOpen"></i>
-                        <i class="fa-solid fa-xmark text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div x-show="mobileMenuOpen" style="display: none;" class="md:hidden bg-white border-t border-slate-200" x-transition>
-            <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="#about" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">Tentang</a>
-                <a href="#services" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">Layanan</a>
-                <a href="#portfolio" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">Portofolio</a>
-                <a href="{{ route('blog.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">Blog</a>
-                
-                <div class="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-2">
-                    @auth
-                        <a href="{{ $dashboardUrl ?? url('/') }}" class="block w-full text-center text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="block w-full text-center text-sm font-semibold border border-slate-200 text-slate-700 px-4 py-2 rounded-md hover:bg-slate-50 transition-colors">
-                            Masuk
-                        </a>
-                        <a href="{{ route('register') }}" class="block w-full text-center text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-                            Daftar
-                        </a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
+            /* Gradient text but strictly monochrome/subtle */
+            .text-gradient-mono {
+                background: linear-gradient(to right, #4f46e5, #818cf8);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+        </style>
+    @endpush
 
     <!-- HERO SECTION -->
     <section
@@ -621,65 +483,6 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-200 py-12">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-2 text-indigo-600">
-                    <i class="fa-solid fa-code text-lg"></i>
-                    <span
-                        class="text-xl font-bold tracking-tight">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
-                </div>
-                <div class="flex gap-6 items-center">
-                    @php
-                        $socialGithub = \App\Models\Setting::where('key', 'social_github')->value('value');
-                        $socialInstagram = \App\Models\Setting::where('key', 'social_instagram')->value('value');
-                        $socialLinkedin = \App\Models\Setting::where('key', 'social_linkedin')->value('value');
-                        $contactEmail = \App\Models\Setting::where('key', 'contact_email')->value('value');
-                        $contactWhatsapp = \App\Models\Setting::where('key', 'contact_whatsapp')->value('value');
-                    @endphp
-                    @if ($contactEmail)
-                        <a href="mailto:{{ $contactEmail }}"
-                            class="text-slate-400 hover:text-indigo-600 transition-colors">
-                            <i class="fa-solid fa-envelope text-xl"></i>
-                        </a>
-                    @endif
-                    @if ($contactWhatsapp)
-                        <a href="https://wa.me/62{{ ltrim($contactWhatsapp, '0') }}" target="_blank"
-                            rel="noopener noreferrer" class="text-slate-400 hover:text-emerald-500 transition-colors">
-                            <i class="fa-brands fa-whatsapp text-xl"></i>
-                        </a>
-                    @endif
-                    @if ($socialGithub)
-                        <a href="{{ $socialGithub }}" target="_blank" rel="noopener noreferrer"
-                            class="text-slate-400 hover:text-indigo-600 transition-colors">
-                            <i class="fa-brands fa-github text-xl"></i>
-                        </a>
-                    @endif
-                    @if ($socialInstagram)
-                        <a href="{{ $socialInstagram }}" target="_blank" rel="noopener noreferrer"
-                            class="text-slate-400 hover:text-pink-600 transition-colors">
-                            <i class="fa-brands fa-instagram text-xl"></i>
-                        </a>
-                    @endif
-                    @if ($socialLinkedin)
-                        <a href="{{ $socialLinkedin }}" target="_blank" rel="noopener noreferrer"
-                            class="text-slate-400 hover:text-blue-600 transition-colors">
-                            <i class="fa-brands fa-linkedin text-xl"></i>
-                        </a>
-                    @endif
-                </div>
-            </div>
-            <div
-                class="mt-8 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
-                <p>&copy; {{ date('Y') }}
-                    {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}. All rights
-                    reserved.</p>
-                <p>Engineered by Bima Ryan.</p>
-            </div>
-        </div>
-    </footer>
-
     <!-- Chatbot Widget -->
     <div id="ryaze-chatbot-widget" class="fixed bottom-6 right-6 z-50 font-sans">
         <!-- Chat Window -->
@@ -721,147 +524,145 @@
         </button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleBtn = document.getElementById('ryaze-chat-toggle');
-            const closeBtn = document.getElementById('ryaze-chat-close');
-            const chatWindow = document.getElementById('ryaze-chat-window');
-            const chatForm = document.getElementById('ryaze-chat-form');
-            const chatInput = document.getElementById('ryaze-chat-input');
-            const messagesContainer = document.getElementById('ryaze-chat-messages');
-            
-            // Notification dot
-            const notifDot = toggleBtn.querySelector('span');
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const toggleBtn = document.getElementById('ryaze-chat-toggle');
+                const closeBtn = document.getElementById('ryaze-chat-close');
+                const chatWindow = document.getElementById('ryaze-chat-window');
+                const chatForm = document.getElementById('ryaze-chat-form');
+                const chatInput = document.getElementById('ryaze-chat-input');
+                const messagesContainer = document.getElementById('ryaze-chat-messages');
 
-            let chatHistory = [];
+                // Notification dot
+                const notifDot = toggleBtn.querySelector('span');
 
-            // Toggle window
-            const toggleChat = () => {
-                chatWindow.classList.toggle('hidden');
-                chatWindow.classList.toggle('flex');
-                if(!chatWindow.classList.contains('hidden')) {
-                    chatInput.focus();
-                    if(notifDot) notifDot.style.display = 'none';
-                }
-            };
+                let chatHistory = [];
 
-            toggleBtn.addEventListener('click', toggleChat);
-            closeBtn.addEventListener('click', toggleChat);
-
-            function addMessage(text, isUser = false) {
-                const wrapper = document.createElement('div');
-                wrapper.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''}`;
-                
-                let avatar = '';
-                if(isUser) {
-                    avatar = `<div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center shrink-0 mt-0.5">
-                                <i class="fa-solid fa-user text-[10px] text-slate-500"></i>
-                              </div>`;
-                } else {
-                    avatar = `<div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
-                                <i class="fa-solid fa-robot text-[10px] text-indigo-600"></i>
-                              </div>`;
-                }
-
-                const msgBubble = document.createElement('div');
-                msgBubble.className = isUser 
-                    ? 'bg-indigo-600 text-white px-3 py-2 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] break-words'
-                    : 'bg-white border border-slate-200 px-3 py-2 rounded-2xl rounded-tl-sm text-slate-700 shadow-sm max-w-[85%] break-words';
-                
-                const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                          .replace(/\n/g, '<br>');
-                msgBubble.innerHTML = formattedText;
-
-                wrapper.innerHTML = avatar;
-                wrapper.appendChild(msgBubble);
-                messagesContainer.appendChild(wrapper);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-
-            function addTypingIndicator() {
-                const id = 'typing-' + Date.now();
-                const wrapper = document.createElement('div');
-                wrapper.id = id;
-                wrapper.className = 'flex items-start gap-2';
-                wrapper.innerHTML = `
-                    <div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
-                        <i class="fa-solid fa-robot text-[10px] text-indigo-600"></i>
-                    </div>
-                    <div class="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
-                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
-                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                    </div>
-                `;
-                messagesContainer.appendChild(wrapper);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                return id;
-            }
-
-            function removeElement(id) {
-                const el = document.getElementById(id);
-                if (el) el.remove();
-            }
-
-            chatForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const text = chatInput.value.trim();
-                if(!text) return;
-
-                const submitBtn = chatForm.querySelector('button');
-                
-                // Add user message to UI
-                addMessage(text, true);
-                chatInput.value = '';
-                chatInput.disabled = true;
-                submitBtn.disabled = true;
-
-                // Add loading
-                const typingId = addTypingIndicator();
-
-                try {
-                    const response = await fetch('/chat', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            message: text,
-                            history: chatHistory
-                        })
-                    });
-
-                    removeElement(typingId);
-                    
-                    if(response.ok) {
-                        const data = await response.json();
-                        if(data.reply) {
-                            addMessage(data.reply, false);
-                            
-                            chatHistory.push({ role: 'user', content: text });
-                            chatHistory.push({ role: 'assistant', content: data.reply });
-                            
-                            if(chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
-                        } else {
-                            addMessage("Maaf, terjadi kesalahan.", false);
-                        }
-                    } else {
-                        addMessage("Maaf, gagal terhubung ke server.", false);
+                // Toggle window
+                const toggleChat = () => {
+                    chatWindow.classList.toggle('hidden');
+                    chatWindow.classList.toggle('flex');
+                    if (!chatWindow.classList.contains('hidden')) {
+                        chatInput.focus();
+                        if (notifDot) notifDot.style.display = 'none';
                     }
-                } catch(err) {
-                    removeElement(typingId);
-                    addMessage("Terjadi kesalahan jaringan.", false);
-                } finally {
-                    chatInput.disabled = false;
-                    submitBtn.disabled = false;
-                    chatInput.focus();
+                };
+
+                toggleBtn.addEventListener('click', toggleChat);
+                closeBtn.addEventListener('click', toggleChat);
+
+                function addMessage(text, isUser = false) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''}`;
+
+                    let avatar = '';
+                    if (isUser) {
+                        avatar = `<div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-user text-[10px] text-slate-500"></i>
+                                  </div>`;
+                    } else {
+                        avatar = `<div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-robot text-[10px] text-indigo-600"></i>
+                                  </div>`;
+                    }
+
+                    const msgBubble = document.createElement('div');
+                    msgBubble.className = isUser
+                        ? 'bg-indigo-600 text-white px-3 py-2 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] break-words'
+                        : 'bg-white border border-slate-200 px-3 py-2 rounded-2xl rounded-tl-sm text-slate-700 shadow-sm max-w-[85%] break-words';
+
+                    const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>');
+                    msgBubble.innerHTML = formattedText;
+
+                    wrapper.innerHTML = avatar;
+                    wrapper.appendChild(msgBubble);
+                    messagesContainer.appendChild(wrapper);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 }
+
+                function addTypingIndicator() {
+                    const id = 'typing-' + Date.now();
+                    const wrapper = document.createElement('div');
+                    wrapper.id = id;
+                    wrapper.className = 'flex items-start gap-2';
+                    wrapper.innerHTML = `
+                        <div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <i class="fa-solid fa-robot text-[10px] text-indigo-600"></i>
+                        </div>
+                        <div class="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
+                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(wrapper);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    return id;
+                }
+
+                function removeElement(id) {
+                    const el = document.getElementById(id);
+                    if (el) el.remove();
+                }
+
+                chatForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const text = chatInput.value.trim();
+                    if (!text) return;
+
+                    const submitBtn = chatForm.querySelector('button');
+
+                    // Add user message to UI
+                    addMessage(text, true);
+                    chatInput.value = '';
+                    chatInput.disabled = true;
+                    submitBtn.disabled = true;
+
+                    // Add loading
+                    const typingId = addTypingIndicator();
+
+                    try {
+                        const response = await fetch('/chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                message: text,
+                                history: chatHistory
+                            })
+                        });
+
+                        removeElement(typingId);
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.reply) {
+                                addMessage(data.reply, false);
+
+                                chatHistory.push({ role: 'user', content: text });
+                                chatHistory.push({ role: 'assistant', content: data.reply });
+
+                                if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+                            } else {
+                                addMessage("Maaf, terjadi kesalahan.", false);
+                            }
+                        } else {
+                            addMessage("Maaf, gagal terhubung ke server.", false);
+                        }
+                    } catch (err) {
+                        removeElement(typingId);
+                        addMessage("Terjadi kesalahan jaringan.", false);
+                    } finally {
+                        chatInput.disabled = false;
+                        submitBtn.disabled = false;
+                        chatInput.focus();
+                    }
+                });
             });
-        });
-    </script>
-
-    @include('components.hot-toast')
-</body>
-
-</html>
+        </script>
+    @endpush
+</x-public-layout>

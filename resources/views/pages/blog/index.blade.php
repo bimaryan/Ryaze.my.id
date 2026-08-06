@@ -1,96 +1,18 @@
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ isset($currentCategory) ? $currentCategory->name . ' - ' : '' }}Blog - {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</title>
-    @php
-        $siteDescription = \App\Models\Setting::where('key', 'site_description')->value('value');
-        $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value');
-        $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
-        $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value');
-    @endphp
-    
-    <meta name="description" content="{{ $siteDescription ?? 'Artikel terbaru seputar teknologi, web development, dan tips hosting dari tim Ryaze.' }}">
-    
-    @if($siteFavicon)
-        <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
-    @endif
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="{{ isset($currentCategory) ? $currentCategory->name . ' - ' : '' }}Blog - {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}">
-    <meta property="og:description" content="{{ $siteDescription ?? 'Artikel terbaru seputar teknologi, web development, dan tips hosting dari tim Ryaze.' }}">
-    @if($siteFavicon)<meta property="og:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
+<x-public-layout
+    title="{{ isset($currentCategory) ? $currentCategory->name . ' - ' : '' }}Blog"
+    description="{{ \App\Models\Setting::where('key', 'site_description')->value('value') ?? 'Artikel terbaru seputar teknologi, web development, dan tips hosting dari tim Ryaze.' }}"
+    body-class="bg-white text-slate-800 antialiased"
+    :links="[
+        ['label' => 'Beranda', 'href' => url('/')],
+        ['label' => 'Blog', 'href' => route('blog.index'), 'active' => true],
+    ]"
+    :footer-compact="true">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
-    <meta property="twitter:title" content="{{ isset($currentCategory) ? $currentCategory->name . ' - ' : '' }}Blog - {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}">
-    <meta property="twitter:description" content="{{ $siteDescription ?? 'Artikel terbaru seputar teknologi, web development, dan tips hosting dari tim Ryaze.' }}">
-    @if($siteFavicon)<meta property="twitter:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
-
-    @if($gaId)
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '{{ $gaId }}');
-        </script>
-    @endif
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" nonce="{{ app('csp_nonce') ?? '' }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" nonce="{{ app('csp_nonce') ?? '' }}">
-    <style nonce="{{ app('csp_nonce') ?? '' }}">
-        body { font-family: 'Inter', sans-serif; }
-    </style>
-</head>
-<body class="bg-white text-slate-800 antialiased">
-
-    {{-- Navbar --}}
-    <nav class="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                    @if($siteLogo)
-                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 object-contain">
-                    @else
-                        <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
-                            <i class="fa-solid fa-code text-sm"></i>
-                        </div>
-                    @endif
-                    <span class="text-xl font-bold tracking-tight text-indigo-600">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
-                </a>
-                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-                    <a href="{{ url('/') }}" class="hover:text-indigo-600 transition-colors">Beranda</a>
-                    <a href="{{ route('blog.index') }}" class="text-indigo-600 font-semibold">Blog</a>
-                </div>
-                <div class="flex items-center gap-4">
-                    @auth
-                        @php
-                            $dashboardUrl = match (Auth::user()->role ?? '') {
-                                'superadmin' => route('superadmin.dashboard'),
-                                'admin_joki' => route('admin_joki.dashboard'),
-                                'admin_hosting' => route('admin_hosting.dashboard'),
-                                'user_joki' => route('user_joki.dashboard'),
-                                'user_hosting' => route('user_hosting.dashboard'),
-                                default => url('/'),
-                            };
-                        @endphp
-                        <a href="{{ $dashboardUrl }}" class="text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden sm:block">Masuk</a>
-                        <a href="{{ route('register') }}" class="text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">Daftar</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
+    @push('head')
+        <style nonce="{{ csp_nonce() }}">
+            body { font-family: 'Inter', sans-serif; }
+        </style>
+    @endpush
 
     {{-- Header --}}
     <section class="pt-28 pb-12 border-b border-slate-200 bg-slate-50">
@@ -210,15 +132,4 @@
             </aside>
         </div>
     </div>
-
-    {{-- Footer --}}
-    <footer class="bg-white border-t border-slate-200 py-8">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
-            <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}. All rights reserved.</p>
-            <p>Engineered by Bima Ryan.</p>
-        </div>
-    </footer>
-
-    @include('components.hot-toast')
-</body>
-</html>
+</x-public-layout>

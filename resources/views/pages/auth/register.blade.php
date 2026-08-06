@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+<x-public-layout
+    title="Register"
+    :with-nav="false"
+    :with-footer="false"
+    body-class="bg-slate-50 font-sans antialiased text-slate-900">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>REGISTER - RYAZE.MY.ID</title>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer nonce="{{ app('csp_nonce') ?? '' }}"></script>
-</head>
-
-<body class="bg-slate-50 font-sans antialiased text-slate-900">
+    @push('head')
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer nonce="{{ csp_nonce() }}"></script>
+    @endpush
 
     <div class="min-h-screen flex items-center justify-center p-6">
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
@@ -120,27 +115,21 @@
         </div>
     </div>
 
-    @include('components.hot-toast')
-    @include('components.hot-toast')
-
-    <!-- FontAwesome for the eye icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        function togglePassword(inputId, btn) {
-            const input = document.getElementById(inputId);
-            const icon = btn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+    @push('scripts')
+        <script>
+            function togglePassword(inputId, btn) {
+                const input = document.getElementById(inputId);
+                const icon = btn.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
             }
-        }
-    </script>
-</body>
-
-</html>
+        </script>
+    @endpush
+</x-public-layout>

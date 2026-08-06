@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Dalam Pemeliharaan - Ryaze</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://kit.fontawesome.com/f74deb4653.js" crossorigin="anonymous"></script>
-</head>
-<body class="bg-slate-50 font-sans antialiased text-slate-900 min-h-screen flex items-center justify-center p-4">
+<x-public-layout
+    title="Sistem Dalam Pemeliharaan"
+    :with-nav="false"
+    :with-footer="false"
+    body-class="bg-slate-50 font-sans antialiased text-slate-900 min-h-screen flex items-center justify-center p-4">
+
     <div class="max-w-lg w-full text-center">
         <!-- Icon Animation -->
         <div class="mb-8 relative inline-block">
@@ -37,5 +33,4 @@
             &copy; {{ date('Y') }} Ryaze Portal. All rights reserved.
         </div>
     </div>
-</body>
-</html>
+</x-public-layout>

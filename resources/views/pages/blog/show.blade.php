@@ -1,119 +1,55 @@
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @php
-        $siteFavicon = \App\Models\Setting::where('key', 'site_favicon')->value('value');
-        $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
-        $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value');
-        $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal';
-    @endphp
-    <title>{{ $article->seo_title }} - {{ $siteName }}</title>
-    @if($siteFavicon)
-        <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
-    @endif
-    @if($gaId)
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '{{ $gaId }}');
-        </script>
-    @endif
-    <meta name="description" content="{{ $article->seo_description }}">
-    <meta name="author" content="{{ $article->user->name ?? 'Ryaze' }}">
+<x-public-layout
+    title="{{ $article->seo_title }}"
+    description="{{ $article->seo_description }}"
+    body-class="bg-white text-slate-800 antialiased"
+    og-image="{{ $article->cover_image ? asset(Storage::url($article->cover_image)) : '' }}"
+    :links="[
+        ['label' => 'Beranda', 'href' => url('/')],
+        ['label' => 'Blog', 'href' => route('blog.index')],
+    ]"
+    :footer-compact="true">
 
-    {{-- Open Graph --}}
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ route('blog.show', $article->slug) }}">
-    <meta property="og:title" content="{{ $article->seo_title }}">
-    <meta property="og:description" content="{{ $article->seo_description }}">
-    @if($article->cover_image)
-        <meta property="og:image" content="{{ asset(Storage::url($article->cover_image)) }}">
-    @endif
-    <meta property="article:published_time" content="{{ $article->published_at?->toIso8601String() }}">
-    <meta property="article:author" content="{{ $article->user->name ?? 'Ryaze' }}">
-    @if($article->category)
-        <meta property="article:section" content="{{ $article->category->name }}">
-    @endif
-    @if(is_array($article->tags))
-        @foreach($article->tags as $tag)
-            <meta property="article:tag" content="{{ $tag }}">
-        @endforeach
-    @elseif(is_string($article->tags))
-        <meta property="article:tag" content="{{ $article->tags }}">
-    @endif
+    @push('head')
+        <meta name="author" content="{{ $article->user->name ?? 'Ryaze' }}">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" nonce="{{ app('csp_nonce') ?? '' }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" nonce="{{ app('csp_nonce') ?? '' }}">
-    <style nonce="{{ app('csp_nonce') ?? '' }}">
-        body { font-family: 'Inter', sans-serif; }
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="{{ route('blog.show', $article->slug) }}">
+        <meta property="article:published_time" content="{{ $article->published_at?->toIso8601String() }}">
+        <meta property="article:author" content="{{ $article->user->name ?? 'Ryaze' }}">
+        @if ($article->category)
+            <meta property="article:section" content="{{ $article->category->name }}">
+        @endif
+        @if (is_array($article->tags))
+            @foreach ($article->tags as $tag)
+                <meta property="article:tag" content="{{ $tag }}">
+            @endforeach
+        @elseif (is_string($article->tags))
+            <meta property="article:tag" content="{{ $article->tags }}">
+        @endif
 
-        /* Prose-like styling for article body */
-        .article-body { line-height: 1.8; color: #374151; }
-        .article-body h1, .article-body h2, .article-body h3, .article-body h4 { color: #111827; font-weight: 700; margin-top: 2em; margin-bottom: 0.75em; }
-        .article-body h2 { font-size: 1.5em; }
-        .article-body h3 { font-size: 1.25em; }
-        .article-body p { margin-bottom: 1.25em; }
-        .article-body a { color: #4f46e5; text-decoration: underline; }
-        .article-body a:hover { color: #3730a3; }
-        .article-body ul, .article-body ol { padding-left: 1.5em; margin-bottom: 1.25em; }
-        .article-body li { margin-bottom: 0.5em; }
-        .article-body blockquote { border-left: 4px solid #e2e8f0; padding: 1em 1.5em; margin: 1.5em 0; color: #64748b; background: #f8fafc; border-radius: 0 8px 8px 0; }
-        .article-body pre { background: #1e293b; color: #e2e8f0; padding: 1.25em; border-radius: 8px; overflow-x: auto; margin-bottom: 1.5em; font-size: 0.875em; }
-        .article-body code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.875em; }
-        .article-body pre code { background: none; padding: 0; }
-        .article-body img { max-width: 100%; height: auto; border-radius: 8px; margin: 1.5em 0; }
-        .article-body table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }
-        .article-body th, .article-body td { border: 1px solid #e2e8f0; padding: 0.75em 1em; text-align: left; }
-        .article-body th { background: #f8fafc; font-weight: 600; }
-    </style>
-</head>
-<body class="bg-white text-slate-800 antialiased">
+        <style nonce="{{ csp_nonce() }}">
+            body { font-family: 'Inter', sans-serif; }
 
-    {{-- Navbar --}}
-    <nav class="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                    @if($siteLogo)
-                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 object-contain">
-                    @else
-                        <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-code text-sm"></i></div>
-                    @endif
-                    <span class="text-xl font-bold tracking-tight text-indigo-600">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</span>
-                </a>
-                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-                    <a href="{{ url('/') }}" class="hover:text-indigo-600 transition-colors">Beranda</a>
-                    <a href="{{ route('blog.index') }}" class="text-indigo-600 font-semibold">Blog</a>
-                </div>
-                <div class="flex items-center gap-4">
-                    @auth
-                        @php
-                            $dashboardUrl = match (Auth::user()->role ?? '') {
-                                'superadmin' => route('superadmin.dashboard'),
-                                'admin_joki' => route('admin_joki.dashboard'),
-                                'admin_hosting' => route('admin_hosting.dashboard'),
-                                'user_joki' => route('user_joki.dashboard'),
-                                'user_hosting' => route('user_hosting.dashboard'),
-                                default => url('/'),
-                            };
-                        @endphp
-                        <a href="{{ $dashboardUrl }}" class="text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden sm:block">Masuk</a>
-                        <a href="{{ route('register') }}" class="text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">Daftar</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
+            /* Prose-like styling for article body */
+            .article-body { line-height: 1.8; color: #374151; }
+            .article-body h1, .article-body h2, .article-body h3, .article-body h4 { color: #111827; font-weight: 700; margin-top: 2em; margin-bottom: 0.75em; }
+            .article-body h2 { font-size: 1.5em; }
+            .article-body h3 { font-size: 1.25em; }
+            .article-body p { margin-bottom: 1.25em; }
+            .article-body a { color: #4f46e5; text-decoration: underline; }
+            .article-body a:hover { color: #3730a3; }
+            .article-body ul, .article-body ol { padding-left: 1.5em; margin-bottom: 1.25em; }
+            .article-body li { margin-bottom: 0.5em; }
+            .article-body blockquote { border-left: 4px solid #e2e8f0; padding: 1em 1.5em; margin: 1.5em 0; color: #64748b; background: #f8fafc; border-radius: 0 8px 8px 0; }
+            .article-body pre { background: #1e293b; color: #e2e8f0; padding: 1.25em; border-radius: 8px; overflow-x: auto; margin-bottom: 1.5em; font-size: 0.875em; }
+            .article-body code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.875em; }
+            .article-body pre code { background: none; padding: 0; }
+            .article-body img { max-width: 100%; height: auto; border-radius: 8px; margin: 1.5em 0; }
+            .article-body table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }
+            .article-body th, .article-body td { border: 1px solid #e2e8f0; padding: 0.75em 1em; text-align: left; }
+            .article-body th { background: #f8fafc; font-weight: 600; }
+        </style>
+    @endpush
 
     {{-- Cover Image --}}
     @if($article->cover_image)
@@ -209,15 +145,4 @@
             </div>
         </section>
     @endif
-
-    {{-- Footer --}}
-    <footer class="bg-white border-t border-slate-200 py-8">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
-            <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}. All rights reserved.</p>
-            <p>Engineered by Bima Ryan.</p>
-        </div>
-    </footer>
-
-    @include('components.hot-toast')
-</body>
-</html>
+</x-public-layout>
