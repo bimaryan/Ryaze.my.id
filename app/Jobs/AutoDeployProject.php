@@ -206,14 +206,17 @@ class AutoDeployProject implements ShouldQueue
             $this->log($deploy, "> Executable permission fallback di-set untuk seluruh node_modules");
         }
 
-        if (in_array($framework, ['react', 'nextjs', 'vue'])) {
-            $this->log($deploy, '> Running build script...');
-            $this->exec("rm -rf {$projectDir}/dist {$projectDir}/build {$projectDir}/out 2>/dev/null || true", $deploy);
-            $this->exec(
-                "cd {$projectDir} && npm run build 2>&1 || true",
-                $deploy,
-                false
-            );
+        if (in_array($framework, ['react', 'nextjs', 'vue', 'node'])) {
+            // Framework 'node' tidak punya build script — langsung jalankan server
+            if ($framework !== 'node') {
+                $this->log($deploy, '> Running build script...');
+                $this->exec("rm -rf {$projectDir}/dist {$projectDir}/build {$projectDir}/out 2>/dev/null || true", $deploy);
+                $this->exec(
+                    "cd {$projectDir} && npm run build 2>&1 || true",
+                    $deploy,
+                    false
+                );
+            }
 
             if ($isLaravelInertia) {
                 $this->log($deploy, '> Laravel+Inertia: Vite output is at public/build. No file move needed.');
@@ -322,7 +325,30 @@ class AutoDeployProject implements ShouldQueue
     {
         $this->exec("rm -f {$projectDir}/public/hot 2>/dev/null || true", $deploy);
         $this->log($deploy, "> Menghapus public/hot (jika ada) agar Laravel Vite menggunakan production build.");
-        
+
+        $this->log($deploy, '> Menjalankan composer install...');
+        $this->runComposerInstall($deploy, $projectDir);
+
+        $this->log($deploy, '> Menyiapkan file .env...');
+        $this->setupLaravelEnv($deploy, $projectDir);
+
+        $envPath = "{$projectDir}/.env";
+        if (!file_exists($envPath) && !file_exists("{$projectDir}/.env.example")) {
+            file_put_contents($envPath, "APP_NAME=Laravel\nAPP_ENV=production\nAPP_DEBUG=false\n");
+            $this->log($deploy, '> Membuat .env minimal (tidak ada .env.example).');
+        }
+
+        if (file_exists($envPath)) {
+            $hasAppKey = preg_match('/^APP_KEY=.+$/m', (string) file_get_contents($envPath));
+            if (!$hasAppKey) {
+                $this->log($deploy, '> Men-generate APP_KEY...');
+                $this->exec("cd {$projectDir} && php artisan key:generate --force 2>&1 || true", $deploy, false);
+            }
+            $this->exec("cd {$projectDir} && php artisan storage:link 2>&1 || true", $deploy, false);
+        }
+
+        $this->runLaravelPostSetup($deploy, $projectDir);
+
         $this->log($deploy, '> Laravel setup complete.');
     }
 
