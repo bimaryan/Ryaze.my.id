@@ -194,6 +194,36 @@ class AuthController extends Controller
             'referred_by' => $referrerId,
         ]);
 
+        // 2.5 Auto-activate Paket Free untuk user hosting baru
+        // (mirip alur aktivasi gratis di Hosting\User\DashboardController::subscribe)
+        if ($user->role === 'user_hosting') {
+            $freeLimits = \App\Models\User::getPlanLimits('free');
+
+            \App\Models\HostingBilling::create([
+                'user_id'            => $user->id,
+                'hosting_project_id' => null,
+                'plan_name'          => 'Paket Free',
+                'plan'               => 'free',
+                'amount'             => 0,
+                'billing_cycle'      => 'monthly',
+                'status'             => 'active',
+                'next_due_date'      => now()->addYears(10),
+            ]);
+
+            $user->update(['hosting_storage_limit_mb' => $freeLimits['storage_mb']]);
+
+            \App\Models\HostingPayment::create([
+                'user_id'          => $user->id,
+                'hosting_project_id' => null,
+                'invoice_number'   => 'HST-INV-' . strtoupper(uniqid()),
+                'amount'           => 0,
+                'status'           => 'paid',
+                'payment_method'   => 'Free Plan',
+                'paid_at'          => now(),
+                'notes'            => 'free',
+            ]);
+        }
+
         // 3. Auto-Login setelah berhasil register
         Auth::login($user);
 
