@@ -1771,34 +1771,58 @@
             ?.addEventListener('click', confirmDelete);
 
         // ── Load Monaco Editor ──────────────────────────────────────────────────
-        var monacoScript = document.createElement('script');
-        monacoScript.src = "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js";
-        monacoScript.onload = function() {
-            require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
-            // Provide proxy to avoid worker cross-origin issues from CDN
-            window.MonacoEnvironment = {
-                getWorkerUrl: function(workerId, label) {
-                    return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
-                        self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/' };
-                        importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/base/worker/workerMain.js');
-                    `)}`;
-                }
-            };
-            require(['vs/editor/editor.main'], function() {
-                defineMonacoThemes();
-                themesDefined = true;
-                window.editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
-                    value: "",
-                    language: "php",
-                    theme: localStorage.getItem('ryaze-ide-theme') || 'vs-dark',
-                    automaticLayout: true,
-                    minimap: { enabled: true },
-                    fontSize: 13,
-                    fontFamily: "'Fira Code', 'JetBrains Mono', 'Courier New', monospace"
+        if (typeof window._ryazeMonacoLoaded === 'undefined') {
+            window._ryazeMonacoLoaded = true;
+            var monacoScript = document.createElement('script');
+            monacoScript.src = "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js";
+            monacoScript.onload = function() {
+                require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+                // Provide proxy to avoid worker cross-origin issues from CDN
+                window.MonacoEnvironment = {
+                    getWorkerUrl: function(workerId, label) {
+                        return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+                            self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/' };
+                            importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/base/worker/workerMain.js');
+                        `)}`;
+                    }
+                };
+                require(['vs/editor/editor.main'], function() {
+                    if (typeof defineMonacoThemes !== 'undefined') defineMonacoThemes();
+                    if (typeof themesDefined !== 'undefined') themesDefined = true;
+                    if (window.editor) window.editor.dispose();
+                    window.editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+                        value: "",
+                        language: "php",
+                        theme: localStorage.getItem('ryaze-ide-theme') || 'vs-dark',
+                        automaticLayout: true,
+                        minimap: { enabled: true },
+                        fontSize: 13,
+                        fontFamily: "'Fira Code', 'JetBrains Mono', 'Courier New', monospace"
+                    });
                 });
-            });
-        };
-        document.body.appendChild(monacoScript);
+            };
+            document.body.appendChild(monacoScript);
+        } else {
+            var checkMonacoReady = setInterval(function() {
+                if (typeof monaco !== 'undefined' && document.getElementById('monaco-editor-container')) {
+                    clearInterval(checkMonacoReady);
+                    if (window.editor) window.editor.dispose();
+                    if (typeof defineMonacoThemes !== 'undefined' && typeof themesDefined !== 'undefined' && !themesDefined) {
+                        defineMonacoThemes();
+                        themesDefined = true;
+                    }
+                    window.editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+                        value: "",
+                        language: "php",
+                        theme: localStorage.getItem('ryaze-ide-theme') || 'vs-dark',
+                        automaticLayout: true,
+                        minimap: { enabled: true },
+                        fontSize: 13,
+                        fontFamily: "'Fira Code', 'JetBrains Mono', 'Courier New', monospace"
+                    });
+                }
+            }, 100);
+        }
 
         // ── IDE Tab Logic ───────────────────────────────────────────────────────
         var ideEditorInstance = null;
