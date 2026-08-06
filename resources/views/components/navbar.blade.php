@@ -531,3 +531,30 @@
         </ul>
     </div>
 </aside>
+
+{{-- Popup untuk user tanpa langganan hosting aktif saat klik menu Proyek Aktif --}}
+@if ($isUserHosting && !Auth::user()->hasActiveHostingSubscription())
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var proyekLink = document.querySelector('a[href="{{ route('user_hosting.projects') }}"]');
+    if (!proyekLink || typeof Swal === 'undefined') return;
+
+    proyekLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'info',
+            title: 'Belum Berlangganan Hosting',
+            html: 'Untuk <strong>melihat & mengelola proyek hosting</strong>, Anda perlu memiliki paket langganan aktif terlebih dahulu.',
+            showCancelButton: true,
+            confirmButtonText: 'Lihat Paket',
+            cancelButtonText: 'Tutup',
+            confirmButtonColor: '#4f46e5',
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                window.location.href = '{{ route('user_hosting.subscription') }}';
+            }
+        });
+    });
+});
+</script>
+@endif
