@@ -35,7 +35,7 @@ class DashboardController extends Controller
         'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date',
         'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
         'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'apk', 'source', 'chmod', 'clear', 'chown',
-        'tar', 'unzip', 'zip'
+        'tar', 'unzip', 'zip', 'ping'
 ];
 
     // Menampilkan halaman dashboard hosting klien
@@ -379,7 +379,7 @@ class DashboardController extends Controller
             return response()->json(['error' => 'GROQ_API_KEY belum dikonfigurasi di server.'], 500);
         }
 
-        $systemPrompt = "Kamu adalah Ryaze AI v1.0, asisten koding cerdas yang terintegrasi di dalam IDE Ryaze Hosting. Balas dalam bahasa Indonesia dengan gaya profesional, singkat, dan tepat sasaran. Jika pengguna menyertakan konteks kodenya, berikan analisis atau saran berdasarkan kode tersebut.\n\nJIKA PENGGUNA MEMINTA KAMU UNTUK MERUBAH ATAU MEMPERBAIKI KESELURUHAN KODE SECARA OTOMATIS (misal: 'perbaiki file ini', 'tulis ulang'), maka kamu WAJIB mengembalikan keseluruhan kode baru di dalam blok berikut:\n<<REPLACE_ALL>>\n[kode baru di sini]\n<<END_REPLACE>>\n\nJika pengguna hanya bertanya atau meminta cuplikan kode sebagian, gunakan markdown code block biasa (```).";
+        $systemPrompt = "Kamu adalah Ryaze AI v1.0, asisten koding cerdas yang terintegrasi di dalam IDE Ryaze Hosting. Balas dalam bahasa Indonesia dengan gaya profesional, singkat, dan tepat sasaran. Jika pengguna menyertakan konteks kodenya, berikan analisis atau saran berdasarkan kode tersebut.\n\nJIKA PENGGUNA MEMINTA KAMU UNTUK MERUBAH ATAU MEMPERBAIKI KESELURUHAN KODE SECARA OTOMATIS (misal: 'perbaiki file ini', 'tulis ulang'), maka kamu WAJIB mengembalikan keseluruhan kode baru di dalam blok berikut:\n<<REPLACE_ALL>>\n[kode baru di sini]\n<<END_REPLACE>>\n\nJIKA PENGGUNA MEMINTA MEMBUAT / MENGUBAH FILE ATAU FOLDER LANGSUNG DI PROJECT (misal: 'buatkan file routes.php', 'buat folder app/Http/Controllers', 'tulis kode X ke file Y'), maka kamu WAJIB mengembalikan blok JSON berikut di akhir jawabanmu, selain jawaban teks singkatnya:\n<<FILE_OPS>>\n[{\"action\":\"write\",\"path\":\"folder/file.ext\",\"content\":\"isi file lengkap\"},{\"action\":\"mkdir\",\"path\":\"folder/baru\"}]\n<<END_FILE_OPS>>\n\nAturan FILE_OPS:\n- action 'write' = menulis/membuat file (path relatif terhadap root project, tanpa leading slash, gunakan garis miring /)\n- action 'mkdir' = membuat folder (termasuk folder bertingkat)\n- content file wajib utuh dan lengkap, bukan placeholder\n- jangan panggil FILE_OPS untuk sekedar menjawab pertanyaan tanpa diminta mengubah file\n\nJika pengguna hanya bertanya atau meminta cuplikan kode sebagian, gunakan markdown code block biasa (```).";
         
         $userMessage = $message;
         if (!empty($context)) {
@@ -388,7 +388,7 @@ class DashboardController extends Controller
 
         try {
             $response = Http::withToken($groqApiKey)
-                ->timeout(15)
+                ->timeout(20)
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
                     'model' => 'llama-3.1-8b-instant',
                     'messages' => [
@@ -402,7 +402,8 @@ class DashboardController extends Controller
                 $data = $response->json();
                 $reply = $data['choices'][0]['message']['content'] ?? 'Tidak ada respons dari AI.';
                 // Konversi markdown sederhana ke HTML bisa dilakukan di frontend, atau kita kembalikan plain markdown.
-                return response()->json(['reply' => $reply]);
+                $fileOps = $this->executeAiFileOps($reply, $project, $projectDir);
+                return response()->json(['reply' => $reply, 'file_ops' => $fileOps]);
             } else {
                 Log::error('Groq API Error: ' . $response->body());
                 return response()->json(['error' => 'API Ryaze AI sedang bermasalah. Coba lagi nanti.'], 500);
@@ -411,6 +412,94 @@ class DashboardController extends Controller
             Log::error('Groq Exception: ' . $e->getMessage());
             return response()->json(['error' => 'Terjadi kesalahan sistem saat menghubungi AI.'], 500);
         }
+    }
+
+    /**
+     * Mengeksekusi operasi file yang diminta AI (agentic coding).
+     * Memakai path jail + proteksi file yang sama seperti saveFile.
+     */
+    private function executeAiFileOps(string $reply, HostingProject $project, string $projectDir): array
+    {
+        $results = [];
+        if (preg_match('/<<FILE_OPS>>(.*?)<<END_FILE_OPS>>/s', $reply, $m)) {
+            $ops = json_decode(trim($m[1]), true);
+            if (!is_array($ops)) {
+                return [['action' => 'parse', 'path' => '', 'status' => 'error', 'message' => 'Format FILE_OPS tidak valid (JSON rusak).']];
+            }
+
+            $projectRootDir = rtrim($projectDir, '/\\');
+            $ops = array_slice($ops, 0, 10);
+
+            foreach ($ops as $op) {
+                $action = $op['action'] ?? '';
+                $relPath = trim((string) ($op['path'] ?? ''), '/');
+                $relPath = str_replace('\\', '/', $relPath);
+
+                if (!in_array($action, ['write', 'mkdir'], true) || $relPath === '' || str_contains($relPath, '..')) {
+                    $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Operasi ditolak: path atau aksi tidak valid.'];
+                    continue;
+                }
+
+                $target = $projectRootDir . '/' . $relPath;
+                if (strpos($target, $projectRootDir . '/') !== 0) {
+                    $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Operasi ditolak: di luar direktori project.'];
+                    continue;
+                }
+
+                try {
+                    if ($action === 'mkdir') {
+                        if (is_dir($target)) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'info', 'message' => 'Folder sudah ada.'];
+                            continue;
+                        }
+                        if (!@mkdir($target, 0770, true)) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal membuat folder (cek permission Linux).'];
+                            continue;
+                        }
+                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => 'Folder dibuat.'];
+                        continue;
+                    }
+
+                    // action = write
+                    if (in_array(basename($target), $this->protectedFiles)) {
+                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File sistem ini tidak dapat diubah.'];
+                        continue;
+                    }
+
+                    $content = (string) ($op['content'] ?? '');
+                    if (strlen($content) > 300000) {
+                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Ukuran file terlalu besar (maks 300KB).'];
+                        continue;
+                    }
+
+                    $parent = dirname($target);
+                    if (!is_dir($parent) && !@mkdir($parent, 0770, true)) {
+                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal membuat folder induk (cek permission Linux).'];
+                        continue;
+                    }
+
+                    $oldSize = file_exists($target) ? filesize($target) : 0;
+                    $newSize = strlen($content);
+                    if ($newSize > $oldSize && !$this->checkDiskQuota($project, $newSize - $oldSize)) {
+                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Penyimpanan Penuh! Kuota disk Anda sudah habis.'];
+                        continue;
+                    }
+
+                    @chmod($parent, 0770);
+                    if (@file_put_contents($target, $content) === false) {
+                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal menulis file (cek permission Linux).'];
+                        continue;
+                    }
+                    @chmod($target, 0660);
+                    $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => 'File berhasil ditulis.'];
+                } catch (\Throwable $e) {
+                    Log::warning('AI FILE_OPS exception: ' . $e->getMessage());
+                    $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Kesalahan sistem saat mengeksekusi operasi.'];
+                }
+            }
+        }
+
+        return $results;
     }
 
     public function ideSearch(Request $request, $hashid)
@@ -434,7 +523,27 @@ class DashboardController extends Controller
         $escapedQuery = escapeshellarg($query);
         $escapedDir = escapeshellarg($projectRootDir);
 
-        // Execute grep command to search text inside project directory, ignoring common big folders
+        // 1. Cari nama file & folder yang cocok dengan query
+        $nameResults = [];
+        $findCmd = "find {$escapedDir} -iname '*{$escapedQuery}*' -not -path '*/node_modules/*' -not -path '*/vendor/*' -not -path '*/.git/*' -not -path '*/storage/*' -not -path '*/.next/*' -not -path '*/dist/*' | head -n 30";
+        $findOutput = shell_exec($findCmd);
+        if ($findOutput) {
+            foreach (explode("\n", trim($findOutput)) as $path) {
+                if (empty($path)) continue;
+                $fullPath = rtrim($path, '/');
+                if (strpos($fullPath, $projectRootDir) !== 0) continue;
+                $relativePath = str_replace($projectRootDir . '/', '', $fullPath);
+                if (strpos($relativePath, '.') === 0) continue;
+                $nameResults[] = [
+                    'path' => $relativePath,
+                    'line' => '',
+                    'content' => is_dir($fullPath) ? '(folder)' : '',
+                    'type' => 'name'
+                ];
+            }
+        }
+
+        // 2. Cari isi file (grep), ignore common big folders
         // Avoid brace expansion {} as it may fail in Alpine's /bin/sh
         $cmd = "grep -rIn {$caseFlag} --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=.git --exclude-dir=storage --exclude-dir=.next {$escapedQuery} {$escapedDir} | head -n 50";
         $output = shell_exec($cmd);
@@ -457,87 +566,15 @@ class DashboardController extends Controller
                         $results[] = [
                             'path' => $relativePath,
                             'line' => $lineNumber,
-                            'content' => mb_strimwidth(trim($content), 0, 120, '...')
+                            'content' => mb_strimwidth(trim($content), 0, 120, '...'),
+                            'type' => 'content'
                         ];
                     }
                 }
             }
         }
 
-        return response()->json(['results' => $results]);
-    }
-
-    public function ideGitStatus(Request $request, $hashid)
-    {
-        $project = $this->getValidProject($hashid);
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
-
-        // Check if git is initialized
-        if (!is_dir($projectRootDir . '/.git')) {
-            return response()->json(['error' => 'Git repository belum diinisialisasi di project ini.']);
-        }
-
-        $cmd = "cd " . escapeshellarg($projectRootDir) . " && git status -s";
-        $output = shell_exec($cmd);
-
-        $changes = [];
-        if ($output) {
-            $lines = explode("\n", trim($output));
-            foreach ($lines as $line) {
-                if (empty($line)) continue;
-                $status = substr($line, 0, 2);
-                $file = trim(substr($line, 2));
-                $changes[] = [
-                    'status' => trim($status),
-                    'file' => $file
-                ];
-            }
-        }
-
-        return response()->json(['changes' => $changes]);
-    }
-
-    public function ideGitCommit(Request $request, $hashid)
-    {
-        $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
-
-        $msg = $request->input('message', 'Update');
-        $msg = escapeshellarg($msg);
-
-        $cmd = "cd " . escapeshellarg($projectRootDir) . " && git add . && git commit -m {$msg} 2>&1";
-        $output = shell_exec($cmd);
-
-        return response()->json(['message' => 'Commit berhasil', 'output' => $output]);
-    }
-
-    public function ideGitPull(Request $request, $hashid)
-    {
-        $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
-
-        $cmd = "cd " . escapeshellarg($projectRootDir) . " && git pull 2>&1";
-        $output = shell_exec($cmd);
-
-        return response()->json(['message' => 'Pull berhasil (Cek log untuk detail)', 'output' => $output]);
-    }
-
-    public function ideGitPush(Request $request, $hashid)
-    {
-        $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
-
-        $cmd = "cd " . escapeshellarg($projectRootDir) . " && git push 2>&1";
-        $output = shell_exec($cmd);
-
-        return response()->json(['message' => 'Push dijalankan (Cek log untuk detail)', 'output' => $output]);
+        return response()->json(['results' => array_merge($nameResults, $results)]);
     }
 
     // 2. Method API untuk navigasi folder

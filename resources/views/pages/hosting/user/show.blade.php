@@ -498,9 +498,6 @@
                     <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-search" title="Search">
                         <i class="fa-solid fa-magnifying-glass text-xl"></i>
                     </button>
-                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-git" title="Source Control">
-                        <i class="fa-solid fa-code-branch text-xl"></i>
-                    </button>
                     <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-extensions" title="Extensions">
                         <i class="fa-solid fa-cubes text-xl"></i>
                     </button>
@@ -554,26 +551,6 @@
                         </div>
                     </div>
 
-                    <!-- Git / Source Control View -->
-                    <div id="ide-sidebar-git" class="ide-sidebar-view hidden flex flex-col h-full">
-                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center">
-                            <span>Source Control</span>
-                            <button id="ide-git-refresh" class="hover:text-white transition-colors" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
-                        </div>
-                        <div class="p-3 border-b border-[#333]">
-                            <textarea id="ide-git-commit-msg" class="w-full bg-[#3c3c3c] text-slate-200 border border-[#3c3c3c] focus:border-indigo-500 rounded text-xs p-2 outline-none placeholder-slate-500 resize-none h-16 mb-2" placeholder="Message (Enter to commit)"></textarea>
-                            <div class="flex gap-2">
-                                <button id="ide-git-commit-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] py-1.5 rounded transition">Commit</button>
-                                <button id="ide-git-pull-btn" class="bg-[#3c3c3c] hover:bg-[#4c4c4c] text-white px-2 py-1.5 rounded transition" title="Pull"><i class="fa-solid fa-arrow-down"></i></button>
-                                <button id="ide-git-push-btn" class="bg-[#3c3c3c] hover:bg-[#4c4c4c] text-white px-2 py-1.5 rounded transition" title="Push"><i class="fa-solid fa-arrow-up"></i></button>
-                            </div>
-                        </div>
-                        <div class="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase">Changes</div>
-                        <div id="ide-git-changes" class="flex-1 overflow-y-auto px-2 py-1 text-xs font-mono text-slate-300">
-                            <!-- Git changes rendered here -->
-                        </div>
-                    </div>
-
                     <!-- Settings / Themes View -->
                     <div id="ide-sidebar-settings" class="ide-sidebar-view hidden flex flex-col h-full">
                         <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333]">
@@ -597,28 +574,37 @@
                             <span>Extensions</span>
                         </div>
                         <div class="p-4 flex-1 overflow-y-auto">
+                            <p class="text-[10px] text-slate-500 mb-3 leading-relaxed">Ekstensi tema — klik "Terapkan" untuk langsung mengubah tema editor.</p>
                             <div class="mb-4 flex gap-3 items-start">
-                                <img src="https://ui-avatars.com/api/?name=PHP&background=4f5b93&color=fff" class="w-10 h-10 rounded">
+                                <div class="w-10 h-10 rounded bg-[#282c34] border border-[#3e4451] shrink-0"></div>
                                 <div class="w-full">
-                                    <p class="text-sm text-slate-200 font-semibold leading-tight">PHP Intelephense</p>
-                                    <p class="text-[10px] text-slate-400 mb-2">Ben Mewburn</p>
-                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors">Install</button>
+                                    <p class="text-sm text-slate-200 font-semibold leading-tight">One Dark Pro</p>
+                                    <p class="text-[10px] text-slate-400 mb-2">Theme · Atom One Dark</p>
+                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors" onclick="applyIdeTheme('one-dark-pro', this)">Terapkan</button>
                                 </div>
                             </div>
                             <div class="mb-4 flex gap-3 items-start">
-                                <img src="https://ui-avatars.com/api/?name=TW&background=38bdf8&color=fff" class="w-10 h-10 rounded">
+                                <div class="w-10 h-10 rounded bg-[#282a36] border border-[#44475a] shrink-0"></div>
                                 <div class="w-full">
-                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Tailwind CSS</p>
-                                    <p class="text-[10px] text-slate-400 mb-2">Tailwind Labs</p>
-                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors">Install</button>
+                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Dracula</p>
+                                    <p class="text-[10px] text-slate-400 mb-2">Theme · Dracula Official</p>
+                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors" onclick="applyIdeTheme('dracula', this)">Terapkan</button>
                                 </div>
                             </div>
                             <div class="mb-4 flex gap-3 items-start">
-                                <img src="https://ui-avatars.com/api/?name=Vue&background=10b981&color=fff" class="w-10 h-10 rounded">
+                                <div class="w-10 h-10 rounded bg-[#1e1e1e] border border-[#333] shrink-0"></div>
                                 <div class="w-full">
-                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Vue Language</p>
-                                    <p class="text-[10px] text-slate-400 mb-2">Vue.js</p>
-                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors">Install</button>
+                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Dark+ (default)</p>
+                                    <p class="text-[10px] text-slate-400 mb-2">Theme · Bawaan Monaco</p>
+                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors" onclick="applyIdeTheme('vs-dark', this)">Terapkan</button>
+                                </div>
+                            </div>
+                            <div class="mb-4 flex gap-3 items-start">
+                                <div class="w-10 h-10 rounded bg-[#ffffff] border border-[#333] shrink-0"></div>
+                                <div class="w-full">
+                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Light+ (default)</p>
+                                    <p class="text-[10px] text-slate-400 mb-2">Theme · Bawaan Monaco</p>
+                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors" onclick="applyIdeTheme('vs', this)">Terapkan</button>
                                 </div>
                             </div>
                         </div>
@@ -2000,6 +1986,22 @@
         };
 
         // ── Themes Logic ────────────────────────────────────────────────────────
+        function applyIdeTheme(theme, btn) {
+            if (typeof monaco === 'undefined') {
+                hotToast('Editor belum dimuat, coba lagi beberapa detik lagi', 'warning');
+                return;
+            }
+            if (!themesDefined) {
+                defineMonacoThemes();
+                themesDefined = true;
+            }
+            monaco.editor.setTheme(theme);
+            localStorage.setItem('ryaze-ide-theme', theme);
+            document.getElementById('ide-theme-selector').value = theme;
+            hotToast('Tema diubah ke ' + theme, 'success');
+        }
+        window.applyIdeTheme = applyIdeTheme;
+
         function defineMonacoThemes() {
             if (typeof monaco === 'undefined') return;
             // One Dark Pro
@@ -2104,6 +2106,12 @@
                         let currentFile = '';
                         
                         data.results.forEach(res => {
+                            if (res.type === 'name') {
+                                const isFolder = res.content === '(folder)';
+                                const icon = isFolder ? 'fa-solid fa-folder text-amber-500' : 'fa-regular fa-file-code';
+                                html += `<div class="mt-2 mb-1 text-[11px] font-bold text-slate-300 break-all cursor-pointer hover:text-indigo-400 transition" onclick="${isFolder ? 'loadIdeSidebar(\'' + res.path + '\')' : 'openIdeFile(\'' + res.path + '\', \'' + res.path.split('/').pop() + '\')'}"><i class="${icon} mr-1"></i>${res.path}${isFolder ? ' <span class="text-[9px] text-amber-500/80 font-medium">(folder)</span>' : ''}</div>`;
+                                return;
+                            }
                             if (currentFile !== res.path) {
                                 currentFile = res.path;
                                 html += `<div class="mt-3 mb-1 text-[11px] font-bold text-slate-300 break-all cursor-pointer hover:text-indigo-400 transition" onclick="openIdeFile('${res.path}', '${res.path.split('/').pop()}')"><i class="fa-regular fa-file-code mr-1"></i>${res.path}</div>`;
@@ -2123,95 +2131,6 @@
                     searchResults.innerHTML = '<div class="text-rose-500 text-center mt-10">Error melakukan pencarian.</div>';
                 });
             }
-        });
-
-        // ── Git Logic ───────────────────────────────────────────────────────────
-        var gitStatusUrl = '{{ route("user_hosting.ide.git.status", $project->hashid) }}';
-        var gitCommitUrl = '{{ route("user_hosting.ide.git.commit", $project->hashid) }}';
-        var gitPullUrl = '{{ route("user_hosting.ide.git.pull", $project->hashid) }}';
-        var gitPushUrl = '{{ route("user_hosting.ide.git.push", $project->hashid) }}';
-        
-        function loadGitStatus() {
-            const container = document.getElementById('ide-git-changes');
-            if(!container) return;
-            container.innerHTML = '<div class="text-center mt-5 text-indigo-400"><i class="fa-solid fa-spinner fa-spin mb-2"></i><br>Checking status...</div>';
-            
-            fetch(gitStatusUrl, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken }})
-            .then(r => r.json()).then(data => {
-                if(data.error) {
-                    container.innerHTML = `<div class="text-rose-500 text-center mt-5">${data.error}</div>`;
-                    return;
-                }
-                if(!data.changes || data.changes.length === 0) {
-                    container.innerHTML = '<div class="text-slate-500 text-center mt-5">Working tree clean</div>';
-                    return;
-                }
-                let html = '';
-                data.changes.forEach(c => {
-                    let color = 'text-slate-300';
-                    let title = 'Modified';
-                    if (c.status.includes('?')) { color = 'text-emerald-400'; title = 'Untracked'; }
-                    else if (c.status.includes('D')) { color = 'text-rose-400'; title = 'Deleted'; }
-                    else if (c.status.includes('M')) { color = 'text-amber-400'; title = 'Modified'; }
-                    else if (c.status.includes('A')) { color = 'text-emerald-400'; title = 'Added'; }
-                    
-                    html += `<div class="flex items-center justify-between py-1 px-2 hover:bg-[#2a2d2e] cursor-pointer rounded" title="${title}">
-                        <div class="flex items-center gap-2 truncate">
-                            <span class="${color} font-bold w-4 text-center shrink-0">${c.status}</span>
-                            <span class="truncate text-slate-300 hover:text-white" onclick="openIdeFile('${c.file}', '${c.file.split('/').pop()}')">${c.file}</span>
-                        </div>
-                    </div>`;
-                });
-                container.innerHTML = html;
-            }).catch(() => {
-                container.innerHTML = '<div class="text-rose-500 text-center mt-5">Failed to load status</div>';
-            });
-        }
-
-        document.getElementById('ide-git-refresh')?.addEventListener('click', loadGitStatus);
-        
-        document.querySelector('[data-target="ide-sidebar-git"]')?.addEventListener('click', () => {
-            loadGitStatus(); // Auto load when clicking Git tab
-        });
-
-        document.getElementById('ide-git-commit-btn')?.addEventListener('click', () => {
-            const msg = document.getElementById('ide-git-commit-msg').value;
-            if(!msg) { swAlert('error', 'Error', 'Commit message required'); return; }
-            
-            const btn = document.getElementById('ide-git-commit-btn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            
-            fetch(gitCommitUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify({ message: msg })
-            }).then(r => r.json()).then(data => {
-                btn.innerHTML = 'Commit';
-                document.getElementById('ide-git-commit-msg').value = '';
-                hotToast(data.message, 'success');
-                loadGitStatus();
-            }).catch(() => {
-                btn.innerHTML = 'Commit';
-                swAlert('error', 'Error', 'Failed to commit');
-            });
-        });
-
-        document.getElementById('ide-git-pull-btn')?.addEventListener('click', () => {
-            hotToast('Pulling...', 'info');
-            fetch(gitPullUrl, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken }})
-            .then(r => r.json()).then(data => {
-                if(data.error) swAlert('error', 'Error', data.error);
-                else { swAlert('success', 'Pull Result', data.output || data.message); loadGitStatus(); }
-            });
-        });
-
-        document.getElementById('ide-git-push-btn')?.addEventListener('click', () => {
-            hotToast('Pushing...', 'info');
-            fetch(gitPushUrl, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken }})
-            .then(r => r.json()).then(data => {
-                if(data.error) swAlert('error', 'Error', data.error);
-                else { swAlert('success', 'Push Result', data.output || data.message); }
-            });
         });
 
         // ── Groq AI Logic ───────────────────────────────────────────────────────
@@ -2266,7 +2185,10 @@
                         </div>
                     `;
                 } else {
-                    let replyText = data.reply;
+                    let replyText = data.reply || '';
+                    
+                    // Sembunyikan blok FILE_OPS dari tampilan (sudah dieksekusi server)
+                    replyText = replyText.replace(/<<FILE_OPS>>[\s\S]*?<<END_FILE_OPS>>/g, '');
                     
                     // 1. Cek auto-replace (<<REPLACE_ALL>>)
                     const replaceMatch = replyText.match(/<<REPLACE_ALL>>([\s\S]*?)<<END_REPLACE>>/);
@@ -2295,13 +2217,36 @@
                     if (autoReplaced) {
                         formattedReply = formattedReply.replace('[[AUTO_REPLACED]]', '<div class="text-emerald-400 my-2 p-2 bg-emerald-900/20 rounded border border-emerald-800/50"><i class="fa-solid fa-check-circle"></i> Seluruh kode di editor telah diperbarui secara otomatis.</div>');
                     }
+
+                    let opsHtml = '';
+                    if (data.file_ops && data.file_ops.length > 0) {
+                        data.file_ops.forEach(op => {
+                            const icon = op.status === 'success' ? '<i class="fa-solid fa-circle-check text-emerald-400"></i>'
+                                : op.status === 'error' ? '<i class="fa-solid fa-circle-xmark text-rose-400"></i>'
+                                : '<i class="fa-solid fa-circle-info text-sky-400"></i>';
+                            const color = op.status === 'success' ? 'text-emerald-300'
+                                : op.status === 'error' ? 'text-rose-300'
+                                : 'text-sky-300';
+                            opsHtml += `<div class="flex items-start gap-2 ${color}"><span class="shrink-0 mt-0.5">${icon}</span><span class="break-all"><b>${op.path || '(parse)'}</b> — ${op.message}</span></div>`;
+                        });
+                        opsHtml = `<div class="mt-2 p-2 bg-[#252526] rounded border border-[#444] text-[11px] space-y-1">${opsHtml}</div>`;
+                    }
                     
                     messagesContainer.innerHTML += `
                         <div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1">
                             <b>Ryaze AI v1.0:</b><br>
                             ${formattedReply}
+                            ${opsHtml}
                         </div>
                     `;
+
+                    if (data.file_ops && data.file_ops.length > 0) {
+                        const anyChanged = data.file_ops.some(op => op.status === 'success');
+                        if (anyChanged) {
+                            loadIdeSidebar(ideCurrentPath);
+                            hotToast('File/folder berhasil diubah oleh AI!', 'success');
+                        }
+                    }
                 }
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             })
