@@ -104,9 +104,23 @@
 
                     // Redirect (login/session expired), error (419/500), or maintenance
                     // page must do a full navigation, otherwise the user gets stuck.
-                    if (!response.ok || response.redirected) {
+                    // Same-origin redirects (trailing slash, https upgrade, canonical)
+                    // are already followed by fetch itself, so only bail out when the
+                    // final response ended up on another origin or failed.
+                    if (!response.ok) {
                         window.location.href = url;
                         return;
+                    }
+                    if (response.redirected) {
+                        try {
+                            if (new URL(response.url).origin !== window.location.origin) {
+                                window.location.href = url;
+                                return;
+                            }
+                        } catch (err) {
+                            window.location.href = url;
+                            return;
+                        }
                     }
 
                     const html = await response.text();
