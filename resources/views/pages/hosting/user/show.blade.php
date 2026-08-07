@@ -639,7 +639,7 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <button id="ide-panel-toggle" title="Toggle Panel (Ctrl+J)" class="text-slate-500 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
-                                <i class="fa-solid fa-square-terminal text-sm"></i>
+                                <i class="fa-solid fa-terminal text-sm"></i>
                             </button>
                             <button id="ide-zen-btn" title="Fullscreen (F11)" class="text-slate-500 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
                                 <i class="fa-solid fa-expand text-sm"></i>
@@ -1297,6 +1297,11 @@
                 // check if it only contains the HTML comment
                 if (ideTree && !ideTree.querySelector('div')) {
                     if(typeof window.loadIdeSidebar === 'function') window.loadIdeSidebar('');
+                }
+                // Auto-buka panel bawah (Terminal) saat IDE pertama kali dibuka
+                if (typeof ideSetBottomPanel === 'function' && !window._idePanelAutoOpened) {
+                    window._idePanelAutoOpened = true;
+                    setTimeout(() => ideSetBottomPanel(true), 120);
                 }
             }
         };
