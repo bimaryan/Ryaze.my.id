@@ -633,6 +633,9 @@
                 </div>
                 <!-- Editor -->
                 <div class="flex-1 flex flex-col relative bg-[#1e1e1e]">
+                    <div id="ide-tabs-bar" class="h-9 bg-[#252526] flex items-stretch overflow-x-auto scrollbar-hide border-b border-[#1e1e1e] shrink-0">
+                        <div class="flex items-center gap-2 px-4 text-xs text-slate-500 font-mono"><i class="fa-solid fa-folder-open text-amber-500/70"></i> Ryaze IDE</div>
+                    </div>
                     <div class="h-10 bg-[#2d2d2d] flex items-center px-4 border-b border-[#1e1e1e] shrink-0 justify-between">
                         <div class="flex items-center gap-2 text-sm text-[#cccccc] font-mono min-w-0">
                             <i class="fa-solid fa-file-code text-indigo-400 shrink-0"></i>
@@ -1815,6 +1818,8 @@
         var ideCurrentPath = '';
         var ideEditingFile = '';
         var ideLoading = false;
+        var ideTabs = {};   // path -> { model, filename, dirty }
+        var ideActiveTab = null;
 
         function loadIdeSidebar(path = '') {
             const treeEl = document.getElementById('ide-sidebar-tree');
@@ -1862,6 +1867,10 @@
         window.loadIdeSidebar = loadIdeSidebar;
 
         function openIdeFile(path, filename) {
+            if (ideTabs[path]) {
+                activateIdeTab(path);
+                return;
+            }
             var loader = document.getElementById('ide-loader');
             var saveBtn = document.getElementById('ide-save-btn');
             const emptyState = document.getElementById('ide-empty-state');
@@ -1876,39 +1885,116 @@
                         loader.classList.add('hidden');
                         return;
                     }
-                    ideEditingFile = path;
                     emptyState.classList.add('hidden');
                     saveBtn.classList.remove('hidden');
 
                     if (!ideEditorInstance && typeof monaco !== 'undefined') {
                         ideEditorInstance = monaco.editor.create(document.getElementById('ide-monaco-container'), {
-                            value: data.content,
+                            value: '',
                             theme: localStorage.getItem('ryaze-ide-theme') || 'vs-dark',
                             automaticLayout: true,
                             minimap: { enabled: true },
                             fontSize: 13,
                             fontFamily: "'Fira Code', 'JetBrains Mono', 'Courier New', monospace"
                         });
-                    } else if (ideEditorInstance) {
-                        ideEditorInstance.setValue(data.content);
                     }
-                    
-                    if (ideEditorInstance) {
-                        let ext = filename.split('.').pop().toLowerCase();
-                        let lang = 'plaintext';
-                        if (ext === 'php') lang = 'php';
-                        else if (ext === 'js') lang = 'javascript';
-                        else if (ext === 'html') lang = 'html';
-                        else if (ext === 'css') lang = 'css';
-                        else if (ext === 'json') lang = 'json';
-                        else if (ext === 'env' || filename === '.env') lang = 'ini';
-                        monaco.editor.setModelLanguage(ideEditorInstance.getModel(), lang);
+
+                    if (typeof monaco !== 'undefined' && ideEditorInstance) {
+                        const model = monaco.editor.createModel(data.content, ideLangFor(filename));
+                        ideTabs[path] = { model: model, filename: filename, dirty: false };
+                        addIdeTab(path, filename);
+                        model.onDidChangeContent(() => {
+                            if (!ideTabs[path]) return;
+                            ideTabs[path].dirty = true;
+                            const el = document.querySelector(`#ide-tabs-bar .ide-tab[data-path="${path}"]`);
+                            if (el) el.querySelector('.ide-tab-dirty').style.display = 'block';
+                        });
+                        activateIdeTab(path);
                     }
                     loader.classList.add('hidden');
                 }).catch(() => {
                     swAlert('error', 'Error', 'Gagal membaca file');
                     loader.classList.add('hidden');
                 });
+        }
+
+        function ideLangFor(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (ext === 'php') return 'php';
+            if (ext === 'js') return 'javascript';
+            if (ext === 'ts') return 'typescript';
+            if (ext === 'html') return 'html';
+            if (ext === 'css') return 'css';
+            if (ext === 'scss') return 'scss';
+            if (ext === 'json') return 'json';
+            if (ext === 'md') return 'markdown';
+            if (ext === 'vue') return 'html';
+            if (ext === 'py') return 'python';
+            if (ext === 'env' || filename === '.env') return 'ini';
+            if (ext === 'xml') return 'xml';
+            if (ext === 'yml' || ext === 'yaml') return 'yaml';
+            if (ext === 'sh' || ext === 'bash') return 'shell';
+            if (ext === 'sql') return 'sql';
+            return 'plaintext';
+        }
+
+        function addIdeTab(path, filename) {
+            const bar = document.getElementById('ide-tabs-bar');
+            const tab = document.createElement('div');
+            tab.className = 'ide-tab flex items-center gap-2 px-3 py-2 text-xs text-slate-300 border-r border-[#1e1e1e] cursor-pointer whitespace-nowrap shrink-0 select-none bg-[#252526]';
+            tab.dataset.path = path;
+            tab.innerHTML = `
+                <i class="fa-regular fa-file-code text-indigo-400"></i>
+                <span class="max-w-[160px] truncate">${filename}</span>
+                <span class="ide-tab-dirty hidden text-[8px] text-amber-400">●</span>
+                <span class="ide-tab-close text-slate-500 hover:text-white" title="Tutup"><i class="fa-solid fa-xmark text-[10px]"></i></span>
+            `;
+            tab.addEventListener('click', (e) => {
+                if (e.target.closest('.ide-tab-close')) {
+                    closeIdeTab(path);
+                    return;
+                }
+                activateIdeTab(path);
+            });
+            bar.appendChild(tab);
+            bar.scrollLeft = bar.scrollWidth;
+        }
+
+        function activateIdeTab(path) {
+            if (!ideTabs[path] || !ideEditorInstance) return;
+            ideActiveTab = path;
+            ideEditingFile = path;
+            ideEditorInstance.setModel(ideTabs[path].model);
+            document.getElementById('ide-current-filename').textContent = ideTabs[path].filename;
+            document.querySelectorAll('#ide-tabs-bar .ide-tab').forEach(t => {
+                const active = t.dataset.path === path;
+                t.style.backgroundColor = active ? '#1e1e1e' : '#252526';
+                t.style.borderTop = active ? '1px solid #6366f1' : '1px solid transparent';
+            });
+            if (typeof monaco !== 'undefined' && ideTabs[path].model) {
+                monaco.editor.setModelLanguage(ideTabs[path].model, ideLangFor(ideTabs[path].filename));
+            }
+        }
+
+        function closeIdeTab(path) {
+            if (!ideTabs[path]) return;
+            ideTabs[path].model.dispose();
+            delete ideTabs[path];
+            const el = document.querySelector(`#ide-tabs-bar .ide-tab[data-path="${path}"]`);
+            if (el) el.remove();
+            if (ideActiveTab === path) {
+                const remaining = Object.keys(ideTabs);
+                if (remaining.length > 0) {
+                    activateIdeTab(remaining[remaining.length - 1]);
+                } else {
+                    ideActiveTab = null;
+                    ideEditingFile = null;
+                    document.getElementById('ide-current-filename').textContent = 'Pilih file...';
+                    document.getElementById('ide-save-btn').classList.add('hidden');
+                    document.getElementById('ide-empty-state').classList.remove('hidden');
+                    if (ideEditorInstance) ideEditorInstance.setModel(null);
+                }
+            }
         }
 
         document.querySelector('[data-action="ide-up"]')?.addEventListener('click', () => {
@@ -1951,17 +2037,23 @@
             });
         }
         document.querySelector('[data-action="ide-save"]')?.addEventListener('click', () => {
-            if (!ideEditingFile || !ideEditorInstance) return;
+            if (!ideActiveTab || !ideTabs[ideActiveTab] || !ideEditorInstance) return;
+            var path = ideActiveTab;
             var loader = document.getElementById('ide-loader');
             loader.classList.remove('hidden');
             fetch(fileSaveUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
-                body: JSON.stringify({ path: ideEditingFile, content: ideEditorInstance.getValue() })
+                body: JSON.stringify({ path: path, content: ideTabs[path].model.getValue() })
             }).then(r => r.json()).then(data => {
                 loader.classList.add('hidden');
                 if (data.error) swAlert('error', 'Gagal', data.error);
-                else hotToast('File berhasil disimpan!', 'success');
+                else {
+                    ideTabs[path].dirty = false;
+                    const el = document.querySelector(`#ide-tabs-bar .ide-tab[data-path="${path}"]`);
+                    if (el) el.querySelector('.ide-tab-dirty').style.display = 'none';
+                    hotToast('File berhasil disimpan!', 'success');
+                }
             }).catch(() => {
                 loader.classList.add('hidden');
                 swAlert('error', 'Error', 'Gagal menyimpan file');
@@ -1976,9 +2068,9 @@
         });
 
         window.applyAiCode = function(b64) {
-            if (ideEditorInstance) {
+            if (ideActiveTab && ideTabs[ideActiveTab]) {
                 const raw = decodeURIComponent(escape(atob(b64)));
-                ideEditorInstance.setValue(raw);
+                ideTabs[ideActiveTab].model.setValue(raw);
                 hotToast('Kode berhasil diterapkan!', 'success');
             } else {
                 swAlert('error', 'Editor tidak aktif', 'Buka file terlebih dahulu.');
@@ -2160,8 +2252,8 @@
             
             // Real API Call to Backend
             let contextData = '';
-            if (ideEditorInstance && ideEditingFile) {
-                contextData = `File: ${ideEditingFile}\n${ideEditorInstance.getValue()}`;
+            if (ideActiveTab && ideTabs[ideActiveTab]) {
+                contextData = `File: ${ideActiveTab}\n${ideTabs[ideActiveTab].model.getValue()}`;
             }
 
             fetch(ideChatUrl, {
@@ -2194,8 +2286,8 @@
                     const replaceMatch = replyText.match(/<<REPLACE_ALL>>([\s\S]*?)<<END_REPLACE>>/);
                     let autoReplaced = false;
                     if (replaceMatch && replaceMatch[1]) {
-                        if (ideEditorInstance) {
-                            ideEditorInstance.setValue(replaceMatch[1].trim());
+                        if (ideActiveTab && ideTabs[ideActiveTab]) {
+                            ideTabs[ideActiveTab].model.setValue(replaceMatch[1].trim());
                             hotToast('File otomatis diperbarui oleh AI!', 'success');
                         }
                         replyText = replyText.replace(/<<REPLACE_ALL>>[\s\S]*?<<END_REPLACE>>/, '[[AUTO_REPLACED]]');
