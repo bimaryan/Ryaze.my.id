@@ -704,17 +704,20 @@
 
                 <!-- Right Panel: Ryaze AI (collapsible) -->
                 <div id="ide-right-panel" class="w-80 bg-[#252526] border-l border-[#333] flex flex-col shrink-0 relative overflow-hidden transition-all duration-150">
-                    <div id="ide-right-chat" class="ide-sidebar-view flex flex-col h-full">
+                    <div id="ide-right-chat" class="ide-sidebar-view flex flex-col h-full relative">
                         <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center shrink-0">
                             <span class="flex items-center gap-2">
                                 <i class="fa-brands fa-galactic-senate text-indigo-400"></i> Ryaze AI v2.0
                                 <span class="text-[8px] bg-indigo-600/20 text-indigo-300 px-1.5 py-0.5 rounded font-semibold">GPT-OSS 120B</span>
                             </span>
-                            <div class="flex items-center gap-2">
-                                <button id="ide-chat-clear" title="Bersihkan percakapan" class="text-slate-500 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                            <div class="flex items-center gap-1.5">
+                                <button id="ide-chat-new" title="New Chat" class="text-slate-400 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                                <button id="ide-chat-history" title="Riwayat Percakapan" class="text-slate-500 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-clock-rotate-left text-[10px]"></i></button>
+                                <button id="ide-chat-clear" title="Hapus percakapan ini" class="text-slate-500 hover:text-rose-400 transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
                                 <button id="ide-collapse-right" title="Tutup Panel AI" class="text-slate-500 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
                             </div>
                         </div>
+                        <div id="ide-chat-list" class="hidden absolute top-11 right-2 left-2 z-40 bg-[#252526] border border-[#333] rounded-lg shadow-xl overflow-hidden max-h-64 overflow-y-auto"></div>
                         <div id="grok-chat-messages" class="flex-1 overflow-y-auto p-3 text-sm flex flex-col gap-3 font-sans">
                             <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
                                 Halo! Saya <b>Ryaze AI v2.0</b>. Bisa analisis bug, generate kode, atau <i>edit file project langsung</i> (buat, ubah, rename, hapus, append). Konteks file yang sedang dibuka otomatis terbaca.
@@ -2487,7 +2490,117 @@
         });
 
         // ── Groq AI Logic (Ryaze AI v2.0) ─────────────────────────────────────
-        var grokChatHistory = [];
+        var ideChatListUrl = fixUrl('{{ route('user_hosting.ide.chats', $project->hashid) }}');
+        var ideChatCreateUrl = fixUrl('{{ route('user_hosting.ide.chats.create', $project->hashid) }}');
+        var ideChatMsgsUrl = fixUrl('{{ route('user_hosting.ide.chats.messages', [$project->hashid, '__CHAT__']) }}');
+        var ideChatDelUrl = fixUrl('{{ route('user_hosting.ide.chats.delete', [$project->hashid, '__CHAT__']) }}');
+        var ideChatId = null;
+
+        function escChat(s) { return String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        function formatAiText(text) {
+            return String(text || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\n/g, '<br>')
+                .replace(/```([a-z]*)(?:<br>)?([\s\S]*?)```/g, (match, lang, code) => {
+                    let rawCode = code.replace(/<br>/g, '\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                    let base64Code = btoa(unescape(encodeURIComponent(rawCode.trim())));
+                    return `<div class="relative group my-2"><div class="absolute right-1 top-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"><button type="button" onclick="window.applyAiCode('${base64Code}')" class="bg-indigo-600 text-white text-[9px] px-1.5 py-0.5 rounded cursor-pointer hover:bg-indigo-500 shadow"><i class="fa-solid fa-wand-magic-sparkles"></i> Terapkan</button></div><pre class="bg-black/30 p-2 pt-6 rounded overflow-x-auto border border-[#444] text-[11px] relative"><code>${code}</code></pre></div>`;
+                })
+                .replace(/`([^`]+)`/g, '<code class="bg-black/30 px-1 py-0.5 rounded text-[11px] text-amber-300">$1</code>');
+        }
+
+        function ideChatWelcome() {
+            document.getElementById('grok-chat-messages').innerHTML = `
+                <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
+                    Halo! Saya <b>Ryaze AI v2.0</b> (GPT-OSS 120B). Bisa analisis bug, generate kode, atau <i>edit file project langsung</i>. Riwayat percakapan tersimpan otomatis.
+                </div>
+            `;
+        }
+
+        function ideRefreshChatList() {
+            fetch(ideChatListUrl, { headers: { 'Accept': 'application/json' } })
+                .then(r => r.json())
+                .then(data => {
+                    const list = document.getElementById('ide-chat-list');
+                    const chats = data.chats || [];
+                    list.innerHTML = '';
+                    if (!chats.length) {
+                        list.innerHTML = '<div class="p-4 text-slate-500 text-xs text-center">Belum ada percakapan.<br>Klik <i class="fa-solid fa-plus"></i> untuk memulai.</div>';
+                        return;
+                    }
+                    chats.forEach(c => {
+                        const row = document.createElement('div');
+                        row.className = 'flex items-center gap-2 px-3 py-2 hover:bg-[#333] cursor-pointer transition-colors border-b border-[#222]' + (ideChatId && c.id === ideChatId ? ' bg-[#2a2d2e]' : '');
+                        row.innerHTML = `<div class="flex-1 min-w-0">
+                            <div class="text-xs text-slate-200 truncate font-medium">${escChat(c.title)}</div>
+                            <div class="text-[10px] text-slate-500">${escChat(c.updated_at)} · ${c.messages} pesan</div>
+                        </div>
+                        <button class="ide-chat-del text-slate-600 hover:text-rose-400 transition-colors shrink-0" title="Hapus"><i class="fa-solid fa-trash-can text-[10px]"></i></button>`;
+                        row.querySelector('.ide-chat-del').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            ideDeleteChat(c.id);
+                        });
+                        row.addEventListener('click', () => {
+                            ideLoadChat(c.id);
+                            document.getElementById('ide-chat-list').classList.add('hidden');
+                        });
+                        list.appendChild(row);
+                    });
+                }).catch(() => {});
+        }
+
+        function ideLoadChat(id) {
+            ideChatId = id;
+            const mc = document.getElementById('grok-chat-messages');
+            mc.innerHTML = '<div class="p-3 text-slate-500 text-xs text-center"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat percakapan...</div>';
+            fetch(ideChatMsgsUrl.replace('__CHAT__', id), { headers: { 'Accept': 'application/json' } })
+                .then(r => r.json())
+                .then(data => {
+                    const msgs = data.messages || [];
+                    mc.innerHTML = '';
+                    if (!msgs.length) { ideChatWelcome(); return; }
+                    msgs.forEach(m => {
+                        if (m.role === 'user') {
+                            mc.insertAdjacentHTML('beforeend', `<div class="bg-indigo-600 text-white p-2 rounded-lg rounded-tr-none self-end max-w-[90%] text-xs leading-relaxed shadow-sm">${escChat(m.content)}</div>`);
+                        } else {
+                            mc.insertAdjacentHTML('beforeend', `<div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1"><b>Ryaze AI v2.0:</b><br>${formatAiText(m.content)}</div>`);
+                        }
+                    });
+                    mc.scrollTop = mc.scrollHeight;
+                    ideRefreshChatList();
+                }).catch(() => { mc.innerHTML = '<div class="p-3 text-rose-400 text-xs">Gagal memuat percakapan.</div>'; });
+        }
+
+        function ideDeleteChat(id) {
+            if (!confirm('Hapus percakapan ini?')) return;
+            fetch(ideChatDelUrl.replace('__CHAT__', id), { method: 'DELETE', headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' } })
+                .then(r => r.json())
+                .then(() => {
+                    if (ideChatId === id) {
+                        ideChatId = null;
+                        ideChatWelcome();
+                    }
+                    document.getElementById('ide-chat-list').classList.remove('hidden');
+                    ideRefreshChatList();
+                    hotToast('Percakapan dihapus', 'success');
+                }).catch(() => hotToast('Gagal menghapus', 'error'));
+        }
+
+        function ideCreateChat() {
+            fetch(ideChatCreateUrl, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' } })
+                .then(r => r.json())
+                .then(data => {
+                    ideChatId = data.chat_id;
+                    ideChatWelcome();
+                    document.getElementById('ide-chat-list').classList.add('hidden');
+                    ideRefreshChatList();
+                    hotToast('Percakapan baru dibuat', 'success');
+                    document.getElementById('grok-chat-input').focus();
+                }).catch(() => {});
+        }
 
         document.querySelectorAll('.ide-chat-chip').forEach(chip => {
             chip.addEventListener('click', () => {
@@ -2497,15 +2610,17 @@
             });
         });
 
+        document.getElementById('ide-chat-new')?.addEventListener('click', ideCreateChat);
+
+        document.getElementById('ide-chat-history')?.addEventListener('click', () => {
+            const list = document.getElementById('ide-chat-list');
+            list.classList.toggle('hidden');
+            if (!list.classList.contains('hidden')) ideRefreshChatList();
+        });
+
         document.getElementById('ide-chat-clear')?.addEventListener('click', () => {
-            grokChatHistory = [];
-            const messagesContainer = document.getElementById('grok-chat-messages');
-            messagesContainer.innerHTML = `
-                <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
-                    Percakapan dibersihkan. Halo! Saya <b>Ryaze AI v2.0</b> — tanyakan apa saja soal kode Anda.
-                </div>
-            `;
-            hotToast('Percakapan dibersihkan', 'success');
+            if (ideChatId) ideDeleteChat(ideChatId);
+            else { ideChatId = null; ideChatWelcome(); hotToast('Percakapan dikosongkan', 'success'); }
         });
 
         var sendGrokMessage = () => {
@@ -2518,7 +2633,7 @@
             // Add User message
             messagesContainer.innerHTML += `
                 <div class="bg-indigo-600 text-white p-2 rounded-lg rounded-tr-none self-end max-w-[90%] text-xs leading-relaxed shadow-sm">
-                    ${val.replace(/</g, '&lt;')}
+                    ${escChat(val)}
                 </div>
             `;
             input.value = '';
@@ -2527,20 +2642,16 @@
             const loaderId = 'grok-loader-' + Date.now();
             messagesContainer.innerHTML += `
                 <div id="${loaderId}" class="bg-[#333] text-slate-400 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs mt-1 border border-[#444]">
-                    <i class="fa-solid fa-ellipsis fa-fade"></i> Ryaze AI sedang berpikir (Llama 3.3 70B)...
+                    <i class="fa-solid fa-ellipsis fa-fade"></i> Ryaze AI sedang berpikir...
                 </div>
             `;
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             
             // Real API Call to Backend
             let contextData = '';
-            let currentFileName = '';
             if (ideActiveTab && ideTabs[ideActiveTab]) {
-                currentFileName = ideActiveTab;
                 contextData = `File: ${ideActiveTab}\n${ideTabs[ideActiveTab].model.getValue()}`;
             }
-
-            grokChatHistory.push({ role: 'user', content: val });
 
             fetch(ideChatUrl, {
                 method: 'POST',
@@ -2549,11 +2660,7 @@
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({
-                    message: val,
-                    context: contextData,
-                    history: grokChatHistory.slice(-12)
-                })
+                body: JSON.stringify({ message: val, context: contextData, chat_id: ideChatId })
             })
             .then(res => res.json())
             .then(data => {
@@ -2563,17 +2670,15 @@
                 if (data.error) {
                     messagesContainer.innerHTML += `
                         <div class="bg-rose-900/50 text-rose-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-rose-800 shadow-sm mt-1">
-                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> ${data.error}
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> ${escChat(data.error)}
                         </div>
                     `;
                 } else {
+                    if (data.chat_id) ideChatId = data.chat_id;
                     let replyText = data.reply || '';
                     
                     // Sembunyikan blok FILE_OPS dari tampilan (sudah dieksekusi server)
                     replyText = replyText.replace(/<<FILE_OPS>>[\s\S]*?<<END_FILE_OPS>>/g, '');
-                    
-                    // Simpan riwayat percakapan (tanpa blok FILE_OPS)
-                    grokChatHistory.push({ role: 'assistant', content: replyText.replace(/<<REPLACE_ALL>>[\s\S]*?<<END_REPLACE>>/g, '').trim() });
                     
                     // 1. Cek auto-replace (<<REPLACE_ALL>>)
                     const replaceMatch = replyText.match(/<<REPLACE_ALL>>([\s\S]*?)<<END_REPLACE>>/);
@@ -2587,17 +2692,7 @@
                         autoReplaced = true;
                     }
 
-                    let formattedReply = replyText
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/\n/g, '<br>')
-                        .replace(/```([a-z]*)(?:<br>)?([\s\S]*?)```/g, (match, lang, code) => {
-                            let rawCode = code.replace(/<br>/g, '\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-                            let base64Code = btoa(unescape(encodeURIComponent(rawCode.trim())));
-                            return `<div class="relative group my-2"><div class="absolute right-1 top-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"><button type="button" onclick="window.applyAiCode('${base64Code}')" class="bg-indigo-600 text-white text-[9px] px-1.5 py-0.5 rounded cursor-pointer hover:bg-indigo-500 shadow"><i class="fa-solid fa-wand-magic-sparkles"></i> Terapkan</button></div><pre class="bg-black/30 p-2 pt-6 rounded overflow-x-auto border border-[#444] text-[11px] relative"><code>${code}</code></pre></div>`;
-                        })
-                        .replace(/`([^`]+)`/g, '<code class="bg-black/30 px-1 py-0.5 rounded text-[11px] text-amber-300">$1</code>');
+                    let formattedReply = formatAiText(replyText);
                     
                     if (autoReplaced) {
                         formattedReply = formattedReply.replace('[[AUTO_REPLACED]]', '<div class="text-emerald-400 my-2 p-2 bg-emerald-900/20 rounded border border-emerald-800/50"><i class="fa-solid fa-check-circle"></i> Seluruh kode di editor telah diperbarui secara otomatis.</div>');
@@ -2618,7 +2713,7 @@
                     }
                     
                     messagesContainer.innerHTML += `
-                        <div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1">
+                        <div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-sm self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1">
                             <b>Ryaze AI v2.0:</b><br>
                             ${formattedReply}
                             ${opsHtml}
@@ -2632,6 +2727,7 @@
                             hotToast('File/folder berhasil diubah oleh AI!', 'success');
                         }
                     }
+                    ideRefreshChatList();
                 }
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             })
@@ -2655,6 +2751,20 @@
                 sendGrokMessage();
             }
         });
+
+        // Inisialisasi: muat percakapan terakhir, atau buat baru
+        (function ideInitChat() {
+            fetch(ideChatListUrl, { headers: { 'Accept': 'application/json' } })
+                .then(r => r.json())
+                .then(data => {
+                    const chats = data.chats || [];
+                    if (chats.length) {
+                        ideLoadChat(chats[0].id);
+                    } else {
+                        ideCreateChat();
+                    }
+                }).catch(() => {});
+        })();
 
     </script>
 
