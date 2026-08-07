@@ -520,7 +520,7 @@
                     
                     <!-- Explorer View -->
                     <div id="ide-sidebar-explorer" class="ide-sidebar-view flex flex-col h-full">
-                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center">
+                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center pr-10">
                             <span class="flex items-center gap-2"><i class="fa-solid fa-folder-open text-indigo-400"></i> Explorer</span>
                             <div class="flex gap-2">
                                 <button data-action="ide-new-file" class="hover:text-white transition-colors" title="New File"><i class="fa-solid fa-file-medical"></i></button>
