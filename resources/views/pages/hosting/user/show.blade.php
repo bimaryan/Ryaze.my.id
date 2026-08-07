@@ -517,7 +517,7 @@
                     <!-- Explorer View -->
                     <div id="ide-sidebar-explorer" class="ide-sidebar-view flex flex-col h-full">
                         <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center">
-                            <span>Explorer</span>
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-folder-open text-indigo-400"></i> Explorer</span>
                             <div class="flex gap-2">
                                 <button data-action="ide-new-file" class="hover:text-white transition-colors" title="New File"><i class="fa-solid fa-file-medical"></i></button>
                                 <button data-action="ide-new-dir" class="hover:text-white transition-colors" title="New Folder"><i class="fa-solid fa-folder-plus"></i></button>
@@ -525,11 +525,12 @@
                                 <button data-action="ide-collapse" class="hover:text-white transition-colors" title="Collapse All"><i class="fa-solid fa-compress"></i></button>
                             </div>
                         </div>
-                        <div class="px-4 py-2 bg-[#2d2d2d] text-[#cccccc] text-xs font-mono border-b border-[#333] truncate">
-                            <i class="fa-solid fa-folder-open text-amber-500 mr-2"></i><span id="ide-current-path">/</span>
+                        <div class="px-3 py-2 bg-[#2d2d2d] text-[#cccccc] text-xs font-mono border-b border-[#333] flex items-center gap-2 truncate">
+                            <i class="fa-solid fa-folder text-amber-500 shrink-0"></i>
+                            <span class="truncate">{{ $project->ryaze_domain }}</span>
                         </div>
                         <div id="ide-sidebar-tree" class="flex-1 overflow-y-auto text-sm text-[#cccccc] py-2 font-mono" style="font-size: 13px;">
-                            <!-- JS akan merender list file -->
+                            <!-- JS akan merender tree file -->
                         </div>
                     </div>
 
@@ -1821,48 +1822,122 @@
         var ideTabs = {};   // path -> { model, filename, dirty }
         var ideActiveTab = null;
 
-        function loadIdeSidebar(path = '') {
+        function ideFileIcon(filename) {
+            const low = filename.toLowerCase();
+            if (low === '.env') return 'fa-solid fa-key text-amber-400';
+            const icons = {
+                php: 'fa-brands fa-php text-indigo-400',
+                js: 'fa-brands fa-js text-yellow-400',
+                jsx: 'fa-brands fa-react text-sky-400',
+                ts: 'fa-brands fa-js text-blue-400',
+                tsx: 'fa-brands fa-react text-sky-400',
+                vue: 'fa-brands fa-vuejs text-emerald-400',
+                html: 'fa-brands fa-html5 text-orange-400',
+                css: 'fa-brands fa-css3 text-sky-400',
+                scss: 'fa-brands fa-sass text-pink-400',
+                less: 'fa-brands fa-css3 text-sky-400',
+                json: 'fa-solid fa-code text-amber-400',
+                md: 'fa-solid fa-file-lines text-slate-400',
+                txt: 'fa-solid fa-file-lines text-slate-400',
+                py: 'fa-brands fa-python text-sky-400',
+                sql: 'fa-solid fa-database text-emerald-400',
+                yml: 'fa-solid fa-gear text-slate-400',
+                yaml: 'fa-solid fa-gear text-slate-400',
+                lock: 'fa-solid fa-lock text-slate-400',
+                gitignore: 'fa-solid fa-file-shield text-slate-400',
+                editorconfig: 'fa-solid fa-sliders text-slate-400',
+                env: 'fa-solid fa-key text-amber-400'
+            };
+            return icons[low.split('.').pop()] || 'fa-regular fa-file text-slate-400';
+        }
+
+        var ideFolderCache = {};      // path -> items (cache hasil fetch)
+        var ideExpanded = new Set();  // folder yang sedang terbuka
+        var ideSelectedPath = '';     // folder/file terakhir dipilih (konteks New File/Folder)
+
+        async function ideFetchFolder(path) {
+            if (ideFolderCache[path] !== undefined) return ideFolderCache[path];
+            try {
+                const r = await fetch(`${fileManagerUrl}?path=${encodeURIComponent(path)}`);
+                const data = await r.json();
+                ideFolderCache[path] = (data && !data.error && data.items) ? data.items : [];
+            } catch (e) {
+                ideFolderCache[path] = [];
+            }
+            return ideFolderCache[path];
+        }
+
+        async function renderIdeTree() {
             const treeEl = document.getElementById('ide-sidebar-tree');
-            const pathEl = document.getElementById('ide-current-path');
-            ideCurrentPath = path;
-            pathEl.textContent = path ? '/' + path : '/';
-            treeEl.innerHTML = '<div class="px-4 py-2 opacity-50 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading...</div>';
-            
-            fetch(`${fileManagerUrl}?path=${encodeURIComponent(path)}`)
-                .then(r => r.json())
-                .then(data => {
-                    if (data.error) {
-                        treeEl.innerHTML = `<div class="px-4 py-2 text-rose-500">${data.error}</div>`;
+            treeEl.innerHTML = '<div class="px-4 py-2 opacity-50 italic text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading...</div>';
+            const items = await ideFetchFolder('');
+            treeEl.innerHTML = '';
+            if (!items.length) {
+                treeEl.innerHTML = '<div class="px-4 py-2 opacity-50 italic text-xs">Kosong</div>';
+                return;
+            }
+            for (const item of items) await appendIdeRow(treeEl, item, 0);
+        }
+
+        async function appendIdeRow(treeEl, item, depth) {
+            const isDir = item.type === 'dir';
+            const row = document.createElement('div');
+            row.className = 'ide-row flex items-center gap-1.5 py-[3px] pr-2 cursor-pointer hover:bg-[#2a2d2e] transition-colors whitespace-nowrap select-none';
+            row.style.paddingLeft = (depth * 14 + 4) + 'px';
+
+            if (isDir) {
+                const expanded = ideExpanded.has(item.path);
+                row.innerHTML =
+                    `<span class="ide-chev w-[14px] text-center text-[9px] text-slate-500 shrink-0">${expanded ? '&#9662;' : '&#9656;'}</span>` +
+                    `<i class="fa-solid ${expanded ? 'fa-folder-open text-amber-400' : 'fa-folder text-amber-500'} text-[13px] shrink-0"></i>` +
+                    `<span class="truncate text-[#cccccc]">${item.name}</span>`;
+                row.onclick = (e) => {
+                    e.stopPropagation();
+                    ideSelectedPath = item.path;
+                    ideCurrentPath = item.path;
+                    if (expanded) {
+                        ideExpanded.delete(item.path);
+                        renderIdeTree();
+                    } else {
+                        ideExpanded.add(item.path);
+                        ideFetchFolder(item.path).then(() => renderIdeTree());
+                    }
+                };
+            } else {
+                const locked = isProtected(item.name);
+                const icon = locked ? 'fa-solid fa-lock text-slate-500' : ideFileIcon(item.name);
+                row.innerHTML =
+                    `<span class="ide-chev w-[14px] shrink-0"></span>` +
+                    `<i class="${icon} text-[13px] shrink-0"></i>` +
+                    `<span class="truncate ${locked ? 'opacity-50' : 'text-[#cccccc]'}">${item.name}</span>`;
+                row.onclick = (e) => {
+                    e.stopPropagation();
+                    if (locked) {
+                        swAlert('warning', 'File Terlindungi', 'File ini tidak bisa diedit.');
                         return;
                     }
-                    treeEl.innerHTML = '';
-                    if (!data.items.length) {
-                        treeEl.innerHTML = '<div class="px-4 py-2 opacity-50 italic">Folder kosong</div>';
-                        return;
-                    }
-                    data.items.forEach(item => {
-                        const isDir = item.type === 'dir';
-                        const locked = !isDir && isProtected(item.name);
-                        const icon = isDir ? '<i class="fa-solid fa-folder text-amber-500 w-4"></i>' : 
-                                     locked ? '<i class="fa-solid fa-lock text-slate-500 w-4"></i>' :
-                                     '<i class="fa-regular fa-file-code text-indigo-400 w-4"></i>';
-                        
-                        const div = document.createElement('div');
-                        div.className = `px-4 py-1.5 flex items-center gap-2 cursor-pointer hover:bg-[#2a2d2e] transition-colors ${locked ? 'opacity-50' : ''}`;
-                        div.innerHTML = `${icon} <span class="truncate">${item.name}</span>`;
-                        div.onclick = () => {
-                            if (locked) {
-                                swAlert('warning', 'File Terlindungi', 'File ini tidak bisa diedit.');
-                                return;
-                            }
-                            if (isDir) loadIdeSidebar(item.path);
-                            else openIdeFile(item.path, item.name);
-                        };
-                        treeEl.appendChild(div);
-                    });
-                }).catch(() => {
-                    treeEl.innerHTML = '<div class="px-4 py-2 text-rose-500">Gagal load explorer</div>';
+                    ideSelectedPath = item.path;
+                    ideCurrentPath = item.path.split('/').slice(0, -1).join('/');
+                    openIdeFile(item.path, item.name);
+                };
+            }
+            treeEl.appendChild(row);
+
+            if (isDir && ideExpanded.has(item.path)) {
+                const children = await ideFetchFolder(item.path);
+                for (const child of children) await appendIdeRow(treeEl, child, depth + 1);
+            }
+        }
+
+        function loadIdeSidebar(path = '') {
+            if (path) {
+                let acc = '';
+                path.split('/').filter(Boolean).forEach(p => {
+                    acc = acc ? acc + '/' + p : p;
+                    ideExpanded.add(acc);
                 });
+            }
+            renderIdeTree();
         }
         window.loadIdeSidebar = loadIdeSidebar;
 
@@ -1997,15 +2072,14 @@
             }
         }
 
-        document.querySelector('[data-action="ide-up"]')?.addEventListener('click', () => {
-            if (!ideCurrentPath) return;
-            loadIdeSidebar(ideCurrentPath.split('/').slice(0, -1).join('/'));
-        });
         document.querySelector('[data-action="ide-refresh"]')?.addEventListener('click', () => {
-            loadIdeSidebar(ideCurrentPath);
+            ideFolderCache = {};
+            renderIdeTree();
         });
         document.querySelector('[data-action="ide-collapse"]')?.addEventListener('click', () => {
-            loadIdeSidebar(''); // Reload from root
+            ideExpanded.clear();
+            ideSelectedPath = '';
+            renderIdeTree();
         });
         document.querySelector('[data-action="ide-new-file"]')?.addEventListener('click', () => {
             promptCreateIdeItem('file');
@@ -2027,12 +2101,14 @@
             fetch(fileCreateUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify({ type, name, current_path: ideCurrentPath })
+                body: JSON.stringify({ type, name, current_path: ideSelectedPath })
             }).then(r => r.json()).then(data => {
                 if (data.error) swAlert('error', 'Gagal', data.error);
                 else {
                     hotToast(`${label} berhasil dibuat!`, 'success');
-                    loadIdeSidebar(ideCurrentPath);
+                    if (ideSelectedPath) ideExpanded.add(ideSelectedPath);
+                    delete ideFolderCache[ideSelectedPath];
+                    renderIdeTree();
                 }
             });
         }
