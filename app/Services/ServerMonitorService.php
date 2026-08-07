@@ -54,12 +54,7 @@ class ServerMonitorService
         $ram = self::getRamUsage();
         $disk = self::getDiskUsage();
         
-        $uptime = @shell_exec('uptime -p');
-        if ($uptime) {
-            $uptime = trim(str_replace('up ', '', $uptime));
-        } else {
-            $uptime = 'Unknown';
-        }
+        $uptime = self::getUptime();
 
         return [
             'cpu' => $cpu,
@@ -100,27 +95,87 @@ class ServerMonitorService
         ];
     }
 
+    private static function getUptime(): string
+    {
+        $uptime = @shell_exec('uptime -p');
+        if (is_string($uptime) && trim($uptime) !== '') {
+            return trim(str_replace('up ', '', $uptime));
+        }
+
+        // Paket procps (uptime/free) sering tidak tersedia di container.
+        // /proc/uptime selalu ada (dibaca langsung dari kernel host).
+        $raw = @file_get_contents('/proc/uptime');
+        if ($raw !== false) {
+            $seconds = (int) floor((float) trim($raw));
+            if ($seconds > 0) {
+                $days = intdiv($seconds, 86400);
+                $hours = intdiv($seconds % 86400, 3600);
+                $minutes = intdiv($seconds % 3600, 60);
+                $parts = [];
+                if ($days > 0) {
+                    $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
+                }
+                if ($hours > 0) {
+                    $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
+                }
+                if ($minutes > 0 || empty($parts)) {
+                    $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+                }
+                return implode(', ', $parts);
+            }
+        }
+
+        return 'Unknown';
+    }
+
     private static function getRamUsage(): array
     {
         $free = @shell_exec('free -m');
-        $free = (string)trim((string)$free);
-        $free_arr = explode("\n", $free);
-        
-        if (count($free_arr) >= 2) {
-            $mem = explode(" ", preg_replace("!\s+!", " ", $free_arr[1])); // Mem: total used free shared buff/cache available
-            $total = (float)$mem[1];
-            $used = (float)$mem[2];
-            
-            if ($total > 0) {
-                $percentage = round(($used / $total) * 100, 1);
+        if (is_string($free) && trim($free) !== '') {
+            $free_arr = explode("\n", $free);
+
+            if (count($free_arr) >= 2) {
+                $mem = explode(" ", preg_replace("!\s+!", " ", $free_arr[1])); // Mem: total used free shared buff/cache available
+                $total = (float)($mem[1] ?? 0);
+                $used = (float)($mem[2] ?? 0);
+
+                if ($total > 0) {
+                    $percentage = round(($used / $total) * 100, 1);
+                    return [
+                        'total_mb' => $total,
+                        'used_mb' => $used,
+                        'percentage' => $percentage
+                    ];
+                }
+            }
+        }
+
+        // Fallback tanpa binary: baca langsung /proc/meminfo
+        $meminfo = @file('/proc/meminfo');
+        if (is_array($meminfo)) {
+            $totalKb = 0;
+            $availableKb = 0;
+            foreach ($meminfo as $line) {
+                if (str_starts_with($line, 'MemTotal:')) {
+                    $totalKb = (float) preg_replace('/[^0-9]/', '', $line);
+                } elseif (str_starts_with($line, 'MemAvailable:')) {
+                    $availableKb = (float) preg_replace('/[^0-9]/', '', $line);
+                }
+            }
+            if ($totalKb > 0) {
+                $total = round($totalKb / 1024, 0);
+                $used = round(($totalKb - $availableKb) / 1024, 0);
+                if ($used < 0) {
+                    $used = 0;
+                }
                 return [
                     'total_mb' => $total,
                     'used_mb' => $used,
-                    'percentage' => $percentage
+                    'percentage' => round(($used / $total) * 100, 1)
                 ];
             }
         }
-        
+
         return [
             'total_mb' => 0,
             'used_mb' => 0,
