@@ -21,7 +21,7 @@
                         <span class="text-xl font-bold tracking-tight">{{ $siteName }}</span>
                     </div>
                     <p class="text-xs text-slate-500 leading-relaxed max-w-xs mt-1">
-                        Jasa pembuatan website & aplikasi, plus cloud hosting Indonesia dengan auto-deploy, SSL gratis,
+                        Jasa pembuatan website & aplikasi, plus shared hosting Indonesia dengan auto-deploy, SSL gratis,
                         dan database MySQL.
                     </p>
                 </div>
@@ -29,7 +29,7 @@
                     <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Layanan</p>
                     <ul class="space-y-2 text-sm">
                         <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Jasa Pembuatan Website</a></li>
-                        <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Cloud Hosting Indonesia</a></li>
+                        <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Shared Hosting Indonesia</a></li>
                         <li><a href="{{ url('/#pricing') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Harga Paket Hosting</a></li>
                         <li><a href="{{ url('/#portfolio') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Portofolio</a></li>
                         <li><a href="{{ route('blog.index') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Blog & Tips Hosting</a></li>

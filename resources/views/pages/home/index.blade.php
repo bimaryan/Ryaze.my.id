@@ -1,6 +1,6 @@
 <x-public-layout
-    title="Jasa Pembuatan Website & Cloud Hosting Indonesia"
-    description="Jasa pembuatan website, aplikasi, dan joki Tugas Akhir. Cloud hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan."
+    title="Jasa Pembuatan Website & Shared Hosting Indonesia"
+    description="Jasa pembuatan website, aplikasi, dan joki Tugas Akhir. Shared hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan."
     body-class="antialiased selection:bg-indigo-600 selection:text-white relative"
     og-image="{{ url('/og-image.png') }}"
     :links="[
@@ -14,7 +14,7 @@
     @push('head')
         <meta name="theme-color" content="#4f46e5">
         <meta name="robots" content="index, follow, max-image-preview:large">
-        <meta name="keywords" content="jasa pembuatan website, web hosting indonesia, hosting murah, cloud hosting, jasa joki skripsi, pembuatan aplikasi web, auto deploy website, hosting laravel, jasa website polindra">
+        <meta name="keywords" content="jasa pembuatan website, web hosting indonesia, hosting murah, shared hosting, jasa joki skripsi, pembuatan aplikasi web, auto deploy website, hosting laravel, jasa website polindra">
         <meta name="author" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}">
         <meta property="og:site_name" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}">
 
@@ -32,7 +32,7 @@
                 "width": 1200,
                 "height": 630
             },
-            "description": "Platform jasa pembuatan website, aplikasi, dan cloud hosting Indonesia dengan auto-deploy, SSL gratis, dan database MySQL.",
+            "description": "Platform jasa pembuatan website, aplikasi, dan shared hosting Indonesia dengan auto-deploy, SSL gratis, dan database MySQL.",
             "sameAs": [
                 @if(\App\Models\Setting::val('social_github')){{ '"' . \App\Models\Setting::val('social_github') . '",' }}@endif
                 @if(\App\Models\Setting::val('social_instagram')){{ '"' . \App\Models\Setting::val('social_instagram') . '",' }}@endif
@@ -64,7 +64,7 @@
                 "name": "Apa itu Ryaze?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Ryaze adalah platform layanan jasa pembuatan website dan aplikasi sekaligus penyedia cloud hosting Indonesia dengan auto-deploy dari repositori Git, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap."
+                    "text": "Ryaze adalah platform layanan jasa pembuatan website dan aplikasi sekaligus penyedia shared hosting Indonesia dengan auto-deploy dari repositori Git, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap."
                 }
             }, {
                 "@type": "Question",
@@ -161,7 +161,7 @@
             </h1>
 
             <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-                Jasa pembuatan website & aplikasi terpercaya, plus cloud hosting Indonesia dengan auto-deploy, SSL
+                Jasa pembuatan website & aplikasi terpercaya, plus shared hosting Indonesia dengan auto-deploy, SSL
                 gratis, dan database MySQL. Tim development profesional siap mengeksekusi visi teknologi Anda tanpa
                 kompromi.
             </p>
@@ -214,7 +214,7 @@
 
                     <div class="flex flex-wrap gap-2">
                         <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">Fullstack Web</span>
-                        <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">Cloud Server</span>
+                        <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">Shared Server</span>
                         <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">CI/CD Pipeline</span>
                         <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded text-xs font-semibold text-slate-700">Game Engine</span>
                     </div>
@@ -249,8 +249,8 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="mb-16 max-w-2xl">
                 <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Infrastruktur & Layanan</h2>
-                <p class="text-slate-500 text-base">Kami merancang arsitektur web dan infrastruktur cloud kelas pekerja
-                    yang bisa diandalkan kapan saja.</p>
+                <p class="text-slate-500 text-base">Kami merancang arsitektur web dan infrastruktur shared hosting yang
+                    andal untuk melayani project Anda kapan saja.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -286,7 +286,7 @@
                         <i class="fa-solid fa-server text-xl"></i>
                     </div>
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-xl font-bold text-slate-900">Cloud Application Hosting</h3>
+                        <h3 class="text-xl font-bold text-slate-900">Shared Application Hosting</h3>
                         @php
                             $normalPrice = (int) \App\Models\Setting::val('hosting_price', 10000);
                             $promoPrice = (int) \App\Models\Setting::val('hosting_promo_price', 0);
@@ -577,7 +577,7 @@
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition-transform"></i>
                     </summary>
                     <p class="text-sm text-slate-500 leading-relaxed mt-4">
-                        Ryaze adalah platform layanan jasa pembuatan website dan aplikasi sekaligus penyedia cloud
+                        Ryaze adalah platform layanan jasa pembuatan website dan aplikasi sekaligus penyedia shared
                         hosting Indonesia dengan auto-deploy dari repositori Git, SSL gratis, database MySQL, web
                         terminal, dan panel kontrol lengkap.
                     </p>
