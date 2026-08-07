@@ -36,47 +36,8 @@ class DashboardController extends Controller
         'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
         'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'apk', 'source', 'chmod', 'clear', 'chown',
         'tar', 'unzip', 'zip'
-    ];
+];
 
-    /**
-     * Pola berbahaya yang diblokir di terminal (regex).
-     */
-    private array $blockedPatterns = [
-        '/\.\.\//',                    // directory traversal
-        '/\/etc\//',                   // system config access
-        '/\/root\//',                  // root home
-        '/\/var\/(?!www)/',            // /var (kecuali /var/www)
-        '/\/proc\//',                  // proc filesystem
-        '/\bsudo\b/',                  // privilege escalation
-        '/\bsu\s/',                    // switch user
-        '/\brm\s+-rf\s+\/(?!\S)/',     // rm -rf /
-        '/\bwget\b/',                  // download executables
-        '/\bcurl\b.*\|.*\bsh\b/',      // curl pipe to shell
-        '/\bnc\b|\bnetcat\b/',         // reverse shell
-        '/\beval\b/',                  // eval execution
-        '/\$\(/',                      // command substitution
-        '/`[^`]+`/',                   // backtick execution
-        '/\bexport\b/',               // env manipulation
-        '/\benv\b/',                  // env variables dump
-        '/\bpasswd\b/',               // password file
-        '/\bshadow\b/',               // shadow file
-        '/\bcrontab\b/',              // cron manipulation
-        '/\bkill\b/',                 // process kill
-        '/\bkillall\b/',              // kill all processes
-        '/\breboot\b/',               // system reboot
-        '/\bshutdown\b/',             // system shutdown
-        '/\bmysql\b/',                // direct mysql access
-        '/\bsqlite3\b/',              // direct sqlite access
-        '/\bpsql\b/',                 // direct postgres access
-        '/\bphp\s+-r\b/',             // php inline code execution
-        '/\bpython3\s+-c\b/',         // python inline code execution
-        '/\bnode\s+-e\b/',            // node inline code execution
-        '/\btinker\b/',               // php artisan tinker (interactive)
-        '/\bssh\b/',                  // ssh connections
-        '/\bftp\b/',                  // ftp connections
-        '/\bscp\b/',                  // scp file transfer
-        '/\brsync\b/',                // rsync file transfer
-    ];
     // Menampilkan halaman dashboard hosting klien
     public function index()
     {
@@ -214,7 +175,7 @@ class DashboardController extends Controller
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
                 'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
                 'framework'    => 'required|in:' . $allowedFrameworks,
-                'branch'       => 'required|string|max:50',
+                'branch'       => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9_\/\-.]*$/'],
             ]);
 
             $repoSource = $request->input('repo_source');
@@ -345,6 +306,7 @@ class DashboardController extends Controller
     public function createStaging($hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
         
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
@@ -539,6 +501,7 @@ class DashboardController extends Controller
     public function ideGitCommit(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
@@ -554,6 +517,7 @@ class DashboardController extends Controller
     public function ideGitPull(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
@@ -566,6 +530,7 @@ class DashboardController extends Controller
     public function ideGitPush(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
@@ -655,6 +620,7 @@ class DashboardController extends Controller
     {
         \Log::info("saveFile route hit! hashid: {$hashid}, path: " . $request->input('path'));
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
 
@@ -721,6 +687,7 @@ class DashboardController extends Controller
     public function deleteItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
 
         if (! $targetPath) {
@@ -751,6 +718,7 @@ class DashboardController extends Controller
     public function renameItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
 
         if (! $targetPath) {
@@ -788,6 +756,7 @@ class DashboardController extends Controller
     public function createItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
 
         if (! $dirPath || ! is_dir($dirPath)) {
@@ -824,6 +793,7 @@ class DashboardController extends Controller
         ]);
 
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
 
         if (! $dirPath || ! is_dir($dirPath)) {
@@ -883,6 +853,40 @@ class DashboardController extends Controller
         return $query->findOrFail($decoded[0]);
     }
 
+    /**
+     * Apakah user saat ini hanya member berperan 'viewer' (tidak boleh menulis)?
+     * Pemilik project & role internal super_admin/admin_hosting selalu bisa tulis.
+     */
+    private function isViewerOnly(HostingProject $project): bool
+    {
+        if ($project->user_id === Auth::id()) {
+            return false;
+        }
+        if (in_array(Auth::user()->role, ['superadmin', 'admin_hosting'], true)) {
+            return false;
+        }
+
+        $member = $project->teamMembers()->wherePivot('user_id', Auth::id())->first();
+
+        return $member && ($member->pivot->role ?? null) === 'viewer';
+    }
+
+    /** Mengembalikan response error untuk operasi tulis yang dilarang viewer. */
+    private function denyViewerWrite(HostingProject $project, bool $json = false)
+    {
+        if (! $this->isViewerOnly($project)) {
+            return null;
+        }
+
+        if ($json) {
+            return response()->json([
+                'error' => 'Akses ditolak. Anda hanya berperan sebagai Viewer pada project ini.',
+            ], 403);
+        }
+
+        return back()->with('error', 'Akses ditolak. Anda hanya berperan sebagai Viewer pada project ini.');
+    }
+
     private function getValidTargetPath($project, $requestPath)
     {
         $subdomain = explode('.', $project->ryaze_domain)[0];
@@ -916,6 +920,7 @@ class DashboardController extends Controller
     public function updateEnv(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
 
         $envPath = hosting_clients_dir() . "/{$subdomain}/.env";
@@ -948,6 +953,7 @@ class DashboardController extends Controller
     public function startDevServer($hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
 
         // Only allow React/Next.js/Vue/Python frameworks
         if (!in_array($project->framework, ['react', 'nextjs', 'vue', 'python'])) {
@@ -1171,6 +1177,7 @@ PHP;
     public function stopDevServer($hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
         
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = hosting_clients_dir() . "/{$subdomain}";
@@ -1253,6 +1260,7 @@ PHP;
     public function redeploy($hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
 
         $project->update(['status' => 'building']);
 
@@ -1294,6 +1302,7 @@ PHP;
         } catch (\Exception $e) {
             return response()->json(['error' => 'Project tidak ditemukan.'], 404);
         }
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
 
         $projectDir = hosting_clients_dir() . "/{$subdomain}";
@@ -1340,62 +1349,84 @@ PHP;
             ]);
         }
 
-        // ════════ SECURITY: Command Whitelist ════════
-        // Izinkan 'php artisan ...' sebagai satu command prefix
-        if ($firstWord === 'php' && str_starts_with($command, 'php artisan')) {
-            // Auto-append --force untuk menghindari prompt yes/no (karena terminal non-interactive)
-            $interactiveArtisan = ['migrate', 'migrate:fresh', 'migrate:refresh', 'migrate:reset', 'db:seed', 'db:wipe', 'key:generate'];
-            foreach ($interactiveArtisan as $artCmd) {
-                if (str_contains($command, $artCmd) && !str_contains($command, '--force')) {
-                    $command .= ' --force';
-                    break;
-                }
+// ════════ SECURITY: Deny Shell Metacharacters (anti-RCE) ════════
+        // Tanpa metacharacter shell tidak ada pipe, redirection, command
+        // substitution, glob expansion, quote-breaking, maupun escape.
+        // Dikombinasikan dengan whitelist + path-jail, kelas serangan RCE
+        // (mis: `find -exec {} +`, `curl | sh`, `cat file | nc`) menjadi mustahil.
+        $unsafeMetacharacters = [';', '&', '`', '|', '<', '>', '$', '(', ')', '{', '}', '[', ']', '*', '?', '!', '~', '#', '"', "'", '\\'];
+        foreach ($unsafeMetacharacters as $meta) {
+            if (str_contains($command, $meta)) {
+                return response()->json([
+                    'output' => "⛔ Karakter '{$meta}' tidak diizinkan di web terminal (mencegah injection & chaining perintah).",
+                    'exit_code' => 1,
+                ]);
             }
-        } elseif (! in_array($firstWord, $this->allowedCommands, true)) {
+        }
+
+        if (preg_match('/[\x00-\x08\x0a-\x1f\x7f]/', $command)) {
+            return response()->json([
+                'output' => '⛔ Perintah mengandung karakter kontrol yang tidak diizinkan.',
+                'exit_code' => 1,
+            ]);
+        }
+
+        // ── Tokenisasi perintah (dieksekusi TANPA shell) ──
+        $tokens = array_values(array_filter(preg_split('/\s+/', $command), fn ($t) => $t !== ''));
+        $firstWord = $tokens[0] ?? '';
+        $isArtisan = $firstWord === 'php' && ($tokens[1] ?? '') === 'artisan';
+
+        // ════════ SECURITY: Command Whitelist ════════
+        if (! $isArtisan && ! in_array($firstWord, $this->allowedCommands, true)) {
             return response()->json([
                 'output' => "⛔ Command '{$firstWord}' tidak diizinkan.\nCommand yang diizinkan: ".implode(', ', $this->allowedCommands),
                 'exit_code' => 1,
             ]);
         }
 
-        // ════════ SECURITY: Dangerous Pattern Blacklist ════════
-        foreach ($this->blockedPatterns as $pattern) {
-            if (preg_match($pattern, $command)) {
-                Log::warning('[TERMINAL_BLOCKED] User '.Auth::id()." attempted: {$command}");
-
-                return response()->json([
-                    'output' => '⛔ Command mengandung pola berbahaya dan diblokir demi keamanan server.',
-                    'exit_code' => 1,
-                ]);
+        // Auto-append --force untuk artisan interaktif (terminal non-interactive)
+        if ($isArtisan) {
+            $interactiveArtisan = ['migrate', 'migrate:fresh', 'migrate:refresh', 'migrate:reset', 'db:seed', 'db:wipe', 'key:generate'];
+            if (array_intersect($tokens, $interactiveArtisan) && ! in_array('--force', $tokens, true)) {
+                $tokens[] = '--force';
+            }
+        } elseif ($project->framework === 'python') {
+            // ── Python venv alias ──
+            $venvMap = [
+                'python3' => 'venv/bin/python3',
+                'python'  => 'venv/bin/python',
+                'pip3'    => 'venv/bin/pip3',
+                'pip'     => 'venv/bin/pip',
+            ];
+            if (isset($venvMap[$firstWord])) {
+                $tokens[0] = $venvMap[$firstWord];
             }
         }
 
-        // ════════ SECURITY: Block chained/piped & redirection commands ════════
-        if (preg_match('/[;&|><]/', $command)) {
-            return response()->json([
-                'output' => '⛔ Chaining command (;, &&, ||, |) dan Redirection (>, <) tidak diizinkan.',
-                'exit_code' => 1,
-            ]);
+        // ════════ SECURITY: Path Jail — argumen bernama path wajib berada di dalam project ════════
+        foreach (array_slice($tokens, 1) as $arg) {
+            if ($arg === '' || str_starts_with($arg, '-') || preg_match('/^[a-zA-Z][a-zA-Z0-9+.\-]*:\/\//', $arg)) {
+                continue; // flag / opsional URL (mis: curl, git)
+            }
+            if (str_contains($arg, '/')) {
+                $candidate = str_starts_with($arg, '/')
+                    ? $arg
+                    : rtrim(str_replace('\\', '/', $cwd), '/') . '/' . $arg;
+                $candidateNorm = $this->normalizeTerminalPath($candidate);
+                if ($candidateNorm !== $baseDir && ! str_starts_with($candidateNorm . '/', $baseDir . '/')) {
+                    Log::warning('[TERMINAL_BLOCKED] User '.Auth::id()." path-escape attempt: {$arg}");
+
+                    return response()->json([
+                        'output' => "⛔ Path '{$arg}' berada di luar direktori project.",
+                        'exit_code' => 1,
+                    ]);
+                }
+            }
         }
-        // ══════════════════════════════════════════════════════════
 
-        // ════════ MANTRA ANTI-BLEEDING ════════
-        $unsetEnv = (PHP_OS_FAMILY === 'Windows')
-            ? ''
-            : 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
-
-        // ════════ PYTHON VENV ALIAS ════════
-        if ($project->framework === 'python') {
-            $command = preg_replace('/^python3\b/', 'venv/bin/python3', $command);
-            $command = preg_replace('/^python\b/', 'venv/bin/python', $command);
-            $command = preg_replace('/^pip3\b/', 'venv/bin/pip3', $command);
-            $command = preg_replace('/^pip\b/', 'venv/bin/pip', $command);
-        }
-
-        $fullCommand = $unsetEnv . $command . ' 2>&1';
-
+        // ════════ SECURITY: lingkungan sanitasi (tanpa kredensial utama) ════════
         @set_time_limit(630);
-        $result = $this->runTerminalCommand($fullCommand, $cwd, 600);
+        $result = $this->runTerminalCommand($tokens, $cwd, 600, $this->terminalEnv());
 
         // Sembunyikan path absolut agar terlihat seperti root direktori project
         $output = str_replace($projectDir, '/' . $subdomain, $result['output']);
@@ -1467,9 +1498,39 @@ PHP;
     }
 
     /**
+     * Lingkungan sanitasi untuk web terminal — turunkan seluruh environment
+     * PHP, lalu buang kredensial & konfigurasi sensitif agar perintah yang
+     * dijalankan user tidak pernah membaca sekret dari getenv($_ENV).
+     */
+    private function terminalEnv(): array
+    {
+        // getenv() tanpa argumen mengembalikan seluruh env (atau false pada SAPI tertentu)
+        $env = getenv();
+        if (! is_array($env)) {
+            $env = [];
+        }
+
+        $sensitive = [
+            'APP_KEY', 'APP_ENV', 'APP_DEBUG',
+            'DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE',
+            'DB_USERNAME', 'DB_PASSWORD', 'DATABASE_URL',
+            'REDIS_CLIENT', 'REDIS_PASSWORD', 'REDIS_HOST', 'REDIS_PORT',
+            'BROADCAST_DRIVER', 'CACHE_DRIVER', 'QUEUE_CONNECTION',
+            'SESSION_DRIVER', 'LOG_CHANNEL',
+            'HASHIDS_SALT', 'PAYMENT_API_KEY', 'PAYMENT_MERCHANT_ID',
+            'PAKASIR_API_KEY', 'TELEGRAM_BOT_TOKEN', 'CF_API_TOKEN',
+        ];
+        foreach ($sensitive as $key) {
+            unset($env[$key]);
+        }
+
+        return $env;
+    }
+
+    /**
      * Jalankan perintah dengan timeout dan tetap kembalikan output parsial.
      */
-    private function runTerminalCommand(string $command, string $cwd, int $timeout = 600): array
+    private function runTerminalCommand(array $command, string $cwd, int $timeout = 600, ?array $env = null): array
     {
         $descriptors = [
             0 => ['pipe', 'r'],
@@ -1477,7 +1538,8 @@ PHP;
             2 => ['pipe', 'w'],
         ];
 
-        $process = proc_open($command, $descriptors, $pipes, $cwd);
+        // Argv array → dieksekusi tanpa shell (execvp), isi $env direplace total.
+        $process = proc_open($command, $descriptors, $pipes, $cwd, $env);
         if (!is_resource($process)) {
             return ['output' => 'Gagal menjalankan perintah.', 'exit_code' => 1, 'timed_out' => false];
         }
@@ -1746,6 +1808,7 @@ PHP;
     public function deleteProject(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
@@ -1808,6 +1871,7 @@ PHP;
     public function updateSettings(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
@@ -1952,6 +2016,7 @@ PHP;
         ]);
 
         $project = $this->getValidProject($hashid);
+        if ($denyWrite = $this->denyViewerWrite($project)) { return $denyWrite; }
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = hosting_clients_dir() . "/{$subdomain}";
 
@@ -1963,6 +2028,21 @@ PHP;
         
         $zip = new \ZipArchive();
         if ($zip->open($zipFile->getRealPath()) === TRUE) {
+            // ── ANTIZIP-SLIP: pastikan setiap entry berada di dalam projectDir ──
+            $baseDir = rtrim(str_replace('\\', '/', $projectDir), '/');
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $entry = str_replace('\\', '/', $zip->getNameIndex($i));
+                if (str_contains($entry, '..') || str_starts_with($entry, '/')) {
+                    $zip->close();
+                    return back()->with('error', 'Backup ditolak: ZIP mengandung path traversal.');
+                }
+                $dest = $baseDir . '/' . $entry;
+                if ($entry !== '' && !str_starts_with($dest, $baseDir . '/')) {
+                    $zip->close();
+                    return back()->with('error', 'Backup ditolak: ZIP berisi file di luar direktori project.');
+                }
+            }
+
             // Overwrite existing files
             $zip->extractTo($projectDir);
             $zip->close();

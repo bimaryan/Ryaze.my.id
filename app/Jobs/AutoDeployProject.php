@@ -97,25 +97,32 @@ class AutoDeployProject implements ShouldQueue
                     $this->log($deploy, "> [INFO] Converted SSH URL to HTTPS: {$repoUrl}");
                 }
 
+                // Branch hanya boleh berisi karakter aman (anti shell injection).
+                $branch = $this->project->branch ?? 'main';
+                $branch = preg_replace('/[^A-Za-z0-9_\/\-.]/', '', $branch);
+                if ($branch === '') {
+                    $branch = 'main';
+                }
+
                 $isRepo = is_dir("{$projectDir}/.git");
 
                 if ($isRepo) {
                     $this->log($deploy, '> Repository found. Pulling latest changes...');
-                    $this->exec("chown -R root:root {$projectDir}", $deploy);
+                    $this->exec("chown -R root:root " . escapeshellarg($projectDir), $deploy);
                     $this->exec(
-                        "cd {$projectDir} && git fetch --all && git reset --hard origin/{$this->project->branch}",
+                        'cd ' . escapeshellarg($projectDir) . ' && git fetch --all && git reset --hard origin/' . escapeshellarg($branch),
                         $deploy,
                         true
                     );
                 } else {
                     if (is_dir($projectDir)) {
                         $this->log($deploy, '> Found stale directory (not a git repo). Cleaning up...');
-                        $this->exec("rm -rf {$projectDir}", $deploy);
+                        $this->exec("rm -rf " . escapeshellarg($projectDir), $deploy);
                     }
 
                     $this->log($deploy, '> Cloning repository...');
                     $this->exec(
-                        "GIT_TERMINAL_PROMPT=0 git clone -b {$this->project->branch} {$repoUrl} {$projectDir}",
+                        'GIT_TERMINAL_PROMPT=0 git clone -b ' . escapeshellarg($branch) . ' ' . escapeshellarg($repoUrl) . ' ' . escapeshellarg($projectDir),
                         $deploy,
                         true
                     );

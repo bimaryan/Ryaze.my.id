@@ -12,6 +12,20 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class DomainController extends Controller
 {
+    /** User berperan viewer pada project — tidak boleh menulis. */
+    private function isViewerOnly(HostingProject $project): bool
+    {
+        if ($project->user_id === Auth::id()) {
+            return false;
+        }
+        if (in_array(Auth::user()->role, ['superadmin', 'admin_hosting'], true)) {
+            return false;
+        }
+        $member = $project->teamMembers()->wherePivot('user_id', Auth::id())->first();
+
+        return $member && ($member->pivot->role ?? null) === 'viewer';
+    }
+
     public function store(Request $request, $projectHashid)
     {
         $decoded = Hashids::decode($projectHashid);
@@ -23,6 +37,11 @@ class DomainController extends Controller
                   $sq->where('user_id', Auth::id());
               });
         })->findOrFail($decoded[0]);
+
+        // Viewer hanya boleh membaca
+        if ($this->isViewerOnly($project)) {
+            return back()->with('error', 'Akses ditolak. Anda hanya berperan sebagai Viewer pada project ini.');
+        }
 
         $request->validate([
             'domain_name' => 'required|string|max:255|unique:hosting_domains,domain_name',
@@ -80,6 +99,10 @@ class DomainController extends Controller
                   $sq->where('user_id', Auth::id());
               });
         })->findOrFail($decoded[0]);
+
+        if ($this->isViewerOnly($domain->project)) {
+            return back()->with('error', 'Akses ditolak. Anda hanya berperan sebagai Viewer pada project ini.');
+        }
 
         $projectHashid = $domain->project->hashid;
         

@@ -29,8 +29,9 @@ return [
     'connections' => [
 
         'main' => [
-            'salt' => '',
-            'length' => 0,
+            // Jangan pernah biarkan salt kosong; encode ID jadi mudah ditebak.
+            'salt' => env('HASHIDS_SALT', 'ryaze-default-change-me'),
+            'length' => 12,
             // 'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
         ],
 

@@ -11,6 +11,20 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class CronController extends Controller
 {
+    /** User berperan viewer pada project — tidak boleh menulis. */
+    private function isViewerOnly(HostingProject $project): bool
+    {
+        if ($project->user_id === Auth::id()) {
+            return false;
+        }
+        if (in_array(Auth::user()->role, ['superadmin', 'admin_hosting'], true)) {
+            return false;
+        }
+        $member = $project->teamMembers()->wherePivot('user_id', Auth::id())->first();
+
+        return $member && ($member->pivot->role ?? null) === 'viewer';
+    }
+
     public function store(Request $request, $projectHashid)
     {
         $decoded = Hashids::decode($projectHashid);
@@ -26,6 +40,10 @@ class CronController extends Controller
             });
         }
         $project = $query->findOrFail($decoded[0]);
+
+        if ($this->isViewerOnly($project)) {
+            return back()->with('error', 'Akses ditolak. Anda hanya berperan sebagai Viewer pada project ini.');
+        }
 
         $request->validate([
             'command' => 'required|string|max:255',
@@ -59,6 +77,10 @@ class CronController extends Controller
         });
         
         $cron = $query->findOrFail($decoded[0]);
+
+        if ($this->isViewerOnly(HostingProject::findOrFail($cron->project_id))) {
+            return back()->with('error', 'Akses ditolak. Anda hanya berperan sebagai Viewer pada project ini.');
+        }
 
         $cron->delete();
 

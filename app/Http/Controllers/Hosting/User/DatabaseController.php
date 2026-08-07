@@ -519,11 +519,12 @@ class DatabaseController extends Controller
             // 1. Create Role (User) if not exists
             $stmt = $pdo->prepare("SELECT 1 FROM pg_roles WHERE rolname = ?");
             $stmt->execute([$cleanUsername]);
+            $sqlPassword = str_replace("'", "''", $dbPassword); // hapus pecah string literal SQL
             if (!$stmt->fetchColumn()) {
                 // PDO prepare doesn't work for CREATE ROLE names
-                $pdo->exec("CREATE ROLE \"{$cleanUsername}\" WITH LOGIN PASSWORD '{$dbPassword}'");
+                $pdo->exec("CREATE ROLE \"{$cleanUsername}\" WITH LOGIN PASSWORD '{$sqlPassword}'");
             } else {
-                $pdo->exec("ALTER ROLE \"{$cleanUsername}\" WITH PASSWORD '{$dbPassword}'");
+                $pdo->exec("ALTER ROLE \"{$cleanUsername}\" WITH PASSWORD '{$sqlPassword}'");
             }
 
             // 2. Create Database

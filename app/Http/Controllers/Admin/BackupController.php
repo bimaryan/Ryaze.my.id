@@ -170,6 +170,13 @@ class BackupController extends Controller
 
             $zip = new ZipArchive();
             if ($zip->open($zipFile->getPathname()) === true) {
+                // ── ANTIZIP-SLIP: semua entry wajib berada di dalam tempExtractDir ──
+                for ($i = 0; $i < $zip->numFiles; $i++) {
+                    $entry = str_replace('\\', '/', $zip->getNameIndex($i));
+                    if (str_contains($entry, '..') || str_starts_with($entry, '/') || str_contains($entry, ':')) {
+                        throw new \Exception("Backup ditolak: ZIP mengandung path traversal.");
+                    }
+                }
                 $zip->extractTo($tempExtractDir);
                 $zip->close();
             } else {
