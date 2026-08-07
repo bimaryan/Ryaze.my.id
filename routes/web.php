@@ -212,6 +212,12 @@ Route::middleware('auth')->group(function () {
             Route::post('user/hosting/projects/{hashid}/files/rename', [DashboardController::class, 'renameItem'])->name('user_hosting.files.rename');
             Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
             Route::post('user/hosting/projects/{hashid}/ide/chat', [DashboardController::class, 'ideChat'])->name('user_hosting.ide.chat');
+            Route::get('user/hosting/projects/{hashid}/ide/chats', [DashboardController::class, 'ideChats'])->name('user_hosting.ide.chats');
+            Route::post('user/hosting/projects/{hashid}/ide/chats', [DashboardController::class, 'createIdeChat'])->name('user_hosting.ide.chats.create');
+            Route::get('user/hosting/projects/{hashid}/ide/chats/{chatId}/messages', [DashboardController::class, 'ideChatMessages'])->name('user_hosting.ide.chats.messages');
+            Route::delete('user/hosting/projects/{hashid}/ide/chats/{chatId}', [DashboardController::class, 'deleteIdeChat'])->name('user_hosting.ide.chats.delete');
+            Route::get('user/hosting/projects/{hashid}/ide/log', [DashboardController::class, 'ideLogTail'])->name('user_hosting.ide.log');
+            Route::post('user/hosting/projects/{hashid}/ide/lint', [DashboardController::class, 'ideLintPhp'])->name('user_hosting.ide.lint');
             Route::post('user/hosting/projects/{hashid}/ide/search', [DashboardController::class, 'ideSearch'])->name('user_hosting.ide.search');
             Route::get('user/hosting/storage', [StorageController::class, 'index'])->name('user_hosting.storage');
             Route::post('user/hosting/storage/upgrade', [StorageController::class, 'upgrade'])->name('user_hosting.storage.upgrade');

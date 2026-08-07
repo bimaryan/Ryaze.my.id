@@ -638,6 +638,9 @@
                             <span id="ide-current-filename" class="truncate">Pilih file...</span>
                         </div>
                         <div class="flex items-center gap-3">
+                            <button id="ide-panel-toggle" title="Toggle Panel (Ctrl+J)" class="text-slate-500 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
+                                <i class="fa-solid fa-square-terminal text-sm"></i>
+                            </button>
                             <button id="ide-zen-btn" title="Fullscreen (F11)" class="text-slate-500 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
                                 <i class="fa-solid fa-expand text-sm"></i>
                             </button>
@@ -658,6 +661,45 @@
                     <div id="ide-loader" class="hidden absolute inset-0 bg-[#1e1e1e]/80 flex items-center justify-center z-10">
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
                     </div>
+
+                    <!-- Bottom Panel (VS Code-style) -->
+                    <div id="ide-bottom-panel" class="h-56 bg-[#181818] border-t border-[#333] flex flex-col shrink-0 hidden">
+                        <div class="h-9 bg-[#252526] border-b border-[#1e1e1e] flex items-stretch shrink-0 overflow-x-auto scrollbar-hide">
+                            <button data-panel-tab="problems" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                                <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Problems
+                                <span id="problems-count" class="text-[9px] bg-rose-600/40 text-rose-300 px-1.5 rounded-full hidden">0</span>
+                            </button>
+                            <button data-panel-tab="output" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                                <i class="fa-solid fa-rectangle-list text-[10px]"></i> Output
+                            </button>
+                            <button data-panel-tab="debug" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                                <i class="fa-solid fa-bug text-[10px]"></i> Debug Console
+                            </button>
+                            <button data-panel-tab="terminal" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                                <i class="fa-solid fa-terminal text-[10px]"></i> Terminal
+                            </button>
+                            <button data-panel-tab="ports" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                                <i class="fa-solid fa-plug text-[10px]"></i> Ports
+                            </button>
+                            <div class="ml-auto flex items-center gap-0.5 px-1.5">
+                                <button id="ide-term-new" title="New Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-plus text-[11px]"></i></button>
+                                <button id="ide-term-split" title="Split Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-table-columns text-[11px]"></i></button>
+                                <button id="ide-term-kill" title="Kill Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-trash-can text-[11px]"></i></button>
+                                <button id="ide-term-send-chat" title="Send Terminal to Chat" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 hover:text-white transition-colors"><i class="fa-brands fa-galactic-senate text-[11px]"></i></button>
+                                <button id="ide-panel-hide" title="Hide Panel" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-chevron-down text-[11px]"></i></button>
+                            </div>
+                        </div>
+                        <div class="flex-1 relative overflow-hidden">
+                            <div id="ide-panel-problems" class="ide-panel-view absolute inset-0 overflow-y-auto hidden"></div>
+                            <div id="ide-panel-output" class="ide-panel-view absolute inset-0 overflow-y-auto hidden"></div>
+                            <div id="ide-panel-debug" class="ide-panel-view absolute inset-0 hidden flex flex-col"></div>
+                            <div id="ide-panel-terminal" class="ide-panel-view absolute inset-0 hidden flex flex-col">
+                                <div id="ide-term-tabs" class="h-8 bg-[#1e1e1e] border-b border-[#333] flex items-center gap-1 px-2 overflow-x-auto scrollbar-hide shrink-0"></div>
+                                <div id="ide-term-area" class="flex-1 flex flex-col min-h-0"></div>
+                            </div>
+                            <div id="ide-panel-ports" class="ide-panel-view absolute inset-0 overflow-y-auto hidden"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Panel: Ryaze AI (collapsible) -->
@@ -666,7 +708,7 @@
                         <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center shrink-0">
                             <span class="flex items-center gap-2">
                                 <i class="fa-brands fa-galactic-senate text-indigo-400"></i> Ryaze AI v2.0
-                                <span class="text-[8px] bg-indigo-600/20 text-indigo-300 px-1.5 py-0.5 rounded font-semibold">70B</span>
+                                <span class="text-[8px] bg-indigo-600/20 text-indigo-300 px-1.5 py-0.5 rounded font-semibold">GPT-OSS 120B</span>
                             </span>
                             <div class="flex items-center gap-2">
                                 <button id="ide-chat-clear" title="Bersihkan percakapan" class="text-slate-500 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
@@ -2613,6 +2655,326 @@
                 sendGrokMessage();
             }
         });
+
+    </script>
+
+    {{-- ── SCRIPT 6: Bottom Panel (Problems / Output / Debug / Terminal / Ports) ── --}}
+    <script nonce="{{ csp_nonce() }}">
+        var ideBottomOpen = false;
+        var ideBottomTab = 'terminal';
+        var ideTerminals = [];
+        var ideActiveTerminal = null;
+        var ideDebugTerminal = null;
+        var ideTermSeq = 1;
+        var ideProblems = [];
+        var ideLogUrl = fixUrl('{{ route('user_hosting.ide.log', $project->hashid) }}');
+        var ideLintUrl = fixUrl('{{ route('user_hosting.ide.lint', $project->hashid) }}');
+
+        function ideEsc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        function ideSetBottomPanel(open) {
+            ideBottomOpen = open;
+            document.getElementById('ide-bottom-panel').classList.toggle('hidden', !open);
+            if (open) ideActivatePanelTab(ideBottomTab);
+            setTimeout(() => { if (ideEditorInstance) ideEditorInstance.layout(); }, 80);
+        }
+
+        function ideActivatePanelTab(tab) {
+            ideBottomTab = tab;
+            document.querySelectorAll('.ide-panel-tab').forEach(b => {
+                const on = b.dataset.panelTab === tab;
+                b.classList.toggle('text-white', on);
+                b.classList.toggle('text-slate-500', !on);
+                b.classList.toggle('border-indigo-500', on);
+            });
+            document.querySelectorAll('.ide-panel-view').forEach(v => v.classList.add('hidden'));
+            document.getElementById('ide-panel-' + tab).classList.remove('hidden');
+            if (tab === 'output') ideRefreshLogTail();
+            if (tab === 'problems') ideRenderProblems();
+            if (tab === 'debug') ideEnsureDebugTerminal();
+            if (tab === 'terminal') ideRenderTermArea();
+            if (tab === 'ports') ideRenderPorts();
+        }
+
+        document.getElementById('ide-panel-toggle')?.addEventListener('click', () => ideSetBottomPanel(!ideBottomOpen));
+        document.getElementById('ide-panel-hide')?.addEventListener('click', () => ideSetBottomPanel(false));
+        document.querySelectorAll('.ide-panel-tab').forEach(b => b.addEventListener('click', () => ideActivatePanelTab(b.dataset.panelTab)));
+        document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'j') { e.preventDefault(); ideSetBottomPanel(!ideBottomOpen); }
+        });
+
+        // ── Terminal instances ──────────────────────────────────────────────────
+        function ideNewTerminal(name, opts = {}) {
+            const id = opts.id || ('ide-term-' + (ideTermSeq++));
+            const pane = document.createElement('div');
+            pane.className = 'ide-term-pane flex-1 flex flex-col min-h-0 bg-[#181818] border-t border-[#1e1e1e]';
+            pane.dataset.termId = id;
+            pane.innerHTML = `
+                <div class="h-7 bg-[#252526] flex items-center px-3 text-[11px] text-slate-400 shrink-0 border-b border-[#1e1e1e]">
+                    <span class="text-emerald-400 font-mono">${ideEsc(name)}</span>
+                    <button class="ide-term-pane-kill ml-auto w-5 h-5 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-600 hover:text-white transition-colors" title="Kill Terminal"><i class="fa-solid fa-xmark text-[9px]"></i></button>
+                </div>
+                <div class="ide-term-out flex-1 overflow-y-auto p-2 font-mono text-[12px] leading-relaxed text-slate-200"></div>
+                <div class="flex items-center gap-2 px-2 pb-2 shrink-0">
+                    <span class="ide-term-prompt text-indigo-400 font-mono text-xs select-none whitespace-nowrap">${ideEsc(projectSlug)} $</span>
+                    <input class="ide-term-input flex-1 bg-transparent text-slate-100 font-mono text-xs outline-none" placeholder="ketik perintah, lalu Enter..." autocomplete="off" spellcheck="false">
+                </div>`;
+            const t = {
+                id, name, paneEl: pane, split: !!opts.split,
+                outEl: pane.querySelector('.ide-term-out'),
+                inputEl: pane.querySelector('.ide-term-input'),
+                promptEl: pane.querySelector('.ide-term-prompt'),
+                history: [], histIdx: -1, running: false, cwd: null
+            };
+            t.appendRaw = (html) => { t.outEl.insertAdjacentHTML('beforeend', html); t.outEl.scrollTop = t.outEl.scrollHeight; };
+            t.updatePrompt = (cwd) => {
+                t.cwd = cwd;
+                const rel = cwd && cwd.startsWith(projectRoot) ? cwd.slice(projectRoot.length) : '';
+                t.promptEl.innerHTML = `<span class="text-indigo-400">${ideEsc(projectSlug + rel)}</span><span class="text-slate-400"> $</span>`;
+            };
+            t.run = async () => {
+                if (t.running) return;
+                const cmd = t.inputEl.value.trim();
+                if (!cmd) return;
+                t.history.unshift(cmd);
+                if (t.history.length > 100) t.history.pop();
+                t.histIdx = -1;
+                t.appendRaw(`<div class="flex items-start gap-2 mb-0.5"><span class="text-indigo-400 select-none shrink-0">${ideEsc(projectSlug)} $</span><span class="text-slate-100 break-all">${ideEsc(cmd)}</span></div>`);
+                t.inputEl.value = '';
+                t.running = true;
+                const lid = 'tld-' + t.id + '-' + Date.now();
+                t.appendRaw(`<div id="${lid}" class="text-slate-600 animate-pulse">▌</div>`);
+                try {
+                    const res = await fetch(termUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                        body: JSON.stringify({ command: cmd, term_id: t.id })
+                    });
+                    const data = await res.json();
+                    document.getElementById(lid)?.remove();
+                    if (data.cwd && data.cwd !== t.cwd) t.updatePrompt(data.cwd);
+                    if (data.error) {
+                        t.appendRaw(`<div class="text-rose-400 mb-1">${ideEsc(data.error)}</div>`);
+                    } else if (data.output && data.output.trim() !== '') {
+                        const cls = data.exit_code !== 0 ? 'text-rose-300' : 'text-slate-200';
+                        t.appendRaw(`<pre class="${cls} whitespace-pre-wrap break-words mb-1 leading-relaxed">${ideEsc(data.output)}</pre>`);
+                        ideCaptureProblems(data.output, t.name);
+                    }
+                } catch (err) {
+                    document.getElementById(lid)?.remove();
+                    t.appendRaw(`<div class="text-rose-400 mb-1">Network error: ${ideEsc(err.message)}</div>`);
+                }
+                t.running = false;
+                t.inputEl.focus();
+            };
+            t.inputEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); t.run(); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); if (t.histIdx < t.history.length - 1) t.inputEl.value = t.history[++t.histIdx]; }
+                else if (e.key === 'ArrowDown') { e.preventDefault(); t.histIdx > 0 ? (t.inputEl.value = t.history[--t.histIdx]) : (t.histIdx = -1, t.inputEl.value = ''); }
+                else if (e.ctrlKey && e.key === 'l') { e.preventDefault(); Array.from(t.outEl.children).forEach(c => c.remove()); }
+            });
+            pane.addEventListener('click', () => t.inputEl.focus());
+            pane.querySelector('.ide-term-pane-kill')?.addEventListener('click', (e) => { e.stopPropagation(); ideKillTerminal(t); });
+            return t;
+        }
+
+        function ideKillTerminal(t) {
+            const idx = ideTerminals.findIndex(x => x.id === t.id);
+            if (idx === -1) return;
+            ideTerminals.splice(idx, 1);
+            t.paneEl.remove();
+            if (ideActiveTerminal && ideActiveTerminal.id === t.id) ideActiveTerminal = ideTerminals[0] || null;
+            ideRenderTermTabs();
+            ideRenderTermArea();
+        }
+
+        function ideRenderTermTabs() {
+            const wrap = document.getElementById('ide-term-tabs');
+            wrap.innerHTML = '';
+            if (!ideTerminals.length) {
+                wrap.innerHTML = '<div class="text-slate-600 text-[11px] px-2">Tidak ada terminal — klik <i class="fa-solid fa-plus"></i> untuk membuat</div>';
+                return;
+            }
+            ideTerminals.forEach(t => {
+                const chip = document.createElement('button');
+                const active = ideActiveTerminal && ideActiveTerminal.id === t.id;
+                chip.className = 'flex items-center gap-1.5 px-2.5 h-6 rounded text-[11px] font-mono transition-colors shrink-0 ' + (active ? 'bg-[#3c3c3c] text-white' : 'text-slate-500 hover:text-slate-200 hover:bg-[#2a2d2e]');
+                chip.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${t.running ? 'bg-amber-400' : 'bg-emerald-500'}"></span><span class="truncate max-w-[140px]">${ideEsc(t.name)}</span>`;
+                chip.onclick = () => { ideActiveTerminal = t; ideRenderTermTabs(); ideRenderTermArea(); setTimeout(() => t.inputEl.focus(), 30); };
+                wrap.appendChild(chip);
+            });
+        }
+
+        function ideRenderTermArea() {
+            const area = document.getElementById('ide-term-area');
+            area.innerHTML = '';
+            if (!ideTerminals.length || !ideActiveTerminal) return;
+            ideTerminals.forEach(t => {
+                if (t.id === ideActiveTerminal.id || t.split) area.appendChild(t.paneEl);
+            });
+        }
+
+        function ideActivateTerminal(t) {
+            ideActiveTerminal = t;
+            ideRenderTermTabs();
+            ideRenderTermArea();
+            setTimeout(() => t.inputEl.focus(), 30);
+        }
+
+        document.getElementById('ide-term-new')?.addEventListener('click', () => {
+            ideSetBottomPanel(true);
+            ideActivatePanelTab('terminal');
+            const t = ideNewTerminal('' + (ideTerminals.length + 1) + ': bash');
+            ideTerminals.push(t);
+            ideActivateTerminal(t);
+        });
+
+        document.getElementById('ide-term-split')?.addEventListener('click', () => {
+            ideSetBottomPanel(true);
+            ideActivatePanelTab('terminal');
+            const t = ideNewTerminal('' + (ideTerminals.length + 1) + ': bash', { split: true });
+            ideTerminals.push(t);
+            ideActivateTerminal(t);
+        });
+
+        document.getElementById('ide-term-kill')?.addEventListener('click', () => {
+            if (ideActiveTerminal) ideKillTerminal(ideActiveTerminal);
+        });
+
+        document.getElementById('ide-term-send-chat')?.addEventListener('click', () => {
+            const t = ideActiveTerminal;
+            if (!t) { hotToast('Tidak ada terminal aktif', 'error'); return; }
+            const lines = (t.outEl.textContent || '').split('\n').filter(Boolean).slice(-50);
+            const input = document.getElementById('grok-chat-input');
+            input.value = 'Analisis output terminal ini:\n```\n' + lines.join('\n') + '\n```';
+            if (!ideRightOpen) document.getElementById('ide-ai-activity-btn')?.click();
+            input.focus();
+            hotToast('Output terminal dikirim ke Ryaze AI', 'success');
+        });
+
+        // Terminal awal saat IDE dibuka pertama kali
+        (function ideInitFirstTerminal() {
+            const t = ideNewTerminal('1: bash');
+            ideTerminals.push(t);
+            ideActiveTerminal = t;
+            ideRenderTermTabs();
+            ideRenderTermArea();
+        })();
+
+        // ── Problems ────────────────────────────────────────────────────────────
+        function ideCaptureProblems(text, source) {
+            (text || '').split('\n').forEach(line => {
+                const l = line.trim();
+                if (!l) return;
+                if (/(\berror\b|fatal|exception|parse error|syntax error|undefined variable|failed to open)/i.test(l)) {
+                    const key = l.slice(0, 140);
+                    if (!ideProblems.some(p => p.text === key)) {
+                        ideProblems.push({ text: key, source: source || 'terminal' });
+                    }
+                }
+            });
+            ideRenderProblems();
+        }
+
+        function ideRenderProblems() {
+            const host = document.getElementById('ide-panel-problems');
+            const count = document.getElementById('problems-count');
+            const n = ideProblems.length;
+            if (n) { count.textContent = n; count.classList.remove('hidden'); } else { count.classList.add('hidden'); }
+            host.innerHTML = `<div class="flex items-center gap-2 px-3 py-2 border-b border-[#333] bg-[#252526] sticky top-0 z-10">
+                <button id="ide-problems-scan" class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded transition-colors"><i class="fa-solid fa-broom mr-1"></i>Scan PHP</button>
+                <button id="ide-problems-clear" class="text-[10px] bg-[#3c3c3c] hover:bg-[#4a4a4a] text-slate-300 px-2.5 py-1 rounded transition-colors"><i class="fa-solid fa-trash-can mr-1"></i>Clear</button>
+            </div>`;
+            if (!n) {
+                host.insertAdjacentHTML('beforeend', '<div class="p-6 text-center text-slate-600 text-xs"><i class="fa-solid fa-circle-check text-emerald-600 text-xl mb-2"></i><br>Tidak ada masalah yang terdeteksi.</div>');
+            } else {
+                ideProblems.forEach((p, i) => {
+                    host.insertAdjacentHTML('beforeend', `<div class="flex items-start gap-2 px-3 py-1.5 border-b border-[#222] text-[11px]">
+                        <i class="fa-solid fa-circle-exclamation text-rose-500 mt-0.5"></i>
+                        <div class="flex-1 min-w-0"><div class="text-rose-300 break-all font-mono">${ideEsc(p.text)}</div><div class="text-slate-500 text-[10px]">${ideEsc(p.source)}</div></div>
+                        <button data-idx="${i}" class="ide-problem-dismiss text-slate-600 hover:text-white transition-colors shrink-0"><i class="fa-solid fa-xmark"></i></button>
+                    </div>`);
+                });
+                host.querySelectorAll('.ide-problem-dismiss').forEach(b => b.addEventListener('click', () => {
+                    ideProblems.splice(+b.dataset.idx, 1);
+                    ideRenderProblems();
+                }));
+            }
+            document.getElementById('ide-problems-scan')?.addEventListener('click', ideScanPhp);
+            document.getElementById('ide-problems-clear')?.addEventListener('click', () => { ideProblems = []; ideRenderProblems(); });
+        }
+
+        function ideScanPhp() {
+            const btn = document.getElementById('ide-problems-scan');
+            if (!btn || btn.dataset.busy) return;
+            btn.dataset.busy = '1';
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Scanning...';
+            fetch(ideLintUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { hotToast(data.error, 'error'); return; }
+                ideProblems = (data.results || []).map(r => ({ text: r.error || 'Lint error', source: r.file }));
+                ideRenderProblems();
+                hotToast('Scan PHP selesai', 'success');
+            })
+            .catch(() => hotToast('Gagal scan PHP', 'error'))
+            .finally(() => { btn.innerHTML = orig; delete btn.dataset.busy; });
+        }
+
+        // ── Output (laravel.log) ────────────────────────────────────────────────
+        function ideRefreshLogTail() {
+            const host = document.getElementById('ide-panel-output');
+            host.innerHTML = '<div class="p-3 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Membaca log...</div>';
+            fetch(ideLogUrl)
+                .then(r => r.json())
+                .then(data => {
+                    host.innerHTML = `<div class="sticky top-0 z-10 flex items-center gap-2 px-3 py-2 border-b border-[#333] bg-[#252526]">
+                        <span class="text-[10px] text-slate-500 font-mono">laravel.log — 250 baris terakhir</span>
+                        <button id="ide-log-refresh" class="ml-auto text-[10px] bg-[#3c3c3c] hover:bg-[#4a4a4a] text-slate-300 px-2.5 py-1 rounded transition-colors"><i class="fa-solid fa-rotate-right mr-1"></i>Refresh</button>
+                    </div>`;
+                    host.insertAdjacentHTML('beforeend', `<pre class="p-3 font-mono text-[11px] text-slate-300 whitespace-pre-wrap break-words">${ideEsc(data.content || '')}</pre>`);
+                    document.getElementById('ide-log-refresh')?.addEventListener('click', ideRefreshLogTail);
+                })
+                .catch(() => { host.innerHTML = '<div class="p-3 text-rose-400 text-xs">Gagal membaca log.</div>'; });
+        }
+
+        // ── Debug Console ───────────────────────────────────────────────────────
+        function ideEnsureDebugTerminal() {
+            const host = document.getElementById('ide-panel-debug');
+            if (host.dataset.ready) return;
+            host.dataset.ready = '1';
+            const t = ideNewTerminal('Debug Console', { id: 'ide-term-debug' });
+            ideDebugTerminal = t;
+            host.appendChild(t.paneEl);
+            t.paneEl.style.borderTop = 'none';
+            t.appendRaw('<div class="text-slate-500">Debug Console — ketik perintah untuk melihat error/debug output.</div>');
+        }
+
+        // ── Ports ───────────────────────────────────────────────────────────────
+        function ideRenderPorts() {
+            const host = document.getElementById('ide-panel-ports');
+            const devPort = '{{ $project->dev_port ?? '' }}';
+            const devActive = {{ $project->dev_mode ? 'true' : 'false' }};
+            host.innerHTML = `<div class="px-3 py-2 border-b border-[#333] bg-[#252526] text-[10px] text-slate-500 font-mono">Port aktif project — klik untuk membuka</div>
+                <div class="p-3 grid grid-cols-2 gap-2">
+                    <div class="border border-[#333] rounded p-3 bg-[#1e1e1e]">
+                        <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-globe text-indigo-400"></i><span class="text-[10px] text-slate-500 font-mono">HTTPS / HTTP</span></div>
+                        <div class="text-sm text-white font-mono">443 / 80</div>
+                        <div class="text-[10px] text-slate-500 truncate mb-2">${ideEsc(projectSlug)}</div>
+                        <a href="https://${ideEsc(projectSlug)}" target="_blank" class="inline-block text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>
+                    </div>
+                    <div class="border border-[#333] rounded p-3 bg-[#1e1e1e]">
+                        <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-microchip text-emerald-400"></i><span class="text-[10px] text-slate-500 font-mono">Dev Server</span></div>
+                        <div class="text-sm text-white font-mono">${devPort ? ideEsc(devPort) : '—'}</div>
+                        <div class="mb-2"><span class="text-[9px] px-1.5 py-0.5 rounded-full ${devActive ? 'bg-emerald-600/30 text-emerald-300' : 'bg-slate-700 text-slate-400'}">${devActive ? 'AKTIF' : 'NONAKTIF'}</span></div>
+                        ${devActive && devPort ? `<a href="https://dev${ideEsc(devPort)}.ryaze.my.id" target="_blank" class="inline-block text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1 rounded transition-colors"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>` : '<span class="text-[9px] text-slate-600">Aktifkan dari tab Overview</span>'}
+                    </div>
+                </div>`;
+        }
 
     </script>
 

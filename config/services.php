@@ -155,7 +155,7 @@ return [
     */
     'groq' => [
         'api_key' => env('GROQ_API_KEY'),
-        'text_model' => env('GROQ_TEXT_MODEL', 'llama-3.3-70b-versatile'),
+        'text_model' => env('GROQ_TEXT_MODEL', 'openai/gpt-oss-120b'),
     ],
 
 ];

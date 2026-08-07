@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Jobs\AutoDeployProject;
 use App\Models\HostingBilling;
 use App\Models\HostingProject;
+use App\Models\IdeChat;
+use App\Models\IdeChatMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -354,11 +356,27 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
         $message = $request->input('message');
         $context = $request->input('context'); // Current editing file context
-        $history = $request->input('history', []); // Riwayat percakapan (multi-turn)
+        $chatHashId = $request->input('chat_id'); // ID percakapan persisten (database)
 
         if (empty($message)) {
             return response()->json(['error' => 'Pesan tidak boleh kosong.'], 400);
         }
+
+        // Resolusi percakapan: pakai chat_id yang dikirim, atau buat baru
+        if (!empty($chatHashId)) {
+            $chat = IdeChat::where('hosting_project_id', $project->id)->findByHashidOrFail($chatHashId);
+        } else {
+            $chat = IdeChat::create(['hosting_project_id' => $project->id, 'user_id' => Auth::id(), 'title' => 'Percakapan baru']);
+        }
+
+        // Judul otomatis dari pesan pertama
+        if ($chat->title === 'Percakapan baru') {
+            $chat->title = mb_substr(preg_replace('/\s+/', ' ', trim($message)), 0, 40);
+            $chat->save();
+        }
+
+        // Simpan pesan user ke database
+        IdeChatMessage::create(['ide_chat_id' => $chat->id, 'role' => 'user', 'content' => mb_substr($message, 0, 60000)]);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = hosting_clients_dir() . "/{$subdomain}";
@@ -380,16 +398,20 @@ class DashboardController extends Controller
             return response()->json(['error' => 'GROQ_API_KEY belum dikonfigurasi di server.'], 500);
         }
 
-        // Sanitasi riwayat percakapan (maks 20 pesan terakhir)
+        // Riwayat percakapan dari database (maks 20 pesan terakhir) — AI jadi lebih pintar
         $historyMessages = [];
-        if (is_array($history)) {
-            foreach (array_slice($history, -20) as $h) {
-                $role = $h['role'] ?? '';
-                $content = trim((string) ($h['content'] ?? ''));
-                if (in_array($role, ['user', 'assistant'], true) && $content !== '') {
-                    $historyMessages[] = ['role' => $role, 'content' => mb_substr($content, 0, 60000)];
-                }
+        foreach ($chat->messages()->latest()->limit(20)->get()->reverse() as $msg) {
+            $content = trim((string) $msg->content);
+            if ($content === '') {
+                continue;
             }
+            // Bersihkan blok perintah agar tidak jadi noise di prompt
+            $content = preg_replace('/<<FILE_OPS>>.*?<<END_FILE_OPS>>/s', '', $content);
+            $content = preg_replace('/<<REPLACE_ALL>>.*?<<END_REPLACE>>/s', '', $content);
+            $historyMessages[] = [
+                'role' => $msg->role === 'user' ? 'user' : 'assistant',
+                'content' => mb_substr($content, 0, 60000),
+            ];
         }
 
         // Snapshot struktur file project agar AI tahu path yang valid (agentic)
@@ -426,7 +448,7 @@ class DashboardController extends Controller
             $response = Http::withToken($groqApiKey)
                 ->timeout(60)
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model' => config('services.groq.text_model', 'llama-3.3-70b-versatile'),
+                    'model' => config('services.groq.text_model', 'openai/gpt-oss-120b'),
                     'messages' => array_merge(
                         [['role' => 'system', 'content' => $systemPrompt]],
                         $historyMessages,
@@ -440,7 +462,13 @@ class DashboardController extends Controller
                 $data = $response->json();
                 $reply = $data['choices'][0]['message']['content'] ?? 'Tidak ada respons dari AI.';
                 $fileOps = $this->executeAiFileOps($reply, $project, $projectDir);
-                return response()->json(['reply' => $reply, 'file_ops' => $fileOps]);
+
+                // Simpan balasan AI (bersih dari blok perintah) agar riwayat tersimpan
+                $storedReply = preg_replace('/<<FILE_OPS>>.*?<<END_FILE_OPS>>/s', '', $reply);
+                $storedReply = preg_replace('/<<REPLACE_ALL>>.*?<<END_REPLACE>>/s', '', $storedReply);
+                IdeChatMessage::create(['ide_chat_id' => $chat->id, 'role' => 'assistant', 'content' => mb_substr(trim($storedReply), 0, 100000)]);
+
+                return response()->json(['reply' => $reply, 'file_ops' => $fileOps, 'chat_id' => $chat->hashid]);
             } else {
                 Log::error('Groq API Error: ' . $response->body());
                 return response()->json(['error' => 'API Ryaze AI sedang bermasalah. Coba lagi nanti.'], 500);
@@ -449,6 +477,125 @@ class DashboardController extends Controller
             Log::error('Groq Exception: ' . $e->getMessage());
             return response()->json(['error' => 'Terjadi kesalahan sistem saat menghubungi AI.'], 500);
         }
+    }
+
+    public function ideChats(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+
+        $chats = IdeChat::where('hosting_project_id', $project->id)
+            ->withCount('messages')
+            ->latest('updated_at')
+            ->limit(30)
+            ->get()
+            ->map(fn ($c) => [
+                'id' => $c->hashid,
+                'title' => $c->title,
+                'messages' => $c->messages_count,
+                'updated_at' => $c->updated_at->diffForHumans(),
+            ]);
+
+        return response()->json(['chats' => $chats]);
+    }
+
+    public function createIdeChat(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $chat = IdeChat::create([
+            'hosting_project_id' => $project->id,
+            'user_id' => Auth::id(),
+            'title' => 'Percakapan baru',
+        ]);
+
+        return response()->json(['chat_id' => $chat->hashid]);
+    }
+
+    public function ideChatMessages(Request $request, $hashid, $chatId)
+    {
+        $project = $this->getValidProject($hashid);
+        $chat = IdeChat::where('hosting_project_id', $project->id)->findByHashidOrFail($chatId);
+
+        $messages = $chat->messages()->get()->map(fn ($m) => [
+            'role' => $m->role,
+            'content' => $m->content,
+        ]);
+
+        return response()->json(['messages' => $messages]);
+    }
+
+    public function deleteIdeChat(Request $request, $hashid, $chatId)
+    {
+        $project = $this->getValidProject($hashid);
+        $chat = IdeChat::where('hosting_project_id', $project->id)->findByHashidOrFail($chatId);
+        $chat->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function ideLogTail(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
+        $logPath = hosting_clients_dir() . "/{$subdomain}/storage/logs/laravel.log";
+
+        if (!is_file($logPath)) {
+            return response()->json(['content' => '(belum ada file log: storage/logs/laravel.log)']);
+        }
+
+        $size = filesize($logPath);
+        $fp = fopen($logPath, 'r');
+        fseek($fp, max(0, $size - 200000));
+        $content = (string) stream_get_contents($fp);
+        fclose($fp);
+
+        $lines = array_slice(explode("\n", $content), -250);
+
+        return response()->json(['content' => implode("\n", $lines)]);
+    }
+
+    public function ideLintPhp(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        $subdomain = explode('.', $project->ryaze_domain)[0];
+        $root = hosting_clients_dir() . "/{$subdomain}";
+
+        // Pastikan PHP CLI tersedia
+        exec('command -v php 2>/dev/null', $whichOut, $whichCode);
+        if ($whichCode !== 0 || empty($whichOut)) {
+            return response()->json(['error' => 'PHP CLI tidak tersedia di server.'], 500);
+        }
+
+        $files = [];
+        foreach (['app', 'routes', 'config', 'database'] as $dir) {
+            $base = $root . '/' . $dir;
+            if (!is_dir($base)) {
+                continue;
+            }
+            $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($base, \FilesystemIterator::SKIP_DOTS));
+            foreach ($it as $f) {
+                if ($f->getExtension() === 'php') {
+                    $files[] = $f->getPathname();
+                    if (count($files) >= 80) {
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        $results = [];
+        foreach ($files as $file) {
+            $out = null;
+            $code = 0;
+            exec('php -l ' . escapeshellarg($file) . ' 2>&1', $out, $code);
+            if ($code !== 0) {
+                $results[] = [
+                    'file' => str_replace($root . '/', '', $file),
+                    'error' => trim(implode("\n", $out)),
+                ];
+            }
+        }
+
+        return response()->json(['results' => $results]);
     }
 
     /**
@@ -1517,7 +1664,10 @@ PHP;
         }
 
         // ── Sesi direktori aktif per project (persistent antar perintah) ──
-        $sessionKey = 'terminal_cwd_' . $project->id;
+        // term_id opsional: setiap instance terminal (tab/split) punya cwd sendiri
+        $termId = preg_replace('/[^a-zA-Z0-9]/', '', (string) $request->input('term_id', 'main'));
+        $termId = $termId === '' ? 'main' : substr($termId, 0, 20);
+        $sessionKey = 'terminal_cwd_' . $project->id . '_' . $termId;
         $cwd = session($sessionKey, $projectDir);
         $baseDir = rtrim(str_replace('\\', '/', $projectDir), '/');
         $normCwd = str_replace('\\', '/', $cwd);
