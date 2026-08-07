@@ -273,9 +273,6 @@ class DashboardController extends Controller
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $filePath = hosting_clients_dir() . "/{$subdomain}/.suspended";
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $filePath = substr(base_path(), 0, 2) . str_replace('/', '\\', $filePath);
-        }
 
         // Buat file marker agar Nginx 503
         touch($filePath);

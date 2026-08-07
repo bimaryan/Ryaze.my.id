@@ -32,7 +32,7 @@ class BlogController extends Controller
         $articles = $query->paginate(9)->withQueryString();
         $categories = ArticleCategory::withCount(['articles' => function ($q) {
             $q->published();
-        }])->having('articles_count', '>', 0)->orderBy('name')->get();
+        }])->get()->reject(fn ($c) => $c->articles_count < 1)->sortBy('name')->values();
 
         return view('pages.blog.index', compact('articles', 'categories', 'featured'));
     }
@@ -86,7 +86,7 @@ class BlogController extends Controller
 
         $categories = ArticleCategory::withCount(['articles' => function ($q) {
             $q->published();
-        }])->having('articles_count', '>', 0)->orderBy('name')->get();
+        }])->get()->reject(fn ($c) => $c->articles_count < 1)->sortBy('name')->values();
 
         return view('pages.blog.index', [
             'articles' => $articles,
