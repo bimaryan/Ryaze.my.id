@@ -2276,11 +2276,10 @@
             // monaco.editor.setTheme(savedTheme) will be called after editor is created.
         }
 
-        // ── Activity Bar Logic (VS Code-style toggle) ───────────────────────────
+        // ── Activity Bar Logic (VS Code-style toggle, kiri & kanan independen) ──
         var ideLeftOpen = true;
         var ideRightOpen = false;
         var ideZenMode = false;
-        var ideActiveSide = 'left';
 
         function ideSetActiveButton(btn) {
             document.querySelectorAll('.ide-activity-btn').forEach(b => {
@@ -2315,31 +2314,23 @@
                 const isLeft = target !== 'ide-right-chat';
 
                 if (isLeft) {
-                    if (ideRightOpen) ideSetRightPanel(false);
-                    if (ideActiveSide === 'left' && ideLeftOpen && btn.classList.contains('border-indigo-500')) {
+                    // Klik nama view yang sedang aktif = tutup sidebar (VS Code behavior)
+                    if (ideLeftOpen && btn.classList.contains('border-indigo-500')) {
                         ideSetLeftSidebar(false);
                         return;
                     }
                     ideSetLeftSidebar(true);
-                    ideActiveSide = 'left';
-                    document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
+                    document.querySelectorAll('#ide-left-sidebar .ide-sidebar-view').forEach(v => v.classList.add('hidden'));
                     document.getElementById(target).classList.remove('hidden');
                     ideSetActiveButton(btn);
                 } else {
-                    if (ideLeftOpen) {
-                        document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
-                        ideSetLeftSidebar(false);
-                    }
+                    // Klik AI = toggle panel kanan, tanpa menyentuh panel kiri
                     if (ideRightOpen) {
                         ideSetRightPanel(false);
                         ideSetActiveButton(null);
-                        ideActiveSide = 'left';
                         return;
                     }
                     ideSetRightPanel(true);
-                    ideActiveSide = 'right';
-                    document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
-                    document.getElementById(target).classList.remove('hidden');
                     ideSetActiveButton(btn);
                 }
             });
@@ -2358,7 +2349,6 @@
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
                 e.preventDefault();
-                if (ideRightOpen) ideSetRightPanel(false);
                 ideSetLeftSidebar(!ideLeftOpen);
             }
         });
