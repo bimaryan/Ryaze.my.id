@@ -62,6 +62,22 @@
                             <p class="text-sm font-medium text-slate-500 mb-1">Pendapatan (Bulan Ini)</p>
                             <h3 class="text-2xl font-bold text-slate-800 tracking-tight">Rp
                                 {{ number_format($totalRevenueMonth, 0, ',', '.') }}</h3>
+                            <div class="text-xs text-slate-400 mt-1.5 space-y-0.5">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="inline-block w-2 h-2 rounded-full bg-indigo-500"></span>
+                                    Joki: Rp {{ number_format($jokiRevenueMonth, 0, ',', '.') }}
+                                    ({{ number_format($jokiRevenueMonthCount) }} transaksi)
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    Hosting: Rp {{ number_format($hostingRevenueMonth, 0, ',', '.') }}
+                                    ({{ number_format($hostingRevenueMonthCount) }} transaksi)
+                                </div>
+                            </div>
+                            <a href="{{ route('superadmin.finance') }}"
+                                class="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-800 mt-2 transition-colors">
+                                <i class="fa-solid fa-chart-pie"></i> Lihat Laporan Keuangan
+                            </a>
                         </div>
                         <div
                             class="w-12 h-12 flex items-center justify-center rounded-xl bg-sky-100 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors duration-300">

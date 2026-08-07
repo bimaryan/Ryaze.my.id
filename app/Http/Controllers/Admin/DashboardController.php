@@ -35,6 +35,10 @@ class DashboardController extends Controller
             ->whereMonth('paid_at', $currentMonth)
             ->whereYear('paid_at', $currentYear)
             ->sum('amount');
+        $jokiRevenueMonthCount = JokiPayment::where('status', 'paid')
+            ->whereMonth('paid_at', $currentMonth)
+            ->whereYear('paid_at', $currentYear)
+            ->count();
         $jokiRevenueTotal = JokiPayment::where('status', 'paid')->sum('amount');
 
         // Hosting Revenue
@@ -42,6 +46,10 @@ class DashboardController extends Controller
             ->whereMonth('paid_at', $currentMonth)
             ->whereYear('paid_at', $currentYear)
             ->sum('amount');
+        $hostingRevenueMonthCount = HostingPayment::where('status', 'paid')
+            ->whereMonth('paid_at', $currentMonth)
+            ->whereYear('paid_at', $currentYear)
+            ->count();
         $hostingRevenueTotal = HostingPayment::where('status', 'paid')->sum('amount');
 
         // Total Revenue
@@ -115,8 +123,10 @@ class DashboardController extends Controller
             'activeHosting',
             'totalHosting',
             'jokiRevenueMonth',
+            'jokiRevenueMonthCount',
             'jokiRevenueTotal',
             'hostingRevenueMonth',
+            'hostingRevenueMonthCount',
             'hostingRevenueTotal',
             'totalRevenueMonth',
             'totalRevenueTotal',

@@ -231,6 +231,13 @@
                         <span class="ms-3 whitespace-nowrap">Kelola Penarikan</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('superadmin.finance') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.finance')) }}">
+                        <i class="fa-solid fa-chart-pie {{ $iconClass(request()->routeIs('superadmin.finance')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Laporan Keuangan</span>
+                    </a>
+                </li>
 
             @endif
 

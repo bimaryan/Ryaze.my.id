@@ -92,6 +92,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:superadmin', 'verified'])->group(function () {
         Route::get('superadmin/dashboard', [AdminDashboardController::class, 'index'])->name('superadmin.dashboard');
         Route::get('superadmin/server-status', [AdminDashboardController::class, 'getServerStatus'])->name('superadmin.server_status');
+
+        // Laporan Keuangan
+        Route::get('superadmin/finance', [\App\Http\Controllers\Admin\FinanceController::class, 'index'])->name('superadmin.finance');
         
         // Backup Sistem
         Route::get('superadmin/backup', [\App\Http\Controllers\Admin\BackupController::class, 'index'])->name('superadmin.backup.index');
