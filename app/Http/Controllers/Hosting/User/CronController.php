@@ -50,9 +50,30 @@ class CronController extends Controller
             'schedule_expression' => 'required|string|max:100',
         ]);
 
+        $command = trim($request->command);
+
+        // ════ SECURITY: command cron harus dari allowlist & tanpa shell metachar ════
+        $unsafeMeta = [';', '&', '`', '|', '<', '>', '$', '(', ')', '{', '}', '[', ']', '*', '?', '!', '~', '#', '"', "'", '\\', "\n"];
+        foreach ($unsafeMeta as $meta) {
+            if (str_contains($command, $meta)) {
+                return back()->with('error', "Cron ditolak: karakter '{$meta}' tidak diizinkan (mencegah chaining/injection).");
+            }
+        }
+
+        $allowedCronCommands = [
+            'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'date',
+            'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
+            'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'source', 'chmod', 'chown',
+            'tar', 'unzip', 'zip', 'clear', 'true', 'false',
+        ];
+        $firstWord = explode(' ', $command)[0];
+        if (! in_array($firstWord, $allowedCronCommands, true)) {
+            return back()->with('error', "Cron ditolak: command '{$firstWord}' tidak ada di daftar yang diizinkan.");
+        }
+
         HostingCron::create([
             'project_id' => $project->id,
-            'command' => trim($request->command),
+            'command' => $command,
             'schedule_expression' => trim($request->schedule_expression),
             'is_active' => true,
         ]);

@@ -28,34 +28,31 @@ try {
                 $projectPath = storage_path('app/hosting_clients/' . $subdomain);
             }
 
-            // ════ SECURITY: blokir command cron berbahaya ════
+            // ════ SECURITY: command cron harus dari allowlist & tanpa shell metachar ════
             $command = trim($cron->command);
             if (empty($command)) {
                 continue;
             }
 
-            $blockedCronPatterns = [
-                '/[;&|><`]/',                       // chaining & redirection
-                '/\$\(/',                           // command substitution
-                '/\brm\s+-rf\s+\//',                // rm -rf /
-                '/\bwget\b|\bcurl\b.*\|.*\b(sh|bash)\b/', // download → execute
-                '/\bnc\b|\bnetcat\b/',              // reverse shell
-                '/\bpasswd\b|\bshadow\b/',          // password files
-                '/\breboot\b|\bshutdown\b/',        // system control
-                '/\beval\b|\bexec\b\(\s*[\'"]?php/', // php exec
-                '/\bsudo\b/',
-            ];
-
-            $isDangerous = false;
-            foreach ($blockedCronPatterns as $pattern) {
-                if (preg_match($pattern, $command)) {
-                    $isDangerous = true;
-                    break;
+            // Deny metacharacter shell (no chaining, redirection, substitution, glob, quote-breaking)
+            $unsafeMeta = [';', '&', '`', '|', '<', '>', '$', '(', ')', '{', '}', '[', ']', '*', '?', '!', '~', '#', '"', "'", '\\', "\n"];
+            foreach ($unsafeMeta as $meta) {
+                if (str_contains($command, $meta)) {
+                    \Illuminate\Support\Facades\Log::warning('[CRON_BLOCKED] Cron command mengandung metachar dilarang: ' . $command);
+                    continue 2;
                 }
             }
 
-            if ($isDangerous) {
-                \Illuminate\Support\Facades\Log::warning('[CRON_BLOCKED] Cron command diblokir: ' . $command);
+            $allowedCronCommands = [
+                'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'date',
+                'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
+                'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'source', 'chmod', 'chown',
+                'tar', 'unzip', 'zip', 'mkdir', 'clear', 'true', 'false',
+            ];
+
+            $firstWord = explode(' ', $command)[0];
+            if (! in_array($firstWord, $allowedCronCommands, true)) {
+                \Illuminate\Support\Facades\Log::warning('[CRON_BLOCKED] Cron command tidak diizinkan: ' . $command);
                 continue;
             }
 

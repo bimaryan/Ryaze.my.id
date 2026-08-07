@@ -45,8 +45,8 @@ class DatabaseController extends Controller
             $password = $prefix . trim($request->db_password);
         }
 
-        $redisHost = env('REDIS_HOST', '127.0.0.1');
-        $redisPort = env('REDIS_PORT', 6379);
+        $redisHost = config('database.redis.default.host', '127.0.0.1');
+        $redisPort = config('database.redis.default.port', 6379);
 
         // Jika Anda menggunakan Redis 6+ dengan ACL, Anda bisa menjalankan perintah ACL SETUSER di sini
         // $redis = new \Redis();
@@ -195,8 +195,8 @@ class DatabaseController extends Controller
 
         $database = HostingDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
 
-        $rootPass = env('PANEL_MYSQL_ROOT_PASSWORD');
-        $mysqlHost = env('PANEL_MYSQL_HOST', '1Panel-mysql-KZAi');
+        $rootPass = config('services.panel_mysql.root_password');
+        $mysqlHost = config('services.panel_mysql.host');
 
         try {
             $pdo = new \PDO("mysql:host={$mysqlHost};port=3306", 'root', $rootPass);
@@ -503,10 +503,10 @@ class DatabaseController extends Controller
             return back()->with('error', 'Nama database "'.$cleanDbName.'" sudah digunakan.');
         }
 
-        $pgHost = env('PANEL_PGSQL_HOST');
-        $pgPort = env('PANEL_PGSQL_PORT', '5432');
-        $pgUser = env('PANEL_PGSQL_USER');
-        $pgPass = env('PANEL_PGSQL_PASSWORD');
+        $pgHost = config('services.panel_pgsql.host');
+        $pgPort = config('services.panel_pgsql.port');
+        $pgUser = config('services.panel_pgsql.user');
+        $pgPass = config('services.panel_pgsql.password');
 
         if (empty($pgHost) || empty($pgUser) || empty($pgPass)) {
             return back()->with('error', 'Konfigurasi PostgreSQL panel belum diatur di .env.');
@@ -564,10 +564,10 @@ class DatabaseController extends Controller
 
         $database = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->findOrFail($decoded[0]);
 
-        $pgHost = env('PANEL_PGSQL_HOST');
-        $pgPort = env('PANEL_PGSQL_PORT', '5432');
-        $pgUser = env('PANEL_PGSQL_USER');
-        $pgPass = env('PANEL_PGSQL_PASSWORD');
+        $pgHost = config('services.panel_pgsql.host');
+        $pgPort = config('services.panel_pgsql.port');
+        $pgUser = config('services.panel_pgsql.user');
+        $pgPass = config('services.panel_pgsql.password');
 
         if (empty($pgHost) || empty($pgUser) || empty($pgPass)) {
             return back()->with('error', 'Konfigurasi PostgreSQL panel belum diatur di .env.');

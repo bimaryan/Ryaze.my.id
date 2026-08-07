@@ -515,9 +515,9 @@ class AutoDeployProject implements ShouldQueue
     private function createCloudflareDNS($deploy): bool
     {
         $domainName = $this->project->ryaze_domain;
-        $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+        $apiToken = config('services.cloudflare.api_token');
         $tunnelUrl = preg_replace('#^https?://#', '', rtrim(
-            config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')),
+            config('services.cloudflare.tunnel_url'),
             '/'
         ));
 
@@ -528,7 +528,7 @@ class AutoDeployProject implements ShouldQueue
 
         // Ambil Zone ID secara dinamis
         $zoneName = explode('.', $domainName, 2)[1] ?? $domainName;
-        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        $zoneId = config('services.cloudflare.zone_id');
         $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
         if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
             $zoneId = $zoneReq->json('result.0.id');

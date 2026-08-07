@@ -112,8 +112,8 @@ class BuildApkJob implements ShouldQueue
             $javaSymlink = trim(shell_exec('which java 2>/dev/null') ?: '');
             $javaRealPath = $javaSymlink ? trim(shell_exec("readlink -f {$javaSymlink} 2>/dev/null") ?: $javaSymlink) : '';
             // Naiki ke JAVA_HOME (biasanya: .../bin/java -> ...)
-            $jdkPath = $javaRealPath ? dirname(dirname($javaRealPath)) : env('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk');
-            $sdkPath = env('ANDROID_SDK_ROOT', '/opt/android-sdk');
+            $jdkPath = $javaRealPath ? dirname(dirname($javaRealPath)) : config('services.apk_build.java_home');
+            $sdkPath = config('services.apk_build.android_sdk_root');
             $log .= "[INFO] Detected JAVA_HOME: {$jdkPath}\n";
             $log .= "[INFO] Detected ANDROID_SDK_ROOT: {$sdkPath}\n";
 

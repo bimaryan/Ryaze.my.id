@@ -65,11 +65,11 @@ class BackupController extends Controller
             }
 
             // Dump Database using pure PHP (ifsnop/mysqldump-php)
-            $dbHost = env('DB_HOST', '127.0.0.1');
-            $dbPort = env('DB_PORT', '3306');
-            $dbName = env('DB_DATABASE');
-            $dbUser = env('DB_USERNAME');
-            $dbPass = env('DB_PASSWORD');
+$dbHost = config('database.connections.mysql.host', '127.0.0.1');
+                $dbPort = config('database.connections.mysql.port', '3306');
+                $dbName = config('database.connections.mysql.database');
+                $dbUser = config('database.connections.mysql.username');
+                $dbPass = config('database.connections.mysql.password');
 
             try {
                 $dump = new \Ifsnop\Mysqldump\Mysqldump(
@@ -186,9 +186,9 @@ class BackupController extends Controller
             // Restore Database if exists
             $sqlFile = $tempExtractDir . '/database.sql';
             if (file_exists($sqlFile)) {
-                $dbHost = env('DB_HOST', '127.0.0.1');
-                $dbPort = env('DB_PORT', '3306');
-                $dbName = env('DB_DATABASE');
+                $dbHost = config('database.connections.mysql.host', '127.0.0.1');
+                $dbPort = config('database.connections.mysql.port', '3306');
+                $dbName = config('database.connections.mysql.database');
                 try {
                     $sql = file_get_contents($sqlFile);
                     \Illuminate\Support\Facades\DB::unprepared($sql);

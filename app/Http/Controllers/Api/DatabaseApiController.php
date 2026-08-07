@@ -47,8 +47,8 @@ class DatabaseApiController extends Controller
             'database' => $database->db_name,
             'basePath' => '/api/v1/db/' . $hashid,
             'middlewares' => 'cors',
-            'cors.allowedOrigins' => env('API_CORS_ALLOWED_ORIGINS', 'https://ryaze.my.id'),
-            'debug' => env('APP_DEBUG', false),
+            'cors.allowedOrigins' => config('services.api.cors_allowed_origins', 'https://ryaze.my.id'),
+            'debug' => config('services.api.debug', false),
         ]);
 
         // 3. Create the API instance and handle the request

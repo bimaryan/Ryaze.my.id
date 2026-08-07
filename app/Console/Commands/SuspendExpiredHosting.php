@@ -31,8 +31,10 @@ class SuspendExpiredHosting extends Command
     {
         $this->info("Memulai pengecekan hosting expired...");
 
+        // Status enum hosting_billings: active | past_due | canceled.
+        // 'unpaid' BUKAN nilai yang valid di kolom ini, jadi cron lama tidak pernah jalan.
         $expiredBillings = HostingBilling::where('next_due_date', '<', Carbon::now())
-            ->where('status', 'unpaid')
+            ->whereIn('status', ['active', 'past_due'])
             ->get();
 
         $count = 0;
@@ -40,6 +42,11 @@ class SuspendExpiredHosting extends Command
         foreach ($expiredBillings as $billing) {
             $user = $billing->user;
             if (!$user) continue;
+
+            // Tandai tagihan yang jatuh tempo sebagai past_due
+            if ($billing->status !== 'past_due') {
+                $billing->update(['status' => 'past_due']);
+            }
 
             $projects = \App\Models\HostingProject::where('user_id', $user->id)
                 ->where('status', 'active')

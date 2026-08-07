@@ -374,7 +374,7 @@ class DashboardController extends Controller
             }
         }
 
-        $groqApiKey = $userApiKey ?: env('GROQ_API_KEY');
+        $groqApiKey = $userApiKey ?: config('services.groq.api_key');
         if (empty($groqApiKey)) {
             return response()->json(['error' => 'GROQ_API_KEY belum dikonfigurasi di server.'], 500);
         }
@@ -1139,14 +1139,14 @@ PHP;
         ]);
 
         // Create Cloudflare DNS for Dev Server
-        $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
-        $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')), '/'));
+        $apiToken = config('services.cloudflare.api_token');
+        $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url'), '/'));
         
         $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
         $domainName = "dev{$port}" . $domainExtension;
         
         $zoneName = ltrim($domainExtension, '.');
-        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        $zoneId = config('services.cloudflare.zone_id');
         $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
         if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
             $zoneId = $zoneReq->json('result.0.id');
@@ -1226,11 +1226,11 @@ PHP;
         // Hapus Cloudflare DNS for Dev Server
         if ($devPort) {
             // Hapus dev server DNS jika ada
-            $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+            $apiToken = config('services.cloudflare.api_token');
             if ($apiToken) {
                 $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
                 $zoneName = ltrim($domainExtension, '.');
-                $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+                $zoneId = config('services.cloudflare.zone_id');
                 
                 $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
                 if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
@@ -1840,12 +1840,12 @@ PHP;
 
     private function deleteCloudflareDNS($domainName)
     {
-        $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+        $apiToken = config('services.cloudflare.api_token');
 
         if (!$apiToken) return;
 
         $zoneName = explode('.', $domainName, 2)[1] ?? $domainName;
-        $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+        $zoneId = config('services.cloudflare.zone_id');
         
         $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
         if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {

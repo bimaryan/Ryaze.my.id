@@ -42,6 +42,7 @@ return [
     */
     'pakasir' => [
         'slug' => env('PAKASIR_SLUG', 'ryaze'),
+        'api_key' => env('PAKASIR_API_KEY'),
     ],
 
     /*
@@ -63,6 +64,58 @@ return [
     'panel_mysql' => [
         'root_password' => env('PANEL_MYSQL_ROOT_PASSWORD'),
         'host' => env('PANEL_MYSQL_HOST', '1Panel-mysql-KZAi'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Panel PostgreSQL (untuk provisioning database pgsql klien)
+    |--------------------------------------------------------------------------
+    */
+    'panel_pgsql' => [
+        'host' => env('PANEL_PGSQL_HOST'),
+        'port' => env('PANEL_PGSQL_PORT', '5432'),
+        'user' => env('PANEL_PGSQL_USER'),
+        'password' => env('PANEL_PGSQL_PASSWORD'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Poste.io (email hosting klien)
+    |--------------------------------------------------------------------------
+    */
+    'poste' => [
+        'url' => env('POSTE_IO_URL'),
+        'user' => env('POSTE_IO_USER'),
+        'password' => env('POSTE_IO_PASSWORD'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Android build (Apk Builder)
+    |--------------------------------------------------------------------------
+    */
+    'apk_build' => [
+        'java_home' => env('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk'),
+        'android_sdk_root' => env('ANDROID_SDK_ROOT', '/opt/android-sdk'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | API eksternal
+    |--------------------------------------------------------------------------
+    */
+    'api' => [
+        'cors_allowed_origins' => env('API_CORS_ALLOWED_ORIGINS', 'https://ryaze.my.id'),
+        'debug' => env('APP_DEBUG', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reverb WebSocket (shared key untuk tunnel client)
+    |--------------------------------------------------------------------------
+    */
+    'reverb' => [
+        'app_key' => env('REVERB_APP_KEY'),
     ],
 
     /*

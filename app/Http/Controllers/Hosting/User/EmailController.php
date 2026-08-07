@@ -56,9 +56,9 @@ class EmailController extends Controller
      */
     private function syncToMailServer(HostingEmail $email, string $rawPassword, string $action)
     {
-        $url = env('POSTE_IO_URL');
-        $user = env('POSTE_IO_USER');
-        $pass = env('POSTE_IO_PASSWORD');
+        $url = config('services.poste.url');
+        $user = config('services.poste.user');
+        $pass = config('services.poste.password');
 
         if (!$url || !$user || !$pass) {
             \Log::warning("[MailServer Sync] Missing Poste.io credentials in .env");

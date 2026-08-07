@@ -35,10 +35,10 @@ class TunnelManagerController extends Controller
 
         // Create Cloudflare DNS Record
         try {
-            $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
-            $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url', env('CLOUDFLARE_TUNNEL_URL')), '/'));
+            $apiToken = config('services.cloudflare.api_token');
+            $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url'), '/'));
             $domainName = $tunnel->subdomain . '.ryaze.my.id';
-            $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+            $zoneId = config('services.cloudflare.zone_id');
 
             if ($zoneId && $apiToken && $tunnelUrl) {
                 $existing = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
@@ -74,7 +74,7 @@ class TunnelManagerController extends Controller
                 if (!file_exists($projectDir)) exec("mkdir -p \"{$projectDir}\"");
             }
 
-            $relayApiUrl = rtrim(env('APP_URL', 'https://ryaze.my.id'), '/') . '/api/tunnel/relay';
+            $relayApiUrl = rtrim(config('app.url', 'https://ryaze.my.id'), '/') . '/api/tunnel/relay';
             $proxyScript = <<<PHP
 <?php
 // Ryaze Tunnel Relay Proxy
@@ -131,9 +131,9 @@ PHP;
         
         // Delete Cloudflare DNS Record
         try {
-            $apiToken = config('services.cloudflare.api_token', env('CLOUDFLARE_API_TOKEN'));
+            $apiToken = config('services.cloudflare.api_token');
             $domainName = $tunnel->subdomain . '.ryaze.my.id';
-            $zoneId = config('services.cloudflare.zone_id', env('CLOUDFLARE_ZONE_ID'));
+            $zoneId = config('services.cloudflare.zone_id');
 
             if ($zoneId && $apiToken) {
                 $existing = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
@@ -386,9 +386,9 @@ while (true) {
 }
 PHP;
         
-        $serverUrl = rtrim(env('APP_URL', 'https://ryaze.my.id'), '/');
+        $serverUrl = rtrim(config('app.url', 'https://ryaze.my.id'), '/');
         $websocketUrl = str_replace(['http://', 'https://'], ['ws://', 'wss://'], $serverUrl);
-        $appKey = env('REVERB_APP_KEY');
+        $appKey = config('services.reverb.app_key');
         
         $clientCode = str_replace(
             ['{SUBDOMAIN}', '{PORT}', '{SERVER_URL}', '{WEBSOCKET_URL}', '{APP_KEY}', '{SECRET}'],
@@ -659,9 +659,9 @@ while (true) {
 }
 PHP;
         
-        $serverUrl = rtrim(env('APP_URL', 'https://ryaze.my.id'), '/');
+        $serverUrl = rtrim(config('app.url', 'https://ryaze.my.id'), '/');
         $websocketUrl = str_replace(['http://', 'https://'], ['ws://', 'wss://'], $serverUrl);
-        $appKey = env('REVERB_APP_KEY');
+        $appKey = config('services.reverb.app_key');
         
         $clientCode = str_replace(
             ['{SUBDOMAIN}', '{PORT}', '{SERVER_URL}', '{WEBSOCKET_URL}', '{APP_KEY}', '{SECRET}'],

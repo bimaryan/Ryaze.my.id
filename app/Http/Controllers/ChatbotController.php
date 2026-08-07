@@ -17,8 +17,8 @@ class ChatbotController extends Controller
             'history.*.content' => 'required|string|max:2000'
         ]);
 
-        $apiKey = env('GROQ_API_KEY');
-        $model = env('GROQ_TEXT_MODEL', 'llama-3.3-70b-versatile');
+        $apiKey = config('services.groq.api_key');
+        $model = config('services.groq.text_model');
 
         if (!$apiKey) {
             return response()->json(['error' => 'API Key not configured'], 500);

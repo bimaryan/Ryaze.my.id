@@ -52,8 +52,8 @@ class DomainController extends Controller
         $domainName = strtolower(trim($request->domain_name));
         $domainName = preg_replace('#^https?://#', '', $domainName);
 
-        $apiToken = env('CLOUDFLARE_API_TOKEN');
-        $primaryZoneId = env('CLOUDFLARE_ZONE_ID');
+        $apiToken = config('services.cloudflare.api_token');
+        $primaryZoneId = config('services.cloudflare.zone_id');
 
         // 1. Get Account ID from Primary Zone
         $zoneInfoRes = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$primaryZoneId}");
@@ -106,7 +106,7 @@ class DomainController extends Controller
 
         $projectHashid = $domain->project->hashid;
         
-        $apiToken = env('CLOUDFLARE_API_TOKEN');
+        $apiToken = config('services.cloudflare.api_token');
 
         if ($domain->cf_zone_id) {
             Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}");
@@ -138,7 +138,7 @@ class DomainController extends Controller
             return back()->with('error', 'Zone ID tidak ditemukan.');
         }
 
-        $apiToken = env('CLOUDFLARE_API_TOKEN');
+        $apiToken = config('services.cloudflare.api_token');
         
         // Force Cloudflare to re-check nameservers immediately
         Http::withToken($apiToken)->put("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}/activation_check");
@@ -152,7 +152,7 @@ class DomainController extends Controller
                 $domain->update(['ssl_status' => 'active']);
 
                 // Create CNAME records to tunnel
-                $tunnelUrl = env('CLOUDFLARE_TUNNEL_URL');
+                $tunnelUrl = config('services.cloudflare.tunnel_url');
                 if ($tunnelUrl) {
                     // Create @ record
                     Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$domain->cf_zone_id}/dns_records", [

@@ -51,8 +51,8 @@ class PaymentCallbackController extends Controller
         }
 
         // 1. Verifikasi Resmi Pakasir (Cross-Check API)
-        $apiKey = env('PAKASIR_API_KEY');
-        $projectSlug = env('PAKASIR_SLUG');
+        $apiKey = config('services.pakasir.api_key');
+        $projectSlug = config('services.pakasir.slug');
         
         if (!$apiKey || !$projectSlug) {
             \Illuminate\Support\Facades\Log::error('Pakasir API Key or Slug is missing in .env');
