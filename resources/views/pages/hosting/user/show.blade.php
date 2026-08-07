@@ -488,7 +488,7 @@
 
         {{-- TAB: IDE VS CODE --}}
         <div id="panel-ide" class="tab-panel hidden">
-            <div class="flex h-[650px] bg-[#1e1e1e] rounded-xl overflow-hidden shadow-xl border border-slate-700">
+            <div id="ide-shell" class="flex h-[650px] bg-[#1e1e1e] rounded-xl overflow-hidden shadow-xl border border-slate-700">
                 
                 <!-- Activity Bar -->
                 <div class="w-12 bg-[#333333] flex flex-col items-center py-2 shrink-0 border-r border-[#1e1e1e] z-10">
@@ -501,18 +501,22 @@
                     <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-extensions" title="Extensions">
                         <i class="fa-solid fa-cubes text-xl"></i>
                     </button>
-                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-chat" title="Ryaze AI">
-                        <i class="fa-brands fa-galactic-senate text-xl"></i>
-                    </button>
                     <div class="mt-auto mb-2">
                         <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-settings" title="Settings / Themes">
                             <i class="fa-solid fa-gear text-xl"></i>
                         </button>
+                        <button id="ide-ai-activity-btn" class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-right-chat" title="Ryaze AI">
+                            <i class="fa-brands fa-galactic-senate text-xl"></i>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Sidebar -->
-                <div class="w-64 bg-[#252526] border-r border-[#333] flex flex-col shrink-0">
+                <!-- Left Sidebar (collapsible) -->
+                <div id="ide-left-sidebar" class="w-64 bg-[#252526] border-r border-[#333] flex flex-col shrink-0 relative overflow-hidden transition-all duration-150">
+                    <button id="ide-collapse-left" title="Collapse Sidebar (Ctrl+B)"
+                        class="absolute top-2 right-2 z-30 w-6 h-6 flex items-center justify-center rounded hover:bg-[#333] text-slate-500 hover:text-white transition-colors">
+                        <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                    </button>
                     
                     <!-- Explorer View -->
                     <div id="ide-sidebar-explorer" class="ide-sidebar-view flex flex-col h-full">
@@ -614,26 +618,17 @@
                     <!-- Ryaze AI Chat View -->
                     <div id="ide-sidebar-chat" class="ide-sidebar-view hidden flex flex-col h-full">
                         <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333]">
-                            <i class="fa-brands fa-galactic-senate text-indigo-400 mr-1"></i> <span>Ryaze AI v1.0</span>
+                            <i class="fa-brands fa-galactic-senate text-indigo-400 mr-1"></i> <span>Ryaze AI v2.0</span>
                         </div>
-                        <div id="grok-chat-messages" class="flex-1 overflow-y-auto p-3 text-sm flex flex-col gap-3 font-sans">
-                            <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
-                                Halo! Saya <b>Ryaze AI v1.0</b>. Anda bisa bertanya soal kode, minta analisis bug, atau tulis <i>prompt</i> untuk generate kode baru dengan kecepatan pemrosesan super tinggi.
-                            </div>
-                        </div>
-                        <div class="p-3 border-t border-[#333] bg-[#252526]">
-                            <div id="grok-chat-form" class="flex flex-col gap-2">
-                                <textarea id="grok-chat-input" rows="2" class="w-full bg-[#3c3c3c] text-white text-xs px-3 py-2 rounded outline-none border border-[#444] focus:border-indigo-500 resize-none" placeholder="Tanya Ryaze AI... (Enter untuk kirim, Shift+Enter untuk baris baru)"></textarea>
-                                <button type="button" id="grok-chat-send-btn" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-xs hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-paper-plane"></i> Kirim
-                                </button>
-                            </div>
+                        <div class="flex-1 flex flex-col items-center justify-center gap-3 text-slate-500 p-6 text-center">
+                            <i class="fa-brands fa-galactic-senate text-4xl text-indigo-500/40"></i>
+                            <p class="text-xs leading-relaxed">Ryaze AI sudah dipindah ke panel kanan.<br>Klik ikon <i class="fa-brands fa-galactic-senate text-slate-300"></i> di bawah activity bar.</p>
                         </div>
                     </div>
 
                 </div>
                 <!-- Editor -->
-                <div class="flex-1 flex flex-col relative bg-[#1e1e1e]">
+                <div class="flex-1 flex flex-col relative bg-[#1e1e1e] min-w-0">
                     <div id="ide-tabs-bar" class="h-9 bg-[#252526] flex items-stretch overflow-x-auto scrollbar-hide border-b border-[#1e1e1e] shrink-0">
                         <div class="flex items-center gap-2 px-4 text-xs text-slate-500 font-mono"><i class="fa-solid fa-folder-open text-amber-500/70"></i> Ryaze IDE</div>
                     </div>
@@ -643,6 +638,12 @@
                             <span id="ide-current-filename" class="truncate">Pilih file...</span>
                         </div>
                         <div class="flex items-center gap-3">
+                            <button id="ide-zen-btn" title="Fullscreen (F11)" class="text-slate-500 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
+                                <i class="fa-solid fa-expand text-sm"></i>
+                            </button>
+                            <button id="ide-popout-btn" title="Buka di jendela baru" class="text-slate-500 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+                            </button>
                             <button id="ide-save-btn" data-action="ide-save" class="hidden text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded transition-colors flex items-center gap-1.5 font-semibold">
                                 <i class="fa-solid fa-save"></i> Simpan
                             </button>
@@ -656,6 +657,41 @@
                     </div>
                     <div id="ide-loader" class="hidden absolute inset-0 bg-[#1e1e1e]/80 flex items-center justify-center z-10">
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500"></i>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Ryaze AI (collapsible) -->
+                <div id="ide-right-panel" class="w-80 bg-[#252526] border-l border-[#333] flex flex-col shrink-0 relative overflow-hidden transition-all duration-150">
+                    <div id="ide-right-chat" class="ide-sidebar-view flex flex-col h-full">
+                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-[#333] flex justify-between items-center shrink-0">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-brands fa-galactic-senate text-indigo-400"></i> Ryaze AI v2.0
+                                <span class="text-[8px] bg-indigo-600/20 text-indigo-300 px-1.5 py-0.5 rounded font-semibold">70B</span>
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <button id="ide-chat-clear" title="Bersihkan percakapan" class="text-slate-500 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                <button id="ide-collapse-right" title="Tutup Panel AI" class="text-slate-500 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                            </div>
+                        </div>
+                        <div id="grok-chat-messages" class="flex-1 overflow-y-auto p-3 text-sm flex flex-col gap-3 font-sans">
+                            <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
+                                Halo! Saya <b>Ryaze AI v2.0</b>. Bisa analisis bug, generate kode, atau <i>edit file project langsung</i> (buat, ubah, rename, hapus, append). Konteks file yang sedang dibuka otomatis terbaca.
+                            </div>
+                        </div>
+                        <div class="px-3 pt-2 flex gap-1.5 flex-wrap shrink-0">
+                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 text-slate-300 hover:text-white px-2 py-1 rounded-full transition-colors border border-[#444]">Perbaiki kode</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 text-slate-300 hover:text-white px-2 py-1 rounded-full transition-colors border border-[#444]">Analisis bug</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 text-slate-300 hover:text-white px-2 py-1 rounded-full transition-colors border border-[#444]">Buat file</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 text-slate-300 hover:text-white px-2 py-1 rounded-full transition-colors border border-[#444]">Jelaskan</button>
+                        </div>
+                        <div class="p-3 border-t border-[#333] bg-[#252526] shrink-0">
+                            <div id="grok-chat-form" class="flex flex-col gap-2">
+                                <textarea id="grok-chat-input" rows="2" class="w-full bg-[#3c3c3c] text-white text-xs px-3 py-2 rounded outline-none border border-[#444] focus:border-indigo-500 resize-none" placeholder="Tanya Ryaze AI... (Enter untuk kirim, Shift+Enter untuk baris baru)"></textarea>
+                                <button type="button" id="grok-chat-send-btn" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-xs hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i> Kirim
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1219,6 +1255,11 @@
                 }
             }
         };
+
+        // Dukungan URL hash: #ide langsung membuka tab IDE (untuk mode popout/new window)
+        if (location.hash && location.hash.startsWith('#') && document.getElementById('panel-' + location.hash.slice(1))) {
+            switchTab(location.hash.slice(1));
+        }
     </script>
 
     {{-- ── SCRIPT 4: Terminal ───────────────────────────────────────────────── --}}
@@ -1818,6 +1859,7 @@
         var ideEditorInstance = null;
         var ideCurrentPath = '';
         var ideEditingFile = '';
+        var ideCurrentFilename = '';
         var ideLoading = false;
         var ideTabs = {};   // path -> { model, filename, dirty }
         var ideActiveTab = null;
@@ -1950,6 +1992,7 @@
             var saveBtn = document.getElementById('ide-save-btn');
             const emptyState = document.getElementById('ide-empty-state');
             document.getElementById('ide-current-filename').textContent = filename;
+            ideCurrentFilename = path;
             loader.classList.remove('hidden');
 
             fetch(`${fileReadUrl}?path=${encodeURIComponent(path)}`)
@@ -2233,19 +2276,129 @@
             // monaco.editor.setTheme(savedTheme) will be called after editor is created.
         }
 
-        // ── Activity Bar Logic ──────────────────────────────────────────────────
-        document.querySelectorAll('.ide-activity-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.ide-activity-btn').forEach(b => {
-                    b.classList.remove('text-white', 'border-indigo-500');
-                    b.classList.add('text-slate-500', 'border-transparent');
-                });
+        // ── Activity Bar Logic (VS Code-style toggle) ───────────────────────────
+        var ideLeftOpen = true;
+        var ideRightOpen = false;
+        var ideZenMode = false;
+        var ideActiveSide = 'left';
+
+        function ideSetActiveButton(btn) {
+            document.querySelectorAll('.ide-activity-btn').forEach(b => {
+                b.classList.remove('text-white', 'border-indigo-500');
+                b.classList.add('text-slate-500', 'border-transparent');
+            });
+            if (btn) {
                 btn.classList.remove('text-slate-500', 'border-transparent');
                 btn.classList.add('text-white', 'border-indigo-500');
+            }
+        }
 
-                document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
-                document.getElementById(btn.dataset.target).classList.remove('hidden');
+        function ideSetLeftSidebar(open) {
+            ideLeftOpen = open;
+            const sb = document.getElementById('ide-left-sidebar');
+            sb.style.width = open ? '' : '0px';
+            sb.style.borderRightWidth = open ? '' : '0px';
+            if (ideEditorInstance) setTimeout(() => ideEditorInstance.layout(), 80);
+        }
+
+        function ideSetRightPanel(open) {
+            ideRightOpen = open;
+            const rp = document.getElementById('ide-right-panel');
+            rp.style.width = open ? '' : '0px';
+            rp.style.borderLeftWidth = open ? '' : '0px';
+            if (ideEditorInstance) setTimeout(() => ideEditorInstance.layout(), 80);
+        }
+
+        document.querySelectorAll('.ide-activity-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.target;
+                const isLeft = target !== 'ide-right-chat';
+
+                if (isLeft) {
+                    if (ideRightOpen) ideSetRightPanel(false);
+                    if (ideActiveSide === 'left' && ideLeftOpen && btn.classList.contains('border-indigo-500')) {
+                        ideSetLeftSidebar(false);
+                        return;
+                    }
+                    ideSetLeftSidebar(true);
+                    ideActiveSide = 'left';
+                    document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
+                    document.getElementById(target).classList.remove('hidden');
+                    ideSetActiveButton(btn);
+                } else {
+                    if (ideLeftOpen) {
+                        document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
+                        ideSetLeftSidebar(false);
+                    }
+                    if (ideRightOpen) {
+                        ideSetRightPanel(false);
+                        ideSetActiveButton(null);
+                        ideActiveSide = 'left';
+                        return;
+                    }
+                    ideSetRightPanel(true);
+                    ideActiveSide = 'right';
+                    document.querySelectorAll('.ide-sidebar-view').forEach(v => v.classList.add('hidden'));
+                    document.getElementById(target).classList.remove('hidden');
+                    ideSetActiveButton(btn);
+                }
             });
+        });
+
+        document.getElementById('ide-collapse-left')?.addEventListener('click', () => {
+            ideSetLeftSidebar(false);
+            ideSetActiveButton(null);
+        });
+
+        document.getElementById('ide-collapse-right')?.addEventListener('click', () => {
+            ideSetRightPanel(false);
+            ideSetActiveButton(null);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+                e.preventDefault();
+                if (ideRightOpen) ideSetRightPanel(false);
+                ideSetLeftSidebar(!ideLeftOpen);
+            }
+        });
+
+        // ── Zen / Fullscreen Mode (VS Code "Expand") ─────────────────────────────
+        function ideSetZen(zen) {
+            ideZenMode = zen;
+            const shell = document.getElementById('ide-shell');
+            const panel = document.getElementById('panel-ide');
+            const zenBtn = document.getElementById('ide-zen-btn');
+            if (zen) {
+                shell.classList.add('ide-zen-shell');
+                panel.classList.add('ide-zen-panel');
+                document.body.style.overflow = 'hidden';
+                zenBtn.innerHTML = '<i class="fa-solid fa-compress text-sm"></i>';
+                zenBtn.title = 'Keluar Fullscreen (F11)';
+            } else {
+                shell.classList.remove('ide-zen-shell');
+                panel.classList.remove('ide-zen-panel');
+                document.body.style.overflow = '';
+                zenBtn.innerHTML = '<i class="fa-solid fa-expand text-sm"></i>';
+                zenBtn.title = 'Fullscreen (F11)';
+            }
+            if (ideEditorInstance) setTimeout(() => ideEditorInstance.layout(), 80);
+        }
+
+        document.getElementById('ide-zen-btn')?.addEventListener('click', () => ideSetZen(!ideZenMode));
+
+        document.getElementById('ide-popout-btn')?.addEventListener('click', () => {
+            window.open(location.href.split('#')[0] + '#ide', '_blank', 'noopener');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F11') {
+                const idePanel = document.getElementById('panel-ide');
+                if (idePanel && !idePanel.classList.contains('hidden')) {
+                    e.preventDefault();
+                    ideSetZen(!ideZenMode);
+                }
+            }
         });
 
         // ── Search Logic ────────────────────────────────────────────────────────
@@ -2301,7 +2454,28 @@
             }
         });
 
-        // ── Groq AI Logic ───────────────────────────────────────────────────────
+        // ── Groq AI Logic (Ryaze AI v2.0) ─────────────────────────────────────
+        var grokChatHistory = [];
+
+        document.querySelectorAll('.ide-chat-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const input = document.getElementById('grok-chat-input');
+                input.value = chip.textContent.trim() + ': ' + (ideCurrentFilename || '');
+                input.focus();
+            });
+        });
+
+        document.getElementById('ide-chat-clear')?.addEventListener('click', () => {
+            grokChatHistory = [];
+            const messagesContainer = document.getElementById('grok-chat-messages');
+            messagesContainer.innerHTML = `
+                <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
+                    Percakapan dibersihkan. Halo! Saya <b>Ryaze AI v2.0</b> — tanyakan apa saja soal kode Anda.
+                </div>
+            `;
+            hotToast('Percakapan dibersihkan', 'success');
+        });
+
         var sendGrokMessage = () => {
             const input = document.getElementById('grok-chat-input');
             const val = input.value.trim();
@@ -2321,16 +2495,20 @@
             const loaderId = 'grok-loader-' + Date.now();
             messagesContainer.innerHTML += `
                 <div id="${loaderId}" class="bg-[#333] text-slate-400 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs mt-1 border border-[#444]">
-                    <i class="fa-solid fa-ellipsis fa-fade"></i> Ryaze AI sedang memproses...
+                    <i class="fa-solid fa-ellipsis fa-fade"></i> Ryaze AI sedang berpikir (Llama 3.3 70B)...
                 </div>
             `;
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             
             // Real API Call to Backend
             let contextData = '';
+            let currentFileName = '';
             if (ideActiveTab && ideTabs[ideActiveTab]) {
+                currentFileName = ideActiveTab;
                 contextData = `File: ${ideActiveTab}\n${ideTabs[ideActiveTab].model.getValue()}`;
             }
+
+            grokChatHistory.push({ role: 'user', content: val });
 
             fetch(ideChatUrl, {
                 method: 'POST',
@@ -2339,7 +2517,11 @@
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ message: val, context: contextData })
+                body: JSON.stringify({
+                    message: val,
+                    context: contextData,
+                    history: grokChatHistory.slice(-12)
+                })
             })
             .then(res => res.json())
             .then(data => {
@@ -2357,6 +2539,9 @@
                     
                     // Sembunyikan blok FILE_OPS dari tampilan (sudah dieksekusi server)
                     replyText = replyText.replace(/<<FILE_OPS>>[\s\S]*?<<END_FILE_OPS>>/g, '');
+                    
+                    // Simpan riwayat percakapan (tanpa blok FILE_OPS)
+                    grokChatHistory.push({ role: 'assistant', content: replyText.replace(/<<REPLACE_ALL>>[\s\S]*?<<END_REPLACE>>/g, '').trim() });
                     
                     // 1. Cek auto-replace (<<REPLACE_ALL>>)
                     const replaceMatch = replyText.match(/<<REPLACE_ALL>>([\s\S]*?)<<END_REPLACE>>/);
@@ -2402,7 +2587,7 @@
                     
                     messagesContainer.innerHTML += `
                         <div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1">
-                            <b>Ryaze AI v1.0:</b><br>
+                            <b>Ryaze AI v2.0:</b><br>
                             ${formattedReply}
                             ${opsHtml}
                         </div>
@@ -2449,6 +2634,41 @@
         .scrollbar-hide {
             -ms-overflow-style: none;
             scrollbar-width: none
+        }
+
+        /* ── IDE Zen Mode (fullscreen seperti VS Code) ── */
+        #panel-ide.ide-zen-panel {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            padding: 0 !important;
+            background: #1e1e1e;
+        }
+        #panel-ide.ide-zen-panel > .flex {
+            height: 100vh !important;
+            border-radius: 0 !important;
+            border: none !important;
+        }
+        #panel-ide.ide-zen-panel .ide-zen-shell {
+            border-radius: 0 !important;
+        }
+
+        /* Scrollbar gelap tipis untuk panel IDE */
+        #ide-left-sidebar::-webkit-scrollbar,
+        #ide-right-panel::-webkit-scrollbar,
+        #grok-chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        #ide-left-sidebar::-webkit-scrollbar-thumb,
+        #ide-right-panel::-webkit-scrollbar-thumb,
+        #grok-chat-messages::-webkit-scrollbar-thumb {
+            background: #3c3c3c;
+            border-radius: 3px;
+        }
+        #ide-left-sidebar::-webkit-scrollbar-thumb:hover,
+        #ide-right-panel::-webkit-scrollbar-thumb:hover,
+        #grok-chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4a;
         }
     </style>
 

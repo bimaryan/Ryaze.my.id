@@ -354,6 +354,7 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashid);
         $message = $request->input('message');
         $context = $request->input('context'); // Current editing file context
+        $history = $request->input('history', []); // Riwayat percakapan (multi-turn)
 
         if (empty($message)) {
             return response()->json(['error' => 'Pesan tidak boleh kosong.'], 400);
@@ -379,8 +380,43 @@ class DashboardController extends Controller
             return response()->json(['error' => 'GROQ_API_KEY belum dikonfigurasi di server.'], 500);
         }
 
-        $systemPrompt = "Kamu adalah Ryaze AI v1.0, asisten koding cerdas yang terintegrasi di dalam IDE Ryaze Hosting. Balas dalam bahasa Indonesia dengan gaya profesional, singkat, dan tepat sasaran. Jika pengguna menyertakan konteks kodenya, berikan analisis atau saran berdasarkan kode tersebut.\n\nJIKA PENGGUNA MEMINTA KAMU UNTUK MERUBAH ATAU MEMPERBAIKI KESELURUHAN KODE SECARA OTOMATIS (misal: 'perbaiki file ini', 'tulis ulang'), maka kamu WAJIB mengembalikan keseluruhan kode baru di dalam blok berikut:\n<<REPLACE_ALL>>\n[kode baru di sini]\n<<END_REPLACE>>\n\nJIKA PENGGUNA MEMINTA MEMBUAT / MENGUBAH FILE ATAU FOLDER LANGSUNG DI PROJECT (misal: 'buatkan file routes.php', 'buat folder app/Http/Controllers', 'tulis kode X ke file Y'), maka kamu WAJIB mengembalikan blok JSON berikut di akhir jawabanmu, selain jawaban teks singkatnya:\n<<FILE_OPS>>\n[{\"action\":\"write\",\"path\":\"folder/file.ext\",\"content\":\"isi file lengkap\"},{\"action\":\"mkdir\",\"path\":\"folder/baru\"}]\n<<END_FILE_OPS>>\n\nAturan FILE_OPS:\n- action 'write' = menulis/membuat file (path relatif terhadap root project, tanpa leading slash, gunakan garis miring /)\n- action 'mkdir' = membuat folder (termasuk folder bertingkat)\n- content file wajib utuh dan lengkap, bukan placeholder\n- jangan panggil FILE_OPS untuk sekedar menjawab pertanyaan tanpa diminta mengubah file\n\nJika pengguna hanya bertanya atau meminta cuplikan kode sebagian, gunakan markdown code block biasa (```).";
-        
+        // Sanitasi riwayat percakapan (maks 20 pesan terakhir)
+        $historyMessages = [];
+        if (is_array($history)) {
+            foreach (array_slice($history, -20) as $h) {
+                $role = $h['role'] ?? '';
+                $content = trim((string) ($h['content'] ?? ''));
+                if (in_array($role, ['user', 'assistant'], true) && $content !== '') {
+                    $historyMessages[] = ['role' => $role, 'content' => mb_substr($content, 0, 60000)];
+                }
+            }
+        }
+
+        // Snapshot struktur file project agar AI tahu path yang valid (agentic)
+        $projectTree = $this->buildProjectTree($projectDir);
+
+        $systemPrompt = "Kamu adalah Ryaze AI v2.0, asisten koding cerdas yang terintegrasi di dalam IDE Ryaze Hosting. Balas dalam bahasa Indonesia dengan gaya profesional, singkat, dan tepat sasaran. Jika pengguna menyertakan konteks kodenya, berikan analisis atau saran berdasarkan kode tersebut.\n"
+            . "Kamu menjalankan model Llama 3.3 70B — kamu mampu menjawab pertanyaan teknis mendalam, debugging, refactoring, dan pengembangan full-stack (PHP/Laravel, JS/React/Vue, Python, HTML/CSS, SQL, dsb).\n\n"
+            . "JIKA PENGGUNA MEMINTA KAMU UNTUK MERUBAH ATAU MEMPERBAIKI KESELURUHAN KODE SECARA OTOMATIS (misal: 'perbaiki file ini', 'tulis ulang'), maka kamu WAJIB mengembalikan keseluruhan kode baru di dalam blok berikut:\n<<REPLACE_ALL>>\n[kode baru di sini]\n<<END_REPLACE>>\n\n"
+            . "JIKA PENGGUNA MEMINTA MEMBUAT / MENGUBAH / MENGHAPUS FILE ATAU FOLDER LANGSUNG DI PROJECT (misal: 'buatkan file routes.php', 'buat folder app/Http/Controllers', 'tulis kode X ke file Y', 'hapus file X', 'rename file X jadi Y', 'tambah log ke file Z'), maka kamu WAJIB mengembalikan blok JSON berikut di akhir jawabanmu, selain jawaban teks singkatnya:\n"
+            . "<<FILE_OPS>>\n"
+            . "[{\"action\":\"write\",\"path\":\"folder/file.ext\",\"content\":\"isi file lengkap\"},{\"action\":\"mkdir\",\"path\":\"folder/baru\"},{\"action\":\"append\",\"path\":\"file.ext\",\"content\":\"teks tambahan di akhir file\"},{\"action\":\"rename\",\"path\":\"file-lama.ext\",\"new_path\":\"file-baru.ext\"},{\"action\":\"delete\",\"path\":\"file-atau-folder-kosong.ext\"}]\n"
+            . "<<END_FILE_OPS>>\n\n"
+            . "Aturan FILE_OPS:\n"
+            . "- action 'write' = menulis/membuat file baru (path relatif, tanpa leading slash, pakai garis miring /)\n"
+            . "- action 'mkdir' = membuat folder (termasuk bertingkat)\n"
+            . "- action 'append' = menambahkan teks di akhir file yang sudah ada\n"
+            . "- action 'rename' = memindahkan/mengganti nama file atau folder (wajib isi 'new_path')\n"
+            . "- action 'delete' = menghapus file (atau folder kosong)\n"
+            . "- content file wajib utuh dan lengkap, bukan placeholder\n"
+            . "- jangan panggil FILE_OPS untuk sekedar menjawab pertanyaan tanpa diminta mengubah file\n"
+            . "- gunakan path yang benar-benar ada dari struktur project yang diberikan (jika ada) — jangan menebak path acak\n\n"
+            . "Jika pengguna hanya bertanya atau meminta cuplikan kode sebagian, gunakan markdown code block biasa (```).";
+
+        if (!empty($projectTree)) {
+            $systemPrompt .= "\n\nStruktur file project saat ini (referensi untuk path FILE_OPS):\n```\n{$projectTree}\n```";
+        }
+
         $userMessage = $message;
         if (!empty($context)) {
             $userMessage = "Konteks file yang sedang saya buka:\n```\n" . $context . "\n```\n\nPertanyaan saya:\n" . $message;
@@ -388,20 +424,21 @@ class DashboardController extends Controller
 
         try {
             $response = Http::withToken($groqApiKey)
-                ->timeout(20)
+                ->timeout(60)
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model' => 'llama-3.1-8b-instant',
-                    'messages' => [
-                        ['role' => 'system', 'content' => $systemPrompt],
-                        ['role' => 'user', 'content' => $userMessage],
-                    ],
-                    'temperature' => 0.7,
+                    'model' => config('services.groq.text_model', 'llama-3.3-70b-versatile'),
+                    'messages' => array_merge(
+                        [['role' => 'system', 'content' => $systemPrompt]],
+                        $historyMessages,
+                        [['role' => 'user', 'content' => $userMessage]]
+                    ),
+                    'temperature' => 0.6,
+                    'max_tokens' => 8192,
                 ]);
 
             if ($response->successful()) {
                 $data = $response->json();
                 $reply = $data['choices'][0]['message']['content'] ?? 'Tidak ada respons dari AI.';
-                // Konversi markdown sederhana ke HTML bisa dilakukan di frontend, atau kita kembalikan plain markdown.
                 $fileOps = $this->executeAiFileOps($reply, $project, $projectDir);
                 return response()->json(['reply' => $reply, 'file_ops' => $fileOps]);
             } else {
@@ -428,14 +465,14 @@ class DashboardController extends Controller
             }
 
             $projectRootDir = rtrim($projectDir, '/\\');
-            $ops = array_slice($ops, 0, 10);
+            $ops = array_slice($ops, 0, 15);
 
             foreach ($ops as $op) {
                 $action = $op['action'] ?? '';
                 $relPath = trim((string) ($op['path'] ?? ''), '/');
                 $relPath = str_replace('\\', '/', $relPath);
 
-                if (!in_array($action, ['write', 'mkdir'], true) || $relPath === '' || str_contains($relPath, '..')) {
+                if (!in_array($action, ['write', 'mkdir', 'append', 'rename', 'delete'], true) || $relPath === '' || str_contains($relPath, '..')) {
                     $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Operasi ditolak: path atau aksi tidak valid.'];
                     continue;
                 }
@@ -447,6 +484,7 @@ class DashboardController extends Controller
                 }
 
                 try {
+                    // ── mkdir ──
                     if ($action === 'mkdir') {
                         if (is_dir($target)) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'info', 'message' => 'Folder sudah ada.'];
@@ -456,19 +494,82 @@ class DashboardController extends Controller
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal membuat folder (cek permission Linux).'];
                             continue;
                         }
+                        @chmod($target, 0770);
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => 'Folder dibuat.'];
                         continue;
                     }
 
-                    // action = write
+                    // ── rename ──
+                    if ($action === 'rename') {
+                        $newRel = trim((string) ($op['new_path'] ?? ''), '/');
+                        $newRel = str_replace('\\', '/', $newRel);
+                        if ($newRel === '' || str_contains($newRel, '..')) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'new_path tidak valid.'];
+                            continue;
+                        }
+                        $newTarget = $projectRootDir . '/' . $newRel;
+                        if (strpos($newTarget, $projectRootDir . '/') !== 0) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Operasi ditolak: di luar direktori project.'];
+                            continue;
+                        }
+                        if (in_array(basename($target), $this->protectedFiles)) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File sistem ini tidak dapat diubah.'];
+                            continue;
+                        }
+                        if (!file_exists($target) && !is_dir($target)) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Target tidak ditemukan.'];
+                            continue;
+                        }
+                        $parent = dirname($newTarget);
+                        if (!is_dir($parent) && !@mkdir($parent, 0770, true)) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal membuat folder tujuan.'];
+                            continue;
+                        }
+                        if (!@rename($target, $newTarget)) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal rename/memindahkan (cek permission Linux).'];
+                            continue;
+                        }
+                        $results[] = ['action' => $action, 'path' => $newRel, 'status' => 'success', 'message' => "Dipindah dari {$relPath}."];
+                        continue;
+                    }
+
+                    // ── delete ──
+                    if ($action === 'delete') {
+                        if (in_array(basename($target), $this->protectedFiles)) {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File sistem ini tidak dapat dihapus.'];
+                            continue;
+                        }
+                        if (is_file($target)) {
+                            if (@unlink($target)) {
+                                $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => 'File dihapus.'];
+                            } else {
+                                $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal menghapus file (cek permission Linux).'];
+                            }
+                        } elseif (is_dir($target)) {
+                            $entries = array_merge(glob($target . '/*') ?: [], glob($target . '/.*') ?: []);
+                            $entries = array_filter($entries, fn ($p) => !in_array(basename($p), ['.', '..'], true));
+                            if (!empty($entries)) {
+                                $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Folder tidak kosong, tidak bisa dihapus.'];
+                            } elseif (@rmdir($target)) {
+                                $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => 'Folder kosong dihapus.'];
+                            } else {
+                                $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal menghapus folder (cek permission Linux).'];
+                            }
+                        } else {
+                            $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'info', 'message' => 'Target tidak ditemukan (sudah terhapus?).'];
+                        }
+                        continue;
+                    }
+
+                    // ── write / append ──
                     if (in_array(basename($target), $this->protectedFiles)) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File sistem ini tidak dapat diubah.'];
                         continue;
                     }
 
                     $content = (string) ($op['content'] ?? '');
-                    if (strlen($content) > 300000) {
-                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Ukuran file terlalu besar (maks 300KB).'];
+                    if (strlen($content) > 500000) {
+                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Ukuran file terlalu besar (maks 500KB).'];
                         continue;
                     }
 
@@ -478,20 +579,28 @@ class DashboardController extends Controller
                         continue;
                     }
 
+                    if ($action === 'append' && !file_exists($target)) {
+                        $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File target tidak ditemukan (gunakan write untuk membuat baru).'];
+                        continue;
+                    }
+
                     $oldSize = file_exists($target) ? filesize($target) : 0;
-                    $newSize = strlen($content);
+                    $newSize = $action === 'append' ? $oldSize + strlen($content) : strlen($content);
                     if ($newSize > $oldSize && !$this->checkDiskQuota($project, $newSize - $oldSize)) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Penyimpanan Penuh! Kuota disk Anda sudah habis.'];
                         continue;
                     }
 
                     @chmod($parent, 0770);
-                    if (@file_put_contents($target, $content) === false) {
+                    $written = $action === 'append'
+                        ? @file_put_contents($target, $content, FILE_APPEND)
+                        : @file_put_contents($target, $content);
+                    if ($written === false) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal menulis file (cek permission Linux).'];
                         continue;
                     }
                     @chmod($target, 0660);
-                    $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => 'File berhasil ditulis.'];
+                    $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => $action === 'append' ? 'Konten ditambahkan.' : 'File berhasil ditulis.'];
                 } catch (\Throwable $e) {
                     Log::warning('AI FILE_OPS exception: ' . $e->getMessage());
                     $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Kesalahan sistem saat mengeksekusi operasi.'];
@@ -500,6 +609,60 @@ class DashboardController extends Controller
         }
 
         return $results;
+    }
+
+    /**
+     * Membangun snapshot struktur file project (terbatas kedalaman & jumlah)
+     * agar AI agent tahu path mana yang valid saat bekerja dengan FILE_OPS.
+     */
+    private function buildProjectTree(string $projectDir, int $maxDepth = 4, int $maxLines = 100): string
+    {
+        $skipDirs = ['vendor', 'node_modules', '.git', 'storage', 'public/build', '.cache', '.idea', '.vscode', 'bootstrap/cache'];
+        $lines = [];
+        $count = 0;
+
+        $walk = function (string $dir, int $depth) use (&$walk, &$lines, &$count, $maxDepth, $maxLines, $skipDirs, $projectDir) {
+            if ($count >= $maxLines || $depth > $maxDepth) {
+                return;
+            }
+            $entries = @scandir($dir) ?: [];
+            $entries = array_diff($entries, ['.', '..']);
+            usort($entries, function ($a, $b) use ($dir) {
+                $aIsDir = is_dir($dir . '/' . $a);
+                $bIsDir = is_dir($dir . '/' . $b);
+                if ($aIsDir !== $bIsDir) {
+                    return $aIsDir ? -1 : 1;
+                }
+                return strcasecmp($a, $b);
+            });
+
+            foreach ($entries as $entry) {
+                if ($count >= $maxLines) {
+                    return;
+                }
+                $full = $dir . '/' . $entry;
+                $rel = str_replace($projectDir . '/', '', $full);
+                if (is_dir($full)) {
+                    if (in_array($rel, $skipDirs, true)) {
+                        continue;
+                    }
+                    $lines[] = $rel . '/';
+                    $count++;
+                    $walk($full, $depth + 1);
+                } else {
+                    $lines[] = $rel;
+                    $count++;
+                }
+            }
+        };
+
+        $walk($projectDir, 0);
+
+        if ($count >= $maxLines) {
+            $lines[] = '... (terpotong)';
+        }
+
+        return implode("\n", $lines);
     }
 
     public function ideSearch(Request $request, $hashid)
