@@ -110,6 +110,7 @@
                 font-family: 'Inter', sans-serif;
                 background-color: #ffffff;
                 color: #111827;
+                scroll-behavior: smooth;
             }
 
             /* Subtle grid pattern background */
@@ -120,17 +121,27 @@
                 background-position: center top;
             }
 
+            /* Aurora glow blobs untuk hero */
+            .hero-blob {
+                position: absolute;
+                border-radius: 9999px;
+                filter: blur(80px);
+                opacity: .45;
+                pointer-events: none;
+            }
+
             /* Strict borders for cards */
             .card-brutal {
                 background: #ffffff;
                 border: 1px solid #e2e8f0;
                 border-radius: 12px;
-                transition: all 0.2s ease;
+                transition: all 0.25s ease;
             }
 
             .card-brutal:hover {
                 border-color: #4f46e5;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 12px 28px rgba(79, 70, 229, 0.08);
+                transform: translateY(-3px);
             }
 
             /* Gradient text but strictly monochrome/subtle */
@@ -140,18 +151,51 @@
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
             }
+
+            /* Scroll reveal */
+            .reveal {
+                opacity: 0;
+                transform: translateY(24px);
+                transition: opacity .7s ease, transform .7s ease;
+            }
+            .reveal.reveal-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .reveal { opacity: 1; transform: none; transition: none; }
+            }
+
+            /* Hero stack logos */
+            .stack-logo {
+                transition: transform .2s ease, color .2s ease;
+            }
+            .stack-logo:hover {
+                transform: translateY(-3px) scale(1.12);
+            }
+
+            /* Popular plan glow */
+            .plan-popular {
+                box-shadow: 0 0 0 2px #8b5cf6, 0 20px 45px -15px rgba(139, 92, 246, 0.35);
+            }
         </style>
     @endpush
 
     <!-- HERO SECTION -->
     <section
-        class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-grid min-h-[90vh] flex items-center border-b border-slate-200">
+        class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-grid min-h-[90vh] flex items-center border-b border-slate-200 overflow-hidden">
+        <div class="hero-blob w-96 h-96 bg-indigo-300 -top-20 -left-20"></div>
+        <div class="hero-blob w-80 h-80 bg-violet-300 top-40 right-0"></div>
+        <div class="hero-blob w-72 h-72 bg-sky-300 -bottom-16 left-1/3"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white pointer-events-none"></div>
         <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
 
             <div
-                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-slate-600 text-xs font-semibold mb-8">
-                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white/80 backdrop-blur text-slate-600 text-xs font-semibold mb-8 shadow-sm">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
                 Sistem Deployment Tersedia
             </div>
 
@@ -168,7 +212,7 @@
 
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="#services"
-                    class="px-8 py-3.5 text-sm font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                    class="px-8 py-3.5 text-sm font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-all hover:shadow-lg hover:shadow-indigo-500/30 flex items-center justify-center gap-2">
                     Jelajahi Layanan
                 </a>
                 <a href="#portfolio"
@@ -177,16 +221,31 @@
                 </a>
             </div>
 
-            <div class="mt-24 pt-8 border-t border-slate-200 max-w-3xl mx-auto">
+            <div class="mt-16 grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+                <div class="bg-white/70 backdrop-blur border border-slate-200 rounded-lg py-5 px-3">
+                    <p class="text-2xl md:text-3xl font-extrabold text-slate-900">99.9%</p>
+                    <p class="text-xs font-medium text-slate-500 mt-1">Uptime Server</p>
+                </div>
+                <div class="bg-white/70 backdrop-blur border border-slate-200 rounded-lg py-5 px-3">
+                    <p class="text-2xl md:text-3xl font-extrabold text-slate-900">100+</p>
+                    <p class="text-xs font-medium text-slate-500 mt-1">Project Selesai</p>
+                </div>
+                <div class="bg-white/70 backdrop-blur border border-slate-200 rounded-lg py-5 px-3">
+                    <p class="text-2xl md:text-3xl font-extrabold text-slate-900">&lt;5 mnt</p>
+                    <p class="text-xs font-medium text-slate-500 mt-1">Auto-Deploy</p>
+                </div>
+            </div>
+
+            <div class="mt-16 pt-8 border-t border-slate-200 max-w-3xl mx-auto">
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-6">Stack Teknologi Kami</p>
-                <div class="flex flex-wrap justify-center gap-8 text-slate-300 hover:text-slate-400 transition-colors">
-                    <i class="fa-brands fa-laravel text-3xl"></i>
-                    <i class="fa-brands fa-react text-3xl"></i>
-                    <i class="fa-brands fa-node-js text-3xl"></i>
-                    <i class="fa-brands fa-python text-3xl"></i>
-                    <i class="fa-brands fa-vuejs text-3xl"></i>
-                    <i class="fa-brands fa-aws text-3xl"></i>
-                    <i class="fa-brands fa-docker text-3xl"></i>
+                <div class="flex flex-wrap justify-center gap-8 text-slate-300">
+                    <i class="fa-brands fa-laravel text-3xl stack-logo text-red-500"></i>
+                    <i class="fa-brands fa-react text-3xl stack-logo text-cyan-500"></i>
+                    <i class="fa-brands fa-node-js text-3xl stack-logo text-green-500"></i>
+                    <i class="fa-brands fa-python text-3xl stack-logo text-yellow-500"></i>
+                    <i class="fa-brands fa-vuejs text-3xl stack-logo text-emerald-500"></i>
+                    <i class="fa-brands fa-aws text-3xl stack-logo text-orange-500"></i>
+                    <i class="fa-brands fa-docker text-3xl stack-logo text-sky-500"></i>
                 </div>
             </div>
         </div>
@@ -197,7 +256,7 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                 <!-- Text Content -->
-                <div class="pt-4">
+                <div class="pt-4 reveal">
                     <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-6">Di Balik Layar</h2>
                     <div class="w-12 h-1 bg-indigo-600 mb-8"></div>
 
@@ -247,13 +306,13 @@
     <!-- SERVICES SECTION -->
     <section id="services" class="py-24 bg-white border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="mb-16 max-w-2xl">
+            <div class="mb-16 max-w-2xl reveal">
                 <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Infrastruktur & Layanan</h2>
                 <p class="text-slate-500 text-base">Kami merancang arsitektur web dan infrastruktur shared hosting yang
                     andal untuk melayani project Anda kapan saja.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
                 <!-- Web Dev Box -->
                 <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50">
                     <div class="w-12 h-12 bg-indigo-600 text-white rounded flex items-center justify-center mb-6">
@@ -330,7 +389,7 @@
     <!-- PRICING SECTION -->
     <section id="pricing" class="py-24 bg-white border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="mb-14 text-center">
+            <div class="mb-14 text-center reveal">
                 <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-3 block">Harga Transparan</span>
                 <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Pilih Paket Hosting</h2>
                 <p class="text-slate-500 text-base max-w-xl mx-auto">Deploy project Anda sekarang. Mulai dari harga terjangkau dengan fitur lengkap, siap scale sesuai kebutuhan.</p>
@@ -344,7 +403,7 @@
                     'amber'  => ['accent' => 'border-t-amber-400',  'icon' => 'bg-amber-500',  'price' => 'text-amber-600',  'btn' => 'bg-amber-500 hover:bg-amber-600 text-white',   'check' => 'text-amber-500'],
                 ];
             @endphp
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
                 @foreach ($homePlans as $slug => $plan)
                     @php
                         $pricing = \App\Models\User::getPlanPricing($slug);
@@ -389,13 +448,32 @@
                     </div>
                 @endforeach
             </div>
+
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
+                <div class="flex items-center gap-3 justify-center md:justify-start">
+                    <i class="fa-solid fa-shield-halved text-indigo-600 text-lg"></i>
+                    <span class="text-sm font-semibold text-slate-700">SSL Gratis</span>
+                </div>
+                <div class="flex items-center gap-3 justify-center md:justify-start">
+                    <i class="fa-solid fa-database text-indigo-600 text-lg"></i>
+                    <span class="text-sm font-semibold text-slate-700">Database MySQL</span>
+                </div>
+                <div class="flex items-center gap-3 justify-center md:justify-start">
+                    <i class="fa-solid fa-rotate text-indigo-600 text-lg"></i>
+                    <span class="text-sm font-semibold text-slate-700">Auto-Deploy Git</span>
+                </div>
+                <div class="flex items-center gap-3 justify-center md:justify-start">
+                    <i class="fa-solid fa-headset text-indigo-600 text-lg"></i>
+                    <span class="text-sm font-semibold text-slate-700">Support 1-on-1</span>
+                </div>
+            </div>
         </div>
     </section>
 
         <!-- PORTFOLIO SECTION -->
     <section id="portfolio" class="py-24 bg-slate-50 border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="mb-12 flex justify-between items-end">
+            <div class="mb-12 flex justify-between items-end reveal">
                 <div>
                     <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-2">Arsip Karya</h2>
                     <p class="text-slate-500 text-sm">Beberapa entitas digital yang telah kami kembangkan.</p>
@@ -406,7 +484,7 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
                 @forelse($portfolios as $portfolio)
                     <div class="card-brutal flex flex-col overflow-hidden bg-white group">
                         @if ($portfolio->link_preview)
@@ -499,7 +577,7 @@
     <!-- BLOG SECTION -->
     <section class="py-24 bg-slate-50 border-t border-slate-200" id="blog">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12 reveal">
                 <div>
                     <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 mb-2">Artikel Terbaru</h2>
                     <p class="text-slate-500 text-sm max-w-2xl">Tulisan seputar web development, tips hosting, dan
@@ -511,7 +589,7 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
                 @forelse($articles as $article)
                     <a href="{{ route('blog.show', $article->slug) }}"
                         class="group card-brutal overflow-hidden flex flex-col">
@@ -564,13 +642,13 @@
     <!-- FAQ SECTION -->
     <section id="faq" class="py-24 bg-white border-b border-slate-200">
         <div class="max-w-3xl mx-auto px-6 lg:px-8">
-            <div class="mb-14 text-center">
+            <div class="mb-14 text-center reveal">
                 <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-3 block">Pertanyaan Umum</span>
                 <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Yang Sering Ditanyakan</h2>
                 <p class="text-slate-500 text-base">Semua yang perlu Anda ketahui sebelum deploy atau memesan jasa pembuatan website.</p>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-4 reveal">
                 <details class="card-brutal p-6 group" open>
                     <summary class="cursor-pointer font-bold text-slate-900 flex items-center justify-between gap-4">
                         Apa itu Ryaze?
@@ -642,13 +720,15 @@
     </section>
 
     <!-- CALL TO ACTION -->
-    <section class="py-24 bg-indigo-600 text-white text-center px-6">
-        <div class="max-w-3xl mx-auto">
+    <section class="py-24 bg-indigo-600 text-white text-center px-6 relative overflow-hidden">
+        <div class="hero-blob w-80 h-80 bg-indigo-400 -top-24 -right-24" style="opacity:.3"></div>
+        <div class="hero-blob w-80 h-80 bg-violet-500 -bottom-24 -left-24" style="opacity:.25"></div>
+        <div class="max-w-3xl mx-auto relative z-10 reveal">
             <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-6">Siap Mengeksekusi Ide?</h2>
             <p class="text-indigo-200 text-lg mb-10 max-w-xl mx-auto">Daftar sekarang untuk mengakses lingkungan
                 deployment yang kuat atau hubungi kami untuk pengerjaan perangkat lunak Anda.</p>
             <a href="{{ route('register') }}"
-                class="inline-block px-8 py-3 bg-white text-indigo-700 text-sm font-bold rounded-md hover:bg-indigo-50 transition-colors">
+                class="inline-block px-8 py-3 bg-white text-indigo-700 text-sm font-bold rounded-md hover:bg-indigo-50 transition-colors shadow-lg shadow-indigo-900/20">
                 Mulai Secara Gratis
             </a>
         </div>
@@ -696,6 +776,24 @@
     </div>
 
     @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const revealEls = document.querySelectorAll('.reveal');
+                if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    const io = new IntersectionObserver((entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('reveal-visible');
+                                io.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.08 });
+                    revealEls.forEach((el) => io.observe(el));
+                } else {
+                    revealEls.forEach((el) => el.classList.add('reveal-visible'));
+                }
+            });
+        </script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const toggleBtn = document.getElementById('ryaze-chat-toggle');

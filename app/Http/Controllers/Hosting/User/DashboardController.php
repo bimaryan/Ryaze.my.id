@@ -418,7 +418,7 @@ class DashboardController extends Controller
         $projectTree = $this->buildProjectTree($projectDir);
 
         $systemPrompt = "Kamu adalah Ryaze AI v2.0, asisten koding cerdas yang terintegrasi di dalam IDE Ryaze Hosting. Balas dalam bahasa Indonesia dengan gaya profesional, singkat, dan tepat sasaran. Jika pengguna menyertakan konteks kodenya, berikan analisis atau saran berdasarkan kode tersebut.\n"
-            . "Kamu menjalankan model Llama 3.3 70B — kamu mampu menjawab pertanyaan teknis mendalam, debugging, refactoring, dan pengembangan full-stack (PHP/Laravel, JS/React/Vue, Python, HTML/CSS, SQL, dsb).\n\n"
+            . "Kamu menjalankan model GPT-OSS 120B (Groq) — kamu mampu menjawab pertanyaan teknis mendalam, debugging, refactoring, dan pengembangan full-stack (PHP/Laravel, JS/React/Vue, Python, HTML/CSS, SQL, dsb).\n\n"
             . "JIKA PENGGUNA MEMINTA KAMU UNTUK MERUBAH ATAU MEMPERBAIKI KESELURUHAN KODE SECARA OTOMATIS (misal: 'perbaiki file ini', 'tulis ulang'), maka kamu WAJIB mengembalikan keseluruhan kode baru di dalam blok berikut:\n<<REPLACE_ALL>>\n[kode baru di sini]\n<<END_REPLACE>>\n\n"
             . "JIKA PENGGUNA MEMINTA MEMBUAT / MENGUBAH / MENGHAPUS FILE ATAU FOLDER LANGSUNG DI PROJECT (misal: 'buatkan file routes.php', 'buat folder app/Http/Controllers', 'tulis kode X ke file Y', 'hapus file X', 'rename file X jadi Y', 'tambah log ke file Z'), maka kamu WAJIB mengembalikan blok JSON berikut di akhir jawabanmu, selain jawaban teks singkatnya:\n"
             . "<<FILE_OPS>>\n"
@@ -470,12 +470,15 @@ class DashboardController extends Controller
 
                 return response()->json(['reply' => $reply, 'file_ops' => $fileOps, 'chat_id' => $chat->hashid]);
             } else {
-                Log::error('Groq API Error: ' . $response->body());
-                return response()->json(['error' => 'API Ryaze AI sedang bermasalah. Coba lagi nanti.'], 500);
+                $groqError = $response->json('error.message') ?: trim($response->body());
+                $usedModel = config('services.groq.text_model', 'openai/gpt-oss-120b');
+                $keyHint = $groqApiKey === config('services.groq.api_key') ? 'app-key' : 'project-key';
+                Log::error("Groq API Error [{$keyHint}] [{$usedModel}]: " . $groqError);
+                return response()->json(['error' => "API Groq menolak permintaan (model: {$usedModel}, key: {$keyHint}): " . mb_substr($groqError, 0, 300)], 500);
             }
         } catch (\Exception $e) {
             Log::error('Groq Exception: ' . $e->getMessage());
-            return response()->json(['error' => 'Terjadi kesalahan sistem saat menghubungi AI.'], 500);
+            return response()->json(['error' => 'Terjadi kesalahan sistem saat menghubungi AI: ' . mb_substr($e->getMessage(), 0, 300)], 500);
         }
     }
 
