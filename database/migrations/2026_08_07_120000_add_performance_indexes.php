@@ -55,8 +55,8 @@ return new class extends Migration
 
         // Deployment: project → deployment terbaru (polling build log)
         Schema::table('hosting_deployments', function (Blueprint $table) {
-            if (! $this->hasIndex('hosting_deployments', 'hosting_deployments_project_id_created_at_index')) {
-                $table->index(['project_id', 'created_at'], 'hosting_deployments_project_id_created_at_index');
+            if (! $this->hasIndex('hosting_deployments', 'hosting_deployments_hosting_project_id_created_at_index')) {
+                $table->index(['hosting_project_id', 'created_at'], 'hosting_deployments_hosting_project_id_created_at_index');
             }
         });
 
@@ -102,7 +102,7 @@ return new class extends Migration
             $table->dropIndex('hosting_project_users_user_id_project_id_index');
         });
         Schema::table('hosting_deployments', function (Blueprint $table) {
-            $table->dropIndex('hosting_deployments_project_id_created_at_index');
+            $table->dropIndex('hosting_deployments_hosting_project_id_created_at_index');
         });
         Schema::table('hosting_billings', function (Blueprint $table) {
             $table->dropIndex('hosting_billings_user_id_status_index');
