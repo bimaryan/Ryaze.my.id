@@ -48,9 +48,13 @@ class ProfileController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        // Update nama dan email
+        // Update nama dan email — email baru wajib diverifikasi ulang
+        $emailChanged = $user->email !== $request->email;
         $user->name = $request->name;
         $user->email = $request->email;
+        if ($emailChanged) {
+            $user->email_verified_at = null;
+        }
         $user->save();
 
         return redirect()->route('profile.edit')->with('success', 'Profil berhasil diperbarui!');

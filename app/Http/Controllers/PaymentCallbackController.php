@@ -50,7 +50,8 @@ class PaymentCallbackController extends Controller
             return response()->json(['success' => false, 'message' => 'Missing order_id or amount'], 400);
         }
 
-        // 1. Verifikasi Resmi Pakasir (Cross-Check API)
+        // Jangan pernah percaya amount/order_id dari payload webhook mentah —
+        // semua penentuan status berdasar hasil cross-check resmi Pakasir.
         $apiKey = config('services.pakasir.api_key');
         $projectSlug = config('services.pakasir.slug');
         
@@ -75,6 +76,19 @@ class PaymentCallbackController extends Controller
             $transactionData = $verifyResponse->json('transaction');
             if (!$transactionData) {
                 return response()->json(['success' => false, 'message' => 'Invalid transaction data from Pakasir'], 401);
+            }
+
+            // ════ SECURITY: pastikan transaksi yang dikembalikan Pakasir
+            // benar-benar milik order_id & amount yang diminta (anti swap/replay).
+            $verifiedOrderId = $transactionData['order_id'] ?? null;
+            $verifiedAmount = $transactionData['amount'] ?? null;
+            if ((string)$verifiedOrderId !== (string)$order_id) {
+                \Illuminate\Support\Facades\Log::warning("Pakasir mismatch order_id: webhook={$order_id}, verified={$verifiedOrderId}, IP=" . $request->ip());
+                return response()->json(['success' => false, 'message' => 'Order ID mismatch'], 401);
+            }
+            if (abs((float)$verifiedAmount - (float)$amount) > 0.01) {
+                \Illuminate\Support\Facades\Log::warning("Pakasir mismatch amount: webhook={$amount}, verified={$verifiedAmount}, order={$order_id}");
+                return response()->json(['success' => false, 'message' => 'Amount mismatch'], 401);
             }
 
             $status = $transactionData['status'] ?? null;

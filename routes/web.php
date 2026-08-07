@@ -291,7 +291,7 @@ Route::middleware('auth')->group(function () {
     // ═══════════════════════════════════════════════════════════════
     // ADMIN JOKI (+ superadmin)
     // ═══════════════════════════════════════════════════════════════
-    Route::middleware('role:admin_joki,superadmin')->group(function () {
+    Route::middleware(['role:admin_joki,superadmin', 'verified'])->group(function () {
         Route::get('admin/joki/dashboard', [JokiAdminDashboardController::class, 'index'])->name('admin_joki.dashboard');
         Route::get('admin/joki/orders', [JokiAdminDashboardController::class, 'manageOrders'])->name('admin_joki.orders');
         Route::get('admin/joki/orders/{hashid}/edit', [JokiAdminDashboardController::class, 'editOrder'])->name('admin_joki.orders.edit');
@@ -313,7 +313,9 @@ Route::middleware('auth')->group(function () {
 });
 
 // ── CHATBOT ROUTE ────────────────────────────────────────────
-Route::post('/chat', [\App\Http\Controllers\ChatbotController::class, 'chat'])->name('chat.send');
+Route::post('/chat', [\App\Http\Controllers\ChatbotController::class, 'chat'])
+    ->middleware('throttle:10,1') // Maks 10 pesan/menit per IP (Groq berbayar & anti-abuse)
+    ->name('chat.send');
 
 // ── TUNNEL ROUTE (Catch-all for tunneling) ───────────────────
 Route::any('/t/{subdomain}/{path?}', [\App\Http\Controllers\TunnelController::class, 'handleProxyRequest'])
