@@ -27,6 +27,24 @@
             <meta property="article:tag" content="{{ $article->tags }}">
         @endif
 
+        {{-- JSON-LD Structured Data for Google --}}
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+        {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": "{{ $article->title }}",
+            "image": [
+                "{{ $article->cover_image ? url(Storage::url($article->cover_image)) : '' }}"
+            ],
+            "datePublished": "{{ $article->published_at?->toIso8601String() }}",
+            "dateModified": "{{ $article->updated_at?->toIso8601String() }}",
+            "author": [{
+                "@type": "Person",
+                "name": "{{ $article->user->name ?? 'Ryaze' }}"
+            }]
+        }
+        </script>
+
         <style nonce="{{ csp_nonce() }}">
             body { font-family: 'Inter', sans-serif; }
 

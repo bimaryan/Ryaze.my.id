@@ -41,7 +41,7 @@
         document.addEventListener('DOMContentLoaded', () => hotToast(@json(session("error")), 'error'));
     @endif
     
-    @if($errors->any())
+    @if(isset($errors) && $errors->any())
         document.addEventListener('DOMContentLoaded', () => hotToast(@json($errors->first()), 'error'));
     @endif
 </script>
