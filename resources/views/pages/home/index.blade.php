@@ -1,20 +1,110 @@
 <x-public-layout
-    title="Cloud Hosting & Web Development"
-    description="{{ \App\Models\Setting::where('key', 'site_description')->value('value') ?? 'Layanan web hosting canggih dan jasa development profesional.' }}"
+    title="Jasa Pembuatan Website & Cloud Hosting Indonesia"
+    description="Jasa pembuatan website, aplikasi, dan joki Tugas Akhir. Cloud hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan."
     body-class="antialiased selection:bg-indigo-600 selection:text-white relative"
-    og-image="https://ui-avatars.com/api/?name={{ urlencode(\App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal') }}&size=600&background=4f46e5&color=fff"
+    og-image="{{ url('/og-image.png') }}"
     :links="[
         ['label' => 'Tentang', 'href' => '#about'],
         ['label' => 'Layanan', 'href' => '#services'],
+        ['label' => 'Harga', 'href' => '#pricing'],
         ['label' => 'Portofolio', 'href' => '#portfolio'],
         ['label' => 'Blog', 'href' => route('blog.index')],
     ]">
 
     @push('head')
-        <meta name="theme-color" content="#ffffff">
-        <meta name="robots" content="index, follow">
-        <meta name="keywords" content="hosting, web development, ryaze, server, cloud">
+        <meta name="theme-color" content="#4f46e5">
+        <meta name="robots" content="index, follow, max-image-preview:large">
+        <meta name="keywords" content="jasa pembuatan website, web hosting indonesia, hosting murah, cloud hosting, jasa joki skripsi, pembuatan aplikasi web, auto deploy website, hosting laravel, jasa website polindra">
         <meta name="author" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}">
+        <meta property="og:site_name" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}">
+
+        {{-- JSON-LD: Organization --}}
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+        {
+            "@@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "{{ url('/') }}#organization",
+            "name": "{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}",
+            "url": "{{ url('/') }}",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "{{ url('/og-image.png') }}",
+                "width": 1200,
+                "height": 630
+            },
+            "description": "Platform jasa pembuatan website, aplikasi, dan cloud hosting Indonesia dengan auto-deploy, SSL gratis, dan database MySQL.",
+            "sameAs": [
+                @if(\App\Models\Setting::val('social_github')){{ '"' . \App\Models\Setting::val('social_github') . '",' }}@endif
+                @if(\App\Models\Setting::val('social_instagram')){{ '"' . \App\Models\Setting::val('social_instagram') . '",' }}@endif
+                @if(\App\Models\Setting::val('social_linkedin')){{ '"' . \App\Models\Setting::val('social_linkedin') . '"' }}@endif
+            ]
+        }
+        </script>
+
+        {{-- JSON-LD: WebSite --}}
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+        {
+            "@@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "{{ url('/') }}#website",
+            "url": "{{ url('/') }}",
+            "name": "{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}",
+            "inLanguage": "id-ID",
+            "publisher": { "@id": "{{ url('/') }}#organization" }
+        }
+        </script>
+
+        {{-- JSON-LD: FAQPage --}}
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+        {
+            "@@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [{
+                "@type": "Question",
+                "name": "Apa itu Ryaze?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ryaze adalah platform layanan jasa pembuatan website dan aplikasi sekaligus penyedia cloud hosting Indonesia dengan auto-deploy dari repositori Git, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap."
+                }
+            }, {
+                "@type": "Question",
+                "name": "Teknologi apa saja yang didukung hosting Ryaze?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Hosting Ryaze mendukung Node.js, PHP (termasuk Laravel), Python, React, Vue.js, dan website statis HTML. Setiap project di-deploy otomatis dari repositori Git Anda."
+                }
+            }, {
+                "@type": "Question",
+                "name": "Apakah SSL gratis tersedia?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ya, setiap project hosting di Ryaze otomatis mendapatkan sertifikat SSL gratis sehingga website Anda aman dan diakses melalui HTTPS."
+                }
+            }, {
+                "@type": "Question",
+                "name": "Apakah tersedia database untuk project saya?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ya, setiap project mendapatkan database MySQL bawaan yang dapat dikelola melalui panel, mini phpMyAdmin, dan API key untuk koneksi aplikasi."
+                }
+            }, {
+                "@type": "Question",
+                "name": "Apakah bisa request jasa pembuatan website atau aplikasi?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Bisa. Ryaze menerima pengerjaan sistem informasi, aplikasi SaaS, hingga prototipe fungsional Tugas Akhir atau Skripsi dengan arsitektur modern yang bersih dan terdokumentasi."
+                }
+            }, {
+                "@type": "Question",
+                "name": "Bagaimana cara mulai menggunakan Ryaze?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Cukup daftar akun secara gratis, pilih paket hosting yang sesuai, lalu deploy project Anda langsung dari repositori Git dalam hitungan menit."
+                }
+            }]
+        }
+        </script>
+
         <style nonce="{{ csp_nonce() }}">
             body {
                 font-family: 'Inter', sans-serif;
@@ -71,8 +161,9 @@
             </h1>
 
             <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-                Infrastruktur hosting tangguh berbasis cloud dan tim development profesional siap mengeksekusi visi
-                teknologi Anda tanpa kompromi.
+                Jasa pembuatan website & aplikasi terpercaya, plus cloud hosting Indonesia dengan auto-deploy, SSL
+                gratis, dan database MySQL. Tim development profesional siap mengeksekusi visi teknologi Anda tanpa
+                kompromi.
             </p>
 
             <div class="flex flex-col sm:flex-row justify-center gap-4">
@@ -135,7 +226,7 @@
                         <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                             <div class="aspect-[3/4] bg-slate-100 relative">
                                 <img src="{{ asset('profil/bima.jpeg') }}"
-                                    alt="Bima Ryan"
+                                    alt="Bima Ryan Alfarizi - Founder dan Lead Developer Ryaze"
                                     class="w-full h-full object-cover object-top">
                             </div>
                             <div class="p-6 border-t border-slate-100 bg-slate-50">
@@ -215,8 +306,8 @@
                         </div>
                     </div>
                     <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-1">
-                        Deployment otomatis tanpa pusing. Eksekusi repositori kode langsung ke server publik dengan
-                        dukungan Web-Terminal, proses manager, dan database bawaan.
+                        Hosting murah dengan deployment otomatis tanpa pusing. Eksekusi repositori kode langsung ke
+                        server publik dengan dukungan Web-Terminal, proses manager, dan database bawaan.
                     </p>
                     <ul class="space-y-2 mb-8 text-sm font-medium text-slate-600">
                         <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Auto
@@ -466,6 +557,86 @@
                     class="text-sm font-semibold text-indigo-600 inline-flex items-center gap-2 hover:underline">
                     Lihat Semua Artikel <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="py-24 bg-white border-b border-slate-200">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+            <div class="mb-14 text-center">
+                <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-3 block">Pertanyaan Umum</span>
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900 mb-4">Yang Sering Ditanyakan</h2>
+                <p class="text-slate-500 text-base">Semua yang perlu Anda ketahui sebelum deploy atau memesan jasa pembuatan website.</p>
+            </div>
+
+            <div class="space-y-4">
+                <details class="card-brutal p-6 group" open>
+                    <summary class="cursor-pointer font-bold text-slate-900 flex items-center justify-between gap-4">
+                        Apa itu Ryaze?
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-slate-500 leading-relaxed mt-4">
+                        Ryaze adalah platform layanan jasa pembuatan website dan aplikasi sekaligus penyedia cloud
+                        hosting Indonesia dengan auto-deploy dari repositori Git, SSL gratis, database MySQL, web
+                        terminal, dan panel kontrol lengkap.
+                    </p>
+                </details>
+
+                <details class="card-brutal p-6 group">
+                    <summary class="cursor-pointer font-bold text-slate-900 flex items-center justify-between gap-4">
+                        Teknologi apa saja yang didukung hosting Ryaze?
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-slate-500 leading-relaxed mt-4">
+                        Hosting Ryaze mendukung Node.js, PHP (termasuk Laravel), Python, React, Vue.js, dan website
+                        statis HTML. Setiap project di-deploy otomatis dari repositori Git Anda.
+                    </p>
+                </details>
+
+                <details class="card-brutal p-6 group">
+                    <summary class="cursor-pointer font-bold text-slate-900 flex items-center justify-between gap-4">
+                        Apakah SSL gratis tersedia?
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-slate-500 leading-relaxed mt-4">
+                        Ya, setiap project hosting di Ryaze otomatis mendapatkan sertifikat SSL gratis sehingga website
+                        Anda aman dan diakses melalui HTTPS.
+                    </p>
+                </details>
+
+                <details class="card-brutal p-6 group">
+                    <summary class="cursor-pointer font-bold text-slate-900 flex items-center justify-between gap-4">
+                        Apakah tersedia database untuk project saya?
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-slate-500 leading-relaxed mt-4">
+                        Ya, setiap project mendapatkan database MySQL bawaan yang dapat dikelola melalui panel, mini
+                        phpMyAdmin, dan API key untuk koneksi aplikasi.
+                    </p>
+                </details>
+
+                <details class="card-brutal p-6 group">
+                    <summary class="cursor-pointer font-bold text-slate-900 flex items-center justify-between gap-4">
+                        Apakah bisa request jasa pembuatan website atau aplikasi?
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-slate-500 leading-relaxed mt-4">
+                        Bisa. Ryaze menerima pengerjaan sistem informasi, aplikasi SaaS, hingga prototipe fungsional
+                        Tugas Akhir atau Skripsi dengan arsitektur modern yang bersih dan terdokumentasi.
+                    </p>
+                </details>
+
+                <details class="card-brutal p-6 group">
+                    <summary class="cursor-pointer font-bold text-slate-900 flex items-center justify-between gap-4">
+                        Bagaimana cara mulai menggunakan Ryaze?
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-slate-500 leading-relaxed mt-4">
+                        Cukup daftar akun secara gratis, pilih paket hosting yang sesuai, lalu deploy project Anda
+                        langsung dari repositori Git dalam hitungan menit.
+                    </p>
+                </details>
             </div>
         </div>
     </section>

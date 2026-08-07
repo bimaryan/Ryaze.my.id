@@ -23,7 +23,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/sitemap.xml', function () {
     $articles = \App\Models\Article::where('status', 'published')->orderBy('created_at', 'desc')->get();
-    return response()->view('sitemap', compact('articles'))->header('Content-Type', 'text/xml');
+    $categories = \App\Models\ArticleCategory::has('articles')->orderBy('name')->get();
+    return response()->view('sitemap', compact('articles', 'categories'))->header('Content-Type', 'text/xml');
 });
 
 // ── BLOG PUBLIK ─────────────────────────────────────────────

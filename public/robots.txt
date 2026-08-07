@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
+Disallow: /user
+Disallow: /admin
+Disallow: /superadmin
+Disallow: /profile
+Disallow: /dashboard
+Disallow: /email
+Disallow: /chat
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
 
 Sitemap: https://ryaze.my.id/sitemap.xml

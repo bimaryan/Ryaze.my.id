@@ -30,9 +30,14 @@
         {{-- JSON-LD Structured Data for Google --}}
         <script type="application/ld+json" nonce="{{ csp_nonce() }}">
         {
-            "@context": "https://schema.org",
+            "@@context": "https://schema.org",
             "@type": "Article",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "{{ route('blog.show', $article->slug) }}"
+            },
             "headline": "{{ $article->title }}",
+            "description": "{{ $article->seo_description ?: ($article->excerpt ?: Str::limit(strip_tags($article->body), 160)) }}",
             "image": [
                 "{{ $article->cover_image ? url(Storage::url($article->cover_image)) : '' }}"
             ],
@@ -41,6 +46,46 @@
             "author": [{
                 "@type": "Person",
                 "name": "{{ $article->user->name ?? 'Ryaze' }}"
+            }],
+            "publisher": {
+                "@type": "Organization",
+                "name": "{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "{{ url('/og-image.png') }}",
+                    "width": 1200,
+                    "height": 630
+                }
+            },
+            "inLanguage": "id-ID"
+        }
+        </script>
+
+        {{-- JSON-LD: BreadcrumbList --}}
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+        {
+            "@@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [{
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            }, {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Blog",
+                "item": "{{ route('blog.index') }}"
+            }@if($article->category), {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "{{ $article->category->name }}",
+                "item": "{{ route('blog.category', $article->category->slug) }}"
+            }@endif, {
+                "@type": "ListItem",
+                "position": {{ $article->category ? 4 : 3 }},
+                "name": "{{ $article->title }}",
+                "item": "{{ route('blog.show', $article->slug) }}"
             }]
         }
         </script>
@@ -81,14 +126,18 @@
     {{-- Article Content --}}
     <article class="max-w-3xl mx-auto px-6 lg:px-8 {{ $article->cover_image ? 'pt-12' : 'pt-28' }} pb-16">
         {{-- Breadcrumb --}}
-        <nav class="mb-8 text-xs text-slate-400 font-medium">
-            <a href="{{ route('blog.index') }}" class="hover:text-indigo-600 transition-colors">Blog</a>
-            @if($article->category)
-                <span class="mx-1.5">/</span>
-                <a href="{{ route('blog.category', $article->category->slug) }}" class="hover:text-indigo-600 transition-colors">{{ $article->category->name }}</a>
-            @endif
-            <span class="mx-1.5">/</span>
-            <span class="text-slate-600">{{ Str::limit($article->title, 40) }}</span>
+        <nav class="mb-8 text-xs text-slate-400 font-medium" aria-label="Breadcrumb">
+            <ol class="flex flex-wrap items-center gap-1.5">
+                <li><a href="{{ url('/') }}" class="hover:text-indigo-600 transition-colors">Beranda</a></li>
+                <li aria-hidden="true">/</li>
+                <li><a href="{{ route('blog.index') }}" class="hover:text-indigo-600 transition-colors">Blog</a></li>
+                @if($article->category)
+                    <li aria-hidden="true">/</li>
+                    <li><a href="{{ route('blog.category', $article->category->slug) }}" class="hover:text-indigo-600 transition-colors">{{ $article->category->name }}</a></li>
+                @endif
+                <li aria-hidden="true">/</li>
+                <li class="text-slate-600" aria-current="page">{{ Str::limit($article->title, 40) }}</li>
+            </ol>
         </nav>
 
         {{-- Title --}}

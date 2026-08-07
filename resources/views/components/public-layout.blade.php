@@ -34,12 +34,15 @@
 
     @if ($siteFavicon)
         <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $siteFavicon) }}">
     @endif
 
+    <meta property="og:site_name" content="{{ $siteName }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $pageTitle }}">
     <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:locale" content="id_ID">
     @if ($ogImage)
         <meta property="og:image" content="{{ $ogImage }}">
         <meta property="twitter:image" content="{{ $ogImage }}">

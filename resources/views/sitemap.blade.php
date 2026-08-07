@@ -20,4 +20,14 @@
         <priority>0.8</priority>
     </url>
     @endforeach
+    @if (isset($categories))
+        @foreach ($categories as $category)
+        <url>
+            <loc>{{ route('blog.category', $category->slug) }}</loc>
+            <lastmod>{{ $category->updated_at->tz('UTC')->toAtomString() }}</lastmod>
+            <changefreq>weekly</changefreq>
+            <priority>0.7</priority>
+        </url>
+        @endforeach
+    @endif
 </urlset>

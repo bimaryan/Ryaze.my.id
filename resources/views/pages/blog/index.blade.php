@@ -9,6 +9,43 @@
     :footer-compact="true">
 
     @push('head')
+        <meta name="robots" content="index, follow, max-image-preview:large">
+        <meta property="og:site_name" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}">
+
+        {{-- JSON-LD: CollectionPage + Breadcrumb --}}
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+        {
+            "@@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "{{ isset($currentCategory) ? $currentCategory->name : 'Blog' }} - {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}",
+            "description": "{{ isset($currentCategory) && $currentCategory->description ? $currentCategory->description : 'Artikel terbaru seputar web development, tips hosting, dan teknologi dari tim Ryaze.' }}",
+            "url": "{{ url()->current() }}",
+            "inLanguage": "id-ID"
+        }
+        </script>
+        <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+        {
+            "@@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [{
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ url('/') }}"
+            }, {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Blog",
+                "item": "{{ route('blog.index') }}"
+            }@if(isset($currentCategory)), {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "{{ $currentCategory->name }}",
+                "item": "{{ url()->current() }}"
+            }@endif]
+        }
+        </script>
+
         <style nonce="{{ csp_nonce() }}">
             body { font-family: 'Inter', sans-serif; }
         </style>
