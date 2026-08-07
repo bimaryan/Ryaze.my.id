@@ -153,6 +153,12 @@ class DashboardController extends Controller
             return redirect()->back()->with('error', 'Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.');
         }
 
+        $availableFrameworks = \App\Models\Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,python,node,vue');
+        $allowedFrameworks = implode(',', array_map('trim', explode(',', $availableFrameworks)));
+
+        $subdomain = trim(strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', trim($request->project_name))), '-');
+        $domainExtension = $request->input('domain_extension', '.ryaze.my.id');
+
         if ($sourceType === 'template') {
             // ── Mode Template ──────────────────────────────────────────────
             $request->validate([
@@ -168,10 +174,27 @@ class DashboardController extends Controller
             $repoSource  = 'template:' . $templateKey;
             $branch      = 'main';
             $framework   = $template['framework'];
-        } else {
-            $availableFrameworks = \App\Models\Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,python,node,vue');
-            $allowedFrameworks = implode(',', array_map('trim', explode(',', $availableFrameworks)));
+        } elseif ($sourceType === 'upload') {
+            // ── Mode Upload ZIP ────────────────────────────────────────────
+            $request->validate([
+                'project_zip' => 'required|file|mimes:zip|max:51200',
+                'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
+                'framework'    => 'required|in:' . $allowedFrameworks,
+            ]);
 
+            if (!$request->hasFile('project_zip')) {
+                return redirect()->back()->with('error', 'File ZIP belum diunggah.');
+            }
+
+            // Simpan ZIP ke storage privat; path direkam di repo_source dengan prefix 'upload:'
+            $zipName = $subdomain . '-' . time() . '.zip';
+            $zipPath = $request->file('project_zip')->storeAs('zip_uploads', $zipName, 'local');
+            $repoSource = 'upload:' . $zipPath;
+            $branch     = 'main';
+            $framework  = $request->input('framework');
+        } else {
+            // ── Mode Repository Git ────────────────────────────────────────
             $request->validate([
                 'repo_source'  => 'required|url',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
@@ -185,8 +208,6 @@ class DashboardController extends Controller
             $framework  = $request->input('framework');
         }
 
-        $subdomain = trim(strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', trim($request->project_name))), '-');
-        $domainExtension = $request->input('domain_extension', '.ryaze.my.id');
         $user = Auth::user();
         $hasSubscription = $user->hasActiveHostingSubscription();
 
@@ -216,11 +237,14 @@ class DashboardController extends Controller
         ]);
 
         $isTemplate = $sourceType === 'template';
+        $isUpload   = $sourceType === 'upload';
         $project->deployments()->create([
             'status'     => 'queued',
             'build_logs' => $isTemplate
                 ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
-                : "> Memulai proses Deploy awal...\n> Mengambil repository...",
+                : ($isUpload
+                    ? "> Memulai deploy dari ZIP upload...\n> Mengekstrak file ZIP..."
+                    : "> Memulai proses Deploy awal...\n> Mengambil repository..."),
         ]);
         AutoDeployProject::dispatch($project);
         

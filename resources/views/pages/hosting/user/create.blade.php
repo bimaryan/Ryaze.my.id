@@ -5,7 +5,7 @@
         {{-- ── USER HOSTING – Deploy Proyek Baru ───────────────────────── --}}
         <x-ui.page-header
             title="Deploy Proyek Baru"
-            subtitle="Impor repository Git Anda atau mulai dengan template siap pakai."
+            subtitle="Impor repository Git, unggah file ZIP, atau mulai dengan template siap pakai."
             icon="fa-plus"
             iconColor="emerald">
             <x-slot:actions>
@@ -17,7 +17,7 @@
         </x-ui.page-header>
 
         <div class="mx-auto mt-6">
-            <form action="{{ route('user_hosting.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('user_hosting.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
 
@@ -55,6 +55,24 @@
                                         <span class="bg-indigo-100 text-indigo-700 text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase">New</span>
                                     </p>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Mulai cepat dengan starter code siap pakai</p>
+                                </div>
+                                <div class="ml-auto shrink-0 w-5 h-5 border-2 border-slate-300 rounded-full flex items-center justify-center transition-colors group-has-[:checked]:border-indigo-600 group-has-[:checked]:bg-indigo-600">
+                                    <div class="w-2 h-2 bg-white rounded-full opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></div>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer flex-1 group">
+                            <input type="radio" name="source_type" value="upload" id="source_upload" class="peer hidden">
+                            <div class="h-full px-5 py-4 border-2 border-slate-200 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:border-slate-300 transition-all flex items-center gap-4">
+                                <div class="w-11 h-11 bg-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-file-zipper text-xl text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                        Upload File ZIP
+                                        <span class="bg-emerald-100 text-emerald-700 text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase">New</span>
+                                    </p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Upload website jadi langsung, tanpa Git</p>
                                 </div>
                                 <div class="ml-auto shrink-0 w-5 h-5 border-2 border-slate-300 rounded-full flex items-center justify-center transition-colors group-has-[:checked]:border-indigo-600 group-has-[:checked]:bg-indigo-600">
                                     <div class="w-2 h-2 bg-white rounded-full opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></div>
@@ -421,6 +439,38 @@
                     </div>
                 </div>
 
+                {{-- ── STEP 2c: Upload ZIP (jika pilih upload) ── --}}
+                <div id="section_upload" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hidden">
+                    <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2 text-sm">
+                        <span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                        Unggah File ZIP
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-5 ml-8">Arsip ZIP berisi semua file website Anda (HTML, PHP, build hasil `npm run build`, dsb.). File akan diekstrak otomatis saat deploy.</p>
+
+                    <div id="upload_zone"
+                        class="relative border-2 border-dashed border-slate-300 hover:border-emerald-500 hover:bg-emerald-50/50 rounded-xl p-10 text-center transition-all cursor-pointer">
+                        <input type="file" name="project_zip" id="input_project_zip" accept=".zip,application/zip,application/x-zip-compressed" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div id="upload_empty" class="pointer-events-none">
+                            <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-2xl flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-cloud-arrow-up text-2xl text-emerald-600"></i>
+                            </div>
+                            <p class="font-bold text-slate-700 text-sm">Klik untuk pilih file ZIP</p>
+                            <p class="text-[11px] text-slate-500 mt-1">atau seret & lepas di sini &mdash; maks. 50 MB</p>
+                        </div>
+                        <div id="upload_selected" class="pointer-events-none hidden">
+                            <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-2xl flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-file-zipper text-2xl text-emerald-600"></i>
+                            </div>
+                            <p id="upload_file_name" class="font-bold text-slate-700 text-sm break-all px-4"></p>
+                            <p id="upload_file_size" class="text-[11px] text-emerald-600 font-medium mt-1"></p>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-2 ml-8 flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+                        Terverifikasi otomatis: validasi ekstensi, ukuran, dan keamanan path file.
+                    </p>
+                </div>
+
                 {{-- ── STEP 3: Konfigurasi Proyek ── --}}
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm">
@@ -538,20 +588,72 @@
         selectDomainExt.addEventListener('change', updateDomainPreview);
     }
 
-    // --- Toggle antara mode Repo vs Template ---
+    // --- Toggle antara mode Repo / Template / Upload ---
+    const sectionUpload  = document.getElementById('section_upload');
+    const uploadInput    = document.getElementById('input_project_zip');
+    const uploadZone     = document.getElementById('upload_zone');
+    const uploadEmpty    = document.getElementById('upload_empty');
+    const uploadSelected = document.getElementById('upload_selected');
+
+    function updateUploadInfo() {
+        if (!uploadInput.files || !uploadInput.files.length) {
+            if (uploadEmpty) uploadEmpty.classList.remove('hidden');
+            if (uploadSelected) uploadSelected.classList.add('hidden');
+            return;
+        }
+        const file = uploadInput.files[0];
+        const nameEl = document.getElementById('upload_file_name');
+        const sizeEl = document.getElementById('upload_file_size');
+        if (nameEl) nameEl.textContent = file.name;
+        if (sizeEl) sizeEl.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+        if (uploadEmpty) uploadEmpty.classList.add('hidden');
+        if (uploadSelected) uploadSelected.classList.remove('hidden');
+    }
+
+    if (uploadInput) {
+        uploadInput.addEventListener('change', updateUploadInfo);
+        ['dragover', 'dragenter'].forEach(evt => {
+            uploadZone.addEventListener(evt, (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('border-emerald-500', 'bg-emerald-50');
+            });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            uploadZone.addEventListener(evt, (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('border-emerald-500', 'bg-emerald-50');
+            });
+        });
+        uploadZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length) {
+                uploadInput.files = dt.files;
+                updateUploadInfo();
+            }
+        });
+    }
+
     document.querySelectorAll('input[name="source_type"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
-            const isTemplate = e.target.value === 'template';
+            const mode = e.target.value;
+            const isTemplate = mode === 'template';
+            const isUpload   = mode === 'upload';
 
             // Toggle visibility section
-            if(sectionRepo) sectionRepo.classList.toggle('hidden', isTemplate);
+            if(sectionRepo) sectionRepo.classList.toggle('hidden', isTemplate || isUpload);
             if(sectionTemplate) sectionTemplate.classList.toggle('hidden', !isTemplate);
+            if(sectionUpload) sectionUpload.classList.toggle('hidden', !isUpload);
             if(frameworkSection) frameworkSection.classList.toggle('hidden', isTemplate);
 
-            // Toggle required attr untuk repo_source
+            // Toggle required attrs
             if (isTemplate) {
                 if(repoUrl) repoUrl.removeAttribute('required');
                 document.querySelectorAll('input[name="framework"]').forEach(r => r.removeAttribute('required'));
+            } else if (isUpload) {
+                if(repoUrl) repoUrl.removeAttribute('required');
+                const firstFramework = document.querySelector('input[name="framework"]');
+                if (firstFramework) firstFramework.setAttribute('required', 'required');
+                document.querySelectorAll('input[name="template_key"]').forEach(r => r.checked = false);
             } else {
                 if(repoUrl) repoUrl.setAttribute('required', 'required');
                 const firstFramework = document.querySelector('input[name="framework"]');

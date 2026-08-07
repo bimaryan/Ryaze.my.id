@@ -192,11 +192,27 @@
                         <div class="space-y-4 text-sm">
                             <div>
                                 <span class="block text-slate-500 text-xs mb-1">Source Repository</span>
-                                <a href="{{ $project->repo_source }}" target="_blank"
-                                    class="font-semibold text-slate-800 hover:text-indigo-600 flex items-center">
-                                    <i class="fa-brands fa-github mr-2 text-lg"></i>
-                                    {{ str_replace('https://github.com/', '', $project->repo_source) }}
-                                </a>
+                                @php
+                                    $isUploadSource   = ($project->source_type === 'upload') || (is_string($project->repo_source) && str_starts_with($project->repo_source, 'upload:'));
+                                    $isTemplateSource = ($project->source_type === 'template') || (is_string($project->repo_source) && str_starts_with($project->repo_source, 'template:'));
+                                @endphp
+                                @if($isUploadSource)
+                                    <span class="font-semibold text-slate-800 flex items-center">
+                                        <i class="fa-solid fa-file-zipper mr-2 text-lg text-emerald-600"></i>
+                                        ZIP Upload &mdash; {{ basename(str_replace('upload:', '', $project->repo_source)) }}
+                                    </span>
+                                @elseif($isTemplateSource)
+                                    <span class="font-semibold text-slate-800 flex items-center">
+                                        <i class="fa-solid fa-wand-magic-sparkles mr-2 text-lg text-indigo-500"></i>
+                                        Template &mdash; {{ ucwords(str_replace(['template:', '_', '-'], ['', ' ', ' '], (string) $project->repo_source)) }}
+                                    </span>
+                                @else
+                                    <a href="{{ $project->repo_source }}" target="_blank"
+                                        class="font-semibold text-slate-800 hover:text-indigo-600 flex items-center">
+                                        <i class="fa-brands fa-github mr-2 text-lg"></i>
+                                        {{ str_replace('https://github.com/', '', $project->repo_source) }}
+                                    </a>
+                                @endif
                             </div>
                             <div>
                                 <span class="block text-slate-500 text-xs mb-1">Branch</span>

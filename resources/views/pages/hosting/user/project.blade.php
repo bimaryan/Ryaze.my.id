@@ -90,17 +90,35 @@
                             </div>
 
                             <div class="p-5 flex-grow">
+                                @php
+                                    $isUploadSource   = ($project->source_type === 'upload') || (is_string($project->repo_source) && str_starts_with($project->repo_source, 'upload:'));
+                                    $isTemplateSource = ($project->source_type === 'template') || (is_string($project->repo_source) && str_starts_with($project->repo_source, 'template:'));
+                                @endphp
                                 <div class="flex items-center gap-2 mb-3 text-xs">
-                                    <span class="text-slate-500"><i class="fa-brands fa-github mr-1"></i> Repo:</span>
-                                    <span class="font-mono text-slate-700 truncate" title="{{ $project->repo_source }}">
-                                        {{ str_replace('https://github.com/', '', $project->repo_source) }}
-                                    </span>
+                                    @if($isUploadSource)
+                                        <span class="text-emerald-600"><i class="fa-solid fa-file-zipper mr-1"></i> ZIP:</span>
+                                        <span class="font-mono text-slate-700 truncate" title="{{ $project->repo_source }}">
+                                            {{ basename(str_replace('upload:', '', $project->repo_source)) }}
+                                        </span>
+                                    @elseif($isTemplateSource)
+                                        <span class="text-indigo-500"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Template:</span>
+                                        <span class="font-mono text-slate-700 truncate">
+                                            {{ ucwords(str_replace(['template:', '_', '-'], ['', ' ', ' '], (string) $project->repo_source)) }}
+                                        </span>
+                                    @else
+                                        <span class="text-slate-500"><i class="fa-brands fa-github mr-1"></i> Repo:</span>
+                                        <span class="font-mono text-slate-700 truncate" title="{{ $project->repo_source }}">
+                                            {{ str_replace('https://github.com/', '', $project->repo_source) }}
+                                        </span>
+                                    @endif
                                 </div>
                                 <div class="flex items-center gap-2 text-xs">
-                                    <span class="text-slate-500"><i class="fa-solid fa-code-branch mr-1"></i> Branch:</span>
-                                    <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">
-                                        {{ $project->branch }}
-                                    </span>
+                                    @if(!$isUploadSource)
+                                        <span class="text-slate-500"><i class="fa-solid fa-code-branch mr-1"></i> Branch:</span>
+                                        <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">
+                                            {{ $project->branch }}
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
 

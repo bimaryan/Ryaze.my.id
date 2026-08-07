@@ -49,6 +49,7 @@ class AutoDeployProject implements ShouldQueue
             $this->exec("mkdir -p {$baseDir}", $deploy);
 
             $isTemplate = ($this->project->source_type === 'template') || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'template:'));
+            $isUpload   = ($this->project->source_type === 'upload')   || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'upload:'));
 
             $this->log($deploy, "> Debug: source_type = " . ($this->project->source_type ?? 'NULL'));
             $this->log($deploy, "> Debug: repo_source = " . ($this->project->repo_source ?? 'NULL'));
@@ -82,6 +83,11 @@ class AutoDeployProject implements ShouldQueue
 
                     $this->log($deploy, "> Template files ready in: {$projectDir}");
                 }
+            } elseif ($isUpload) {
+                $this->log($deploy, "\n> ✅ Mode ZIP Upload aktif!");
+                $this->log($deploy, "\n> [UPLOAD] Mengekstrak arsip ZIP ke direktori project...");
+                $this->extractUploadZip($deploy, $projectDir);
+                $this->log($deploy, "> File ZIP berhasil diekstrak ke: {$projectDir}");
             } else {
                 $this->log($deploy, "\n> Checking repository status...");
 
@@ -648,6 +654,99 @@ class AutoDeployProject implements ShouldQueue
             'tailwind_linkinbio' => $this->scaffoldTailwindLinkinbio($dir, $projectName),
             default => throw new \RuntimeException("Unknown template key: {$key}"),
         };
+    }
+
+    private function extractUploadZip($deploy, string $projectDir): void
+    {
+        $zipRel = ltrim(str_replace('upload:', '', (string) $this->project->repo_source), '/');
+
+        // Keamanan: jangan izinkan path keluar dari storage app
+        if ($zipRel === '' || str_contains($zipRel, '..')) {
+            throw new \RuntimeException('Lokasi file ZIP tidak valid.');
+        }
+
+        $zipPath = storage_path('app/' . $zipRel);
+        if (!file_exists($zipPath)) {
+            throw new \RuntimeException("File ZIP tidak ditemukan di server: {$zipRel}. Silakan deploy ulang dari halaman Deploy.");
+        }
+
+        if (is_dir($projectDir)) {
+            $this->exec("rm -rf " . escapeshellarg($projectDir), $deploy);
+        }
+        $this->exec("mkdir -p " . escapeshellarg($projectDir), $deploy);
+
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath) !== true) {
+            throw new \RuntimeException('Gagal membuka file ZIP. Pastikan file valid dan tidak corrupt.');
+        }
+
+        $maxFiles    = 10000;
+        $maxBytes    = 500 * 1024 * 1024; // 500 MB total ukuran file (tidak terkompresi, anti zip-bomb)
+        $totalBytes  = 0;
+
+        try {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                if ($i >= $maxFiles) {
+                    throw new \RuntimeException("Terlalu banyak file di dalam ZIP (maks {$maxFiles}).");
+                }
+
+                $rawName = $zip->getNameIndex($i);
+                if ($rawName === false || $rawName === '') {
+                    continue;
+                }
+
+                // Normalisasi separator & validasi entry (anti path traversal)
+                $clean = str_replace('\\', '/', $rawName);
+                if (str_starts_with($clean, '/') || preg_match('#^[A-Za-z]:#', $clean)) {
+                    throw new \RuntimeException("Entry ZIP tidak valid (absolute path): {$rawName}");
+                }
+
+                $segments = [];
+                foreach (explode('/', $clean) as $seg) {
+                    if ($seg === '..') {
+                        throw new \RuntimeException("Path traversal terdeteksi di entry ZIP: {$rawName}");
+                    }
+                    if ($seg === '' || $seg === '.') {
+                        continue;
+                    }
+                    $segments[] = $seg;
+                }
+                if (empty($segments)) {
+                    continue;
+                }
+
+                $target = $projectDir . '/' . implode('/', $segments);
+
+                // Folder
+                if (substr($clean, -1) === '/') {
+                    @mkdir($target, 0755, true);
+                    continue;
+                }
+
+                // Batas ukuran terkompresi total
+                $stat = $zip->statIndex($i);
+                $totalBytes += (int) ($stat['size'] ?? 0);
+                if ($totalBytes > $maxBytes) {
+                    throw new \RuntimeException('Total ukuran isi ZIP melebihi batas 500 MB.');
+                }
+
+                $content = $zip->getFromIndex($i);
+                if ($content === false) {
+                    throw new \RuntimeException("Gagal membaca entry ZIP: {$rawName}");
+                }
+
+                @mkdir(dirname($target), 0755, true);
+                file_put_contents($target, $content);
+            }
+        } finally {
+            $zip->close();
+        }
+
+        file_put_contents("{$projectDir}/.ryaze-upload", json_encode([
+            'zip'        => $zipRel,
+            'extracted'  => now()->toISOString(),
+            'project_id' => $this->project->id,
+        ]));
     }
 
     private function scaffoldTailwind(string $dir, string $name): void
