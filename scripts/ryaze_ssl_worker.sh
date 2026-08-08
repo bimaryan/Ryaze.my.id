@@ -8,6 +8,7 @@ fi
 
 APP_DIR="/opt/1panel/apps/openresty/openresty/www/sites/ryaze.my.id/index"
 QUEUE_FILE="$APP_DIR/storage/app/ssl_queue.json"
+NGINX_QUEUE="$APP_DIR/storage/app/nginx_queue.json"
 NGINX_CONF_DIR="/opt/1panel/apps/openresty/openresty/conf/conf.d"
 NGINX_SSL_DIR="/opt/1panel/apps/openresty/openresty/www/ssl"
 CERTBOT_WEBROOT="/opt/1panel/apps/openresty/openresty/www/letsencrypt"
@@ -89,14 +90,76 @@ EOF
     chown root:root "$CONF_FILE"
 }
 
-if [ ! -f "$QUEUE_FILE" ]; then
+# Keluar hanya bila KEDUA antrean (SSL & Nginx custom) tidak ada
+if [ ! -f "$QUEUE_FILE" ] && [ ! -f "$NGINX_QUEUE" ]; then
     exit 0
 fi
 
-# Pastikan jq terinstal
+# Pastikan jq terinstal (dipakai kedua antrean)
 if ! command -v jq &> /dev/null; then
     echo "jq tidak terinstal. Menginstal jq..."
     apt-get update && apt-get install -y jq
+fi
+
+# ──────────────────────────────────────────────────────────────────
+# Antrean Konfigurasi Nginx Custom per Subdomain (nginx_queue.json)
+# Dijalankan lebih dulu agar independen dari antrean SSL.
+# ──────────────────────────────────────────────────────────────────
+if [ -f "$NGINX_QUEUE" ]; then
+    NQUEUE_CONTENT=$(cat "$NGINX_QUEUE")
+
+    if [ -n "$NQUEUE_CONTENT" ] && [ "$NQUEUE_CONTENT" != "[]" ]; then
+        # Kosongkan antrean agar tidak ada duplikasi
+        echo "[]" > "$NGINX_QUEUE"
+
+        NLEN=$(echo "$NQUEUE_CONTENT" | jq '. | length')
+
+        for i in $(seq 0 $(($NLEN - 1))); do
+            ACTION=$(echo "$NQUEUE_CONTENT" | jq -r ".[$i].action")
+            DOMAIN=$(echo "$NQUEUE_CONTENT" | jq -r ".[$i].domain")
+            PROJECT_DOMAIN=$(echo "$NQUEUE_CONTENT" | jq -r ".[$i].project_domain")
+            CUSTOM_FILE=$(echo "$NQUEUE_CONTENT" | jq -r ".[$i].custom_file")
+
+            CONF_FILE="$NGINX_CONF_DIR/$DOMAIN.conf"
+            NGINX_ERR_DIR="$APP_DIR/storage/app/nginx/errors"
+
+            echo "[$(date)] Memproses task: $ACTION untuk domain $DOMAIN" >> "$APP_DIR/storage/logs/ssl_worker.log"
+
+            if [ "$ACTION" == "custom" ]; then
+                mkdir -p "$NGINX_ERR_DIR"
+
+                if [ -z "$CUSTOM_FILE" ] || [ ! -f "$APP_DIR/$CUSTOM_FILE" ]; then
+                    # Reset ke konfigurasi default (HTTPS bila sertifikat tersedia)
+                    rm -f "$NGINX_ERR_DIR/$DOMAIN.txt"
+                    write_default_conf "$DOMAIN" "$PROJECT_DOMAIN"
+                    docker exec $CONTAINER_NGINX nginx -s reload
+                    docker exec $CONTAINER_PHP php /www/sites/ryaze.my.id/index/artisan domain:nginx-status "$DOMAIN" reset
+                else
+                    # Backup config lama, lalu pasang config baru user
+                    cp -f "$CONF_FILE" "$CONF_FILE.bak" 2>/dev/null
+                    cp -f "$APP_DIR/$CUSTOM_FILE" "$CONF_FILE"
+                    chown root:root "$CONF_FILE"
+
+                    NGINX_TEST=$(docker exec $CONTAINER_NGINX nginx -t 2>&1)
+                    if [ $? -eq 0 ]; then
+                        # Config valid — reload & laporkan sukses
+                        rm -f "$NGINX_ERR_DIR/$DOMAIN.txt"
+                        docker exec $CONTAINER_NGINX nginx -s reload
+                        docker exec $CONTAINER_PHP php /www/sites/ryaze.my.id/index/artisan domain:nginx-status "$DOMAIN" applied
+                    else
+                        # Config invalid — rollback (ke backup bila ada, selain itu default)
+                        if [ -f "$CONF_FILE.bak" ]; then
+                            cp -f "$CONF_FILE.bak" "$CONF_FILE" 2>/dev/null
+                        else
+                            write_default_conf "$DOMAIN" "$PROJECT_DOMAIN"
+                        fi
+                        echo "$NGINX_TEST" > "$NGINX_ERR_DIR/$DOMAIN.txt"
+                        docker exec $CONTAINER_PHP php /www/sites/ryaze.my.id/index/artisan domain:nginx-status "$DOMAIN" failed
+                    fi
+                fi
+            fi
+        done
+    fi
 fi
 
 # Baca isi antrean
@@ -253,65 +316,3 @@ EOF
         docker exec $CONTAINER_NGINX nginx -s reload
     fi
 done
-
-# ──────────────────────────────────────────────────────────────────
-# Antrean Konfigurasi Nginx Custom per Subdomain (nginx_queue.json)
-# ──────────────────────────────────────────────────────────────────
-NGINX_QUEUE="$APP_DIR/storage/app/nginx_queue.json"
-
-if [ -f "$NGINX_QUEUE" ]; then
-    NQUEUE_CONTENT=$(cat "$NGINX_QUEUE")
-
-    if [ -n "$NQUEUE_CONTENT" ] && [ "$NQUEUE_CONTENT" != "[]" ]; then
-        # Kosongkan antrean agar tidak ada duplikasi
-        echo "[]" > "$NGINX_QUEUE"
-
-        NLEN=$(echo "$NQUEUE_CONTENT" | jq '. | length')
-
-        for i in $(seq 0 $(($NLEN - 1))); do
-            ACTION=$(echo "$NQUEUE_CONTENT" | jq -r ".[$i].action")
-            DOMAIN=$(echo "$NQUEUE_CONTENT" | jq -r ".[$i].domain")
-            PROJECT_DOMAIN=$(echo "$NQUEUE_CONTENT" | jq -r ".[$i].project_domain")
-            CUSTOM_FILE=$(echo "$NQUEUE_CONTENT" | jq -r ".[$i].custom_file")
-
-            CONF_FILE="$NGINX_CONF_DIR/$DOMAIN.conf"
-            NGINX_ERR_DIR="$APP_DIR/storage/app/nginx/errors"
-
-            echo "[$(date)] Memproses task: $ACTION untuk domain $DOMAIN" >> "$APP_DIR/storage/logs/ssl_worker.log"
-
-            if [ "$ACTION" == "custom" ]; then
-                mkdir -p "$NGINX_ERR_DIR"
-
-                if [ -z "$CUSTOM_FILE" ] || [ ! -f "$APP_DIR/$CUSTOM_FILE" ]; then
-                    # Reset ke konfigurasi default (HTTPS bila sertifikat tersedia)
-                    rm -f "$NGINX_ERR_DIR/$DOMAIN.txt"
-                    write_default_conf "$DOMAIN" "$PROJECT_DOMAIN"
-                    docker exec $CONTAINER_NGINX nginx -s reload
-                    docker exec $CONTAINER_PHP php /www/sites/ryaze.my.id/index/artisan domain:nginx-status "$DOMAIN" reset
-                else
-                    # Backup config lama, lalu pasang config baru user
-                    cp -f "$CONF_FILE" "$CONF_FILE.bak" 2>/dev/null
-                    cp -f "$APP_DIR/$CUSTOM_FILE" "$CONF_FILE"
-                    chown root:root "$CONF_FILE"
-
-                    NGINX_TEST=$(docker exec $CONTAINER_NGINX nginx -t 2>&1)
-                    if [ $? -eq 0 ]; then
-                        # Config valid — reload & laporkan sukses
-                        rm -f "$NGINX_ERR_DIR/$DOMAIN.txt"
-                        docker exec $CONTAINER_NGINX nginx -s reload
-                        docker exec $CONTAINER_PHP php /www/sites/ryaze.my.id/index/artisan domain:nginx-status "$DOMAIN" applied
-                    else
-                        # Config invalid — rollback (ke backup bila ada, selain itu default)
-                        if [ -f "$CONF_FILE.bak" ]; then
-                            cp -f "$CONF_FILE.bak" "$CONF_FILE" 2>/dev/null
-                        else
-                            write_default_conf "$DOMAIN" "$PROJECT_DOMAIN"
-                        fi
-                        echo "$NGINX_TEST" > "$NGINX_ERR_DIR/$DOMAIN.txt"
-                        docker exec $CONTAINER_PHP php /www/sites/ryaze.my.id/index/artisan domain:nginx-status "$DOMAIN" failed
-                    fi
-                fi
-            fi
-        done
-    fi
-fi
