@@ -1648,6 +1648,119 @@ PHP;
         return back()->with('success', 'Redeploy berhasil dimulai! Silakan tunggu beberapa saat.');
     }
 
+    /**
+     * Antrekan task untuk worker bash (mirip ssl_queue.json).
+     * File: storage/app/nginx_queue.json
+     */
+    private function enqueueNginxTask(array $entry): void
+    {
+        $queueFile = storage_path('app/nginx_queue.json');
+        $dir = dirname($queueFile);
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+
+        $fp = fopen($queueFile, 'c+');
+        if (!$fp) {
+            throw new \RuntimeException('Gagal membuka nginx queue file.');
+        }
+
+        flock($fp, LOCK_EX);
+        $content = stream_get_contents($fp);
+        $items = json_decode($content ?: '[]', true);
+        if (!is_array($items)) {
+            $items = [];
+        }
+        $items[] = $entry;
+        ftruncate($fp, 0);
+        rewind($fp);
+        fwrite($fp, json_encode($items));
+        fflush($fp);
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
+
+    /** Menyimpan konfigurasi Nginx custom user untuk subdomain project-nya. */
+    public function updateNginxConfig(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+
+        $domain = $project->ryaze_domain;
+
+        $request->validate([
+            'nginx_config' => 'required|string|max:60000',
+        ], [
+            'nginx_config.required' => 'Isi konfigurasi Nginx terlebih dahulu.',
+        ]);
+
+        $config = $request->input('nginx_config');
+
+        // Validasi ringan sisi aplikasi; pemeriksaan final oleh nginx -t di worker.
+        if (!str_contains($config, 'server {') || !str_contains($config, 'server_name')) {
+            return back()->with('error', 'Konfigurasi harus berisi blok "server { ... }" dengan direktif "server_name".');
+        }
+        if (!str_contains($config, $domain)) {
+            return back()->with('error', "Konfigurasi harus menyertakan server_name untuk domain Anda: {$domain}");
+        }
+        foreach (['load_module', 'worker_processes', 'pid ', 'master_process', 'daemon '] as $forbidden) {
+            if (str_contains($config, $forbidden)) {
+                return back()->with('error', "Direktif global \"{$forbidden}\" tidak diizinkan dalam konfigurasi per-subdomain.");
+            }
+        }
+
+        // Simpan file konfigurasi ke storage privat agar dibaca worker
+        $confDir = storage_path('app/nginx/custom');
+        if (!is_dir($confDir)) {
+            @mkdir($confDir, 0775, true);
+        }
+        $confFile = "{$confDir}/{$domain}.conf";
+        file_put_contents($confFile, $config);
+
+        $project->update([
+            'nginx_custom' => $config,
+            'nginx_status' => 'pending',
+            'nginx_error'  => null,
+        ]);
+
+        $this->enqueueNginxTask([
+            'action'        => 'custom',
+            'domain'        => $domain,
+            'project_domain'=> $domain,
+            'custom_file'   => 'storage/app/nginx/custom/' . $domain . '.conf',
+        ]);
+
+        return back()->with('success', 'Konfigurasi Nginx dikirim ke server. Status akan diperbarui otomatis setelah diverifikasi (nginx -t).');
+    }
+
+    /** Mengembalikan konfigurasi Nginx project ke template default. */
+    public function resetNginxConfig(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+
+        $domain = $project->ryaze_domain;
+        $confFile = storage_path('app/nginx/custom/' . $domain . '.conf');
+        if (file_exists($confFile)) {
+            @unlink($confFile);
+        }
+
+        $project->update([
+            'nginx_custom' => null,
+            'nginx_status' => 'pending',
+            'nginx_error'  => null,
+        ]);
+
+        $this->enqueueNginxTask([
+            'action'        => 'custom',
+            'domain'        => $domain,
+            'project_domain'=> $domain,
+            'custom_file'   => '',
+        ]);
+
+        return back()->with('success', 'Konfigurasi Nginx dikembalikan ke default. Proses berjalan otomatis di server.');
+    }
+
     // Mengambil build log terakhir untuk polling AJAX
     public function buildLogs($hashid)
     {

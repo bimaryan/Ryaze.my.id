@@ -12,6 +12,15 @@ Artisan::command('inspire', function () {
 Schedule::command('hosting:suspend-expired')->dailyAt('00:00');
 Schedule::command('blog:generate --scheduled')->everyMinute();
 
+// Worker eksternal: memproses antrean SSL & Konfigurasi Nginx custom (polling tiap menit)
+$sslWorkerPath = env('RYAZE_SSL_WORKER', '/opt/1panel/apps/openresty/openresty/www/sites/ryaze.my.id/index/scripts/ryaze_ssl_worker.sh');
+if (is_file($sslWorkerPath)) {
+    Schedule::exec('bash ' . escapeshellarg($sslWorkerPath))
+        ->everyMinute()
+        ->withoutOverlapping()
+        ->appendOutputTo(storage_path('logs/ssl_worker_schedule.log'));
+}
+
 // Load custom cron jobs from database
 try {
     if (\Illuminate\Support\Facades\Schema::hasTable('hosting_crons')) {

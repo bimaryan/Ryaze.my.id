@@ -253,6 +253,77 @@
                         </div>
                     </div>
 
+                    {{-- Konfigurasi Nginx Custom --}}
+                    @php
+                    $d = $project->ryaze_domain;
+                    $defaultNginxConf = "server {\n    listen 80;\n    server_name {$d};\n\n    location /.well-known/acme-challenge/ {\n        root /www/letsencrypt;\n    }\n\n    location / {\n        proxy_pass http://127.0.0.1;\n        proxy_set_header Host {$d};\n        proxy_set_header X-Real-IP \$remote_addr;\n        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n        proxy_set_header X-Forwarded-Proto \$scheme;\n    }\n}";
+                    $nginxStatus = $project->nginx_status;
+                    $nginxBadge = match ($nginxStatus) {
+                        'pending' => ['text-amber-600 bg-amber-50 border-amber-200', 'fa-clock', 'Diproses'],
+                        'applied' => ['text-emerald-600 bg-emerald-50 border-emerald-200', 'fa-circle-check', 'Aktif'],
+                        'failed'  => ['text-rose-600 bg-rose-50 border-rose-200', 'fa-circle-xmark', 'Gagal'],
+                        'reset'   => ['text-slate-600 bg-slate-50 border-slate-200', 'fa-rotate-left', 'Default'],
+                        default   => ['text-slate-400 bg-slate-50 border-slate-200', 'fa-minus', 'Belum diatur'],
+                    };
+                    @endphp
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mt-4">
+                        <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2 text-sm">
+                            <i class="fa-solid fa-server text-indigo-500"></i> Konfigurasi Nginx (OpenResty)
+                            <span class="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider {{ $nginxBadge[0] }}">
+                                <i class="fa-solid {{ $nginxBadge[1] }} {{ $nginxStatus === 'pending' ? 'fa-spin' : '' }}"></i> {{ $nginxBadge[2] }}
+                            </span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-3">
+                            Sesuaikan config server untuk
+                            <code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-700 text-[10px]">{{ $d }}</code>.
+                            Config diverifikasi <code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-700 text-[10px]">nginx -t</code> otomatis;
+                            jika invalid, config lama langsung dipulihkan.
+                        </p>
+
+                        @if($project->nginx_status === 'failed' && $project->nginx_error)
+                            <div class="mb-3 bg-rose-50 border border-rose-200 rounded-xl p-3">
+                                <p class="text-[11px] font-bold text-rose-700 mb-1 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> nginx -t menolak config terakhir:
+                                </p>
+                                <pre class="text-[10px] text-rose-600 whitespace-pre-wrap break-all font-mono max-h-28 overflow-y-auto">{{ $project->nginx_error }}</pre>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('user_hosting.nginx.update', $project->hashid) }}" method="POST">
+                            @csrf
+                            <textarea name="nginx_config" rows="12" spellcheck="false"
+                                class="w-full font-mono text-[11px] leading-relaxed bg-slate-900 text-emerald-300 border border-slate-800 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500/30 outline-none transition resize-y"
+                                placeholder="# Contoh: server {&#10;    listen 80;&#10;    server_name {{ $d }};&#10;    ...&#10;}">{{ $project->nginx_custom }}</textarea>
+                            <div class="flex flex-wrap items-center gap-2 mt-3">
+                                <button type="submit"
+                                    class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-paper-plane"></i> Simpan &amp; Terapkan
+                                </button>
+                                <button type="button" onclick="document.getElementById('nginx_example').classList.toggle('hidden')"
+                                    class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-eye"></i> Contoh Config
+                                </button>
+                                <button type="button" onclick="copyNginxExample()"
+                                    class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-copy"></i> Salin Contoh
+                                </button>
+                            </div>
+                        </form>
+
+                        <form action="{{ route('user_hosting.nginx.reset', $project->hashid) }}" method="POST" class="mt-2"
+                            onsubmit="return confirm('Kembalikan konfigurasi Nginx ke default?')">
+                            @csrf
+                            <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 text-xs font-bold py-2 rounded-lg transition-colors">
+                                <i class="fa-solid fa-rotate-left"></i> Kembalikan ke Default
+                            </button>
+                        </form>
+
+                        <div id="nginx_example" class="hidden mt-3">
+                            <pre id="nginx_example_content" class="text-[10px] font-mono text-slate-300 bg-slate-900 border border-slate-800 rounded-xl p-3 whitespace-pre-wrap break-all max-h-72 overflow-y-auto">{{ $defaultNginxConf }}</pre>
+                        </div>
+                    </div>
+
                     {{-- QR Code Scan --}}
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mt-4 text-center">
                         <h3 class="font-bold text-slate-800 mb-4 border-b pb-2 text-sm flex items-center justify-center gap-2">
@@ -1224,6 +1295,23 @@
 
     {{-- ── SCRIPT 2: Helpers & Build Log polling ────────────────────────────── --}}
     <script nonce="{{ csp_nonce() }}">
+        function copyNginxExample() {
+            var el = document.getElementById('nginx_example_content');
+            if (!el) return;
+            var text = el.textContent;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'success', title: 'Tersalin!', text: 'Config contoh disalin ke clipboard.', timer: 1500, showConfirmButton: false });
+                    } else {
+                        alert('Config contoh disalin ke clipboard.');
+                    }
+                });
+            } else {
+                alert('Salin manual: pilih teks contoh di bawah.');
+            }
+        }
+
         var fixUrl = u => window.location.protocol === 'https:' ?
             u.replace(/^http:\/\//i, 'https://') :
             u;

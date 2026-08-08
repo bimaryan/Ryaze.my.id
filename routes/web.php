@@ -201,6 +201,8 @@ Route::middleware('auth')->group(function () {
             Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
             Route::get('user/hosting/server-status', [DashboardController::class, 'getServerStatus'])->name('user_hosting.server_status');
             Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
+            Route::post('user/hosting/projects/{hashid}/nginx', [DashboardController::class, 'updateNginxConfig'])->name('user_hosting.nginx.update');
+            Route::post('user/hosting/projects/{hashid}/nginx/reset', [DashboardController::class, 'resetNginxConfig'])->name('user_hosting.nginx.reset');
             Route::get('user/hosting/projects/{hashid}/logs', [DashboardController::class, 'buildLogs'])->name('user_hosting.build_logs');
             Route::post('user/hosting/projects/{hashid}/terminal', [DashboardController::class, 'terminal'])->name('user_hosting.terminal');
             Route::get('user/hosting/projects/{hashid}/files', [DashboardController::class, 'getFiles'])->name('user_hosting.files');
