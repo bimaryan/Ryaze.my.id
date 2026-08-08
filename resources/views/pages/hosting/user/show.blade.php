@@ -314,8 +314,8 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
 
     location / {
-        if ($app_root != "") {
-            proxy_pass http://127.0.0.1:$app_root;
+        if ($app_port != "") {
+            proxy_pass http://127.0.0.1:$app_port;
             break;
         }
         try_files $uri $uri/ @framework_fallback;
@@ -332,8 +332,8 @@ server {
     }
 
     location ~ \.php$ {
-        if ($app_root != "") {
-            proxy_pass http://127.0.0.1:$app_root;
+        if ($app_port != "") {
+            proxy_pass http://127.0.0.1:$app_port;
             break;
         }
         try_files $uri =404;
@@ -345,8 +345,8 @@ server {
     }
 
     location ~ .*\.(js|css|png|jpg|jpeg|gif|ico|bmp|swf|eot|svg|ttf|woff|woff2)$ {
-        if ($app_root != "") {
-            proxy_pass http://127.0.0.1:$app_root;
+        if ($app_port != "") {
+            proxy_pass http://127.0.0.1:$app_port;
             break;
         }
         try_files $uri $uri/ @framework_fallback;
