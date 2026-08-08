@@ -16,77 +16,114 @@ CONTAINER_PHP="1Panel-php8-aJQI"
 CONTAINER_NGINX="1Panel-openresty-iLJL"
 
 # Tulis konfigurasi default vhost (dipakai saat reset konfigurasi custom)
+# Template meniru hosting_clients.conf: PHP-FPM 127.0.0.1:9000, static root,
+# dan Node.js via file .port — jadi aman untuk subdomain ryaze/ryz/safetalkai.
 write_default_conf() {
     local DOMAIN="$1" PROJECT_DOMAIN="$2"
+    local SUBDOMAIN="${DOMAIN%%.*}"
     local CONF_FILE="$NGINX_CONF_DIR/$DOMAIN.conf"
+    local CLIENT_DIR="/www/sites/hosting_clients/$SUBDOMAIN"
     mkdir -p "$NGINX_CONF_DIR"
-    if [ -f "$NGINX_SSL_DIR/$DOMAIN/fullchain.pem" ]; then
-        cat <<EOF > "$CONF_FILE"
+    cat <<EOF > "$CONF_FILE"
 server {
     listen 80;
+    listen [::]:80;
     server_name $DOMAIN;
 
-    location /.well-known/acme-challenge/ {
-        root /www/letsencrypt;
+    add_header X-Frame-Options "" always;
+
+    set \$dynamic_root $CLIENT_DIR;
+    if (-f $CLIENT_DIR/public/index.php) {
+        set \$dynamic_root $CLIENT_DIR/public;
+    }
+    if (-f $CLIENT_DIR/public/index.html) {
+        set \$dynamic_root $CLIENT_DIR/public;
+    }
+    if (-f $CLIENT_DIR/dist/index.html) {
+        set \$dynamic_root $CLIENT_DIR/dist;
+    }
+    if (-f $CLIENT_DIR/build/index.html) {
+        set \$dynamic_root $CLIENT_DIR/build;
     }
 
-    location / {
-        set \$do_redirect 0;
-        if (\$http_x_forwarded_proto != "https") {
-            set \$do_redirect 1;
-        }
-        if (\$do_redirect = 1) {
-            return 301 https://\$host\$request_uri;
-        }
+    root \$dynamic_root;
+    index index.php index.html index.htm;
 
-        proxy_pass http://127.0.0.1;
+    access_log /www/sites/hosting_clients/log/access.log main;
+    error_log /www/sites/hosting_clients/log/error.log;
 
-        proxy_set_header Host $PROJECT_DOMAIN;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header X-Forwarded-Host \$host;
+    location ^~ /.well-known/acme-challenge {
+        allow all;
+        root /usr/share/nginx/html;
     }
-}
 
-server {
-    listen 443 ssl http2;
-    server_name $DOMAIN;
+    set_by_lua_block \$app_port {
+        local subdomain = "$SUBDOMAIN"
+        local file_path = "/www/sites/hosting_clients/" .. subdomain .. "/.port"
+        local file = io.open(file_path, "r")
+        if file then
+            local port = file:read("*l")
+            file:close()
+            if port then
+                port = port:gsub("%s+", "")
+                if port ~= "" then
+                    return port
+                end
+            end
+        end
+        return ""
+    }
 
-    ssl_certificate /www/ssl/$DOMAIN/fullchain.pem;
-    ssl_certificate_key /www/ssl/$DOMAIN/privkey.pem;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
 
     location / {
-        proxy_pass http://127.0.0.1;
+        if (\$app_port != "") {
+            proxy_pass http://127.0.0.1:\$app_port;
+            break;
+        }
+        try_files \$uri \$uri/ @framework_fallback;
+    }
 
-        proxy_set_header Host $PROJECT_DOMAIN;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header X-Forwarded-Host \$host;
+    location @framework_fallback {
+        if (-f \$document_root/index.php) {
+            rewrite ^ /index.php?\$query_string last;
+        }
+        if (-f \$document_root/index.html) {
+            rewrite ^ /index.html last;
+        }
+        return 404;
+    }
+
+    location ~ \.php\$ {
+        if (\$app_port != "") {
+            proxy_pass http://127.0.0.1:\$app_port;
+            break;
+        }
+        try_files \$uri =404;
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_param HTTP_HOST \$host;
+    }
+
+    location ~ .*\.(js|css|png|jpg|jpeg|gif|ico|bmp|swf|eot|svg|ttf|woff|woff2)\$ {
+        if (\$app_port != "") {
+            proxy_pass http://127.0.0.1:\$app_port;
+            break;
+        }
+        try_files \$uri \$uri/ @framework_fallback;
+        expires 30d;
+        log_not_found off;
     }
 }
 EOF
-    else
-        cat <<EOF > "$CONF_FILE"
-server {
-    listen 80;
-    server_name $DOMAIN;
-
-    location /.well-known/acme-challenge/ {
-        root /www/letsencrypt;
-    }
-
-    location / {
-        proxy_pass http://127.0.0.1;
-        proxy_set_header Host $PROJECT_DOMAIN;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-    }
-}
-EOF
-    fi
     chown root:root "$CONF_FILE"
 }
 

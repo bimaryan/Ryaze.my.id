@@ -253,11 +253,110 @@
                         </div>
                     </div>
 
-                    {{-- Konfigurasi Nginx Custom --}}
-                    @php
-                    $d = $project->ryaze_domain;
-                    $defaultNginxConf = "server {\n    listen 80;\n    server_name {$d};\n\n    location /.well-known/acme-challenge/ {\n        root /www/letsencrypt;\n    }\n\n    location / {\n        proxy_pass http://127.0.0.1;\n        proxy_set_header Host {$d};\n        proxy_set_header X-Real-IP \$remote_addr;\n        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n        proxy_set_header X-Forwarded-Proto \$scheme;\n    }\n}";
-                    $nginxStatus = $project->nginx_status;
+{{-- Konfigurasi Nginx Custom --}}
+                        @php
+                        $d = $project->ryaze_domain;
+                        $s = explode('.', $d)[0];
+                        $defaultNginxConf = str_replace(
+                            ['__DOMAIN__', '__SUBDOMAIN__'],
+                            [$d, $s],
+                            <<<'NGINX_CONF'
+server {
+    listen 80;
+    listen [::]:80;
+    server_name __DOMAIN__;
+
+    set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__;
+    if (-f /www/sites/hosting_clients/__SUBDOMAIN__/public/index.php) {
+        set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__/public;
+    }
+    if (-f /www/sites/hosting_clients/__SUBDOMAIN__/public/index.html) {
+        set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__/public;
+    }
+    if (-f /www/sites/hosting_clients/__SUBDOMAIN__/dist/index.html) {
+        set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__/dist;
+    }
+    if (-f /www/sites/hosting_clients/__SUBDOMAIN__/build/index.html) {
+        set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__/build;
+    }
+
+    root $dynamic_root;
+    index index.php index.html index.htm;
+
+    location ^~ /.well-known/acme-challenge {
+        allow all;
+        root /usr/share/nginx/html;
+    }
+
+    set_by_lua_block $app_port {
+        local subdomain = "__SUBDOMAIN__"
+        local file_path = "/www/sites/hosting_clients/" .. subdomain .. "/.port"
+        local file = io.open(file_path, "r")
+        if file then
+            local port = file:read("*l")
+            file:close()
+            if port then
+                port = port:gsub("%s+", "")
+                if port ~= "" then
+                    return port
+                end
+            end
+        end
+        return ""
+    }
+
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    location / {
+        if ($app_root != "") {
+            proxy_pass http://127.0.0.1:$app_root;
+            break;
+        }
+        try_files $uri $uri/ @framework_fallback;
+    }
+
+    location @framework_fallback {
+        if (-f $document_root/index.php) {
+            rewrite ^ /index.php?$query_string last;
+        }
+        if (-f $document_root/index.html) {
+            rewrite ^ /index.html last;
+        }
+        return 404;
+    }
+
+    location ~ \.php$ {
+        if ($app_root != "") {
+            proxy_pass http://127.0.0.1:$app_root;
+            break;
+        }
+        try_files $uri =404;
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param HTTP_HOST $host;
+    }
+
+    location ~ .*\.(js|css|png|jpg|jpeg|gif|ico|bmp|swf|eot|svg|ttf|woff|woff2)$ {
+        if ($app_root != "") {
+            proxy_pass http://127.0.0.1:$app_root;
+            break;
+        }
+        try_files $uri $uri/ @framework_fallback;
+        expires 30d;
+        log_not_found off;
+    }
+}
+NGINX_CONF
+                        );
+                        $nginxStatus = $project->nginx_status;
                     $nginxBadge = match ($nginxStatus) {
                         'pending' => ['text-amber-600 bg-amber-50 border-amber-200', 'fa-clock', 'Diproses'],
                         'applied' => ['text-emerald-600 bg-emerald-50 border-emerald-200', 'fa-circle-check', 'Aktif'],
