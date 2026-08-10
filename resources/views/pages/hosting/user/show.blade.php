@@ -285,7 +285,7 @@ server {
 
     location ^~ /.well-known/acme-challenge {
         allow all;
-        root /usr/share/nginx/html;
+        root /www/letsencrypt;
     }
 
     set_by_lua_block $app_port {
