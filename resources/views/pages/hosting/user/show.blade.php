@@ -1574,24 +1574,62 @@ NGINX_CONF
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
+                        'Accept': 'application/x-ndjson'
                     },
                     body: JSON.stringify({
-                        command: cmd
+                        command: cmd,
+                        term_id: 'main'
                     }),
                 });
-                const data = await res.json();
+                
                 document.getElementById(lid)?.remove();
 
-                if (data.cwd && data.cwd !== currentCwd) updatePrompt(data.cwd);
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    appendRaw(`<div class="text-rose-400 mb-1">${escapeHtml(errData.error || 'Terjadi kesalahan sistem (HTTP ' + res.status + ')')}</div>`);
+                    running = false;
+                    termInput.focus();
+                    return;
+                }
 
-                if (data.error) {
-                    appendRaw(`<div class="text-rose-400 mb-1">${escapeHtml(data.error)}</div>`);
-                } else if (data.output && data.output.trim() !== '') {
-                    const cls = data.exit_code !== 0 ? 'text-rose-300' : 'text-slate-200';
-                    appendRaw(
-                        `<pre class="${cls} whitespace-pre-wrap break-words mb-1 leading-relaxed">${escapeHtml(data.output)}</pre>`
-                        );
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                
+                const preId = 'out-' + Date.now();
+                appendRaw(`<pre id="${preId}" class="text-slate-200 whitespace-pre-wrap break-words mb-1 leading-relaxed"></pre>`);
+                const preEl = document.getElementById(preId);
+                
+                let buffer = '';
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // simpan sisa baris yang belum lengkap di buffer
+                    
+                    for (const line of lines) {
+                        if (!line.trim()) continue;
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.cwd && data.cwd !== currentCwd) updatePrompt(data.cwd);
+                            
+                            if (data.error) {
+                                appendRaw(`<div class="text-rose-400 mb-1">${escapeHtml(data.error)}</div>`);
+                            }
+                            if (data.output && data.output !== '') {
+                                preEl.innerHTML += escapeHtml(data.output);
+                                termOut.scrollTop = termOut.scrollHeight;
+                            }
+                            if (data.exit_code !== undefined && data.exit_code !== 0) {
+                                preEl.classList.remove('text-slate-200');
+                                preEl.classList.add('text-rose-300');
+                            }
+                        } catch (e) {
+                            console.error('Error parsing terminal stream JSON:', e, line);
+                        }
+                    }
                 }
             } catch (err) {
                 document.getElementById(lid)?.remove();
