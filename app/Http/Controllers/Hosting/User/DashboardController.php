@@ -1588,6 +1588,13 @@ PHP;
                 exec("rm -f \"{$devSymlink}\"");
             }
         }
+        
+        if (file_exists("{$projectDir}/.port")) {
+            @unlink("{$projectDir}/.port");
+        }
+        if (file_exists("{$projectDir}/index.php")) {
+            @unlink("{$projectDir}/index.php");
+        }
 
         $devPort = $project->dev_port;
 

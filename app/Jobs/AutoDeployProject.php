@@ -189,6 +189,21 @@ class AutoDeployProject implements ShouldQueue
 
     private function setupNodeFramework($deploy, string $projectDir, string $framework): void
     {
+        // Cleanup old PM2 processes and proxy files before rebuilding
+        $pm2Name = "prod_{$this->project->id}";
+        $this->exec("npx -y pm2 delete {$pm2Name} 2>/dev/null || true", $deploy);
+        if ($this->project->dev_pid) {
+            $this->exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true", $deploy);
+            $this->exec("npx -y pm2 delete \"{$this->project->dev_pid}\" 2>/dev/null || true", $deploy);
+        }
+        $this->exec("rm -f {$projectDir}/.port {$projectDir}/.ryaze-pm2.js {$projectDir}/index.php 2>/dev/null || true", $deploy);
+        
+        $this->project->update([
+            'dev_mode' => false,
+            'dev_port' => null,
+            'dev_pid' => null
+        ]);
+
         $isLaravelInertia = file_exists("{$projectDir}/artisan")
             && file_exists("{$projectDir}/composer.json")
             && file_exists("{$projectDir}/package.json");
@@ -269,15 +284,6 @@ class AutoDeployProject implements ShouldQueue
                     }
 
                     $pm2Name = "prod_{$this->project->id}";
-                    
-                    // Kill existing process if any
-                    $this->log($deploy, "> Menghentikan proses lama (jika ada)...");
-                    $this->exec("npx -y pm2 delete {$pm2Name} 2>/dev/null || true", $deploy);
-                    
-                    if ($this->project->dev_pid) {
-                        $this->exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true", $deploy);
-                        $this->exec("npx -y pm2 delete \"{$this->project->dev_pid}\" 2>/dev/null || true", $deploy);
-                    }
 
                     $startCommand = "npm start";
                     if ($framework === 'node') {

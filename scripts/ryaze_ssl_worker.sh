@@ -96,7 +96,7 @@ server {
             rewrite ^ /index.php?\$query_string last;
         }
         if (-f \$document_root/index.html) {
-            rewrite ^ /index.html break;
+            rewrite ^ /index.html last;
         }
         return 404;
     }
@@ -124,8 +124,6 @@ server {
 
     location @app_proxy {
         proxy_pass http://127.0.0.1:\$app_port;
-        proxy_intercept_errors on;
-        error_page 502 504 = @framework_fallback;
     }
 }
 EOF
