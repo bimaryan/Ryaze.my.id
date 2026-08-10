@@ -1916,20 +1916,85 @@ PHP;
 
         // ════════ SECURITY: lingkungan sanitasi (tanpa kredensial utama) ════════
         @set_time_limit(630);
-        $result = $this->runTerminalCommand($tokens, $cwd, 600, $this->terminalEnv());
+        
+        session()->save(); // Mencegah session lock
 
-        // Sembunyikan path absolut agar terlihat seperti root direktori project
-        $output = str_replace($projectDir, '/' . $subdomain, $result['output']);
-        if (str_starts_with(str_replace('\\', '/', $cwd), str_replace('\\', '/', $projectDir))) {
-            $relative = ltrim(substr(str_replace('\\', '/', $cwd), strlen(str_replace('\\', '/', $projectDir))), '/');
-            $output = str_replace($cwd, '/' . $subdomain . ($relative !== '' ? '/' . $relative : ''), $output);
-        }
+        return response()->stream(function () use ($tokens, $cwd, $projectDir, $subdomain) {
+            // Disable output buffering
+            while (ob_get_level() > 0) {
+                ob_end_flush();
+            }
+            // Send initial dummy line to force headers to send
+            echo "\n";
+            flush();
 
-        return response()->json([
-            'output' => $output,
-            'exit_code' => $result['exit_code'],
-            'timed_out' => $result['timed_out'],
-            'cwd' => $cwd,
+            $descriptors = [
+                0 => ['pipe', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w'],
+            ];
+
+            $env = $this->terminalEnv();
+            $process = proc_open($tokens, $descriptors, $pipes, $cwd, $env);
+            if (!is_resource($process)) {
+                echo json_encode(['error' => 'Gagal menjalankan perintah.']) . "\n";
+                flush();
+                return;
+            }
+
+            fclose($pipes[0]);
+            stream_set_blocking($pipes[1], false);
+            stream_set_blocking($pipes[2], false);
+
+            $start = microtime(true);
+            $timeout = 600;
+
+            while (true) {
+                $chunkOutput = '';
+                foreach ([1, 2] as $fd) {
+                    $chunk = stream_get_contents($pipes[$fd]);
+                    if ($chunk !== false && $chunk !== '') {
+                        $chunkOutput .= $chunk;
+                    }
+                }
+
+                if ($chunkOutput !== '') {
+                    $chunkOutput = str_replace($projectDir, '/' . $subdomain, $chunkOutput);
+                    if (str_starts_with(str_replace('\\', '/', $cwd), str_replace('\\', '/', $projectDir))) {
+                        $relative = ltrim(substr(str_replace('\\', '/', $cwd), strlen(str_replace('\\', '/', $projectDir))), '/');
+                        $chunkOutput = str_replace($cwd, '/' . $subdomain . ($relative !== '' ? '/' . $relative : ''), $chunkOutput);
+                    }
+                    echo json_encode(['output' => $chunkOutput]) . "\n";
+                    flush();
+                }
+
+                $status = proc_get_status($process);
+                if (!$status['running']) {
+                    echo json_encode(['exit_code' => $status['exitcode'], 'cwd' => $cwd]) . "\n";
+                    flush();
+                    break;
+                }
+                if ((microtime(true) - $start) > $timeout) {
+                    proc_terminate($process, 9);
+                    echo json_encode([
+                        'output' => "\n\n⏱ Perintah dihentikan karena melebihi batas waktu ({$timeout}s).",
+                        'exit_code' => 124,
+                        'cwd' => $cwd
+                    ]) . "\n";
+                    flush();
+                    break;
+                }
+
+                usleep(50000);
+            }
+
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            proc_close($process);
+        }, 200, [
+            'Cache-Control' => 'no-cache',
+            'Content-Type' => 'application/x-ndjson',
+            'X-Accel-Buffering' => 'no',
         ]);
     }
 
