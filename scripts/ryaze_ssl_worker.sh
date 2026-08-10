@@ -96,7 +96,7 @@ server {
             rewrite ^ /index.php?\$query_string last;
         }
         if (-f \$document_root/index.html) {
-            rewrite ^ /index.html last;
+            rewrite ^ /index.html break;
         }
         return 404;
     }
