@@ -31,6 +31,7 @@ server {
     server_name $DOMAIN;
 
     add_header X-Frame-Options "" always;
+    include mime.types;
 
     set \$dynamic_root $CLIENT_DIR;
     if (-f $CLIENT_DIR/public/index.php) {
@@ -432,6 +433,9 @@ server {
 
     ssl_certificate /www/ssl/$DOMAIN/fullchain.pem;
     ssl_certificate_key /www/ssl/$DOMAIN/privkey.pem;
+
+    add_header X-Frame-Options "" always;
+    include mime.types;
 
     location / {
         proxy_pass http://127.0.0.1;

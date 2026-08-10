@@ -266,6 +266,8 @@ server {
     listen [::]:80;
     server_name __DOMAIN__;
 
+    include mime.types;
+
     set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__;
     if (-f /www/sites/hosting_clients/__SUBDOMAIN__/public/index.php) {
         set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__/public;
