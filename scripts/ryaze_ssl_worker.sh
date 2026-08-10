@@ -82,10 +82,11 @@ server {
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
 
+    error_page 418 = @app_proxy;
+
     location / {
         if (\$app_port != "") {
-            proxy_pass http://127.0.0.1:\$app_port;
-            break;
+            return 418;
         }
         try_files \$uri \$uri/ @framework_fallback;
     }
@@ -102,8 +103,7 @@ server {
 
     location ~ \.php\$ {
         if (\$app_port != "") {
-            proxy_pass http://127.0.0.1:\$app_port;
-            break;
+            return 418;
         }
         try_files \$uri =404;
         fastcgi_pass 127.0.0.1:9000;
@@ -115,12 +115,17 @@ server {
 
     location ~ .*\.(js|css|png|jpg|jpeg|gif|ico|bmp|swf|eot|svg|ttf|woff|woff2)\$ {
         if (\$app_port != "") {
-            proxy_pass http://127.0.0.1:\$app_port;
-            break;
+            return 418;
         }
         try_files \$uri \$uri/ @framework_fallback;
         expires 30d;
         log_not_found off;
+    }
+
+    location @app_proxy {
+        proxy_pass http://127.0.0.1:\$app_port;
+        proxy_intercept_errors on;
+        error_page 502 504 = @framework_fallback;
     }
 }
 EOF
