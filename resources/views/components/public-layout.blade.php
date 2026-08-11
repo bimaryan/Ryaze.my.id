@@ -80,6 +80,9 @@
             var dark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
             document.dispatchEvent(new CustomEvent('theme:change', { detail: { dark: dark } }));
+            document.querySelectorAll('[role="switch"][onclick*="ryazeToggleTheme"]').forEach(function(btn) {
+                btn.setAttribute('aria-checked', dark);
+            });
         };
     </script>
 
