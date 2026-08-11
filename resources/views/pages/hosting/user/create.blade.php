@@ -615,13 +615,13 @@
         ['dragover', 'dragenter'].forEach(evt => {
             uploadZone.addEventListener(evt, (e) => {
                 e.preventDefault();
-                uploadZone.classList.add('border-emerald-500', 'bg-emerald-50 dark:bg-emerald-500/10');
+                uploadZone.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-500/10');
             });
         });
         ['dragleave', 'drop'].forEach(evt => {
             uploadZone.addEventListener(evt, (e) => {
                 e.preventDefault();
-                uploadZone.classList.remove('border-emerald-500', 'bg-emerald-50 dark:bg-emerald-500/10');
+                uploadZone.classList.remove('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-500/10');
             });
         });
         uploadZone.addEventListener('drop', (e) => {

@@ -1481,13 +1481,13 @@ NGINX_CONF
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => {
                 b.classList.remove('bg-indigo-600', 'text-white', 'shadow');
-                b.classList.add('text-slate-500 dark:text-slate-400');
+                b.classList.add('text-slate-500', 'dark:text-slate-400');
             });
             document.getElementById('panel-' + name).classList.remove('hidden');
             const btn = document.getElementById('tab-' + name);
             if(btn) {
                 btn.classList.add('bg-indigo-600', 'text-white', 'shadow');
-                btn.classList.remove('text-slate-500 dark:text-slate-400');
+                btn.classList.remove('text-slate-500', 'dark:text-slate-400');
             }
             if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input').focus(), 80);
             
@@ -2580,10 +2580,10 @@ NGINX_CONF
         function ideSetActiveButton(btn) {
             document.querySelectorAll('.ide-activity-btn').forEach(b => {
                 b.classList.remove('text-white', 'border-indigo-500');
-                b.classList.add('text-slate-500 dark:text-slate-400', 'border-transparent');
+                b.classList.add('text-slate-500', 'dark:text-slate-400', 'border-transparent');
             });
             if (btn) {
-                btn.classList.remove('text-slate-500 dark:text-slate-400', 'border-transparent');
+                btn.classList.remove('text-slate-500', 'dark:text-slate-400', 'border-transparent');
                 btn.classList.add('text-white', 'border-indigo-500');
             }
         }
@@ -3045,7 +3045,8 @@ NGINX_CONF
             document.querySelectorAll('.ide-panel-tab').forEach(b => {
                 const on = b.dataset.panelTab === tab;
                 b.classList.toggle('text-white', on);
-                b.classList.toggle('text-slate-500 dark:text-slate-400', !on);
+                b.classList.toggle('text-slate-500', 'dark:text-slate-400', !on);
+b.classList.toggle('dark:text-slate-400', !on);
                 b.classList.toggle('border-indigo-500', on);
             });
             document.querySelectorAll('.ide-panel-view').forEach(v => v.classList.add('hidden'));

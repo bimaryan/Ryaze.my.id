@@ -281,8 +281,8 @@
             })
             .listen('TicketRepliesRead', (e) => {
                 document.querySelectorAll('.ticket-read-status i.text-slate-400 dark:text-slate-500').forEach(icon => {
-                    icon.classList.remove('text-slate-400 dark:text-slate-500');
-                    icon.classList.add('text-blue-500 dark:text-blue-400');
+                    icon.classList.remove('text-slate-400', 'dark:text-slate-500');
+                    icon.classList.add('text-blue-500', 'dark:text-blue-400');
                 });
             });
     }

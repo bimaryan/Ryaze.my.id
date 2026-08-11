@@ -69,7 +69,7 @@
                                         </form>
                                         <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block">
                                             @csrf @method('DELETE')
-                                            <button type="button" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
+                                            <button type="button" onclick="confirmDatabaseDelete(this)" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
                                                 <i class="fa-regular fa-trash-can"></i>
                                             </button>
                                         </form>
@@ -90,7 +90,7 @@
                                     <div class="flex items-center gap-2">
                                         <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block">
                                             @csrf @method('DELETE')
-                                            <button type="button" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
+                                            <button type="button" onclick="confirmDatabaseDelete(this)" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
                                                 <i class="fa-regular fa-trash-can"></i>
                                             </button>
                                         </form>
@@ -111,7 +111,7 @@
                                     <div class="flex items-center gap-2">
                                         <form action="{{ route('admin_hosting.databases.destroy', $db->hashid) }}" method="POST" class="inline-block">
                                             @csrf @method('DELETE')
-                                            <button type="button" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
+                                            <button type="button" onclick="confirmDatabaseDelete(this)" class="btn-delete w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Database" data-hashid="{{ $db->hashid }}">
                                                 <i class="fa-regular fa-trash-can"></i>
                                             </button>
                                         </form>
@@ -200,7 +200,7 @@
                     </div>
                     <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
                         <button type="button" data-modal-hide="createDbModal"
-                            class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm">Batal</button>
+                            class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-200 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm">Batal</button>
                         <button type="submit"
                             class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-2xl shadow-sm">Buat
                             Database</button>
@@ -231,7 +231,14 @@
                         cancelButtonColor: '#94a3b8',
                         confirmButtonText: 'Ya, Hapus!',
                         cancelButtonText: 'Batal',
-                        reverseButtons: true
+                        reverseButtons: true,
+                        customClass: {
+                            popup: document.documentElement.classList.contains('dark') ? 'bg-slate-800 border border-slate-700' : '',
+                            title: document.documentElement.classList.contains('dark') ? 'text-slate-100' : '',
+                            htmlContainer: document.documentElement.classList.contains('dark') ? 'text-slate-300' : ''
+                        },
+                        background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#fff',
+                        color: document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             btn.closest('form').submit();

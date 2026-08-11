@@ -1222,20 +1222,20 @@
         var methodColor = document.getElementById('tester-method');
         
         // Postman colors for select
-        methodColor.classList.remove('text-emerald-600 dark:text-emerald-300', 'text-orange-500 dark:text-orange-400', 'text-blue-500 dark:text-blue-400', 'text-rose-600 dark:text-rose-300');
-        if (e.target.value === 'GET') methodColor.classList.add('text-emerald-600 dark:text-emerald-300');
-        else if (e.target.value === 'POST') methodColor.classList.add('text-orange-500 dark:text-orange-400');
-        else if (e.target.value === 'PUT') methodColor.classList.add('text-blue-500 dark:text-blue-400');
-        else if (e.target.value === 'DELETE') methodColor.classList.add('text-rose-600 dark:text-rose-300');
+        methodColor.classList.remove('text-emerald-600', 'dark:text-emerald-300', 'text-orange-500', 'dark:text-orange-400', 'text-blue-500', 'dark:text-blue-400', 'text-rose-600', 'dark:text-rose-300');
+        if (e.target.value === 'GET') methodColor.classList.add('text-emerald-600', 'dark:text-emerald-300');
+        else if (e.target.value === 'POST') methodColor.classList.add('text-orange-500', 'dark:text-orange-400');
+        else if (e.target.value === 'PUT') methodColor.classList.add('text-blue-500', 'dark:text-blue-400');
+        else if (e.target.value === 'DELETE') methodColor.classList.add('text-rose-600', 'dark:text-rose-300');
         
         if (e.target.value === 'GET' || e.target.value === 'DELETE') {
             bodyInput.disabled = true;
-            bodyInput.classList.add('opacity-50', 'bg-slate-50 dark:bg-slate-800');
-            bodyInput.classList.remove('bg-white dark:bg-slate-800');
+            bodyInput.classList.add('opacity-50', 'bg-slate-50', 'dark:bg-slate-800');
+            bodyInput.classList.remove('bg-white', 'dark:bg-slate-800');
         } else {
             bodyInput.disabled = false;
-            bodyInput.classList.remove('opacity-50', 'bg-slate-50 dark:bg-slate-800');
-            bodyInput.classList.add('bg-white dark:bg-slate-800');
+            bodyInput.classList.remove('opacity-50', 'bg-slate-50', 'dark:bg-slate-800');
+            bodyInput.classList.add('bg-white', 'dark:bg-slate-800');
         }
     });
     if (testerMethodEl) testerMethodEl.dispatchEvent(new Event('change'));
@@ -1263,8 +1263,8 @@
         responseBox.classList.remove('hidden');
         statusContainer.classList.add('hidden');
         
-        responseBox.classList.remove('text-rose-400 dark:text-rose-300', 'text-emerald-400 dark:text-emerald-300');
-        responseBox.classList.add('text-slate-400 dark:text-slate-500');
+        responseBox.classList.remove('text-rose-400', 'dark:text-rose-300', 'text-emerald-400', 'dark:text-emerald-300');
+        responseBox.classList.add('text-slate-400', 'dark:text-slate-500');
         responseBox.textContent = "Sending request...";
         
         var startTime = performance.now();
@@ -1295,20 +1295,20 @@
             timeBadge.textContent = duration;
             sizeBadge.textContent = size;
             
-            statusBadge.classList.remove('text-emerald-500 dark:text-emerald-400', 'text-rose-500 dark:text-rose-400', 'text-orange-500 dark:text-orange-400');
+            statusBadge.classList.remove('text-emerald-500', 'dark:text-emerald-400', 'text-rose-500', 'dark:text-rose-400', 'text-orange-500', 'dark:text-orange-400');
             if (res.ok) {
-                statusBadge.classList.add('text-emerald-500 dark:text-emerald-400');
+                statusBadge.classList.add('text-emerald-500', 'dark:text-emerald-400');
             } else if (res.status >= 500) {
-                statusBadge.classList.add('text-rose-500 dark:text-rose-400');
+                statusBadge.classList.add('text-rose-500', 'dark:text-rose-400');
             } else {
-                statusBadge.classList.add('text-orange-500 dark:text-orange-400');
+                statusBadge.classList.add('text-orange-500', 'dark:text-orange-400');
             }
             
-            responseBox.classList.remove('text-slate-400 dark:text-slate-500', 'text-emerald-400 dark:text-emerald-300', 'text-rose-400 dark:text-rose-300');
+            responseBox.classList.remove('text-slate-400', 'dark:text-slate-500', 'text-emerald-400', 'dark:text-emerald-300', 'text-rose-400', 'dark:text-rose-300');
             if (res.ok) {
-                responseBox.classList.add('text-emerald-400 dark:text-emerald-300');
+                responseBox.classList.add('text-emerald-400', 'dark:text-emerald-300');
             } else {
-                responseBox.classList.add('text-rose-400 dark:text-rose-300');
+                responseBox.classList.add('text-rose-400', 'dark:text-rose-300');
             }
             
             try {
@@ -1321,12 +1321,12 @@
         } catch (error) {
             statusContainer.classList.remove('hidden');
             statusBadge.textContent = "Error";
-            statusBadge.classList.add('text-rose-500 dark:text-rose-400');
+            statusBadge.classList.add('text-rose-500', 'dark:text-rose-400');
             timeBadge.textContent = "-";
             sizeBadge.textContent = "-";
             
-            responseBox.classList.remove('text-slate-400 dark:text-slate-500', 'text-emerald-400 dark:text-emerald-300');
-            responseBox.classList.add('text-rose-400 dark:text-rose-300');
+            responseBox.classList.remove('text-slate-400', 'dark:text-slate-500', 'text-emerald-400', 'dark:text-emerald-300');
+            responseBox.classList.add('text-rose-400', 'dark:text-rose-300');
             responseBox.textContent = "Failed to fetch: " + error.toString();
         }
         
