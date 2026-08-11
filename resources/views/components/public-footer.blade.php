@@ -11,7 +11,7 @@
     $contactWhatsapp = \App\Models\Setting::where('key', 'contact_whatsapp')->value('value');
 @endphp
 
-<footer class="bg-white border-t border-slate-200 {{ $compact ? 'py-8' : 'py-12' }}">
+<footer class="bg-white border-t border-slate-200 dark:bg-slate-900 dark:border-slate-800 {{ $compact ? 'py-8' : 'py-12' }}">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
         @if (! $compact)
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -20,7 +20,7 @@
                         <i class="fa-solid fa-code text-lg"></i>
                         <span class="text-xl font-bold tracking-tight">{{ $siteName }}</span>
                     </div>
-                    <p class="text-xs text-slate-500 leading-relaxed max-w-xs mt-1">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-xs mt-1">
                         Jasa pembuatan website & aplikasi, plus shared hosting Indonesia dengan auto-deploy, SSL gratis,
                         dan database MySQL.
                     </p>
@@ -28,18 +28,18 @@
                 <div>
                     <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Layanan</p>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Jasa Pembuatan Website</a></li>
-                        <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Shared Hosting Indonesia</a></li>
-                        <li><a href="{{ url('/#pricing') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Harga Paket Hosting</a></li>
-                        <li><a href="{{ url('/#portfolio') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Portofolio</a></li>
-                        <li><a href="{{ route('blog.index') }}" class="text-slate-500 hover:text-indigo-600 transition-colors">Blog & Tips Hosting</a></li>
+                        <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Jasa Pembuatan Website</a></li>
+                        <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Shared Hosting Indonesia</a></li>
+                        <li><a href="{{ url('/#pricing') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Harga Paket Hosting</a></li>
+                        <li><a href="{{ url('/#portfolio') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Portofolio</a></li>
+                        <li><a href="{{ route('blog.index') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Blog & Tips Hosting</a></li>
                     </ul>
                 </div>
                 <div class="flex flex-col items-start gap-4">
                     <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Ikuti Kami</p>
                     <div class="flex gap-6 items-center">
                         @if ($contactEmail)
-                            <a href="mailto:{{ $contactEmail }}" class="text-slate-400 hover:text-indigo-600 transition-colors">
+                            <a href="mailto:{{ $contactEmail }}" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                                 <i class="fa-solid fa-envelope text-xl"></i>
                             </a>
                         @endif
@@ -49,7 +49,7 @@
                             </a>
                         @endif
                         @if ($socialGithub)
-                            <a href="{{ $socialGithub }}" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-indigo-600 transition-colors">
+                            <a href="{{ $socialGithub }}" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                                 <i class="fa-brands fa-github text-xl"></i>
                             </a>
                         @endif
@@ -67,7 +67,7 @@
                 </div>
             </div>
         @endif
-        <div class="{{ $compact ? '' : 'mt-8 pt-8 border-t border-slate-100' }} flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
+        <div class="{{ $compact ? '' : 'mt-8 pt-8 border-t border-slate-100 dark:border-slate-800' }} flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
             <p>&copy; {{ date('Y') }} {{ $siteName }}. All rights reserved.</p>
             <p>Engineered by Bima Ryan.</p>
         </div>

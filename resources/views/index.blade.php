@@ -48,13 +48,27 @@
     @endif
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script nonce="{{ csp_nonce() }}">
+        (function () {
+            var stored = localStorage.getItem('ryaze-theme');
+            if (stored === null) {
+                stored = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.classList.toggle('dark', stored === 'dark');
+        })();
+        window.ryazeToggleTheme = function () {
+            var dark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
+            document.dispatchEvent(new CustomEvent('theme:change', { detail: { dark: dark } }));
+        };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" nonce="{{ csp_nonce() }}"></script>
     <script nonce="{{ csp_nonce() }}">
         window.Swal = Swal.mixin({
             customClass: {
-                popup: 'rounded-2xl shadow-xl border border-slate-100',
-                title: 'text-xl font-bold text-slate-800',
-                htmlContainer: 'text-sm text-slate-500'
+                popup: 'rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700',
+                title: 'text-xl font-bold text-slate-800 dark:text-slate-100',
+                htmlContainer: 'text-sm text-slate-500 dark:text-slate-400'
             }
         });
     </script>
@@ -67,7 +81,7 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" nonce="{{ csp_nonce() }}"></script>
 </head>
 
-<body class="bg-mesh font-sans antialiased text-slate-900">
+<body class="bg-mesh font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100">
     @include('components.navbar')
     @yield('content')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js" nonce="{{ csp_nonce() }}"></script>

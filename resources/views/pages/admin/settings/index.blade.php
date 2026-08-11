@@ -17,92 +17,92 @@
 
                 {{-- Identitas & SEO --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-id-card text-indigo-500 mr-2"></i> Identitas & SEO</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-id-card text-indigo-500 dark:text-indigo-400 mr-2"></i> Identitas & SEO</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Website</label>
-                            <input type="text" name="site_name" value="{{ $settings['site_name'] ?? 'Ryaze Portal' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nama Website</label>
+                            <input type="text" name="site_name" value="{{ $settings['site_name'] ?? 'Ryaze Portal' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi Website (SEO)</label>
-                            <input type="text" name="site_description" value="{{ $settings['site_description'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Portal layanan joki dan hosting terbaik...">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Deskripsi Website (SEO)</label>
+                            <input type="text" name="site_description" value="{{ $settings['site_description'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Portal layanan joki dan hosting terbaik...">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Logo (opsional, disarankan rasio 1:1)</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Upload Logo (opsional, disarankan rasio 1:1)</label>
                             @if(isset($settings['site_logo']))
-                                <img src="{{ asset('storage/' . $settings['site_logo']) }}" alt="Logo" class="h-12 mb-2 rounded border p-1 bg-slate-50 object-contain">
+                                <img src="{{ asset('storage/' . $settings['site_logo']) }}" alt="Logo" class="h-12 mb-2 rounded border p-1 bg-slate-50 dark:bg-slate-800/60 object-contain">
                             @endif
-                            <input type="file" name="site_logo" accept="image/*" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <input type="file" name="site_logo" accept="image/*" class="w-full border-slate-200 dark:border-slate-700 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Favicon (opsional, rasio 1:1)</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Upload Favicon (opsional, rasio 1:1)</label>
                             @if(isset($settings['site_favicon']))
-                                <img src="{{ asset('storage/' . $settings['site_favicon']) }}" alt="Favicon" class="h-8 mb-2 rounded border p-1 bg-slate-50 object-contain">
+                                <img src="{{ asset('storage/' . $settings['site_favicon']) }}" alt="Favicon" class="h-8 mb-2 rounded border p-1 bg-slate-50 dark:bg-slate-800/60 object-contain">
                             @endif
-                            <input type="file" name="site_favicon" accept="image/*" class="w-full border-slate-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <input type="file" name="site_favicon" accept="image/*" class="w-full border-slate-200 dark:border-slate-700 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                         </div>
                     </div>
                 </div>
 
                 {{-- Kontak & Sosial Media --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-address-book text-indigo-500 mr-2"></i> Kontak & Sosial Media</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-address-book text-indigo-500 dark:text-indigo-400 mr-2"></i> Kontak & Sosial Media</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp CS</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nomor WhatsApp CS</label>
                             <div class="flex">
-                                <span class="inline-flex items-center px-4 py-2.5 text-sm text-slate-500 bg-slate-100 border border-r-0 border-slate-200 rounded-l-xl">+62</span>
-                                <input type="text" name="contact_whatsapp" value="{{ $settings['contact_whatsapp'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-r-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="81234567890">
+                                <span class="inline-flex items-center px-4 py-2.5 text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 border border-r-0 border-slate-200 dark:border-slate-700 rounded-l-xl">+62</span>
+                                <input type="text" name="contact_whatsapp" value="{{ $settings['contact_whatsapp'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-r-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="81234567890">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Email Dukungan</label>
-                            <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="support@ryaze.my.id">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Email Dukungan</label>
+                            <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="support@ryaze.my.id">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">URL GitHub</label>
-                            <input type="url" name="social_github" value="{{ $settings['social_github'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://github.com/bimaryan">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">URL GitHub</label>
+                            <input type="url" name="social_github" value="{{ $settings['social_github'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://github.com/bimaryan">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">URL Instagram</label>
-                            <input type="url" name="social_instagram" value="{{ $settings['social_instagram'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://instagram.com/bimaryan">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">URL Instagram</label>
+                            <input type="url" name="social_instagram" value="{{ $settings['social_instagram'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://instagram.com/bimaryan">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">URL LinkedIn</label>
-                            <input type="url" name="social_linkedin" value="{{ $settings['social_linkedin'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://linkedin.com/in/bimaryan">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">URL LinkedIn</label>
+                            <input type="url" name="social_linkedin" value="{{ $settings['social_linkedin'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://linkedin.com/in/bimaryan">
                         </div>
                     </div>
                 </div>
 
                 {{-- API & Integrasi --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-plug text-indigo-500 mr-2"></i> API & Integrasi</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-plug text-indigo-500 dark:text-indigo-400 mr-2"></i> API & Integrasi</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp API Endpoint</label>
-                            <input type="text" name="wa_api_endpoint" value="{{ $settings['wa_api_endpoint'] ?? 'https://api.ryz.my.id/api/whatsapp/v1/send-message' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://api.ryz.my.id/api/whatsapp/v1/send-message">
-                            <p class="text-xs text-slate-500 mt-1">Kosongkan jika tidak menggunakan WA Notif.</p>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">WhatsApp API Endpoint</label>
+                            <input type="text" name="wa_api_endpoint" value="{{ $settings['wa_api_endpoint'] ?? 'https://api.ryz.my.id/api/whatsapp/v1/send-message' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://api.ryz.my.id/api/whatsapp/v1/send-message">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Kosongkan jika tidak menggunakan WA Notif.</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp API Token</label>
-                            <input type="password" name="wa_api_token" value="{{ $settings['wa_api_token'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Token API">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">WhatsApp API Token</label>
+                            <input type="password" name="wa_api_token" value="{{ $settings['wa_api_token'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Token API">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Nomor DANA (Transfer Manual)</label>
-                            <input type="text" name="payment_dana" value="{{ $settings['payment_dana'] ?? '085157433395' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="085157433395">
-                            <p class="text-xs text-slate-500 mt-1">Digunakan untuk opsi pembayaran Transfer Manual via DANA.</p>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nomor DANA (Transfer Manual)</label>
+                            <input type="text" name="payment_dana" value="{{ $settings['payment_dana'] ?? '085157433395' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="085157433395">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Digunakan untuk opsi pembayaran Transfer Manual via DANA.</p>
                         </div>
                     </div>
                 </div>
 
                 {{-- Kontrol Layanan --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-sliders text-indigo-500 mr-2"></i> Kontrol Layanan</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-sliders text-indigo-500 dark:text-indigo-400 mr-2"></i> Kontrol Layanan</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Biaya Admin / Pajak Layanan (%)</label>
-                            <input type="number" name="admin_fee_percentage" value="{{ $settings['admin_fee_percentage'] ?? '0' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" max="100" step="0.1">
-                            <p class="text-xs text-slate-500 mt-1">Biaya admin yang ditambahkan ke setiap tagihan pembayaran (%).</p>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Biaya Admin / Pajak Layanan (%)</label>
+                            <input type="number" name="admin_fee_percentage" value="{{ $settings['admin_fee_percentage'] ?? '0' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" max="100" step="0.1">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Biaya admin yang ditambahkan ke setiap tagihan pembayaran (%).</p>
                         </div>
 
                         <div x-data="{
@@ -121,13 +121,13 @@
                         }">
                             <input type="hidden" name="available_frameworks" :value="tags.join(',')">
                             
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Pilihan Framework Tersedia</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Pilihan Framework Tersedia</label>
                             
-                            <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all min-h-[46px]">
+                            <div class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-2 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all min-h-[46px]">
                                 <template x-for="(tag, index) in tags" :key="index">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-indigo-100 text-indigo-700">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300">
                                         <span x-text="tag"></span>
-                                        <button type="button" @click="removeTag(index)" class="text-indigo-400 hover:text-indigo-600 focus:outline-none">
+                                        <button type="button" @click="removeTag(index)" class="text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 focus:outline-none">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
                                     </span>
@@ -135,29 +135,29 @@
                                 
                                 <input type="text" x-model="newTag" @keydown.enter.prevent="addTag()" @keydown.comma.prevent="addTag()" @keydown.space.prevent="addTag()" @keydown.backspace="if(newTag === '' && tags.length > 0) removeTag(tags.length - 1)" placeholder="Ketik lalu Enter..." class="flex-1 bg-transparent border-none outline-none focus:ring-0 text-sm min-w-[120px] p-1">
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">Ketik nama framework (misal: svelte) lalu tekan <kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded text-slate-600 text-[10px] font-mono">Enter</kbd> atau <kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded text-slate-600 text-[10px] font-mono">Spasi</kbd>.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ketik nama framework (misal: svelte) lalu tekan <kbd class="px-1 py-0.5 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-300 text-[10px] font-mono">Enter</kbd> atau <kbd class="px-1 py-0.5 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-300 text-[10px] font-mono">Spasi</kbd>.</p>
                         </div>
                         
                         <div class="space-y-4">
-                            <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-xl">
+                            <div class="p-4 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 rounded-xl">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <h4 class="font-bold text-indigo-800 text-sm">Buka Pendaftaran Akun</h4>
-                                        <p class="text-xs text-indigo-600 mt-1">Matikan untuk menutup registrasi pengguna baru jika server penuh.</p>
+                                        <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-sm">Buka Pendaftaran Akun</h4>
+                                        <p class="text-xs text-indigo-600 dark:text-indigo-400 mt-1">Matikan untuk menutup registrasi pengguna baru jika server penuh.</p>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="hidden" name="enable_registration" value="0">
                                         <input type="checkbox" name="enable_registration" value="1" class="sr-only peer" {{ (!isset($settings['enable_registration']) || $settings['enable_registration'] == '1') ? 'checked' : '' }}>
-                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                     </label>
                                 </div>
                             </div>
 
-                            <div class="p-4 bg-rose-50 border border-rose-100 rounded-xl">
+                            <div class="p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/30 rounded-xl">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <h4 class="font-bold text-rose-800 text-sm">Mode Pemeliharaan (Maintenance Mode)</h4>
-                                        <p class="text-xs text-rose-600 mt-1">Aktifkan untuk memblokir akses ke fitur klien (hanya Admin yang bisa mengakses).</p>
+                                        <h4 class="font-bold text-rose-800 dark:text-rose-200 text-sm">Mode Pemeliharaan (Maintenance Mode)</h4>
+                                        <p class="text-xs text-rose-600 dark:text-rose-300 mt-1">Aktifkan untuk memblokir akses ke fitur klien (hanya Admin yang bisa mengakses).</p>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="hidden" name="maintenance_mode" value="0">
@@ -172,49 +172,49 @@
 
                 {{-- Harga & Langganan Hosting --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-tags text-indigo-500 mr-2"></i> Harga Langganan Hosting (Paket)</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-tags text-indigo-500 dark:text-indigo-400 mr-2"></i> Harga Langganan Hosting (Paket)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Starter -->
-                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
-                            <h4 class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Paket Starter</h4>
+                        <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
+                            <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">Paket Starter</h4>
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Normal (Rp)</label>
-                                    <input type="number" name="plan_starter_price" value="{{ $settings['plan_starter_price'] ?? '15000' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_starter_price" value="{{ $settings['plan_starter_price'] ?? '15000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Promo (Rp)</label>
-                                    <input type="number" name="plan_starter_promo" value="{{ $settings['plan_starter_promo'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_starter_promo" value="{{ $settings['plan_starter_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Pro -->
-                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
-                            <h4 class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Paket Pro</h4>
+                        <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
+                            <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">Paket Pro</h4>
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Normal (Rp)</label>
-                                    <input type="number" name="plan_pro_price" value="{{ $settings['plan_pro_price'] ?? '30000' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_pro_price" value="{{ $settings['plan_pro_price'] ?? '30000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Promo (Rp)</label>
-                                    <input type="number" name="plan_pro_promo" value="{{ $settings['plan_pro_promo'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_pro_promo" value="{{ $settings['plan_pro_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Business -->
-                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
-                            <h4 class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Paket Business</h4>
+                        <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
+                            <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">Paket Business</h4>
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Normal (Rp)</label>
-                                    <input type="number" name="plan_business_price" value="{{ $settings['plan_business_price'] ?? '75000' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_business_price" value="{{ $settings['plan_business_price'] ?? '75000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Harga Promo (Rp)</label>
-                                    <input type="number" name="plan_business_promo" value="{{ $settings['plan_business_promo'] ?? '' }}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_business_promo" value="{{ $settings['plan_business_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
                                 </div>
                             </div>
                         </div>
@@ -223,16 +223,16 @@
 
                 {{-- Otomasi Blog AI --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-wand-magic-sparkles text-violet-500 mr-2"></i>Otomasi Blog AI</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-wand-magic-sparkles text-violet-500 dark:text-violet-400 mr-2"></i>Otomasi Blog AI</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Daftar Topik</label>
-                            <textarea name="blog_ai_topics" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition" placeholder="Satu topik per baris, misalnya:&#10;Panduan deploy website Laravel&#10;Cara memilih hosting untuk UMKM">{{ $settings['blog_ai_topics'] ?? '' }}</textarea>
-                            <p class="text-xs text-slate-500 mt-1">Sistem memilih satu topik secara acak dan menghasilkan artikel beserta cover image.</p>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Daftar Topik</label>
+                            <textarea name="blog_ai_topics" rows="4" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition" placeholder="Satu topik per baris, misalnya:&#10;Panduan deploy website Laravel&#10;Cara memilih hosting untuk UMKM">{{ $settings['blog_ai_topics'] ?? '' }}</textarea>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sistem memilih satu topik secara acak dan menghasilkan artikel beserta cover image.</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Kategori Default</label>
-                            <select name="blog_ai_category_id" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Kategori Default</label>
+                            <select name="blog_ai_category_id" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm">
                                 <option value="">Tanpa kategori</option>
                                 @foreach ($articleCategories as $category)
                                     <option value="{{ $category->id }}" {{ ($settings['blog_ai_category_id'] ?? '') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -240,36 +240,36 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Frekuensi</label>
-                            <select name="blog_ai_frequency" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Frekuensi</label>
+                            <select name="blog_ai_frequency" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm">
                                 <option value="daily" {{ ($settings['blog_ai_frequency'] ?? 'daily') === 'daily' ? 'selected' : '' }}>Setiap hari</option>
                                 <option value="weekly" {{ ($settings['blog_ai_frequency'] ?? '') === 'weekly' ? 'selected' : '' }}>Setiap minggu</option>
                             </select>
-                            <p class="text-xs text-slate-500 mt-1">Scheduler mengecek setiap jam dan membuat satu artikel saat jadwalnya tiba.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Scheduler mengecek setiap jam dan membuat satu artikel saat jadwalnya tiba.</p>
                         </div>
-                        <div class="p-4 bg-violet-50 border border-violet-100 rounded-xl">
+                        <div class="p-4 bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/30 rounded-xl">
                             <div class="flex items-center justify-between gap-4">
                                 <div>
-                                    <h4 class="font-bold text-violet-800 text-sm">Aktifkan Otomasi</h4>
-                                    <p class="text-xs text-violet-700 mt-1">Butuh OPENAI_API_KEY dan queue worker yang aktif.</p>
+                                    <h4 class="font-bold text-violet-800 dark:text-violet-200 text-sm">Aktifkan Otomasi</h4>
+                                    <p class="text-xs text-violet-700 dark:text-violet-300 mt-1">Butuh OPENAI_API_KEY dan queue worker yang aktif.</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="hidden" name="blog_ai_enabled" value="0">
                                     <input type="checkbox" name="blog_ai_enabled" value="1" class="sr-only peer" {{ ($settings['blog_ai_enabled'] ?? '0') === '1' ? 'checked' : '' }}>
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-violet-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-violet-600"></div>
+                                    <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-violet-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-violet-600"></div>
                                 </label>
                             </div>
                         </div>
-                        <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                        <div class="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/30 rounded-xl">
                             <div class="flex items-center justify-between gap-4">
                                 <div>
-                                    <h4 class="font-bold text-amber-800 text-sm">Auto-publish</h4>
-                                    <p class="text-xs text-amber-700 mt-1">Matikan agar hasil otomatis selalu masuk draft untuk review.</p>
+                                    <h4 class="font-bold text-amber-800 dark:text-amber-200 text-sm">Auto-publish</h4>
+                                    <p class="text-xs text-amber-700 dark:text-amber-300 mt-1">Matikan agar hasil otomatis selalu masuk draft untuk review.</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="hidden" name="blog_ai_auto_publish" value="0">
                                     <input type="checkbox" name="blog_ai_auto_publish" value="1" class="sr-only peer" {{ ($settings['blog_ai_auto_publish'] ?? '0') === '1' ? 'checked' : '' }}>
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:border-amber-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                    <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:border-amber-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
                                 </label>
                             </div>
                         </div>
@@ -278,18 +278,18 @@
 
                 {{-- API & Integrasi 1Panel --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-server text-indigo-500 mr-2"></i> API & Integrasi 1Panel</h3>
-                    <p class="text-xs text-slate-500 mb-4">Integrasi ini digunakan untuk memantau status kesehatan server langsung dari 1Panel.</p>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-server text-indigo-500 dark:text-indigo-400 mr-2"></i> API & Integrasi 1Panel</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Integrasi ini digunakan untuk memantau status kesehatan server langsung dari 1Panel.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">1Panel API URL</label>
-                            <input type="url" name="1panel_url" value="{{ $settings['1panel_url'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://192.168.1.1:10086">
-                            <p class="text-[11px] text-slate-500 mt-1">URL panel tanpa trailing slash (contoh: https://ip:port)</p>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">1Panel API URL</label>
+                            <input type="url" name="1panel_url" value="{{ $settings['1panel_url'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="https://192.168.1.1:10086">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">URL panel tanpa trailing slash (contoh: https://ip:port)</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">1Panel API Key / Token</label>
-                            <input type="text" name="1panel_api_key" value="{{ $settings['1panel_api_key'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Token dari 1Panel API">
-                            <p class="text-[11px] text-slate-500 mt-1">Dapatkan di 1Panel > Pengaturan Panel > API.</p>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">1Panel API Key / Token</label>
+                            <input type="text" name="1panel_api_key" value="{{ $settings['1panel_api_key'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Token dari 1Panel API">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Dapatkan di 1Panel > Pengaturan Panel > API.</p>
                         </div>
                     </div>
                 </div>
@@ -297,20 +297,20 @@
 
                 {{-- Integrasi Eksternal --}}
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-plug text-indigo-500 mr-2"></i> Integrasi Eksternal</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-plug text-indigo-500 dark:text-indigo-400 mr-2"></i> Integrasi Eksternal</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Pakasir Server Key</label>
-                            <input type="password" name="pakasir_server_key" value="{{ $settings['pakasir_server_key'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Pakasir API Server Key">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Pakasir Server Key</label>
+                            <input type="password" name="pakasir_server_key" value="{{ $settings['pakasir_server_key'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Pakasir API Server Key">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Google Analytics ID</label>
-                            <input type="text" name="google_analytics_id" value="{{ $settings['google_analytics_id'] ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="G-XXXXXXXXXX">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Google Analytics ID</label>
+                            <input type="text" name="google_analytics_id" value="{{ $settings['google_analytics_id'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="G-XXXXXXXXXX">
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-slate-100 flex justify-end">
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
                     <button type="submit" class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 shadow-sm transition">
                         <i class="fa-solid fa-save mr-2"></i> Simpan Pengaturan
                     </button>

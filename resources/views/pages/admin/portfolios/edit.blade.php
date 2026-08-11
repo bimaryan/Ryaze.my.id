@@ -8,7 +8,7 @@
             icon="fa-regular fa-pen-to-square">
             <x-slot:actions>
                 <a href="{{ route('superadmin.portfolios.index') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
             </x-slot:actions>
@@ -20,96 +20,96 @@
                 @method('PUT')
                 <div class="space-y-6">
                     <div>
-                        <label for="title" class="block text-sm font-medium text-slate-700 mb-2">Judul Portofolio <span class="text-red-500">*</span></label>
-                        <input type="text" name="title" id="title" class="transition-all @error('title') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('title', $portfolio->title) }}" required>
-                        @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Judul Portofolio <span class="text-red-500 dark:text-red-400">*</span></label>
+                        <input type="text" name="title" id="title" class="transition-all @error('title') border-red-500 @enderror w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('title', $portfolio->title) }}" required>
+                        @error('title') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label for="description" class="block text-sm font-medium text-slate-700 mb-2">Deskripsi <span class="text-red-500">*</span></label>
-                        <textarea name="description" id="description" rows="5" class="transition-all @error('description') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" required>{{ old('description', $portfolio->description) }}</textarea>
-                        @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <label for="description" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Deskripsi <span class="text-red-500 dark:text-red-400">*</span></label>
+                        <textarea name="description" id="description" rows="5" class="transition-all @error('description') border-red-500 @enderror w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" required>{{ old('description', $portfolio->description) }}</textarea>
+                        @error('description') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label for="tags" class="block text-sm font-medium text-slate-700 mb-2">Tags / Teknologi (Pisahkan dengan koma)</label>
-                        <input type="text" name="tags" id="tags" class="transition-all @error('tags') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('tags', implode(', ', $portfolio->tags ?? [])) }}" placeholder="Contoh: Laravel, Tailwind, React">
-                        @error('tags') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <label for="tags" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Tags / Teknologi (Pisahkan dengan koma)</label>
+                        <input type="text" name="tags" id="tags" class="transition-all @error('tags') border-red-500 @enderror w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('tags', implode(', ', $portfolio->tags ?? [])) }}" placeholder="Contoh: Laravel, Tailwind, React">
+                        @error('tags') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="link_preview" class="block text-sm font-medium text-slate-700 mb-2">Link Live Preview</label>
-                            <input type="url" name="link_preview" id="link_preview" class="transition-all @error('link_preview') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_preview', $portfolio->link_preview) }}" placeholder="https://...">
-                            @error('link_preview') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            <label for="link_preview" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Link Live Preview</label>
+                            <input type="url" name="link_preview" id="link_preview" class="transition-all @error('link_preview') border-red-500 @enderror w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_preview', $portfolio->link_preview) }}" placeholder="https://...">
+                            @error('link_preview') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label for="link_github" class="block text-sm font-medium text-slate-700 mb-2">Link GitHub / Repo</label>
-                            <input type="url" name="link_github" id="link_github" class="transition-all @error('link_github') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_github', $portfolio->link_github) }}" placeholder="https://github.com/...">
-                            @error('link_github') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            <label for="link_github" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Link GitHub / Repo</label>
+                            <input type="url" name="link_github" id="link_github" class="transition-all @error('link_github') border-red-500 @enderror w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_github', $portfolio->link_github) }}" placeholder="https://github.com/...">
+                            @error('link_github') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
                     <div>
-                        <label for="link_journal" class="block text-sm font-medium text-slate-700 mb-2">
-                            <i class="fa-solid fa-book-open mr-1 text-indigo-500"></i> Link Jurnal
+                        <label for="link_journal" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
+                            <i class="fa-solid fa-book-open mr-1 text-indigo-500 dark:text-indigo-400"></i> Link Jurnal
                         </label>
-                        <input type="url" name="link_journal" id="link_journal" class="transition-all @error('link_journal') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_journal', $portfolio->link_journal) }}" placeholder="https://journal.example.com/...">
-                        <p class="text-xs text-slate-500 mt-1">Opsional. Isi jika portofolio ini dipublikasikan di jurnal ilmiah.</p>
-                        @error('link_journal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <input type="url" name="link_journal" id="link_journal" class="transition-all @error('link_journal') border-red-500 @enderror w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_journal', $portfolio->link_journal) }}" placeholder="https://journal.example.com/...">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Opsional. Isi jika portofolio ini dipublikasikan di jurnal ilmiah.</p>
+                        @error('link_journal') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label for="image" class="block text-sm font-medium text-slate-700 mb-2">Gambar / Thumbnail</label>
+                        <label for="image" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Gambar / Thumbnail</label>
                         @if($portfolio->image_path)
                             <div class="mb-3">
-                                <p class="text-xs text-slate-500 mb-2">Gambar saat ini:</p>
-                                <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}" class="w-48 rounded-lg border border-slate-200 shadow-sm">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Gambar saat ini:</p>
+                                <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}" class="w-48 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
                             </div>
                         @endif
-                        <input type="file" name="image" id="image" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-lg">
-                        <p class="text-xs text-slate-500 mt-2">Format: JPG, PNG, WEBP (Max 2MB). Kosongkan jika tidak ingin mengubah gambar.</p>
-                        @error('image') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <input type="file" name="image" id="image" accept="image/*" class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 dark:border-slate-700 rounded-lg">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Format: JPG, PNG, WEBP (Max 2MB). Kosongkan jika tidak ingin mengubah gambar.</p>
+                        @error('image') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label for="certificate" class="block text-sm font-medium text-slate-700 mb-2">
-                            <i class="fa-solid fa-certificate mr-1 text-amber-500"></i> Sertifikat Hak Cipta
+                        <label for="certificate" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
+                            <i class="fa-solid fa-certificate mr-1 text-amber-500 dark:text-amber-400"></i> Sertifikat Hak Cipta
                         </label>
                         @if($portfolio->certificate_path)
-                            <div class="mb-3 flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                                <i class="fa-solid fa-file-certificate text-amber-500 text-xl"></i>
+                            <div class="mb-3 flex items-center gap-3 p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/40 rounded-lg">
+                                <i class="fa-solid fa-file-certificate text-amber-500 dark:text-amber-400 text-xl"></i>
                                 <div>
-                                    <p class="text-xs text-slate-500 mb-1">Sertifikat saat ini:</p>
-                                    <a href="{{ Storage::url($portfolio->certificate_path) }}" target="_blank" class="text-sm text-amber-700 font-medium hover:underline">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Sertifikat saat ini:</p>
+                                    <a href="{{ Storage::url($portfolio->certificate_path) }}" target="_blank" class="text-sm text-amber-700 dark:text-amber-300 font-medium hover:underline">
                                         <i class="fa-solid fa-external-link mr-1"></i> Lihat Sertifikat
                                     </a>
                                 </div>
                             </div>
                         @endif
-                        <input type="file" name="certificate" id="certificate" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 border border-slate-200 rounded-lg">
-                        <p class="text-xs text-slate-500 mt-2">Format: PDF, JPG, PNG (Max 5MB). Kosongkan jika tidak ingin mengubah sertifikat.</p>
-                        @error('certificate') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <input type="file" name="certificate" id="certificate" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 border border-slate-200 dark:border-slate-700 rounded-lg">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Format: PDF, JPG, PNG (Max 5MB). Kosongkan jika tidak ingin mengubah sertifikat.</p>
+                        @error('certificate') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label for="link_copyright" class="block text-sm font-medium text-slate-700 mb-2">
-                            <i class="fa-solid fa-shield-halved mr-1 text-amber-500"></i> Link Hak Cipta
+                        <label for="link_copyright" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
+                            <i class="fa-solid fa-shield-halved mr-1 text-amber-500 dark:text-amber-400"></i> Link Hak Cipta
                         </label>
-                        <input type="url" name="link_copyright" id="link_copyright" class="transition-all @error('link_copyright') border-red-500 @enderror w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_copyright', $portfolio->link_copyright) }}" placeholder="https://pdki-indonesia.dgip.go.id/...">
-                        <p class="text-xs text-slate-500 mt-1">Opsional. Link ke halaman resmi pendaftaran hak cipta (DJKI, dll).</p>
-                        @error('link_copyright') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <input type="url" name="link_copyright" id="link_copyright" class="transition-all @error('link_copyright') border-red-500 @enderror w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" value="{{ old('link_copyright', $portfolio->link_copyright) }}" placeholder="https://pdki-indonesia.dgip.go.id/...">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Opsional. Link ke halaman resmi pendaftaran hak cipta (DJKI, dll).</p>
+                        @error('link_copyright') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" name="is_active" value="1" class="sr-only peer" {{ old('is_active', $portfolio->is_active) ? 'checked' : '' }}>
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                            <span class="ml-3 text-sm font-medium text-slate-700">Publikasikan secara langsung (Aktif)</span>
+                            <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-200">Publikasikan secara langsung (Aktif)</span>
                         </label>
                     </div>
 
-                    <div class="pt-4 border-t border-slate-100 flex justify-end">
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
                         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-md transition-colors">
                             <i class="fa-solid fa-save mr-2"></i> Perbarui Portofolio
                         </button>

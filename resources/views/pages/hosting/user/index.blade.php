@@ -6,7 +6,7 @@
             title="Dashboard Hosting" 
             icon="fa-solid fa-gauge">
             <x-slot:subtitle>
-                Halo, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Klien' }}</span>! Selamat datang kembali.
+                Halo, <span class="font-semibold text-indigo-600 dark:text-indigo-400">{{ Auth::user()->name ?? 'Klien' }}</span>! Selamat datang kembali.
             </x-slot:subtitle>
             <x-slot:actions>
                 <a href="{{ route('user_hosting.create') }}" class="inline-flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
@@ -20,25 +20,25 @@
             {{-- Ryaze Wallet --}}
             <x-ui.card class="p-6 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center gap-2 text-slate-500 text-sm font-bold mb-2">
-                        <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm font-bold mb-2">
+                        <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                             <i class="fa-solid fa-wallet text-sm"></i>
                         </div>
                         Ryaze Wallet
                     </div>
-                    <div class="text-3xl font-black text-slate-800 mb-1">
+                    <div class="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">
                         Rp {{ number_format(Auth::user()->wallet->balance ?? 0, 0, ',', '.') }}
                     </div>
-                    <p class="text-xs text-slate-500 mb-5">Saldo aktif yang dapat digunakan untuk transaksi.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">Saldo aktif yang dapat digunakan untuk transaksi.</p>
                 </div>
                 <div class="flex gap-2 mt-auto">
                     <a href="{{ route('user.wallet.history') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold py-2.5 px-3 rounded-xl transition shadow-sm flex-1 text-center flex items-center justify-center gap-1">
                         <i class="fa-solid fa-plus"></i> Top Up
                     </a>
-                    <a href="{{ route('user.wallet.withdraw') }}" class="bg-amber-100 hover:bg-amber-200 text-amber-700 border border-amber-200 text-[11px] font-bold py-2.5 px-3 rounded-xl transition shadow-sm flex-1 text-center flex items-center justify-center gap-1">
+                    <a href="{{ route('user.wallet.withdraw') }}" class="bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/40 text-[11px] font-bold py-2.5 px-3 rounded-xl transition shadow-sm flex-1 text-center flex items-center justify-center gap-1">
                         <i class="fa-solid fa-money-bill-transfer"></i> Tarik
                     </a>
-                    <a href="{{ route('user.wallet.history') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold py-2.5 px-3 rounded-xl transition shadow-sm flex-1 text-center flex items-center justify-center gap-1">
+                    <a href="{{ route('user.wallet.history') }}" class="bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold py-2.5 px-3 rounded-xl transition shadow-sm flex-1 text-center flex items-center justify-center gap-1">
                         <i class="fa-solid fa-history"></i> Riwayat
                     </a>
                 </div>
@@ -48,27 +48,27 @@
             <x-ui.card class="p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2 text-slate-500 text-sm font-bold mb-2">
-                            <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm font-bold mb-2">
+                            <div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 flex items-center justify-center">
                                 <i class="fa-solid fa-users text-sm"></i>
                             </div>
                             Affiliate Program
                         </div>
-                        <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded">Aktif</span>
+                        <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold px-2 py-1 rounded">Aktif</span>
                     </div>
-                    <p class="text-xs text-slate-500 mb-4">Ajak teman dan dapatkan komisi untuk setiap transaksi mereka.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Ajak teman dan dapatkan komisi untuk setiap transaksi mereka.</p>
                 </div>
                 <div class="mt-auto">
-                    <div class="text-xs font-bold text-slate-700 mb-2">Link Referral Anda:</div>
+                    <div class="text-xs font-bold text-slate-700 dark:text-slate-200 mb-2">Link Referral Anda:</div>
                     <div class="flex items-center gap-2 mb-3">
-                        <code class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-indigo-600 flex-1 break-all select-all text-xs font-mono font-medium">
+                        <code class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-xl text-indigo-600 dark:text-indigo-400 flex-1 break-all select-all text-xs font-mono font-medium">
                             {{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}
                         </code>
                         <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . (Auth::user()->referral_code ?? 'RYZ-'.Auth::id())) }}'); typeof hotToast !== 'undefined' ? hotToast('Link referral disalin ke clipboard!', 'success') : alert('Link disalin!')" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl transition shadow-sm flex-shrink-0" title="Copy Link">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
-                    <a href="{{ route('user.affiliate.dashboard') }}" class="block w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm text-center">
+                    <a href="{{ route('user.affiliate.dashboard') }}" class="block w-full bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40 text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm text-center">
                         <i class="fa-solid fa-chart-line mr-1"></i> Buka Dashboard Affiliate
                     </a>
                 </div>
@@ -82,14 +82,14 @@
             <x-stat-card title="Tiket Bantuan" value="{{ $stats['tickets'] }}" icon="fa-headset" color="sky" />
             
             <!-- Server Health Node -->
-            <div x-data="nodeHealth()" x-init="fetchStatus()" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+            <div x-data="nodeHealth()" x-init="fetchStatus()" class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-sm font-medium text-slate-500 mb-1">Server Node</p>
-                        <h3 class="text-xl font-bold" :class="{'text-emerald-600': data.status === 'healthy', 'text-amber-500': data.status === 'heavy_load', 'text-rose-500': error}" x-text="error ? 'Terputus' : (loading ? 'Memeriksa...' : (data.status === 'healthy' ? 'Sehat & Normal' : 'Beban Tinggi'))"></h3>
-                        <p class="text-[10px] text-slate-400 mt-1" x-show="!loading && !error">CPU: <span x-text="data.cpu.load_1m + '%'"></span> | RAM: <span x-text="data.ram.percentage + '%'"></span></p>
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Server Node</p>
+                        <h3 class="text-xl font-bold" :class="{'text-emerald-600 dark:text-emerald-300': data.status === 'healthy', 'text-amber-500 dark:text-amber-400': data.status === 'heavy_load', 'text-rose-500 dark:text-rose-400': error}" x-text="error ? 'Terputus' : (loading ? 'Memeriksa...' : (data.status === 'healthy' ? 'Sehat & Normal' : 'Beban Tinggi'))"></h3>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1" x-show="!loading && !error">CPU: <span x-text="data.cpu.load_1m + '%'"></span> | RAM: <span x-text="data.ram.percentage + '%'"></span></p>
                     </div>
-                    <div class="w-12 h-12 flex items-center justify-center rounded-xl transition-colors duration-300" :class="{'bg-emerald-100 text-emerald-600': data.status === 'healthy', 'bg-amber-100 text-amber-600': data.status === 'heavy_load', 'bg-slate-100 text-slate-400': loading || error}">
+                    <div class="w-12 h-12 flex items-center justify-center rounded-xl transition-colors duration-300" :class="{'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300': data.status === 'healthy', 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-300': data.status === 'heavy_load', 'bg-slate-100 dark:bg-slate-700/50 text-slate-400 dark:text-slate-500': loading || error}">
                         <i class="fa-solid fa-server text-xl"></i>
                     </div>
                 </div>
@@ -129,11 +129,11 @@
         {{-- Tabel Layanan --}}
         <x-ui.table class="mt-8">
             <x-slot:header>
-                <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex flex-wrap gap-3 justify-between items-center">
-                    <h2 class="text-lg font-bold text-slate-800">Layanan Terbaru</h2>
+                <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex flex-wrap gap-3 justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">Layanan Terbaru</h2>
                     <div class="flex items-center gap-4">
                         <a href="{{ route('user_hosting.projects') }}"
-                            class="text-sm text-slate-500 font-semibold hover:text-indigo-600 transition-colors">
+                            class="text-sm text-slate-500 dark:text-slate-400 font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 transition-colors">
                             Lihat Semua <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
                         </a>
                     </div>
@@ -146,14 +146,14 @@
                 <th class="px-6 py-4 text-center">Aksi</th>
             </x-slot:head>
             @forelse ($projects as $project)
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-medium text-slate-800">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                                <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100">
                                     @php
                                         $activeDomain = $project->domains()->where('ssl_status', 'active')->first();
                                         $displayUrl = $activeDomain ? $activeDomain->domain_name : $project->ryaze_domain;
                                     @endphp
                                     <a href="https://{{ $displayUrl }}" target="_blank"
-                                        class="text-xs font-medium text-slate-500 hover:text-indigo-600 transition-colors flex items-center gap-1.5 mt-1">
+                                        class="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5 mt-1">
                                         <i class="fa-solid fa-link text-[10px]"></i> {{ $displayUrl }}
                                     </a>
                                 </td>
@@ -170,14 +170,14 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <a href="{{ route('user_hosting.show', $project->hashid) }}"
-                                        class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition-colors">
+                                        class="text-xs bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition-colors">
                                         Kelola
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-10 text-center text-slate-400">Belum ada project hosting.
+                                <td colspan="4" class="px-6 py-10 text-center text-slate-400 dark:text-slate-500">Belum ada project hosting.
                                 </td>
                             </tr>
             @endforelse

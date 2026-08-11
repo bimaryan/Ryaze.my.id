@@ -9,7 +9,7 @@
             icon="fa-solid fa-file-invoice-dollar">
             <x-slot:actions>
                 <a href="{{ route('user_joki.dashboard') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
             </x-slot:actions>
@@ -23,8 +23,8 @@
                 <th class="px-6 py-4 text-center">Status</th>
             </x-slot:head>
             @forelse ($payments as $payment)
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-semibold text-slate-800">
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-100">
                         {{ $payment->order->order_number ?? '-' }}
                     </td>
                     <td class="px-6 py-4">{{ $payment->payment_name }}</td>
@@ -32,10 +32,10 @@
                     <td class="px-6 py-4 text-center">
                         @php
                             $statusClass = match ($payment->status) {
-                                'paid', 'verified' => 'bg-emerald-100 text-emerald-700',
-                                'pending', 'pending_verification' => 'bg-amber-100 text-amber-700',
-                                'rejected', 'failed' => 'bg-rose-100 text-rose-700',
-                                default => 'bg-slate-100 text-slate-700',
+                                'paid', 'verified' => 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
+                                'pending', 'pending_verification' => 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300',
+                                'rejected', 'failed' => 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300',
+                                default => 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
                             };
 
                             $statusLabel = match ($payment->status) {
@@ -53,7 +53,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-10 text-center text-slate-400">Belum ada riwayat tagihan.</td>
+                    <td colspan="4" class="px-6 py-10 text-center text-slate-400 dark:text-slate-500">Belum ada riwayat tagihan.</td>
                 </tr>
             @endforelse
         </x-ui.table>

@@ -2,10 +2,47 @@
 @import 'quill/dist/quill.snow.css'; 
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Quill editor — tema gelap bila halaman memakai .dark */
+.dark .ql-toolbar.ql-snow {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+.dark .ql-toolbar.ql-snow .ql-stroke {
+    stroke: #cbd5e1;
+}
+.dark .ql-toolbar.ql-snow .ql-fill {
+    fill: #cbd5e1;
+}
+.dark .ql-toolbar.ql-snow .ql-picker {
+    color: #cbd5e1;
+}
+.dark .ql-container.ql-snow {
+    border-color: #334155;
+    background-color: #0f172a;
+}
+.dark .ql-editor {
+    color: #e2e8f0;
+}
+.dark .ql-editor.ql-blank::before {
+    color: #64748b;
+}
+
+/* SweetAlert2 — tema gelap */
+.dark .swal2-popup {
+    background-color: #1e293b !important;
+}
+.dark .swal2-title,
+.dark .swal2-html-container {
+    color: #f1f5f9 !important;
 }

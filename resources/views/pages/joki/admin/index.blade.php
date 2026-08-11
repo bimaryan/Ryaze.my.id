@@ -6,54 +6,54 @@
             title="Manajemen Joki Code" 
             icon="fa-solid fa-gauge">
             <x-slot:subtitle>
-                Semangat ngoding, <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? 'Dev' }}</span>! Berikut antrean pekerjaanmu.
+                Semangat ngoding, <span class="font-semibold text-indigo-600 dark:text-indigo-400">{{ Auth::user()->name ?? 'Dev' }}</span>! Berikut antrean pekerjaanmu.
             </x-slot:subtitle>
         </x-ui.page-header>
 
         <div class="mt-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-amber-500">
-                    <p class="text-sm font-medium text-slate-500">Pesanan Baru (Pending)</p>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $pendingOrders }}</h3>
+                <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 border-t-4 border-t-amber-500">
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Pesanan Baru (Pending)</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-2">{{ $pendingOrders }}</h3>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-blue-500">
-                    <p class="text-sm font-medium text-slate-500">Sedang Dikerjakan</p>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $progressOrders }}</h3>
+                <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 border-t-4 border-t-blue-500">
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Sedang Dikerjakan</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-2">{{ $progressOrders }}</h3>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-purple-500">
-                    <p class="text-sm font-medium text-slate-500">Menunggu Review Klien</p>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $reviewOrders }}</h3>
+                <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 border-t-4 border-t-purple-500">
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Menunggu Review Klien</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-2">{{ $reviewOrders }}</h3>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-emerald-500">
-                    <p class="text-sm font-medium text-slate-500">Proyek Selesai (Bulan ini)</p>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-2">{{ $completedOrders }}</h3>
+                <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 border-t-4 border-t-emerald-500">
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Proyek Selesai (Bulan ini)</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-2">{{ $completedOrders }}</h3>
                 </div>
             </div>
 
             {{-- ══ CHARTS SECTION ══════════════════════════════════════════ --}}
             <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Line Chart: Selesai -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Tren Pesanan Selesai (6 Bulan Terakhir)</h3>
+                <div class="lg:col-span-2 bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Tren Pesanan Selesai (6 Bulan Terakhir)</h3>
                     <div id="chart-completed-orders"></div>
                 </div>
 
                 <!-- Pie Chart: Status -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Distribusi Status Pesanan</h3>
+                <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Distribusi Status Pesanan</h3>
                     <div id="chart-order-status" class="flex justify-center"></div>
                 </div>
 
                 <!-- Bar Chart: Baru -->
-                <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Pesanan Joki Baru (6 Bulan Terakhir)</h3>
+                <div class="lg:col-span-3 bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Pesanan Joki Baru (6 Bulan Terakhir)</h3>
                     <div id="chart-new-orders"></div>
                 </div>
             </div>
 
             {{-- Tabel Antrean --}}
             <div class="mt-8">
-                <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Antrean Pekerjaan Aktif</h2>
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 px-1">Antrean Pekerjaan Aktif</h2>
                 <x-ui.table>
                     <x-slot:head>
                         <th class="px-6 py-4">Klien & Order ID</th>
@@ -63,47 +63,47 @@
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </x-slot:head>
                             @forelse ($queueOrders as $order)
-                                <tr class="hover:bg-slate-50 transition-colors">
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                                     <td class="px-6 py-4">
-                                        <div class="font-bold text-slate-800">{{ $order->client->name ?? 'Unknown' }}</div>
-                                        <div class="text-xs text-slate-500 font-mono mt-0.5">{{ $order->order_number }}</div>
+                                        <div class="font-bold text-slate-800 dark:text-slate-100">{{ $order->client->name ?? 'Unknown' }}</div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">{{ $order->order_number }}</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-slate-800">{{ $order->project_name }}</div>
-                                        <div class="text-xs text-slate-500 mt-0.5">{{ $order->tech_stack }}</div>
+                                        <div class="font-medium text-slate-800 dark:text-slate-100">{{ $order->project_name }}</div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $order->tech_stack }}</div>
                                     </td>
                                     <td class="px-6 py-4">
                                         @php
                                             $statusColors = [
-                                                'pending' => 'bg-amber-100 text-amber-700',
-                                                'progress' => 'bg-blue-100 text-blue-700',
-                                                'review' => 'bg-purple-100 text-purple-700'
+                                                'pending' => 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300',
+                                                'progress' => 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300',
+                                                'review' => 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300'
                                             ];
-                                            $color = $statusColors[$order->status] ?? 'bg-slate-100 text-slate-700';
+                                            $color = $statusColors[$order->status] ?? 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
                                         @endphp
                                         <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $color }} uppercase">
                                             {{ $order->status }}
                                         </span>
                                         @if($order->status == 'progress')
-                                            <div class="mt-2 w-full bg-slate-200 rounded-full h-1.5">
+                                            <div class="mt-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
                                                 <div class="bg-blue-600 h-1.5 rounded-full" style="width: {{ $order->progress }}%"></div>
                                             </div>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <span class="text-xs font-medium px-2 py-1 rounded-lg {{ \Carbon\Carbon::parse($order->deadline)->isPast() ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-700' }}">
+                                        <span class="text-xs font-medium px-2 py-1 rounded-lg {{ \Carbon\Carbon::parse($order->deadline)->isPast() ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200' }}">
                                             {{ \Carbon\Carbon::parse($order->deadline)->format('d M Y') }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <a href="{{ route('admin_joki.orders.edit', $order->hashid) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition">
+                                        <a href="{{ route('admin_joki.orders.edit', $order->hashid) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-10 text-center text-slate-400">Tidak ada antrean aktif saat ini.</td>
+                                    <td colspan="5" class="px-6 py-10 text-center text-slate-400 dark:text-slate-500">Tidak ada antrean aktif saat ini.</td>
                                 </tr>
                             @endforelse
                 </x-ui.table>

@@ -10,13 +10,13 @@
         }
 
         const toast = document.createElement('div');
-        toast.className = 'flex items-center gap-2.5 bg-white px-4 py-3 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.08)] border border-slate-100 transform transition-all duration-300 scale-95 opacity-0 translate-y-[-10px] pointer-events-auto';
+        toast.className = 'flex items-center gap-2.5 bg-white px-4 py-3 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.08)] border border-slate-100 dark:bg-slate-800 dark:border-slate-700 transform transition-all duration-300 scale-95 opacity-0 translate-y-[-10px] pointer-events-auto';
         
         const icon = type === 'success' 
             ? `<div class="shrink-0 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px]"><i class="fa-solid fa-check"></i></div>`
             : `<div class="shrink-0 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center text-white text-[10px]"><i class="fa-solid fa-xmark"></i></div>`;
         
-        toast.innerHTML = `${icon} <span class="text-sm font-medium text-slate-700">${message}</span>`;
+        toast.innerHTML = `${icon} <span class="text-sm font-medium text-slate-700 dark:text-slate-200">${message}</span>`;
         container.appendChild(toast);
         
         // Animate in

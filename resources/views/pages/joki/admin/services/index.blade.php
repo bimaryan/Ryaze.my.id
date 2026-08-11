@@ -1,4 +1,4 @@
-﻿@extends('index')
+@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -14,7 +14,7 @@
         </x-ui.page-header>
 
         @if ($errors->any())
-            <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700">
+            <div class="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/40 text-rose-700 dark:text-rose-300">
                 <div class="flex items-start gap-3">
                     <i class="fa-solid fa-circle-exclamation mt-1"></i>
                     <div>
@@ -38,20 +38,20 @@
                 <th class="px-6 py-4 text-right">Aksi</th>
             </x-slot:head>
                         @forelse ($services as $service)
-                            <tr class="hover:bg-slate-50 transition-colors">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-800">{{ $service->name }}</div>
-                                    <div class="text-xs text-slate-500 truncate max-w-xs">{{ Str::limit($service->description, 50) }}</div>
+                                    <div class="font-bold text-slate-800 dark:text-slate-100">{{ $service->name }}</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">{{ Str::limit($service->description, 50) }}</div>
                                 </td>
                                 <td class="px-6 py-4 font-mono font-medium">Rp{{ number_format($service->base_price, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap inline-block {{ $service->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                                    <span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap inline-block {{ $service->is_active ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300' }}">
                                         {{ $service->is_active ? 'Aktif' : 'Tidak Aktif' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <button class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip btn-edit-modal" 
+                                        <button class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip btn-edit-modal" 
                                             title="Edit Layanan"
                                             data-id="{{ $service->hashid }}"
                                             data-name="{{ $service->name }}"
@@ -63,7 +63,7 @@
                                         <form action="{{ route('admin_joki.services.destroy', $service->hashid) }}" method="POST" class="inline form-delete-service">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Layanan">
+                                            <button type="submit" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Layanan">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </form>
@@ -72,17 +72,17 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-10 text-center text-slate-400">Belum ada layanan yang ditambahkan.</td>
+                                <td colspan="4" class="px-6 py-10 text-center text-slate-400 dark:text-slate-500">Belum ada layanan yang ditambahkan.</td>
                             </tr>
                         @endforelse
         </x-ui.table>
 
     {{-- Modal Create --}}
     <div id="createModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden scale-95 transition-transform duration-300 transform">
-            <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h3 class="text-lg font-bold text-slate-800">Tambah Layanan Joki</h3>
-                <button id="btnCloseCreateModal" type="button" class="text-slate-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50">
+        <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden scale-95 transition-transform duration-300 transform">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Tambah Layanan Joki</h3>
+                <button id="btnCloseCreateModal" type="button" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -90,24 +90,24 @@
                 @csrf
                 <div class="p-6 space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Layanan</label>
-                        <input type="text" name="name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nama Layanan</label>
+                        <input type="text" name="name" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
-                        <textarea name="description" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Deskripsi</label>
+                        <textarea name="description" rows="3" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Harga Dasar (Rp)</label>
-                        <input type="number" name="base_price" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Dasar (Rp)</label>
+                        <input type="number" name="base_price" required min="0" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="checkbox" name="is_active" id="is_active" value="1" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                        <label for="is_active" class="text-sm font-medium text-slate-700">Aktifkan Layanan</label>
+                        <input type="checkbox" name="is_active" id="is_active" value="1" checked class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500">
+                        <label for="is_active" class="text-sm font-medium text-slate-700 dark:text-slate-200">Aktifkan Layanan</label>
                     </div>
                 </div>
-                <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
-                    <button type="button" id="btnCancelCreateModal" class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-end gap-3">
+                    <button type="button" id="btnCancelCreateModal" class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                         Batal
                     </button>
                     <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm transition-all">
@@ -120,10 +120,10 @@
 
     {{-- Modal Edit --}}
     <div id="editModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden scale-95 transition-transform duration-300 transform">
-            <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h3 class="text-lg font-bold text-slate-800">Edit Layanan Joki</h3>
-                <button type="button" id="btnCloseEditModal" class="text-slate-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50">
+        <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden scale-95 transition-transform duration-300 transform">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Edit Layanan Joki</h3>
+                <button type="button" id="btnCloseEditModal" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -132,24 +132,24 @@
                 @method('PUT')
                 <div class="p-6 space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Layanan</label>
-                        <input type="text" name="name" id="edit_name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nama Layanan</label>
+                        <input type="text" name="name" id="edit_name" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
-                        <textarea name="description" id="edit_description" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Deskripsi</label>
+                        <textarea name="description" id="edit_description" rows="3" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Harga Dasar (Rp)</label>
-                        <input type="number" name="base_price" id="edit_base_price" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Dasar (Rp)</label>
+                        <input type="number" name="base_price" id="edit_base_price" required min="0" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                        <label for="edit_is_active" class="text-sm font-medium text-slate-700">Aktifkan Layanan</label>
+                        <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500">
+                        <label for="edit_is_active" class="text-sm font-medium text-slate-700 dark:text-slate-200">Aktifkan Layanan</label>
                     </div>
                 </div>
-                <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
-                    <button type="button" id="btnCancelEditModal" class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-end gap-3">
+                    <button type="button" id="btnCancelEditModal" class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                         Batal
                     </button>
                     <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm transition-all">

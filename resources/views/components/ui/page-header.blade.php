@@ -1,7 +1,7 @@
 @props(['title', 'description' => null, 'icon' => 'cube', 'iconColor' => 'indigo'])
 
 <div
-    class="p-4 bg-white rounded-lg shadow-sm flex flex-wrap items-center justify-between border border-slate-200 mb-6 gap-4">
+    class="p-4 bg-white rounded-lg shadow-sm flex flex-wrap items-center justify-between border border-slate-200 mb-6 gap-4 dark:bg-slate-800/60 dark:border-slate-700">
     <div class="flex items-center gap-4">
         @if (isset($iconSlot))
             {{ $iconSlot }}
@@ -24,8 +24,8 @@
         @endif
         @if (request()->routeIs('*.dashboard'))
             <div
-                class="hidden md:flex px-5 py-2.5 bg-slate-100 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 items-center gap-2">
-                <i class="fa-regular fa-calendar text-slate-400"></i>
+                class="hidden md:flex px-5 py-2.5 bg-slate-100 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 items-center gap-2 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300">
+                <i class="fa-regular fa-calendar text-slate-400 dark:text-slate-500"></i>
                 {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
             </div>
         @endif

@@ -9,7 +9,7 @@
             icon="fa-solid fa-user">
             <x-slot:actions>
                 <a href="{{ url('/') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
             </x-slot:actions>
@@ -19,9 +19,9 @@
 
             {{-- Form Data Diri --}}
             <x-ui.card class="overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-                    <i class="fa-solid fa-id-card text-indigo-500"></i>
-                    <h3 class="font-bold text-slate-800">Informasi Pribadi</h3>
+                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex items-center gap-3">
+                    <i class="fa-solid fa-id-card text-indigo-500 dark:text-indigo-400"></i>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Informasi Pribadi</h3>
                 </div>
                 <form action="{{ route('profile.update') }}" method="POST" class="p-6">
                     @csrf
@@ -29,24 +29,24 @@
 
                     <div class="space-y-5">
                         <div>
-                            <label for="name" class="block text-sm font-semibold text-slate-700 mb-1.5">Nama
+                            <label for="name" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Nama
                                 Lengkap</label>
                             <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
                                 required
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
                             @error('name')
-                                <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
+                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="email" class="block text-sm font-semibold text-slate-700 mb-1.5">Alamat
+                            <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Alamat
                                 Email</label>
                             <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
                                 required
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
                             @error('email')
-                                <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
+                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -62,9 +62,9 @@
 
             {{-- Form Keamanan --}}
             <x-ui.card class="overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-                    <i class="fa-solid fa-shield-halved text-emerald-500"></i>
-                    <h3 class="font-bold text-slate-800">Keamanan Akun</h3>
+                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex items-center gap-3">
+                    <i class="fa-solid fa-shield-halved text-emerald-500 dark:text-emerald-400"></i>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Keamanan Akun</h3>
                 </div>
                 <form action="{{ route('profile.update') }}" method="POST" class="p-6">
                     @csrf
@@ -79,31 +79,31 @@
 
                     <div class="space-y-5">
                         <div>
-                            <label for="current_password" class="block text-sm font-semibold text-slate-700 mb-1.5">Password
+                            <label for="current_password" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Password
                                 Saat Ini</label>
                             <input type="password" id="current_password" name="current_password" placeholder="••••••••"
-                                class="focus:ring-emerald-500 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                class="focus:ring-emerald-500 w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             @error('current_password')
-                                <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
+                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="password" class="block text-sm font-semibold text-slate-700 mb-1.5">Password
+                            <label for="password" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Password
                                 Baru</label>
                             <input type="password" id="password" name="password" placeholder="Minimal 8 karakter"
-                                class="focus:ring-emerald-500 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                class="focus:ring-emerald-500 w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             @error('password')
-                                <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span>
+                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
                             <label for="password_confirmation"
-                                class="block text-sm font-semibold text-slate-700 mb-1.5">Ulangi Password Baru</label>
+                                class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Ulangi Password Baru</label>
                             <input type="password" id="password_confirmation" name="password_confirmation"
                                 placeholder="••••••••"
-                                class="focus:ring-emerald-500 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                class="focus:ring-emerald-500 w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                         </div>
                     </div>
 
@@ -118,21 +118,21 @@
 
             <!-- 2FA Section -->
             <x-ui.card>
-                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                    <h2 class="text-sm font-bold text-slate-800">Two-Factor Authentication (2FA)</h2>
+                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
+                    <h2 class="text-sm font-bold text-slate-800 dark:text-slate-100">Two-Factor Authentication (2FA)</h2>
                     @if(auth()->user()->two_factor_secret)
-                        <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
+                        <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
                             <i class="fa-solid fa-shield-check"></i> Aktif
                         </span>
                     @else
-                        <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
+                        <span class="bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
                             <i class="fa-solid fa-shield"></i> Belum Aktif
                         </span>
                     @endif
                 </div>
 
                 <div class="p-6">
-                    <p class="text-sm text-slate-600 mb-6">
+                    <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">
                         Tambahkan lapisan keamanan ekstra ke akun Anda menggunakan aplikasi autentikator (seperti Google Authenticator).
                     </p>
 

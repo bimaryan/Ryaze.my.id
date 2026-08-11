@@ -7,17 +7,17 @@
             title="Manajemen Hosting" 
             icon="fa-solid fa-server">
             <x-slot:subtitle>
-                Halo Admin <span class="font-semibold text-indigo-600">{{ Auth::user()->name ?? '' }}</span>. Berikut status server hari ini.
+                Halo Admin <span class="font-semibold text-indigo-600 dark:text-indigo-400">{{ Auth::user()->name ?? '' }}</span>. Berikut status server hari ini.
             </x-slot:subtitle>
             <x-slot:actions>
-                <span class="text-sm text-slate-400 sm:text-right shrink-0">{{ now()->format('d M Y, H:i') }} WIB</span>
+                <span class="text-sm text-slate-400 dark:text-slate-500 sm:text-right shrink-0">{{ now()->format('d M Y, H:i') }} WIB</span>
             </x-slot:actions>
         </x-ui.page-header>
 
         {{-- ══ FLASH MESSAGE ══════════════════════════════════════════ --}}
         @if (session('error'))
-            <div class="mt-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl text-sm flex items-center gap-3">
-                <i class="fa-solid fa-circle-xmark text-red-500"></i>
+            <div class="mt-4 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/40 text-red-800 dark:text-red-200 rounded-xl text-sm flex items-center gap-3">
+                <i class="fa-solid fa-circle-xmark text-red-500 dark:text-red-400"></i>
                 {{ session('error') }}
             </div>
         @endif
@@ -27,10 +27,10 @@
             <x-ui.card class="p-5">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs font-medium text-slate-500">Total Project</p>
-                        <h3 class="text-2xl font-bold text-slate-800 mt-1">{{ $stats['total_projects'] }}</h3>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Project</p>
+                        <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">{{ $stats['total_projects'] }}</h3>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-sm">
+                    <div class="w-9 h-9 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 flex items-center justify-center text-sm">
                         <i class="fa-solid fa-layer-group"></i>
                     </div>
                 </div>
@@ -39,11 +39,11 @@
             <x-ui.card class="p-5">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs font-medium text-slate-500">Aktif</p>
-                        <h3 class="text-2xl font-bold text-emerald-600 mt-1">{{ $stats['active_projects'] }}</h3>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Aktif</p>
+                        <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-300 mt-1">{{ $stats['active_projects'] }}</h3>
                     </div>
                     <div
-                        class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-sm">
+                        class="w-9 h-9 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 flex items-center justify-center text-sm">
                         <i class="fa-solid fa-check"></i>
                     </div>
                 </div>
@@ -52,10 +52,10 @@
             <x-ui.card class="p-5">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs font-medium text-slate-500">Total Klien</p>
-                        <h3 class="text-2xl font-bold text-slate-800 mt-1">{{ $stats['total_clients'] }}</h3>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Klien</p>
+                        <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">{{ $stats['total_clients'] }}</h3>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-sm">
+                    <div class="w-9 h-9 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-500 dark:text-blue-400 flex items-center justify-center text-sm">
                         <i class="fa-solid fa-users"></i>
                     </div>
                 </div>
@@ -64,10 +64,10 @@
             <x-ui.card class="p-5">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs font-medium text-slate-500">Database</p>
-                        <h3 class="text-2xl font-bold text-slate-800 mt-1">{{ $stats['total_databases'] }}</h3>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Database</p>
+                        <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">{{ $stats['total_databases'] }}</h3>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-sm">
+                    <div class="w-9 h-9 rounded-full bg-purple-50 dark:bg-purple-500/10 text-purple-500 dark:text-purple-400 flex items-center justify-center text-sm">
                         <i class="fa-solid fa-database"></i>
                     </div>
                 </div>
@@ -76,13 +76,13 @@
             <x-ui.card class="p-5">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs font-medium text-slate-500">Tagihan Pending</p>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Tagihan Pending</p>
                         <h3
-                            class="text-2xl font-bold {{ $stats['pending_billing'] > 0 ? 'text-amber-600' : 'text-slate-800' }} mt-1">
+                            class="text-2xl font-bold {{ $stats['pending_billing'] > 0 ? 'text-amber-600 dark:text-amber-300' : 'text-slate-800 dark:text-slate-100' }} mt-1">
                             {{ $stats['pending_billing'] }}
                         </h3>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-sm">
+                    <div class="w-9 h-9 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400 flex items-center justify-center text-sm">
                         <i class="fa-solid fa-file-invoice-dollar"></i>
                     </div>
                 </div>
@@ -91,13 +91,13 @@
             <x-ui.card class="p-5">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs font-medium text-slate-500">Sedang Build</p>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Sedang Build</p>
                         <h3
-                            class="text-2xl font-bold {{ $stats['building_now'] > 0 ? 'text-blue-600' : 'text-slate-800' }} mt-1">
+                            class="text-2xl font-bold {{ $stats['building_now'] > 0 ? 'text-blue-600 dark:text-blue-300' : 'text-slate-800 dark:text-slate-100' }} mt-1">
                             {{ $stats['building_now'] }}
                         </h3>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center text-sm">
+                    <div class="w-9 h-9 rounded-full bg-sky-50 dark:bg-sky-500/10 text-sky-500 dark:text-sky-400 flex items-center justify-center text-sm">
                         <i class="fa-solid fa-gears"></i>
                     </div>
                 </div>
@@ -107,20 +107,20 @@
         {{-- ══ CHARTS SECTION ══════════════════════════════════════════ --}}
         <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Line Chart: Tren Tagihan -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">Tren Pendapatan Hosting (6 Bulan Terakhir)</h3>
+            <div class="lg:col-span-2 bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Tren Pendapatan Hosting (6 Bulan Terakhir)</h3>
                 <div id="chart-hosting-billings"></div>
             </div>
 
             <!-- Pie Chart: Status Proyek -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">Distribusi Status Proyek</h3>
+            <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Distribusi Status Proyek</h3>
                 <div id="chart-project-status" class="flex justify-center"></div>
             </div>
 
             <!-- Bar Chart: Proyek Baru -->
-            <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">Proyek Hosting Baru (6 Bulan Terakhir)</h3>
+            <div class="lg:col-span-3 bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Proyek Hosting Baru (6 Bulan Terakhir)</h3>
                 <div id="chart-new-projects"></div>
             </div>
         </div>
@@ -130,19 +130,19 @@
 
             {{-- Card 1: Membutuhkan Tindakan --}}
             <a href="{{ route('admin_hosting.pending') }}"
-                class="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-amber-300 transition-all block relative overflow-hidden">
+                class="group bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 hover:shadow-md hover:border-amber-300 transition-all block relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i class="fa-solid fa-triangle-exclamation text-6xl text-amber-500"></i>
+                    <i class="fa-solid fa-triangle-exclamation text-6xl text-amber-500 dark:text-amber-400"></i>
                 </div>
                 <div class="relative z-10">
                     <div
-                        class="w-12 h-12 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-xl mb-4">
+                        class="w-12 h-12 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400 flex items-center justify-center text-xl mb-4">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-1">Membutuhkan Tindakan</h3>
-                    <p class="text-sm text-slate-500 mb-4">Project yang butuh aktivasi, suspend, atau perbaikan error.</p>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">Membutuhkan Tindakan</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Project yang butuh aktivasi, suspend, atau perbaikan error.</p>
                     <span
-                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-600 group-hover:text-amber-700">
+                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-600 dark:text-amber-300 group-hover:text-amber-700">
                         Kelola {{ $stats['action_required'] }} Antrean <i class="fa-solid fa-arrow-right text-xs"></i>
                     </span>
                 </div>
@@ -150,20 +150,20 @@
 
             {{-- Card 2: Deploy Terbaru --}}
             <a href="{{ route('admin_hosting.deployments') }}"
-                class="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all block relative overflow-hidden">
+                class="group bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 hover:shadow-md hover:border-indigo-300 transition-all block relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i class="fa-solid fa-rocket text-6xl text-indigo-500"></i>
+                    <i class="fa-solid fa-rocket text-6xl text-indigo-500 dark:text-indigo-400"></i>
                 </div>
                 <div class="relative z-10">
                     <div
-                        class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-xl mb-4">
+                        class="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 flex items-center justify-center text-xl mb-4">
                         <i class="fa-solid fa-rocket"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-1">Riwayat Deployment</h3>
-                    <p class="text-sm text-slate-500 mb-4">Pantau log dan status build dari project klien secara real-time.
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">Riwayat Deployment</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Pantau log dan status build dari project klien secara real-time.
                     </p>
                     <span
-                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 group-hover:text-indigo-700">
+                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700">
                         Lihat Log Build <i class="fa-solid fa-arrow-right text-xs"></i>
                     </span>
                 </div>
@@ -171,20 +171,20 @@
 
             {{-- Card 3: Semua Project --}}
             <a href="{{ route('admin_hosting.projects') }}"
-                class="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-emerald-300 transition-all block relative overflow-hidden">
+                class="group bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 hover:shadow-md hover:border-emerald-300 transition-all block relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i class="fa-solid fa-server text-6xl text-emerald-500"></i>
+                    <i class="fa-solid fa-server text-6xl text-emerald-500 dark:text-emerald-400"></i>
                 </div>
                 <div class="relative z-10">
                     <div
-                        class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl mb-4">
+                        class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 flex items-center justify-center text-xl mb-4">
                         <i class="fa-solid fa-server"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-1">Semua Project Hosting</h3>
-                    <p class="text-sm text-slate-500 mb-4">Akses tabel master seluruh data website klien, domain, dan paket.
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">Semua Project Hosting</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Akses tabel master seluruh data website klien, domain, dan paket.
                     </p>
                     <span
-                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 group-hover:text-emerald-700">
+                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-300 group-hover:text-emerald-700">
                         Kelola {{ $stats['total_projects'] }} Project <i class="fa-solid fa-arrow-right text-xs"></i>
                     </span>
                 </div>

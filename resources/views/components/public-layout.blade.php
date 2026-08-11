@@ -3,7 +3,7 @@
     'description' => '',
     'withNav' => true,
     'withFooter' => true,
-    'bodyClass' => 'bg-white font-sans antialiased text-slate-900',
+    'bodyClass' => 'bg-white font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100',
     'htmlClass' => 'scroll-smooth',
     'lang' => 'id',
     'links' => [],
@@ -67,6 +67,21 @@
     @endif
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <script nonce="{{ csp_nonce() }}">
+        (function () {
+            var stored = localStorage.getItem('ryaze-theme');
+            if (stored === null) {
+                stored = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.classList.toggle('dark', stored === 'dark');
+        })();
+        window.ryazeToggleTheme = function () {
+            var dark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
+            document.dispatchEvent(new CustomEvent('theme:change', { detail: { dark: dark } }));
+        };
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

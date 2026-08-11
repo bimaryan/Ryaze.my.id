@@ -1,10 +1,10 @@
-<nav class="fixed top-0 z-50 w-full shadow bg-gray-50">
+<nav class="fixed top-0 z-50 w-full shadow bg-gray-50 dark:bg-slate-900">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start gap-2 rtl:justify-end">
                 <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
                     type="button"
-                    class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-600">
+                    class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-600">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -27,6 +27,13 @@
 
             <div class="flex items-center">
                 <div class="flex items-center ms-3 gap-5">
+                    {{-- Toggle Tema --}}
+                    <button type="button" onclick="ryazeToggleTheme()" aria-label="Ganti tema"
+                        class="p-2 rounded-md text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-amber-300 dark:hover:bg-slate-800 transition-colors">
+                        <i class="fa-solid fa-sun hidden dark:inline-block"></i>
+                        <i class="fa-solid fa-moon inline-block dark:hidden"></i>
+                    </button>
+
                     {{-- Notifikasi --}}
                     @php
                         $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]);
@@ -41,7 +48,7 @@
                         </svg>
                         @if ($unreadNotifications->count() > 0)
                             <div
-                                class="absolute block w-5 h-5 bg-emerald-500 border-2 border-white rounded-full -top-1 start-3">
+                                class="absolute block w-5 h-5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full -top-1 start-3">
                                 <p class="text-slate-800 text-[10px] leading-tight font-bold">
                                     {{ $unreadNotifications->count() > 9 ? '9+' : $unreadNotifications->count() }}</p>
                             </div>
@@ -49,28 +56,28 @@
                     </button>
 
                     <div id="dropdownNotification"
-                        class="z-20 hidden w-80 max-w-sm bg-white divide-y divide-slate-100 rounded-lg shadow-xl"
+                        class="z-20 hidden w-80 max-w-sm bg-white divide-y divide-slate-100 rounded-lg shadow-xl dark:bg-slate-800 dark:divide-slate-700"
                         aria-labelledby="dropdownNotificationButton">
                         <div
-                            class="flex items-center justify-between px-4 py-3 font-semibold text-slate-700 rounded-t-lg bg-transparent border-b border-slate-100">
+                            class="flex items-center justify-between px-4 py-3 font-semibold text-slate-700 rounded-t-lg bg-transparent border-b border-slate-100 dark:text-slate-200 dark:border-slate-700">
                             <span>Notifikasi Terbaru</span>
                             @if ($unreadNotifications->count() > 0)
                                 <form action="{{ route('notifications.markAllRead') }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-800">Tandai
+                                    <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">Tandai
                                         Dibaca</button>
                                 </form>
                             @endif
                         </div>
-                        <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+                        <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto dark:divide-slate-700">
                             @forelse($unreadNotifications as $notification)
                                 <a href="#"
                                     onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();"
                                     class="flex px-4 py-3 hover:bg-transparent">
                                     <div class="w-full pl-3">
-                                        <div class="text-slate-600 text-sm mb-1.5">
+                                        <div class="text-slate-600 text-sm mb-1.5 dark:text-slate-300">
                                             {{ $notification->data['message'] ?? 'Notifikasi baru' }}</div>
-                                        <div class="text-xs text-slate-500">
+                                        <div class="text-xs text-slate-500 dark:text-slate-400">
                                             {{ $notification->created_at->diffForHumans() }}</div>
                                     </div>
                                 </a>
@@ -80,15 +87,15 @@
                                     @csrf
                                 </form>
                             @empty
-                                <p class="px-6 py-4 text-sm text-slate-500 text-center">Belum ada notifikasi baru.</p>
+                                <p class="px-6 py-4 text-sm text-slate-500 text-center dark:text-slate-400">Belum ada notifikasi baru.</p>
                             @endforelse
                         </div>
                     </div>
 
                     {{-- Info User --}}
-                    <div class="hidden md:block text-right border-l border-slate-300 pl-5">
-                        <p class="text-sm font-semibold text-slate-800">{{ Auth::user()->name ?? 'Guest' }}</p>
-                        <p class="text-xs text-slate-500">
+                    <div class="hidden md:block text-right border-l border-slate-300 pl-5 dark:border-slate-700">
+                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ Auth::user()->name ?? 'Guest' }}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
                             {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : 'No Role' }}
                         </p>
                     </div>
@@ -96,28 +103,28 @@
                     {{-- Avatar + Dropdown --}}
                     <div>
                         <button type="button"
-                            class="flex text-sm bg-slate-100 rounded-full focus:ring-4 focus:ring-slate-200 border border-slate-200 shadow-sm transition-transform hover:scale-105"
+                            class="flex text-sm bg-slate-100 rounded-full focus:ring-4 focus:ring-slate-200 border border-slate-200 shadow-sm transition-transform hover:scale-105 dark:bg-slate-800 dark:border-slate-700 dark:focus:ring-slate-700"
                             aria-expanded="false" data-dropdown-toggle="dropdown-user">
                             <span class="sr-only">Open user menu</span>
                             <div
-                                class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
+                                class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg dark:bg-indigo-500/20 dark:text-indigo-300">
                                 {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
                             </div>
                         </button>
                     </div>
 
-                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-slate-100 rounded-xl shadow-xl border border-slate-100"
+                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-slate-100 rounded-xl shadow-xl border border-slate-100 dark:bg-slate-800 dark:divide-slate-700 dark:border-slate-700"
                         id="dropdown-user">
                         <div class="px-4 py-3 md:hidden">
-                            <p class="text-sm text-slate-900 font-bold">{{ Auth::user()->name ?? 'Guest' }}</p>
-                            <p class="text-xs font-medium text-slate-500 truncate">
+                            <p class="text-sm text-slate-900 font-bold dark:text-slate-100">{{ Auth::user()->name ?? 'Guest' }}</p>
+                            <p class="text-xs font-medium text-slate-500 truncate dark:text-slate-400">
                                 {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}
                             </p>
                         </div>
                         <ul class="py-1" role="none">
                             <li>
                                 <a href="{{ route('profile.edit') }}"
-                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-transparent">
+                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-transparent dark:text-slate-200">
                                     <i class="fa-solid fa-user me-2 text-indigo-500"></i> Profil Saya
                                 </a>
                             </li>
@@ -125,7 +132,7 @@
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit"
-                                        class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-transparent border-t border-slate-100"
+                                        class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-transparent border-t border-slate-100 dark:border-slate-700"
                                         role="menuitem">
                                         <i class="fa-solid fa-right-from-bracket me-2"></i> Keluar
                                     </button>
@@ -140,9 +147,9 @@
 </nav>
 
 <aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 w-64 h-[100dvh] pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0"
+    class="fixed top-0 left-0 z-40 w-64 h-[100dvh] pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 dark:bg-slate-900 dark:border-slate-800 sm:translate-x-0"
     aria-label="Sidebar">
-    <div class="h-full px-3 pb-24 mt-3 overflow-y-auto bg-white">
+    <div class="h-full px-3 pb-24 mt-3 overflow-y-auto bg-white dark:bg-slate-900">
         <ul class="space-y-2 font-medium">
 
             @php
@@ -169,10 +176,10 @@
                 ) => 'flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group text-sm font-medium ' .
                     ($active
                         ? 'bg-indigo-600 text-slate-800 shadow-md text-white shadow-indigo-200/50'
-                        : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700');
+                        : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-300 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-300');
 
                 $iconClass = fn($active) => 'w-6 text-center text-lg transition-transform group-hover:scale-110 ' .
-                    ($active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600');
+                    ($active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 dark:text-slate-500 dark:group-hover:text-indigo-400');
             @endphp
 
             {{-- Dashboard --}}
@@ -183,10 +190,10 @@
                 </a>
             </li>
 
-            {{-- ══ SISTEM UTAMA (SUPERADMIN) ══════════════════════════════════ --}}
+            {{-- â•â• SISTEM UTAMA (SUPERADMIN) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($role === 'superadmin')
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sistem Utama</span>
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Sistem Utama</span>
                 </li>
 
                 <li>
@@ -241,10 +248,10 @@
 
             @endif
 
-            {{-- ══ MANAJEMEN JOKI ══════════════════════════════════ --}}
+            {{-- â•â• MANAJEMEN JOKI â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($isAdminJoki)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                         {{ $role === 'superadmin' ? 'Manajemen Joki' : 'Manajemen Hosting' }}
                     </span>
                 </li>
@@ -273,10 +280,10 @@
                 </li>
             @endif
 
-            {{-- ══ MANAJEMEN HOSTING ══════════════════════════════════ --}}
+            {{-- â•â• MANAJEMEN HOSTING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($isAdminHosting)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                         {{ $role === 'superadmin' ? 'Manajemen Hosting' : 'Manajemen Admin' }}
                     </span>
                 </li>
@@ -348,10 +355,10 @@
             @endif
 
 
-            {{-- ══ LAYANAN KLIEN JOKI ════════════════════════════════════ --}}
+            {{-- â•â• LAYANAN KLIEN JOKI â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($isUserJoki)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Layanan
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Layanan
                         Klien Joki</span>
                 </li>
 
@@ -391,10 +398,10 @@
                 </li>
             @endif
 
-            {{-- ══ LAYANAN KLIEN HOSTING ════════════════════════════════════ --}}
+            {{-- â•â• LAYANAN KLIEN HOSTING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($isUserHosting)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Layanan
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Layanan
                         Klien Hosting</span>
                 </li>
 
@@ -429,7 +436,7 @@
                             <i
                                 class="fa-solid fa-network-wired {{ $iconClass(request()->routeIs('user_hosting.tunnels*')) }}"></i>
                             <span class="ms-3 whitespace-nowrap">Local Tunnels</span>
-                            <span class="ms-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-100 text-purple-600">Beta</span>
+                            <span class="ms-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-300">Beta</span>
                         </a>
                     </li>
                     <li>
@@ -488,7 +495,7 @@
                                 class="fa-solid fa-crown {{ $iconClass(request()->routeIs('user_hosting.subscription')) }}"></i>
                             <span class="ms-3 whitespace-nowrap">Langganan Paket</span>
                             @if(!Auth::user()->hasActiveHostingSubscription())
-                                <span class="ms-auto inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-bold text-rose-500 bg-rose-100 rounded-full">
+                                <span class="ms-auto inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-bold text-rose-500 bg-rose-100 dark:text-rose-300 dark:bg-rose-500/20 rounded-full">
                                     Beli
                                 </span>
                             @endif
@@ -514,8 +521,8 @@
 
                 {{-- Wallet & Affiliate (Semua User) --}}
                 @if ($isUser)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pendapatan</span>
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pendapatan</span>
                 </li>
                 <li>
                     <a href="{{ route('user.wallet.history') }}"

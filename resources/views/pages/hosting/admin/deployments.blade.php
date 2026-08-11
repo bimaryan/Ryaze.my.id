@@ -9,7 +9,7 @@
             icon="fa-solid fa-rocket">
             <x-slot:actions>
                 <a href="{{ route('admin_hosting.dashboard') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                     &larr; Kembali
                 </a>
             </x-slot:actions>
@@ -24,15 +24,15 @@
                 <th class="px-6 py-4 text-center">Status</th>
             </x-slot:head>
             @forelse ($deployments as $deploy)
-                        <tr class="hover:bg-slate-50 transition-colors">
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
 
                             {{-- Project Info --}}
                             <td class="px-6 py-4">
-                                <p class="font-semibold text-slate-800">
+                                <p class="font-semibold text-slate-800 dark:text-slate-100">
                                     {{ $deploy->project?->project_name ?? 'Project Dihapus' }}</p>
                                 @if ($deploy->project)
                                     <a href="https://{{ $deploy->project->ryaze_domain }}" target="_blank"
-                                        class="text-xs text-indigo-600 hover:underline font-mono">
+                                        class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-mono">
                                         {{ $deploy->project->ryaze_domain }}
                                     </a>
                                 @endif
@@ -40,8 +40,8 @@
 
                             {{-- Client & Commit --}}
                             <td class="px-6 py-4">
-                                <p class="font-medium text-slate-700">{{ $deploy->project?->client?->name ?? '—' }}</p>
-                                <p class="text-xs text-slate-400 mt-0.5 truncate max-w-[250px]"
+                                <p class="font-medium text-slate-700 dark:text-slate-200">{{ $deploy->project?->client?->name ?? '—' }}</p>
+                                <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate max-w-[250px]"
                                     title="{{ $deploy->commit_message }}">
                                     <i class="fa-solid fa-code-commit mr-1"></i>
                                     {{ $deploy->commit_message ? Str::limit($deploy->commit_message, 45) : 'System / Manual Deploy' }}
@@ -50,19 +50,19 @@
 
                             {{-- Time --}}
                             <td class="px-6 py-4">
-                                <p class="text-sm text-slate-700">{{ $deploy->created_at->format('d M Y, H:i') }}</p>
-                                <p class="text-xs text-slate-400 mt-0.5">{{ $deploy->created_at->diffForHumans() }}</p>
+                                <p class="text-sm text-slate-700 dark:text-slate-200">{{ $deploy->created_at->format('d M Y, H:i') }}</p>
+                                <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{{ $deploy->created_at->diffForHumans() }}</p>
                             </td>
 
                             {{-- Status Badge --}}
                             <td class="px-6 py-4 text-center">
                                 @php
                                     $ds = match ($deploy->status) {
-                                        'success' => 'bg-emerald-100 text-emerald-700',
-                                        'failed', 'error' => 'bg-red-100 text-red-700',
-                                        'queued' => 'bg-slate-100 text-slate-600',
-                                        'running', 'building' => 'bg-blue-100 text-blue-700',
-                                        default => 'bg-gray-100 text-gray-600',
+                                        'success' => 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
+                                        'failed', 'error' => 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300',
+                                        'queued' => 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300',
+                                        'running', 'building' => 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300',
+                                        default => 'bg-gray-100 dark:bg-slate-700/50 text-gray-600 dark:text-slate-300',
                                     };
                                 @endphp
                                 <span class="text-xs font-semibold px-2.5 py-1 rounded-full {{ $ds }}">
@@ -73,7 +73,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-12 text-center text-slate-400 text-sm">
+                            <td colspan="4" class="px-6 py-12 text-center text-slate-400 dark:text-slate-500 text-sm">
                                 <i class="fa-solid fa-rocket text-3xl mb-3 opacity-50 block"></i>
                                 Belum ada riwayat deployment.
                             </td>
@@ -81,7 +81,7 @@
                         @endforelse
             <x-slot:pagination>
                 @if ($deployments->hasPages())
-                    <div class="px-6 py-4 border-t border-slate-200 bg-slate-50/50">
+                    <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                         {{ $deployments->links() }}
                     </div>
                 @endif

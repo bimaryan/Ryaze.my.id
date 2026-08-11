@@ -1,4 +1,4 @@
-﻿@extends('index')
+@extends('index')
 
 @section('content')
 <x-ui.page-layout>
@@ -8,7 +8,7 @@
         icon="fa-solid fa-newspaper">
         <x-slot:actions>
             <a href="{{ route('superadmin.article_categories.index') }}"
-                class="inline-flex items-center bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                class="inline-flex items-center bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 px-4 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
                 <i class="fa-solid fa-folder mr-2"></i> Kategori
             </a>
             <button type="button" onclick="document.getElementById('importModal').classList.remove('hidden')"
@@ -30,17 +30,17 @@
         <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-1 gap-4">
             <div class="flex items-center gap-3 w-full sm:w-auto">
                 {{-- Status Filter --}}
-                <div class="flex bg-slate-100 rounded-lg p-0.5">
+                <div class="flex bg-slate-100 dark:bg-slate-700/50 rounded-lg p-0.5">
                     <a href="{{ route('superadmin.articles.index', request()->except('status')) }}" 
-                        class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ !request('status') ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700' }}">
+                        class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ !request('status') ? 'bg-white dark:bg-slate-800/60 shadow-sm text-slate-800 dark:text-slate-100' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
                         Semua
                     </a>
                     <a href="{{ route('superadmin.articles.index', array_merge(request()->except('status'), ['status' => 'draft'])) }}" 
-                        class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ request('status') == 'draft' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700' }}">
+                        class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ request('status') == 'draft' ? 'bg-white dark:bg-slate-800/60 shadow-sm text-slate-800 dark:text-slate-100' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
                         Draft
                     </a>
                     <a href="{{ route('superadmin.articles.index', array_merge(request()->except('status'), ['status' => 'published'])) }}" 
-                        class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ request('status') == 'published' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700' }}">
+                        class="px-3 py-1.5 text-xs font-medium rounded-md transition {{ request('status') == 'published' ? 'bg-white dark:bg-slate-800/60 shadow-sm text-slate-800 dark:text-slate-100' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
                         Published
                     </a>
                 </div>
@@ -52,15 +52,15 @@
                 @endif
                 <div class="relative w-full sm:w-64">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <i class="fa-solid fa-search text-slate-400"></i>
+                        <i class="fa-solid fa-search text-slate-400 dark:text-slate-500"></i>
                     </div>
-                    <input type="text" name="search" class="text-slate-800 block ps-9 p-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Cari judul artikel..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="text-slate-800 dark:text-slate-100 block ps-9 p-2 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Cari judul artikel..." value="{{ request('search') }}">
                 </div>
                 <button type="submit" class="p-2 ms-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm transition">
                     Cari
                 </button>
                 @if(request()->has('search') && request()->search != '')
-                    <a href="{{ route('superadmin.articles.index') }}" class="p-2 ms-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
+                    <a href="{{ route('superadmin.articles.index') }}" class="p-2 ms-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition">
                         Reset
                     </a>
                 @endif
@@ -78,67 +78,67 @@
             </x-slot:head>
 
             @forelse($articles as $article)
-                <tr class="hover:bg-slate-50 transition-colors">
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             @if($article->cover_image)
-                                <img src="{{ Storage::url($article->cover_image) }}" alt="{{ $article->title }}" class="w-12 h-12 object-cover rounded-lg border border-slate-200">
+                                <img src="{{ Storage::url($article->cover_image) }}" alt="{{ $article->title }}" class="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-700">
                             @else
-                                <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-400 border border-indigo-100">
+                                <div class="w-12 h-12 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-100 dark:border-indigo-500/30">
                                     <i class="fa-solid fa-file-lines"></i>
                                 </div>
                             @endif
                             <div class="flex flex-col min-w-0">
-                                <span class="font-medium text-slate-800 truncate max-w-[250px]">{{ $article->title }}</span>
-                                <span class="text-xs text-slate-400">{{ $article->user->name ?? '-' }}</span>
+                                <span class="font-medium text-slate-800 dark:text-slate-100 truncate max-w-[250px]">{{ $article->title }}</span>
+                                <span class="text-xs text-slate-400 dark:text-slate-500">{{ $article->user->name ?? '-' }}</span>
                                 @if($article->is_featured)
-                                    <span class="inline-flex items-center gap-1 text-[10px] text-amber-600 font-bold mt-0.5"><i class="fa-solid fa-star"></i> Sorotan</span>
+                                    <span class="inline-flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-300 font-bold mt-0.5"><i class="fa-solid fa-star"></i> Sorotan</span>
                                 @endif
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-4">
                         @if($article->category)
-                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-medium rounded">{{ $article->category->name }}</span>
+                            <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 text-xs font-medium rounded">{{ $article->category->name }}</span>
                         @else
-                            <span class="text-xs text-slate-400">-</span>
+                            <span class="text-xs text-slate-400 dark:text-slate-500">-</span>
                         @endif
                     </td>
                     <td class="px-6 py-4">
                         @if($article->status == 'published')
-                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase rounded">Published</span>
+                            <span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase rounded">Published</span>
                         @elseif($article->status == 'draft')
-                            <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">Draft</span>
+                            <span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[10px] font-bold uppercase rounded">Draft</span>
                         @else
-                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase rounded">Archived</span>
+                            <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase rounded">Archived</span>
                         @endif
                     </td>
-                    <td class="px-6 py-4 text-sm text-slate-600">
-                        <i class="fa-solid fa-eye text-slate-400 mr-1"></i>{{ number_format($article->views_count) }}
+                    <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                        <i class="fa-solid fa-eye text-slate-400 dark:text-slate-500 mr-1"></i>{{ number_format($article->views_count) }}
                     </td>
-                    <td class="px-6 py-4 text-sm text-slate-500">
+                    <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
                         {{ $article->created_at->format('d M Y') }}
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center justify-center gap-2">
                             <form action="{{ route('superadmin.articles.featured', $article->hashid) }}" method="POST" class="inline">
                                 @csrf @method('PATCH')
-                                <button type="submit" title="{{ $article->is_featured ? 'Hapus Sorotan' : 'Jadikan Sorotan' }}" class="p-1.5 rounded-lg transition {{ $article->is_featured ? 'text-amber-500 bg-amber-50 hover:bg-amber-100' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50' }}">
+                                <button type="submit" title="{{ $article->is_featured ? 'Hapus Sorotan' : 'Jadikan Sorotan' }}" class="p-1.5 rounded-lg transition {{ $article->is_featured ? 'text-amber-500 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20' : 'text-slate-400 dark:text-slate-500 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10' }}">
                                     <i class="fa-solid fa-star"></i>
                                 </button>
                             </form>
                             <form action="{{ route('superadmin.articles.status', $article->hashid) }}" method="POST" class="inline">
                                 @csrf @method('PATCH')
-                                <button type="submit" title="{{ $article->status == 'published' ? 'Draft' : 'Publish' }}" class="p-1.5 rounded-lg transition {{ $article->status == 'published' ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50' }}">
+                                <button type="submit" title="{{ $article->status == 'published' ? 'Draft' : 'Publish' }}" class="p-1.5 rounded-lg transition {{ $article->status == 'published' ? 'text-emerald-500 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' : 'text-slate-400 dark:text-slate-500 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10' }}">
                                     <i class="fa-solid {{ $article->status == 'published' ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                                 </button>
                             </form>
-                            <a href="{{ route('superadmin.articles.edit', $article->hashid) }}" class="p-1.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
+                            <a href="{{ route('superadmin.articles.edit', $article->hashid) }}" class="p-1.5 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 dark:hover:bg-indigo-500/20 rounded-lg transition">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
                             <form action="{{ route('superadmin.articles.destroy', $article->hashid) }}" method="POST" class="inline delete-form">
                                 @csrf @method('DELETE')
-                                <button type="button" class="p-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition delete-btn">
+                                <button type="button" class="p-1.5 text-rose-600 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-lg transition delete-btn">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </form>
@@ -147,8 +147,8 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-slate-500">
-                        <i class="fa-solid fa-newspaper text-4xl text-slate-300 mb-3"></i>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                        <i class="fa-solid fa-newspaper text-4xl text-slate-300 dark:text-slate-400 mb-3"></i>
                         <p class="font-medium">Belum ada artikel.</p>
                     </td>
                 </tr>
@@ -161,31 +161,31 @@
     <!-- Import Modal -->
     <div id="importModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full flex bg-slate-900/50 backdrop-blur-sm">
         <div class="relative p-4 w-full max-w-md max-h-full m-auto">
-            <div class="relative bg-white rounded-xl shadow">
-                <div class="flex items-center justify-between p-4 md:p-5 border-b border-slate-100 rounded-t">
-                    <h3 class="text-lg font-semibold text-slate-900">
+            <div class="relative bg-white dark:bg-slate-800/60 rounded-xl shadow">
+                <div class="flex items-center justify-between p-4 md:p-5 border-b border-slate-100 dark:border-slate-700 rounded-t">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
                         Import Artikel (Excel/CSV)
                     </h3>
-                    <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="text-slate-400 bg-transparent hover:bg-slate-200 hover:text-slate-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center transition">
+                    <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="text-slate-400 dark:text-slate-500 bg-transparent hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center transition">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
                 <form action="{{ route('superadmin.articles.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="p-4 md:p-5 space-y-4">
-                        <div class="bg-indigo-50 text-indigo-700 p-3 rounded-lg text-xs font-medium border border-indigo-100 mb-4">
+                        <div class="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 p-3 rounded-lg text-xs font-medium border border-indigo-100 dark:border-indigo-500/30 mb-4">
                             Unduh template Excel untuk memastikan format kolom sudah benar sebelum mengunggah.
                             <a href="{{ route('superadmin.articles.template') }}" class="inline-block mt-2 underline font-bold"><i class="fa-solid fa-download"></i> Download Template</a>
                         </div>
                         
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-slate-900" for="file">Upload File Excel/CSV</label>
-                            <input class="block w-full text-sm text-slate-900 border border-slate-300 rounded-lg cursor-pointer bg-slate-50 focus:outline-none p-2.5" id="file" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
+                            <label class="block mb-2 text-sm font-medium text-slate-900 dark:text-slate-50" for="file">Upload File Excel/CSV</label>
+                            <input class="block w-full text-sm text-slate-900 dark:text-slate-50 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-800 focus:outline-none p-2.5" id="file" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
                         </div>
                     </div>
-                    <div class="flex items-center p-4 md:p-5 border-t border-slate-100 rounded-b">
+                    <div class="flex items-center p-4 md:p-5 border-t border-slate-100 dark:border-slate-700 rounded-b">
                         <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">Import Data</button>
-                        <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-900 focus:outline-none bg-white rounded-lg border border-slate-200 hover:bg-slate-100 hover:text-indigo-700 transition">Batal</button>
+                        <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-900 dark:text-slate-50 focus:outline-none bg-white dark:bg-slate-800/60 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-indigo-700 dark:hover:text-indigo-400 dark:hover:text-indigo-300 transition">Batal</button>
                     </div>
                 </form>
             </div>
@@ -195,13 +195,13 @@
     <!-- AI Generate Modal -->
     <div id="aiGenerateModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full flex bg-slate-900/50 backdrop-blur-sm">
         <div class="relative p-4 w-full max-w-lg max-h-full m-auto">
-            <div class="relative bg-white rounded-xl shadow">
-                <div class="flex items-center justify-between p-4 md:p-5 border-b border-slate-100 rounded-t">
+            <div class="relative bg-white dark:bg-slate-800/60 rounded-xl shadow">
+                <div class="flex items-center justify-between p-4 md:p-5 border-b border-slate-100 dark:border-slate-700 rounded-t">
                     <div>
-                        <h3 class="text-lg font-semibold text-slate-900">Buat Artikel dengan AI</h3>
-                        <p class="text-xs text-slate-500 mt-1">AI akan membuat isi, SEO, tag, dan gambar sampul.</p>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-50">Buat Artikel dengan AI</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">AI akan membuat isi, SEO, tag, dan gambar sampul.</p>
                     </div>
-                    <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="text-slate-400 hover:bg-slate-100 hover:text-slate-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition">
+                    <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
@@ -209,26 +209,26 @@
                     @csrf
                     <div class="p-4 md:p-5 space-y-4">
                         <div>
-                            <label for="ai-topic" class="block mb-2 text-sm font-medium text-slate-700">Topik</label>
-                            <textarea id="ai-topic" name="topic" rows="3" required minlength="5" maxlength="500" class="block w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none" placeholder="Contoh: Panduan memilih hosting untuk website UMKM"></textarea>
+                            <label for="ai-topic" class="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-200">Topik</label>
+                            <textarea id="ai-topic" name="topic" rows="3" required minlength="5" maxlength="500" class="block w-full text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none" placeholder="Contoh: Panduan memilih hosting untuk website UMKM"></textarea>
                         </div>
                         <div>
-                            <label for="ai-category" class="block mb-2 text-sm font-medium text-slate-700">Kategori</label>
-                            <select id="ai-category" name="category_id" class="block w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <label for="ai-category" class="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-200">Kategori</label>
+                            <select id="ai-category" name="category_id" class="block w-full text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                                 <option value="">Tanpa kategori</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <label class="flex items-start gap-3 text-sm text-slate-700">
-                            <input type="checkbox" name="publish" value="1" class="mt-0.5 rounded border-slate-300 text-violet-600 focus:ring-violet-500">
-                            <span><span class="font-medium">Langsung publikasikan</span><br><span class="text-xs text-slate-500">Jika tidak dicentang, artikel dibuat sebagai draft untuk direview.</span></span>
+                        <label class="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-200">
+                            <input type="checkbox" name="publish" value="1" class="mt-0.5 rounded border-slate-300 dark:border-slate-600 text-violet-600 dark:text-violet-300 focus:ring-violet-500">
+                            <span><span class="font-medium">Langsung publikasikan</span><br><span class="text-xs text-slate-500 dark:text-slate-400">Jika tidak dicentang, artikel dibuat sebagai draft untuk direview.</span></span>
                         </label>
                     </div>
-                    <div class="flex items-center p-4 md:p-5 border-t border-slate-100 rounded-b">
+                    <div class="flex items-center p-4 md:p-5 border-t border-slate-100 dark:border-slate-700 rounded-b">
                         <button type="submit" class="text-white bg-violet-600 hover:bg-violet-700 font-medium rounded-lg text-sm px-5 py-2.5 transition"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Masukkan ke Antrean</button>
-                        <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-700 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 transition">Batal</button>
+                        <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800/60 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition">Batal</button>
                     </div>
                 </form>
             </div>

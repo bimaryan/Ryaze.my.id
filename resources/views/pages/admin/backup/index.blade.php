@@ -9,7 +9,7 @@
 
             <x-slot name="actions">
                 <button type="button" onclick="document.getElementById('restoreModal').classList.remove('hidden')"
-                    class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2.5 rounded-xl transition-all duration-300">
+                    class="flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold px-4 py-2.5 rounded-xl transition-all duration-300">
                     <i class="fa-solid fa-upload"></i> Restore Backup
                 </button>
                 <form action="{{ route('superadmin.backup.create') }}" method="POST" class="inline"
@@ -25,15 +25,15 @@
 
         <!-- Tabel Backup -->
         <x-ui.card class="overflow-hidden">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                <h2 class="text-lg font-bold text-slate-800"><i
-                        class="fa-solid fa-file-archive text-slate-400 mr-2"></i>Riwayat
+            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100"><i
+                        class="fa-solid fa-file-archive text-slate-400 dark:text-slate-500 mr-2"></i>Riwayat
                     Backup Server</h2>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-slate-500">
-                    <thead class="text-xs text-slate-700 uppercase bg-slate-50/50">
+                <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
+                    <thead class="text-xs text-slate-700 dark:text-slate-200 uppercase bg-slate-50/50 dark:bg-slate-800/50">
                         <tr>
                             <th scope="col" class="px-6 py-4 font-bold whitespace-nowrap">Nama File</th>
                             <th scope="col" class="px-6 py-4 font-bold whitespace-nowrap">Ukuran</th>
@@ -43,11 +43,11 @@
                     </thead>
                     <tbody>
                         @forelse($backups as $backup)
-                            <tr class="bg-white border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                                <td class="px-6 py-4 font-medium text-slate-800 whitespace-nowrap">
+                            <tr class="bg-white dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div
-                                            class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500">
+                                            class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 dark:text-indigo-400">
                                             <i class="fa-solid fa-file-zipper"></i>
                                         </div>
                                         {{ $backup['name'] }}
@@ -55,19 +55,19 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
-                                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold">
+                                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 text-xs font-semibold">
                                         <i class="fa-solid fa-hard-drive"></i> {{ $backup['size'] }} MB
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center gap-1.5 text-slate-500 text-sm">
+                                    <span class="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-sm">
                                         <i class="fa-regular fa-clock"></i>
                                         {{ \Carbon\Carbon::parse($backup['date'])->translatedFormat('d F Y, H:i') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                                     <a href="{{ route('superadmin.backup.download', $backup['name']) }}"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors"
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-colors"
                                         title="Download">
                                         <i class="fa-solid fa-download"></i>
                                     </a>
@@ -77,7 +77,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-colors"
+                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-600 hover:text-white transition-colors"
                                             title="Hapus">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
@@ -86,9 +86,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-12 text-center text-slate-400">
+                                <td colspan="4" class="px-6 py-12 text-center text-slate-400 dark:text-slate-500">
                                     <div class="flex flex-col items-center justify-center">
-                                        <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-300"></i>
+                                        <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-300 dark:text-slate-400"></i>
                                         <p class="font-medium">Belum ada backup sistem yang dibuat.</p>
                                     </div>
                                 </td>
@@ -102,14 +102,14 @@
         <!-- Modal Restore -->
         <div id="restoreModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4"
             style="background:rgba(15,23,42,0.5)">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
                 <!-- Modal Header -->
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-                        <i class="fa-solid fa-upload text-indigo-500"></i> Restore Backup Sistem
+                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-upload text-indigo-500 dark:text-indigo-400"></i> Restore Backup Sistem
                     </h3>
                     <button type="button" onclick="document.getElementById('restoreModal').classList.add('hidden')"
-                        class="text-slate-400 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50">
+                        class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
@@ -121,8 +121,8 @@
                     @csrf
 
                     <div
-                        class="p-4 mb-2 text-sm text-amber-800 rounded-xl bg-amber-50 border border-amber-200/50 flex items-start gap-3">
-                        <i class="fa-solid fa-triangle-exclamation mt-0.5 text-amber-600"></i>
+                        class="p-4 mb-2 text-sm text-amber-800 dark:text-amber-200 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200/50 flex items-start gap-3">
+                        <i class="fa-solid fa-triangle-exclamation mt-0.5 text-amber-600 dark:text-amber-300"></i>
                         <div class="leading-relaxed">
                             <span class="font-bold block mb-0.5">Peringatan Kritis</span>
                             Proses ini akan menimpa (overwrite) seluruh database Ryaze dan file-file klien yang ada.
@@ -130,16 +130,16 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 text-sm font-semibold text-slate-700">Upload File Backup (.zip)</label>
+                        <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Upload File Backup (.zip)</label>
                         <input type="file" name="backup_file" accept=".zip" required
-                            class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-xl cursor-pointer bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
-                        <p class="mt-2 text-xs text-slate-500 font-medium"><i
-                                class="fa-solid fa-circle-info mr-1 text-slate-400"></i>Maksimal ukuran file: 500MB</p>
+                            class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer bg-slate-50 dark:bg-slate-800/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400 font-medium"><i
+                                class="fa-solid fa-circle-info mr-1 text-slate-400 dark:text-slate-500"></i>Maksimal ukuran file: 500MB</p>
                     </div>
 
-                    <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-6">
+                    <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-700 mt-6">
                         <button type="button" onclick="document.getElementById('restoreModal').classList.add('hidden')"
-                            class="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                            class="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                             Batal
                         </button>
                         <button type="submit"

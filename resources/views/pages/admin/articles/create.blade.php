@@ -7,7 +7,7 @@
         subtitle="Buat konten artikel untuk blog Ryaze." 
         icon="fa-solid fa-pen-fancy">
         <x-slot:actions>
-            <a href="{{ route('superadmin.articles.index') }}" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg font-medium transition text-sm flex items-center gap-2 shadow-sm">
+            <a href="{{ route('superadmin.articles.index') }}" class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 px-4 py-2 rounded-lg font-medium transition text-sm flex items-center gap-2 shadow-sm">
                 Kembali
             </a>
         </x-slot:actions>
@@ -19,46 +19,46 @@
 
             {{-- Main Content --}}
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Konten Artikel</h3>
+                <div class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm p-6">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">Konten Artikel</h3>
                     
                     <div class="mb-5">
-                        <label for="title" class="block mb-1.5 text-sm font-medium text-slate-700">Judul <span class="text-rose-500">*</span></label>
+                        <label for="title" class="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">Judul <span class="text-rose-500 dark:text-rose-400">*</span></label>
                         <input type="text" name="title" id="title" value="{{ old('title') }}" required
-                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Judul artikel yang menarik...">
-                        @error('title') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            class="text-slate-800 dark:text-slate-100 block p-3 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Judul artikel yang menarik...">
+                        @error('title') <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="mb-5">
-                        <label for="excerpt" class="block mb-1.5 text-sm font-medium text-slate-700">Ringkasan</label>
+                        <label for="excerpt" class="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">Ringkasan</label>
                         <textarea name="excerpt" id="excerpt" rows="3"
-                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Ringkasan singkat artikel (opsional, maks 500 karakter)...">{{ old('excerpt') }}</textarea>
-                        @error('excerpt') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            class="text-slate-800 dark:text-slate-100 block p-3 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Ringkasan singkat artikel (opsional, maks 500 karakter)...">{{ old('excerpt') }}</textarea>
+                        @error('excerpt') <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="mb-5">
-                        <label for="body" class="block mb-1.5 text-sm font-medium text-slate-700">Konten <span class="text-rose-500">*</span></label>
-                        <div class="border border-slate-200 rounded-t-lg bg-slate-50 quill-toolbar-container"></div>
-                        <div id="editor-container" class="bg-white rounded-b-lg border-x border-b border-slate-200 prose prose-sm max-w-none" style="height: 500px;">{!! old('body') !!}</div>
+                        <label for="body" class="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">Konten <span class="text-rose-500 dark:text-rose-400">*</span></label>
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-t-lg bg-slate-50 dark:bg-slate-800/60 quill-toolbar-container"></div>
+                        <div id="editor-container" class="bg-white dark:bg-slate-800/60 rounded-b-lg border-x border-b border-slate-200 dark:border-slate-700 prose prose-sm max-w-none" style="height: 500px;">{!! old('body') !!}</div>
                         <input type="hidden" name="body" id="body" value="{{ old('body') }}">
-                        @error('body') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('body') <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 {{-- SEO Settings --}}
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">
-                        <i class="fa-solid fa-magnifying-glass-chart text-indigo-500 mr-2"></i>Pengaturan SEO
+                <div class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm p-6">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
+                        <i class="fa-solid fa-magnifying-glass-chart text-indigo-500 dark:text-indigo-400 mr-2"></i>Pengaturan SEO
                     </h3>
                     <div class="mb-5">
-                        <label for="meta_title" class="block mb-1.5 text-sm font-medium text-slate-700">Meta Title</label>
+                        <label for="meta_title" class="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">Meta Title</label>
                         <input type="text" name="meta_title" id="meta_title" value="{{ old('meta_title') }}" maxlength="70"
-                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Override judul untuk mesin pencari (maks 70 karakter)">
+                            class="text-slate-800 dark:text-slate-100 block p-3 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Override judul untuk mesin pencari (maks 70 karakter)">
                     </div>
                     <div>
-                        <label for="meta_description" class="block mb-1.5 text-sm font-medium text-slate-700">Meta Description</label>
+                        <label for="meta_description" class="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">Meta Description</label>
                         <textarea name="meta_description" id="meta_description" rows="2" maxlength="160"
-                            class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Deskripsi singkat untuk hasil pencarian Google (maks 160 karakter)">{{ old('meta_description') }}</textarea>
+                            class="text-slate-800 dark:text-slate-100 block p-3 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Deskripsi singkat untuk hasil pencarian Google (maks 160 karakter)">{{ old('meta_description') }}</textarea>
                     </div>
                 </div>
             </div>
@@ -66,12 +66,12 @@
             {{-- Sidebar --}}
             <div class="lg:col-span-1 space-y-6">
                 {{-- Publish Settings --}}
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Publikasi</h3>
+                <div class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm p-6">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">Publikasi</h3>
                     
                     <div class="mb-5">
-                        <label for="status" class="block mb-1.5 text-sm font-medium text-slate-700">Status</label>
-                        <select name="status" id="status" class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label for="status" class="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">Status</label>
+                        <select name="status" id="status" class="text-slate-800 dark:text-slate-100 block p-3 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                             <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
                             <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Archived</option>
@@ -79,8 +79,8 @@
                     </div>
 
                     <div class="mb-5">
-                        <label for="category_id" class="block mb-1.5 text-sm font-medium text-slate-700">Kategori</label>
-                        <select name="category_id" id="category_id" class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label for="category_id" class="block mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">Kategori</label>
+                        <select name="category_id" id="category_id" class="text-slate-800 dark:text-slate-100 block p-3 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <option value="">Tanpa Kategori</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -90,8 +90,8 @@
 
                     <div class="flex items-center gap-3 mb-5">
                         <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
-                            class="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500">
-                        <label for="is_featured" class="text-sm font-medium text-slate-700">Jadikan Sorotan</label>
+                            class="w-4 h-4 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 rounded focus:ring-indigo-500">
+                        <label for="is_featured" class="text-sm font-medium text-slate-700 dark:text-slate-200">Jadikan Sorotan</label>
                     </div>
 
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-3 rounded-lg transition shadow-sm">
@@ -100,20 +100,20 @@
                 </div>
 
                 {{-- Cover Image --}}
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Gambar Sampul</h3>
+                <div class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm p-6">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">Gambar Sampul</h3>
                     <input type="file" name="cover_image" id="cover_image" accept="image/*"
-                        class="block w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
-                    <p class="text-xs text-slate-400 mt-2">Format: JPG, PNG, WEBP. Maks: 3MB.</p>
-                    @error('cover_image') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">Format: JPG, PNG, WEBP. Maks: 3MB.</p>
+                    @error('cover_image') <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- Tags --}}
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Tags</h3>
+                <div class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm p-6">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">Tags</h3>
                     <input type="text" name="tags" id="tags" value="{{ old('tags') }}"
-                        class="text-slate-800 block p-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="laravel, php, tutorial">
-                    <p class="text-xs text-slate-400 mt-2">Pisahkan dengan koma.</p>
+                        class="text-slate-800 dark:text-slate-100 block p-3 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="laravel, php, tutorial">
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">Pisahkan dengan koma.</p>
                 </div>
             </div>
         </div>

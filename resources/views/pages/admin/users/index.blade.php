@@ -1,4 +1,4 @@
-﻿@extends('index')
+@extends('index')
 
 @section('content')
     <x-ui.page-layout>
@@ -10,31 +10,29 @@
 
         <div id="users-container" class="transition-opacity duration-300">
             <div class="mb-6 flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
-                <a href="{{ route('superadmin.users.index') }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ !request()->has('role') || request('role') == '' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Semua Pengguna</a>
-                <a href="{{ route('superadmin.users.index', ['role' => 'user_joki']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'user_joki' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Klien Joki</a>
-                <a href="{{ route('superadmin.users.index', ['role' => 'user_hosting']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'user_hosting' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Klien Hosting</a>
-                <a href="{{ route('superadmin.users.index', ['role' => 'admin']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'admin' ? 'bg-amber-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Admin Joki/Hosting</a>
-                <a href="{{ route('superadmin.users.index', ['role' => 'superadmin']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'superadmin' ? 'bg-purple-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}">Superadmin</a>
+                <a href="{{ route('superadmin.users.index') }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ !request()->has('role') || request('role') == '' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/40' }}">Semua Pengguna</a>
+                <a href="{{ route('superadmin.users.index', ['role' => 'user_joki']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'user_joki' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/40' }}">Klien Joki</a>
+                <a href="{{ route('superadmin.users.index', ['role' => 'user_hosting']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'user_hosting' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/40' }}">Klien Hosting</a>
+                <a href="{{ route('superadmin.users.index', ['role' => 'admin']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'admin' ? 'bg-amber-600 text-white shadow-sm' : 'bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/40' }}">Admin Joki/Hosting</a>
+                <a href="{{ route('superadmin.users.index', ['role' => 'superadmin']) }}" class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition {{ request('role') == 'superadmin' ? 'bg-purple-600 text-white shadow-sm' : 'bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/40' }}">Superadmin</a>
             </div>
 
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-1 gap-4">
-                <h2 class="text-lg font-bold text-slate-800">Daftar Pengguna</h2>
-                
                 <form action="{{ route('superadmin.users.index') }}" method="GET" class="flex items-center w-full sm:w-auto">
                     @if(request()->has('role'))
                         <input type="hidden" name="role" value="{{ request('role') }}">
                     @endif
                     <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <i class="fa-solid fa-search text-slate-400"></i>
+                            <i class="fa-solid fa-search text-slate-400 dark:text-slate-500"></i>
                         </div>
-                        <input type="text" name="search" class="text-slate-800 block ps-9 p-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Cari nama atau email..." value="{{ request('search') }}">
+                        <input type="text" name="search" class="text-slate-800 dark:text-slate-100 block ps-9 p-2 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Cari nama atau email..." value="{{ request('search') }}">
                     </div>
                     <button type="submit" class="p-2 ms-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm transition">
                         Cari
                     </button>
                     @if(request()->has('search') && request()->search != '')
-                        <a href="{{ route('superadmin.users.index', request()->has('role') ? ['role' => request('role')] : []) }}" class="p-2 ms-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition">
+                        <a href="{{ route('superadmin.users.index', request()->has('role') ? ['role' => request('role')] : []) }}" class="p-2 ms-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition">
                             Reset
                         </a>
                     @endif
@@ -49,10 +47,10 @@
                     <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                 </x-slot:head>
                             @forelse($users as $user)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                            <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100 flex items-center gap-3">
                                 <div
-                                    class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm uppercase shadow-sm border border-slate-200">
+                                    class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-sm uppercase shadow-sm border border-slate-200 dark:border-slate-700">
                                     {{ substr($user->name, 0, 1) }}
                                 </div>
                                 {{ $user->name }}
@@ -61,15 +59,15 @@
                             <td class="px-6 py-4">
                                 @if ($user->role == 'user_joki')
                                     <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-blue-50 text-blue-600 border border-blue-200">Jasa
+                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-500/40">Jasa
                                         Joki Code</span>
                                 @elseif($user->role == 'user_hosting')
                                     <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-emerald-50 text-emerald-600 border border-emerald-200">App
+                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40">App
                                         Deployment</span>
                                 @else
                                     <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-purple-50 text-purple-600 border border-purple-200 uppercase">{{ str_replace('_', ' ', $user->role) }}</span>
+                                        class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/40 uppercase">{{ str_replace('_', ' ', $user->role) }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -77,7 +75,7 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <a href="{{ route('superadmin.users.show', $user->hashid) }}"
-                                    class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
+                                    class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
                                     title="Detail Profil">
                                     <i class="fa-regular fa-eye"></i>
                                 </a>
@@ -85,8 +83,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
-                                <i class="fa-solid fa-users-slash text-3xl mb-3 text-slate-300"></i>
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                                <i class="fa-solid fa-users-slash text-3xl mb-3 text-slate-300 dark:text-slate-400"></i>
                                 <p>Belum ada data pengguna.</p>
                             </td>
                         </tr>

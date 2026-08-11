@@ -2,14 +2,14 @@
     title="Lupa Password"
     :with-nav="false"
     :with-footer="false"
-    body-class="bg-slate-50 font-sans antialiased text-slate-900">
+    body-class="bg-slate-50 dark:bg-slate-900 font-sans antialiased text-slate-900 dark:text-slate-50">
 
     @push('head')
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer nonce="{{ csp_nonce() }}"></script>
     @endpush
 
     <div class="min-h-screen flex items-center justify-center p-6">
-        <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="max-w-md w-full bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
 
             <div class="bg-indigo-600 px-8 py-10 text-center relative">
                 <a href="{{ route('login') }}"
@@ -25,13 +25,13 @@
                     @csrf
 
                     <div>
-                        <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email
+                        <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Email
                             Address</label>
                         <input type="email" name="email" id="email"
-                            class="py-3 transition-all duration-200 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
+                            class="py-3 transition-all duration-200 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
                             placeholder="nama@email.com" value="{{ old('email') }}" required autofocus>
                         @error('email')
-                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-500 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -39,7 +39,7 @@
                         <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}"></div>
                     </div>
                     @error('cf-turnstile-response')
-                        <p class="mt-1 text-sm text-red-500 text-center">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-500 dark:text-red-400 text-center">{{ $message }}</p>
                     @enderror
 
                     <button type="submit"
@@ -49,10 +49,10 @@
                     </button>
                 </form>
 
-                <div class="mt-8 text-center text-sm text-slate-600">
+                <div class="mt-8 text-center text-sm text-slate-600 dark:text-slate-300">
                     Ingat password Anda?
                     <a href="{{ route('login') }}"
-                        class="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">Masuk di sini</a>
+                        class="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors">Masuk di sini</a>
                 </div>
             </div>
 

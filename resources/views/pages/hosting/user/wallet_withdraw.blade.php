@@ -9,7 +9,7 @@
             iconColor="indigo">
             <x-slot:actions>
                 <a href="{{ route('user.wallet.history') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
+                    class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
                     &larr; Kembali ke Wallet
                 </a>
             </x-slot:actions>
@@ -32,54 +32,54 @@
             </div>
 
             <div class="md:col-span-2">
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div class="bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
                     <form action="{{ route('user.wallet.withdraw.process') }}" method="POST" class="space-y-5">
                         @csrf
                         
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Nominal Penarikan <span class="text-rose-500">*</span></label>
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">Nominal Penarikan <span class="text-rose-500 dark:text-rose-400">*</span></label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <span class="text-slate-500 font-bold">Rp</span>
+                                    <span class="text-slate-500 dark:text-slate-400 font-bold">Rp</span>
                                 </div>
                                 <input type="number" name="amount" min="50000" max="{{ $wallet->balance }}" value="{{ old('amount', 50000) }}" required
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition font-mono text-lg font-bold">
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-12 pr-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition font-mono text-lg font-bold">
                             </div>
                             @error('amount')
-                                <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                                <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-1.5">Bank / E-Wallet <span class="text-rose-500">*</span></label>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">Bank / E-Wallet <span class="text-rose-500 dark:text-rose-400">*</span></label>
                                 <input type="text" name="bank_name" placeholder="BCA / GoPay / OVO" value="{{ old('bank_name') }}" required
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                                 @error('bank_name')
-                                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                                    <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-1.5">Nomor Rekening / HP <span class="text-rose-500">*</span></label>
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">Nomor Rekening / HP <span class="text-rose-500 dark:text-rose-400">*</span></label>
                                 <input type="text" name="account_number" placeholder="0812xxxxxx / 8371xxxxx" value="{{ old('account_number') }}" required
-                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                                 @error('account_number')
-                                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                                    <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Nama Pemilik Rekening <span class="text-rose-500">*</span></label>
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">Nama Pemilik Rekening <span class="text-rose-500 dark:text-rose-400">*</span></label>
                             <input type="text" name="account_name" placeholder="Atas Nama" value="{{ old('account_name') }}" required
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             @error('account_name')
-                                <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                                <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="pt-4 border-t border-slate-100">
+                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
                             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition">
                                 <i class="fa-solid fa-paper-plane mr-2"></i> Ajukan Penarikan
                             </button>
