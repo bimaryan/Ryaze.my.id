@@ -113,6 +113,11 @@
                 scroll-behavior: smooth;
             }
 
+            .dark body {
+                background-color: #0f172a;
+                color: #f1f5f9;
+            }
+
             /* Subtle grid pattern background */
             .bg-grid {
                 background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px),
@@ -143,10 +148,20 @@
                 transition: all 0.25s ease;
             }
 
+            .dark .card-brutal {
+                background: rgba(30, 41, 59, 0.6);
+                border-color: #334155;
+            }
+
             .card-brutal:hover {
                 border-color: #4f46e5;
                 box-shadow: 0 12px 28px rgba(79, 70, 229, 0.08);
                 transform: translateY(-3px);
+            }
+
+            .dark .card-brutal:hover {
+                border-color: #6366f1;
+                box-shadow: 0 12px 28px rgba(99, 102, 241, 0.15);
             }
 
             /* Gradient text but strictly monochrome/subtle */
@@ -776,7 +791,7 @@
         <!-- Toggle Button -->
         <button id="ryaze-chat-toggle" class="w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-indigo-200 transition-all hover:scale-105 ml-auto relative">
             <i class="fa-solid fa-message text-xl"></i>
-            <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-rose-500 border-2 border-white rounded-full"></span>
+            <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-rose-500 border-2 border-white dark:border-slate-900 rounded-full"></span>
         </button>
     </div>
 

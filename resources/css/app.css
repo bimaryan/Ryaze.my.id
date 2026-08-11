@@ -46,3 +46,36 @@
 .dark .swal2-html-container {
     color: #f1f5f9 !important;
 }
+
+/* =====================================================
+   GLOBAL DARK MODE — input / select / textarea focus
+   Prevents white flash when focusing on form elements
+   in dark mode (avoids hardcoded focus:bg-white issue)
+   ===================================================== */
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+    background-color: #1e293b !important;
+    color: #f1f5f9;
+}
+
+/* bg-mesh — dark variant */
+.dark .bg-mesh {
+    background-color: #0f172a;
+}
+
+/* Scrollbar — dark mode */
+.dark ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.dark ::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
