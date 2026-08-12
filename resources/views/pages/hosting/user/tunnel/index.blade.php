@@ -87,8 +87,8 @@
 
         <!-- Modal Create Tunnel -->
         <div id="createTunnelModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4 transition-opacity duration-300">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden transition-transform duration-300 transform">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden transition-transform duration-300 transform">
+                <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Buat Tunnel Baru</h3>
                     <button type="button" onclick="document.getElementById('createTunnelModal').classList.add('hidden')" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
                         <i class="fa-solid fa-xmark text-lg"></i>
@@ -124,9 +124,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-end gap-3">
+                    <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
                         <button type="button" onclick="document.getElementById('createTunnelModal').classList.add('hidden')"
-                                class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                                class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-600 hover:text-slate-800 dark:hover:text-slate-100 transition-colors">
                             Batal
                         </button>
                         <button type="submit"
@@ -140,8 +140,8 @@
 
         <!-- Modal Instruksi -->
         <div id="instructionModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4 transition-opacity duration-300">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden transition-transform duration-300 transform">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden transition-transform duration-300 transform">
+                <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Cara Menjalankan Tunnel</h3>
                     <button type="button" onclick="document.getElementById('instructionModal').classList.add('hidden')" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
                         <i class="fa-solid fa-xmark text-lg"></i>
@@ -178,9 +178,9 @@
                     </div>
 
                 </div>
-                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-end gap-3">
+                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
                     <button type="button" onclick="document.getElementById('instructionModal').classList.add('hidden')"
-                            class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                            class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-600 hover:text-slate-800 dark:hover:text-slate-100 transition-colors">
                         Tutup
                     </button>
                 </div>
@@ -189,8 +189,8 @@
 
         <!-- Modal Dokumentasi -->
         <div id="documentationModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4 transition-opacity duration-300">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden transition-transform duration-300 transform">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50 shrink-0">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden transition-transform duration-300 transform">
+                <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800 shrink-0">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100"><i class="fa-solid fa-book-open text-indigo-500 dark:text-indigo-400 mr-2"></i> Dokumentasi & Cara Kerja Tunnel</h3>
                     <button type="button" onclick="document.getElementById('documentationModal').classList.add('hidden')" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
                         <i class="fa-solid fa-xmark text-lg"></i>
@@ -280,9 +280,9 @@
                     </div>
                 </div>
 
-                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-end shrink-0">
+                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-end shrink-0">
                     <button type="button" onclick="document.getElementById('documentationModal').classList.add('hidden')"
-                            class="px-6 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors shadow-sm">
+                            class="px-6 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-600 hover:text-slate-800 dark:hover:text-slate-100 transition-colors shadow-sm">
                         Tutup Dokumentasi
                     </button>
                 </div>
