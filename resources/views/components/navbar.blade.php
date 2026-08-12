@@ -29,16 +29,11 @@
                 <div class="flex items-center ms-3 gap-5">
                     {{-- Toggle Tema --}}
                     <button type="button" onclick="ryazeToggleTheme()" aria-label="Ganti tema"
-                        class="relative inline-flex h-9 w-16 flex-shrink-0 cursor-pointer rounded-full border-2 border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                        class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-300 dark:bg-indigo-600 transition-colors duration-300 ease-in-out focus:outline-none shadow-inner"
                         role="switch" aria-checked="false">
-                        <span class="pointer-events-none inline-flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-lg text-amber-500 dark:bg-slate-700 dark:text-indigo-300 transition-transform duration-300 ease-out transform dark:translate-x-7 relative"
-                            aria-hidden="true">
-                            <i class="fa-solid fa-sun text-[14px] absolute transition-opacity duration-300 opacity-100 dark:opacity-0"></i>
-                            <i class="fa-solid fa-moon text-[14px] absolute transition-opacity duration-300 opacity-0 dark:opacity-100"></i>
-                        </span>
-                        <span class="pointer-events-none absolute inset-0 flex items-center justify-between px-1.5 text-[10px] font-medium text-slate-400 dark:text-slate-500" aria-hidden="true">
-                            <i class="fa-solid fa-sun opacity-100 dark:opacity-0 transition-opacity"></i>
-                            <i class="fa-solid fa-moon opacity-0 dark:opacity-100 transition-opacity"></i>
+                        <span class="pointer-events-none inline-flex h-5 w-5 transform translate-x-1 dark:translate-x-6 items-center justify-center rounded-full bg-white shadow-sm transition-all duration-300 ease-in-out">
+                            <i class="fa-solid fa-sun text-[10px] text-amber-500 absolute transition-opacity duration-300 opacity-100 dark:opacity-0"></i>
+                            <i class="fa-solid fa-moon text-[10px] text-indigo-600 absolute transition-opacity duration-300 opacity-0 dark:opacity-100"></i>
                         </span>
                     </button>
 
