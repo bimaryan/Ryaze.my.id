@@ -103,7 +103,7 @@
                 <div class="fixed inset-0 transition-opacity" aria-hidden="true">
                     <div class="absolute inset-0 bg-slate-900 opacity-75 backdrop-blur-sm"></div>
                 </div>
-                <div class="inline-block align-bottom bg-white dark:bg-slate-800/60 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full relative z-10">
+                <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full relative z-10">
                     <form action="{{ route('user.wallet.topup') }}" method="POST">
                         @csrf
                         <div class="px-6 pt-6 pb-4">
@@ -134,8 +134,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/60 flex justify-end gap-2 rounded-b-2xl">
-                            <button type="button" onclick="document.getElementById('topup-modal').classList.add('hidden')" class="px-5 py-2.5 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-700/40 transition shadow-sm">
+                        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 rounded-b-2xl">
+                            <button type="button" onclick="document.getElementById('topup-modal').classList.add('hidden')" class="px-5 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-600 hover:text-slate-800 dark:hover:text-slate-100 transition-colors shadow-sm">
                                 Batal
                             </button>
                             <button type="submit" class="px-5 py-2.5 bg-indigo-600 border border-transparent text-white rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm">
