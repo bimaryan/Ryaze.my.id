@@ -185,7 +185,7 @@
                     </div>
                     <div class="flex items-center p-4 md:p-5 border-t border-slate-100 dark:border-slate-700 rounded-b">
                         <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">Import Data</button>
-                        <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-900 dark:text-slate-50 focus:outline-none bg-white dark:bg-slate-800/60 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-indigo-700 dark:hover:text-indigo-400 dark:hover:text-indigo-300 transition">Batal</button>
+                        <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 focus:outline-none bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">Batal</button>
                     </div>
                 </form>
             </div>
@@ -228,7 +228,7 @@
                     </div>
                     <div class="flex items-center p-4 md:p-5 border-t border-slate-100 dark:border-slate-700 rounded-b">
                         <button type="submit" class="text-white bg-violet-600 hover:bg-violet-700 font-medium rounded-lg text-sm px-5 py-2.5 transition"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Masukkan ke Antrean</button>
-                        <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800/60 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition">Batal</button>
+                        <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="py-2.5 px-5 ms-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 focus:outline-none bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">Batal</button>
                     </div>
                 </form>
             </div>

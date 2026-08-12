@@ -1009,7 +1009,7 @@ NGINX_CONF
                             </label>
                         </div>
                         <div
-                            class="flex items-center justify-between p-4 rounded-xl border border-rose-100 dark:border-rose-500/30 bg-rose-50/50">
+                            class="flex items-center justify-between p-4 rounded-xl border border-rose-100 dark:border-rose-500/30 bg-rose-50/50 dark:bg-rose-500/10">
                             <div>
                                 <h4 class="text-sm font-semibold text-rose-700 dark:text-rose-300">DDoS Protection (Rate Limit)</h4>
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aktifkan limitasi koneksi ketat jika website Anda sedang diserang.</p>
@@ -1076,7 +1076,7 @@ NGINX_CONF
 
             {{-- Danger Zone --}}
             <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-rose-200 dark:border-rose-500/40 overflow-hidden">
-                <div class="px-6 py-4 border-b border-rose-100 dark:border-rose-500/30 bg-rose-50/50">
+                <div class="px-6 py-4 border-b border-rose-100 dark:border-rose-500/30 bg-rose-50/50 dark:bg-rose-500/10">
                     <h3 class="font-bold text-rose-600 dark:text-rose-300 flex items-center gap-2">
                         <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
                     </h3>
@@ -1085,7 +1085,7 @@ NGINX_CONF
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-5">Tindakan di bawah bersifat destruktif dan tidak dapat
                         dibatalkan.</p>
                     <div
-                        class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-rose-100 dark:border-rose-500/30 rounded-xl bg-rose-50/30 gap-4">
+                        class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-rose-100 dark:border-rose-500/30 rounded-xl bg-rose-50/30 dark:bg-rose-500/10 gap-4">
                         <div>
                             <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Hapus Proyek</h4>
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Menghapus folder root, DNS Cloudflare, dan semua
