@@ -32,7 +32,7 @@
                         <i class="fa-solid fa-gift text-9xl"></i>
                     </div>
                     <div class="relative z-10 flex items-start gap-4">
-                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shrink-0">
+                        <div class="w-12 h-12 bg-white dark:bg-slate-800/20 backdrop-blur-sm rounded-full flex items-center justify-center shrink-0">
                             <i class="fa-solid fa-gift text-xl"></i>
                         </div>
                         <div>

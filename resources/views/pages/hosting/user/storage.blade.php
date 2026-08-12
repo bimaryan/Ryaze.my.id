@@ -137,7 +137,7 @@
                             $pc = $item['percent'];
                             $bc = $pc >= 90 ? 'bg-rose-500' : ($pc >= 70 ? 'bg-amber-500' : 'bg-indigo-400');
                         @endphp
-                        <div class="px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                        <div class="px-6 py-4 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                             <div class="flex items-center justify-between gap-4 mb-2">
                                 <div class="flex items-center gap-3 min-w-0">
                                     {{-- Framework icon --}}

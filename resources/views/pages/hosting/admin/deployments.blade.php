@@ -24,7 +24,7 @@
                 <th class="px-6 py-4 text-center">Status</th>
             </x-slot:head>
             @forelse ($deployments as $deploy)
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                        <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
 
                             {{-- Project Info --}}
                             <td class="px-6 py-4">

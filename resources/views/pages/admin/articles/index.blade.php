@@ -78,7 +78,7 @@
             </x-slot:head>
 
             @forelse($articles as $article)
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             @if($article->cover_image)
@@ -201,7 +201,7 @@
                         <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-50">Buat Artikel dengan AI</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">AI akan membuat isi, SEO, tag, dan gambar sampul.</p>
                     </div>
-                    <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition">
+                    <button type="button" onclick="document.getElementById('aiGenerateModal').classList.add('hidden')" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>

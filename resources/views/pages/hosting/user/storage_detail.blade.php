@@ -130,7 +130,7 @@
                                         ? 'bg-indigo-400'
                                         : 'bg-indigo-300');
                         @endphp
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                        <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                             <td class="px-6 py-3">
                                 <div class="flex items-center gap-2 min-w-0">
                                     @if ($item['is_dir'])

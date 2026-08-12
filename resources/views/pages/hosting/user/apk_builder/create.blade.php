@@ -19,7 +19,7 @@
             <!-- Banner Lock Screen -->
             <div class="bg-gradient-to-r from-rose-500 to-pink-500 rounded-2xl p-8 text-white shadow-lg mb-8 relative overflow-hidden">
                 <div class="relative z-10">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4 backdrop-blur-sm">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-white dark:bg-slate-800/20 rounded-full mb-4 backdrop-blur-sm">
                         <i class="fa-solid fa-lock text-3xl"></i>
                     </div>
                     <h2 class="text-3xl font-black mb-2">Fitur Eksklusif Pro</h2>

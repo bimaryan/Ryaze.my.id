@@ -12,10 +12,10 @@
                     Deploy aplikasi modern dalam hitungan detik. Tanpa konfigurasi manual, tanpa setup server. Pilih framework favorit Anda dan biarkan Ryaze Auto-Deployer melakukan sisanya.
                 </p>
                 <div class="flex items-center gap-3">
-                    <span class="bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/10">
+                    <span class="bg-white dark:bg-slate-800/20 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/10">
                         <i class="fa-solid fa-bolt text-yellow-300 mr-1"></i> 1-Click Install
                     </span>
-                    <span class="bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/10">
+                    <span class="bg-white dark:bg-slate-800/20 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/10">
                         <i class="fa-solid fa-shield-halved text-emerald-300 mr-1"></i> Production Ready
                     </span>
                 </div>

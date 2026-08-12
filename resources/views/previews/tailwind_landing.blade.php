@@ -18,21 +18,21 @@
     </script>
     <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');</style>
 </head>
-<body class="bg-white text-slate-800 font-sans antialiased overflow-x-hidden">
+<body class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-sans antialiased overflow-x-hidden">
     <!-- Navbar -->
-    <header class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-100 z-50">
+    <header class="fixed top-0 w-full bg-white dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-100 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="font-black text-2xl tracking-tighter flex items-center gap-2">
                 <div class="w-8 h-8 bg-brand rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-cube"></i></div>
                 Landing
             </div>
             <nav class="hidden md:flex gap-8 font-medium text-slate-500">
-                <a href="#features" class="hover:text-slate-900 transition">Features</a>
-                <a href="#testimonials" class="hover:text-slate-900 transition">Testimonials</a>
-                <a href="#pricing" class="hover:text-slate-900 transition">Pricing</a>
+                <a href="#features" class="hover:text-slate-900 dark:text-slate-100 transition">Features</a>
+                <a href="#testimonials" class="hover:text-slate-900 dark:text-slate-100 transition">Testimonials</a>
+                <a href="#pricing" class="hover:text-slate-900 dark:text-slate-100 transition">Pricing</a>
             </nav>
             <div class="flex gap-4 items-center">
-                <a href="#" class="hidden lg:block font-medium text-slate-600 hover:text-slate-900">Sign in</a>
+                <a href="#" class="hidden lg:block font-medium text-slate-600 hover:text-slate-900 dark:text-slate-100">Sign in</a>
                 <a href="#" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">Get Started</a>
             </div>
         </div>
@@ -44,7 +44,7 @@
         <a href="#" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-sm font-medium text-brand mb-8 hover:bg-blue-100 transition">
             <span class="bg-brand text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">New</span> Introducing AI Features <i class="fa-solid fa-arrow-right"></i>
         </a>
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-slate-900 leading-[1.1]">
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-slate-900 dark:text-slate-100 leading-[1.1]">
             Build faster. <br class="hidden md:block">
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-cyan-500">Scale infinitely.</span>
         </h1>
@@ -55,14 +55,14 @@
             <a href="#" class="bg-brand text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-xl shadow-brand/30 flex items-center justify-center gap-2 text-lg">
                 Start your free trial <i class="fa-solid fa-arrow-right"></i>
             </a>
-            <a href="#" class="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition flex items-center justify-center gap-2 text-lg">
+            <a href="#" class="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700/40 transition flex items-center justify-center gap-2 text-lg">
                 <i class="fa-solid fa-play"></i> Watch Demo
             </a>
         </div>
         
         <!-- Dashboard Mockup -->
         <div class="mt-20 relative mx-auto max-w-5xl">
-            <div class="rounded-2xl border border-slate-200/50 bg-slate-50 p-2 shadow-2xl relative">
+            <div class="rounded-2xl border border-slate-200/50 bg-slate-50 dark:bg-slate-800/50 p-2 shadow-2xl relative">
                 <div class="absolute -top-4 -left-4 w-32 h-32 bg-blue-400 rounded-full mix-blend-multiply filter blur-2xl opacity-70"></div>
                 <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-purple-400 rounded-full mix-blend-multiply filter blur-2xl opacity-70"></div>
                 <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Dashboard" class="rounded-xl border border-slate-200 shadow-sm w-full relative z-10">
@@ -71,7 +71,7 @@
     </section>
 
     <!-- Trusted By -->
-    <section class="py-10 border-y border-slate-100 bg-slate-50">
+    <section class="py-10 border-y border-slate-100 bg-slate-50 dark:bg-slate-800/50">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Trusted by innovative teams worldwide</p>
             <div class="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
@@ -85,32 +85,32 @@
     </section>
 
     <!-- Features -->
-    <section id="features" class="py-24 bg-white">
+    <section id="features" class="py-24 bg-white dark:bg-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Everything you need to succeed</h2>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-4">Everything you need to succeed</h2>
                 <p class="text-lg text-slate-500 max-w-2xl mx-auto">Our platform provides all the tools you need to build, scale, and manage your projects efficiently.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
-                    <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+                    <div class="w-14 h-14 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-bolt"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Lightning Fast</h3>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3">Lightning Fast</h3>
                     <p class="text-slate-500 leading-relaxed">Built on edge infrastructure to deliver content to your users in milliseconds, anywhere in the world.</p>
                 </div>
-                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
-                    <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+                    <div class="w-14 h-14 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-lock"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Enterprise Security</h3>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3">Enterprise Security</h3>
                     <p class="text-slate-500 leading-relaxed">Bank-grade encryption, role-based access control, and automated compliance out of the box.</p>
                 </div>
-                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
-                    <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+                    <div class="w-14 h-14 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-brand text-2xl mb-6 group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-chart-pie"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Real-time Analytics</h3>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3">Real-time Analytics</h3>
                     <p class="text-slate-500 leading-relaxed">Gain deep insights into user behavior and system performance with our intuitive dashboards.</p>
                 </div>
             </div>
@@ -118,24 +118,24 @@
     </section>
 
     <!-- Pricing -->
-    <section id="pricing" class="py-24 bg-slate-50 border-t border-slate-100">
+    <section id="pricing" class="py-24 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Simple, transparent pricing</h2>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-4">Simple, transparent pricing</h2>
                 <p class="text-lg text-slate-500 max-w-2xl mx-auto">No hidden fees. No surprise charges. Choose the plan that fits your needs.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto gap-8">
                 <!-- Basic Plan -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Starter</h3>
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Starter</h3>
                     <p class="text-slate-500 text-sm mb-6">Perfect for individuals and small projects.</p>
                     <div class="mb-6">
-                        <span class="text-4xl font-black text-slate-900">$0</span>
+                        <span class="text-4xl font-black text-slate-900 dark:text-slate-100">$0</span>
                         <span class="text-slate-500 font-medium">/month</span>
                     </div>
-                    <a href="#" class="block w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-center rounded-xl transition">Get Started</a>
-                    <ul class="mt-8 space-y-4 text-sm text-slate-600">
+                    <a href="#" class="block w-full py-3 px-4 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 text-slate-900 dark:text-slate-100 font-bold text-center rounded-xl transition">Get Started</a>
+                    <ul class="mt-8 space-y-4 text-sm text-slate-600 dark:text-slate-300">
                         <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Up to 3 projects</li>
                         <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Community support</li>
                         <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> 1GB Storage</li>
@@ -168,7 +168,7 @@
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Ready to transform your workflow?</h2>
             <p class="text-lg text-blue-100 mb-10">Join thousands of teams who are already building the future on our platform.</p>
-            <a href="#" class="bg-white text-brand px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition shadow-lg text-lg inline-block">Get Started for Free</a>
+            <a href="#" class="bg-white dark:bg-slate-800 text-brand px-8 py-4 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700/40 transition shadow-lg text-lg inline-block">Get Started for Free</a>
         </div>
     </section>
 

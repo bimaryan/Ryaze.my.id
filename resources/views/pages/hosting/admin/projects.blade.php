@@ -22,7 +22,7 @@
             </x-slot:head>
 
             @forelse ($projects as $project)
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                     <td class="px-6 py-4">
                         <p class="font-semibold text-slate-800 dark:text-slate-100">{{ $project->project_name }}</p>
                         <p class="text-xs text-slate-400 dark:text-slate-500 uppercase">{{ $project->framework }}</p>

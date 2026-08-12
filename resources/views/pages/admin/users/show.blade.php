@@ -149,7 +149,7 @@
                         <div class="space-y-4">
                             @foreach ($jokiOrders as $order)
                                 <div
-                                    class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                                    class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
                                             <h4 class="font-bold text-slate-800 dark:text-slate-100">{{ $order->project_name }}</h4>
@@ -186,7 +186,7 @@
                     @if (isset($hostingProjects) && $hostingProjects->count() > 0)
                         <div class="space-y-4">
                             @foreach ($hostingProjects as $project)
-                                <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                                <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
                                             <h4 class="font-bold text-slate-800 dark:text-slate-100">{{ $project->project_name }}</h4>

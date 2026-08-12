@@ -334,7 +334,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
                 <!-- Web Dev Box -->
-                <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                     <div class="w-12 h-12 bg-indigo-600 text-white rounded flex items-center justify-center mb-6">
                         <i class="fa-solid fa-laptop-code text-xl"></i>
                     </div>
@@ -360,7 +360,7 @@
                 </div>
 
                 <!-- Hosting Box -->
-                <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                <div class="card-brutal p-8 flex flex-col h-full group hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                     <div class="w-12 h-12 bg-indigo-600 text-white rounded flex items-center justify-center mb-6">
                         <i class="fa-solid fa-server text-xl"></i>
                     </div>

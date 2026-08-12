@@ -43,7 +43,7 @@
                     </thead>
                     <tbody>
                         @forelse($backups as $backup)
-                            <tr class="bg-white dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50/50 transition-colors">
+                            <tr class="bg-white dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40/50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div

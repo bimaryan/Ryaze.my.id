@@ -129,7 +129,7 @@
                     <div class="aspect-video w-full overflow-hidden relative">
                         <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Project 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <a href="#" class="px-6 py-3 bg-white text-slate-900 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:scale-105">View Live Demo</a>
+                            <a href="#" class="px-6 py-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:scale-105">View Live Demo</a>
                         </div>
                     </div>
                     <div class="p-8">
@@ -147,7 +147,7 @@
                     <div class="aspect-video w-full overflow-hidden relative">
                         <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Project 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <a href="#" class="px-6 py-3 bg-white text-slate-900 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:scale-105">View Live Demo</a>
+                            <a href="#" class="px-6 py-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:scale-105">View Live Demo</a>
                         </div>
                     </div>
                     <div class="p-8">

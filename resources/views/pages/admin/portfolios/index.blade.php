@@ -63,7 +63,7 @@
                     <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                 </x-slot:head>
                 @forelse($portfolios as $portfolio)
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 @if($portfolio->image_path)

@@ -31,7 +31,7 @@
                     <button type="button" onclick="ryazeToggleTheme()" aria-label="Ganti tema"
                         class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-300 dark:bg-indigo-600 transition-colors duration-300 ease-in-out focus:outline-none shadow-inner"
                         role="switch" aria-checked="false">
-                        <span class="pointer-events-none inline-flex h-5 w-5 transform translate-x-1 dark:translate-x-6 items-center justify-center rounded-full bg-white shadow-sm transition-all duration-300 ease-in-out">
+                        <span class="pointer-events-none inline-flex h-5 w-5 transform translate-x-1 dark:translate-x-6 items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm transition-all duration-300 ease-in-out">
                             <i class="fa-solid fa-sun text-[10px] text-amber-500 absolute transition-opacity duration-300 opacity-100 dark:opacity-0"></i>
                             <i class="fa-solid fa-moon text-[10px] text-indigo-600 absolute transition-opacity duration-300 opacity-0 dark:opacity-100"></i>
                         </span>
@@ -42,7 +42,7 @@
                         $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]);
                     @endphp
                     <button id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification"
-                        class="relative inline-flex items-center text-sm font-medium text-center text-indigo-200 hover:text-slate-800 focus:outline-none transition-colors"
+                        class="relative inline-flex items-center text-sm font-medium text-center text-indigo-200 hover:text-slate-800 dark:text-slate-100 focus:outline-none transition-colors"
                         type="button">
                         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 14 20">
@@ -52,7 +52,7 @@
                         @if ($unreadNotifications->count() > 0)
                             <div
                                 class="absolute block w-5 h-5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full -top-1 start-3">
-                                <p class="text-slate-800 text-[10px] leading-tight font-bold">
+                                <p class="text-slate-800 dark:text-slate-100 text-[10px] leading-tight font-bold">
                                     {{ $unreadNotifications->count() > 9 ? '9+' : $unreadNotifications->count() }}</p>
                             </div>
                         @endif
@@ -178,7 +178,7 @@
                     $active,
                 ) => 'flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group text-sm font-medium ' .
                     ($active
-                        ? 'bg-indigo-600 text-slate-800 shadow-md text-white shadow-indigo-200/50'
+                        ? 'bg-indigo-600 text-slate-800 dark:text-slate-100 shadow-md text-white shadow-indigo-200/50'
                         : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-300 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-300');
 
                 $iconClass = fn($active) => 'w-6 text-center text-lg transition-transform group-hover:scale-110 ' .

@@ -23,7 +23,7 @@
                 <th class="px-6 py-4 text-center">Status</th>
             </x-slot:head>
             @forelse ($payments as $payment)
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                     <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-100">
                         {{ $payment->order->order_number ?? '-' }}
                     </td>

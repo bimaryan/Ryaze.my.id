@@ -18,22 +18,22 @@
     </script>
     <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');</style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans antialiased flex flex-col min-h-screen">
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+<body class="bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 font-sans antialiased flex flex-col min-h-screen">
+    <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
             <div class="font-bold text-xl text-brand flex items-center gap-2">
                 <i class="fa-solid fa-code"></i> Tailwind CSS Starter
             </div>
             <div class="flex gap-4">
-                <a href="#" class="text-sm font-medium text-slate-600 hover:text-brand transition">Documentation</a>
-                <a href="#" class="text-sm font-medium text-slate-600 hover:text-brand transition">GitHub</a>
+                <a href="#" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand transition">Documentation</a>
+                <a href="#" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand transition">GitHub</a>
             </div>
         </div>
     </nav>
     <main class="flex-grow flex items-center justify-center p-6">
-        <div class="max-w-3xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+        <div class="max-w-3xl w-full bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-100">
             <div class="bg-gradient-to-br from-brand to-indigo-700 p-12 text-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-white/10 opacity-30" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 20px 20px;"></div>
+                <div class="absolute inset-0 bg-white dark:bg-slate-800/10 opacity-30" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 20px 20px;"></div>
                 <i class="fa-brands fa-css3-alt text-6xl text-white mb-6 relative z-10 drop-shadow-md"></i>
                 <h1 class="text-4xl sm:text-5xl font-extrabold text-white mb-4 relative z-10 tracking-tight">Tailwind CSS Starter</h1>
                 <p class="text-indigo-100 font-medium text-lg relative z-10 max-w-xl mx-auto">Proyek <strong>Tailwind CSS Starter</strong> Anda sudah siap digunakan! Tidak perlu repot dengan instalasi NPM atau build tools.</p>
@@ -45,8 +45,8 @@
                             <i class="fa-solid fa-bolt text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-900 mb-2">Super Cepat</h3>
-                            <p class="text-sm text-slate-600 leading-relaxed">Menggunakan Tailwind CSS dari CDN. Langsung render dengan sempurna di semua perangkat.</p>
+                            <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Super Cepat</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">Menggunakan Tailwind CSS dari CDN. Langsung render dengan sempurna di semua perangkat.</p>
                         </div>
                     </div>
                     <div class="flex gap-4">
@@ -54,8 +54,8 @@
                             <i class="fa-solid fa-paintbrush text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-900 mb-2">Siap Dikustomisasi</h3>
-                            <p class="text-sm text-slate-600 leading-relaxed">Buka File Manager Anda, edit <code>index.html</code>, dan mulai tambahkan utility class Tailwind favorit Anda.</p>
+                            <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Siap Dikustomisasi</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">Buka File Manager Anda, edit <code>index.html</code>, dan mulai tambahkan utility class Tailwind favorit Anda.</p>
                         </div>
                     </div>
                     <div class="flex gap-4">
@@ -63,8 +63,8 @@
                             <i class="fa-solid fa-icons text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-900 mb-2">FontAwesome Included</h3>
-                            <p class="text-sm text-slate-600 leading-relaxed">Lebih dari 2.000+ ikon gratis siap pakai. Cukup gunakan tag <code>&lt;i class="fa-solid fa-user"&gt;</code>.</p>
+                            <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-2">FontAwesome Included</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">Lebih dari 2.000+ ikon gratis siap pakai. Cukup gunakan tag <code>&lt;i class="fa-solid fa-user"&gt;</code>.</p>
                         </div>
                     </div>
                     <div class="flex gap-4">
@@ -72,8 +72,8 @@
                             <i class="fa-solid fa-mobile-screen text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-900 mb-2">100% Responsif</h3>
-                            <p class="text-sm text-slate-600 leading-relaxed">Gunakan prefix seperti <code>md:</code>, <code>lg:</code>, dan <code>hover:</code> untuk membuat tampilan menakjubkan.</p>
+                            <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-2">100% Responsif</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">Gunakan prefix seperti <code>md:</code>, <code>lg:</code>, dan <code>hover:</code> untuk membuat tampilan menakjubkan.</p>
                         </div>
                     </div>
                 </div>
@@ -97,10 +97,10 @@
         <div id="demoModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-0">
             <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="document.getElementById('demoModal').classList.add('hidden')"></div>
             
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative z-10 transform transition-all flex flex-col max-h-[90vh]">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative z-10 transform transition-all flex flex-col max-h-[90vh]">
                 <!-- Modal Header -->
-                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
-                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50/50 shrink-0">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-cube text-indigo-600"></i> Komponen Modal
                     </h3>
                     <button type="button" onclick="document.getElementById('demoModal').classList.add('hidden')" class="text-slate-400 hover:text-red-500 hover:bg-red-50 w-8 h-8 rounded-lg flex items-center justify-center transition-colors">
@@ -116,17 +116,17 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <h4 class="text-xl font-bold text-slate-900 mb-2">Desain Premium!</h4>
+                        <h4 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Desain Premium!</h4>
                         <p class="text-slate-500 text-sm leading-relaxed mb-6">
                             Modal ini dirancang agar terlihat sama persis dengan desain yang ada di halaman Portal Ryaze Hosting. Dilengkapi dengan backdrop blur, transisi lembut, dan tombol-tombol modern.
                         </p>
                     </div>
                     
-                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-2">
+                    <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-100 mb-2">
                         <div class="flex items-center gap-3">
                             <i class="fa-solid fa-code text-slate-400"></i>
                             <div class="text-left text-sm">
-                                <p class="font-semibold text-slate-800">Siap Pakai</p>
+                                <p class="font-semibold text-slate-800 dark:text-slate-100">Siap Pakai</p>
                                 <p class="text-slate-500 text-xs">Salin kode ini untuk proyek Anda</p>
                             </div>
                         </div>
@@ -134,8 +134,8 @@
                 </div>
                 
                 <!-- Modal Footer -->
-                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
-                    <button type="button" onclick="document.getElementById('demoModal').classList.add('hidden')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors">
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-end gap-3 shrink-0">
+                    <button type="button" onclick="document.getElementById('demoModal').classList.add('hidden')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-100 hover:bg-slate-200 transition-colors">
                         Tutup
                     </button>
                     <button type="button" onclick="document.getElementById('demoModal').classList.add('hidden')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm shadow-indigo-200 hover:-translate-y-0.5 transition-all">

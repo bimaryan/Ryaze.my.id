@@ -22,7 +22,7 @@
                     </thead>
                     <tbody>
                         @forelse($logs as $log)
-                            <tr class="border-b hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                            <tr class="border-b hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                                 <td class="px-4 py-3 font-medium text-slate-800 dark:text-slate-100 whitespace-nowrap">
                                     {{ $log->created_at->format('d M Y H:i:s') }}
                                 </td>

@@ -38,7 +38,7 @@
                 <th class="px-6 py-4 text-right">Aksi</th>
             </x-slot:head>
                         @forelse ($services as $service)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                            <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                                 <td class="px-6 py-4">
                                     <div class="font-bold text-slate-800 dark:text-slate-100">{{ $service->name }}</div>
                                     <div class="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">{{ Str::limit($service->description, 50) }}</div>

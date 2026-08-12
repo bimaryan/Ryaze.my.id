@@ -18,7 +18,7 @@
                 <th class="px-6 py-4">Daftar Database</th>
             </x-slot:head>
             @forelse($usersWithDatabases as $user)
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors border-b border-slate-100 dark:border-slate-700">
+                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors border-b border-slate-100 dark:border-slate-700">
                     <td class="px-6 py-4 align-top border-r border-slate-100 dark:border-slate-700">
                         <div class="font-bold text-slate-800 dark:text-slate-100">{{ $user->name }}</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">{{ $user->email }}</div>

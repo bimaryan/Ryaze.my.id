@@ -78,7 +78,7 @@
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Pilih Layanan Utama</label>
                         <div class="grid grid-cols-2 gap-4">
                             <label
-                                class="relative flex items-center justify-center p-3 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600 {{ $errors->has('role') ? 'border-red-500 ring-1 ring-red-500' : '' }}">
+                                class="relative flex items-center justify-center p-3 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600 {{ $errors->has('role') ? 'border-red-500 ring-1 ring-red-500' : '' }}">
                                 <input type="radio" name="role" value="user_joki" class="peer sr-only"
                                     {{ old('role') == 'user_joki' ? 'checked' : '' }}>
                                 <span class="text-sm font-medium text-slate-600 dark:text-slate-300 peer-checked:text-indigo-700">Jasa
@@ -86,7 +86,7 @@
                             </label>
 
                             <label
-                                class="relative flex items-center justify-center p-3 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600 {{ $errors->has('role') ? 'border-red-500 ring-1 ring-red-500' : '' }}">
+                                class="relative flex items-center justify-center p-3 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600 {{ $errors->has('role') ? 'border-red-500 ring-1 ring-red-500' : '' }}">
                                 <input type="radio" name="role" value="user_hosting" class="peer sr-only"
                                     {{ old('role') == 'user_hosting' ? 'checked' : '' }}>
                                 <span class="text-sm font-medium text-slate-600 dark:text-slate-300 peer-checked:text-indigo-700">Beli

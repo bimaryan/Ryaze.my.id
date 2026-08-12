@@ -21,7 +21,7 @@
                     <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                 </x-slot:head>
                 @forelse($orders as $order)
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                         <td class="px-6 py-4 font-bold text-indigo-600 dark:text-indigo-400">{{ $order->order_number }}</td>
                         <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100 flex items-center gap-3">
                             <div

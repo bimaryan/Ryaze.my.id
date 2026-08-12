@@ -52,7 +52,7 @@
                     </a>
                     
                     <!-- Hamburger Button -->
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-400 dark:text-slate-500 hover:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700/50 focus:outline-none">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-400 dark:text-slate-500 hover:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700/50 focus:outline-none">
                         <i class="fa-solid fa-bars text-xl" x-show="!mobileMenuOpen"></i>
                         <i class="fa-solid fa-xmark text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
                     </button>
@@ -63,10 +63,10 @@
         <!-- Mobile Menu -->
         <div x-show="mobileMenuOpen" style="display: none;" class="md:hidden bg-white dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-700" x-transition>
             <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="{{ url('/#about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-700/40">Tentang</a>
-                <a href="{{ url('/#services') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-700/40">Layanan</a>
-                <a href="{{ url('/#portfolio') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-700/40">Portofolio</a>
-                <a href="{{ route('blog.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-700/40">Blog</a>
+                <a href="{{ url('/#about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">Tentang</a>
+                <a href="{{ url('/#services') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">Layanan</a>
+                <a href="{{ url('/#portfolio') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">Portofolio</a>
+                <a href="{{ route('blog.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">Blog</a>
                 <a href="{{ url('/') }}" class="block w-full text-center mt-4 text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
                     Kembali
                 </a>

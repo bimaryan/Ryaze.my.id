@@ -25,7 +25,7 @@
                 <th class="px-6 py-4 text-center">Aksi</th>
             </x-slot:head>
             @forelse ($billings as $bill)
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                     <td class="px-6 py-4">
                         <div class="font-bold text-slate-800 dark:text-slate-100">{{ $bill->invoice_number }}</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ $bill->created_at->format('d M Y, H:i') }}</div>

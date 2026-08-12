@@ -34,7 +34,7 @@
                 <div class="absolute right-0 top-0 opacity-10 p-2">
                     <i class="fa-solid fa-money-bill-trend-up text-7xl"></i>
                 </div>
-                <div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-2xl relative z-10">
+                <div class="w-14 h-14 rounded-full bg-white dark:bg-slate-800/20 flex items-center justify-center text-2xl relative z-10">
                     <i class="fa-solid fa-coins"></i>
                 </div>
                 <div class="relative z-10">
@@ -70,7 +70,7 @@
                 <th class="px-6 py-4 text-center">Status</th>
             </x-slot:head>
             @forelse ($commissions as $comm)
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                     <td class="px-6 py-4">
                         <div class="font-bold text-slate-800 dark:text-slate-100">{{ $comm->created_at->format('d M Y') }}</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ $comm->created_at->format('H:i') }}</div>

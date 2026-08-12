@@ -27,7 +27,7 @@
         </x-slot:head>
 
         @forelse($categories as $category)
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+            <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                 <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100">{{ $category->name }}</td>
                 <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400"><code class="bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded text-xs">{{ $category->slug }}</code></td>
                 <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{{ Str::limit($category->description, 60) ?: '-' }}</td>

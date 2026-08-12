@@ -25,7 +25,7 @@
 <body class="bg-stone-50 text-stone-900 antialiased font-sans">
     
     <!-- Header -->
-    <header class="border-b border-stone-200 bg-white sticky top-0 z-50">
+    <header class="border-b border-stone-200 bg-white dark:bg-slate-800 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-20 items-center">
             <a href="#" class="font-serif font-black text-2xl tracking-tight">Blog<span class="text-orange-500">.</span></a>
             <nav class="hidden md:flex gap-6 font-medium text-sm text-stone-600">
@@ -110,21 +110,21 @@
 
         <!-- Newsletter -->
         <div class="bg-stone-900 rounded-3xl p-10 md:p-16 text-center text-white relative overflow-hidden shadow-2xl">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-slate-800/10 rounded-full blur-3xl"></div>
             <div class="absolute bottom-0 left-0 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl"></div>
             
             <i class="fa-regular fa-envelope-open text-4xl text-orange-500 mb-6 relative z-10"></i>
             <h2 class="text-3xl font-serif font-bold mb-4 relative z-10">Get the latest articles in your inbox</h2>
             <p class="text-stone-400 mb-8 max-w-lg mx-auto relative z-10">Join 5,000+ subscribers who receive our weekly newsletter on design, code, and startups. No spam.</p>
             <form class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto relative z-10">
-                <input type="email" placeholder="Your email address" class="px-6 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent flex-grow transition">
+                <input type="email" placeholder="Your email address" class="px-6 py-3 rounded-xl bg-white dark:bg-slate-800/10 border border-white/20 text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent flex-grow transition">
                 <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg shadow-orange-500/30">Subscribe</button>
             </form>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-stone-200 py-12 mt-10">
+    <footer class="bg-white dark:bg-slate-800 border-t border-stone-200 py-12 mt-10">
         <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="font-serif font-black text-xl tracking-tight">Blog<span class="text-orange-500">.</span></div>
             <p class="text-stone-500 text-sm font-medium">&copy; 2026 Blog. All rights reserved.</p>

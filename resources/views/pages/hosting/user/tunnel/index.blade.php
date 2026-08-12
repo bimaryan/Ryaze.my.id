@@ -36,7 +36,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-sm">
                             @forelse($tunnels as $tunnel)
-                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 dark:bg-slate-800/50/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <div class="font-semibold text-slate-800 dark:text-slate-100 mb-0.5">{{ $tunnel->name }}</div>
                                         <div class="text-xs text-slate-500 dark:text-slate-400 font-mono bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded inline-block border border-slate-200 dark:border-slate-700">

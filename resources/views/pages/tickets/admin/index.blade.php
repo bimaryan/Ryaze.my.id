@@ -22,7 +22,7 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     @forelse($tickets as $ticket)
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">
+                        <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition">
                             <td class="px-6 py-4">
                                 <div class="font-bold text-slate-800 dark:text-slate-100">{{ $ticket->user->name }}</div>
                                 <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $ticket->user->email }}</div>

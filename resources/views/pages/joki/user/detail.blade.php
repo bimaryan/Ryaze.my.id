@@ -183,7 +183,7 @@
                             <p class="text-indigo-100 text-xs mb-4">Proyek Anda sudah selesai! Anda bisa langsung meng-online-kannya ke layanan Ryaze Hosting hanya dengan satu klik.</p>
                             
                             @if ($order->is_deployed_to_hosting)
-                                <div class="bg-white/20 border border-white/30 rounded-lg px-4 py-2 text-sm font-semibold flex items-center justify-center gap-2">
+                                <div class="bg-white dark:bg-slate-800/20 border border-white/30 rounded-lg px-4 py-2 text-sm font-semibold flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-check-circle"></i> Sudah di-deploy
                                 </div>
                             @else
@@ -273,7 +273,7 @@
                 <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
                     Pilih Metode Pembayaran
                 </h3>
-                <button type="button" onclick="closePaymentModal()" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center">
+                <button type="button" onclick="closePaymentModal()" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>

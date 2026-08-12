@@ -40,7 +40,7 @@
                 <th class="px-6 py-4 text-center">Aksi</th>
             </x-slot:head>
             @forelse ($transactions as $tx)
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                     <td class="px-6 py-4">
                         <div class="font-bold text-slate-800 dark:text-slate-100">{{ $tx->created_at->format('d M Y') }}</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ $tx->created_at->format('H:i') }}</div>

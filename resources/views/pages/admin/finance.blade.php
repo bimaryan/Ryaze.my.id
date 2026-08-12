@@ -163,7 +163,7 @@
                         <th class="px-6 py-4 text-right">Nominal</th>
                     </x-slot:head>
                     @forelse ($transactions as $row)
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                        <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                             <td class="px-6 py-4 text-xs text-slate-500 dark:text-slate-400 font-mono">
                                 {{ $row['paid_at'] ? \Carbon\Carbon::parse($row['paid_at'])->format('d M Y, H:i') : '-' }}
                             </td>

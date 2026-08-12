@@ -83,40 +83,40 @@
                 <i class="fa-solid fa-chart-simple"></i> <span>Overview</span>
             </button>
             <button data-tab="logs" id="tab-logs" onclick="switchTab('logs')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-scroll"></i> <span>Build Logs</span>
             </button>
             <button data-tab="terminal" id="tab-terminal" onclick="switchTab('terminal')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-terminal"></i> <span>Terminal</span>
             </button>
             <button data-tab="files" id="tab-files" onclick="switchTab('files')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-folder-tree"></i> <span>Root Files</span>
             </button>
             <button data-tab="ide" id="tab-ide" onclick="switchTab('ide')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-laptop-code"></i> <span>IDE VS Code</span>
             </button>
             <button data-tab="env" id="tab-env" onclick="switchTab('env')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-key"></i> <span>.env</span>
             </button>
             <button data-tab="settings" id="tab-settings" onclick="switchTab('settings')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-gears"></i> <span>Settings</span>
             </button>
 
             {{-- <button data-tab="email" id="tab-email"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-envelope"></i> <span>Email</span>
             </button> --}}
             <button data-tab="crons" id="tab-crons" onclick="switchTab('crons')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-clock"></i> <span>Cron Jobs</span>
             </button>
             <button data-tab="team" id="tab-team" onclick="switchTab('team')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-users"></i> <span>Team Access</span>
             </button>
         </div>
@@ -1766,7 +1766,7 @@ NGINX_CONF
 
                             const tr = document.createElement('tr');
                             tr.className =
-                                `hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors group ${locked ? 'opacity-60' : ''}`;
+                                `hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors group ${locked ? 'opacity-60' : ''}`;
                             // Simpan data di dataset — dipakai event delegation
                             tr.dataset.path = item.path;
                             tr.dataset.name = item.name;
@@ -3393,7 +3393,7 @@ b.classList.toggle('dark:text-slate-400', !on);
                 <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
                     Pilih Metode Pembayaran
                 </h3>
-                <button type="button" onclick="closePaymentModal()" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center">
+                <button type="button" onclick="closePaymentModal()" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>

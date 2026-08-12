@@ -370,7 +370,7 @@
                                 <th scope="col" class="px-6 py-3 text-right">Harga</th>
                             </x-slot:head>
                             @forelse($recentJokiOrders as $order)
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                                     <td class="px-6 py-3">
                                         <div class="font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[150px]">
                                             {{ $order->project_name ?? 'Tanpa Nama' }}</div>
@@ -428,7 +428,7 @@
                                 <th scope="col" class="px-6 py-3 text-right">Status</th>
                             </x-slot:head>
                             @forelse($recentHostingProjects as $project)
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                                     <td class="px-6 py-3">
                                         <div class="font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[150px]">
                                             {{ $project->project_name }}</div>
@@ -492,7 +492,7 @@
                             <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                         </x-slot:head>
                         @forelse($recentUsers as $user)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                            <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
                                 <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100 flex items-center gap-3">
                                     <div
                                         class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold text-sm uppercase shadow-sm">

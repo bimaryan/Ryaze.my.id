@@ -24,7 +24,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @forelse ($withdrawals as $w)
-                            <tr class="hover:bg-slate-50/50 transition-colors">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 dark:bg-slate-800/50/50 transition-colors">
                                 <td class="px-6 py-4">
                                     <div class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $w->created_at->format('d M Y') }}</div>
                                     <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ $w->created_at->format('H:i') }}</div>

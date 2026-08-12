@@ -92,7 +92,7 @@
             
             <div class="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700 shrink-0">
                 <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Buat Akun Email Baru</h3>
-                <button type="button" class="btn-close-modal text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/50">
+                <button type="button" class="btn-close-modal text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1 rounded-lg hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700/50">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
