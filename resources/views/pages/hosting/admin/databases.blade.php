@@ -141,7 +141,7 @@
         <!-- Modal Create Database -->
         <div id="createDbModal"
             class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 p-4">
-            <div class="modal-content-stop bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
+            <div class="modal-content-stop bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
                 <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Buat Database Baru</h3>
                     <button type="button" data-modal-hide="createDbModal" class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">

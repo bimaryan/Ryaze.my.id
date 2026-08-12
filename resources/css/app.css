@@ -79,3 +79,20 @@
 .dark ::-webkit-scrollbar-thumb:hover {
     background: #475569;
 }
+
+/* =====================================================
+   MODAL / POPUP — dark mode solid background
+   Prevent transparency on modal containers that use
+   dark:bg-slate-800/60 (60% opacity = transparent)
+   ===================================================== */
+.dark [id$="Modal"] > div,
+.dark [id$="modal"] > div,
+.dark .modal-content-stop {
+    background-color: #1e293b !important;
+}
+
+/* Flowbite modal content */
+.dark [data-modal-target] + [id] .relative,
+.dark .fixed [class*="bg-white"] {
+    background-color: #1e293b;
+}
