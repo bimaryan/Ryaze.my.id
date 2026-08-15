@@ -178,11 +178,11 @@
                     $active,
                 ) => 'flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group text-sm font-medium ' .
                     ($active
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/50'
-                        : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-indigo-500/20 dark:hover:text-white');
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200/50 dark:bg-indigo-500/20 dark:text-indigo-400 dark:shadow-none'
+                        : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-300 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-300');
 
                 $iconClass = fn($active) => 'w-6 text-center text-lg transition-transform group-hover:scale-110 ' .
-                    ($active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 dark:text-slate-400 dark:group-hover:text-indigo-300');
+                    ($active ? 'text-white dark:text-indigo-400' : 'text-slate-400 group-hover:text-indigo-600 dark:text-slate-500 dark:group-hover:text-indigo-300');
             @endphp
 
             {{-- Dashboard --}}
