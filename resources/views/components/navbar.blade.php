@@ -150,9 +150,9 @@
 </nav>
 
 <aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 w-64 h-[100dvh] pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 dark:bg-slate-900 dark:border-slate-800 sm:translate-x-0"
+    class="fixed top-0 left-0 z-40 w-64 h-[100dvh] pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 dark:bg-slate-950 dark:border-slate-800 sm:translate-x-0"
     aria-label="Sidebar">
-    <div class="h-full px-3 pb-24 mt-3 overflow-y-auto bg-white dark:bg-slate-900">
+    <div class="h-full px-3 pb-24 mt-3 overflow-y-auto bg-white dark:bg-slate-950">
         <ul class="space-y-2 font-medium">
 
             @php
