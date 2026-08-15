@@ -178,11 +178,11 @@
                     $active,
                 ) => 'flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group text-sm font-medium ' .
                     ($active
-                        ? 'bg-indigo-600 text-slate-800 dark:text-slate-100 shadow-md text-white shadow-indigo-200/50'
-                        : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-300 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-300');
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/50'
+                        : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-indigo-500/20 dark:hover:text-white');
 
                 $iconClass = fn($active) => 'w-6 text-center text-lg transition-transform group-hover:scale-110 ' .
-                    ($active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 dark:text-slate-500 dark:group-hover:text-indigo-400');
+                    ($active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 dark:text-slate-400 dark:group-hover:text-indigo-300');
             @endphp
 
             {{-- Dashboard --}}
@@ -195,8 +195,8 @@
 
             {{-- â•â• SISTEM UTAMA (SUPERADMIN) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($role === 'superadmin')
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Sistem Utama</span>
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-700">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Sistem Utama</span>
                 </li>
 
                 <li>
@@ -253,8 +253,8 @@
 
             {{-- â•â• MANAJEMEN JOKI â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($isAdminJoki)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-700">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">
                         {{ $role === 'superadmin' ? 'Manajemen Joki' : 'Manajemen Hosting' }}
                     </span>
                 </li>
@@ -285,8 +285,8 @@
 
             {{-- â•â• MANAJEMEN HOSTING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($isAdminHosting)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-700">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">
                         {{ $role === 'superadmin' ? 'Manajemen Hosting' : 'Manajemen Admin' }}
                     </span>
                 </li>
@@ -360,8 +360,8 @@
 
             {{-- â•â• LAYANAN KLIEN JOKI â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($isUserJoki)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Layanan
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-700">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Layanan
                         Klien Joki</span>
                 </li>
 
@@ -403,8 +403,8 @@
 
             {{-- â•â• LAYANAN KLIEN HOSTING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
             @if ($isUserHosting)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Layanan
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-700">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Layanan
                         Klien Hosting</span>
                 </li>
 
@@ -524,8 +524,8 @@
 
                 {{-- Wallet & Affiliate (Semua User) --}}
                 @if ($isUser)
-                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-800">
-                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pendapatan</span>
+                <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-700">
+                    <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Pendapatan</span>
                 </li>
                 <li>
                     <a href="{{ route('user.wallet.history') }}"

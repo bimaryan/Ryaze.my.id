@@ -38,7 +38,7 @@
                         <div class="relative">
                             <input type="password" name="password" id="password"
                                 class="py-3 pr-10 transition-all duration-200 focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
-                                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+                                placeholder="********">
                             <button type="button" onclick="togglePassword('password', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
