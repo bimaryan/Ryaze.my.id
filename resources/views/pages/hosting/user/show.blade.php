@@ -613,6 +613,10 @@ NGINX_CONF
                             <i class="fa-solid fa-file-circle-plus text-emerald-500 dark:text-emerald-400 mr-1"></i><span
                                 class="hidden sm:inline">New File</span>
                         </button>
+                        <button data-action="paste-file" id="fm-btn-paste"
+                            class="hidden text-xs bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors font-semibold">
+                            <i class="fa-solid fa-paste mr-1"></i><span class="hidden sm:inline">Paste</span>
+                        </button>
                         <button data-action="new-dir"
                             class="text-xs bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                             <i class="fa-solid fa-folder-plus text-amber-500 dark:text-amber-400 mr-1"></i><span class="hidden sm:inline">New
@@ -716,6 +720,7 @@ NGINX_CONF
                             <div class="flex gap-2">
                                 <button data-action="ide-new-file" class="hover:text-white transition-colors" title="New File"><i class="fa-solid fa-file-medical"></i></button>
                                 <button data-action="ide-new-dir" class="hover:text-white transition-colors" title="New Folder"><i class="fa-solid fa-folder-plus"></i></button>
+                                <button data-action="ide-paste" id="ide-btn-paste" class="hidden text-indigo-400 hover:text-indigo-300 transition-colors" title="Paste"><i class="fa-solid fa-paste"></i></button>
                                 <button data-action="ide-refresh" class="hover:text-white transition-colors" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
                                 <button data-action="ide-collapse" class="hover:text-white transition-colors" title="Collapse All"><i class="fa-solid fa-compress"></i></button>
                             </div>
@@ -1692,8 +1697,12 @@ NGINX_CONF
         var fileCreateUrl = fixUrl('{{ route('user_hosting.files.create', $project->hashid) }}');
         var fileDeleteUrl = fixUrl('{{ route('user_hosting.files.delete', $project->hashid) }}');
         var fileRenameUrl = fixUrl('{{ route('user_hosting.files.rename', $project->hashid) }}');
+        var fileCopyUrl = fixUrl('{{ route('user_hosting.files.copy', $project->hashid) }}');
+        var fileMoveUrl = fixUrl('{{ route('user_hosting.files.move', $project->hashid) }}');
         var fileDownloadUrl = fixUrl('{{ route('user_hosting.files.download', $project->hashid) }}');
         var ideChatUrl = fixUrl('{{ route('user_hosting.ide.chat', $project->hashid) }}');
+
+        window.fileClipboard = null; // { type: 'copy'|'cut', path: '...', name: '...' }
 
         var PROTECTED_FILES = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
         var isProtected = name => PROTECTED_FILES.includes(name);
@@ -1741,6 +1750,12 @@ NGINX_CONF
                                     `<span class="text-xs text-slate-300 dark:text-slate-400 italic select-none px-1">sistem</span>`;
                             } else if (isDir) {
                                 actions = `
+                                    <button class="file-action text-indigo-400 dark:text-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-1 transition-colors" data-op="copy" title="Copy">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </button>
+                                    <button class="file-action text-purple-400 dark:text-purple-300 hover:text-purple-600 dark:hover:text-purple-400 px-1 transition-colors" data-op="cut" title="Cut">
+                                        <i class="fa-solid fa-scissors"></i>
+                                    </button>
                                     <button class="file-action text-amber-400 dark:text-amber-300 hover:text-amber-600 dark:hover:text-amber-400 px-1 transition-colors" data-op="rename" title="Rename">
                                         <i class="fa-solid fa-i-cursor"></i>
                                     </button>
@@ -1751,6 +1766,12 @@ NGINX_CONF
                                 actions = `
                                     <button class="file-action text-sky-400 dark:text-sky-300 hover:text-sky-600 dark:hover:text-sky-400 px-1 transition-colors" data-op="edit" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="file-action text-indigo-400 dark:text-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-1 transition-colors" data-op="copy" title="Copy">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </button>
+                                    <button class="file-action text-purple-400 dark:text-purple-300 hover:text-purple-600 dark:hover:text-purple-400 px-1 transition-colors" data-op="cut" title="Cut">
+                                        <i class="fa-solid fa-scissors"></i>
                                     </button>
                                     <button class="file-action text-amber-400 dark:text-amber-300 hover:text-amber-600 dark:hover:text-amber-400 px-1 transition-colors" data-op="rename" title="Rename">
                                         <i class="fa-solid fa-i-cursor"></i>
@@ -1832,12 +1853,65 @@ NGINX_CONF
             if (btn.dataset.op === 'edit') openFileEditor(path, name);
             if (btn.dataset.op === 'rename') renameItem(path, name);
             if (btn.dataset.op === 'delete') deleteItem(path, name);
+            if (btn.dataset.op === 'copy') copyOrCutItem(path, name, 'copy');
+            if (btn.dataset.op === 'cut') copyOrCutItem(path, name, 'cut');
         });
 
         // ── Navigasi naik ──────────────────────────────────────────────────────
         function navigateUp() {
             if (!currentFolderPath) return;
             loadFileManager(currentFolderPath.split('/').slice(0, -1).join('/'));
+        }
+
+        function updatePasteButton() {
+            const btn = document.getElementById('fm-btn-paste');
+            const ideBtn = document.getElementById('ide-btn-paste');
+            if (window.fileClipboard) {
+                if (btn) btn.classList.remove('hidden');
+                if (ideBtn) ideBtn.classList.remove('hidden');
+            } else {
+                if (btn) btn.classList.add('hidden');
+                if (ideBtn) ideBtn.classList.add('hidden');
+            }
+        }
+
+        function copyOrCutItem(path, name, action) {
+            window.fileClipboard = { path, name, action };
+            updatePasteButton();
+            // Flash feedback
+            const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+            Toast.fire({ icon: 'success', title: \`\${action === 'copy' ? 'Disalin' : 'Dipotong'}: \${name}\` });
+        }
+
+        async function doPasteItem(destinationPath) {
+            if (!window.fileClipboard) return;
+            
+            const clipboard = window.fileClipboard;
+            const url = clipboard.action === 'copy' ? fileCopyUrl : fileMoveUrl;
+
+            const fd = new FormData();
+            fd.append('source', clipboard.path);
+            fd.append('destination', destinationPath);
+            fd.append('_token', csrfToken);
+
+            const r = await fetch(url, { method: 'POST', body: fd });
+            const data = await r.json();
+
+            if (data.error) {
+                swAlert('error', 'Gagal', data.error);
+                return;
+            }
+
+            if (clipboard.action === 'cut') {
+                window.fileClipboard = null;
+                updatePasteButton();
+            }
+
+            swAlert('success', 'Berhasil', \`File/folder berhasil di-\${clipboard.action === 'copy' ? 'copy' : 'move'}\`);
+            
+            // Reload views
+            if(typeof window.loadFileManager === 'function') window.loadFileManager(currentFolderPath);
+            if(typeof window.renderIdeTree === 'function') window.renderIdeTree();
         }
 
         // ── Buat file / folder baru ────────────────────────────────────────────
@@ -2077,6 +2151,9 @@ NGINX_CONF
         document.querySelector('[data-action="new-file"]')
             ?.addEventListener('click', () => promptCreateItem('file'));
 
+        document.querySelector('[data-action="paste-file"]')
+            ?.addEventListener('click', () => doPasteItem(currentFolderPath));
+
         document.querySelector('[data-action="new-dir"]')
             ?.addEventListener('click', () => promptCreateItem('dir'));
 
@@ -2220,15 +2297,22 @@ NGINX_CONF
         async function appendIdeRow(treeEl, item, depth) {
             const isDir = item.type === 'dir';
             const row = document.createElement('div');
-            row.className = 'ide-row flex items-center gap-1.5 py-[3px] pr-2 cursor-pointer hover:bg-[#2a2d2e] transition-colors whitespace-nowrap select-none';
+            row.className = 'ide-row group flex items-center gap-1.5 py-[3px] pr-2 cursor-pointer hover:bg-[#2a2d2e] transition-colors whitespace-nowrap select-none w-full';
             row.style.paddingLeft = (depth * 14 + 4) + 'px';
+
+            const actionsHtml = !isProtected(item.name) ? `
+                <div class="hidden group-hover:flex items-center gap-2 ml-auto pl-2 bg-[#2a2d2e] text-[11px] text-slate-400">
+                    <button class="hover:text-indigo-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${item.path.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}', 'copy')" title="Copy"><i class="fa-solid fa-copy"></i></button>
+                    <button class="hover:text-purple-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${item.path.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}', 'cut')" title="Cut"><i class="fa-solid fa-scissors"></i></button>
+                </div>
+            ` : '';
 
             if (isDir) {
                 const expanded = ideExpanded.has(item.path);
                 row.innerHTML =
                     `<span class="ide-chev w-[14px] text-center text-[9px] text-slate-500 dark:text-slate-400 shrink-0">${expanded ? '&#9662;' : '&#9656;'}</span>` +
                     `<i class="fa-solid ${expanded ? 'fa-folder-open text-amber-400 dark:text-amber-300' : 'fa-folder text-amber-500 dark:text-amber-400'} text-[13px] shrink-0"></i>` +
-                    `<span class="truncate text-[#cccccc]">${item.name}</span>`;
+                    `<span class="truncate text-[#cccccc] flex-1">${item.name}</span>` + actionsHtml;
                 row.onclick = (e) => {
                     e.stopPropagation();
                     ideSelectedPath = item.path;
@@ -2247,7 +2331,7 @@ NGINX_CONF
                 row.innerHTML =
                     `<span class="ide-chev w-[14px] shrink-0"></span>` +
                     `<i class="${icon} text-[13px] shrink-0"></i>` +
-                    `<span class="truncate ${locked ? 'opacity-50' : 'text-[#cccccc]'}">${item.name}</span>`;
+                    `<span class="truncate ${locked ? 'opacity-50' : 'text-[#cccccc]'} flex-1">${item.name}</span>` + actionsHtml;
                 row.onclick = (e) => {
                     e.stopPropagation();
                     if (locked) {
@@ -2425,6 +2509,9 @@ NGINX_CONF
         });
         document.querySelector('[data-action="ide-new-dir"]')?.addEventListener('click', () => {
             promptCreateIdeItem('dir');
+        });
+        document.querySelector('[data-action="ide-paste"]')?.addEventListener('click', () => {
+            doPasteItem(ideCurrentPath);
         });
 
         async function promptCreateIdeItem(type) {
