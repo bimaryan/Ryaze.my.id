@@ -1126,6 +1126,98 @@ class DashboardController extends Controller
         }
     }
 
+    public function copyItem(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
+        
+        $sourcePath = $this->getValidTargetPath($project, $request->input('source', ''));
+        $targetDir = $this->getValidTargetPath($project, $request->input('destination', ''));
+
+        if (! $sourcePath || ! $targetDir) {
+            return response()->json(['error' => 'Path tidak valid atau akses ditolak.'], 403);
+        }
+
+        if (! file_exists($sourcePath)) {
+            return response()->json(['error' => 'File sumber tidak ditemukan.'], 404);
+        }
+        
+        if (! is_dir($targetDir)) {
+            return response()->json(['error' => 'Direktori tujuan tidak valid.'], 400);
+        }
+
+        $basename = basename($sourcePath);
+        $newPath = $targetDir . '/' . $basename;
+        
+        if (file_exists($newPath)) {
+            $extension = pathinfo($basename, PATHINFO_EXTENSION);
+            $filename = pathinfo($basename, PATHINFO_FILENAME);
+            $suffix = '-copy-' . time();
+            $newPath = $targetDir . '/' . $filename . $suffix . ($extension ? '.' . $extension : '');
+        }
+
+        // Hitung perkiraan ukuran tambahan
+        $additionalBytes = is_file($sourcePath) ? filesize($sourcePath) : \Illuminate\Support\Facades\File::size($sourcePath);
+        if (!$this->checkDiskQuota($project, $additionalBytes)) {
+            return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda tidak mencukupi untuk menyalin.'], 403);
+        }
+
+        try {
+            if (is_dir($sourcePath)) {
+                \Illuminate\Support\Facades\File::copyDirectory($sourcePath, $newPath);
+            } else {
+                \Illuminate\Support\Facades\File::copy($sourcePath, $newPath);
+            }
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal copy: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function moveItem(Request $request, $hashid)
+    {
+        $project = $this->getValidProject($hashid);
+        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
+        
+        $sourcePath = $this->getValidTargetPath($project, $request->input('source', ''));
+        $targetDir = $this->getValidTargetPath($project, $request->input('destination', ''));
+
+        if (! $sourcePath || ! $targetDir) {
+            return response()->json(['error' => 'Path tidak valid atau akses ditolak.'], 403);
+        }
+
+        // PROTEKSI FILE SISTEM (JANGAN DIPINDAH)
+        $basename = basename($sourcePath);
+        if (in_array($basename, $this->protectedFiles)) {
+            return response()->json(['error' => 'File sistem ini tidak dapat dipindahkan.'], 403);
+        }
+
+        if (! file_exists($sourcePath)) {
+            return response()->json(['error' => 'File sumber tidak ditemukan.'], 404);
+        }
+        
+        if (! is_dir($targetDir)) {
+            return response()->json(['error' => 'Direktori tujuan tidak valid.'], 400);
+        }
+
+        $newPath = $targetDir . '/' . $basename;
+        
+        if (file_exists($newPath) && $sourcePath !== $newPath) {
+            return response()->json(['error' => 'File/folder dengan nama tersebut sudah ada di lokasi tujuan.'], 400);
+        }
+
+        if ($sourcePath === $newPath) {
+            return response()->json(['success' => true]); // Ga ngapa ngapain
+        }
+
+        try {
+            rename($sourcePath, $newPath);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal memindah file: ' . $e->getMessage()], 500);
+        }
+    }
+
     // --- 4. BUAT FILE / FOLDER BARU ---
     public function createItem(Request $request, $hashid)
     {

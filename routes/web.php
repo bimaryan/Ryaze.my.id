@@ -212,6 +212,8 @@ Route::middleware('auth')->group(function () {
             Route::post('user/hosting/projects/{hashid}/files/create', [DashboardController::class, 'createItem'])->name('user_hosting.files.create');
             Route::post('user/hosting/projects/{hashid}/files/delete', [DashboardController::class, 'deleteItem'])->name('user_hosting.files.delete');
             Route::post('user/hosting/projects/{hashid}/files/rename', [DashboardController::class, 'renameItem'])->name('user_hosting.files.rename');
+            Route::post('user/hosting/projects/{hashid}/files/copy', [DashboardController::class, 'copyItem'])->name('user_hosting.files.copy');
+            Route::post('user/hosting/projects/{hashid}/files/move', [DashboardController::class, 'moveItem'])->name('user_hosting.files.move');
             Route::get('user/hosting/projects/{hashid}/files/download', [DashboardController::class, 'downloadItem'])->name('user_hosting.files.download');
             Route::post('user/hosting/projects/{hashid}/ide/chat', [DashboardController::class, 'ideChat'])->name('user_hosting.ide.chat');
             Route::get('user/hosting/projects/{hashid}/ide/chats', [DashboardController::class, 'ideChats'])->name('user_hosting.ide.chats');
