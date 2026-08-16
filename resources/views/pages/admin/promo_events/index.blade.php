@@ -13,73 +13,69 @@
             </x-slot>
         </x-ui.page-header>
         
-        <x-ui.card class="mt-6 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                    <thead class="bg-slate-50 dark:bg-slate-800/50">
-                        <tr>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Judul Promo</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Masa Berlaku</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-                            <th scope="col" class="px-6 py-4 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-700">
-                        @forelse($promos as $promo)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        @if($promo->banner_image)
-                                            <div class="flex-shrink-0 h-10 w-16 mr-4 bg-slate-100 rounded flex items-center justify-center overflow-hidden">
-                                                <img class="max-h-full max-w-full object-cover" src="{{ $promo->banner_url }}" alt="">
-                                            </div>
-                                        @endif
-                                        <div>
-                                            <div class="text-sm font-medium text-slate-900 dark:text-white">{{ $promo->title }}</div>
-                                            <div class="text-xs text-slate-500">{{ Str::limit($promo->description, 50) }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-slate-900 dark:text-white">{{ $promo->start_date->format('d M Y, H:i') }}</div>
-                                    <div class="text-xs text-slate-500">s.d. {{ $promo->end_date->format('d M Y, H:i') }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($promo->is_active && $promo->end_date >= now())
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
-                                            Aktif
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20">
-                                            Tidak Aktif
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a href="{{ route('admin.promo_events.edit', $promo->id) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">Edit</a>
-                                    <form action="{{ route('admin.promo_events.destroy', $promo->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus promo ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-rose-600 hover:text-rose-900 dark:text-rose-400 dark:hover:text-rose-300">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="px-6 py-12 text-center">
-                                    <div class="text-slate-500 dark:text-slate-400 mb-2"><i class="fa-solid fa-box-open text-4xl"></i></div>
-                                    <p class="text-sm font-medium text-slate-600 dark:text-slate-300">Belum ada promo event</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+        <x-ui.table>
+            <x-slot:head>
+                <th scope="col" class="px-6 py-4">Judul Promo</th>
+                <th scope="col" class="px-6 py-4">Masa Berlaku</th>
+                <th scope="col" class="px-6 py-4">Status</th>
+                <th scope="col" class="px-6 py-4 text-right">Aksi</th>
+            </x-slot:head>
+
+            @forelse($promos as $promo)
+                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            @if($promo->banner_image)
+                                <img src="{{ $promo->banner_url }}" alt="{{ $promo->title }}" class="w-16 h-10 object-cover rounded-lg border border-slate-200 dark:border-slate-700">
+                            @else
+                                <div class="w-16 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-100 dark:border-indigo-500/30">
+                                    <i class="fa-solid fa-bullhorn"></i>
+                                </div>
+                            @endif
+                            <div class="flex flex-col min-w-0">
+                                <span class="font-medium text-slate-800 dark:text-slate-100 truncate max-w-[250px]">{{ $promo->title }}</span>
+                                <span class="text-xs text-slate-400 dark:text-slate-500">{{ Str::limit($promo->description, 50) }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-slate-900 dark:text-slate-100">{{ $promo->start_date->format('d M Y, H:i') }}</div>
+                        <div class="text-xs text-slate-500">s.d. {{ $promo->end_date->format('d M Y, H:i') }}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        @if($promo->is_active && $promo->end_date >= now())
+                            <span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase rounded">Aktif</span>
+                        @else
+                            <span class="px-2 py-0.5 bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 text-[10px] font-bold uppercase rounded">Tidak Aktif</span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <a href="{{ route('admin.promo_events.edit', $promo->id) }}" class="p-1.5 inline-flex items-center justify-center text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 rounded-lg transition mr-2" title="Edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <form action="{{ route('admin.promo_events.destroy', $promo->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus promo ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="p-1.5 inline-flex items-center justify-center text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-lg transition" title="Hapus">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center">
+                        <div class="text-slate-400 dark:text-slate-500 mb-2"><i class="fa-solid fa-folder-open text-4xl"></i></div>
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Belum ada promo event.</p>
+                    </td>
+                </tr>
+            @endforelse
+        </x-ui.table>
+
+        @if($promos->hasPages())
+            <div class="mt-4">
+                {{ $promos->links() }}
             </div>
-            @if($promos->hasPages())
-                <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700">
-                    {{ $promos->links() }}
-                </div>
-            @endif
-        </x-ui.card>
+        @endif
     </x-ui.page-layout>
 @endsection

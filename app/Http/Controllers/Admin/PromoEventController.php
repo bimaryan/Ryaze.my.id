@@ -56,7 +56,7 @@ class PromoEventController extends Controller
             'target_url' => 'nullable|url',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'banner_image' => 'nullable|image|max:2048',
+            'banner_image' => 'nullable|image|max:3048',
         ]);
 
         $data = $request->except('banner_image');
