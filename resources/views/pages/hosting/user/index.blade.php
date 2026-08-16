@@ -16,7 +16,7 @@
         </x-ui.page-header>
 
         {{-- Promo Event Banner --}}
-        <x-ui.promo-banner class="mt-6" />
+        <x-ui.promo-banner class="mt-6 max-w-4xl mx-auto shadow-sm" />
 
         {{-- Wallet & Affiliate Summary --}}
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">

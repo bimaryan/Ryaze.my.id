@@ -210,7 +210,7 @@
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-slate-950 pointer-events-none"></div>
         <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
 
-            <x-ui.promo-banner class="mb-8 max-w-2xl mx-auto shadow-lg">
+            <x-ui.promo-banner class="mb-8 max-w-4xl mx-auto shadow-lg">
                 <x-slot name="fallback">
                     <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur text-slate-600 dark:text-slate-300 text-xs font-semibold mb-8 shadow-sm">
                         <span class="relative flex h-2 w-2">
