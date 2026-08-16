@@ -2300,19 +2300,33 @@ PHP;
             $invoiceAmount += $adminFee;
         }
 
+        $activeBilling = $user->hostingBillings()->where('status', 'active')->latest()->first();
+        $oldPlanBaseStorage = $activeBilling ? (\App\Models\User::getPlanLimits($activeBilling->plan)['storage_mb'] ?? 1024) : 1024;
+        $currentLimit = $user->hosting_storage_limit_mb ?? 1024;
+        $extraStorage = max(0, $currentLimit - $oldPlanBaseStorage);
+
         if ($invoiceAmount <= 0) {
             // Activate immediately
-            \App\Models\HostingBilling::create([
-                'user_id'            => $user->id,
-                'hosting_project_id' => null,
-                'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
-                'plan'               => $selectedPlan,
-                'amount'             => 0,
-                'billing_cycle'      => 'monthly',
-                'status'             => 'active',
-                'next_due_date'      => now()->addYears(10), // Paket gratis / free berlaku panjang
-            ]);
-            $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb']]);
+            if ($activeBilling) {
+                $activeBilling->update([
+                    'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
+                    'plan'               => $selectedPlan,
+                    'amount'             => 0,
+                    'next_due_date'      => now()->addYears(10),
+                ]);
+            } else {
+                \App\Models\HostingBilling::create([
+                    'user_id'            => $user->id,
+                    'hosting_project_id' => null,
+                    'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
+                    'plan'               => $selectedPlan,
+                    'amount'             => 0,
+                    'billing_cycle'      => 'monthly',
+                    'status'             => 'active',
+                    'next_due_date'      => now()->addYears(10), // Paket gratis / free berlaku panjang
+                ]);
+            }
+            $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);
             
             // Hapus tagihan unpaid sebelumnya jika ada
             \App\Models\HostingPayment::where('user_id', $user->id)->where('invoice_number', 'like', 'HST-INV-%')->where('status', 'unpaid')->delete();
@@ -2420,22 +2434,35 @@ PHP;
             ->where('status', 'active')
             ->first();
 
+        $oldPlanBaseStorage = $billing ? (\App\Models\User::getPlanLimits($billing->plan)['storage_mb'] ?? 1024) : 1024;
+        $currentLimit = $user->hosting_storage_limit_mb ?? 1024;
+        $extraStorage = max(0, $currentLimit - $oldPlanBaseStorage);
+
+        $selectedPlan = $invoice->notes;
+        $planLimits = \App\Models\User::getPlanLimits($selectedPlan);
+
         if ($billing) {
             $billing->update([
+                'plan_name' => 'Paket ' . ucfirst($selectedPlan),
+                'plan' => $selectedPlan,
+                'amount' => $invoice->amount,
                 'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
             ]);
         } else {
             \App\Models\HostingBilling::create([
                 'user_id' => $user->id,
                 'hosting_project_id' => null,
-                'plan_name' => 'Paket ' . ucfirst($invoice->notes),
-                'plan' => $invoice->notes,
+                'plan_name' => 'Paket ' . ucfirst($selectedPlan),
+                'plan' => $selectedPlan,
                 'amount' => $invoice->amount,
                 'billing_cycle' => 'monthly',
                 'next_due_date' => now()->addMonth(),
                 'status' => 'active'
             ]);
         }
+
+        // Update storage limit according to plan
+        $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);
 
         // Cari semua project unpaid dan deploy
         $unpaidProjects = \App\Models\HostingProject::where('user_id', $user->id)

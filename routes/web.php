@@ -126,6 +126,9 @@ Route::middleware('auth')->group(function () {
         Route::patch('superadmin/articles/{hashid}/featured', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleFeatured'])->name('superadmin.articles.featured');
         Route::patch('superadmin/articles/{hashid}/status', [\App\Http\Controllers\Admin\ArticleController::class, 'toggleStatus'])->name('superadmin.articles.status');
         Route::resource('superadmin/article-categories', \App\Http\Controllers\Admin\ArticleCategoryController::class)->names('superadmin.article_categories');
+        
+        // Promo Events
+        Route::resource('superadmin/promo-events', \App\Http\Controllers\Admin\PromoEventController::class)->names('admin.promo_events');
     });
 
     // ═══════════════════════════════════════════════════════════════

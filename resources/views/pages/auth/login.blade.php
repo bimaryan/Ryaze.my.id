@@ -11,9 +11,30 @@
     <div class="min-h-screen flex items-center justify-center p-6">
         <div class="max-w-md w-full bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
 
-            <div class="bg-indigo-600 px-8 py-10 text-center">
-                <h1 class="text-3xl font-bold text-white tracking-tight">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</h1>
-                <p class="text-indigo-200 mt-2 text-sm">Masuk untuk mengelola Joki & Hosting Anda</p>
+            <div class="bg-indigo-600 px-8 py-10 text-center relative overflow-hidden">
+                @php
+                    $activePromo = \App\Models\PromoEvent::where('is_active', true)
+                        ->where('start_date', '<=', now())
+                        ->where('end_date', '>=', now())
+                        ->latest()
+                        ->first();
+                @endphp
+
+                @if($activePromo && $activePromo->banner_image)
+                    <div class="absolute inset-0 z-0">
+                        <img src="{{ $activePromo->banner_url }}" class="w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Promo">
+                        <div class="absolute inset-0 bg-indigo-900/40"></div>
+                    </div>
+                @endif
+                
+                <div class="relative z-10">
+                    <h1 class="text-3xl font-bold text-white tracking-tight">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</h1>
+                    @if($activePromo)
+                        <p class="text-indigo-100 mt-2 text-sm font-medium">✨ {{ $activePromo->title }} ✨</p>
+                    @else
+                        <p class="text-indigo-200 mt-2 text-sm">Masuk untuk mengelola Joki & Hosting Anda</p>
+                    @endif
+                </div>
             </div>
 
             <div class="p-8">

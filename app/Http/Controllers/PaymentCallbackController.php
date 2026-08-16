@@ -117,6 +117,10 @@ class PaymentCallbackController extends Controller
                                 ->first();
 
                             if ($billing) {
+                                $oldPlanBaseStorage = \App\Models\User::getPlanLimits($billing->plan)['storage_mb'] ?? 1024;
+                                $currentLimit = $user->hosting_storage_limit_mb ?? 1024;
+                                $extraStorage = max(0, $currentLimit - $oldPlanBaseStorage);
+
                                 $selectedPlan = $payment->notes ?? $billing->plan;
                                 if (!in_array($selectedPlan, ['starter', 'pro', 'business'])) {
                                     $selectedPlan = $billing->plan ?? 'starter';
@@ -131,8 +135,12 @@ class PaymentCallbackController extends Controller
                                     'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
                                 ]);
                                 
-                                $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb']]);
+                                $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);
                             } else {
+                                $currentLimit = $user->hosting_storage_limit_mb ?? 1024;
+                                $oldPlanBaseStorage = 1024; // Default Starter
+                                $extraStorage = max(0, $currentLimit - $oldPlanBaseStorage);
+
                                 // Read selected plan from invoice notes
                                 $selectedPlan = $payment->notes ?? 'starter';
                                 if (!in_array($selectedPlan, ['starter', 'pro', 'business'])) {
@@ -153,8 +161,9 @@ class PaymentCallbackController extends Controller
                                 ]);
 
                                 // Update storage limit according to plan
-                                $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb']]);
+                                $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);
                             }
+
 
                             // Cari semua project unpaid dan deploy
                             $unpaidProjects = \App\Models\HostingProject::where('user_id', $user->id)

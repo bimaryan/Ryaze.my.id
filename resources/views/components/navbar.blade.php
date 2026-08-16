@@ -214,6 +214,13 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.promo_events.index') }}"
+                        class="{{ $navLink(request()->routeIs('admin.promo_events*')) }}">
+                        <i class="fa-solid fa-bullhorn {{ $iconClass(request()->routeIs('admin.promo_events*')) }}"></i>
+                        <span class="ms-3 whitespace-nowrap">Promo Event</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('superadmin.articles.index') }}"
                         class="{{ $navLink(request()->routeIs('superadmin.articles*') || request()->routeIs('superadmin.article_categories*')) }}">
                         <i class="fa-solid fa-newspaper {{ $iconClass(request()->routeIs('superadmin.articles*') || request()->routeIs('superadmin.article_categories*')) }}"></i>
