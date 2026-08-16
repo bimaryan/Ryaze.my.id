@@ -210,36 +210,17 @@
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-slate-950 pointer-events-none"></div>
         <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
 
-            @php
-                $activePromo = \App\Models\PromoEvent::where('is_active', true)
-                    ->where('start_date', '<=', now())
-                    ->where('end_date', '>=', now())
-                    ->latest()
-                    ->first();
-            @endphp
-
-            @if($activePromo)
-                <a href="{{ $activePromo->target_url ?? '#' }}" class="block mb-8 transition-transform hover:scale-[1.02]">
-                    @if($activePromo->banner_image)
-                        <img src="{{ $activePromo->banner_url }}" class="w-full max-w-2xl mx-auto rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 h-auto object-cover max-h-48" alt="{{ $activePromo->title }}">
-                    @else
-                        <div class="inline-flex flex-col items-center justify-center p-6 w-full max-w-2xl mx-auto rounded-2xl shadow-lg bg-gradient-to-r from-indigo-500 to-purple-600 border border-indigo-400 dark:border-indigo-500/50">
-                            <h3 class="text-xl md:text-2xl font-bold text-white">{{ $activePromo->title }}</h3>
-                            @if($activePromo->description)
-                                <p class="text-indigo-100 mt-2 text-sm">{{ $activePromo->description }}</p>
-                            @endif
-                        </div>
-                    @endif
-                </a>
-            @else
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur text-slate-600 dark:text-slate-300 text-xs font-semibold mb-8 shadow-sm">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    Sistem Deployment Tersedia
-                </div>
-            @endif
+            <x-ui.promo-banner class="mb-8 max-w-2xl mx-auto shadow-lg">
+                <x-slot name="fallback">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur text-slate-600 dark:text-slate-300 text-xs font-semibold mb-8 shadow-sm">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Sistem Deployment Tersedia
+                    </div>
+                </x-slot>
+            </x-ui.promo-banner>
 
             <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 leading-[1.1] mb-6">
                 Bangun Produk Digital Anda <br class="hidden md:block" />
