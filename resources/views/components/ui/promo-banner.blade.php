@@ -18,7 +18,7 @@
                 <div class="w-full shrink-0">
                     <a href="{{ $activePromo->target_url ?? '#' }}" class="block relative w-full h-full hover:scale-[1.01] transition-transform">
                         @if($activePromo->banner_image)
-                            <img src="{{ $activePromo->banner_url }}" class="w-full h-auto object-cover max-h-48" alt="{{ $activePromo->title }}">
+                            <img src="{{ $activePromo->banner_url }}" class="w-full h-auto object-contain rounded-2xl" alt="{{ $activePromo->title }}">
                         @else
                             <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8 sm:py-10 text-center border border-indigo-400 dark:border-indigo-500/50 min-h-[192px] flex flex-col justify-center">
                                 <h3 class="text-xl md:text-2xl font-bold text-white tracking-tight">{{ $activePromo->title }}</h3>
