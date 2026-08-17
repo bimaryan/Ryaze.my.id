@@ -923,16 +923,19 @@ class DashboardController extends Controller
         $baseDir = hosting_clients_dir() . "/{$subdomain}";
         if (!is_dir($baseDir)) {
             @mkdir($baseDir, 0755, true);
+            clearstatcache(true, $baseDir);
         }
-        $projectRootDir = realpath($baseDir);
+        $realBase = realpath($baseDir);
+        $projectRootDir = ($realBase !== false) ? $realBase : rtrim($baseDir, '/\\');
         $requestPath = trim($request->input('path', ''), '/');
 
         $targetDir = $projectRootDir;
         if (! empty($requestPath)) {
-            $targetDir = realpath($projectRootDir.'/'.$requestPath);
+            $realTarget = realpath($projectRootDir . DIRECTORY_SEPARATOR . $requestPath);
+            $targetDir = ($realTarget !== false) ? $realTarget : $projectRootDir . DIRECTORY_SEPARATOR . $requestPath;
         }
 
-        if ($targetDir === false || $projectRootDir === false || strpos($targetDir, $projectRootDir) !== 0) {
+        if ($targetDir === false || strpos(str_replace('\\', '/', $targetDir), str_replace('\\', '/', $projectRootDir)) !== 0) {
             return response()->json(['error' => 'Akses ditolak! Anda mencoba keluar dari root direktori.'], 403);
         }
 
