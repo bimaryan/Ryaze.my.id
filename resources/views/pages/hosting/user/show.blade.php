@@ -1707,6 +1707,10 @@ NGINX_CONF
         var PROTECTED_FILES = ['.suspended', '.htaccess', '.user.ini', '.maintenance'];
         var isProtected = name => PROTECTED_FILES.includes(name);
 
+        function escHtmlJs(str) {
+            return JSON.stringify(str || '').slice(1, -1).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
         // ── Load direktori ─────────────────────────────────────────────────────
         function loadFileManager(path = '') {
             const loader = document.getElementById('file-manager-loader');
@@ -2302,8 +2306,8 @@ NGINX_CONF
 
             const actionsHtml = !isProtected(item.name) ? `
                 <div class="hidden group-hover:flex items-center gap-2 ml-auto pl-2 bg-[#2a2d2e] text-[11px] text-slate-400">
-                    <button class="hover:text-indigo-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${item.path.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}', 'copy')" title="Copy"><i class="fa-solid fa-copy"></i></button>
-                    <button class="hover:text-purple-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${item.path.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}', 'cut')" title="Cut"><i class="fa-solid fa-scissors"></i></button>
+                    <button class="hover:text-indigo-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'copy')" title="Copy"><i class="fa-solid fa-copy"></i></button>
+                    <button class="hover:text-purple-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'cut')" title="Cut"><i class="fa-solid fa-scissors"></i></button>
                 </div>
             ` : '';
 
