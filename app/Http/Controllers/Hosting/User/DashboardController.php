@@ -228,6 +228,7 @@ class DashboardController extends Controller
             'source_type'  => $sourceType,
             'ryaze_domain' => $subdomain . $domainExtension,
             'status'       => 'building',
+            'storage_limit_mb' => $user->hosting_storage_limit_mb ?? \App\Models\User::getPlanLimits('free')['storage_mb'],
         ]);
 
         \Illuminate\Support\Facades\Log::info('Project created (Building)', [
@@ -354,6 +355,7 @@ class DashboardController extends Controller
             'source_type'  => $project->source_type, 
             'ryaze_domain' => $stagingDomain,
             'status'       => 'active',
+            'storage_limit_mb' => $user->hosting_storage_limit_mb ?? \App\Models\User::getPlanLimits('free')['storage_mb'],
         ]);
 
         $liveDir = hosting_clients_dir() . "/{$subdomain}";

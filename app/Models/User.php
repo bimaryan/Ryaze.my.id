@@ -195,7 +195,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public static function getPlanLimits(string $plan): array
     {
-        return static::hostingPlans()[$plan] ?? static::hostingPlans()['starter'];
+        return static::hostingPlans()[$plan] ?? static::hostingPlans()['free'];
     }
 
     public static function getPlanPricing(string $plan): array
@@ -243,7 +243,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('next_due_date', '>', now())
             ->latest()
             ->first();
-        $plan = $activeBilling->plan ?? 'starter';
+        $plan = $activeBilling->plan ?? 'free';
         return static::getPlanLimits($plan)['max_projects'];
     }
 
