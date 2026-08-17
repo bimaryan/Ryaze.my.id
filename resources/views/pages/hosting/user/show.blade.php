@@ -1886,7 +1886,7 @@ NGINX_CONF
             updatePasteButton();
             // Flash feedback
             const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
-            Toast.fire({ icon: 'success', title: \`\${action === 'copy' ? 'Disalin' : 'Dipotong'}: \${name}\` });
+            Toast.fire({ icon: 'success', title: (action === 'copy' ? 'Disalin' : 'Dipotong') + ': ' + name });
         }
 
         async function doPasteItem(destinationPath) {
@@ -1913,7 +1913,7 @@ NGINX_CONF
                 updatePasteButton();
             }
 
-            swAlert('success', 'Berhasil', \`File/folder berhasil di-\${clipboard.action === 'copy' ? 'copy' : 'move'}\`);
+            swAlert('success', 'Berhasil', 'File/folder berhasil di-' + (clipboard.action === 'copy' ? 'copy' : 'move'));
             
             // Reload views
             if(typeof window.loadFileManager === 'function') window.loadFileManager(currentFolderPath);
