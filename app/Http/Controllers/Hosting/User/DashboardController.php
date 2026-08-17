@@ -932,7 +932,7 @@ class DashboardController extends Controller
             $targetDir = realpath($projectRootDir.'/'.$requestPath);
         }
 
-        if ($targetDir === false || strpos($targetDir, $projectRootDir) !== 0) {
+        if ($targetDir === false || $projectRootDir === false || strpos($targetDir, $projectRootDir) !== 0) {
             return response()->json(['error' => 'Akses ditolak! Anda mencoba keluar dari root direktori.'], 403);
         }
 
@@ -2800,7 +2800,10 @@ PHP;
         $baseDir = hosting_clients_dir() . "/{$subdomain}";
         if (!is_dir($baseDir)) {
             @mkdir($baseDir, 0755, true);
+            clearstatcache(true, $baseDir);
         }
-        return realpath($baseDir);
+        
+        $real = realpath($baseDir);
+        return $real !== false ? $real : $baseDir;
     }
 }
