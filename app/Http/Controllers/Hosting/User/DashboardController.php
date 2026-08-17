@@ -844,8 +844,7 @@ class DashboardController extends Controller
     public function ideSearch(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
+        $projectRootDir = $this->getProjectRootDir($project);
 
         $query = $request->input('query', '');
         $matchCase = filter_var($request->input('matchCase', false), FILTER_VALIDATE_BOOLEAN);
@@ -921,7 +920,11 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
+        $baseDir = hosting_clients_dir() . "/{$subdomain}";
+        if (!is_dir($baseDir)) {
+            @mkdir($baseDir, 0755, true);
+        }
+        $projectRootDir = realpath($baseDir);
         $requestPath = trim($request->input('path', ''), '/');
 
         $targetDir = $projectRootDir;
@@ -977,8 +980,7 @@ class DashboardController extends Controller
     public function readFile(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
+        $projectRootDir = $this->getProjectRootDir($project);
 
         $requestPath = trim($request->input('path', ''), '/');
         $targetFile = realpath($projectRootDir.'/'.$requestPath);
@@ -997,8 +999,7 @@ class DashboardController extends Controller
         \Log::info("saveFile route hit! hashid: {$hashid}, path: " . $request->input('path'));
         $project = $this->getValidProject($hashid);
         if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
+        $projectRootDir = $this->getProjectRootDir($project);
 
         $requestPath = trim($request->input('path', ''), '/');
         $targetFile = realpath($projectRootDir.'/'.$requestPath);
@@ -1357,8 +1358,7 @@ class DashboardController extends Controller
 
     private function getValidTargetPath($project, $requestPath)
     {
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectRootDir = realpath(hosting_clients_dir() . "/{$subdomain}");
+        $projectRootDir = $this->getProjectRootDir($project);
 
         // Gabungkan path
         $fullPath = $projectRootDir.'/'.trim($requestPath, '/');
@@ -2625,8 +2625,7 @@ PHP;
         $totalBytes = 0;
 
         foreach ($projects as $p) {
-            $subdomain = explode('.', $p->ryaze_domain)[0];
-            $dir = realpath(hosting_clients_dir() . "/{$subdomain}");
+            $dir = $this->getProjectRootDir($p);
             if ($dir && is_dir($dir)) {
                 $output = shell_exec("du -sb " . escapeshellarg($dir) . " 2>/dev/null");
                 if ($output) {
@@ -2793,5 +2792,15 @@ PHP;
         $project->teamMembers()->detach($userId);
 
         return back()->with('success', 'Akses anggota tim berhasil dicabut.');
+    }
+
+    private function getProjectRootDir($project)
+    {
+        $subdomain = explode('.', $project->ryaze_domain)[0];
+        $baseDir = hosting_clients_dir() . "/{$subdomain}";
+        if (!is_dir($baseDir)) {
+            @mkdir($baseDir, 0755, true);
+        }
+        return realpath($baseDir);
     }
 }
