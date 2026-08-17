@@ -1496,12 +1496,10 @@ NGINX_CONF
             }
             if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input').focus(), 80);
             
-            // Auto-load file manager saat pertama dibuka
+            // Auto-load file manager saat dibuka
             if (name === 'files') {
-                const fmBody = document.getElementById('file-manager-body');
-                if (fmBody && fmBody.children.length === 0) {
-                    if(typeof window.loadFileManager === 'function') window.loadFileManager();
-                }
+                if(typeof window.loadFileManager === 'function') window.loadFileManager();
+                else console.error('loadFileManager not defined yet');
             }
             
             // Auto-load IDE saat pertama dibuka
@@ -1821,8 +1819,11 @@ NGINX_CONF
 
                     loader.classList.add('hidden');
                 })
-                .catch(() => {
-                    hotToast('Gagal memuat file browser.', 'error');
+                .catch((err) => {
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-rose-400">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-2 opacity-70 block"></i>
+                        Gagal memuat file: ${err && err.message ? err.message : 'Network error'}
+                    </td></tr>`;
                     loader.classList.add('hidden');
                 });
         }
