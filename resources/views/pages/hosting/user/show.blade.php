@@ -1533,7 +1533,8 @@ NGINX_CONF
         var cwdDisplay = document.getElementById('terminal-cwd-display');
         var termUrl = fixUrl('{{ route('user_hosting.terminal', $project->hashid) }}');
         var csrfToken = '{{ csrf_token() }}';
-        var projectRoot = @json(implode('/', explode(DIRECTORY_SEPARATOR, hosting_clients_dir())) . '/' . str_replace('.ryaze.my.id', '', $project->ryaze_domain));
+        @php $__projectRoot = str_replace(DIRECTORY_SEPARATOR, '/', hosting_clients_dir()) . '/' . str_replace('.ryaze.my.id', '', $project->ryaze_domain); @endphp
+        var projectRoot = @json($__projectRoot);
         var projectSlug = '{{ $project->ryaze_domain }}';
 
         var cmdHistory = [],
