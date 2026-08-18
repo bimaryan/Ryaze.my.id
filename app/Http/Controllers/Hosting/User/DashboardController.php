@@ -2313,6 +2313,12 @@ PHP;
         if ($invoiceAmount <= 0) {
             // Activate immediately
             if ($activeBilling) {
+                // Nonaktifkan semua billing aktif lain agar tidak ada duplikat
+                \App\Models\HostingBilling::where('user_id', $user->id)
+                    ->where('status', 'active')
+                    ->where('id', '!=', $activeBilling->id)
+                    ->update(['status' => 'canceled']);
+
                 $activeBilling->update([
                     'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
                     'plan'               => $selectedPlan,
@@ -2437,6 +2443,7 @@ PHP;
         // Update atau buat langganan
         $billing = \App\Models\HostingBilling::where('user_id', $user->id)
             ->where('status', 'active')
+            ->latest()
             ->first();
 
         $oldPlanBaseStorage = $billing ? (\App\Models\User::getPlanLimits($billing->plan)['storage_mb'] ?? 1024) : 1024;
@@ -2447,6 +2454,12 @@ PHP;
         $planLimits = \App\Models\User::getPlanLimits($selectedPlan);
 
         if ($billing) {
+            // Nonaktifkan semua billing aktif lain agar tidak ada duplikat
+            \App\Models\HostingBilling::where('user_id', $user->id)
+                ->where('status', 'active')
+                ->where('id', '!=', $billing->id)
+                ->update(['status' => 'canceled']);
+
             $billing->update([
                 'plan_name' => 'Paket ' . ucfirst($selectedPlan),
                 'plan' => $selectedPlan,

@@ -112,8 +112,10 @@ class PaymentCallbackController extends Controller
                         $user = $payment->user;
                         if ($user) {
                             // Update atau buat langganan
+                            // Ambil billing aktif terbaru
                             $billing = \App\Models\HostingBilling::where('user_id', $user->id)
                                 ->where('status', 'active')
+                                ->latest()
                                 ->first();
 
                             if ($billing) {
@@ -127,6 +129,12 @@ class PaymentCallbackController extends Controller
                                 }
                                 $planLimits = \App\Models\User::getPlanLimits($selectedPlan);
                                 $planPrice  = \App\Models\User::getPlanPrice($selectedPlan);
+
+                                // Nonaktifkan semua billing aktif lain agar tidak ada duplikat
+                                \App\Models\HostingBilling::where('user_id', $user->id)
+                                    ->where('status', 'active')
+                                    ->where('id', '!=', $billing->id)
+                                    ->update(['status' => 'canceled']);
 
                                 $billing->update([
                                     'plan' => $selectedPlan,
