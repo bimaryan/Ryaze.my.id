@@ -118,26 +118,7 @@ html.dark::-webkit-scrollbar-thumb:hover {
     background-color: #1e293b !important;
 }
 
-/* =====================================================
-   VIEW TRANSITION API (SMOOTH DARK MODE TOGGLE)
-   ===================================================== */
-::view-transition-old(root),
-::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-}
-::view-transition-old(root) {
-    z-index: 1;
-}
-::view-transition-new(root) {
-    z-index: 2147483646;
-}
-.dark::view-transition-old(root) {
-    z-index: 2147483646;
-}
-.dark::view-transition-new(root) {
-    z-index: 1;
-}
+
 
 /* Flowbite modal content */
 .dark [data-modal-target] + [id] .relative,

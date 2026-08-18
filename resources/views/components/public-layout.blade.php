@@ -136,6 +136,26 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js" nonce="{{ csp_nonce() }}"></script>
 
     @stack('head')
+    <style>
+        /* View Transition API untuk animasi Dark Mode */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+        ::view-transition-old(root) {
+            z-index: 1;
+        }
+        ::view-transition-new(root) {
+            z-index: 2147483646;
+        }
+        .dark::view-transition-old(root) {
+            z-index: 2147483646;
+        }
+        .dark::view-transition-new(root) {
+            z-index: 1;
+        }
+    </style>
 </head>
 
 <body class="{{ $bodyClass }}">

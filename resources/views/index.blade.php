@@ -127,6 +127,26 @@
 
     <!-- ApexCharts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" nonce="{{ csp_nonce() }}"></script>
+    <style>
+        /* View Transition API untuk animasi Dark Mode */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+        ::view-transition-old(root) {
+            z-index: 1;
+        }
+        ::view-transition-new(root) {
+            z-index: 2147483646;
+        }
+        .dark::view-transition-old(root) {
+            z-index: 2147483646;
+        }
+        .dark::view-transition-new(root) {
+            z-index: 1;
+        }
+    </style>
 </head>
 
 <body class="bg-mesh font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100">

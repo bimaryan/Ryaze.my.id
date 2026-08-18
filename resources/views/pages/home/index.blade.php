@@ -1,7 +1,7 @@
 <x-public-layout
     title="Jasa Pembuatan Website & Shared Hosting Indonesia"
     description="Jasa pembuatan website, aplikasi, dan joki Tugas Akhir. Shared hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan."
-    body-class="antialiased selection:bg-indigo-600 selection:text-white relative"
+    body-class="bg-slate-50 font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-indigo-600 selection:text-white relative"
     og-image="{{ url('/og-image.png') }}"
     :links="[
         ['label' => 'Tentang', 'href' => '#about'],
