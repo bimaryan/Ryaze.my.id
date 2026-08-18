@@ -9,10 +9,27 @@ use Illuminate\Support\Facades\Storage;
 
 class PromoEventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $promos = PromoEvent::latest()->paginate(10);
+        $query = PromoEvent::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('is_active', $request->status);
+        }
+
+        $promos = $query->latest()->paginate(10)->withQueryString();
+        
         return view('pages.admin.promo_events.index', compact('promos'));
+    }
+
+    public function toggleStatus(PromoEvent $promo_event)
+    {
+        $promo_event->update(['is_active' => !$promo_event->is_active]);
+        return back()->with('success', 'Status promo berhasil diubah.');
     }
 
     public function create()

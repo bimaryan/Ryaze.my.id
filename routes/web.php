@@ -128,6 +128,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('superadmin/article-categories', \App\Http\Controllers\Admin\ArticleCategoryController::class)->names('superadmin.article_categories');
         
         // Promo Events
+        Route::patch('superadmin/promo-events/{promo_event}/status', [\App\Http\Controllers\Admin\PromoEventController::class, 'toggleStatus'])->name('admin.promo_events.status');
         Route::resource('superadmin/promo-events', \App\Http\Controllers\Admin\PromoEventController::class)->names('admin.promo_events');
     });
 
