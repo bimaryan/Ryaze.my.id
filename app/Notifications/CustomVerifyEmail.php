@@ -23,8 +23,8 @@ class CustomVerifyEmail extends VerifyEmailBase
         }
 
         return (new MailMessage)
-            ->from('verifikasi@ryaze.my.id', 'Ryaze Security')
-            ->subject('Verifikasi Alamat Email Anda')
+            ->from(config('mail.from.address'), 'Ryaze Portal')
+            ->subject('[Ryaze] Verifikasi Alamat Email Anda')
             ->view('emails.custom-auth', [
                 'title' => 'Verifikasi Email',
                 'intro' => 'Terima kasih telah mendaftar di Ryaze Portal. Untuk mulai menggunakan semua fitur kami, silakan verifikasi alamat email Anda dengan mengeklik tombol di bawah ini.',

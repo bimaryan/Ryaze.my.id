@@ -27,8 +27,8 @@ class CustomResetPassword extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('resetpassword@ryaze.my.id', 'Ryaze Security')
-            ->subject('Permintaan Reset Password')
+            ->from(config('mail.from.address'), 'Ryaze Portal')
+            ->subject('[Ryaze] Permintaan Reset Password')
             ->view('emails.custom-auth', [
                 'title' => 'Reset Password',
                 'intro' => 'Kami menerima permintaan untuk mereset password akun Anda di Ryaze Portal. Silakan klik tombol di bawah ini untuk membuat password baru.',
