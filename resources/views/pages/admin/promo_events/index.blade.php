@@ -93,16 +93,16 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <form action="{{ route('admin.promo_events.status', $promo->id) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.promo_events.status', $promo->hashid) }}" method="POST" class="inline">
                                     @csrf @method('PATCH')
                                     <button type="submit" title="{{ $promo->is_active ? 'Nonaktifkan' : 'Aktifkan' }}" class="p-1.5 rounded-lg transition {{ $promo->is_active ? 'text-emerald-500 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' : 'text-slate-400 dark:text-slate-500 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10' }}">
                                         <i class="fa-solid {{ $promo->is_active ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                                     </button>
                                 </form>
-                                <a href="{{ route('admin.promo_events.edit', $promo->id) }}" class="p-1.5 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 rounded-lg transition">
+                                <a href="{{ route('admin.promo_events.edit', $promo->hashid) }}" class="p-1.5 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 rounded-lg transition">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('admin.promo_events.destroy', $promo->id) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.promo_events.destroy', $promo->hashid) }}" method="POST" class="inline">
                                     @csrf @method('DELETE')
                                     <button type="button" onclick="confirmDelete(this)" class="p-1.5 text-rose-600 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-lg transition">
                                         <i class="fa-solid fa-trash-can"></i>

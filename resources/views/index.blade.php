@@ -65,13 +65,48 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script nonce="{{ csp_nonce() }}">
-        window.ryazeToggleTheme = function () {
-            var dark = document.documentElement.classList.toggle('dark');
-            document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-            localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
-            document.dispatchEvent(new CustomEvent('theme:change', { detail: { dark: dark } }));
-            document.querySelectorAll('[role="switch"][onclick*="ryazeToggleTheme"]').forEach(function(btn) {
-                btn.setAttribute('aria-checked', dark);
+        window.ryazeToggleTheme = function (event) {
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            const toggleTheme = () => {
+                var dark = document.documentElement.classList.toggle('dark');
+                document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+                localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
+                document.dispatchEvent(new CustomEvent('theme:change', { detail: { dark: dark } }));
+                document.querySelectorAll('[role="switch"][onclick*="ryazeToggleTheme"]').forEach(function(btn) {
+                    btn.setAttribute('aria-checked', dark);
+                });
+            };
+
+            // Jika browser tidak support View Transitions API, gunakan mode standar
+            if (!document.startViewTransition) {
+                toggleTheme();
+                return;
+            }
+
+            // Ambil titik kordinat klik untuk animasi melingkar
+            const x = event?.clientX ?? window.innerWidth / 2;
+            const y = event?.clientY ?? window.innerHeight / 2;
+            const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+            const transition = document.startViewTransition(toggleTheme);
+
+            transition.ready.then(() => {
+                const clipPath = [
+                    `circle(0px at ${x}px ${y}px)`,
+                    `circle(${endRadius}px at ${x}px ${y}px)`
+                ];
+                
+                document.documentElement.animate(
+                    {
+                        clipPath: isDark ? [...clipPath].reverse() : clipPath,
+                    },
+                    {
+                        duration: 500,
+                        easing: 'ease-in-out',
+                        pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
+                    }
+                );
             });
         };
     </script>

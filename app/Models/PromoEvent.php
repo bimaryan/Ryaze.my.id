@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasHashid;
 
 class PromoEvent extends Model
 {
+    use HasHashid;
     protected $fillable = [
         'title',
         'description',

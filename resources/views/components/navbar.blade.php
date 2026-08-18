@@ -28,7 +28,7 @@
             <div class="flex items-center">
                 <div class="flex items-center ms-3 gap-5">
                     {{-- Toggle Tema --}}
-                    <button type="button" onclick="ryazeToggleTheme()" aria-label="Ganti tema"
+                    <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
                         class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-300 dark:bg-indigo-600 transition-colors duration-300 ease-in-out focus:outline-none shadow-inner"
                         role="switch" aria-checked="false">
                         <span class="pointer-events-none inline-flex h-5 w-5 transform translate-x-1 dark:translate-x-6 items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm transition-all duration-300 ease-in-out">
