@@ -144,16 +144,16 @@
             mix-blend-mode: normal;
         }
         ::view-transition-old(root) {
-            z-index: 1;
+            z-index: 2147483646;
         }
         ::view-transition-new(root) {
-            z-index: 2147483646;
+            z-index: 1;
         }
         .dark::view-transition-old(root) {
-            z-index: 2147483646;
+            z-index: 1;
         }
         .dark::view-transition-new(root) {
-            z-index: 1;
+            z-index: 2147483646;
         }
     </style>
 </head>
