@@ -114,89 +114,19 @@
             }
 
             .dark body {
-                background-color: #020617; /* Slate 950 */
+                background-color: #09090b; /* Zinc 950 */
                 color: #f8fafc;
-            }
-
-            /* Elegant Modern Grid Background */
-            .bg-grid {
-                background-image: 
-                    linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
-                background-size: 32px 32px;
-                background-position: center top;
-                mask-image: linear-gradient(to bottom, white 40%, transparent 100%);
-                -webkit-mask-image: linear-gradient(to bottom, white 40%, transparent 100%);
-            }
-
-            .dark .bg-grid {
-                background-image: 
-                    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            }
-
-            /* Premium Glow Blobs */
-            .hero-glow {
-                position: absolute;
-                border-radius: 50%;
-                filter: blur(120px);
-                opacity: 0.6;
-                pointer-events: none;
-                z-index: 0;
-            }
-            .dark .hero-glow {
-                opacity: 0.25;
-            }
-
-            /* Glass & Modern Cards */
-            .card-premium {
-                background: rgba(255, 255, 255, 0.7);
-                backdrop-filter: blur(16px);
-                border: 1px solid rgba(15, 23, 42, 0.05);
-                border-radius: 16px;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            
-            .dark .card-premium {
-                background: rgba(15, 23, 42, 0.4);
-                border-color: rgba(255, 255, 255, 0.05);
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            }
-
-            .card-premium:hover {
-                transform: translateY(-4px);
-                border-color: rgba(99, 102, 241, 0.3);
-                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-            }
-
-            .dark .card-premium:hover {
-                border-color: rgba(99, 102, 241, 0.4);
-                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            }
-
-            /* Gradient text for subtle emphasis */
-            .text-gradient {
-                background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-            .dark .text-gradient {
-                background: linear-gradient(135deg, #818cf8 0%, #2dd4bf 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
             }
 
             /* Smooth Scroll Reveal */
             .reveal {
                 opacity: 0;
-                transform: translateY(30px) scale(0.98);
-                transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+                transform: translateY(20px);
+                transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             }
             .reveal.reveal-visible {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0);
             }
             @media (prefers-reduced-motion: reduce) {
                 .reveal { opacity: 1; transform: none; transition: none; }
@@ -205,54 +135,71 @@
             /* Stack Logos Hover */
             .stack-logo {
                 transition: all 0.3s ease;
-                filter: grayscale(100%) opacity(0.6);
+                opacity: 0.6;
             }
             .stack-logo:hover {
-                filter: grayscale(0%) opacity(1);
-                transform: translateY(-4px) scale(1.1);
+                opacity: 1;
+            }
+
+            /* Dotted Grid Background - Clean SaaS style */
+            .bg-dot-pattern {
+                background-image: radial-gradient(rgba(15, 23, 42, 0.1) 1px, transparent 1px);
+                background-size: 24px 24px;
+            }
+            .dark .bg-dot-pattern {
+                background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            }
+            .hero-glow {
+                position: absolute;
+                width: 600px;
+                height: 600px;
+                background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(0,0,0,0) 70%);
+                top: -200px;
+                left: 50%;
+                transform: translateX(-50%);
+                pointer-events: none;
+                z-index: 0;
             }
         </style>
     @endpush
 
     <!-- HERO SECTION -->
-    <section class="relative pt-32 pb-24 lg:pt-48 lg:pb-32 bg-slate-50 dark:bg-[#020617] min-h-[90vh] flex items-center overflow-hidden border-b border-slate-200/50 dark:border-white/5">
-        <!-- Abstract Background -->
-        <div class="absolute inset-0 bg-grid z-0"></div>
-        <div class="hero-glow w-[600px] h-[600px] bg-indigo-500/20 dark:bg-indigo-600/20 top-[-20%] left-[-10%]"></div>
-        <div class="hero-glow w-[500px] h-[500px] bg-sky-400/20 dark:bg-sky-500/20 bottom-[-10%] right-[-5%]"></div>
+    <section class="relative pt-32 pb-24 lg:pt-48 lg:pb-32 bg-white dark:bg-[#030712] min-h-[90vh] flex items-center overflow-hidden border-b border-slate-200 dark:border-white/5">
+        <!-- Minimal Background Pattern -->
+        <div class="absolute inset-0 bg-dot-pattern z-0 opacity-40"></div>
+        <div class="hero-glow hidden dark:block"></div>
+        <div class="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-white dark:from-[#030712] to-transparent z-0"></div>
+        <div class="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-white dark:from-[#030712] to-transparent z-0"></div>
         
         <div class="max-w-5xl mx-auto px-6 relative z-10 text-center">
             
-            <!-- Modern Badge -->
+            <!-- Sleek Badge -->
             <x-ui.promo-banner class="mb-10 max-w-4xl mx-auto">
                 <x-slot name="fallback">
-                    <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-slate-200/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] text-slate-600 dark:text-slate-300 text-xs sm:text-sm font-medium mb-8 transition-all hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:bg-white dark:hover:bg-slate-800">
-                        <span class="relative flex h-2.5 w-2.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                        </span>
+                    <div class="inline-flex items-center gap-2.5 px-3 py-1 rounded-full border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md shadow-sm text-slate-600 dark:text-slate-300 text-xs sm:text-sm font-medium mb-8 transition-colors hover:border-slate-300 dark:hover:border-white/20">
+                        <span class="flex h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
                         Sistem Deployment Tersedia
-                        <i class="fa-solid fa-arrow-right text-[10px] ml-1 opacity-70"></i>
+                        <i class="fa-solid fa-arrow-right text-[10px] ml-1 opacity-50"></i>
                     </div>
                 </x-slot>
             </x-ui.promo-banner>
 
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15] mb-8">
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-b dark:from-white dark:to-slate-400 leading-tight mb-6">
                 Bangun Produk Digital Anda <br class="hidden md:block" />
-                <span class="text-gradient">Lebih Cepat & Kuat.</span>
+                Lebih Cepat & Kuat.
             </h1>
 
-            <p class="text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed font-normal">
+            <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
                 Jasa pembuatan website & aplikasi terpercaya, plus shared hosting Indonesia dengan auto-deploy, SSL gratis, dan database MySQL. Tim development profesional siap mengeksekusi visi teknologi Anda tanpa kompromi.
             </p>
 
             <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
                 <a href="#services"
-                    class="px-8 py-3.5 text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 dark:hover:bg-indigo-500 shadow-[0_1px_2px_rgba(0,0,0,0.1),0_0_0_1px_rgba(255,255,255,0.1)_inset] hover:shadow-[0_4px_12px_rgba(79,70,229,0.3)] transition-all flex items-center justify-center gap-2">
+                    class="px-8 py-3 text-sm font-semibold rounded-full text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.1)] dark:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-2">
                     Jelajahi Layanan
                 </a>
                 <a href="#portfolio"
-                    class="px-8 py-3.5 text-sm font-semibold rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 shadow-sm transition-all flex items-center justify-center gap-2">
+                    class="px-8 py-3 text-sm font-semibold rounded-full text-slate-700 dark:text-slate-300 bg-transparent border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
                     Lihat Portofolio
                 </a>
             </div>
@@ -261,21 +208,21 @@
             <div class="grid grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
                 <div class="flex flex-col items-center justify-center">
                     <p class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">99.9%</p>
-                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2 uppercase tracking-wider">Uptime Server</p>
+                    <p class="text-[10px] font-bold text-slate-500 dark:text-slate-500 mt-2 uppercase tracking-[0.2em]">Uptime Server</p>
                 </div>
                 <div class="flex flex-col items-center justify-center border-x border-slate-200/50 dark:border-white/10">
                     <p class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">100+</p>
-                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2 uppercase tracking-wider">Project Selesai</p>
+                    <p class="text-[10px] font-bold text-slate-500 dark:text-slate-500 mt-2 uppercase tracking-[0.2em]">Project Selesai</p>
                 </div>
                 <div class="flex flex-col items-center justify-center">
                     <p class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">&lt;5 mnt</p>
-                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2 uppercase tracking-wider">Auto-Deploy</p>
+                    <p class="text-[10px] font-bold text-slate-500 dark:text-slate-500 mt-2 uppercase tracking-[0.2em]">Auto-Deploy</p>
                 </div>
             </div>
 
             <!-- Minimalist Tech Stack -->
-            <div class="pt-10 border-t border-slate-200/50 dark:border-white/10 max-w-4xl mx-auto">
-                <p class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-8">Didukung oleh Teknologi Modern</p>
+            <div class="pt-10 border-t border-slate-200/50 dark:border-white/5 max-w-4xl mx-auto">
+                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-8">Didukung oleh Teknologi Modern</p>
                 <div class="flex flex-wrap justify-center gap-10 text-slate-400 dark:text-slate-500">
                     <i class="fa-brands fa-laravel text-3xl md:text-4xl stack-logo"></i>
                     <i class="fa-brands fa-react text-3xl md:text-4xl stack-logo"></i>
@@ -290,13 +237,13 @@
     </section>
 
     <!-- ABOUT SECTION -->
-    <section id="about" class="py-24 bg-white dark:bg-[#020617] border-b border-slate-100 dark:border-white/5">
+    <section id="about" class="py-24 bg-slate-50 dark:bg-[#030712] border-b border-slate-200 dark:border-white/5">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <!-- Text Content -->
                 <div class="reveal">
-                    <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-3 block">Di Balik Layar</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6">Dedikasi Terhadap Kode yang Bersih.</h2>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-3 block">Di Balik Layar</span>
+                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">Dedikasi Terhadap Kode yang Bersih.</h2>
                     
                     <p class="text-base text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
                         Saya <strong>Bima Ryan Alfarizi</strong>, mahasiswa D4 Rekayasa Perangkat Lunak di Politeknik
@@ -310,34 +257,34 @@
                     </p>
 
                     <div class="flex flex-wrap gap-2">
-                        <span class="px-4 py-1.5 bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 rounded-full text-[11px] font-bold tracking-wider text-slate-600 dark:text-slate-300">FULLSTACK WEB</span>
-                        <span class="px-4 py-1.5 bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 rounded-full text-[11px] font-bold tracking-wider text-slate-600 dark:text-slate-300">SHARED SERVER</span>
-                        <span class="px-4 py-1.5 bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 rounded-full text-[11px] font-bold tracking-wider text-slate-600 dark:text-slate-300">CI/CD PIPELINE</span>
-                        <span class="px-4 py-1.5 bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 rounded-full text-[11px] font-bold tracking-wider text-slate-600 dark:text-slate-300">GAME ENGINE</span>
+                        <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">FULLSTACK WEB</span>
+                        <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">SHARED SERVER</span>
+                        <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">CI/CD PIPELINE</span>
+                        <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">GAME ENGINE</span>
                     </div>
                 </div>
 
-                <!-- Premium Profile Card -->
+                <!-- Clean Profile Card -->
                 <div class="flex justify-center lg:justify-end reveal">
-                    <div class="w-full max-w-sm relative">
-                        <!-- Decorative element -->
-                        <div class="absolute -inset-1 bg-gradient-to-tr from-indigo-500 to-sky-400 rounded-2xl blur-lg opacity-20 dark:opacity-40 pointer-events-none"></div>
-                        
-                        <div class="card-premium relative overflow-hidden bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl">
-                            <div class="aspect-[4/5] bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+                    <div class="w-full max-w-sm">
+                        <div class="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white dark:bg-white/5 dark:backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative group">
+                            <!-- Subtle card glow -->
+                            <div class="absolute -inset-0.5 bg-gradient-to-br from-white/20 to-transparent opacity-0 dark:opacity-100 pointer-events-none rounded-2xl"></div>
+                            
+                            <div class="aspect-[4/5] bg-slate-100 dark:bg-transparent relative overflow-hidden">
                                 <img src="{{ asset('profil/bima.jpeg') }}"
                                     alt="Bima Ryan Alfarizi - Founder dan Lead Developer Ryaze"
-                                    class="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105">
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+                                    class="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                                 
-                                <div class="absolute bottom-0 left-0 right-0 p-6">
-                                    <h3 class="font-bold text-white text-xl">Bima Ryan Alfarizi, S.Tr.Kom</h3>
-                                    <p class="text-indigo-300 font-medium text-sm mt-1">Sarjana Terapan RPL Polindra</p>
+                                <div class="absolute bottom-0 left-0 right-0 p-6 z-10">
+                                    <h3 class="font-bold text-white text-xl tracking-tight">Bima Ryan Alfarizi, S.Tr.Kom</h3>
+                                    <p class="text-slate-300 font-medium text-sm mt-1">Sarjana Terapan RPL Polindra</p>
                                 </div>
                             </div>
-                            <div class="px-6 py-4 border-t border-slate-200/50 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+                            <div class="px-6 py-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400 relative z-10 bg-white dark:bg-transparent">
                                 <span class="flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Indramayu, ID</span>
-                                <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Available for Hire</span>
+                                <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div> Available for Hire</span>
                             </div>
                         </div>
                     </div>
@@ -347,58 +294,61 @@
     </section>
 
     <!-- SERVICES SECTION -->
-    <section id="services" class="py-24 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-white/5 relative overflow-hidden">
-        <!-- Abstract Decoration -->
-        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-500/10 dark:bg-violet-600/10 rounded-full blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
-
+    <section id="services" class="py-24 bg-white dark:bg-[#030712] border-b border-slate-200 dark:border-white/5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-indigo-50/50 dark:from-white/[0.02] to-transparent pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="mb-16 max-w-2xl reveal">
-                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">Infrastruktur & Layanan.</h2>
+                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-3 block">Layanan</span>
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">Infrastruktur & Layanan.</h2>
                 <p class="text-slate-500 dark:text-slate-400 text-lg leading-relaxed">Kami merancang arsitektur web dan infrastruktur shared hosting yang andal untuk melayani project Anda kapan saja.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 reveal">
                 <!-- Web Dev Box -->
-                <div class="card-premium p-8 lg:p-10 flex flex-col h-full group bg-white/60 dark:bg-slate-800/40">
-                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-8 shadow-sm">
-                        <i class="fa-solid fa-laptop-code text-2xl"></i>
+                <div class="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 dark:backdrop-blur-xl p-8 lg:p-10 flex flex-col h-full group shadow-sm transition-all hover:border-slate-300 dark:hover:border-white/20 hover:-translate-y-1 relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none"></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 rounded-lg bg-white dark:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white flex items-center justify-center mb-8 shadow-sm">
+                            <i class="fa-solid fa-laptop-code text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">Jasa Pembuatan Sistem</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-base leading-relaxed mb-8">
+                            Pengerjaan sistem informasi, aplikasi SaaS, hingga prototipe fungsional Tugas Akhir (Skripsi). Berbasis arsitektur modern yang bersih, efisien, dan terdokumentasi.
+                        </p>
+                        <ul class="space-y-4 mb-10 text-sm font-medium text-slate-600 dark:text-slate-300 flex-1">
+                            <li class="flex items-center gap-3">
+                                <div class="flex-shrink-0 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-check"></i></div>
+                                Backend & API Design
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="flex-shrink-0 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-check"></i></div>
+                                Frontend Modern (React/Vue)
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="flex-shrink-0 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-check"></i></div>
+                                Keamanan & Skalabilitas Tinggi
+                            </li>
+                        </ul>
+                        <a href="{{ route('register') }}"
+                            class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-slate-900 dark:text-white bg-white dark:bg-white/10 border border-slate-300 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/20 rounded-full transition-colors shadow-sm">
+                            Mulai Konsultasi <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+                        </a>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Jasa Pembuatan Sistem</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-base leading-relaxed mb-8 flex-1">
-                        Pengerjaan sistem informasi, aplikasi SaaS, hingga prototipe fungsional Tugas Akhir (Skripsi). Berbasis arsitektur modern yang bersih, efisien, dan terdokumentasi.
-                    </p>
-                    <ul class="space-y-4 mb-10 text-sm font-medium text-slate-600 dark:text-slate-300">
-                        <li class="flex items-center gap-3">
-                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-check text-[10px]"></i></div>
-                            Backend & API Design
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-check text-[10px]"></i></div>
-                            Frontend Modern (React/Vue)
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-check text-[10px]"></i></div>
-                            Keamanan & Skalabilitas Tinggi
-                        </li>
-                    </ul>
-                    <a href="{{ route('register') }}"
-                        class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 text-sm font-semibold text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 rounded-xl transition-all shadow-md hover:shadow-lg">
-                        Mulai Konsultasi <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
-                    </a>
                 </div>
 
                 <!-- Hosting Box -->
-                <div class="card-premium p-8 lg:p-10 flex flex-col h-full group bg-white/60 dark:bg-slate-800/40 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 pointer-events-none">
+                <div class="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 dark:backdrop-blur-xl p-8 lg:p-10 flex flex-col h-full group shadow-sm transition-all hover:border-slate-300 dark:hover:border-white/20 hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none"></div>
+                    <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none transition-transform duration-700 group-hover:scale-110">
                         <i class="fa-solid fa-server text-9xl text-slate-900 dark:text-white"></i>
                     </div>
                     <div class="relative z-10 flex-1 flex flex-col">
-                        <div class="w-14 h-14 rounded-2xl bg-sky-50 dark:bg-sky-500/10 border border-sky-100 dark:border-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center mb-8 shadow-sm">
-                            <i class="fa-solid fa-server text-2xl"></i>
+                        <div class="w-12 h-12 rounded-lg bg-white dark:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white flex items-center justify-center mb-8 shadow-sm">
+                            <i class="fa-solid fa-server text-xl"></i>
                         </div>
                         
                         <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-4 gap-4">
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Shared App Hosting</h3>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Shared App Hosting</h3>
                             @php
                                 $starterPricing = \App\Models\User::getPlanPricing('starter');
                                 $normalPrice = $starterPricing['normal'];
@@ -406,41 +356,41 @@
                             @endphp
                             <div class="flex flex-col sm:items-end">
                                 @if ($promoPrice > 0)
-                                    <span class="text-[11px] font-semibold text-slate-400 line-through mb-1">Rp {{ number_format($normalPrice, 0, ',', '.') }}</span>
+                                    <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500 line-through mb-1">Rp {{ number_format($normalPrice, 0, ',', '.') }}</span>
                                     <div class="flex items-baseline gap-1">
-                                        <span class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($promoPrice, 0, ',', '.') }}</span>
+                                        <span class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Rp {{ number_format($promoPrice, 0, ',', '.') }}</span>
                                         <span class="text-xs text-slate-500">/bln</span>
                                     </div>
                                 @else
                                     <div class="flex items-baseline gap-1">
-                                        <span class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">Rp {{ number_format($normalPrice, 0, ',', '.') }}</span>
+                                        <span class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Rp {{ number_format($normalPrice, 0, ',', '.') }}</span>
                                         <span class="text-xs text-slate-500">/bln</span>
                                     </div>
                                 @endif
                             </div>
                         </div>
 
-                        <p class="text-slate-500 dark:text-slate-400 text-base leading-relaxed mb-8 flex-1">
+                        <p class="text-slate-500 dark:text-slate-400 text-base leading-relaxed mb-8">
                             Hosting murah dengan deployment otomatis tanpa pusing. Eksekusi repositori kode langsung ke server publik dengan dukungan Web-Terminal, proses manager, dan database bawaan.
                         </p>
 
-                        <ul class="space-y-4 mb-10 text-sm font-medium text-slate-600 dark:text-slate-300">
+                        <ul class="space-y-4 mb-10 text-sm font-medium text-slate-600 dark:text-slate-300 flex-1">
                             <li class="flex items-center gap-3">
-                                <div class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-check text-[10px]"></i></div>
+                                <div class="flex-shrink-0 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-check"></i></div>
                                 Auto Deploy (Node, PHP, Python, dsb)
                             </li>
                             <li class="flex items-center gap-3">
-                                <div class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-check text-[10px]"></i></div>
+                                <div class="flex-shrink-0 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-check"></i></div>
                                 Database (MySQL) & SSL Gratis
                             </li>
                             <li class="flex items-center gap-3">
-                                <div class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-check text-[10px]"></i></div>
+                                <div class="flex-shrink-0 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-check"></i></div>
                                 File Manager & Web Terminal Lengkap
                             </li>
                         </ul>
 
                         <a href="{{ route('register') }}"
-                            class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 text-sm font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 rounded-xl transition-all shadow-sm">
+                            class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 rounded-full transition-colors shadow-sm">
                             Deploy Sekarang <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
                         </a>
                     </div>
@@ -450,28 +400,25 @@
     </section>
 
     <!-- PRICING SECTION -->
-    <section id="pricing" class="py-24 bg-white dark:bg-[#020617] border-b border-slate-100 dark:border-white/5 relative overflow-hidden">
-        <!-- Background Glow -->
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-
+    <section id="pricing" class="py-24 bg-slate-50 dark:bg-[#030712] border-b border-slate-200 dark:border-white/5 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="mb-16 text-center reveal">
-                <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-3 block">Harga Transparan</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">Pilih Paket Hosting</h2>
+                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-3 block">Harga Transparan</span>
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">Pilih Paket Hosting</h2>
                 <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto">Deploy project Anda sekarang. Mulai dari harga terjangkau dengan fitur lengkap, siap scale sesuai kebutuhan.</p>
             </div>
             
             @php
                 $homePlans = \App\Models\User::hostingPlans();
                 $homeColorMap = [
-                    'slate'  => ['accent' => 'from-slate-400 to-slate-500', 'bg' => 'bg-slate-50 dark:bg-slate-900/50', 'text' => 'text-slate-600 dark:text-slate-300', 'btn' => 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100', 'check' => 'text-slate-500 dark:text-slate-400', 'iconBg' => 'bg-slate-100 dark:bg-slate-800'],
-                    'indigo' => ['accent' => 'from-indigo-400 to-indigo-600', 'bg' => 'bg-indigo-50/30 dark:bg-indigo-900/10', 'text' => 'text-indigo-600 dark:text-indigo-400', 'btn' => 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-500/20', 'check' => 'text-indigo-500', 'iconBg' => 'bg-indigo-100 dark:bg-indigo-900/30'],
-                    'violet' => ['accent' => 'from-violet-400 to-violet-600', 'bg' => 'bg-violet-50/30 dark:bg-violet-900/10', 'text' => 'text-violet-600 dark:text-violet-400', 'btn' => 'bg-violet-600 hover:bg-violet-500 text-white shadow-md shadow-violet-500/20', 'check' => 'text-violet-500', 'iconBg' => 'bg-violet-100 dark:bg-violet-900/30'],
-                    'amber'  => ['accent' => 'from-amber-400 to-amber-500',  'bg' => 'bg-amber-50/30 dark:bg-amber-900/10',  'text' => 'text-amber-600 dark:text-amber-400',  'btn' => 'bg-amber-500 hover:bg-amber-400 text-white shadow-md shadow-amber-500/20',   'check' => 'text-amber-500', 'iconBg' => 'bg-amber-100 dark:bg-amber-900/30'],
+                    'slate'  => ['bg' => 'bg-white dark:bg-white/5 dark:backdrop-blur-xl', 'text' => 'text-slate-900 dark:text-white', 'btn' => 'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-white/20 border border-transparent dark:border-white/10', 'check' => 'text-slate-400 dark:text-slate-500'],
+                    'indigo' => ['bg' => 'bg-white dark:bg-white/5 dark:backdrop-blur-xl', 'text' => 'text-slate-900 dark:text-white', 'btn' => 'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-white/20 border border-transparent dark:border-white/10', 'check' => 'text-slate-400 dark:text-slate-500'],
+                    'violet' => ['bg' => 'bg-slate-900 dark:bg-indigo-500/10 dark:backdrop-blur-xl', 'text' => 'text-white dark:text-white', 'btn' => 'bg-white dark:bg-white text-slate-900 dark:text-slate-900 hover:bg-slate-100 dark:hover:bg-slate-200 border border-slate-700 dark:border-transparent', 'check' => 'text-slate-400 dark:text-indigo-300'],
+                    'amber'  => ['bg' => 'bg-white dark:bg-white/5 dark:backdrop-blur-xl', 'text' => 'text-slate-900 dark:text-white', 'btn' => 'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-white/20 border border-transparent dark:border-white/10', 'check' => 'text-slate-400 dark:text-slate-500'],
                 ];
             @endphp
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 reveal">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
                 @foreach ($homePlans as $slug => $plan)
                     @php
                         $pricing = \App\Models\User::getPlanPricing($slug);
@@ -479,42 +426,34 @@
                         $isPopular = $slug === 'pro';
                     @endphp
                     
-                    <div class="relative flex flex-col {{ $hc['bg'] }} backdrop-blur-sm border {{ $isPopular ? 'border-violet-500/50 dark:border-violet-400/50 shadow-2xl shadow-violet-500/10 scale-105 z-10' : 'border-slate-200/60 dark:border-white/10 shadow-sm hover:shadow-lg' }} rounded-3xl overflow-hidden transition-all duration-300">
-                        <!-- Top Gradient Bar -->
-                        <div class="h-1.5 w-full bg-gradient-to-r {{ $hc['accent'] }}"></div>
+                    <div class="relative flex flex-col {{ $hc['bg'] }} border {{ $isPopular ? 'border-slate-900 dark:border-indigo-500 shadow-md z-10 scale-100 lg:scale-[1.02]' : 'border-slate-200 dark:border-white/10 shadow-sm' }} rounded-2xl overflow-hidden transition-all hover:border-slate-300 dark:hover:border-white/20">
                         
                         @if ($isPopular)
-                            <div class="absolute top-5 right-5">
-                                <span class="text-[10px] font-bold bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 px-3 py-1 rounded-full border border-violet-200 dark:border-violet-500/30">
-                                    PALING POPULER
-                                </span>
+                            <div class="absolute top-0 inset-x-0 bg-slate-900 dark:bg-indigo-500 text-white dark:text-white text-[10px] font-bold text-center py-1 uppercase tracking-wider">
+                                Paling Populer
                             </div>
                         @endif
 
-                        <div class="p-8 flex-1">
-                            <div class="w-12 h-12 {{ $hc['iconBg'] }} {{ $hc['text'] }} rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-                                <i class="fa-solid fa-server text-xl"></i>
-                            </div>
+                        <div class="p-8 flex-1 mt-4">
+                            <h3 class="text-lg font-semibold {{ $hc['text'] }} mb-2">{{ $plan['label'] }}</h3>
                             
-                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">{{ $plan['label'] }}</h3>
-                            
-                            <div class="mb-8">
+                            <div class="mb-6">
                                 @if($pricing['promo'] !== null)
-                                    <span class="text-sm font-semibold text-slate-400 line-through decoration-slate-300 dark:decoration-slate-600 block mb-1">Rp {{ number_format($pricing['normal'], 0, ',', '.') }}</span>
+                                    <span class="text-xs font-medium text-slate-400 dark:text-slate-500 line-through block mb-1">Rp {{ number_format($pricing['normal'], 0, ',', '.') }}</span>
                                 @else
-                                    <div class="h-5 mb-1"></div> <!-- Spacer -->
+                                    <div class="h-4 mb-1"></div> <!-- Spacer -->
                                 @endif
                                 <div class="flex items-baseline gap-1">
-                                    <span class="text-4xl font-extrabold text-slate-900 dark:text-white">Rp {{ number_format($pricing['active'], 0, ',', '.') }}</span>
-                                    <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">/bln</span>
+                                    <span class="text-3xl font-bold tracking-tight {{ $hc['text'] }}">Rp {{ number_format($pricing['active'], 0, ',', '.') }}</span>
+                                    <span class="{{ $isPopular ? 'text-slate-300 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400' }} text-sm">/bln</span>
                                 </div>
                             </div>
 
-                            <ul class="space-y-4">
+                            <ul class="space-y-3">
                                 @foreach ($plan['features'] as $feat)
-                                    <li class="flex items-start gap-3 text-sm font-medium text-slate-600 dark:text-slate-300">
-                                        <div class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full {{ $hc['iconBg'] }} flex items-center justify-center">
-                                            <i class="fa-solid fa-check {{ $hc['text'] }} text-[10px]"></i>
+                                    <li class="flex items-start gap-3 text-sm {{ $isPopular ? 'text-slate-600 dark:text-indigo-100' : 'text-slate-600 dark:text-slate-400' }}">
+                                        <div class="mt-1 flex-shrink-0">
+                                            <i class="fa-solid fa-check {{ $hc['check'] }} text-[10px]"></i>
                                         </div>
                                         <span>{{ $feat }}</span>
                                     </li>
@@ -523,8 +462,8 @@
                         </div>
                         
                         <div class="p-8 pt-0">
-                            <a href="{{ route('register') }}" class="flex items-center justify-center w-full {{ $hc['btn'] }} font-semibold py-3.5 rounded-xl transition-all text-sm">
-                                Pilih Paket Ini
+                            <a href="{{ route('register') }}" class="flex items-center justify-center w-full {{ $hc['btn'] }} font-semibold py-2.5 rounded-full transition-colors text-sm">
+                                Pilih Paket
                             </a>
                         </div>
                     </div>
@@ -534,25 +473,25 @@
             <!-- Features Bottom Line -->
             <div class="mt-16 pt-8 border-t border-slate-200/60 dark:border-white/10 grid grid-cols-2 md:grid-cols-4 gap-6 reveal">
                 <div class="flex items-center justify-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-slate-300 border border-transparent dark:border-white/10">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">SSL Gratis</span>
                 </div>
                 <div class="flex items-center justify-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-slate-300 border border-transparent dark:border-white/10">
                         <i class="fa-solid fa-database"></i>
                     </div>
                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Database MySQL</span>
                 </div>
                 <div class="flex items-center justify-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-slate-300 border border-transparent dark:border-white/10">
                         <i class="fa-solid fa-rotate"></i>
                     </div>
                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Auto-Deploy Git</span>
                 </div>
                 <div class="flex items-center justify-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-slate-300 border border-transparent dark:border-white/10">
                         <i class="fa-solid fa-headset"></i>
                     </div>
                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Support 1-on-1</span>
@@ -757,7 +696,7 @@
                     </p>
                 </details>
 
-                <details class="bg-white dark:bg-slate-800/60 border border-slate-200/60 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group">
+                <details class="bg-white dark:bg-white/5 dark:backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group hover:border-slate-300 dark:hover:border-white/20">
                     <summary class="cursor-pointer font-bold text-slate-900 dark:text-slate-50 flex items-center justify-between gap-4">
                         Teknologi apa saja yang didukung hosting Ryaze?
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 group-open:rotate-180 transition-transform"></i>
@@ -768,7 +707,7 @@
                     </p>
                 </details>
 
-                <details class="bg-white dark:bg-slate-800/60 border border-slate-200/60 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group">
+                <details class="bg-white dark:bg-white/5 dark:backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group hover:border-slate-300 dark:hover:border-white/20">
                     <summary class="cursor-pointer font-bold text-slate-900 dark:text-slate-50 flex items-center justify-between gap-4">
                         Apakah SSL gratis tersedia?
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 group-open:rotate-180 transition-transform"></i>
@@ -779,7 +718,7 @@
                     </p>
                 </details>
 
-                <details class="bg-white dark:bg-slate-800/60 border border-slate-200/60 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group">
+                <details class="bg-white dark:bg-white/5 dark:backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group hover:border-slate-300 dark:hover:border-white/20">
                     <summary class="cursor-pointer font-bold text-slate-900 dark:text-slate-50 flex items-center justify-between gap-4">
                         Apakah tersedia database untuk project saya?
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 group-open:rotate-180 transition-transform"></i>
@@ -790,7 +729,7 @@
                     </p>
                 </details>
 
-                <details class="bg-white dark:bg-slate-800/60 border border-slate-200/60 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group">
+                <details class="bg-white dark:bg-white/5 dark:backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group hover:border-slate-300 dark:hover:border-white/20">
                     <summary class="cursor-pointer font-bold text-slate-900 dark:text-slate-50 flex items-center justify-between gap-4">
                         Apakah bisa request jasa pembuatan website atau aplikasi?
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 group-open:rotate-180 transition-transform"></i>
@@ -801,7 +740,7 @@
                     </p>
                 </details>
 
-                <details class="bg-white dark:bg-slate-800/60 border border-slate-200/60 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group">
+                <details class="bg-white dark:bg-white/5 dark:backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm transition-all duration-300 rounded-2xl p-6 lg:p-8 group hover:border-slate-300 dark:hover:border-white/20">
                     <summary class="cursor-pointer font-bold text-slate-900 dark:text-slate-50 flex items-center justify-between gap-4">
                         Bagaimana cara mulai menggunakan Ryaze?
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 group-open:rotate-180 transition-transform"></i>
@@ -816,15 +755,17 @@
     </section>
 
     <!-- CALL TO ACTION -->
-    <section class="py-24 bg-indigo-600 text-white text-center px-6 relative overflow-hidden">
-        <div class="hero-blob w-80 h-80 bg-indigo-400 -top-24 -right-24" style="opacity:.3"></div>
-        <div class="hero-blob w-80 h-80 bg-violet-500 -bottom-24 -left-24" style="opacity:.25"></div>
+    <section class="py-24 bg-slate-50 dark:bg-[#030712] text-center px-6 relative overflow-hidden border-t border-slate-200 dark:border-white/5">
+        <!-- Subtle radial spotlight -->
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/10 via-[#030712] to-[#030712] pointer-events-none hidden dark:block"></div>
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/[0.02] to-transparent pointer-events-none"></div>
+        
         <div class="max-w-3xl mx-auto relative z-10 reveal">
-            <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-6">Siap Mengeksekusi Ide?</h2>
-            <p class="text-indigo-200 text-lg mb-10 max-w-xl mx-auto">Daftar sekarang untuk mengakses lingkungan
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-6 text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-b dark:from-white dark:to-slate-400">Siap Mengeksekusi Ide?</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-lg mb-10 max-w-xl mx-auto">Daftar sekarang untuk mengakses lingkungan
                 deployment yang kuat atau hubungi kami untuk pengerjaan perangkat lunak Anda.</p>
             <a href="{{ route('register') }}"
-                class="inline-block px-8 py-3 bg-white dark:bg-slate-800/60 text-indigo-700 dark:text-indigo-300 text-sm font-bold rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10 transition-colors shadow-lg shadow-indigo-900/20">
+                class="inline-flex px-8 py-3 bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-semibold rounded-full hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors shadow-sm dark:shadow-[0_0_20px_rgba(255,255,255,0.15)]">
                 Mulai Secara Gratis
             </a>
         </div>
@@ -833,8 +774,8 @@
     <!-- Chatbot Widget -->
     <div id="ryaze-chatbot-widget" class="fixed bottom-6 right-6 z-50 font-sans">
         <!-- Chat Window -->
-        <div id="ryaze-chat-window" class="hidden flex-col bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl w-80 h-96 mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right">
-            <div class="bg-indigo-600 px-4 py-3 text-white flex justify-between items-center shadow-sm">
+        <div id="ryaze-chat-window" class="hidden flex-col bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-white/10 shadow-2xl rounded-2xl w-80 h-96 mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right">
+            <div class="bg-slate-900 dark:bg-indigo-600 px-4 py-3 text-white flex justify-between items-center shadow-sm">
                 <div class="flex items-center gap-2">
                     <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
                     <span class="font-bold text-sm">Ryaze Assistant</span>
@@ -843,21 +784,21 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div id="ryaze-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 dark:bg-slate-800/60 text-sm flex flex-col">
+            <div id="ryaze-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 dark:bg-[#030712] text-sm flex flex-col">
                 <!-- Welcome Message -->
                 <div class="flex items-start gap-2">
                     <div class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
                         <i class="fa-solid fa-robot text-[10px] text-indigo-600 dark:text-indigo-400"></i>
                     </div>
-                    <div class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-2xl rounded-tl-sm text-slate-700 dark:text-slate-200 shadow-sm max-w-[85%]">
+                    <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 px-3 py-2 rounded-2xl rounded-tl-sm text-slate-700 dark:text-slate-200 shadow-sm max-w-[85%]">
                         Halo! Saya asisten AI Ryaze. Ada yang bisa saya bantu hari ini?
                     </div>
                 </div>
             </div>
-            <div class="p-3 bg-white dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-700">
+            <div class="p-3 bg-white dark:bg-[#0B0F19] border-t border-slate-100 dark:border-white/10">
                 <form id="ryaze-chat-form" class="flex items-center gap-2">
-                    <input type="text" id="ryaze-chat-input" placeholder="Ketik pesan..." required class="flex-1 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-sm rounded-full px-4 py-2 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
-                    <button type="submit" class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition-colors shrink-0 shadow-sm disabled:opacity-50">
+                    <input type="text" id="ryaze-chat-input" placeholder="Ketik pesan..." required class="flex-1 bg-slate-50 dark:bg-[#030712] border border-slate-200 dark:border-white/10 text-sm rounded-full px-4 py-2 focus:outline-none focus:border-slate-400 dark:focus:border-white/20 transition-all text-slate-900 dark:text-white">
+                    <button type="submit" class="w-9 h-9 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors shrink-0 shadow-sm disabled:opacity-50">
                         <i class="fa-solid fa-paper-plane text-[10px] -ml-0.5"></i>
                     </button>
                 </form>
@@ -923,7 +864,7 @@
 
                     let avatar = '';
                     if (isUser) {
-                        avatar = `<div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0 mt-0.5">
+                        avatar = `<div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
                                     <i class="fa-solid fa-user text-[10px] text-slate-500 dark:text-slate-400"></i>
                                   </div>`;
                     } else {
@@ -934,8 +875,8 @@
 
                     const msgBubble = document.createElement('div');
                     msgBubble.className = isUser
-                        ? 'bg-indigo-600 text-white px-3 py-2 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] break-words'
-                        : 'bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-2xl rounded-tl-sm text-slate-700 dark:text-slate-200 shadow-sm max-w-[85%] break-words';
+                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-2 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] break-words'
+                        : 'bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 px-3 py-2 rounded-2xl rounded-tl-sm text-slate-700 dark:text-slate-200 shadow-sm max-w-[85%] break-words';
 
                     const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                         .replace(/\n/g, '<br>');
@@ -956,7 +897,7 @@
                         <div class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
                             <i class="fa-solid fa-robot text-[10px] text-indigo-600 dark:text-indigo-400"></i>
                         </div>
-                        <div class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
+                        <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
                             <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
                             <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
                             <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
