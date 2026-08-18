@@ -1,4 +1,4 @@
-<nav class="fixed top-0 z-50 w-full shadow bg-gray-50 dark:bg-slate-900">
+<nav class="fixed top-0 z-50 w-full shadow bg-gray-50 dark:bg-slate-800">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start gap-2 rtl:justify-end">
@@ -150,7 +150,7 @@
 </nav>
 
 <aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 w-64 h-[100dvh] pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 dark:bg-slate-950 dark:border-slate-800 sm:translate-x-0"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform -translate-x-full bg-white border-r border-gray-200 dark:bg-slate-800 dark:border-slate-800 sm:translate-x-0"
     aria-label="Sidebar">
     <div class="h-full px-3 pb-24 mt-3 overflow-y-auto bg-white dark:bg-slate-950">
         <ul class="space-y-2 font-medium">
@@ -193,7 +193,7 @@
                 </a>
             </li>
 
-            {{-- â•â• SISTEM UTAMA (SUPERADMIN) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
+            {{-- SISTEM UTAMA (SUPERADMIN) --}}
             @if ($role === 'superadmin')
                 <li class="pt-4 pb-1 mt-4 border-t border-slate-200/60 dark:border-slate-700">
                     <span class="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Sistem Utama</span>

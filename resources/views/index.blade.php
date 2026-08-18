@@ -3,6 +3,22 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Dark mode: set class BEFORE CSS loads to prevent scrollbar FOUC -->
+    <script>
+        (function () {
+            var stored = localStorage.getItem('ryaze-theme');
+            if (stored === null) {
+                stored = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            if (stored === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.style.colorScheme = 'dark';
+            } else {
+                document.documentElement.style.colorScheme = 'light';
+            }
+        })();
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     @php
@@ -49,15 +65,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script nonce="{{ csp_nonce() }}">
-        (function () {
-            var stored = localStorage.getItem('ryaze-theme');
-            if (stored === null) {
-                stored = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            }
-            document.documentElement.classList.toggle('dark', stored === 'dark');
-        })();
         window.ryazeToggleTheme = function () {
             var dark = document.documentElement.classList.toggle('dark');
+            document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
             localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
             document.dispatchEvent(new CustomEvent('theme:change', { detail: { dark: dark } }));
             document.querySelectorAll('[role="switch"][onclick*="ryazeToggleTheme"]').forEach(function(btn) {

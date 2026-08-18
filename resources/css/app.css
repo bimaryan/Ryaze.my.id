@@ -64,19 +64,46 @@
     background-color: #0f172a;
 }
 
-/* Scrollbar — dark mode */
-.dark ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+/* =====================================================
+   SCROLLBAR — konsisten di semua mode (light & dark)
+   Light mode pakai abu, dark mode pakai gelap.
+   Lebar sama supaya tidak "ramping" di dark mode.
+   ===================================================== */
+html {
+    color-scheme: light;
 }
-.dark ::-webkit-scrollbar-track {
+html.dark {
+    color-scheme: dark;
+}
+
+/* Global — semua elemen & main page scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Dark mode override */
+.dark ::-webkit-scrollbar-track,
+html.dark::-webkit-scrollbar-track {
     background: #0f172a;
 }
-.dark ::-webkit-scrollbar-thumb {
+.dark ::-webkit-scrollbar-thumb,
+html.dark::-webkit-scrollbar-thumb {
     background: #334155;
     border-radius: 4px;
 }
-.dark ::-webkit-scrollbar-thumb:hover {
+.dark ::-webkit-scrollbar-thumb:hover,
+html.dark::-webkit-scrollbar-thumb:hover {
     background: #475569;
 }
 
