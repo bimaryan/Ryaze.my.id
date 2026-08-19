@@ -97,6 +97,32 @@
 
     <div class="h-screen w-full flex flex-col bg-slate-50 dark:bg-slate-950 ai-bg" x-data="aiConsultationPage()">
 
+        <!-- Custom Confirm Modal -->
+        <div x-show="confirmReset" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none;">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="confirmReset = false"></div>
+            <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95">
+                <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-900/30 mx-auto mb-4">
+                    <i class="fa-solid fa-rotate-right text-red-500 text-[22px]"></i>
+                </div>
+                <h3 class="text-[17px] font-semibold text-slate-900 dark:text-white text-center mb-1">Reset Percakapan?</h3>
+                <p class="text-[14px] text-slate-500 dark:text-slate-400 text-center mb-6">Semua riwayat chat akan dihapus dan tidak bisa dikembalikan.</p>
+                <div class="flex gap-3">
+                    <button type="button" @click="confirmReset = false" class="flex-1 h-11 rounded-xl border border-slate-200 dark:border-slate-700 text-[14px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                        Batal
+                    </button>
+                    <button type="button" @click="doReset()" class="flex-1 h-11 rounded-xl bg-red-500 hover:bg-red-600 text-white text-[14px] font-medium transition-colors">
+                        Ya, Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Top Bar -->
         <header class="shrink-0 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-10">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
@@ -120,7 +146,7 @@
                 </div>
                 <!-- Right: Actions -->
                 <div class="flex items-center gap-1">
-                    <button type="button" onclick="if(confirm('Reset semua percakapan?')){ localStorage.removeItem('ryaze_consultation_token'); location.reload(); }" class="h-9 px-3 rounded-xl text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2" title="Reset chat">
+                    <button type="button" @click="confirmReset = true" class="h-9 px-3 rounded-xl text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2" title="Reset chat">
                         <i class="fa-solid fa-rotate-right text-[13px]"></i>
                         <span class="hidden sm:inline">Reset</span>
                     </button>
@@ -212,6 +238,7 @@
         Alpine.data('aiConsultationPage', () => ({
             isLoading: false,
             inputText: '',
+            confirmReset: false,
             token: localStorage.getItem('ryaze_consultation_token') || null,
             messages: [
                 {
@@ -232,6 +259,11 @@
                     this.loadHistory();
                 }
                 setTimeout(() => this.scrollToBottom(), 100);
+            },
+
+            doReset() {
+                localStorage.removeItem('ryaze_consultation_token');
+                location.reload();
             },
 
             async loadHistory() {
