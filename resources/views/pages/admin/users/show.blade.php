@@ -141,9 +141,7 @@
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-slate-500 dark:text-slate-400">Storage Hosting</span>
                             @php
-                                $totalLimit = isset($hostingProjects) && $hostingProjects->count() > 0 
-                                    ? $hostingProjects->sum(fn($p) => $p->storage_limit_mb ?? 1024) 
-                                    : ($user->hosting_storage_limit_mb ?? 1024);
+                                $totalLimit = $user->hosting_storage_limit_mb ?? (\App\Models\User::getPlanLimits($currentPlan)['storage_mb'] ?? 256);
                             @endphp
                             <span class="font-semibold text-slate-800 dark:text-slate-100">{{ number_format($totalLimit) }} MB</span>
                         </div>
