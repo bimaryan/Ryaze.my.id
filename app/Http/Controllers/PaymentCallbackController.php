@@ -173,21 +173,35 @@ class PaymentCallbackController extends Controller
                             }
 
 
-                            // Cari semua project unpaid dan deploy
+                            // Cari semua project unpaid dan suspended untuk diaktifkan/deploy
                             $unpaidProjects = \App\Models\HostingProject::where('user_id', $user->id)
-                                ->where('status', 'unpaid')
+                                ->whereIn('status', ['unpaid', 'suspended'])
                                 ->get();
 
                             foreach ($unpaidProjects as $proj) {
-                                $proj->update(['status' => 'building']);
                                 $isTemplate = $proj->source_type === 'template';
-                                $proj->deployments()->create([
-                                    'status' => 'queued',
-                                    'build_logs' => $isTemplate
-                                        ? "> Payment received!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil template starter code...\n> Menyiapkan environment ".strtoupper($proj->framework).'...'
-                                        : "> Payment received!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil repository dari ".$proj->repo_source."\n> Branch: ".$proj->branch."\n> Menyiapkan environment ".strtoupper($proj->framework).'...',
-                                ]);
-                                \App\Jobs\AutoDeployProject::dispatch($proj);
+                                
+                                if ($proj->status === 'suspended') {
+                                    $subdomain = explode('.', $proj->ryaze_domain)[0];
+                                    $suspendFile = hosting_clients_dir() . "/{$subdomain}/.suspended";
+                                    if (file_exists($suspendFile)) {
+                                        @unlink($suspendFile);
+                                    }
+                                    $proj->update(['status' => 'active']);
+                                    $proj->deployments()->create([
+                                        'status' => 'success',
+                                        'build_logs' => "> SISTEM: Project berhasil diaktifkan kembali setelah pembayaran langganan diterima.",
+                                    ]);
+                                } else {
+                                    $proj->update(['status' => 'building']);
+                                    $proj->deployments()->create([
+                                        'status' => 'queued',
+                                        'build_logs' => $isTemplate
+                                            ? "> Payment received!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil template starter code...\n> Menyiapkan environment ".strtoupper($proj->framework).'...'
+                                            : "> Payment received!\n> Initialize build pipeline...\n> Menunggu worker tersedia...\n> Mengambil repository dari ".$proj->repo_source."\n> Branch: ".$proj->branch."\n> Menyiapkan environment ".strtoupper($proj->framework).'...',
+                                    ]);
+                                    \App\Jobs\AutoDeployProject::dispatch($proj);
+                                }
                             }
 
                             $user->notify(new \App\Notifications\SystemNotification('Pembayaran langganan hosting ('.$payment->invoice_number.') berhasil. ' . $unpaidProjects->count() . ' project sedang disiapkan.', 'success'));

@@ -38,6 +38,47 @@ class SettingController extends Controller
             \Illuminate\Support\Facades\Cache::forget('setting_' . $key);
         }
 
+        // Suspend projects for inactive plans
+        $inactivePlans = [];
+        $plans = ['free', 'starter', 'pro', 'business'];
+        foreach ($plans as $plan) {
+            $key = "plan_{$plan}_active";
+            if (isset($data[$key]) && $data[$key] == '0') {
+                $inactivePlans[] = $plan;
+            }
+        }
+
+        if (!empty($inactivePlans)) {
+            $billingsToSuspend = \App\Models\HostingBilling::whereIn('plan', $inactivePlans)
+                ->where('status', 'active')
+                ->get();
+                
+            foreach ($billingsToSuspend as $billing) {
+                $projects = \App\Models\HostingProject::where('user_id', $billing->user_id)
+                    ->whereIn('status', ['active', 'building'])
+                    ->get();
+                    
+                foreach ($projects as $project) {
+                    $project->status = 'suspended';
+                    $project->save();
+                    
+                    $subdomain = explode('.', $project->ryaze_domain)[0];
+                    $projectDir = hosting_clients_dir() . "/{$subdomain}";
+                    $suspendFile = "{$projectDir}/.suspended";
+                    
+                    if (is_dir($projectDir)) {
+                        touch($suspendFile);
+                        @chmod($suspendFile, 0660);
+                    }
+                    
+                    $project->deployments()->create([
+                        'status' => 'error',
+                        'build_logs' => "> SISTEM: Hosting disuspend otomatis karena paket langganan saat ini telah dinonaktifkan oleh administrator. Silakan upgrade ke paket yang tersedia.",
+                    ]);
+                }
+            }
+        }
+
         return redirect()->back()->with('success', 'Pengaturan berhasil diperbarui!');
     }
 }
