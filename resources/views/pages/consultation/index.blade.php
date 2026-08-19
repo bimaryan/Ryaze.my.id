@@ -7,30 +7,36 @@
         ['label' => 'Beranda', 'href' => url('/')],
         ['label' => 'Portofolio', 'href' => url('/#portfolio')],
         ['label' => 'Blog', 'href' => route('blog.index')],
-    ]">
+    ]"
+    :withNav="false"
+    :withFooter="false">
 
-    <div class="pt-24 pb-12 min-h-screen flex items-center justify-center">
-        <div class="container mx-auto px-4 max-w-7xl w-full" x-data="aiConsultationPage()">
-            
-            <div class="flex flex-col h-[85vh] min-h-[600px] bg-[#efeae2] dark:bg-[#0b141a] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
-                
-                <!-- Header -->
-                <div class="bg-[#008069] dark:bg-[#202c33] px-4 py-3 flex items-center justify-between shrink-0 shadow-sm z-10">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white text-lg">
-                            <i class="fa-solid fa-robot"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-base font-semibold text-white tracking-tight">AI Konsultan Joki</h1>
-                            <p class="text-xs text-white/80">Online</p>
-                        </div>
-                    </div>
+    <div class="h-screen w-full bg-[#efeae2] dark:bg-[#0b141a] flex flex-col relative" x-data="aiConsultationPage()">
+        
+        <!-- Header -->
+        <div class="bg-[#008069] dark:bg-[#202c33] px-6 py-3 flex items-center justify-between shrink-0 shadow-sm z-10 w-full">
+            <div class="flex items-center gap-4">
+                <a href="{{ url('/') }}" class="text-white/80 hover:text-white mr-2 transition-colors" title="Kembali ke Beranda">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </a>
+                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white text-lg">
+                    <i class="fa-solid fa-robot"></i>
                 </div>
+                <div>
+                    <h1 class="text-lg font-semibold text-white tracking-tight">AI Konsultan Joki</h1>
+                    <p class="text-xs text-white/80">Online</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 text-white/80">
+                <button type="button" class="hover:text-white transition-colors" title="Cari pesan"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button type="button" class="hover:text-white transition-colors" title="Menu"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            </div>
+        </div>
 
-                <!-- Chat Area -->
-                <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 relative" id="chat-container">
-                    <!-- WA Background Pattern -->
-                    <div class="absolute inset-0 z-0 opacity-[0.06] dark:opacity-[0.03]" style="background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e7195b6b733d9110b408f075d.png'); background-repeat: repeat;"></div>
+        <!-- Chat Area -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-4 relative z-10" id="chat-container">
+            <!-- WA Background Pattern -->
+            <div class="absolute inset-0 z-0 opacity-[0.06] dark:opacity-[0.03]" style="background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e7195b6b733d9110b408f075d.png'); background-repeat: repeat;"></div>
                     
                     <div class="relative z-10 space-y-3 flex flex-col">
                         <template x-for="(msg, index) in messages" :key="index">
@@ -52,22 +58,24 @@
                     </div>
                 </div>
 
-                <!-- Input Area -->
-                <div class="bg-[#f0f2f5] dark:bg-[#202c33] px-4 py-3 shrink-0 flex flex-col gap-2">
-                    <form @submit.prevent="sendMessage" class="flex-1 flex gap-3 items-end">
-                        <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-lg flex items-center shadow-[0_1px_0.5px_rgba(11,20,26,.13)] overflow-hidden">
-                            <input type="text" x-model="inputText" :disabled="isLoading" placeholder="Ketik pesan" class="block w-full border-0 bg-transparent py-3 px-4 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 sm:text-[15px] disabled:opacity-50">
-                        </div>
-                        <button type="submit" :disabled="isLoading || inputText.trim() === ''" class="inline-flex items-center justify-center rounded-full bg-[#00a884] text-white hover:bg-[#008f6f] disabled:opacity-50 disabled:cursor-not-allowed w-12 h-12 shrink-0 transition-colors shadow-sm">
-                            <i class="fa-solid fa-paper-plane text-[15px]" x-show="!isLoading"></i>
-                            <i class="fa-solid fa-circle-notch fa-spin text-[15px]" x-show="isLoading" style="display:none;"></i>
-                        </button>
-                    </form>
-                    <p class="text-[11px] text-center text-slate-400 dark:text-[#8696a0] mt-1 font-medium">AI Ryaze dapat membuat kesalahan. Harap periksa kembali informasi penting.</p>
+        <!-- Input Area -->
+        <div class="bg-[#f0f2f5] dark:bg-[#202c33] px-6 py-4 shrink-0 flex flex-col gap-2 z-10">
+            <form @submit.prevent="sendMessage" class="flex-1 flex gap-4 items-end max-w-5xl mx-auto w-full">
+                <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] mb-3 text-xl transition-colors"><i class="fa-solid fa-face-smile"></i></button>
+                <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] mb-3 text-xl transition-colors"><i class="fa-solid fa-paperclip"></i></button>
+                
+                <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-xl flex items-center shadow-[0_1px_0.5px_rgba(11,20,26,.13)] overflow-hidden">
+                    <input type="text" x-model="inputText" :disabled="isLoading" placeholder="Ketik pesan..." class="block w-full border-0 bg-transparent py-3.5 px-5 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 sm:text-[15px] disabled:opacity-50">
                 </div>
-            </div>
-            
+                
+                <button type="submit" :disabled="isLoading || inputText.trim() === ''" class="inline-flex items-center justify-center rounded-full bg-[#00a884] text-white hover:bg-[#008f6f] disabled:opacity-50 disabled:cursor-not-allowed w-12 h-12 shrink-0 transition-colors shadow-sm mb-0.5">
+                    <i class="fa-solid fa-paper-plane text-[15px]" x-show="!isLoading"></i>
+                    <i class="fa-solid fa-circle-notch fa-spin text-[15px]" x-show="isLoading" style="display:none;"></i>
+                </button>
+            </form>
+            <p class="text-[11px] text-center text-slate-400 dark:text-[#8696a0] mt-1 font-medium max-w-5xl mx-auto w-full">AI Ryaze dapat membuat kesalahan. Harap periksa kembali informasi penting.</p>
         </div>
+        
     </div>
 
     @push('scripts')
