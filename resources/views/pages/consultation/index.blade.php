@@ -11,25 +11,58 @@
     :withNav="false"
     :withFooter="false">
 
+    <style>
+        .wa-bubble-left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-top: 0px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-right: 12px solid #ffffff;
+        }
+        .dark .wa-bubble-left::before {
+            border-right-color: #202c33;
+        }
+        
+        .wa-bubble-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -8px;
+            width: 0;
+            height: 0;
+            border-top: 0px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-left: 12px solid #d9fdd3;
+        }
+        .dark .wa-bubble-right::before {
+            border-left-color: #005c4b;
+        }
+    </style>
+
     <div class="h-screen w-full bg-[#efeae2] dark:bg-[#0b141a] flex flex-col relative" x-data="aiConsultationPage()">
         
         <!-- Header -->
-        <div class="bg-[#008069] dark:bg-[#202c33] px-6 py-3 flex items-center justify-between shrink-0 shadow-sm z-10 w-full">
-            <div class="flex items-center gap-4">
-                <a href="{{ url('/') }}" class="text-white/80 hover:text-white mr-2 transition-colors" title="Kembali ke Beranda">
-                    <i class="fa-solid fa-arrow-left text-xl"></i>
+        <div class="bg-[#008069] dark:bg-[#202c33] px-2 py-2 flex items-center justify-between shrink-0 shadow-sm z-10 w-full sticky top-0">
+            <div class="flex items-center gap-1">
+                <a href="{{ url('/') }}" class="text-white hover:bg-white/10 rounded-full p-2 pr-3 transition-colors flex items-center gap-1" title="Kembali ke Beranda">
+                    <i class="fa-solid fa-arrow-left text-[20px]"></i>
+                    <div class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center text-slate-500 text-lg overflow-hidden shrink-0 ml-1">
+                        <img src="https://ui-avatars.com/api/?name=AI+Joki&background=ffffff&color=008069" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
                 </a>
-                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white text-lg">
-                    <i class="fa-solid fa-robot"></i>
-                </div>
-                <div>
-                    <h1 class="text-lg font-semibold text-white tracking-tight">AI Konsultan Joki</h1>
-                    <p class="text-xs text-white/80">Online</p>
+                <div class="ml-1 cursor-pointer flex-1">
+                    <h1 class="text-[17px] font-medium text-white leading-tight line-clamp-1">AI Konsultan Joki</h1>
+                    <p class="text-[13px] text-white/80 leading-tight">online</p>
                 </div>
             </div>
-            <div class="flex items-center gap-4 text-white/80">
-                <button type="button" class="hover:text-white transition-colors" title="Cari pesan"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <button type="button" class="hover:text-white transition-colors" title="Menu"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            <div class="flex items-center text-white mr-1 shrink-0">
+                <button type="button" class="w-11 h-11 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center" title="Video call"><i class="fa-solid fa-video text-[19px]"></i></button>
+                <button type="button" class="w-11 h-11 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center" title="Voice call"><i class="fa-solid fa-phone text-[19px]"></i></button>
+                <button type="button" class="w-11 h-11 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center" title="Menu"><i class="fa-solid fa-ellipsis-vertical text-[21px]"></i></button>
             </div>
         </div>
 
@@ -40,9 +73,13 @@
                     
                     <div class="relative z-10 space-y-3 flex flex-col">
                         <template x-for="(msg, index) in messages" :key="index">
-                            <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
-                                <div :class="msg.role === 'user' ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-md rounded-tr-none' : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] rounded-md rounded-tl-none'" class="max-w-[85%] sm:max-w-[75%] px-3 py-2 shadow-[0_1px_0.5px_rgba(11,20,26,.13)] text-[15px] leading-relaxed break-words">
-                                    <div x-html="msg.content"></div>
+                            <div :class="msg.role === 'user' ? 'flex justify-end pl-12 sm:pl-20' : 'flex justify-start pr-12 sm:pr-20'">
+                                <div :class="msg.role === 'user' ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-[10px] rounded-tr-none wa-bubble-right relative' : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] rounded-[10px] rounded-tl-none wa-bubble-left relative'" class="px-2 py-1.5 shadow-[0_1px_0.5px_rgba(11,20,26,.13)] text-[15px] leading-relaxed break-words relative inline-block">
+                                    <div x-html="msg.content" class="pb-3 pr-8 min-w-[80px]"></div>
+                                    <span class="text-[10px] text-gray-500 dark:text-gray-300/80 absolute bottom-1 right-2 flex items-center gap-1">
+                                        <span x-text="new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
+                                        <template x-if="msg.role === 'user'"><i class="fa-solid fa-check-double text-[#53bdeb] text-[10px]"></i></template>
+                                    </span>
                                 </div>
                             </div>
                         </template>
@@ -59,21 +96,24 @@
                 </div>
 
         <!-- Input Area -->
-        <div class="bg-[#f0f2f5] dark:bg-[#202c33] px-6 py-4 shrink-0 flex flex-col gap-2 z-10">
-            <form @submit.prevent="sendMessage" class="flex-1 flex gap-4 items-end max-w-5xl mx-auto w-full">
-                <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] mb-3 text-xl transition-colors"><i class="fa-solid fa-face-smile"></i></button>
-                <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] mb-3 text-xl transition-colors"><i class="fa-solid fa-paperclip"></i></button>
+        <div class="bg-transparent px-2 py-2 shrink-0 z-10 pb-4">
+            <form @submit.prevent="sendMessage" class="flex gap-2 items-end max-w-5xl mx-auto w-full">
                 
-                <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-xl flex items-center shadow-[0_1px_0.5px_rgba(11,20,26,.13)] overflow-hidden">
-                    <input type="text" x-model="inputText" :disabled="isLoading" placeholder="Ketik pesan..." class="block w-full border-0 bg-transparent py-3.5 px-5 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 sm:text-[15px] disabled:opacity-50">
+                <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-[24px] flex items-end shadow-[0_1px_0.5px_rgba(11,20,26,.13)] min-h-[44px]">
+                    <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 px-3.5 transition-colors shrink-0"><i class="fa-regular fa-face-smile text-2xl"></i></button>
+                    
+                    <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="block w-full border-0 bg-transparent py-3 px-1 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 sm:text-[16px] disabled:opacity-50 resize-none max-h-32 min-h-[44px] overflow-y-auto" rows="1" style="line-height: 1.4;"></textarea>
+                    
+                    <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 pr-2 transition-colors shrink-0 transform -rotate-45"><i class="fa-solid fa-paperclip text-[22px]"></i></button>
+                    <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 pr-4 transition-colors shrink-0" x-show="inputText.trim() === ''"><i class="fa-solid fa-camera text-xl"></i></button>
                 </div>
                 
-                <button type="submit" :disabled="isLoading || inputText.trim() === ''" class="inline-flex items-center justify-center rounded-full bg-[#00a884] text-white hover:bg-[#008f6f] disabled:opacity-50 disabled:cursor-not-allowed w-12 h-12 shrink-0 transition-colors shadow-sm mb-0.5">
-                    <i class="fa-solid fa-paper-plane text-[15px]" x-show="!isLoading"></i>
-                    <i class="fa-solid fa-circle-notch fa-spin text-[15px]" x-show="isLoading" style="display:none;"></i>
+                <button type="submit" :disabled="isLoading" class="inline-flex items-center justify-center rounded-full bg-[#00a884] text-white hover:bg-[#008f6f] disabled:opacity-50 w-[48px] h-[48px] shrink-0 transition-colors shadow-sm mb-0.5">
+                    <i class="fa-solid fa-microphone text-[20px]" x-show="inputText.trim() === '' && !isLoading"></i>
+                    <i class="fa-solid fa-paper-plane text-[18px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
+                    <i class="fa-solid fa-circle-notch fa-spin text-[18px]" x-show="isLoading" style="display:none;"></i>
                 </button>
             </form>
-            <p class="text-[11px] text-center text-slate-400 dark:text-[#8696a0] mt-1 font-medium max-w-5xl mx-auto w-full">AI Ryaze dapat membuat kesalahan. Harap periksa kembali informasi penting.</p>
         </div>
         
     </div>
