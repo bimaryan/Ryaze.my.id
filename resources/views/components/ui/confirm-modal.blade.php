@@ -15,6 +15,12 @@
 <div
     x-show="{{ $model }}"
     x-cloak
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
     class="fixed inset-0 z-50 flex items-center justify-center p-4"
     style="display:none;">
 
@@ -26,13 +32,14 @@
 
     {{-- Modal Card --}}
     <div
+        x-show="{{ $model }}"
         class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700"
         x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-start="opacity-0 scale-90"
         x-transition:enter-end="opacity-100 scale-100"
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95">
+        x-transition:leave-end="opacity-0 scale-90">
 
         {{-- Icon --}}
         <div class="flex items-center justify-center w-14 h-14 rounded-2xl {{ $iconBg }} mx-auto mb-4">
