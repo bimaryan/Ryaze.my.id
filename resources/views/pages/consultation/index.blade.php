@@ -99,7 +99,7 @@
 
         <!-- Custom Confirm Modal -->
         <div x-show="confirmReset" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none;">
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="confirmReset = false"></div>
+            <div class="absolute inset-0 bg-black/50" @click="confirmReset = false"></div>
             <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700"
                 x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 scale-95"
