@@ -43,46 +43,79 @@
         }
     </style>
 
-    <!-- Background for Desktop WA Web (Green top band) -->
-    <div class="hidden md:block fixed inset-0 z-0">
-        <div class="h-[127px] bg-[#00a884] dark:bg-[#202c33] w-full"></div>
-        <div class="h-[calc(100vh-127px)] bg-[#e3e1db] dark:bg-[#111b21] w-full"></div>
-    </div>
-
     <!-- Main App Container -->
-    <div class="relative z-10 h-screen w-full md:h-[calc(100vh-38px)] md:max-w-[1400px] md:mx-auto md:my-[19px] md:rounded-sm md:shadow-xl flex bg-white dark:bg-[#111b21] overflow-hidden" x-data="aiConsultationPage()">
+    <div class="h-screen w-full flex bg-white dark:bg-[#111b21] overflow-hidden" x-data="aiConsultationPage()">
         
-        <!-- Sidebar (Desktop Only) -->
-        <div class="hidden md:flex flex-col w-[30%] lg:w-[30%] border-r border-slate-200 dark:border-[#202c33] bg-white dark:bg-[#111b21]">
-            <div class="bg-[#f0f2f5] dark:bg-[#202c33] px-4 py-3 flex items-center justify-between h-[59px] shrink-0">
-                <a href="{{ url('/') }}" class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 ring-indigo-500 transition-all" title="Kembali ke Beranda">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="User" class="w-full h-full object-cover">
+        <!-- Leftmost Mini Sidebar (Desktop Only) -->
+        <div class="hidden md:flex flex-col w-[64px] bg-[#f0f2f5] dark:bg-[#202c33] border-r border-slate-200 dark:border-[#313d45] items-center py-4 justify-between shrink-0 z-20">
+            <!-- Top Icons -->
+            <div class="flex flex-col gap-4 items-center w-full">
+                <button type="button" class="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-[#2a3942] flex items-center justify-center text-[#54656f] dark:text-[#aebac1] transition-colors" title="Pesan"><i class="fa-solid fa-message text-[20px]"></i></button>
+                <button type="button" class="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-[#2a3942] flex items-center justify-center text-[#54656f] dark:text-[#aebac1] transition-colors" title="Panggilan"><i class="fa-solid fa-phone text-[20px]"></i></button>
+                <button type="button" class="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-[#2a3942] flex items-center justify-center text-[#54656f] dark:text-[#aebac1] transition-colors" title="Status"><i class="fa-solid fa-circle-notch text-[20px]"></i></button>
+            </div>
+            <!-- Bottom Icons -->
+            <div class="flex flex-col gap-4 items-center w-full">
+                <button type="button" class="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-[#2a3942] flex items-center justify-center text-[#54656f] dark:text-[#aebac1] transition-colors" title="Pengaturan"><i class="fa-solid fa-gear text-[20px]"></i></button>
+                <a href="{{ url('/') }}" class="w-8 h-8 rounded-full overflow-hidden shrink-0 mt-2 hover:ring-2 ring-indigo-500 transition-all" title="Profil">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="w-full h-full object-cover">
                 </a>
-                <div class="flex items-center gap-5 text-[#54656f] dark:text-[#aebac1]">
-                    <i class="fa-solid fa-users text-[22px] cursor-pointer" title="Komunitas"></i>
-                    <i class="fa-solid fa-message text-[20px] cursor-pointer" title="Pesan Baru"></i>
-                    <i class="fa-solid fa-ellipsis-vertical text-[20px] cursor-pointer" title="Menu"></i>
+            </div>
+        </div>
+
+        <!-- Chat List Sidebar (Desktop Only) -->
+        <div class="hidden md:flex flex-col w-[380px] bg-white dark:bg-[#111b21] border-r border-slate-200 dark:border-[#313d45] shrink-0 z-20">
+            <!-- Header -->
+            <div class="px-5 py-4 flex items-center justify-between h-[60px] shrink-0">
+                <h2 class="text-[#111b21] dark:text-white text-[22px] font-bold">WhatsApp</h2>
+                <div class="flex items-center gap-3 text-[#54656f] dark:text-[#aebac1]">
+                    <button type="button" class="w-10 h-10 rounded-full hover:bg-[#f0f2f5] dark:hover:bg-[#202c33] flex items-center justify-center transition-colors"><i class="fa-solid fa-pen-to-square text-[20px]"></i></button>
+                    <button type="button" class="w-10 h-10 rounded-full hover:bg-[#f0f2f5] dark:hover:bg-[#202c33] flex items-center justify-center transition-colors"><i class="fa-solid fa-ellipsis-vertical text-[20px]"></i></button>
                 </div>
             </div>
             
-            <div class="bg-white dark:bg-[#111b21] border-b border-slate-200 dark:border-[#202c33] p-2">
-                <div class="bg-[#f0f2f5] dark:bg-[#202c33] rounded-lg flex items-center px-3 h-[35px]">
-                    <i class="fa-solid fa-magnifying-glass text-[#54656f] dark:text-[#aebac1] text-[13px] mr-3"></i>
-                    <input type="text" placeholder="Cari atau mulai chat baru" class="bg-transparent border-0 focus:ring-0 text-sm w-full p-0 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#54656f] dark:placeholder:text-[#8696a0]">
+            <!-- Search -->
+            <div class="px-3 py-2 shrink-0">
+                <div class="bg-[#f0f2f5] dark:bg-[#202c33] rounded-lg flex items-center px-3 h-[35px] border-b-2 border-transparent focus-within:border-[#00a884] transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-[#54656f] dark:text-[#aebac1] text-[13px] mr-3 shrink-0"></i>
+                    <input type="text" placeholder="Cari atau mulai obrolan baru" class="bg-transparent border-0 focus:ring-0 text-[14px] w-full p-0 text-[#111b21] dark:text-[#d1d7db] placeholder:text-[#54656f] dark:placeholder:text-[#8696a0]">
                 </div>
             </div>
+
+            <!-- Filters -->
+            <div class="px-4 py-2 flex gap-2 shrink-0 overflow-x-auto no-scrollbar" style="scrollbar-width: none;">
+                <button type="button" class="px-3 py-1.5 rounded-full bg-[#dcf8c6] dark:bg-[#0a332c] text-[#008069] dark:text-[#00a884] text-[14px] whitespace-nowrap">Semua</button>
+                <button type="button" class="px-3 py-1.5 rounded-full bg-[#f0f2f5] dark:bg-[#202c33] text-[#54656f] dark:text-[#aebac1] hover:bg-[#e9edef] dark:hover:bg-[#2a3942] text-[14px] whitespace-nowrap transition-colors">Belum dibaca</button>
+                <button type="button" class="px-3 py-1.5 rounded-full bg-[#f0f2f5] dark:bg-[#202c33] text-[#54656f] dark:text-[#aebac1] hover:bg-[#e9edef] dark:hover:bg-[#2a3942] text-[14px] whitespace-nowrap transition-colors">Favorit</button>
+                <button type="button" class="px-3 py-1.5 rounded-full bg-[#f0f2f5] dark:bg-[#202c33] text-[#54656f] dark:text-[#aebac1] hover:bg-[#e9edef] dark:hover:bg-[#2a3942] text-[14px] whitespace-nowrap transition-colors">Grup</button>
+            </div>
             
-            <div class="flex-1 overflow-y-auto">
+            <!-- Chat List -->
+            <div class="flex-1 overflow-y-auto mt-2">
+                <!-- Active Chat -->
                 <div class="flex items-center px-3 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#202c33] cursor-pointer bg-[#f0f2f5] dark:bg-[#2a3942]">
-                    <div class="w-[49px] h-[49px] rounded-full bg-slate-300 flex items-center justify-center overflow-hidden shrink-0">
+                    <div class="w-[49px] h-[49px] rounded-full flex items-center justify-center overflow-hidden shrink-0 ml-1">
                         <img src="https://ui-avatars.com/api/?name=AI+Joki&background=ffffff&color=008069" alt="Avatar" class="w-full h-full object-cover">
                     </div>
-                    <div class="ml-3 flex-1 border-b border-slate-100 dark:border-[#202c33] pb-3 h-full flex flex-col justify-center">
+                    <div class="ml-3 flex-1 border-b border-transparent pb-3 h-full flex flex-col justify-center">
                         <div class="flex justify-between items-center mb-0.5">
                             <h3 class="text-[17px] text-[#111b21] dark:text-[#e9edef]">AI Konsultan Joki</h3>
-                            <span class="text-xs text-[#00a884]">Hari ini</span>
+                            <span class="text-[12px] text-[#00a884]">Hari ini</span>
                         </div>
                         <p class="text-[14px] text-[#54656f] dark:text-[#8696a0] line-clamp-1">Sedang mengetik...</p>
+                    </div>
+                </div>
+                <!-- Mock Chat -->
+                <div class="flex items-center px-3 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#202c33] cursor-pointer">
+                    <div class="w-[49px] h-[49px] rounded-full flex items-center justify-center overflow-hidden shrink-0 ml-1">
+                        <img src="https://ui-avatars.com/api/?name=Grup+Tugas&background=random" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
+                    <div class="ml-3 flex-1 border-b border-slate-200 dark:border-[#313d45] pb-3 h-full flex flex-col justify-center">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <h3 class="text-[17px] text-[#111b21] dark:text-[#e9edef]">Grup Tugas Tugas</h3>
+                            <span class="text-[12px] text-[#54656f] dark:text-[#8696a0]">Selasa</span>
+                        </div>
+                        <p class="text-[14px] text-[#54656f] dark:text-[#8696a0] line-clamp-1">rendy dayat: 5 foto</p>
                     </div>
                 </div>
             </div>
@@ -142,8 +175,8 @@
                     </div>
                 </div>
 
-            <!-- Input Area -->
-            <div class="px-4 py-3 bg-[#f0f2f5] dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col relative z-10 w-full shrink-0">
+            <!-- MOBILE Input Area (Ticket Style) -->
+            <div class="md:hidden px-4 py-3 bg-[#f0f2f5] dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col relative z-10 w-full shrink-0">
                 <form @submit.prevent="sendMessage" class="flex gap-2 items-end max-w-5xl mx-auto w-full">
                     
                     <div class="flex-1 bg-white dark:bg-slate-800/60 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-end px-2 py-1.5 min-h-[44px]">
@@ -151,7 +184,7 @@
                             <i class="fa-regular fa-face-smile"></i>
                         </button>
                         
-                        <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="bg-transparent border-none px-2 py-1.5 text-[15px] resize-none m-0 w-full text-slate-800 dark:text-slate-100 placeholder:text-slate-500 disabled:opacity-50" rows="1" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
+                        <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="bg-transparent border-none px-2 py-1.5 text-[15px] focus:ring-0 focus:outline-none resize-none m-0 w-full text-slate-800 dark:text-slate-100 placeholder:text-slate-500 disabled:opacity-50" rows="1" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
                         
                         <button type="button" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
                             <i class="fa-solid fa-paperclip"></i>
@@ -159,6 +192,30 @@
                     </div>
                     
                     <button type="submit" :disabled="isLoading" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-sm mb-0.5 disabled:opacity-50">
+                        <i class="fa-solid fa-microphone text-[19px]" x-show="inputText.trim() === '' && !isLoading"></i>
+                        <i class="fa-solid fa-paper-plane text-[17px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
+                        <i class="fa-solid fa-circle-notch fa-spin text-[17px]" x-show="isLoading" style="display:none;"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- DESKTOP Input Area (New WA Web Style) -->
+            <div class="hidden md:flex bg-[#f0f2f5] dark:bg-[#202c33] px-4 py-3 shrink-0 z-10 w-full items-end gap-3 border-t border-transparent dark:border-[#313d45]">
+                <button type="button" class="text-[#54656f] dark:text-[#aebac1] hover:text-[#008069] transition-colors text-[24px] mb-1.5 shrink-0"><i class="fa-solid fa-plus"></i></button>
+                
+                <form @submit.prevent="sendMessage" class="flex-1 flex gap-3 items-end">
+                    <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-lg flex items-end px-3 py-1.5 min-h-[44px]">
+                        <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-1.5 transition-colors shrink-0 mr-1 mb-0.5"><i class="fa-regular fa-face-smile text-[22px]"></i></button>
+                        
+                        <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="block w-full border-0 bg-transparent py-2 px-2 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 text-[15px] disabled:opacity-50 resize-none max-h-32 min-h-[24px] overflow-y-auto m-0" rows="1" style="line-height: 1.4;"></textarea>
+                        
+                        <div class="flex items-center gap-2 shrink-0 mb-0.5 ml-2">
+                            <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-1.5 transition-colors transform -rotate-45"><i class="fa-solid fa-paperclip text-[20px]"></i></button>
+                            <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-1.5 transition-colors"><i class="fa-solid fa-camera text-[20px]"></i></button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" :disabled="isLoading" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-11 h-11 rounded-full flex items-center justify-center transition shadow-sm mb-[1px] disabled:opacity-50">
                         <i class="fa-solid fa-microphone text-[19px]" x-show="inputText.trim() === '' && !isLoading"></i>
                         <i class="fa-solid fa-paper-plane text-[17px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
                         <i class="fa-solid fa-circle-notch fa-spin text-[17px]" x-show="isLoading" style="display:none;"></i>
