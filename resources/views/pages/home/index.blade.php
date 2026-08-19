@@ -329,7 +329,7 @@
                                 Keamanan & Skalabilitas Tinggi
                             </li>
                         </ul>
-                        <button @click="$dispatch('open-consultation')" type="button"
+                        <button x-data @click="$dispatch('open-consultation')" type="button"
                             class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-slate-900 dark:text-white bg-white dark:bg-white/10 border border-slate-300 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/20 rounded-full transition-colors shadow-sm">
                             Mulai Konsultasi <i class="fa-solid fa-robot ml-2"></i>
                         </button>
