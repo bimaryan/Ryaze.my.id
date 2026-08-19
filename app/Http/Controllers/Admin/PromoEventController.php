@@ -26,8 +26,9 @@ class PromoEventController extends Controller
         return view('pages.admin.promo_events.index', compact('promos'));
     }
 
-    public function toggleStatus(PromoEvent $promo_event)
+    public function toggleStatus($hashid)
     {
+        $promo_event = PromoEvent::findByHashidOrFail($hashid);
         $promo_event->update(['is_active' => !$promo_event->is_active]);
         return back()->with('success', 'Status promo berhasil diubah.');
     }
@@ -60,13 +61,15 @@ class PromoEventController extends Controller
         return redirect()->route('admin.promo_events.index')->with('success', 'Promo event berhasil ditambahkan.');
     }
 
-    public function edit(PromoEvent $promo_event)
+    public function edit($hashid)
     {
+        $promo_event = PromoEvent::findByHashidOrFail($hashid);
         return view('pages.admin.promo_events.edit', compact('promo_event'));
     }
 
-    public function update(Request $request, PromoEvent $promo_event)
+    public function update(Request $request, $hashid)
     {
+        $promo_event = PromoEvent::findByHashidOrFail($hashid);
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -91,8 +94,9 @@ class PromoEventController extends Controller
         return redirect()->route('admin.promo_events.index')->with('success', 'Promo event berhasil diperbarui.');
     }
 
-    public function destroy(PromoEvent $promo_event)
+    public function destroy($hashid)
     {
+        $promo_event = PromoEvent::findByHashidOrFail($hashid);
         if ($promo_event->banner_image) {
             Storage::disk('public')->delete($promo_event->banner_image);
         }

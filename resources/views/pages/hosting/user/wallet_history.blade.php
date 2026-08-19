@@ -98,7 +98,7 @@
         </x-ui.table>
 
         {{-- Modal Top Up --}}
-        <dialog id="topup-modal" class="m-auto backdrop:bg-slate-900/50 backdrop:backdrop-blur-sm p-0 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 open:animate-in open:fade-in open:zoom-in-95 overflow-hidden">
+        <dialog id="topup-modal" class="m-auto backdrop:bg-black/50 p-0 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 open:animate-in open:fade-in open:zoom-in-95 overflow-hidden">
             <form action="{{ route('user.wallet.topup') }}" method="POST">
                 @csrf
                 <div class="px-6 pt-6 pb-4">
