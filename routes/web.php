@@ -20,7 +20,7 @@ use App\Http\Controllers\Blog\BlogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
+Route::view('/consultation', 'pages.consultation.index')->name('consultation');
 Route::get('/sitemap.xml', function () {
     $articles = \App\Models\Article::where('status', 'published')->orderBy('created_at', 'desc')->get();
     $categories = \App\Models\ArticleCategory::has('articles')->orderBy('name')->get();
