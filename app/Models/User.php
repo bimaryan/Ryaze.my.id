@@ -156,6 +156,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'default_price' => 0,
                 'color'         => 'slate',
                 'features'      => ['256 MB Storage', 'Maks. 1 Project', '1 MySQL Database', 'Subdomain Bawaan', 'Prioritas Support'],
+                'is_active'     => \App\Models\Setting::val('plan_free_active', '1') == '1',
             ],
             'starter'  => [
                 'label'         => 'Starter',
@@ -166,6 +167,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'default_price' => 15000,
                 'color'         => 'indigo',
                 'features'      => ['1 GB Storage', 'Maks. 3 Project', 'MySQL & PostgreSQL', 'Subdomain Bawaan', 'Prioritas Support'],
+                'is_active'     => \App\Models\Setting::val('plan_starter_active', '1') == '1',
             ],
             'pro' => [
                 'label'         => 'Pro',
@@ -176,6 +178,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'default_price' => 30000,
                 'color'         => 'violet',
                 'features'      => ['3 GB Storage', 'Maks. 10 Project', 'MySQL, PostgreSQL & Redis', 'Subdomain Bawaan', 'Prioritas Support'],
+                'is_active'     => \App\Models\Setting::val('plan_pro_active', '1') == '1',
             ],
             'business' => [
                 'label'         => 'Business',
@@ -186,6 +189,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'default_price' => 75000,
                 'color'         => 'amber',
                 'features'      => ['10 GB Storage', 'Project Unlimited', 'Semua Database', 'Subdomain Bawaan', 'Prioritas Support'],
+                'is_active'     => \App\Models\Setting::val('plan_business_active', '1') == '1',
             ],
         ];
     }

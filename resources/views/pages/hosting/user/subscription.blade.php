@@ -57,6 +57,9 @@
             </p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 @foreach ($plans as $slug => $plan)
+                    @if (!($plan['is_active'] ?? true) && $currentPlan !== $slug)
+                        @continue
+                    @endif
                     @php 
                         $pricing = \App\Models\User::getPlanPricing($slug); 
                         $c = $colorMap[$plan['color']]; 

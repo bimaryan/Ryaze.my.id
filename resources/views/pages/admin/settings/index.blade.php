@@ -173,10 +173,32 @@
                 {{-- Harga & Langganan Hosting --}}
                 <div>
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-tags text-indigo-500 dark:text-indigo-400 mr-2"></i> Harga Langganan Hosting (Paket)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Free -->
+                        <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 rounded-xl flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
+                                    <h4 class="font-bold text-slate-800 dark:text-slate-100">Paket Free</h4>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="hidden" name="plan_free_active" value="0">
+                                        <input type="checkbox" name="plan_free_active" value="1" class="sr-only peer" {{ (!isset($settings['plan_free_active']) || $settings['plan_free_active'] == '1') ? 'checked' : '' }}>
+                                        <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    </label>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Harga Paket Free selalu Rp 0.</p>
+                            </div>
+                        </div>
+
                         <!-- Starter -->
                         <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">Paket Starter</h4>
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
+                                <h4 class="font-bold text-slate-800 dark:text-slate-100">Paket Starter</h4>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="hidden" name="plan_starter_active" value="0">
+                                    <input type="checkbox" name="plan_starter_active" value="1" class="sr-only peer" {{ (!isset($settings['plan_starter_active']) || $settings['plan_starter_active'] == '1') ? 'checked' : '' }}>
+                                    <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>
@@ -191,7 +213,14 @@
 
                         <!-- Pro -->
                         <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">Paket Pro</h4>
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
+                                <h4 class="font-bold text-slate-800 dark:text-slate-100">Paket Pro</h4>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="hidden" name="plan_pro_active" value="0">
+                                    <input type="checkbox" name="plan_pro_active" value="1" class="sr-only peer" {{ (!isset($settings['plan_pro_active']) || $settings['plan_pro_active'] == '1') ? 'checked' : '' }}>
+                                    <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>
@@ -206,7 +235,14 @@
 
                         <!-- Business -->
                         <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">Paket Business</h4>
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
+                                <h4 class="font-bold text-slate-800 dark:text-slate-100">Paket Business</h4>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="hidden" name="plan_business_active" value="0">
+                                    <input type="checkbox" name="plan_business_active" value="1" class="sr-only peer" {{ (!isset($settings['plan_business_active']) || $settings['plan_business_active'] == '1') ? 'checked' : '' }}>
+                                    <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>

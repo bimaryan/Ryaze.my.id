@@ -2281,6 +2281,12 @@ PHP;
             }
         }
         $selectedPlan = $request->plan;
+        $planConfig   = \App\Models\User::hostingPlans()[$selectedPlan] ?? null;
+        
+        if (!$planConfig || !($planConfig['is_active'] ?? true)) {
+            return back()->with('error', 'Paket yang Anda pilih saat ini sedang tidak tersedia atau dinonaktifkan.');
+        }
+
         $planLimits   = \App\Models\User::getPlanLimits($selectedPlan);
         $planPrice    = \App\Models\User::getPlanPrice($selectedPlan);
 
