@@ -9,10 +9,10 @@
         ['label' => 'Blog', 'href' => route('blog.index')],
     ]">
 
-    <div class="pt-32 pb-20 min-h-screen">
-        <div class="container mx-auto px-4 max-w-4xl" x-data="aiConsultationPage()">
+    <div class="pt-24 pb-12 min-h-screen flex items-center justify-center">
+        <div class="container mx-auto px-4 max-w-7xl w-full" x-data="aiConsultationPage()">
             
-            <div class="flex flex-col h-[75vh] min-h-[500px] bg-[#efeae2] dark:bg-[#0b141a] rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
+            <div class="flex flex-col h-[85vh] min-h-[600px] bg-[#efeae2] dark:bg-[#0b141a] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
                 
                 <!-- Header -->
                 <div class="bg-[#008069] dark:bg-[#202c33] px-4 py-3 flex items-center justify-between shrink-0 shadow-sm z-10">
