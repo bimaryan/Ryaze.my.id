@@ -43,28 +43,75 @@
         }
     </style>
 
-    <div class="h-screen w-full bg-[#efeae2] dark:bg-[#0b141a] flex flex-col relative" x-data="aiConsultationPage()">
+    <!-- Background for Desktop WA Web (Green top band) -->
+    <div class="hidden md:block fixed inset-0 z-0">
+        <div class="h-[127px] bg-[#00a884] dark:bg-[#202c33] w-full"></div>
+        <div class="h-[calc(100vh-127px)] bg-[#e3e1db] dark:bg-[#111b21] w-full"></div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="relative z-10 h-screen w-full md:h-[calc(100vh-38px)] md:max-w-[1400px] md:mx-auto md:my-[19px] md:rounded-sm md:shadow-xl flex bg-white dark:bg-[#111b21] overflow-hidden" x-data="aiConsultationPage()">
         
-        <!-- Header -->
-        <div class="bg-[#008069] dark:bg-[#202c33] px-2 py-2 flex items-center justify-between shrink-0 shadow-sm z-10 w-full sticky top-0">
-            <div class="flex items-center gap-1">
-                <a href="{{ url('/') }}" class="text-white hover:bg-white/10 rounded-full p-2 pr-3 transition-colors flex items-center gap-1" title="Kembali ke Beranda">
-                    <i class="fa-solid fa-arrow-left text-[20px]"></i>
-                    <div class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center text-slate-500 text-lg overflow-hidden shrink-0 ml-1">
-                        <img src="https://ui-avatars.com/api/?name=AI+Joki&background=ffffff&color=008069" alt="Avatar" class="w-full h-full object-cover">
-                    </div>
+        <!-- Sidebar (Desktop Only) -->
+        <div class="hidden md:flex flex-col w-[30%] lg:w-[30%] border-r border-slate-200 dark:border-[#202c33] bg-white dark:bg-[#111b21]">
+            <div class="bg-[#f0f2f5] dark:bg-[#202c33] px-4 py-3 flex items-center justify-between h-[59px] shrink-0">
+                <a href="{{ url('/') }}" class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 ring-indigo-500 transition-all" title="Kembali ke Beranda">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="User" class="w-full h-full object-cover">
                 </a>
-                <div class="ml-1 cursor-pointer flex-1">
-                    <h1 class="text-[17px] font-medium text-white leading-tight line-clamp-1">AI Konsultan Joki</h1>
-                    <p class="text-[13px] text-white/80 leading-tight">online</p>
+                <div class="flex items-center gap-5 text-[#54656f] dark:text-[#aebac1]">
+                    <i class="fa-solid fa-users text-[22px] cursor-pointer" title="Komunitas"></i>
+                    <i class="fa-solid fa-message text-[20px] cursor-pointer" title="Pesan Baru"></i>
+                    <i class="fa-solid fa-ellipsis-vertical text-[20px] cursor-pointer" title="Menu"></i>
                 </div>
             </div>
-            <div class="flex items-center text-white mr-1 shrink-0">
-                <button type="button" class="w-11 h-11 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center" title="Video call"><i class="fa-solid fa-video text-[19px]"></i></button>
-                <button type="button" class="w-11 h-11 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center" title="Voice call"><i class="fa-solid fa-phone text-[19px]"></i></button>
-                <button type="button" class="w-11 h-11 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center" title="Menu"><i class="fa-solid fa-ellipsis-vertical text-[21px]"></i></button>
+            
+            <div class="bg-white dark:bg-[#111b21] border-b border-slate-200 dark:border-[#202c33] p-2">
+                <div class="bg-[#f0f2f5] dark:bg-[#202c33] rounded-lg flex items-center px-3 h-[35px]">
+                    <i class="fa-solid fa-magnifying-glass text-[#54656f] dark:text-[#aebac1] text-[13px] mr-3"></i>
+                    <input type="text" placeholder="Cari atau mulai chat baru" class="bg-transparent border-0 focus:ring-0 text-sm w-full p-0 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#54656f] dark:placeholder:text-[#8696a0]">
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto">
+                <div class="flex items-center px-3 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#202c33] cursor-pointer bg-[#f0f2f5] dark:bg-[#2a3942]">
+                    <div class="w-[49px] h-[49px] rounded-full bg-slate-300 flex items-center justify-center overflow-hidden shrink-0">
+                        <img src="https://ui-avatars.com/api/?name=AI+Joki&background=ffffff&color=008069" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
+                    <div class="ml-3 flex-1 border-b border-slate-100 dark:border-[#202c33] pb-3 h-full flex flex-col justify-center">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <h3 class="text-[17px] text-[#111b21] dark:text-[#e9edef]">AI Konsultan Joki</h3>
+                            <span class="text-xs text-[#00a884]">Hari ini</span>
+                        </div>
+                        <p class="text-[14px] text-[#54656f] dark:text-[#8696a0] line-clamp-1">Sedang mengetik...</p>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Chat Area Wrapper (Mobile: full width, Desktop: 70%) -->
+        <div class="flex-1 flex flex-col h-full bg-[#efeae2] dark:bg-[#0b141a] relative">
+            
+            <!-- Header -->
+            <div class="bg-[#008069] md:bg-[#f0f2f5] dark:bg-[#202c33] px-2 md:px-4 py-2 md:py-3 flex items-center justify-between shrink-0 shadow-sm md:shadow-none z-10 w-full h-[59px]">
+                <div class="flex items-center gap-1 md:gap-4 cursor-pointer flex-1">
+                    <a href="{{ url('/') }}" class="text-white hover:bg-white/10 rounded-full p-2 pr-3 transition-colors flex items-center gap-1 md:hidden" title="Kembali ke Beranda">
+                        <i class="fa-solid fa-arrow-left text-[20px]"></i>
+                    </a>
+                    <div class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden shrink-0 ml-1 md:ml-0">
+                        <img src="https://ui-avatars.com/api/?name=AI+Joki&background=ffffff&color=008069" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
+                    <div class="ml-1 md:ml-0 flex-1">
+                        <h1 class="text-[17px] md:text-[16px] font-medium md:font-semibold text-white md:text-[#111b21] md:dark:text-[#e9edef] leading-tight line-clamp-1">AI Konsultan Joki</h1>
+                        <p class="text-[13px] text-white/80 md:text-[#54656f] md:dark:text-[#8696a0] leading-tight">online</p>
+                    </div>
+                </div>
+                <div class="flex items-center text-white md:text-[#54656f] md:dark:text-[#aebac1] mr-1 md:mr-0 shrink-0 gap-1 md:gap-5">
+                    <button type="button" class="w-11 h-11 md:w-auto md:h-auto rounded-full hover:bg-white/10 md:hover:bg-transparent transition-colors flex items-center justify-center md:hidden" title="Video call"><i class="fa-solid fa-video text-[19px]"></i></button>
+                    <button type="button" class="hidden md:flex w-11 h-11 md:w-auto md:h-auto rounded-full hover:bg-white/10 md:hover:bg-transparent transition-colors items-center justify-center" title="Search"><i class="fa-solid fa-magnifying-glass text-[19px]"></i></button>
+                    <button type="button" class="w-11 h-11 md:w-auto md:h-auto rounded-full hover:bg-white/10 md:hover:bg-transparent transition-colors flex items-center justify-center md:hidden" title="Voice call"><i class="fa-solid fa-phone text-[19px]"></i></button>
+                    <button type="button" class="w-11 h-11 md:w-auto md:h-auto rounded-full hover:bg-white/10 md:hover:bg-transparent transition-colors flex items-center justify-center" title="Menu"><i class="fa-solid fa-ellipsis-vertical text-[21px] md:text-[20px]"></i></button>
+                </div>
+            </div>
 
         <!-- Chat Area -->
         <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-4 relative z-10" id="chat-container">
@@ -95,27 +142,37 @@
                     </div>
                 </div>
 
-        <!-- Input Area -->
-        <div class="bg-transparent px-2 py-2 shrink-0 z-10 pb-4">
-            <form @submit.prevent="sendMessage" class="flex gap-2 items-end max-w-5xl mx-auto w-full">
-                
-                <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-[24px] flex items-end shadow-[0_1px_0.5px_rgba(11,20,26,.13)] min-h-[44px]">
-                    <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 px-3.5 transition-colors shrink-0"><i class="fa-regular fa-face-smile text-2xl"></i></button>
+            <!-- Input Area -->
+            <div class="bg-transparent md:bg-[#f0f2f5] md:dark:bg-[#202c33] px-2 md:px-4 py-2 md:py-3 shrink-0 z-10 pb-4 md:pb-3 w-full">
+                <form @submit.prevent="sendMessage" class="flex gap-2 md:gap-4 items-end md:items-center max-w-5xl mx-auto w-full">
                     
-                    <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="block w-full border-0 bg-transparent py-3 px-1 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 sm:text-[16px] disabled:opacity-50 resize-none max-h-32 min-h-[44px] overflow-y-auto" rows="1" style="line-height: 1.4;"></textarea>
+                    <button type="button" class="hidden md:block text-[#54656f] dark:text-[#aebac1] hover:text-[#008069] transition-colors text-[24px]"><i class="fa-regular fa-face-smile"></i></button>
+                    <button type="button" class="hidden md:block text-[#54656f] dark:text-[#aebac1] hover:text-[#008069] transition-colors text-[24px] transform -rotate-45 mr-1"><i class="fa-solid fa-paperclip"></i></button>
+
+                    <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-[24px] md:rounded-lg flex items-end md:items-center shadow-[0_1px_0.5px_rgba(11,20,26,.13)] md:shadow-none min-h-[44px]">
+                        <button type="button" class="md:hidden text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 px-3.5 transition-colors shrink-0"><i class="fa-regular fa-face-smile text-2xl"></i></button>
+                        
+                        <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="block w-full border-0 bg-transparent py-3 md:py-2.5 px-1 md:px-4 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 sm:text-[15px] disabled:opacity-50 resize-none max-h-32 min-h-[44px] md:min-h-0 overflow-y-auto" rows="1" style="line-height: 1.4;"></textarea>
+                        
+                        <button type="button" class="md:hidden text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 pr-2 transition-colors shrink-0 transform -rotate-45"><i class="fa-solid fa-paperclip text-[22px]"></i></button>
+                        <button type="button" class="md:hidden text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 pr-4 transition-colors shrink-0" x-show="inputText.trim() === ''"><i class="fa-solid fa-camera text-xl"></i></button>
+                    </div>
                     
-                    <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 pr-2 transition-colors shrink-0 transform -rotate-45"><i class="fa-solid fa-paperclip text-[22px]"></i></button>
-                    <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 pr-4 transition-colors shrink-0" x-show="inputText.trim() === ''"><i class="fa-solid fa-camera text-xl"></i></button>
-                </div>
-                
-                <button type="submit" :disabled="isLoading" class="inline-flex items-center justify-center rounded-full bg-[#00a884] text-white hover:bg-[#008f6f] disabled:opacity-50 w-[48px] h-[48px] shrink-0 transition-colors shadow-sm mb-0.5">
-                    <i class="fa-solid fa-microphone text-[20px]" x-show="inputText.trim() === '' && !isLoading"></i>
-                    <i class="fa-solid fa-paper-plane text-[18px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
-                    <i class="fa-solid fa-circle-notch fa-spin text-[18px]" x-show="isLoading" style="display:none;"></i>
-                </button>
-            </form>
+                    <button type="submit" :disabled="isLoading" class="inline-flex md:hidden items-center justify-center rounded-full bg-[#00a884] text-white hover:bg-[#008f6f] disabled:opacity-50 w-[48px] h-[48px] shrink-0 transition-colors shadow-sm mb-0.5">
+                        <i class="fa-solid fa-microphone text-[20px]" x-show="inputText.trim() === '' && !isLoading"></i>
+                        <i class="fa-solid fa-paper-plane text-[18px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
+                        <i class="fa-solid fa-circle-notch fa-spin text-[18px]" x-show="isLoading" style="display:none;"></i>
+                    </button>
+                    
+                    <button type="submit" :disabled="isLoading" class="hidden md:inline-flex items-center justify-center text-[#54656f] dark:text-[#aebac1] hover:text-[#00a884] transition-colors ml-1 w-10 h-10">
+                        <i class="fa-solid fa-microphone text-[24px]" x-show="inputText.trim() === '' && !isLoading"></i>
+                        <i class="fa-solid fa-paper-plane text-[24px]" x-show="inputText.trim() !== '' && !isLoading"></i>
+                        <i class="fa-solid fa-circle-notch fa-spin text-[24px]" x-show="isLoading" style="display:none;"></i>
+                    </button>
+                </form>
+            </div>
         </div>
-        
+
     </div>
 
     @push('scripts')
