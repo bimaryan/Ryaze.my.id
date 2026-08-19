@@ -1,7 +1,7 @@
 <x-public-layout
     title="Konsultasi AI Joki - Ryaze"
     description="Konsultasikan ide proyek atau sistem yang ingin Anda buat dengan AI Konsultan kami."
-    body-class="bg-slate-50 font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-indigo-600 selection:text-white"
+    body-class="bg-slate-50 font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100"
     og-image="{{ url('/og-image.png') }}"
     :links="[
         ['label' => 'Beranda', 'href' => url('/')],
@@ -12,217 +12,197 @@
     :withFooter="false">
 
     <style>
-        .wa-bubble-left::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -8px;
-            width: 0;
-            height: 0;
-            border-top: 0px solid transparent;
-            border-bottom: 12px solid transparent;
-            border-right: 12px solid #ffffff;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body { font-family: 'Inter', sans-serif; }
+
+        .ai-bg {
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.15), transparent),
+                        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139,92,246,0.1), transparent);
         }
-        .dark .wa-bubble-left::before {
-            border-right-color: #202c33;
+        .dark .ai-bg {
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.08), transparent),
+                        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139,92,246,0.06), transparent);
         }
-        
-        .wa-bubble-right::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: -8px;
-            width: 0;
-            height: 0;
-            border-top: 0px solid transparent;
-            border-bottom: 12px solid transparent;
-            border-left: 12px solid #d9fdd3;
+
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 18px 18px 4px 18px;
         }
-        .dark .wa-bubble-right::before {
-            border-left-color: #005c4b;
+        .chat-bubble-ai {
+            background: white;
+            color: #1e293b;
+            border-radius: 18px 18px 18px 4px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .dark .chat-bubble-ai {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-color: #334155;
+        }
+
+        .input-area {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+        .dark .input-area {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .send-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+        }
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #chat-container::-webkit-scrollbar { width: 4px; }
+        #chat-container::-webkit-scrollbar-track { background: transparent; }
+        #chat-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark #chat-container::-webkit-scrollbar-thumb { background: #334155; }
+
+        .typing-dot {
+            width: 8px; height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typing-bounce 1.2s ease-in-out infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing-bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        .msg-appear {
+            animation: msg-in 0.25s ease-out forwards;
+        }
+        @keyframes msg-in {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
     </style>
 
-    <!-- Main App Container -->
-    <div class="h-screen w-full flex bg-white dark:bg-[#111b21] overflow-hidden" x-data="aiConsultationPage()">
-        
-        <!-- Leftmost Mini Sidebar (Desktop Only) -->
-        <div class="hidden md:flex flex-col w-[64px] bg-[#f0f2f5] dark:bg-[#202c33] border-r border-slate-200 dark:border-[#313d45] items-center py-4 justify-between shrink-0 z-20">
-            <!-- Top Icons -->
-            <div class="flex flex-col gap-4 items-center w-full">
-                <button type="button" class="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-[#2a3942] flex items-center justify-center text-[#54656f] dark:text-[#aebac1] transition-colors" title="Pesan"><i class="fa-solid fa-message text-[20px]"></i></button>
-                <button type="button" class="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-[#2a3942] flex items-center justify-center text-[#54656f] dark:text-[#aebac1] transition-colors" title="Panggilan"><i class="fa-solid fa-phone text-[20px]"></i></button>
-                <button type="button" class="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-[#2a3942] flex items-center justify-center text-[#54656f] dark:text-[#aebac1] transition-colors" title="Status"><i class="fa-solid fa-circle-notch text-[20px]"></i></button>
-            </div>
-            <!-- Bottom Icons -->
-            <div class="flex flex-col gap-4 items-center w-full">
-                <button type="button" class="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-[#2a3942] flex items-center justify-center text-[#54656f] dark:text-[#aebac1] transition-colors" title="Pengaturan"><i class="fa-solid fa-gear text-[20px]"></i></button>
-                <a href="{{ url('/') }}" class="w-8 h-8 rounded-full overflow-hidden shrink-0 mt-2 hover:ring-2 ring-indigo-500 transition-all" title="Profil">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="w-full h-full object-cover">
-                </a>
-            </div>
-        </div>
+    <div class="h-screen w-full flex flex-col bg-slate-50 dark:bg-slate-950 ai-bg" x-data="aiConsultationPage()">
 
-        <!-- Chat List Sidebar (Desktop Only) -->
-        <div class="hidden md:flex flex-col w-[380px] bg-white dark:bg-[#111b21] border-r border-slate-200 dark:border-[#313d45] shrink-0 z-20">
-            <!-- Header -->
-            <div class="px-5 py-4 flex items-center justify-between h-[60px] shrink-0">
-                <h2 class="text-[#111b21] dark:text-white text-[22px] font-bold">WhatsApp</h2>
-                <div class="flex items-center gap-3 text-[#54656f] dark:text-[#aebac1]">
-                    <button type="button" class="w-10 h-10 rounded-full hover:bg-[#f0f2f5] dark:hover:bg-[#202c33] flex items-center justify-center transition-colors"><i class="fa-solid fa-pen-to-square text-[20px]"></i></button>
-                    <button type="button" class="w-10 h-10 rounded-full hover:bg-[#f0f2f5] dark:hover:bg-[#202c33] flex items-center justify-center transition-colors"><i class="fa-solid fa-ellipsis-vertical text-[20px]"></i></button>
-                </div>
-            </div>
-            
-            <!-- Search -->
-            <div class="px-3 py-2 shrink-0">
-                <div class="bg-[#f0f2f5] dark:bg-[#202c33] rounded-lg flex items-center px-3 h-[35px] border-b-2 border-transparent focus-within:border-[#00a884] transition-colors">
-                    <i class="fa-solid fa-magnifying-glass text-[#54656f] dark:text-[#aebac1] text-[13px] mr-3 shrink-0"></i>
-                    <input type="text" placeholder="Cari atau mulai obrolan baru" class="bg-transparent border-0 focus:ring-0 text-[14px] w-full p-0 text-[#111b21] dark:text-[#d1d7db] placeholder:text-[#54656f] dark:placeholder:text-[#8696a0]">
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="px-4 py-2 flex gap-2 shrink-0 overflow-x-auto no-scrollbar" style="scrollbar-width: none;">
-                <button type="button" class="px-3 py-1.5 rounded-full bg-[#dcf8c6] dark:bg-[#0a332c] text-[#008069] dark:text-[#00a884] text-[14px] whitespace-nowrap">Semua</button>
-                <button type="button" class="px-3 py-1.5 rounded-full bg-[#f0f2f5] dark:bg-[#202c33] text-[#54656f] dark:text-[#aebac1] hover:bg-[#e9edef] dark:hover:bg-[#2a3942] text-[14px] whitespace-nowrap transition-colors">Belum dibaca</button>
-                <button type="button" class="px-3 py-1.5 rounded-full bg-[#f0f2f5] dark:bg-[#202c33] text-[#54656f] dark:text-[#aebac1] hover:bg-[#e9edef] dark:hover:bg-[#2a3942] text-[14px] whitespace-nowrap transition-colors">Favorit</button>
-                <button type="button" class="px-3 py-1.5 rounded-full bg-[#f0f2f5] dark:bg-[#202c33] text-[#54656f] dark:text-[#aebac1] hover:bg-[#e9edef] dark:hover:bg-[#2a3942] text-[14px] whitespace-nowrap transition-colors">Grup</button>
-            </div>
-            
-            <!-- Chat List -->
-            <div class="flex-1 overflow-y-auto mt-2">
-                <!-- Active Chat -->
-                <div class="flex items-center px-3 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#202c33] cursor-pointer bg-[#f0f2f5] dark:bg-[#2a3942]">
-                    <div class="w-[49px] h-[49px] rounded-full flex items-center justify-center overflow-hidden shrink-0 ml-1">
-                        <img src="https://ui-avatars.com/api/?name=AI+Joki&background=ffffff&color=008069" alt="Avatar" class="w-full h-full object-cover">
-                    </div>
-                    <div class="ml-3 flex-1 border-b border-transparent pb-3 h-full flex flex-col justify-center">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <h3 class="text-[17px] text-[#111b21] dark:text-[#e9edef]">AI Konsultan Joki</h3>
-                            <span class="text-[12px] text-[#00a884]">Hari ini</span>
-                        </div>
-                        <p class="text-[14px] text-[#54656f] dark:text-[#8696a0] line-clamp-1">Sedang mengetik...</p>
-                    </div>
-                </div>
-                <!-- Mock Chat -->
-                <div class="flex items-center px-3 py-3 hover:bg-[#f5f6f6] dark:hover:bg-[#202c33] cursor-pointer">
-                    <div class="w-[49px] h-[49px] rounded-full flex items-center justify-center overflow-hidden shrink-0 ml-1">
-                        <img src="https://ui-avatars.com/api/?name=Grup+Tugas&background=random" alt="Avatar" class="w-full h-full object-cover">
-                    </div>
-                    <div class="ml-3 flex-1 border-b border-slate-200 dark:border-[#313d45] pb-3 h-full flex flex-col justify-center">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <h3 class="text-[17px] text-[#111b21] dark:text-[#e9edef]">Grup Tugas Tugas</h3>
-                            <span class="text-[12px] text-[#54656f] dark:text-[#8696a0]">Selasa</span>
-                        </div>
-                        <p class="text-[14px] text-[#54656f] dark:text-[#8696a0] line-clamp-1">rendy dayat: 5 foto</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chat Area Wrapper (Mobile: full width, Desktop: 70%) -->
-        <div class="flex-1 flex flex-col h-full bg-[#efeae2] dark:bg-[#0b141a] relative">
-            
-            <!-- Header -->
-            <div class="bg-[#008069] md:bg-[#f0f2f5] dark:bg-[#202c33] px-2 md:px-4 py-2 md:py-3 flex items-center justify-between shrink-0 shadow-sm md:shadow-none z-10 w-full h-[59px]">
-                <div class="flex items-center gap-1 md:gap-4 cursor-pointer flex-1">
-                    <a href="{{ url('/') }}" class="text-white hover:bg-white/10 rounded-full p-2 pr-3 transition-colors flex items-center gap-1 md:hidden" title="Kembali ke Beranda">
-                        <i class="fa-solid fa-arrow-left text-[20px]"></i>
+        <!-- Top Bar -->
+        <header class="shrink-0 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-10">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+                <!-- Left: Back + Identity -->
+                <div class="flex items-center gap-3">
+                    <a href="{{ url('/') }}" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Kembali">
+                        <i class="fa-solid fa-arrow-left text-[15px]"></i>
                     </a>
-                    <div class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden shrink-0 ml-1 md:ml-0">
-                        <img src="https://ui-avatars.com/api/?name=AI+Joki&background=ffffff&color=008069" alt="Avatar" class="w-full h-full object-cover">
-                    </div>
-                    <div class="ml-1 md:ml-0 flex-1">
-                        <h1 class="text-[17px] md:text-[16px] font-medium md:font-semibold text-white md:text-[#111b21] md:dark:text-[#e9edef] leading-tight line-clamp-1">AI Konsultan Joki</h1>
-                        <p class="text-[13px] text-white/80 md:text-[#54656f] md:dark:text-[#8696a0] leading-tight">online</p>
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shrink-0 shadow-sm">
+                                <i class="fa-solid fa-robot text-[15px]"></i>
+                            </div>
+                            <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-white dark:border-slate-900 rounded-full"></span>
+                        </div>
+                        <div>
+                            <h1 class="text-[15px] font-semibold text-slate-900 dark:text-white leading-tight">AI Konsultan Joki</h1>
+                            <p class="text-[12px] text-emerald-500 font-medium leading-tight">Online &bull; Siap membantu</p>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-center text-white md:text-[#54656f] md:dark:text-[#aebac1] mr-1 md:mr-0 shrink-0 gap-1 md:gap-5">
-                    <button type="button" class="w-11 h-11 md:w-auto md:h-auto rounded-full hover:bg-white/10 md:hover:bg-transparent transition-colors flex items-center justify-center md:hidden" title="Video call"><i class="fa-solid fa-video text-[19px]"></i></button>
-                    <button type="button" class="hidden md:flex w-11 h-11 md:w-auto md:h-auto rounded-full hover:bg-white/10 md:hover:bg-transparent transition-colors items-center justify-center" title="Search"><i class="fa-solid fa-magnifying-glass text-[19px]"></i></button>
-                    <button type="button" class="w-11 h-11 md:w-auto md:h-auto rounded-full hover:bg-white/10 md:hover:bg-transparent transition-colors flex items-center justify-center md:hidden" title="Voice call"><i class="fa-solid fa-phone text-[19px]"></i></button>
-                    <button type="button" class="w-11 h-11 md:w-auto md:h-auto rounded-full hover:bg-white/10 md:hover:bg-transparent transition-colors flex items-center justify-center" title="Menu"><i class="fa-solid fa-ellipsis-vertical text-[21px] md:text-[20px]"></i></button>
+                <!-- Right: Actions -->
+                <div class="flex items-center gap-1">
+                    <button type="button" onclick="if(confirm('Reset semua percakapan?')){ localStorage.removeItem('ryaze_consultation_token'); location.reload(); }" class="h-9 px-3 rounded-xl text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2" title="Reset chat">
+                        <i class="fa-solid fa-rotate-right text-[13px]"></i>
+                        <span class="hidden sm:inline">Reset</span>
+                    </button>
                 </div>
             </div>
+        </header>
 
         <!-- Chat Area -->
-        <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-4 relative z-10" id="chat-container">
-            <!-- WA Background Pattern -->
-            <div class="absolute inset-0 z-0 opacity-[0.06] dark:opacity-[0.03]" style="background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e7195b6b733d9110b408f075d.png'); background-repeat: repeat;"></div>
-                    
-                    <div class="relative z-10 space-y-3 flex flex-col">
-                        <template x-for="(msg, index) in messages" :key="index">
-                            <div :class="msg.role === 'user' ? 'flex justify-end pl-12 sm:pl-20' : 'flex justify-start pr-12 sm:pr-20'">
-                                <div :class="msg.role === 'user' ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-[10px] rounded-tr-none wa-bubble-right relative' : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] rounded-[10px] rounded-tl-none wa-bubble-left relative'" class="px-2 py-1.5 shadow-[0_1px_0.5px_rgba(11,20,26,.13)] text-[15px] leading-relaxed break-words relative inline-block">
-                                    <div x-html="msg.content" class="pb-3 pr-8 min-w-[80px]"></div>
-                                    <span class="text-[10px] text-gray-500 dark:text-gray-300/80 absolute bottom-1 right-2 flex items-center gap-1">
-                                        <span x-text="new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
-                                        <template x-if="msg.role === 'user'"><i class="fa-solid fa-check-double text-[#53bdeb] text-[10px]"></i></template>
-                                    </span>
-                                </div>
-                            </div>
-                        </template>
+        <main class="flex-1 overflow-hidden relative">
+            <div class="h-full overflow-y-auto" id="chat-container">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-5">
 
-                        <!-- Loading Indicator -->
-                        <div x-show="isLoading" class="flex justify-start">
-                            <div class="bg-white dark:bg-[#202c33] rounded-md rounded-tl-none px-4 py-3 shadow-[0_1px_0.5px_rgba(11,20,26,.13)] flex items-center gap-2">
-                                <div class="w-2 h-2 rounded-full bg-slate-400 animate-bounce"></div>
-                                <div class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.15s"></div>
-                                <div class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.3s"></div>
+                    <!-- Date badge -->
+                    <div class="flex justify-center">
+                        <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1 rounded-full shadow-sm">
+                            Hari ini &bull; {{ now()->format('d M Y') }}
+                        </span>
+                    </div>
+
+                    <!-- Messages -->
+                    <template x-for="(msg, index) in messages" :key="index">
+                        <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start items-end gap-3'" class="msg-appear">
+                            <!-- AI Avatar -->
+                            <template x-if="msg.role === 'assistant'">
+                                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shrink-0 shadow-sm mb-0.5">
+                                    <i class="fa-solid fa-robot text-[12px]"></i>
+                                </div>
+                            </template>
+
+                            <div :class="msg.role === 'user' ? 'chat-bubble-user max-w-[80%] sm:max-w-[65%] px-4 py-3' : 'chat-bubble-ai max-w-[85%] sm:max-w-[70%] px-4 py-3'" class="text-[15px] leading-relaxed break-words">
+                                <div x-html="msg.content" class="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-li:my-0.5"></div>
+                                <p class="text-[11px] mt-1.5 opacity-60 text-right" x-text="msg.time || ''"></p>
                             </div>
                         </div>
+                    </template>
+
+                    <!-- Loading / Typing Indicator -->
+                    <div x-show="isLoading" class="flex justify-start items-end gap-3 msg-appear">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shrink-0 shadow-sm">
+                            <i class="fa-solid fa-robot text-[12px]"></i>
+                        </div>
+                        <div class="chat-bubble-ai px-4 py-3 flex items-center gap-1.5">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
                     </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <footer class="shrink-0 p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+            <div class="max-w-4xl mx-auto">
+                <!-- Suggested prompts (only when 1 message) -->
+                <div x-show="messages.length <= 1 && !isLoading" class="flex flex-wrap gap-2 mb-3">
+                    <template x-for="prompt in suggestedPrompts" :key="prompt">
+                        <button type="button" @click="inputText = prompt; sendMessage()" class="text-[13px] px-3 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors" x-text="prompt"></button>
+                    </template>
                 </div>
 
-            <!-- MOBILE Input Area (Ticket Style) -->
-            <div class="md:hidden px-4 py-3 bg-[#f0f2f5] dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col relative z-10 w-full shrink-0">
-                <form @submit.prevent="sendMessage" class="flex gap-2 items-end max-w-5xl mx-auto w-full">
-                    
-                    <div class="flex-1 bg-white dark:bg-slate-800/60 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-end px-2 py-1.5 min-h-[44px]">
-                        <button type="button" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
-                            <i class="fa-regular fa-face-smile"></i>
-                        </button>
-                        
-                        <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="bg-transparent border-none px-2 py-1.5 text-[15px] focus:ring-0 focus:outline-none resize-none m-0 w-full text-slate-800 dark:text-slate-100 placeholder:text-slate-500 disabled:opacity-50" rows="1" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
-                        
-                        <button type="button" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
-                            <i class="fa-solid fa-paperclip"></i>
-                        </button>
-                    </div>
-                    
-                    <button type="submit" :disabled="isLoading" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-sm mb-0.5 disabled:opacity-50">
-                        <i class="fa-solid fa-microphone text-[19px]" x-show="inputText.trim() === '' && !isLoading"></i>
-                        <i class="fa-solid fa-paper-plane text-[17px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
-                        <i class="fa-solid fa-circle-notch fa-spin text-[17px]" x-show="isLoading" style="display:none;"></i>
-                    </button>
-                </form>
-            </div>
+                <form @submit.prevent="sendMessage" class="input-area flex items-end gap-3 p-3">
+                    <textarea
+                        x-model="inputText"
+                        @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()"
+                        :disabled="isLoading"
+                        placeholder="Tanyakan sesuatu tentang proyek Anda..."
+                        class="flex-1 bg-transparent border-0 focus:ring-0 focus:outline-none resize-none text-[15px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 disabled:opacity-50 max-h-40 min-h-[24px] overflow-y-auto leading-relaxed py-1"
+                        rows="1"
+                        oninput="this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,160)+'px'"></textarea>
 
-            <!-- DESKTOP Input Area (New WA Web Style) -->
-            <div class="hidden md:flex bg-[#f0f2f5] dark:bg-[#202c33] px-4 py-3 shrink-0 z-10 w-full items-end gap-3 border-t border-transparent dark:border-[#313d45]">
-                <button type="button" class="text-[#54656f] dark:text-[#aebac1] hover:text-[#008069] transition-colors text-[24px] mb-1.5 shrink-0"><i class="fa-solid fa-plus"></i></button>
-                
-                <form @submit.prevent="sendMessage" class="flex-1 flex gap-3 items-end">
-                    <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-lg flex items-end px-3 py-1.5 min-h-[44px]">
-                        <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-1.5 transition-colors shrink-0 mr-1 mb-0.5"><i class="fa-regular fa-face-smile text-[22px]"></i></button>
-                        
-                        <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="block w-full border-0 bg-transparent py-2 px-2 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 text-[15px] disabled:opacity-50 resize-none max-h-32 min-h-[24px] overflow-y-auto m-0" rows="1" style="line-height: 1.4;"></textarea>
-                        
-                        <div class="flex items-center gap-2 shrink-0 mb-0.5 ml-2">
-                            <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-1.5 transition-colors transform -rotate-45"><i class="fa-solid fa-paperclip text-[20px]"></i></button>
-                            <button type="button" class="text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-1.5 transition-colors"><i class="fa-solid fa-camera text-[20px]"></i></button>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" :disabled="isLoading" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-11 h-11 rounded-full flex items-center justify-center transition shadow-sm mb-[1px] disabled:opacity-50">
-                        <i class="fa-solid fa-microphone text-[19px]" x-show="inputText.trim() === '' && !isLoading"></i>
-                        <i class="fa-solid fa-paper-plane text-[17px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
-                        <i class="fa-solid fa-circle-notch fa-spin text-[17px]" x-show="isLoading" style="display:none;"></i>
+                    <button type="submit" :disabled="isLoading || inputText.trim() === ''" class="send-btn flex items-center justify-center w-11 h-11 text-white shrink-0 self-end">
+                        <i class="fa-solid fa-paper-plane text-[14px]" x-show="!isLoading" style="margin-left:1px;"></i>
+                        <i class="fa-solid fa-circle-notch fa-spin text-[14px]" x-show="isLoading" style="display:none;"></i>
                     </button>
                 </form>
+                <p class="text-[11px] text-center text-slate-400 dark:text-slate-600 mt-2">
+                    <i class="fa-solid fa-shield-halved mr-1"></i>AI dapat membuat kesalahan. Harap periksa informasi penting.
+                </p>
             </div>
-        </div>
+        </footer>
 
     </div>
 
@@ -236,19 +216,24 @@
             messages: [
                 {
                     role: 'assistant',
-                    content: 'Halo! Saya AI Konsultan dari Ryaze. Ada ide proyek atau sistem yang ingin Anda buat? Ceritakan kebutuhan Anda, dan mari kita diskusikan solusinya!'
+                    content: 'Halo! 👋 Saya <strong>AI Konsultan Joki</strong> dari Ryaze.<br><br>Saya siap membantu Anda merencanakan, mendiskusikan, dan mengembangkan ide proyek atau sistem. Ceritakan kebutuhan Anda!',
+                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
                 }
             ],
-            
+            suggestedPrompts: [
+                '💡 Saya ingin membuat website',
+                '📱 Butuh aplikasi mobile',
+                '🤖 Sistem otomatisasi',
+                '📊 Aplikasi manajemen data',
+            ],
+
             init() {
                 if (this.token) {
                     this.loadHistory();
                 }
-                setTimeout(() => {
-                    this.scrollToBottom();
-                }, 100);
+                setTimeout(() => this.scrollToBottom(), 100);
             },
-            
+
             async loadHistory() {
                 try {
                     const response = await fetch('/api/consultation/history?token=' + this.token);
@@ -259,28 +244,30 @@
                             data.history.forEach(msg => {
                                 this.messages.push({
                                     role: msg.role,
-                                    content: msg.role === 'assistant' ? this.parseMarkdown(msg.content) : msg.content
+                                    content: msg.role === 'assistant' ? this.parseMarkdown(msg.content) : msg.content,
+                                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
                                 });
                             });
                             setTimeout(() => this.scrollToBottom(), 100);
                         }
                     }
                 } catch (error) {
-                    console.error("Gagal memuat riwayat chat:", error);
+                    console.error("Gagal memuat riwayat:", error);
                 }
             },
-            
+
             scrollToBottom() {
                 const container = document.getElementById('chat-container');
-                if (container) {
-                    container.scrollTop = container.scrollHeight;
-                }
+                if (container) container.scrollTop = container.scrollHeight;
             },
-            
+
             parseMarkdown(text) {
-                let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-indigo-400 hover:text-indigo-500 font-bold underline">$1</a>');
-                html = html.replace(/\n/g, '<br>');
+                let html = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/`(.*?)`/g, '<code class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[13px] font-mono">$1</code>')
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-indigo-500 hover:text-indigo-600 underline" target="_blank">$1</a>')
+                    .replace(/\n/g, '<br>');
                 return html;
             },
 
@@ -289,12 +276,15 @@
 
                 const userText = this.inputText;
                 this.inputText = '';
-                
+                const textarea = document.querySelector('textarea');
+                if (textarea) textarea.style.height = 'auto';
+
                 this.messages.push({
                     role: 'user',
-                    content: userText
+                    content: userText,
+                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
                 });
-                
+
                 this.isLoading = true;
                 this.scrollToBottom();
 
@@ -305,34 +295,29 @@
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
                         },
-                        body: JSON.stringify({
-                            message: userText,
-                            token: this.token
-                        })
+                        body: JSON.stringify({ message: userText, token: this.token })
                     });
 
                     const data = await response.json();
-                    
+
                     if (data.token) {
                         this.token = data.token;
                         localStorage.setItem('ryaze_consultation_token', this.token);
                     }
 
-                    if (response.ok) {
-                        this.messages.push({
-                            role: 'assistant',
-                            content: this.parseMarkdown(data.reply)
-                        });
-                    } else {
-                        this.messages.push({
-                            role: 'assistant',
-                            content: 'Maaf, terjadi kesalahan: ' + (data.error || 'Server error')
-                        });
-                    }
+                    this.messages.push({
+                        role: 'assistant',
+                        content: response.ok
+                            ? this.parseMarkdown(data.reply)
+                            : 'Maaf, terjadi kesalahan: ' + (data.error || 'Server error'),
+                        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                    });
+
                 } catch (error) {
                     this.messages.push({
                         role: 'assistant',
-                        content: 'Gagal terhubung ke server. Silakan coba lagi.'
+                        content: 'Gagal terhubung ke server. Silakan coba lagi.',
+                        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
                     });
                 } finally {
                     this.isLoading = false;
