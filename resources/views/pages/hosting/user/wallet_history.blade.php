@@ -9,7 +9,7 @@
             icon="fa-wallet" 
             iconColor="indigo">
             <x-slot:actions>
-                <button type="button" onclick="document.getElementById('topup-modal').classList.remove('hidden')"
+                <button type="button" onclick="document.getElementById('topup-modal').showModal()"
                     class="inline-flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
                     <i class="fa-solid fa-plus mr-2"></i> Top Up
                 </button>
@@ -98,54 +98,47 @@
         </x-ui.table>
 
         {{-- Modal Top Up --}}
-        <div id="topup-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
-                </div>
-                <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full relative z-10">
-                    <form action="{{ route('user.wallet.topup') }}" method="POST">
-                        @csrf
-                        <div class="px-6 pt-6 pb-4">
-                            <div class="flex items-center justify-between mb-5">
-                                <h3 class="text-xl leading-6 font-bold text-slate-800 dark:text-slate-100" id="modal-title">
-                                    Top Up Ryaze Wallet
-                                </h3>
-                                <button type="button" onclick="document.getElementById('topup-modal').classList.add('hidden')" class="text-slate-400 dark:text-slate-500 hover:text-slate-500">
-                                    <i class="fa-solid fa-xmark text-lg"></i>
+        <dialog id="topup-modal" class="m-auto backdrop:bg-slate-900/50 backdrop:backdrop-blur-sm p-0 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 open:animate-in open:fade-in open:zoom-in-95 overflow-hidden">
+            <form action="{{ route('user.wallet.topup') }}" method="POST">
+                @csrf
+                <div class="px-6 pt-6 pb-4">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="text-xl leading-6 font-bold text-slate-800 dark:text-slate-100" id="modal-title">
+                            Top Up Ryaze Wallet
+                        </h3>
+                        <button type="button" onclick="document.getElementById('topup-modal').close()" class="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Masukkan nominal top up yang Anda inginkan (Minimal Rp 10.000).</p>
+                        
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            @foreach([20000, 50000, 100000, 200000, 500000, 1000000] as $preset)
+                                <button type="button" onclick="document.getElementById('amount_input').value = {{ $preset }}" class="py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:border-indigo-200 dark:hover:bg-indigo-500/10 dark:hover:border-indigo-500/40 transition">
+                                    {{ number_format($preset/1000, 0, ',', '.') }}K
                                 </button>
-                            </div>
-                            <div class="mt-2">
-                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Masukkan nominal top up yang Anda inginkan (Minimal Rp 10.000).</p>
-                                
-                                <div class="grid grid-cols-3 gap-2 mb-4">
-                                    @foreach([20000, 50000, 100000, 200000, 500000, 1000000] as $preset)
-                                        <button type="button" onclick="document.getElementById('amount_input').value = {{ $preset }}" class="py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10 hover:border-indigo-200 dark:hover:border-indigo-500/40 transition">
-                                            {{ number_format($preset/1000, 0, ',', '.') }}K
-                                        </button>
-                                    @endforeach
-                                </div>
-                                
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <span class="text-slate-500 dark:text-slate-400 font-bold">Rp</span>
-                                    </div>
-                                    <input type="number" name="amount" id="amount_input" min="10000" step="1000" class="block w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 font-bold text-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none" placeholder="10000" required>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
-                        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2 rounded-b-2xl">
-                            <button type="button" onclick="document.getElementById('topup-modal').classList.add('hidden')" class="px-5 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-600 hover:text-slate-800 dark:hover:text-slate-100 transition-colors shadow-sm">
-                                Batal
-                            </button>
-                            <button type="submit" class="px-5 py-2.5 bg-indigo-600 border border-transparent text-white rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm">
-                                Lanjutkan Pembayaran
-                            </button>
+                        
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <span class="text-slate-500 dark:text-slate-400 font-bold">Rp</span>
+                            </div>
+                            <input type="number" name="amount" id="amount_input" min="10000" step="1000" class="block w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 font-bold text-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none" placeholder="10000" required>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </div>
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2">
+                    <button type="button" onclick="document.getElementById('topup-modal').close()" class="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 bg-indigo-600 border border-transparent text-white rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm">
+                        Lanjutkan Pembayaran
+                    </button>
+                </div>
+            </form>
+        </dialog>
 
     </x-ui.page-layout>
 @endsection
