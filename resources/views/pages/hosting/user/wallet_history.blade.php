@@ -101,7 +101,7 @@
         <div id="topup-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
                 <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div class="absolute inset-0 bg-slate-900 opacity-75 backdrop-blur-sm"></div>
+                    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
                 </div>
                 <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full relative z-10">
                     <form action="{{ route('user.wallet.topup') }}" method="POST">
