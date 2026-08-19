@@ -12,51 +12,58 @@
     <div class="pt-32 pb-20 min-h-screen">
         <div class="container mx-auto px-4 max-w-4xl" x-data="aiConsultationPage()">
             
-            <div class="flex flex-col h-[75vh] min-h-[500px] bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
+            <div class="flex flex-col h-[75vh] min-h-[500px] bg-[#efeae2] dark:bg-[#0b141a] rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
                 
                 <!-- Header -->
-                <div class="bg-indigo-600 px-6 py-5 flex items-center justify-between shrink-0">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white text-lg shadow-inner">
+                <div class="bg-[#008069] dark:bg-[#202c33] px-4 py-3 flex items-center justify-between shrink-0 shadow-sm z-10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white text-lg">
                             <i class="fa-solid fa-robot"></i>
                         </div>
                         <div>
-                            <h1 class="text-lg font-bold text-white tracking-tight">AI Konsultan Joki</h1>
-                            <p class="text-sm text-indigo-200 font-medium">Diskusikan kebutuhan sistem Anda di sini</p>
+                            <h1 class="text-base font-semibold text-white tracking-tight">AI Konsultan Joki</h1>
+                            <p class="text-xs text-white/80">Online</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Chat Area -->
-                <div class="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900/50 space-y-6" id="chat-container">
+                <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 relative" id="chat-container">
+                    <!-- WA Background Pattern -->
+                    <div class="absolute inset-0 z-0 opacity-[0.06] dark:opacity-[0.03]" style="background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e7195b6b733d9110b408f075d.png'); background-repeat: repeat;"></div>
                     
-                    <template x-for="(msg, index) in messages" :key="index">
-                        <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
-                            <div :class="msg.role === 'user' ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-sm' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-2xl rounded-tl-sm'" class="max-w-[85%] sm:max-w-[75%] px-5 py-4 shadow-sm text-base leading-relaxed" x-html="msg.content">
+                    <div class="relative z-10 space-y-3 flex flex-col">
+                        <template x-for="(msg, index) in messages" :key="index">
+                            <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+                                <div :class="msg.role === 'user' ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-md rounded-tr-none' : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] rounded-md rounded-tl-none'" class="max-w-[85%] sm:max-w-[75%] px-3 py-2 shadow-[0_1px_0.5px_rgba(11,20,26,.13)] text-[15px] leading-relaxed break-words">
+                                    <div x-html="msg.content"></div>
+                                </div>
                             </div>
-                        </div>
-                    </template>
+                        </template>
 
-                    <!-- Loading Indicator -->
-                    <div x-show="isLoading" class="flex justify-start">
-                        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-sm px-5 py-4 shadow-sm flex items-center gap-2">
-                            <div class="w-2.5 h-2.5 rounded-full bg-slate-400 animate-bounce"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.15s"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.3s"></div>
+                        <!-- Loading Indicator -->
+                        <div x-show="isLoading" class="flex justify-start">
+                            <div class="bg-white dark:bg-[#202c33] rounded-md rounded-tl-none px-4 py-3 shadow-[0_1px_0.5px_rgba(11,20,26,.13)] flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-slate-400 animate-bounce"></div>
+                                <div class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.15s"></div>
+                                <div class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.3s"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Input Area -->
-                <div class="bg-white dark:bg-slate-900 px-6 py-5 border-t border-slate-200 dark:border-slate-800 shrink-0">
-                    <form @submit.prevent="sendMessage" class="flex gap-4">
-                        <input type="text" x-model="inputText" :disabled="isLoading" placeholder="Ketik pesan Anda di sini..." class="block w-full rounded-full border-0 py-3.5 px-6 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:bg-slate-800 dark:ring-slate-700 dark:text-white dark:placeholder:text-slate-500 sm:text-base sm:leading-6 disabled:opacity-50 transition-all">
-                        <button type="submit" :disabled="isLoading || inputText.trim() === ''" class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3.5 text-base font-bold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed w-14 h-14 shrink-0 transition-colors">
-                            <i class="fa-solid fa-paper-plane text-lg" x-show="!isLoading"></i>
-                            <i class="fa-solid fa-circle-notch fa-spin text-lg" x-show="isLoading" style="display:none;"></i>
+                <div class="bg-[#f0f2f5] dark:bg-[#202c33] px-4 py-3 shrink-0 flex flex-col gap-2">
+                    <form @submit.prevent="sendMessage" class="flex-1 flex gap-3 items-end">
+                        <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-lg flex items-center shadow-[0_1px_0.5px_rgba(11,20,26,.13)] overflow-hidden">
+                            <input type="text" x-model="inputText" :disabled="isLoading" placeholder="Ketik pesan" class="block w-full border-0 bg-transparent py-3 px-4 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 sm:text-[15px] disabled:opacity-50">
+                        </div>
+                        <button type="submit" :disabled="isLoading || inputText.trim() === ''" class="inline-flex items-center justify-center rounded-full bg-[#00a884] text-white hover:bg-[#008f6f] disabled:opacity-50 disabled:cursor-not-allowed w-12 h-12 shrink-0 transition-colors shadow-sm">
+                            <i class="fa-solid fa-paper-plane text-[15px]" x-show="!isLoading"></i>
+                            <i class="fa-solid fa-circle-notch fa-spin text-[15px]" x-show="isLoading" style="display:none;"></i>
                         </button>
                     </form>
-                    <p class="text-xs text-center text-slate-400 dark:text-slate-500 mt-3 font-medium">AI Ryaze dapat membuat kesalahan. Harap periksa kembali informasi penting.</p>
+                    <p class="text-[11px] text-center text-slate-400 dark:text-[#8696a0] mt-1 font-medium">AI Ryaze dapat membuat kesalahan. Harap periksa kembali informasi penting.</p>
                 </div>
             </div>
             
