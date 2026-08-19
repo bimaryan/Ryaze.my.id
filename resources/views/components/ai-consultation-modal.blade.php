@@ -38,7 +38,7 @@
                         </div>
                         <div>
                             <h3 class="text-base font-bold leading-6 text-white" id="modal-title">AI Konsultan Joki</h3>
-                            <p class="text-xs text-indigo-200">Ryaze Ecosystem</p>
+                            <p class="text-xs text-indigo-200">Ryaze</p>
                         </div>
                     </div>
                     <button type="button" @click="isOpen = false" class="text-indigo-200 hover:text-white transition-colors">

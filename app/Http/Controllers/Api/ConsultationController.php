@@ -75,7 +75,7 @@ JANGAN berikan tautan itu jika user belum siap atau masih bertanya-tanya. Jaga b
         ];
 
         $payload = [
-            'model' => 'llama-3.1-70b-versatile',
+            'model' => env('GROQ_TEXT_MODEL', 'openai/gpt-oss-120b'),
             'messages' => $messages,
             'temperature' => 0.7,
             'max_tokens' => 800
