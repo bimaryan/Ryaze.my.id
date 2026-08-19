@@ -72,7 +72,7 @@ class SettingController extends Controller
                     }
                     
                     $project->deployments()->create([
-                        'status' => 'error',
+                        'status' => 'failed',
                         'build_logs' => "> SISTEM: Hosting disuspend otomatis karena paket langganan saat ini telah dinonaktifkan oleh administrator. Silakan upgrade ke paket yang tersedia.",
                     ]);
                 }

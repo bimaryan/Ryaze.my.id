@@ -189,7 +189,7 @@ class PaymentCallbackController extends Controller
                                     }
                                     $proj->update(['status' => 'active']);
                                     $proj->deployments()->create([
-                                        'status' => 'success',
+                                        'status' => 'ready',
                                         'build_logs' => "> SISTEM: Project berhasil diaktifkan kembali setelah pembayaran langganan diterima.",
                                     ]);
                                 } else {

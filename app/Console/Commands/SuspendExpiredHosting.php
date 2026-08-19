@@ -69,7 +69,7 @@ class SuspendExpiredHosting extends Command
 
                 // Catat log
                 $project->deployments()->create([
-                    'status' => 'error',
+                    'status' => 'failed',
                     'build_logs' => "> SISTEM: Hosting disuspend otomatis karena tagihan langganan akun melewati batas waktu pembayaran.",
                 ]);
 
