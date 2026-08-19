@@ -24,19 +24,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .bg-grid {
-            background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px),
-                linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: center top;
-        }
-        .dark .bg-grid {
-            background-image: linear-gradient(to right, #1e293b 1px, transparent 1px),
-                linear-gradient(to bottom, #1e293b 1px, transparent 1px);
-        }
     </style>
 </head>
-<body class="antialiased selection:bg-indigo-600 selection:text-white bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 bg-grid min-h-screen flex flex-col relative overflow-hidden">
+<body class="antialiased selection:bg-indigo-600 selection:text-white bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 min-h-screen flex flex-col relative overflow-hidden bg-[length:40px_40px] bg-[position:center_top] bg-[image:linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] dark:bg-[image:linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)]">
     
     <!-- NAVBAR -->
     <x-public-nav :links="[
