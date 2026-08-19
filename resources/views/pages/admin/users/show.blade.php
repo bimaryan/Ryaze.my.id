@@ -112,6 +112,25 @@
                             </span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500 dark:text-slate-400">Paket Hosting</span>
+                            @php
+                                $activeBilling = $user->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first();
+                                $currentPlan = $activeBilling ? $activeBilling->plan : 'free';
+                                $plans = \App\Models\User::hostingPlans();
+                                $planLabel = $plans[$currentPlan]['label'] ?? ucfirst($currentPlan);
+                                $colorMap = [
+                                    'slate'  => 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
+                                    'indigo' => 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300',
+                                    'violet' => 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300',
+                                    'amber'  => 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300',
+                                ];
+                                $badgeClass = $colorMap[$plans[$currentPlan]['color'] ?? 'slate'] ?? $colorMap['slate'];
+                            @endphp
+                            <span class="font-bold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider {{ $badgeClass }}">
+                                {{ $planLabel }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
                             <span class="text-slate-500 dark:text-slate-400">Total Pesanan Joki</span>
                             <span class="font-semibold text-slate-800 dark:text-slate-100">{{ $user->client_orders_count ?? 0 }}</span>
                         </div>
