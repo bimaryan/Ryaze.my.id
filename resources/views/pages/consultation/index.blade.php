@@ -143,31 +143,25 @@
                 </div>
 
             <!-- Input Area -->
-            <div class="bg-transparent md:bg-[#f0f2f5] md:dark:bg-[#202c33] px-2 md:px-4 py-2 md:py-3 shrink-0 z-10 pb-4 md:pb-3 w-full">
-                <form @submit.prevent="sendMessage" class="flex gap-2 md:gap-4 items-end md:items-center max-w-5xl mx-auto w-full">
+            <div class="px-4 py-3 bg-[#f0f2f5] dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col relative z-10 w-full shrink-0">
+                <form @submit.prevent="sendMessage" class="flex gap-2 items-end max-w-5xl mx-auto w-full">
                     
-                    <button type="button" class="hidden md:block text-[#54656f] dark:text-[#aebac1] hover:text-[#008069] transition-colors text-[24px]"><i class="fa-regular fa-face-smile"></i></button>
-                    <button type="button" class="hidden md:block text-[#54656f] dark:text-[#aebac1] hover:text-[#008069] transition-colors text-[24px] transform -rotate-45 mr-1"><i class="fa-solid fa-paperclip"></i></button>
-
-                    <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-[24px] md:rounded-lg flex items-end md:items-center shadow-[0_1px_0.5px_rgba(11,20,26,.13)] md:shadow-none min-h-[44px]">
-                        <button type="button" class="md:hidden text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 px-3.5 transition-colors shrink-0"><i class="fa-regular fa-face-smile text-2xl"></i></button>
+                    <div class="flex-1 bg-white dark:bg-slate-800/60 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-end px-2 py-1.5 min-h-[44px]">
+                        <button type="button" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
+                            <i class="fa-regular fa-face-smile"></i>
+                        </button>
                         
-                        <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="block w-full border-0 bg-transparent py-3 md:py-2.5 px-1 md:px-4 text-[#111b21] dark:text-[#e9edef] placeholder:text-[#667781] dark:placeholder:text-[#8696a0] focus:ring-0 sm:text-[15px] disabled:opacity-50 resize-none max-h-32 min-h-[44px] md:min-h-0 overflow-y-auto" rows="1" style="line-height: 1.4;"></textarea>
+                        <textarea x-model="inputText" @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" :disabled="isLoading" placeholder="Ketik pesan" class="bg-transparent border-none px-2 py-1.5 text-[15px] focus:ring-0 focus:outline-none resize-none m-0 w-full text-slate-800 dark:text-slate-100 placeholder:text-slate-500 disabled:opacity-50" rows="1" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
                         
-                        <button type="button" class="md:hidden text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 pr-2 transition-colors shrink-0 transform -rotate-45"><i class="fa-solid fa-paperclip text-[22px]"></i></button>
-                        <button type="button" class="md:hidden text-[#54656f] dark:text-[#8696a0] hover:text-[#008069] p-3 pr-4 transition-colors shrink-0" x-show="inputText.trim() === ''"><i class="fa-solid fa-camera text-xl"></i></button>
+                        <button type="button" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </button>
                     </div>
                     
-                    <button type="submit" :disabled="isLoading" class="inline-flex md:hidden items-center justify-center rounded-full bg-[#00a884] text-white hover:bg-[#008f6f] disabled:opacity-50 w-[48px] h-[48px] shrink-0 transition-colors shadow-sm mb-0.5">
-                        <i class="fa-solid fa-microphone text-[20px]" x-show="inputText.trim() === '' && !isLoading"></i>
-                        <i class="fa-solid fa-paper-plane text-[18px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
-                        <i class="fa-solid fa-circle-notch fa-spin text-[18px]" x-show="isLoading" style="display:none;"></i>
-                    </button>
-                    
-                    <button type="submit" :disabled="isLoading" class="hidden md:inline-flex items-center justify-center text-[#54656f] dark:text-[#aebac1] hover:text-[#00a884] transition-colors ml-1 w-10 h-10">
-                        <i class="fa-solid fa-microphone text-[24px]" x-show="inputText.trim() === '' && !isLoading"></i>
-                        <i class="fa-solid fa-paper-plane text-[24px]" x-show="inputText.trim() !== '' && !isLoading"></i>
-                        <i class="fa-solid fa-circle-notch fa-spin text-[24px]" x-show="isLoading" style="display:none;"></i>
+                    <button type="submit" :disabled="isLoading" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-sm mb-0.5 disabled:opacity-50">
+                        <i class="fa-solid fa-microphone text-[19px]" x-show="inputText.trim() === '' && !isLoading"></i>
+                        <i class="fa-solid fa-paper-plane text-[17px] mr-1" x-show="inputText.trim() !== '' && !isLoading"></i>
+                        <i class="fa-solid fa-circle-notch fa-spin text-[17px]" x-show="isLoading" style="display:none;"></i>
                     </button>
                 </form>
             </div>
