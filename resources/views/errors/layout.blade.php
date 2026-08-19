@@ -7,10 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
+    <script>
+        (function () {
+            var stored = localStorage.getItem('ryaze-theme');
+            if (stored === null) {
+                stored = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            if (stored === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.style.colorScheme = 'dark';
+            } else {
+                document.documentElement.style.colorScheme = 'light';
+            }
+        })();
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #111827; }
-        .dark body { background-color: #020617; color: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; }
         .bg-grid {
             background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px),
                 linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
@@ -23,56 +36,15 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-indigo-600 selection:text-white bg-grid min-h-screen flex flex-col relative overflow-hidden">
+<body class="antialiased selection:bg-indigo-600 selection:text-white bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 bg-grid min-h-screen flex flex-col relative overflow-hidden">
     
     <!-- NAVBAR -->
-    <nav x-data="{ mobileMenuOpen: false }" class="fixed top-0 z-50 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                    <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
-                        <i class="fa-solid fa-code text-sm"></i>
-                    </div>
-                    <span class="text-xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">Ryaze Portal</span>
-                </a>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-300">
-                    <a href="{{ url('/#about') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 transition-colors">Tentang</a>
-                    <a href="{{ url('/#services') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 transition-colors">Layanan</a>
-                    <a href="{{ url('/#portfolio') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 transition-colors">Portofolio</a>
-                    <a href="{{ route('blog.index') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 transition-colors">Blog</a>
-                </div>
-
-                <!-- Auth Buttons & Mobile Toggle -->
-                <div class="flex items-center gap-4">
-                    <a href="{{ url('/') }}" class="hidden sm:inline-flex text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-                        Kembali
-                    </a>
-                    
-                    <!-- Hamburger Button -->
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-400 dark:text-slate-500 hover:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700/50 focus:outline-none">
-                        <i class="fa-solid fa-bars text-xl" x-show="!mobileMenuOpen"></i>
-                        <i class="fa-solid fa-xmark text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div x-show="mobileMenuOpen" style="display: none;" class="md:hidden bg-white dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-700" x-transition>
-            <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="{{ url('/#about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">Tentang</a>
-                <a href="{{ url('/#services') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">Layanan</a>
-                <a href="{{ url('/#portfolio') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">Portofolio</a>
-                <a href="{{ route('blog.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">Blog</a>
-                <a href="{{ url('/') }}" class="block w-full text-center mt-4 text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-                    Kembali
-                </a>
-            </div>
-        </div>
-    </nav>
+    <x-public-nav :links="[
+        ['label' => 'Tentang', 'href' => url('/#about')],
+        ['label' => 'Layanan', 'href' => url('/#services')],
+        ['label' => 'Portofolio', 'href' => url('/#portfolio')],
+        ['label' => 'Blog', 'href' => route('blog.index')]
+    ]" />
 
     <!-- CONTENT -->
     <main class="flex-grow flex items-center justify-center pt-24 pb-16 px-6">
@@ -106,16 +78,51 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 py-8">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
-            <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-                <i class="fa-solid fa-code text-sm"></i>
-                <span class="text-sm font-bold tracking-tight">Ryaze Portal</span>
-            </div>
-            <p>&copy; {{ date('Y') }} Ryaze Ecosystem. All rights reserved.</p>
-            <p>Engineered by Bima Ryan.</p>
-        </div>
-    </footer>
+    <x-public-footer />
 
+    <script nonce="{{ csp_nonce() }}">
+        window.ryazeToggleTheme = function (event) {
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            const toggleTheme = () => {
+                var dark = document.documentElement.classList.toggle('dark');
+                document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+                localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
+                document.dispatchEvent(new CustomEvent('theme:change', { detail: { dark: dark } }));
+                document.querySelectorAll('[role="switch"][onclick*="ryazeToggleTheme"]').forEach(function(btn) {
+                    btn.setAttribute('aria-checked', dark);
+                });
+            };
+
+            if (!document.startViewTransition) {
+                toggleTheme();
+                return;
+            }
+
+            const x = event?.clientX ?? window.innerWidth / 2;
+            const y = event?.clientY ?? window.innerHeight / 2;
+            const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+            const transition = document.startViewTransition(toggleTheme);
+
+            transition.ready.then(() => {
+                const clipPath = [
+                    `circle(0px at ${x}px ${y}px)`,
+                    `circle(${endRadius}px at ${x}px ${y}px)`
+                ];
+                
+                document.documentElement.animate(
+                    {
+                        clipPath: isDark ? [...clipPath].reverse() : clipPath,
+                    },
+                    {
+                        duration: 500,
+                        easing: 'ease-in-out',
+                        pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
+                    }
+                );
+            });
+        };
+    </script>
 </body>
 </html>
