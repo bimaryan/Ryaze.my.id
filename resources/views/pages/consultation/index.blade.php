@@ -1,6 +1,3 @@
-@extends('index')
-
-@section('content')
 <x-public-layout
     title="Konsultasi AI Joki - Ryaze"
     description="Konsultasikan ide proyek atau sistem yang ingin Anda buat dengan AI Konsultan kami."
@@ -185,4 +182,3 @@
     @endpush
 
 </x-public-layout>
-@endsection
