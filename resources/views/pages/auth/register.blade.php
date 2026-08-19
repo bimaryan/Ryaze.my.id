@@ -22,6 +22,9 @@
                     @if(request()->has('ref'))
                         <input type="hidden" name="ref" value="{{ request('ref') }}">
                     @endif
+                    @if(request()->has('consultation_token'))
+                        <input type="hidden" name="consultation_token" value="{{ request('consultation_token') }}">
+                    @endif
 
                     <div>
                         <label for="name" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Nama Lengkap</label>

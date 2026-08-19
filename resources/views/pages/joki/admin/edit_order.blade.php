@@ -288,6 +288,25 @@
                     </div>
                 </x-ui.card>
 
+                @if(isset($consultation) && !empty($consultation->chat_history))
+                <x-ui.card class="p-6">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-3 border-b pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-indigo-500"></i> Riwayat Konsultasi AI
+                    </h3>
+                    <div class="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                        @foreach($consultation->chat_history as $msg)
+                            <div class="{{ $msg['role'] == 'user' ? 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-100 dark:border-indigo-500/20 ml-4' : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 mr-4' }} p-3 rounded-lg border text-sm">
+                                <div class="font-bold mb-1 text-[11px] uppercase tracking-wider {{ $msg['role'] == 'user' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400' }}">
+                                    {{ $msg['role'] == 'user' ? $order->client->name : 'AI Konsultan' }}
+                                </div>
+                                <div class="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{!! \Illuminate\Support\Str::markdown($msg['content']) !!}</div>
+                            </div>
+                        @endforeach
+                    </div>
+                </x-ui.card>
+                @endif
+
+
                 <x-ui.card class="p-6">
                     <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2">Tagihan & Pembayaran</h3>
 

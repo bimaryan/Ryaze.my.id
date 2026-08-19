@@ -194,6 +194,17 @@ class AuthController extends Controller
             'referred_by' => $referrerId,
         ]);
 
+        // 2.2 Tautkan Sesi Konsultasi AI (jika ada)
+        if ($request->filled('consultation_token')) {
+            $consultation = \App\Models\ConsultationSession::where('token', $request->input('consultation_token'))->first();
+            if ($consultation) {
+                $consultation->update([
+                    'user_id' => $user->id,
+                    'status' => 'converted'
+                ]);
+            }
+        }
+
         // 2.5 Auto-activate Paket Free untuk user hosting baru
         // (mirip alur aktivasi gratis di Hosting\User\DashboardController::subscribe)
         if ($user->role === 'user_hosting') {

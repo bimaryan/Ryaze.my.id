@@ -90,8 +90,9 @@ class DashboardController extends Controller
         $id = $decoded[0];
 
         $order = JokiOrder::with(['client', 'service'])->findOrFail($id);
+        $consultation = \App\Models\ConsultationSession::where('user_id', $order->client_id)->latest()->first();
 
-        return view('pages.joki.admin.edit_order', compact('order'));
+        return view('pages.joki.admin.edit_order', compact('order', 'consultation'));
     }
 
     public function updateOrder(Request $request, $hashid)
