@@ -69,27 +69,29 @@ class WalletController extends Controller
             return back()->with('error', 'Saldo Anda tidak mencukupi untuk melakukan penarikan ini.');
         }
 
-        // Deduct balance
-        $wallet->decrement('balance', $request->amount);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($wallet, $request, $user) {
+            // Deduct balance
+            $wallet->decrement('balance', $request->amount);
 
-        // Create withdrawal request
-        \App\Models\WalletWithdrawal::create([
-            'user_id' => $user->id,
-            'amount' => $request->amount,
-            'bank_name' => $request->bank_name,
-            'account_number' => $request->account_number,
-            'account_name' => $request->account_name,
-            'status' => 'pending',
-        ]);
+            // Create withdrawal request
+            \App\Models\WalletWithdrawal::create([
+                'user_id' => $user->id,
+                'amount' => $request->amount,
+                'bank_name' => $request->bank_name,
+                'account_number' => $request->account_number,
+                'account_name' => $request->account_name,
+                'status' => 'pending',
+            ]);
 
-        // Create transaction log
-        WalletTransaction::create([
-            'wallet_id' => $wallet->id,
-            'amount' => $request->amount,
-            'type' => 'debit',
-            'description' => 'Penarikan Dana ke ' . $request->bank_name . ' (' . $request->account_number . ')',
-            'status' => 'pending', // Menunggu persetujuan admin
-        ]);
+            // Create transaction log
+            WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $request->amount,
+                'type' => 'debit',
+                'description' => 'Penarikan Dana ke ' . $request->bank_name . ' (' . $request->account_number . ')',
+                'status' => 'pending', // Menunggu persetujuan admin
+            ]);
+        });
 
         return redirect()->route('user.wallet.history')->with('success', 'Permintaan penarikan dana berhasil dikirim dan sedang menunggu persetujuan.');
     }

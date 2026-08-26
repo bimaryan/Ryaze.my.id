@@ -377,186 +377,52 @@ class DashboardController extends Controller
         return redirect()->route('user_hosting.show', $stagingProject->hashid)->with('success', 'Staging environment berhasil dibuat!');
     }
 
-    public function ideChat(Request $request, $hashid)
+    public function ideChat(Request $request, $hashid, \App\Services\IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
-        $message = $request->input('message');
-        $context = $request->input('context'); // Current editing file context
-        $chatHashId = $request->input('chat_id'); // ID percakapan persisten (database)
+        
+        $result = $chatService->processChat(
+            $project, 
+            $request->input('message', ''), 
+            $request->input('context'), 
+            $request->input('chat_id')
+        );
 
-        if (empty($message)) {
-            return response()->json(['error' => 'Pesan tidak boleh kosong.'], 400);
+        if (isset($result['error'])) {
+            return response()->json(['error' => $result['error']], $result['status'] ?? 500);
         }
 
-        // Resolusi percakapan: pakai chat_id yang dikirim, atau buat baru
-        if (!empty($chatHashId)) {
-            $chat = IdeChat::where('hosting_project_id', $project->id)->findByHashidOrFail($chatHashId);
-        } else {
-            $chat = IdeChat::create(['hosting_project_id' => $project->id, 'user_id' => Auth::id(), 'title' => 'Percakapan baru']);
-        }
-
-        // Judul otomatis dari pesan pertama
-        if ($chat->title === 'Percakapan baru') {
-            $chat->title = mb_substr(preg_replace('/\s+/', ' ', trim($message)), 0, 40);
-            $chat->save();
-        }
-
-        // Simpan pesan user ke database
-        IdeChatMessage::create(['ide_chat_id' => $chat->id, 'role' => 'user', 'content' => mb_substr($message, 0, 60000)]);
-
-        $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
-        $envPath = $projectDir . '/.env';
-        $userApiKey = null;
-        if (file_exists($envPath)) {
-            $envLines = explode("\n", file_get_contents($envPath));
-            foreach ($envLines as $line) {
-                if (str_starts_with(trim($line), 'GROQ_API_KEY=')) {
-                    $userApiKey = trim(explode('=', $line, 2)[1]);
-                    $userApiKey = trim($userApiKey, "\"'");
-                    break;
-                }
-            }
-        }
-
-        $groqApiKey = $userApiKey ?: config('services.groq.api_key');
-        if (empty($groqApiKey)) {
-            return response()->json(['error' => 'GROQ_API_KEY belum dikonfigurasi di server.'], 500);
-        }
-
-        // Riwayat percakapan dari database (maks 20 pesan terakhir) — AI jadi lebih pintar
-        $historyMessages = [];
-        foreach ($chat->messages()->latest()->limit(20)->get()->reverse() as $msg) {
-            $content = trim((string) $msg->content);
-            if ($content === '') {
-                continue;
-            }
-            // Bersihkan blok perintah agar tidak jadi noise di prompt
-            $content = preg_replace('/<<FILE_OPS>>.*?<<END_FILE_OPS>>/s', '', $content);
-            $content = preg_replace('/<<REPLACE_ALL>>.*?<<END_REPLACE>>/s', '', $content);
-            $historyMessages[] = [
-                'role' => $msg->role === 'user' ? 'user' : 'assistant',
-                'content' => mb_substr($content, 0, 60000),
-            ];
-        }
-
-        // Snapshot struktur file project agar AI tahu path yang valid (agentic)
-        $projectTree = $this->buildProjectTree($projectDir);
-
-        $systemPrompt = "Kamu adalah Ryaze AI v2.0, asisten koding cerdas yang terintegrasi di dalam IDE Ryaze Hosting. Balas dalam bahasa Indonesia dengan gaya profesional, singkat, dan tepat sasaran. Jika pengguna menyertakan konteks kodenya, berikan analisis atau saran berdasarkan kode tersebut.\n"
-            . "Kamu menjalankan model GPT-OSS 120B (Groq) — kamu mampu menjawab pertanyaan teknis mendalam, debugging, refactoring, dan pengembangan full-stack (PHP/Laravel, JS/React/Vue, Python, HTML/CSS, SQL, dsb).\n\n"
-            . "JIKA PENGGUNA MEMINTA KAMU UNTUK MERUBAH ATAU MEMPERBAIKI KESELURUHAN KODE SECARA OTOMATIS (misal: 'perbaiki file ini', 'tulis ulang'), maka kamu WAJIB mengembalikan keseluruhan kode baru di dalam blok berikut:\n<<REPLACE_ALL>>\n[kode baru di sini]\n<<END_REPLACE>>\n\n"
-            . "JIKA PENGGUNA MEMINTA MEMBUAT / MENGUBAH / MENGHAPUS FILE ATAU FOLDER LANGSUNG DI PROJECT (misal: 'buatkan file routes.php', 'buat folder app/Http/Controllers', 'tulis kode X ke file Y', 'hapus file X', 'rename file X jadi Y', 'tambah log ke file Z'), maka kamu WAJIB mengembalikan blok JSON berikut di akhir jawabanmu, selain jawaban teks singkatnya:\n"
-            . "<<FILE_OPS>>\n"
-            . "[{\"action\":\"write\",\"path\":\"folder/file.ext\",\"content\":\"isi file lengkap\"},{\"action\":\"mkdir\",\"path\":\"folder/baru\"},{\"action\":\"append\",\"path\":\"file.ext\",\"content\":\"teks tambahan di akhir file\"},{\"action\":\"rename\",\"path\":\"file-lama.ext\",\"new_path\":\"file-baru.ext\"},{\"action\":\"delete\",\"path\":\"file-atau-folder-kosong.ext\"}]\n"
-            . "<<END_FILE_OPS>>\n\n"
-            . "Aturan FILE_OPS:\n"
-            . "- action 'write' = menulis/membuat file baru (path relatif, tanpa leading slash, pakai garis miring /)\n"
-            . "- action 'mkdir' = membuat folder (termasuk bertingkat)\n"
-            . "- action 'append' = menambahkan teks di akhir file yang sudah ada\n"
-            . "- action 'rename' = memindahkan/mengganti nama file atau folder (wajib isi 'new_path')\n"
-            . "- action 'delete' = menghapus file (atau folder kosong)\n"
-            . "- content file wajib utuh dan lengkap, bukan placeholder\n"
-            . "- jangan panggil FILE_OPS untuk sekedar menjawab pertanyaan tanpa diminta mengubah file\n"
-            . "- gunakan path yang benar-benar ada dari struktur project yang diberikan (jika ada) — jangan menebak path acak\n\n"
-            . "Jika pengguna hanya bertanya atau meminta cuplikan kode sebagian, gunakan markdown code block biasa (```).";
-
-        if (!empty($projectTree)) {
-            $systemPrompt .= "\n\nStruktur file project saat ini (referensi untuk path FILE_OPS):\n```\n{$projectTree}\n```";
-        }
-
-        $userMessage = $message;
-        if (!empty($context)) {
-            $userMessage = "Konteks file yang sedang saya buka:\n```\n" . $context . "\n```\n\nPertanyaan saya:\n" . $message;
-        }
-
-        try {
-            $response = Http::withToken($groqApiKey)
-                ->timeout(60)
-                ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model' => config('services.groq.text_model', 'openai/gpt-oss-120b'),
-                    'messages' => array_merge(
-                        [['role' => 'system', 'content' => $systemPrompt]],
-                        $historyMessages,
-                        [['role' => 'user', 'content' => $userMessage]]
-                    ),
-                    'temperature' => 0.6,
-                    'max_tokens' => 8192,
-                ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                $reply = $data['choices'][0]['message']['content'] ?? 'Tidak ada respons dari AI.';
-                $fileOps = $this->executeAiFileOps($reply, $project, $projectDir);
-
-                // Simpan balasan AI (bersih dari blok perintah) agar riwayat tersimpan
-                $storedReply = preg_replace('/<<FILE_OPS>>.*?<<END_FILE_OPS>>/s', '', $reply);
-                $storedReply = preg_replace('/<<REPLACE_ALL>>.*?<<END_REPLACE>>/s', '', $storedReply);
-                IdeChatMessage::create(['ide_chat_id' => $chat->id, 'role' => 'assistant', 'content' => mb_substr(trim($storedReply), 0, 100000)]);
-
-                return response()->json(['reply' => $reply, 'file_ops' => $fileOps, 'chat_id' => $chat->hashid]);
-            } else {
-                $groqError = $response->json('error.message') ?: trim($response->body());
-                $usedModel = config('services.groq.text_model', 'openai/gpt-oss-120b');
-                $keyHint = $groqApiKey === config('services.groq.api_key') ? 'app-key' : 'project-key';
-                Log::error("Groq API Error [{$keyHint}] [{$usedModel}]: " . $groqError);
-                return response()->json(['error' => "API Groq menolak permintaan (model: {$usedModel}, key: {$keyHint}): " . mb_substr($groqError, 0, 300)], 500);
-            }
-        } catch (\Exception $e) {
-            Log::error('Groq Exception: ' . $e->getMessage());
-            return response()->json(['error' => 'Terjadi kesalahan sistem saat menghubungi AI: ' . mb_substr($e->getMessage(), 0, 300)], 500);
-        }
+        return response()->json($result);
     }
 
-    public function ideChats(Request $request, $hashid)
+    public function ideChats(Request $request, $hashid, \App\Services\IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
-
-        $chats = IdeChat::where('hosting_project_id', $project->id)
-            ->withCount('messages')
-            ->latest('updated_at')
-            ->limit(30)
-            ->get()
-            ->map(fn ($c) => [
-                'id' => $c->hashid,
-                'title' => $c->title,
-                'messages' => $c->messages_count,
-                'updated_at' => $c->updated_at->diffForHumans(),
-            ]);
+        $chats = $chatService->getChats($project);
 
         return response()->json(['chats' => $chats]);
     }
 
-    public function createIdeChat(Request $request, $hashid)
+    public function createIdeChat(Request $request, $hashid, \App\Services\IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
-        $chat = IdeChat::create([
-            'hosting_project_id' => $project->id,
-            'user_id' => Auth::id(),
-            'title' => 'Percakapan baru',
-        ]);
+        $chat = $chatService->createChat($project);
 
         return response()->json(['chat_id' => $chat->hashid]);
     }
 
-    public function ideChatMessages(Request $request, $hashid, $chatId)
+    public function ideChatMessages(Request $request, $hashid, $chatId, \App\Services\IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
-        $chat = IdeChat::where('hosting_project_id', $project->id)->findByHashidOrFail($chatId);
-
-        $messages = $chat->messages()->get()->map(fn ($m) => [
-            'role' => $m->role,
-            'content' => $m->content,
-        ]);
+        $messages = $chatService->getChatMessages($project, $chatId);
 
         return response()->json(['messages' => $messages]);
     }
 
-    public function deleteIdeChat(Request $request, $hashid, $chatId)
+    public function deleteIdeChat(Request $request, $hashid, $chatId, \App\Services\IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
-        $chat = IdeChat::where('hosting_project_id', $project->id)->findByHashidOrFail($chatId);
-        $chat->delete();
+        $chatService->deleteChat($project, $chatId);
 
         return response()->json(['ok' => true]);
     }
