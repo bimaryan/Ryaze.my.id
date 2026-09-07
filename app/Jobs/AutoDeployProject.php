@@ -357,8 +357,8 @@ class AutoDeployProject implements ShouldQueue
             $this->log($deploy, '> Membuat .env minimal (tidak ada .env.example).');
         }
 
-        if (file_exists($envPath)) {
-            $hasAppKey = preg_match('/^APP_KEY=.+$/m', (string) file_get_contents($envPath));
+        if (file_exists($envPath) && is_readable($envPath)) {
+            $hasAppKey = preg_match('/^APP_KEY=.+$/m', (string) @file_get_contents($envPath));
             if (!$hasAppKey) {
                 $this->log($deploy, '> Men-generate APP_KEY...');
                 $this->exec("cd {$projectDir} && php artisan key:generate --force 2>&1 || true", $deploy, false);

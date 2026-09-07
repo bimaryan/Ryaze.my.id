@@ -36,8 +36,8 @@ class IdeChatService
         $projectDir = hosting_clients_dir() . "/{$subdomain}";
         $envPath = $projectDir . '/.env';
         $userApiKey = null;
-        if (file_exists($envPath)) {
-            $envLines = explode("\n", file_get_contents($envPath));
+        if (file_exists($envPath) && is_readable($envPath)) {
+            $envLines = explode("\n", @file_get_contents($envPath) ?: '');
             foreach ($envLines as $line) {
                 if (str_starts_with(trim($line), 'GROQ_API_KEY=')) {
                     $userApiKey = trim(explode('=', $line, 2)[1]);

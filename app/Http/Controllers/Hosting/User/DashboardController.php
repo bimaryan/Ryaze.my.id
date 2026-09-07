@@ -264,15 +264,15 @@ class DashboardController extends Controller
         // Membaca file .env
         $envPath = $projectDir.'/.env';
         $envContent = '';
-        if (file_exists($envPath)) {
-            $envContent = file_get_contents($envPath);
+        if (file_exists($envPath) && is_readable($envPath)) {
+            $envContent = @file_get_contents($envPath) ?: '';
         }
 
         // Membaca konfigurasi WAF Blocked IPs
         $wafPath = $projectDir.'/.waf_blocks';
         $wafContent = '';
-        if (file_exists($wafPath)) {
-            $wafContent = file_get_contents($wafPath);
+        if (file_exists($wafPath) && is_readable($wafPath)) {
+            $wafContent = @file_get_contents($wafPath) ?: '';
         }
 
         // Monitoring (Disk & Visitors)
@@ -859,7 +859,16 @@ class DashboardController extends Controller
             return response()->json(['error' => 'File tidak valid atau akses ditolak.'], 403);
         }
 
-        return response()->json(['content' => file_get_contents($targetFile)]);
+        if (!is_readable($targetFile)) {
+            return response()->json(['error' => 'File tidak dapat dibaca (akses ditolak/permission denied).'], 403);
+        }
+
+        $content = @file_get_contents($targetFile);
+        if ($content === false) {
+            return response()->json(['error' => 'Gagal membaca isi file.'], 500);
+        }
+
+        return response()->json(['content' => $content]);
     }
 
     // 4. BARU: Method untuk menyimpan file yang diedit
