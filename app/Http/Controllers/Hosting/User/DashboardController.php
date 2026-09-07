@@ -960,7 +960,9 @@ class DashboardController extends Controller
             if (is_dir($targetPath)) {
                 exec('rm -rf '.escapeshellarg($targetPath));
             } else {
-                unlink($targetPath);
+                if (!@unlink($targetPath)) {
+                    return response()->json(['error' => 'Gagal menghapus file (izin ditolak/permission denied).'], 403);
+                }
             }
 
             return response()->json(['success' => true]);

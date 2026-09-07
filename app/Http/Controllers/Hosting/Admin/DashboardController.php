@@ -275,8 +275,8 @@ class DashboardController extends Controller
         $filePath = hosting_clients_dir() . "/{$subdomain}/.suspended";
 
         // Buat file marker agar Nginx 503
-        touch($filePath);
-        chmod($filePath, 0660);
+        @touch($filePath);
+        @chmod($filePath, 0660);
 
         return back()->with('success', "Project '{$project->project_name}' telah disuspend.");
     }
@@ -294,7 +294,8 @@ class DashboardController extends Controller
 
         // Hapus file marker agar Nginx kembali normal
         if (file_exists($filePath)) {
-            unlink($filePath);
+            @chmod($filePath, 0666);
+            @unlink($filePath);
         }
 
         return back()->with('success', "Project '{$project->project_name}' berhasil diaktifkan.");
