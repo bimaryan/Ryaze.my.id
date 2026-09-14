@@ -406,7 +406,16 @@
     </x-ui.page-layout>
 
     <script>
-        function formatBytes(mb) {
+        function parseToMB(val) {
+            val = val.toString().trim().toLowerCase().replace(/\s+/g, '');
+            var num = parseFloat(val);
+            if (isNaN(num)) return 0;
+            if (val.match(/tb$/)) return Math.round(num * 1048576);
+            if (val.match(/gb$/)) return Math.round(num * 1024);
+            if (val.match(/mb$/)) return Math.round(num);
+            return Math.round(num);
+        }
+        function formatMB(mb) {
             if (mb == 0) return '0 MB';
             if (mb < 1024) return mb + ' MB';
             if (mb < 1048576) return (mb / 1024).toFixed(2).replace(/\.?0+$/, '') + ' GB';
@@ -416,9 +425,17 @@
             var hint = document.createElement('p');
             hint.className = 'text-xs text-indigo-500 dark:text-indigo-400 mt-1 font-medium';
             input.parentNode.appendChild(hint);
-            function update() { hint.textContent = '= ' + formatBytes(parseInt(input.value) || 0); }
+            function update() {
+                var mb = parseToMB(input.value);
+                hint.textContent = '= ' + formatMB(mb) + ' (' + mb + ' MB)';
+            }
             input.addEventListener('input', update);
             update();
+        });
+        document.querySelector('form').addEventListener('submit', function() {
+            document.querySelectorAll('input[name$="_storage"]').forEach(function(input) {
+                input.value = parseToMB(input.value);
+            });
         });
     </script>
 @endsection
