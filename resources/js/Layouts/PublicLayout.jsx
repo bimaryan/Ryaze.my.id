@@ -9,6 +9,8 @@ const dashboardUrl = {
     user_hosting: '/user/hosting/dashboard',
     default: '/user/hosting/dashboard',
 };
+
+const navLinks = [
     { label: 'Tentang', href: '/#about' },
     { label: 'Layanan', href: '/#services' },
     { label: 'Harga', href: '/#pricing' },
@@ -64,7 +66,7 @@ export default function PublicLayout({ children }) {
                             <i className={`fa-solid ${dark ? 'fa-sun' : 'fa-moon'} text-sm`}></i>
                         </button>
                         {user ? (
-                            <a href={user.role === 'superadmin' ? '/admin' : '/dashboard'} className="px-4 py-1.5 bg-[#7c3aed] text-white text-[13px] font-semibold hover:bg-[#6d28d9] transition-colors">
+                            <a href={dashboardUrl[user.role] || dashboardUrl.default} className="px-4 py-1.5 bg-[#7c3aed] text-white text-[13px] font-semibold hover:bg-[#6d28d9] transition-colors">
                                 Dashboard
                             </a>
                         ) : (
