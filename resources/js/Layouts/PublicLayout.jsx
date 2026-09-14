@@ -1,7 +1,14 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
-const navLinks = [
+const dashboardUrl = {
+    superadmin: '/superadmin/dashboard',
+    admin_joki: '/admin/joki/dashboard',
+    admin_hosting: '/admin/hosting/dashboard',
+    user_joki: '/user/joki/dashboard',
+    user_hosting: '/user/hosting/dashboard',
+    default: '/user/hosting/dashboard',
+};
     { label: 'Tentang', href: '/#about' },
     { label: 'Layanan', href: '/#services' },
     { label: 'Harga', href: '/#pricing' },
