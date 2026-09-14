@@ -4,12 +4,24 @@ namespace App\Http\Controllers\Hosting\User;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\AutoDeployProject;
+use App\Jobs\CopyFileOrDirectory;
+use App\Models\AffiliateCommission;
 use App\Models\HostingBilling;
+use App\Models\HostingEmail;
+use App\Models\HostingPayment;
 use App\Models\HostingProject;
-use App\Models\IdeChat;
-use App\Models\IdeChatMessage;
+use App\Models\Setting;
+use App\Models\User;
+use App\Models\Voucher;
+use App\Models\WalletTransaction;
+use App\Notifications\SystemNotification;
+use App\Services\IdeChatService;
+use App\Services\ServerMonitorService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Vinkla\Hashids\Facades\Hashids;
@@ -37,8 +49,8 @@ class DashboardController extends Controller
         'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date',
         'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
         'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'apk', 'source', 'chmod', 'clear', 'chown',
-        'tar', 'unzip', 'zip', 'ping'
-];
+        'tar', 'unzip', 'zip', 'ping',
+    ];
 
     // Menampilkan halaman dashboard hosting klien
     public function index()
@@ -66,7 +78,7 @@ class DashboardController extends Controller
             ->where('status', 'active')
             ->latest('next_due_date')
             ->first();
-        
+
         $expiredBilling = Auth::user()->hostingBillings()
             ->where('status', 'past_due')
             ->latest('next_due_date')
@@ -96,6 +108,7 @@ class DashboardController extends Controller
     public function marketplace()
     {
         $templates = $this->availableTemplates;
+
         return view('pages.hosting.user.marketplace', compact('templates'));
     }
 
@@ -114,57 +127,57 @@ class DashboardController extends Controller
 
     public function previewTemplate($key)
     {
-        if (!array_key_exists($key, $this->availableTemplates)) {
+        if (! array_key_exists($key, $this->availableTemplates)) {
             abort(404, 'Template not found');
         }
-        
+
         // This expects the view to be stored in resources/views/previews/{key}.blade.php
-        if (view()->exists('previews.' . $key)) {
-            return view('previews.' . $key);
+        if (view()->exists('previews.'.$key)) {
+            return view('previews.'.$key);
         }
-        
+
         abort(404, 'Preview not available for this template yet.');
     }
 
     private array $availableTemplates = [
-        'html_landing'        => ['framework' => 'html'],
-        'php_basic'           => ['framework' => 'php'],
-        'wordpress'           => ['framework' => 'php'],
-        'ghost_cms'           => ['framework' => 'node'],
-        'laravel_starter'     => ['framework' => 'laravel'],
-        'laravel_starter_10'  => ['framework' => 'laravel'],
-        'laravel_starter_11'  => ['framework' => 'laravel'],
-        'laravel_starter_12'  => ['framework' => 'laravel'],
-        'laravel_starter_13'  => ['framework' => 'laravel'],
-        'react_starter'       => ['framework' => 'react'],
-        'nextjs_starter'      => ['framework' => 'nextjs'],
-        'vue_starter'         => ['framework' => 'vue'],
-        'nuxt_starter'        => ['framework' => 'vue'],
-        'svelte_starter'      => ['framework' => 'node'],
-        'node_express'        => ['framework' => 'node'],
-        'tailwind_starter'    => ['framework' => 'html'],
-        'tailwind_portfolio'  => ['framework' => 'html'],
-        'tailwind_landing'    => ['framework' => 'html'],
-        'tailwind_blog'       => ['framework' => 'html'],
-        'tailwind_ecommerce'  => ['framework' => 'html'],
-        'tailwind_admin'      => ['framework' => 'html'],
-        'tailwind_linkinbio'  => ['framework' => 'html'],
+        'html_landing' => ['framework' => 'html'],
+        'php_basic' => ['framework' => 'php'],
+        'wordpress' => ['framework' => 'php'],
+        'ghost_cms' => ['framework' => 'node'],
+        'laravel_starter' => ['framework' => 'laravel'],
+        'laravel_starter_10' => ['framework' => 'laravel'],
+        'laravel_starter_11' => ['framework' => 'laravel'],
+        'laravel_starter_12' => ['framework' => 'laravel'],
+        'laravel_starter_13' => ['framework' => 'laravel'],
+        'react_starter' => ['framework' => 'react'],
+        'nextjs_starter' => ['framework' => 'nextjs'],
+        'vue_starter' => ['framework' => 'vue'],
+        'nuxt_starter' => ['framework' => 'vue'],
+        'svelte_starter' => ['framework' => 'node'],
+        'node_express' => ['framework' => 'node'],
+        'tailwind_starter' => ['framework' => 'html'],
+        'tailwind_portfolio' => ['framework' => 'html'],
+        'tailwind_landing' => ['framework' => 'html'],
+        'tailwind_blog' => ['framework' => 'html'],
+        'tailwind_ecommerce' => ['framework' => 'html'],
+        'tailwind_admin' => ['framework' => 'html'],
+        'tailwind_linkinbio' => ['framework' => 'html'],
     ];
 
     // Memproses data dan memulai Deploy Otomatis
     public function store(Request $request)
     {
         $sourceType = $request->input('source_type', 'repo');
-        \Illuminate\Support\Facades\Log::info('Store method called', [
+        Log::info('Store method called', [
             'source_type' => $sourceType,
-            'all_input' => $request->all()
+            'all_input' => $request->all(),
         ]);
 
         if ($request->input('framework') === 'python') {
             return redirect()->back()->with('error', 'Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.');
         }
 
-        $availableFrameworks = \App\Models\Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,python,node,vue');
+        $availableFrameworks = Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,python,node,vue');
         $allowedFrameworks = implode(',', array_map('trim', explode(',', $availableFrameworks)));
 
         $subdomain = trim(strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', trim($request->project_name))), '-');
@@ -173,92 +186,99 @@ class DashboardController extends Controller
         if ($sourceType === 'template') {
             // ── Mode Template ──────────────────────────────────────────────
             $request->validate([
-                'template_key' => 'required|in:' . implode(',', array_keys($this->availableTemplates)),
+                'template_key' => 'required|in:'.implode(',', array_keys($this->availableTemplates)),
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
                 'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
             ]);
 
             $templateKey = $request->input('template_key');
-            $template    = $this->availableTemplates[$templateKey];
+            $template = $this->availableTemplates[$templateKey];
             // Simpan key template di repo_source dengan prefix 'template:'
             // AutoDeploy akan membaca ini dan generate file langsung tanpa clone
-            $repoSource  = 'template:' . $templateKey;
-            $branch      = 'main';
-            $framework   = $template['framework'];
+            $repoSource = 'template:'.$templateKey;
+            $branch = 'main';
+            $framework = $template['framework'];
         } elseif ($sourceType === 'upload') {
             // ── Mode Upload ZIP ────────────────────────────────────────────
             $request->validate([
                 'project_zip' => 'required|file|mimes:zip|max:51200',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
                 'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
-                'framework'    => 'required|in:' . $allowedFrameworks,
+                'framework' => 'required|in:'.$allowedFrameworks,
             ]);
 
-            if (!$request->hasFile('project_zip')) {
+            if (! $request->hasFile('project_zip')) {
                 return redirect()->back()->with('error', 'File ZIP belum diunggah.');
             }
 
             // Simpan ZIP ke storage privat; path direkam di repo_source dengan prefix 'upload:'
-            $zipName = $subdomain . '-' . time() . '.zip';
+            $zipName = $subdomain.'-'.time().'.zip';
             $zipPath = $request->file('project_zip')->storeAs('zip_uploads', $zipName, 'local');
-            $repoSource = 'upload:' . $zipPath;
-            $branch     = 'main';
-            $framework  = $request->input('framework');
+            $repoSource = 'upload:'.$zipPath;
+            $branch = 'main';
+            $framework = $request->input('framework');
         } else {
             // ── Mode Repository Git ────────────────────────────────────────
             $request->validate([
-                'repo_source'  => 'required|url',
+                'repo_source' => 'required|url',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
                 'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
-                'framework'    => 'required|in:' . $allowedFrameworks,
-                'branch'       => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9_\/\-.]*$/'],
+                'framework' => 'required|in:'.$allowedFrameworks,
+                'branch' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9_\/\-.]*$/'],
             ]);
 
             $repoSource = $request->input('repo_source');
-            $branch     = $request->input('branch');
-            $framework  = $request->input('framework');
+            $branch = $request->input('branch');
+            $framework = $request->input('framework');
         }
 
         $user = Auth::user();
         $hasSubscription = $user->hasActiveHostingSubscription();
 
-        if (!$hasSubscription) {
+        if (! $hasSubscription) {
             return redirect()->route('user_hosting.subscription')->with('error', 'Anda harus berlangganan hosting terlebih dahulu untuk mendeploy aplikasi.');
         }
 
-        if (!$user->canCreateMoreProjects()) {
+        if (! $user->canCreateMoreProjects()) {
             return redirect()->back()->with('error', 'Batas maksimal pembuatan project untuk paket langganan Anda telah tercapai. Silakan upgrade paket.');
         }
 
-        // --- Mencegah Subdomain Collision ---
-        $ryazeDomain = $subdomain . $domainExtension;
-        $domainExists = \App\Models\HostingProject::where('ryaze_domain', $ryazeDomain)->exists();
-        if ($domainExists) {
+        // --- Mencegah Subdomain Collision (dalam transaksi anti race-condition) ---
+        $ryazeDomain = $subdomain.$domainExtension;
+
+        $project = DB::transaction(function () use ($ryazeDomain, $user, $request, $framework, $repoSource, $branch, $sourceType) {
+            $domainExists = HostingProject::where('ryaze_domain', $ryazeDomain)->exists();
+            if ($domainExists) {
+                return null;
+            }
+
+            return HostingProject::create([
+                'user_id' => $user->id,
+                'project_name' => $request->project_name,
+                'framework' => $framework,
+                'repo_source' => $repoSource,
+                'branch' => $branch,
+                'source_type' => $sourceType,
+                'ryaze_domain' => $ryazeDomain,
+                'status' => 'building',
+                'storage_limit_mb' => $user->hosting_storage_limit_mb ?? User::getPlanLimits('free')['storage_mb'],
+            ]);
+        });
+
+        if ($project === null) {
             return redirect()->back()->withInput()->with('error', "Subdomain '{$ryazeDomain}' sudah terpakai oleh project lain (kemungkinan karena nama yang mirip). Silakan gunakan nama project yang lebih spesifik.");
         }
 
-        $project = HostingProject::create([
-            'user_id'      => $user->id,
-            'project_name' => $request->project_name,
-            'framework'    => $framework,
-            'repo_source'  => $repoSource,
-            'branch'       => $branch,
-            'source_type'  => $sourceType,
-            'ryaze_domain' => $subdomain . $domainExtension,
-            'status'       => 'building',
-            'storage_limit_mb' => $user->hosting_storage_limit_mb ?? \App\Models\User::getPlanLimits('free')['storage_mb'],
-        ]);
-
-        \Illuminate\Support\Facades\Log::info('Project created (Building)', [
+        Log::info('Project created (Building)', [
             'id' => $project->id,
             'source_type' => $project->source_type,
-            'repo_source' => $project->repo_source
+            'repo_source' => $project->repo_source,
         ]);
 
         $isTemplate = $sourceType === 'template';
-        $isUpload   = $sourceType === 'upload';
+        $isUpload = $sourceType === 'upload';
         $project->deployments()->create([
-            'status'     => 'queued',
+            'status' => 'queued',
             'build_logs' => $isTemplate
                 ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
                 : ($isUpload
@@ -266,9 +286,9 @@ class DashboardController extends Controller
                     : "> Memulai proses Deploy awal...\n> Mengambil repository..."),
         ]);
         AutoDeployProject::dispatch($project);
-        
-        $user->notify(new \App\Notifications\SystemNotification('Project Hosting Anda berhasil dibuat dan proses deployment telah dimulai.', 'info'));
-        
+
+        $user->notify(new SystemNotification('Project Hosting Anda berhasil dibuat dan proses deployment telah dimulai.', 'info'));
+
         return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat dan sedang dalam proses deployment!');
     }
 
@@ -277,7 +297,7 @@ class DashboardController extends Controller
         $project = $this->getValidProject($hashed_id, true);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
 
         // Membaca file .env
         $envPath = $projectDir.'/.env';
@@ -308,12 +328,12 @@ class DashboardController extends Controller
             // Visitors (Unique IPs in access log)
             $logPaths = [
                 "/www/sites/{$project->ryaze_domain}/log/access.log", // Dedicated 1Panel site
-                hosting_clients_dir() . "/log/access.log", // Hosting clients shared log
-                "/www/sites/ryaze.my.id/log/access.log", // Wildcard site
-                "/www/sites/ryz.my.id/log/access.log",
-                "/www/sites/safetalkai.my.id/log/access.log",
+                hosting_clients_dir().'/log/access.log', // Hosting clients shared log
+                '/www/sites/ryaze.my.id/log/access.log', // Wildcard site
+                '/www/sites/ryz.my.id/log/access.log',
+                '/www/sites/safetalkai.my.id/log/access.log',
             ];
-            
+
             $validLogPath = null;
             foreach ($logPaths as $path) {
                 if (file_exists($path)) {
@@ -329,16 +349,16 @@ class DashboardController extends Controller
                 } else {
                     $wcCommand = sprintf("awk '{print $1}' %s | sort | uniq | wc -l", escapeshellarg($validLogPath));
                 }
-                
+
                 exec($wcCommand, $wcOutput, $wcReturnVar);
                 if ($wcReturnVar === 0 && isset($wcOutput[0])) {
-                    $visitorsCount = (int)$wcOutput[0];
+                    $visitorsCount = (int) $wcOutput[0];
                 }
             }
         }
 
-        $projectEmails = \App\Models\HostingEmail::where('user_id', Auth::id())
-            ->where(function($query) use ($project) {
+        $projectEmails = HostingEmail::where('user_id', Auth::id())
+            ->where(function ($query) use ($project) {
                 $query->where('domain', $project->ryaze_domain);
                 if ($project->custom_domain) {
                     $query->orWhere('domain', $project->custom_domain);
@@ -351,58 +371,60 @@ class DashboardController extends Controller
     public function createStaging($hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
-        
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
+
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
-        $stagingSubdomain = 'staging-' . $subdomain;
-        $stagingDomain = $stagingSubdomain . $domainExtension;
-        
+        $stagingSubdomain = 'staging-'.$subdomain;
+        $stagingDomain = $stagingSubdomain.$domainExtension;
+
         if (HostingProject::where('ryaze_domain', $stagingDomain)->exists()) {
-            return back()->with('error', 'Staging environment sudah ada (staging-' . $subdomain . ').');
+            return back()->with('error', 'Staging environment sudah ada (staging-'.$subdomain.').');
         }
 
         $user = Auth::user();
 
         $stagingProject = HostingProject::create([
-            'user_id'      => $user->id,
-            'project_name' => substr($project->project_name, 0, 35) . ' (Staging)',
-            'framework'    => $project->framework,
-            'repo_source'  => $project->repo_source,
-            'branch'       => $project->branch,
-            'source_type'  => $project->source_type, 
+            'user_id' => $user->id,
+            'project_name' => substr($project->project_name, 0, 35).' (Staging)',
+            'framework' => $project->framework,
+            'repo_source' => $project->repo_source,
+            'branch' => $project->branch,
+            'source_type' => $project->source_type,
             'ryaze_domain' => $stagingDomain,
-            'status'       => 'active',
-            'storage_limit_mb' => $user->hosting_storage_limit_mb ?? \App\Models\User::getPlanLimits('free')['storage_mb'],
+            'status' => 'active',
+            'storage_limit_mb' => $user->hosting_storage_limit_mb ?? User::getPlanLimits('free')['storage_mb'],
         ]);
 
-        $liveDir = hosting_clients_dir() . "/{$subdomain}";
-        $stagingDir = hosting_clients_dir() . "/{$stagingSubdomain}";
+        $liveDir = hosting_clients_dir()."/{$subdomain}";
+        $stagingDir = hosting_clients_dir()."/{$stagingSubdomain}";
 
         if (is_dir($liveDir)) {
-            $command = sprintf("cp -a %s %s", escapeshellarg($liveDir), escapeshellarg($stagingDir));
-            exec($command, $output, $returnVar);
-            
-            if ($returnVar !== 0) {
-                \Log::error("Failed to copy staging files: " . implode("\n", $output));
-            } else {
-                exec(sprintf("chown -R www-data:www-data %s", escapeshellarg($stagingDir)));
+            try {
+                File::copyDirectory($liveDir, $stagingDir);
+                if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+                    exec(sprintf('chown -R www-data:www-data %s', escapeshellarg($stagingDir)));
+                }
+            } catch (\Throwable $e) {
+                \Log::error('Failed to copy staging files: '.$e->getMessage());
             }
         }
 
-        $user->notify(new \App\Notifications\SystemNotification('Staging Environment berhasil dibuat untuk project ' . $project->project_name, 'success'));
-        
+        $user->notify(new SystemNotification('Staging Environment berhasil dibuat untuk project '.$project->project_name, 'success'));
+
         return redirect()->route('user_hosting.show', $stagingProject->hashid)->with('success', 'Staging environment berhasil dibuat!');
     }
 
-    public function ideChat(Request $request, $hashid, \App\Services\IdeChatService $chatService)
+    public function ideChat(Request $request, $hashid, IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
-        
+
         $result = $chatService->processChat(
-            $project, 
-            $request->input('message', ''), 
-            $request->input('context'), 
+            $project,
+            $request->input('message', ''),
+            $request->input('context'),
             $request->input('chat_id')
         );
 
@@ -413,7 +435,7 @@ class DashboardController extends Controller
         return response()->json($result);
     }
 
-    public function ideChats(Request $request, $hashid, \App\Services\IdeChatService $chatService)
+    public function ideChats(Request $request, $hashid, IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
         $chats = $chatService->getChats($project);
@@ -421,7 +443,7 @@ class DashboardController extends Controller
         return response()->json(['chats' => $chats]);
     }
 
-    public function createIdeChat(Request $request, $hashid, \App\Services\IdeChatService $chatService)
+    public function createIdeChat(Request $request, $hashid, IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
         $chat = $chatService->createChat($project);
@@ -429,7 +451,7 @@ class DashboardController extends Controller
         return response()->json(['chat_id' => $chat->hashid]);
     }
 
-    public function ideChatMessages(Request $request, $hashid, $chatId, \App\Services\IdeChatService $chatService)
+    public function ideChatMessages(Request $request, $hashid, $chatId, IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
         $messages = $chatService->getChatMessages($project, $chatId);
@@ -437,7 +459,7 @@ class DashboardController extends Controller
         return response()->json(['messages' => $messages]);
     }
 
-    public function deleteIdeChat(Request $request, $hashid, $chatId, \App\Services\IdeChatService $chatService)
+    public function deleteIdeChat(Request $request, $hashid, $chatId, IdeChatService $chatService)
     {
         $project = $this->getValidProject($hashid);
         $chatService->deleteChat($project, $chatId);
@@ -449,9 +471,9 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $logPath = hosting_clients_dir() . "/{$subdomain}/storage/logs/laravel.log";
+        $logPath = hosting_clients_dir()."/{$subdomain}/storage/logs/laravel.log";
 
-        if (!is_file($logPath)) {
+        if (! is_file($logPath)) {
             return response()->json(['content' => '(belum ada file log: storage/logs/laravel.log)']);
         }
 
@@ -470,7 +492,7 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $root = hosting_clients_dir() . "/{$subdomain}";
+        $root = hosting_clients_dir()."/{$subdomain}";
 
         // Pastikan PHP CLI tersedia
         exec('command -v php 2>/dev/null', $whichOut, $whichCode);
@@ -480,8 +502,8 @@ class DashboardController extends Controller
 
         $files = [];
         foreach (['app', 'routes', 'config', 'database'] as $dir) {
-            $base = $root . '/' . $dir;
-            if (!is_dir($base)) {
+            $base = $root.'/'.$dir;
+            if (! is_dir($base)) {
                 continue;
             }
             $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($base, \FilesystemIterator::SKIP_DOTS));
@@ -499,10 +521,10 @@ class DashboardController extends Controller
         foreach ($files as $file) {
             $out = null;
             $code = 0;
-            exec('php -l ' . escapeshellarg($file) . ' 2>&1', $out, $code);
+            exec('php -l '.escapeshellarg($file).' 2>&1', $out, $code);
             if ($code !== 0) {
                 $results[] = [
-                    'file' => str_replace($root . '/', '', $file),
+                    'file' => str_replace($root.'/', '', $file),
                     'error' => trim(implode("\n", $out)),
                 ];
             }
@@ -520,7 +542,7 @@ class DashboardController extends Controller
         $results = [];
         if (preg_match('/<<FILE_OPS>>(.*?)<<END_FILE_OPS>>/s', $reply, $m)) {
             $ops = json_decode(trim($m[1]), true);
-            if (!is_array($ops)) {
+            if (! is_array($ops)) {
                 return [['action' => 'parse', 'path' => '', 'status' => 'error', 'message' => 'Format FILE_OPS tidak valid (JSON rusak).']];
             }
 
@@ -532,14 +554,16 @@ class DashboardController extends Controller
                 $relPath = trim((string) ($op['path'] ?? ''), '/');
                 $relPath = str_replace('\\', '/', $relPath);
 
-                if (!in_array($action, ['write', 'mkdir', 'append', 'rename', 'delete'], true) || $relPath === '' || str_contains($relPath, '..')) {
+                if (! in_array($action, ['write', 'mkdir', 'append', 'rename', 'delete'], true) || $relPath === '' || str_contains($relPath, '..')) {
                     $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Operasi ditolak: path atau aksi tidak valid.'];
+
                     continue;
                 }
 
-                $target = $projectRootDir . '/' . $relPath;
-                if (strpos($target, $projectRootDir . '/') !== 0) {
+                $target = $projectRootDir.'/'.$relPath;
+                if (strpos($target, $projectRootDir.'/') !== 0) {
                     $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Operasi ditolak: di luar direktori project.'];
+
                     continue;
                 }
 
@@ -548,14 +572,17 @@ class DashboardController extends Controller
                     if ($action === 'mkdir') {
                         if (is_dir($target)) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'info', 'message' => 'Folder sudah ada.'];
+
                             continue;
                         }
-                        if (!@mkdir($target, 0770, true)) {
+                        if (! @mkdir($target, 0770, true)) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal membuat folder (cek permission Linux).'];
+
                             continue;
                         }
                         @chmod($target, 0770);
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => 'Folder dibuat.'];
+
                         continue;
                     }
 
@@ -565,31 +592,38 @@ class DashboardController extends Controller
                         $newRel = str_replace('\\', '/', $newRel);
                         if ($newRel === '' || str_contains($newRel, '..')) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'new_path tidak valid.'];
+
                             continue;
                         }
-                        $newTarget = $projectRootDir . '/' . $newRel;
-                        if (strpos($newTarget, $projectRootDir . '/') !== 0) {
+                        $newTarget = $projectRootDir.'/'.$newRel;
+                        if (strpos($newTarget, $projectRootDir.'/') !== 0) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Operasi ditolak: di luar direktori project.'];
+
                             continue;
                         }
                         if (in_array(basename($target), $this->protectedFiles)) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File sistem ini tidak dapat diubah.'];
+
                             continue;
                         }
-                        if (!file_exists($target) && !is_dir($target)) {
+                        if (! file_exists($target) && ! is_dir($target)) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Target tidak ditemukan.'];
+
                             continue;
                         }
                         $parent = dirname($newTarget);
-                        if (!is_dir($parent) && !@mkdir($parent, 0770, true)) {
+                        if (! is_dir($parent) && ! @mkdir($parent, 0770, true)) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal membuat folder tujuan.'];
+
                             continue;
                         }
-                        if (!@rename($target, $newTarget)) {
+                        if (! @rename($target, $newTarget)) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal rename/memindahkan (cek permission Linux).'];
+
                             continue;
                         }
                         $results[] = ['action' => $action, 'path' => $newRel, 'status' => 'success', 'message' => "Dipindah dari {$relPath}."];
+
                         continue;
                     }
 
@@ -597,6 +631,7 @@ class DashboardController extends Controller
                     if ($action === 'delete') {
                         if (in_array(basename($target), $this->protectedFiles)) {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File sistem ini tidak dapat dihapus.'];
+
                             continue;
                         }
                         if (is_file($target)) {
@@ -606,9 +641,9 @@ class DashboardController extends Controller
                                 $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal menghapus file (cek permission Linux).'];
                             }
                         } elseif (is_dir($target)) {
-                            $entries = array_merge(glob($target . '/*') ?: [], glob($target . '/.*') ?: []);
-                            $entries = array_filter($entries, fn ($p) => !in_array(basename($p), ['.', '..'], true));
-                            if (!empty($entries)) {
+                            $entries = array_merge(glob($target.'/*') ?: [], glob($target.'/.*') ?: []);
+                            $entries = array_filter($entries, fn ($p) => ! in_array(basename($p), ['.', '..'], true));
+                            if (! empty($entries)) {
                                 $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Folder tidak kosong, tidak bisa dihapus.'];
                             } elseif (@rmdir($target)) {
                                 $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => 'Folder kosong dihapus.'];
@@ -618,36 +653,42 @@ class DashboardController extends Controller
                         } else {
                             $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'info', 'message' => 'Target tidak ditemukan (sudah terhapus?).'];
                         }
+
                         continue;
                     }
 
                     // ── write / append ──
                     if (in_array(basename($target), $this->protectedFiles)) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File sistem ini tidak dapat diubah.'];
+
                         continue;
                     }
 
                     $content = (string) ($op['content'] ?? '');
                     if (strlen($content) > 500000) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Ukuran file terlalu besar (maks 500KB).'];
+
                         continue;
                     }
 
                     $parent = dirname($target);
-                    if (!is_dir($parent) && !@mkdir($parent, 0770, true)) {
+                    if (! is_dir($parent) && ! @mkdir($parent, 0770, true)) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal membuat folder induk (cek permission Linux).'];
+
                         continue;
                     }
 
-                    if ($action === 'append' && !file_exists($target)) {
+                    if ($action === 'append' && ! file_exists($target)) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'File target tidak ditemukan (gunakan write untuk membuat baru).'];
+
                         continue;
                     }
 
                     $oldSize = file_exists($target) ? filesize($target) : 0;
                     $newSize = $action === 'append' ? $oldSize + strlen($content) : strlen($content);
-                    if ($newSize > $oldSize && !$this->checkDiskQuota($project, $newSize - $oldSize)) {
+                    if ($newSize > $oldSize && ! $this->checkDiskQuota($project, $newSize - $oldSize)) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Penyimpanan Penuh! Kuota disk Anda sudah habis.'];
+
                         continue;
                     }
 
@@ -657,12 +698,13 @@ class DashboardController extends Controller
                         : @file_put_contents($target, $content);
                     if ($written === false) {
                         $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Gagal menulis file (cek permission Linux).'];
+
                         continue;
                     }
                     @chmod($target, 0660);
                     $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'success', 'message' => $action === 'append' ? 'Konten ditambahkan.' : 'File berhasil ditulis.'];
                 } catch (\Throwable $e) {
-                    Log::warning('AI FILE_OPS exception: ' . $e->getMessage());
+                    Log::warning('AI FILE_OPS exception: '.$e->getMessage());
                     $results[] = ['action' => $action, 'path' => $relPath, 'status' => 'error', 'message' => 'Kesalahan sistem saat mengeksekusi operasi.'];
                 }
             }
@@ -688,11 +730,12 @@ class DashboardController extends Controller
             $entries = @scandir($dir) ?: [];
             $entries = array_diff($entries, ['.', '..']);
             usort($entries, function ($a, $b) use ($dir) {
-                $aIsDir = is_dir($dir . '/' . $a);
-                $bIsDir = is_dir($dir . '/' . $b);
+                $aIsDir = is_dir($dir.'/'.$a);
+                $bIsDir = is_dir($dir.'/'.$b);
                 if ($aIsDir !== $bIsDir) {
                     return $aIsDir ? -1 : 1;
                 }
+
                 return strcasecmp($a, $b);
             });
 
@@ -700,13 +743,13 @@ class DashboardController extends Controller
                 if ($count >= $maxLines) {
                     return;
                 }
-                $full = $dir . '/' . $entry;
-                $rel = str_replace($projectDir . '/', '', $full);
+                $full = $dir.'/'.$entry;
+                $rel = str_replace($projectDir.'/', '', $full);
                 if (is_dir($full)) {
                     if (in_array($rel, $skipDirs, true)) {
                         continue;
                     }
-                    $lines[] = $rel . '/';
+                    $lines[] = $rel.'/';
                     $count++;
                     $walk($full, $depth + 1);
                 } else {
@@ -751,16 +794,22 @@ class DashboardController extends Controller
         $findOutput = shell_exec($findCmd);
         if ($findOutput) {
             foreach (explode("\n", trim($findOutput)) as $path) {
-                if (empty($path)) continue;
+                if (empty($path)) {
+                    continue;
+                }
                 $fullPath = rtrim($path, '/');
-                if (strpos($fullPath, $projectRootDir) !== 0) continue;
-                $relativePath = str_replace($projectRootDir . '/', '', $fullPath);
-                if (strpos($relativePath, '.') === 0) continue;
+                if (strpos($fullPath, $projectRootDir) !== 0) {
+                    continue;
+                }
+                $relativePath = str_replace($projectRootDir.'/', '', $fullPath);
+                if (strpos($relativePath, '.') === 0) {
+                    continue;
+                }
                 $nameResults[] = [
                     'path' => $relativePath,
                     'line' => '',
                     'content' => is_dir($fullPath) ? '(folder)' : '',
-                    'type' => 'name'
+                    'type' => 'name',
                 ];
             }
         }
@@ -774,22 +823,24 @@ class DashboardController extends Controller
         if ($output) {
             $lines = explode("\n", trim($output));
             foreach ($lines as $line) {
-                if (empty($line)) continue;
+                if (empty($line)) {
+                    continue;
+                }
                 // Parse grep output: /full/path:line:content
                 $parts = explode(':', $line, 3);
                 if (count($parts) >= 3) {
                     $fullPath = $parts[0];
                     $lineNumber = $parts[1];
                     $content = $parts[2];
-                    
+
                     // Ensure the result is within project scope
                     if (strpos($fullPath, $projectRootDir) === 0) {
-                        $relativePath = str_replace($projectRootDir . '/', '', $fullPath);
+                        $relativePath = str_replace($projectRootDir.'/', '', $fullPath);
                         $results[] = [
                             'path' => $relativePath,
                             'line' => $lineNumber,
                             'content' => mb_strimwidth(trim($content), 0, 120, '...'),
-                            'type' => 'content'
+                            'type' => 'content',
                         ];
                     }
                 }
@@ -804,8 +855,8 @@ class DashboardController extends Controller
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $baseDir = hosting_clients_dir() . "/{$subdomain}";
-        if (!is_dir($baseDir)) {
+        $baseDir = hosting_clients_dir()."/{$subdomain}";
+        if (! is_dir($baseDir)) {
             @mkdir($baseDir, 0755, true);
             clearstatcache(true, $baseDir);
         }
@@ -815,8 +866,8 @@ class DashboardController extends Controller
 
         $targetDir = $projectRootDir;
         if (! empty($requestPath)) {
-            $realTarget = realpath($projectRootDir . DIRECTORY_SEPARATOR . $requestPath);
-            $targetDir = ($realTarget !== false) ? $realTarget : $projectRootDir . DIRECTORY_SEPARATOR . $requestPath;
+            $realTarget = realpath($projectRootDir.DIRECTORY_SEPARATOR.$requestPath);
+            $targetDir = ($realTarget !== false) ? $realTarget : $projectRootDir.DIRECTORY_SEPARATOR.$requestPath;
         }
 
         if ($targetDir === false || strpos(str_replace('\\', '/', $targetDir), str_replace('\\', '/', $projectRootDir)) !== 0) {
@@ -877,7 +928,7 @@ class DashboardController extends Controller
             return response()->json(['error' => 'File tidak valid atau akses ditolak.'], 403);
         }
 
-        if (!is_readable($targetFile)) {
+        if (! is_readable($targetFile)) {
             return response()->json(['error' => 'File tidak dapat dibaca (akses ditolak/permission denied).'], 403);
         }
 
@@ -892,9 +943,11 @@ class DashboardController extends Controller
     // 4. BARU: Method untuk menyimpan file yang diedit
     public function saveFile(Request $request, $hashid)
     {
-        \Log::info("saveFile route hit! hashid: {$hashid}, path: " . $request->input('path'));
+        \Log::info("saveFile route hit! hashid: {$hashid}, path: ".$request->input('path'));
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project, true)) {
+            return $deny;
+        }
         $projectRootDir = $this->getProjectRootDir($project);
 
         $requestPath = trim($request->input('path', ''), '/');
@@ -914,7 +967,7 @@ class DashboardController extends Controller
         $newSize = strlen($newContent);
 
         if ($newSize > $oldSize) {
-            if (!$this->checkDiskQuota($project, $newSize - $oldSize)) {
+            if (! $this->checkDiskQuota($project, $newSize - $oldSize)) {
                 return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda sudah habis.'], 403);
             }
         }
@@ -960,7 +1013,9 @@ class DashboardController extends Controller
     public function deleteItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project, true)) {
+            return $deny;
+        }
         $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
 
         if (! $targetPath) {
@@ -976,9 +1031,9 @@ class DashboardController extends Controller
 
         try {
             if (is_dir($targetPath)) {
-                \Illuminate\Support\Facades\File::deleteDirectory($targetPath);
+                File::deleteDirectory($targetPath);
             } else {
-                if (!@unlink($targetPath)) {
+                if (! @unlink($targetPath)) {
                     return response()->json(['error' => 'Gagal menghapus file (izin ditolak/permission denied).'], 403);
                 }
             }
@@ -993,7 +1048,9 @@ class DashboardController extends Controller
     public function renameItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project, true)) {
+            return $deny;
+        }
         $targetPath = $this->getValidTargetPath($project, $request->input('path', ''));
 
         if (! $targetPath) {
@@ -1013,7 +1070,7 @@ class DashboardController extends Controller
         }
 
         $parentDir = dirname($targetPath);
-        $newPath = $parentDir . '/' . $newName;
+        $newPath = $parentDir.'/'.$newName;
 
         if (file_exists($newPath)) {
             return response()->json(['error' => 'Nama sudah digunakan oleh file/folder lain.'], 400);
@@ -1021,17 +1078,20 @@ class DashboardController extends Controller
 
         try {
             rename($targetPath, $newPath);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal rename: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Gagal rename: '.$e->getMessage()], 500);
         }
     }
 
     public function copyItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
-        
+        if ($deny = $this->denyViewerWrite($project, true)) {
+            return $deny;
+        }
+
         $sourcePath = $this->getValidTargetPath($project, $request->input('source', ''));
         $targetDir = $this->getValidTargetPath($project, $request->input('destination', ''));
 
@@ -1042,44 +1102,60 @@ class DashboardController extends Controller
         if (! file_exists($sourcePath)) {
             return response()->json(['error' => 'File sumber tidak ditemukan.'], 404);
         }
-        
+
         if (! is_dir($targetDir)) {
             return response()->json(['error' => 'Direktori tujuan tidak valid.'], 400);
         }
 
         $basename = basename($sourcePath);
-        $newPath = $targetDir . '/' . $basename;
-        
+        $newPath = $targetDir.'/'.$basename;
+
         if (file_exists($newPath)) {
             $extension = pathinfo($basename, PATHINFO_EXTENSION);
             $filename = pathinfo($basename, PATHINFO_FILENAME);
-            $suffix = '-copy-' . time();
-            $newPath = $targetDir . '/' . $filename . $suffix . ($extension ? '.' . $extension : '');
+            $suffix = '-copy-'.time();
+            $newPath = $targetDir.'/'.$filename.$suffix.($extension ? '.'.$extension : '');
         }
 
         // Hitung perkiraan ukuran tambahan
-        $additionalBytes = is_file($sourcePath) ? filesize($sourcePath) : \Illuminate\Support\Facades\File::size($sourcePath);
-        if (!$this->checkDiskQuota($project, $additionalBytes)) {
+        $additionalBytes = is_file($sourcePath) ? filesize($sourcePath) : File::size($sourcePath);
+        if (! $this->checkDiskQuota($project, $additionalBytes)) {
             return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda tidak mencukupi untuk menyalin.'], 403);
+        }
+
+        // Untuk file/directory besar (>50MB), gunakan queue job agar tidak timeout
+        $thresholdBytes = 50 * 1024 * 1024;
+        if ($additionalBytes > $thresholdBytes) {
+            $isDir = is_dir($sourcePath);
+            CopyFileOrDirectory::dispatch($sourcePath, $newPath, $isDir, Auth::id());
+
+            return response()->json([
+                'success' => true,
+                'queued' => true,
+                'message' => 'Penyalinan file besar sedang diproses di background. Anda akan mendapat notifikasi setelah selesai.',
+            ]);
         }
 
         try {
             if (is_dir($sourcePath)) {
-                \Illuminate\Support\Facades\File::copyDirectory($sourcePath, $newPath);
+                File::copyDirectory($sourcePath, $newPath);
             } else {
-                \Illuminate\Support\Facades\File::copy($sourcePath, $newPath);
+                File::copy($sourcePath, $newPath);
             }
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal copy: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Gagal copy: '.$e->getMessage()], 500);
         }
     }
 
     public function moveItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
-        
+        if ($deny = $this->denyViewerWrite($project, true)) {
+            return $deny;
+        }
+
         $sourcePath = $this->getValidTargetPath($project, $request->input('source', ''));
         $targetDir = $this->getValidTargetPath($project, $request->input('destination', ''));
 
@@ -1096,13 +1172,13 @@ class DashboardController extends Controller
         if (! file_exists($sourcePath)) {
             return response()->json(['error' => 'File sumber tidak ditemukan.'], 404);
         }
-        
+
         if (! is_dir($targetDir)) {
             return response()->json(['error' => 'Direktori tujuan tidak valid.'], 400);
         }
 
-        $newPath = $targetDir . '/' . $basename;
-        
+        $newPath = $targetDir.'/'.$basename;
+
         if (file_exists($newPath) && $sourcePath !== $newPath) {
             return response()->json(['error' => 'File/folder dengan nama tersebut sudah ada di lokasi tujuan.'], 400);
         }
@@ -1113,9 +1189,10 @@ class DashboardController extends Controller
 
         try {
             rename($sourcePath, $newPath);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal memindah file: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Gagal memindah file: '.$e->getMessage()], 500);
         }
     }
 
@@ -1123,7 +1200,9 @@ class DashboardController extends Controller
     public function createItem(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project, true)) {
+            return $deny;
+        }
         $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
 
         if (! $dirPath || ! is_dir($dirPath)) {
@@ -1138,7 +1217,7 @@ class DashboardController extends Controller
             return response()->json(['error' => 'Nama sudah digunakan.'], 400);
         }
 
-        if (!$this->checkDiskQuota($project, 0)) {
+        if (! $this->checkDiskQuota($project, 0)) {
             return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda sudah habis.'], 403);
         }
 
@@ -1160,7 +1239,9 @@ class DashboardController extends Controller
         ]);
 
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project, true)) {
+            return $deny;
+        }
         $dirPath = $this->getValidTargetPath($project, $request->input('current_path', ''));
 
         if (! $dirPath || ! is_dir($dirPath)) {
@@ -1169,7 +1250,7 @@ class DashboardController extends Controller
 
         $file = $request->file('file');
 
-        if (!$this->checkDiskQuota($project, $file->getSize())) {
+        if (! $this->checkDiskQuota($project, $file->getSize())) {
             return response()->json(['error' => 'Penyimpanan Penuh! Kuota disk Anda tidak cukup untuk mengupload file ini.'], 403);
         }
 
@@ -1208,12 +1289,12 @@ class DashboardController extends Controller
             }]);
         }
 
-        if (!in_array(Auth::user()->role, ['superadmin', 'admin_hosting'])) {
-            $query->where(function($q) {
+        if (! in_array(Auth::user()->role, ['superadmin', 'admin_hosting'])) {
+            $query->where(function ($q) {
                 $q->where('user_id', Auth::id())
-                  ->orWhereHas('teamMembers', function($sq) {
-                      $sq->where('user_id', Auth::id());
-                  });
+                    ->orWhereHas('teamMembers', function ($sq) {
+                        $sq->where('user_id', Auth::id());
+                    });
             });
         }
 
@@ -1286,12 +1367,14 @@ class DashboardController extends Controller
     public function updateEnv(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
         $subdomain = explode('.', $project->ryaze_domain)[0];
 
-        $envPath = hosting_clients_dir() . "/{$subdomain}/.env";
+        $envPath = hosting_clients_dir()."/{$subdomain}/.env";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $envPath = substr(base_path(), 0, 2) . str_replace('/', '\\', $envPath);
+            $envPath = substr(base_path(), 0, 2).str_replace('/', '\\', $envPath);
         }
         $content = $request->input('env_content', '');
 
@@ -1311,7 +1394,7 @@ class DashboardController extends Controller
 
             return back()->with('success', 'Environment variables berhasil disimpan!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage());
         }
     }
 
@@ -1319,35 +1402,37 @@ class DashboardController extends Controller
     public function startDevServer($hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
 
         // Only allow React/Next.js/Vue/Python frameworks
-        if (!in_array($project->framework, ['react', 'nextjs', 'vue', 'python'])) {
+        if (! in_array($project->framework, ['react', 'nextjs', 'vue', 'python'])) {
             return back()->with('error', 'Dev Server hanya tersedia untuk React, Next.js, Vue, dan Python!');
         }
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
 
         // Cari port yang tersedia dengan start random (3000-4000) untuk mem-bypass DNS negative caching
         $port = null;
         $startPort = rand(3000, 4000);
-        
+
         // Cari dari startPort ke 4000
         for ($p = $startPort; $p <= 4000; $p++) {
             $connection = @fsockopen('127.0.0.1', $p, $errCode, $errStr, 0.1);
-            if (!is_resource($connection)) {
+            if (! is_resource($connection)) {
                 $port = $p;
                 break;
             }
             fclose($connection);
         }
-        
+
         // Jika belum ketemu, cari dari 3000 ke startPort
-        if (!$port) {
+        if (! $port) {
             for ($p = 3000; $p < $startPort; $p++) {
                 $connection = @fsockopen('127.0.0.1', $p, $errCode, $errStr, 0.1);
-                if (!is_resource($connection)) {
+                if (! is_resource($connection)) {
                     $port = $p;
                     break;
                 }
@@ -1355,7 +1440,7 @@ class DashboardController extends Controller
             }
         }
 
-        if (!$port) {
+        if (! $port) {
             return back()->with('error', 'Tidak ada port yang tersedia!');
         }
 
@@ -1380,12 +1465,13 @@ class DashboardController extends Controller
         // Mulai dev server menggunakan PM2
         $appName = "dev{$project->id}";
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-        $winProjectDir = $isWindows ? substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir) : $projectDir;
+        $winProjectDir = $isWindows ? substr(base_path(), 0, 2).str_replace('/', '\\', $projectDir) : $projectDir;
 
-        $pm2Wrapper = function($cmd) use ($isWindows, $winProjectDir, $projectDir) {
+        $pm2Wrapper = function ($cmd) use ($isWindows, $winProjectDir, $projectDir) {
             if ($isWindows) {
                 return "cd /D \"{$winProjectDir}\" && {$cmd} 2>&1";
             }
+
             // PHP is already running inside the container (e.g. 1Panel-php8-aJQI), so just run it directly.
             // We assume pm2 and npm/python are installed globally inside the PHP container.
             return "cd {$projectDir} && {$cmd} 2>&1";
@@ -1397,9 +1483,13 @@ class DashboardController extends Controller
             shell_exec($pm2Wrapper("pm2 start npm --name \"{$appName}\" -- run dev -- -p {$port}"));
         } elseif ($project->framework === 'python') {
             $entrypoint = 'app.py';
-            if (file_exists("{$projectDir}/main.py")) $entrypoint = 'main.py';
-            elseif (file_exists("{$projectDir}/server.py")) $entrypoint = 'server.py';
-            elseif (file_exists("{$projectDir}/wsgi.py")) $entrypoint = 'wsgi.py';
+            if (file_exists("{$projectDir}/main.py")) {
+                $entrypoint = 'main.py';
+            } elseif (file_exists("{$projectDir}/server.py")) {
+                $entrypoint = 'server.py';
+            } elseif (file_exists("{$projectDir}/wsgi.py")) {
+                $entrypoint = 'wsgi.py';
+            }
 
             $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
             if ($hasGunicorn) {
@@ -1409,10 +1499,10 @@ class DashboardController extends Controller
                 shell_exec($pm2Wrapper("PORT={$port} FLASK_RUN_PORT={$port} pm2 start venv/bin/python --name \"{$appName}\" -- {$entrypoint}"));
             }
         }
-        
+
         $pid = $appName; // PM2 name as identifier
 
-        if (!$pid) {
+        if (! $pid) {
             return back()->with('error', 'Gagal memulai Dev Server!');
         }
 
@@ -1488,7 +1578,7 @@ PHP;
         // Buat symlink agar OpenResty dapat melakukan routing dev{port}.ryaze.my.id ke projectDir
         $baseDir = dirname($projectDir);
         $devSymlink = $isWindows ? "{$winProjectDir}\\..\\dev{$port}" : "{$baseDir}/dev{$port}";
-        if (!file_exists($devSymlink)) {
+        if (! file_exists($devSymlink)) {
             if ($isWindows) {
                 exec("mklink /D \"{$devSymlink}\" \"{$winProjectDir}\" 2>nul");
             } else {
@@ -1501,38 +1591,38 @@ PHP;
         $project->update([
             'dev_mode' => true,
             'dev_port' => $port,
-            'dev_pid' => $pid
+            'dev_pid' => $pid,
         ]);
 
         // Create Cloudflare DNS for Dev Server
         $apiToken = config('services.cloudflare.api_token');
         $tunnelUrl = preg_replace('#^https?://#', '', rtrim(config('services.cloudflare.tunnel_url'), '/'));
-        
+
         $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
-        $domainName = "dev{$port}" . $domainExtension;
-        
+        $domainName = "dev{$port}".$domainExtension;
+
         $zoneName = ltrim($domainExtension, '.');
         $zoneId = config('services.cloudflare.zone_id');
-        $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
-        if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+        $zoneReq = Http::withToken($apiToken)->get('https://api.cloudflare.com/client/v4/zones', ['name' => $zoneName]);
+        if ($zoneReq->successful() && ! empty($zoneReq->json('result'))) {
             $zoneId = $zoneReq->json('result.0.id');
         }
-        
-        \Illuminate\Support\Facades\Log::info("CF Vars: zone=$zoneId, token=$apiToken, tunnel=$tunnelUrl");
-        
+
+        Log::info("CF Vars: zone=$zoneId, token=$apiToken, tunnel=$tunnelUrl");
+
         if ($zoneId && $apiToken && $tunnelUrl) {
-            $existing = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", ['type' => 'CNAME', 'name' => $domainName]);
+            $existing = Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", ['type' => 'CNAME', 'name' => $domainName]);
             if ($existing->successful() && empty($existing->json('result'))) {
                 $resp = Http::withToken($apiToken)->post("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
-                    'type'    => 'CNAME',
-                    'name'    => $domainName,
+                    'type' => 'CNAME',
+                    'name' => $domainName,
                     'content' => $tunnelUrl,
                     'proxied' => true,
-                    'ttl'     => 1,
+                    'ttl' => 1,
                 ]);
-                \Illuminate\Support\Facades\Log::info("Cloudflare DevServer DNS created: " . $resp->body());
+                Log::info('Cloudflare DevServer DNS created: '.$resp->body());
             } else {
-                \Illuminate\Support\Facades\Log::info("Cloudflare DevServer DNS exists or error: " . $existing->body());
+                Log::info('Cloudflare DevServer DNS exists or error: '.$existing->body());
             }
         }
 
@@ -1543,10 +1633,12 @@ PHP;
     public function stopDevServer($hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
-        
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
+
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
 
         if ($project->dev_pid) {
             $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
@@ -1564,15 +1656,15 @@ PHP;
                 }
             }
         }
-        
+
         // Hapus proxy script saat dev server dimatikan
         if (file_exists("{$projectDir}/index.php")) {
             @unlink("{$projectDir}/index.php");
         }
-        
+
         // Hapus symlink dev server
         $baseDir = dirname($projectDir);
-        $devSymlink = "{$baseDir}/dev" . $project->dev_port;
+        $devSymlink = "{$baseDir}/dev".$project->dev_port;
         if (file_exists($devSymlink) || is_link($devSymlink)) {
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 exec("rmdir \"{$devSymlink}\" 2>nul");
@@ -1580,7 +1672,7 @@ PHP;
                 exec("rm -f \"{$devSymlink}\"");
             }
         }
-        
+
         if (file_exists("{$projectDir}/.port")) {
             @unlink("{$projectDir}/.port");
         }
@@ -1593,7 +1685,7 @@ PHP;
         $project->update([
             'dev_mode' => false,
             'dev_port' => null,
-            'dev_pid' => null
+            'dev_pid' => null,
         ]);
 
         // Hapus Cloudflare DNS for Dev Server
@@ -1604,15 +1696,15 @@ PHP;
                 $domainExtension = substr($project->ryaze_domain, strlen($subdomain));
                 $zoneName = ltrim($domainExtension, '.');
                 $zoneId = config('services.cloudflare.zone_id');
-                
-                $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
-                if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+
+                $zoneReq = Http::withToken($apiToken)->get('https://api.cloudflare.com/client/v4/zones', ['name' => $zoneName]);
+                if ($zoneReq->successful() && ! empty($zoneReq->json('result'))) {
                     $zoneId = $zoneReq->json('result.0.id');
                 }
 
                 if ($zoneId) {
-                    $devDomain = "dev{$devPort}" . $domainExtension;
-                    $response = \Illuminate\Support\Facades\Http::withToken($apiToken)
+                    $devDomain = "dev{$devPort}".$domainExtension;
+                    $response = Http::withToken($apiToken)
                         ->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
                             'type' => 'CNAME',
                             'name' => $devDomain,
@@ -1620,7 +1712,7 @@ PHP;
 
                     if ($response->successful() && ! empty($response->json('result'))) {
                         $recordId = $response->json('result.0.id');
-                        \Illuminate\Support\Facades\Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records/{$recordId}");
+                        Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records/{$recordId}");
                     }
                 }
             }
@@ -1633,7 +1725,9 @@ PHP;
     public function redeploy($hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
 
         $project->update(['status' => 'building']);
 
@@ -1655,19 +1749,19 @@ PHP;
     {
         $queueFile = storage_path('app/nginx_queue.json');
         $dir = dirname($queueFile);
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             @mkdir($dir, 0775, true);
         }
 
         $fp = fopen($queueFile, 'c+');
-        if (!$fp) {
+        if (! $fp) {
             throw new \RuntimeException('Gagal membuka nginx queue file.');
         }
 
         flock($fp, LOCK_EX);
         $content = stream_get_contents($fp);
         $items = json_decode($content ?: '[]', true);
-        if (!is_array($items)) {
+        if (! is_array($items)) {
             $items = [];
         }
         $items[] = $entry;
@@ -1683,7 +1777,9 @@ PHP;
     public function updateNginxConfig(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
 
         $domain = $project->ryaze_domain;
 
@@ -1696,10 +1792,10 @@ PHP;
         $config = $request->input('nginx_config');
 
         // Validasi ringan sisi aplikasi; pemeriksaan final oleh nginx -t di worker.
-        if (!str_contains($config, 'server {') || !str_contains($config, 'server_name')) {
+        if (! str_contains($config, 'server {') || ! str_contains($config, 'server_name')) {
             return back()->with('error', 'Konfigurasi harus berisi blok "server { ... }" dengan direktif "server_name".');
         }
-        if (!str_contains($config, $domain)) {
+        if (! str_contains($config, $domain)) {
             return back()->with('error', "Konfigurasi harus menyertakan server_name untuk domain Anda: {$domain}");
         }
         foreach (['load_module', 'worker_processes', 'pid ', 'master_process', 'daemon '] as $forbidden) {
@@ -1710,7 +1806,7 @@ PHP;
 
         // Simpan file konfigurasi ke storage privat agar dibaca worker
         $confDir = storage_path('app/nginx/custom');
-        if (!is_dir($confDir)) {
+        if (! is_dir($confDir)) {
             @mkdir($confDir, 0775, true);
         }
         $confFile = "{$confDir}/{$domain}.conf";
@@ -1719,14 +1815,14 @@ PHP;
         $project->update([
             'nginx_custom' => $config,
             'nginx_status' => 'pending',
-            'nginx_error'  => null,
+            'nginx_error' => null,
         ]);
 
         $this->enqueueNginxTask([
-            'action'        => 'custom',
-            'domain'        => $domain,
-            'project_domain'=> $domain,
-            'custom_file'   => 'storage/app/nginx/custom/' . $domain . '.conf',
+            'action' => 'custom',
+            'domain' => $domain,
+            'project_domain' => $domain,
+            'custom_file' => 'storage/app/nginx/custom/'.$domain.'.conf',
         ]);
 
         return back()->with('success', 'Konfigurasi Nginx dikirim ke server. Status akan diperbarui otomatis setelah diverifikasi (nginx -t).');
@@ -1736,10 +1832,12 @@ PHP;
     public function resetNginxConfig(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
 
         $domain = $project->ryaze_domain;
-        $confFile = storage_path('app/nginx/custom/' . $domain . '.conf');
+        $confFile = storage_path('app/nginx/custom/'.$domain.'.conf');
         if (file_exists($confFile)) {
             @unlink($confFile);
         }
@@ -1747,14 +1845,14 @@ PHP;
         $project->update([
             'nginx_custom' => null,
             'nginx_status' => 'pending',
-            'nginx_error'  => null,
+            'nginx_error' => null,
         ]);
 
         $this->enqueueNginxTask([
-            'action'        => 'custom',
-            'domain'        => $domain,
-            'project_domain'=> $domain,
-            'custom_file'   => '',
+            'action' => 'custom',
+            'domain' => $domain,
+            'project_domain' => $domain,
+            'custom_file' => '',
         ]);
 
         return back()->with('success', 'Konfigurasi Nginx dikembalikan ke default. Proses berjalan otomatis di server.');
@@ -1788,15 +1886,17 @@ PHP;
         } catch (\Exception $e) {
             return response()->json(['error' => 'Project tidak ditemukan.'], 404);
         }
-        if ($deny = $this->denyViewerWrite($project, true)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project, true)) {
+            return $deny;
+        }
         $subdomain = explode('.', $project->ryaze_domain)[0];
 
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
         $command = trim($request->input('command', ''));
 
         if (mb_strlen($command) > 500) {
             return response()->json([
-                'output' => "⛔ Perintah terlalu panjang (maksimal 500 karakter).",
+                'output' => '⛔ Perintah terlalu panjang (maksimal 500 karakter).',
                 'exit_code' => 1,
                 'cwd' => null,
             ]);
@@ -1806,11 +1906,11 @@ PHP;
         // term_id opsional: setiap instance terminal (tab/split) punya cwd sendiri
         $termId = preg_replace('/[^a-zA-Z0-9]/', '', (string) $request->input('term_id', 'main'));
         $termId = $termId === '' ? 'main' : substr($termId, 0, 20);
-        $sessionKey = 'terminal_cwd_' . $project->id . '_' . $termId;
+        $sessionKey = 'terminal_cwd_'.$project->id.'_'.$termId;
         $cwd = session($sessionKey, $projectDir);
         $baseDir = rtrim(str_replace('\\', '/', $projectDir), '/');
         $normCwd = str_replace('\\', '/', $cwd);
-        if (!is_dir($cwd) || !str_starts_with($normCwd . '/', $baseDir . '/')) {
+        if (! is_dir($cwd) || ! str_starts_with($normCwd.'/', $baseDir.'/')) {
             $cwd = $baseDir;
         }
 
@@ -1824,7 +1924,7 @@ PHP;
             $newCwd = $this->resolveTerminalCwd($cwd, $command, $baseDir);
             if ($newCwd === null) {
                 return response()->json([
-                    'output' => "cd: tidak dapat berpindah ke lokasi tersebut (di luar direktori project).",
+                    'output' => 'cd: tidak dapat berpindah ke lokasi tersebut (di luar direktori project).',
                     'exit_code' => 1,
                     'cwd' => $cwd,
                 ]);
@@ -1838,7 +1938,7 @@ PHP;
             ]);
         }
 
-// ════════ SECURITY: Deny Shell Metacharacters (anti-RCE) ════════
+        // ════════ SECURITY: Deny Shell Metacharacters (anti-RCE) ════════
         // Tanpa metacharacter shell tidak ada pipe, redirection, command
         // substitution, glob expansion, quote-breaking, maupun escape.
         // Dikombinasikan dengan whitelist + path-jail, kelas serangan RCE
@@ -1883,9 +1983,9 @@ PHP;
             // ── Python venv alias ──
             $venvMap = [
                 'python3' => 'venv/bin/python3',
-                'python'  => 'venv/bin/python',
-                'pip3'    => 'venv/bin/pip3',
-                'pip'     => 'venv/bin/pip',
+                'python' => 'venv/bin/python',
+                'pip3' => 'venv/bin/pip3',
+                'pip' => 'venv/bin/pip',
             ];
             if (isset($venvMap[$firstWord])) {
                 $tokens[0] = $venvMap[$firstWord];
@@ -1900,9 +2000,9 @@ PHP;
             if (str_contains($arg, '/')) {
                 $candidate = str_starts_with($arg, '/')
                     ? $arg
-                    : rtrim(str_replace('\\', '/', $cwd), '/') . '/' . $arg;
+                    : rtrim(str_replace('\\', '/', $cwd), '/').'/'.$arg;
                 $candidateNorm = $this->normalizeTerminalPath($candidate);
-                if ($candidateNorm !== $baseDir && ! str_starts_with($candidateNorm . '/', $baseDir . '/')) {
+                if ($candidateNorm !== $baseDir && ! str_starts_with($candidateNorm.'/', $baseDir.'/')) {
                     Log::warning('[TERMINAL_BLOCKED] User '.Auth::id()." path-escape attempt: {$arg}");
 
                     return response()->json([
@@ -1915,7 +2015,7 @@ PHP;
 
         // ════════ SECURITY: lingkungan sanitasi (tanpa kredensial utama) ════════
         @set_time_limit(630);
-        
+
         session()->save(); // Mencegah session lock
 
         return response()->stream(function () use ($tokens, $cwd, $projectDir, $subdomain) {
@@ -1935,9 +2035,10 @@ PHP;
 
             $env = $this->terminalEnv();
             $process = proc_open($tokens, $descriptors, $pipes, $cwd, $env);
-            if (!is_resource($process)) {
-                echo json_encode(['error' => 'Gagal menjalankan perintah.']) . "\n";
+            if (! is_resource($process)) {
+                echo json_encode(['error' => 'Gagal menjalankan perintah.'])."\n";
                 flush();
+
                 return;
             }
 
@@ -1958,18 +2059,18 @@ PHP;
                 }
 
                 if ($chunkOutput !== '') {
-                    $chunkOutput = str_replace($projectDir, '/' . $subdomain, $chunkOutput);
+                    $chunkOutput = str_replace($projectDir, '/'.$subdomain, $chunkOutput);
                     if (str_starts_with(str_replace('\\', '/', $cwd), str_replace('\\', '/', $projectDir))) {
                         $relative = ltrim(substr(str_replace('\\', '/', $cwd), strlen(str_replace('\\', '/', $projectDir))), '/');
-                        $chunkOutput = str_replace($cwd, '/' . $subdomain . ($relative !== '' ? '/' . $relative : ''), $chunkOutput);
+                        $chunkOutput = str_replace($cwd, '/'.$subdomain.($relative !== '' ? '/'.$relative : ''), $chunkOutput);
                     }
-                    echo json_encode(['output' => $chunkOutput]) . "\n";
+                    echo json_encode(['output' => $chunkOutput])."\n";
                     flush();
                 }
 
                 $status = proc_get_status($process);
-                if (!$status['running']) {
-                    echo json_encode(['exit_code' => $status['exitcode'], 'cwd' => $cwd]) . "\n";
+                if (! $status['running']) {
+                    echo json_encode(['exit_code' => $status['exitcode'], 'cwd' => $cwd])."\n";
                     flush();
                     break;
                 }
@@ -1978,8 +2079,8 @@ PHP;
                     echo json_encode([
                         'output' => "\n\n⏱ Perintah dihentikan karena melebihi batas waktu ({$timeout}s).",
                         'exit_code' => 124,
-                        'cwd' => $cwd
-                    ]) . "\n";
+                        'cwd' => $cwd,
+                    ])."\n";
                     flush();
                     break;
                 }
@@ -2012,17 +2113,17 @@ PHP;
 
         $path = str_starts_with($target, '/')
             ? $target
-            : rtrim(str_replace('\\', '/', $current), '/') . '/' . $target;
+            : rtrim(str_replace('\\', '/', $current), '/').'/'.$target;
 
         $normalized = $this->normalizeTerminalPath($path);
 
         if ($normalized === $baseDir) {
             return $baseDir;
         }
-        if (!str_starts_with($normalized . '/', $baseDir . '/')) {
+        if (! str_starts_with($normalized.'/', $baseDir.'/')) {
             return null;
         }
-        if (!is_dir($normalized)) {
+        if (! is_dir($normalized)) {
             return null;
         }
 
@@ -2041,14 +2142,16 @@ PHP;
                 continue;
             }
             if ($part === '..') {
-                if (!empty($stack)) {
+                if (! empty($stack)) {
                     array_pop($stack);
                 }
+
                 continue;
             }
             $stack[] = $part;
         }
-        return ($isAbsolute ? '/' : '') . implode('/', $stack);
+
+        return ($isAbsolute ? '/' : '').implode('/', $stack);
     }
 
     /**
@@ -2094,7 +2197,7 @@ PHP;
 
         // Argv array → dieksekusi tanpa shell (execvp), isi $env direplace total.
         $process = proc_open($command, $descriptors, $pipes, $cwd, $env);
-        if (!is_resource($process)) {
+        if (! is_resource($process)) {
             return ['output' => 'Gagal menjalankan perintah.', 'exit_code' => 1, 'timed_out' => false];
         }
 
@@ -2114,7 +2217,7 @@ PHP;
             }
 
             $status = proc_get_status($process);
-            if (!$status['running']) {
+            if (! $status['running']) {
                 break;
             }
             if ((microtime(true) - $start) > $timeout) {
@@ -2130,7 +2233,7 @@ PHP;
                 proc_close($process);
 
                 return [
-                    'output' => $output . "\n\n⏱ Perintah dihentikan karena melebihi batas waktu ({$timeout}s).",
+                    'output' => $output."\n\n⏱ Perintah dihentikan karena melebihi batas waktu ({$timeout}s).",
                     'exit_code' => 124,
                     'timed_out' => true,
                 ];
@@ -2155,7 +2258,7 @@ PHP;
     public function billingHistory()
     {
         // Mengambil semua invoice/tagihan milik user yang sedang login
-        $billings = \App\Models\HostingPayment::where('user_id', Auth::id())
+        $billings = HostingPayment::where('user_id', Auth::id())
             ->where('invoice_number', 'like', 'HST-INV-%')
             ->latest()
             ->paginate(15);
@@ -2168,7 +2271,7 @@ PHP;
         $user = Auth::user();
 
         $request->validate(['plan' => 'required|in:free,starter,pro,business']);
-        
+
         if ($user->hasActiveHostingSubscription()) {
             $activeBilling = $user->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first();
             if ($activeBilling && $activeBilling->plan === $request->plan) {
@@ -2176,21 +2279,21 @@ PHP;
             }
         }
         $selectedPlan = $request->plan;
-        $planConfig   = \App\Models\User::hostingPlans()[$selectedPlan] ?? null;
-        
-        if (!$planConfig || !($planConfig['is_active'] ?? true)) {
+        $planConfig = User::hostingPlans()[$selectedPlan] ?? null;
+
+        if (! $planConfig || ! ($planConfig['is_active'] ?? true)) {
             return back()->with('error', 'Paket yang Anda pilih saat ini sedang tidak tersedia atau dinonaktifkan.');
         }
 
-        $planLimits   = \App\Models\User::getPlanLimits($selectedPlan);
-        $planPrice    = \App\Models\User::getPlanPrice($selectedPlan);
+        $planLimits = User::getPlanLimits($selectedPlan);
+        $planPrice = User::getPlanPrice($selectedPlan);
 
         $voucherFinalPrice = null;
         $voucherMessage = null;
 
         if ($request->filled('voucher_code')) {
-            $voucher = \App\Models\Voucher::where('code', strtoupper(trim($request->voucher_code)))->first();
-            if (!$voucher || !$voucher->isValid()) {
+            $voucher = Voucher::where('code', strtoupper(trim($request->voucher_code)))->first();
+            if (! $voucher || ! $voucher->isValid()) {
                 return back()->withInput()->with('error', 'Kode voucher tidak valid, kuota habis, atau sudah tidak berlaku.');
             }
             $voucherFinalPrice = $planPrice - $voucher->calculateDiscount($planPrice);
@@ -2199,15 +2302,15 @@ PHP;
         }
 
         $invoiceAmount = isset($voucherFinalPrice) ? $voucherFinalPrice : $planPrice;
-        
-        $adminFeePercentage = (float) \App\Models\Setting::val('admin_fee_percentage', '0');
+
+        $adminFeePercentage = (float) Setting::val('admin_fee_percentage', '0');
         if ($adminFeePercentage > 0 && $invoiceAmount > 0) {
             $adminFee = $invoiceAmount * ($adminFeePercentage / 100);
             $invoiceAmount += $adminFee;
         }
 
         $activeBilling = $user->hostingBillings()->where('status', 'active')->latest()->first();
-        $oldPlanBaseStorage = $activeBilling ? (\App\Models\User::getPlanLimits($activeBilling->plan)['storage_mb'] ?? 1024) : 1024;
+        $oldPlanBaseStorage = $activeBilling ? (User::getPlanLimits($activeBilling->plan)['storage_mb'] ?? 1024) : 1024;
         $currentLimit = $user->hosting_storage_limit_mb ?? 1024;
         $extraStorage = max(0, $currentLimit - $oldPlanBaseStorage);
 
@@ -2219,81 +2322,85 @@ PHP;
 
             if ($activeBilling) {
                 // Nonaktifkan semua billing aktif lain agar tidak ada duplikat
-                \App\Models\HostingBilling::where('user_id', $user->id)
+                HostingBilling::where('user_id', $user->id)
                     ->where('status', 'active')
                     ->where('id', '!=', $activeBilling->id)
                     ->update(['status' => 'canceled']);
 
                 $activeBilling->update([
-                    'plan_name'     => 'Paket ' . ucfirst($selectedPlan),
-                    'plan'          => $selectedPlan,
-                    'amount'        => 0,
-                    'status'        => 'active',
+                    'plan_name' => 'Paket '.ucfirst($selectedPlan),
+                    'plan' => $selectedPlan,
+                    'amount' => 0,
+                    'status' => 'active',
                     'next_due_date' => $newDueDate,
                 ]);
             } else {
-                \App\Models\HostingBilling::create([
-                    'user_id'            => $user->id,
+                HostingBilling::create([
+                    'user_id' => $user->id,
                     'hosting_project_id' => null,
-                    'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
-                    'plan'               => $selectedPlan,
-                    'amount'             => 0,
-                    'billing_cycle'      => 'monthly',
-                    'status'             => 'active',
-                    'next_due_date'      => $newDueDate,
+                    'plan_name' => 'Paket '.ucfirst($selectedPlan),
+                    'plan' => $selectedPlan,
+                    'amount' => 0,
+                    'billing_cycle' => 'monthly',
+                    'status' => 'active',
+                    'next_due_date' => $newDueDate,
                 ]);
             }
             $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);
-            
+
             // Hapus tagihan unpaid sebelumnya jika ada
-            \App\Models\HostingPayment::where('user_id', $user->id)->where('invoice_number', 'like', 'HST-INV-%')->where('status', 'unpaid')->delete();
-            
-            \App\Models\HostingPayment::create([
+            HostingPayment::where('user_id', $user->id)->where('invoice_number', 'like', 'HST-INV-%')->where('status', 'unpaid')->delete();
+
+            HostingPayment::create([
                 'user_id' => $user->id, 'hosting_project_id' => null,
-                'invoice_number' => 'HST-INV-' . strtoupper(uniqid()),
+                'invoice_number' => 'HST-INV-'.strtoupper(uniqid()),
                 'amount' => 0, 'status' => 'paid', 'payment_method' => $planPrice == 0 ? 'Free Plan' : 'Voucher',
                 'paid_at' => now(), 'notes' => $selectedPlan,
             ]);
-            
-            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket ' . ucfirst($selectedPlan) . ' aktif secara gratis selama 1 bulan.';
+
+            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket '.ucfirst($selectedPlan).' aktif secara gratis selama 1 bulan.';
+
             return back()->with('success', $msg);
         }
 
         // Kalau tidak gratis, buat tagihan
-        $existingInvoice = \App\Models\HostingPayment::where('user_id', $user->id)
+        $existingInvoice = HostingPayment::where('user_id', $user->id)
             ->where('invoice_number', 'like', 'HST-INV-%')->where('status', 'unpaid')->first();
 
-        if (!$existingInvoice) {
-            \App\Models\HostingPayment::create([
+        if (! $existingInvoice) {
+            HostingPayment::create([
                 'user_id' => $user->id, 'hosting_project_id' => null,
-                'invoice_number' => 'HST-INV-' . strtoupper(uniqid()),
+                'invoice_number' => 'HST-INV-'.strtoupper(uniqid()),
                 'amount' => $invoiceAmount, 'status' => 'unpaid', 'notes' => $selectedPlan,
             ]);
         } else {
             $existingInvoice->update([
-                'amount' => $invoiceAmount, 'invoice_number' => 'HST-INV-' . strtoupper(uniqid()), 'notes' => $selectedPlan,
+                'amount' => $invoiceAmount, 'invoice_number' => 'HST-INV-'.strtoupper(uniqid()), 'notes' => $selectedPlan,
             ]);
         }
 
-        $msg = 'Tagihan Paket ' . ucfirst($selectedPlan) . ' (Rp ' . number_format($invoiceAmount, 0, ',', '.') . ') berhasil dibuat. Silakan selesaikan pembayaran.';
-        if ($voucherMessage) $msg = $voucherMessage . ' ' . $msg;
+        $msg = 'Tagihan Paket '.ucfirst($selectedPlan).' (Rp '.number_format($invoiceAmount, 0, ',', '.').') berhasil dibuat. Silakan selesaikan pembayaran.';
+        if ($voucherMessage) {
+            $msg = $voucherMessage.' '.$msg;
+        }
+
         return back()->with('success', $msg);
     }
 
-        public function payWithWallet(Request $request)
+    public function payWithWallet(Request $request)
     {
         $request->validate([
             'invoice_number' => 'required|string',
         ]);
 
         $user = Auth::user();
-        $invoice = \App\Models\HostingPayment::where('invoice_number', $request->invoice_number)
+        $invoice = HostingPayment::where('invoice_number', $request->invoice_number)
             ->where('user_id', $user->id)
             ->where('status', 'unpaid')
             ->firstOrFail();
 
         $wallet = $user->wallet()->firstOrCreate(['user_id' => $user->id], ['balance' => 0]);
-        
+
         if ($wallet->balance < $invoice->amount) {
             return back()->with('error', 'Saldo Wallet Anda tidak mencukupi untuk membayar tagihan ini.');
         }
@@ -2302,11 +2409,11 @@ PHP;
         $wallet->decrement('balance', $invoice->amount);
 
         // Catat transaksi wallet
-        \App\Models\WalletTransaction::create([
+        WalletTransaction::create([
             'wallet_id' => $wallet->id,
             'amount' => $invoice->amount,
             'type' => 'debit',
-            'description' => 'Pembayaran Tagihan Hosting: ' . $invoice->invoice_number,
+            'description' => 'Pembayaran Tagihan Hosting: '.$invoice->invoice_number,
             'status' => 'completed',
         ]);
 
@@ -2322,8 +2429,8 @@ PHP;
             $referrer = $user->referrer;
             if ($referrer) {
                 $commissionAmount = $invoice->amount * 0.10; // 10%
-                
-                \App\Models\AffiliateCommission::create([
+
+                AffiliateCommission::create([
                     'user_id' => $referrer->id,
                     'referred_user_id' => $user->id,
                     'amount' => $commissionAmount,
@@ -2334,57 +2441,57 @@ PHP;
                 $referrerWallet = $referrer->wallet()->firstOrCreate(['user_id' => $referrer->id], ['balance' => 0]);
                 $referrerWallet->increment('balance', $commissionAmount);
 
-                \App\Models\WalletTransaction::create([
+                WalletTransaction::create([
                     'wallet_id' => $referrerWallet->id,
                     'amount' => $commissionAmount,
                     'type' => 'credit',
                     'description' => 'Komisi Affiliate: Pembayaran Langganan Hosting',
                     'status' => 'completed',
                 ]);
-                
-                $referrer->notify(new \App\Notifications\SystemNotification('Anda mendapatkan komisi afiliasi sebesar Rp ' . number_format($commissionAmount, 0, ',', '.') . ' dari referal Anda.', 'success'));
+
+                $referrer->notify(new SystemNotification('Anda mendapatkan komisi afiliasi sebesar Rp '.number_format($commissionAmount, 0, ',', '.').' dari referal Anda.', 'success'));
             }
         }
 
         // Update atau buat langganan
-        $billing = \App\Models\HostingBilling::where('user_id', $user->id)
+        $billing = HostingBilling::where('user_id', $user->id)
             ->where('status', 'active')
             ->latest()
             ->first();
 
-        $oldPlanBaseStorage = $billing ? (\App\Models\User::getPlanLimits($billing->plan)['storage_mb'] ?? 1024) : 1024;
+        $oldPlanBaseStorage = $billing ? (User::getPlanLimits($billing->plan)['storage_mb'] ?? 1024) : 1024;
         $currentLimit = $user->hosting_storage_limit_mb ?? 1024;
         $extraStorage = max(0, $currentLimit - $oldPlanBaseStorage);
 
         $selectedPlan = $invoice->notes;
-        $planLimits = \App\Models\User::getPlanLimits($selectedPlan);
+        $planLimits = User::getPlanLimits($selectedPlan);
 
         if ($billing) {
             // Nonaktifkan semua billing aktif lain agar tidak ada duplikat
-            \App\Models\HostingBilling::where('user_id', $user->id)
+            HostingBilling::where('user_id', $user->id)
                 ->where('status', 'active')
                 ->where('id', '!=', $billing->id)
                 ->update(['status' => 'canceled']);
 
             // Jika billing sudah expired, mulai dari sekarang. Jika masih aktif, perpanjang dari tanggal jatuh tempo.
-            $baseDate = \Carbon\Carbon::parse($billing->next_due_date)->isPast() ? now() : \Carbon\Carbon::parse($billing->next_due_date);
+            $baseDate = Carbon::parse($billing->next_due_date)->isPast() ? now() : Carbon::parse($billing->next_due_date);
             $billing->update([
-                'plan_name'     => 'Paket ' . ucfirst($selectedPlan),
-                'plan'          => $selectedPlan,
-                'amount'        => $invoice->amount,
-                'status'        => 'active',
-                'next_due_date' => $baseDate->addMonth()
+                'plan_name' => 'Paket '.ucfirst($selectedPlan),
+                'plan' => $selectedPlan,
+                'amount' => $invoice->amount,
+                'status' => 'active',
+                'next_due_date' => $baseDate->addMonth(),
             ]);
         } else {
-            \App\Models\HostingBilling::create([
+            HostingBilling::create([
                 'user_id' => $user->id,
                 'hosting_project_id' => null,
-                'plan_name' => 'Paket ' . ucfirst($selectedPlan),
+                'plan_name' => 'Paket '.ucfirst($selectedPlan),
                 'plan' => $selectedPlan,
                 'amount' => $invoice->amount,
                 'billing_cycle' => 'monthly',
                 'next_due_date' => now()->addMonth(),
-                'status' => 'active'
+                'status' => 'active',
             ]);
         }
 
@@ -2392,23 +2499,23 @@ PHP;
         $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);
 
         // Cari semua project unpaid dan suspended untuk diaktifkan/deploy
-        $unpaidProjects = \App\Models\HostingProject::where('user_id', $user->id)
+        $unpaidProjects = HostingProject::where('user_id', $user->id)
             ->whereIn('status', ['unpaid', 'suspended'])
             ->get();
 
         foreach ($unpaidProjects as $proj) {
             $isTemplate = $proj->source_type === 'template';
-            
+
             if ($proj->status === 'suspended') {
                 $subdomain = explode('.', $proj->ryaze_domain)[0];
-                $suspendFile = hosting_clients_dir() . "/{$subdomain}/.suspended";
+                $suspendFile = hosting_clients_dir()."/{$subdomain}/.suspended";
                 if (file_exists($suspendFile)) {
                     @unlink($suspendFile);
                 }
                 $proj->update(['status' => 'active']);
                 $proj->deployments()->create([
                     'status' => 'ready',
-                    'build_logs' => "> SISTEM: Project berhasil diaktifkan kembali setelah pembayaran langganan diterima.",
+                    'build_logs' => '> SISTEM: Project berhasil diaktifkan kembali setelah pembayaran langganan diterima.',
                 ]);
             } else {
                 $proj->update(['status' => 'building']);
@@ -2422,7 +2529,7 @@ PHP;
             }
         }
 
-        $user->notify(new \App\Notifications\SystemNotification('Pembayaran langganan hosting ('.$invoice->invoice_number.') menggunakan saldo wallet berhasil. ' . $unpaidProjects->count() . ' project sedang disiapkan.', 'success'));
+        $user->notify(new SystemNotification('Pembayaran langganan hosting ('.$invoice->invoice_number.') menggunakan saldo wallet berhasil. '.$unpaidProjects->count().' project sedang disiapkan.', 'success'));
 
         return back()->with('success', 'Pembayaran berhasil menggunakan Saldo Wallet.');
     }
@@ -2430,27 +2537,32 @@ PHP;
     public function deleteProject(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
 
         // 1. Hapus Record DNS Cloudflare
         $this->deleteCloudflareDNS($project->ryaze_domain);
 
         // 1.5. Hentikan Proses Background (PM2 / Python / Node)
-        if ($project->dev_pid) {
-            $pid = escapeshellarg($project->dev_pid);
-            if (is_numeric($project->dev_pid)) {
-                exec("kill -9 {$pid} 2>/dev/null || true");
-            } else {
-                exec("pm2 delete {$pid} 2>/dev/null || true");
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+        if (! $isWindows) {
+            if ($project->dev_pid) {
+                $pid = escapeshellarg($project->dev_pid);
+                if (is_numeric($project->dev_pid)) {
+                    exec("kill -9 {$pid} 2>/dev/null || true");
+                } else {
+                    exec("pm2 delete {$pid} 2>/dev/null || true");
+                }
             }
+            exec("pm2 delete \"prod_{$project->id}\" 2>/dev/null || true");
         }
-        exec("pm2 delete \"prod_{$project->id}\" 2>/dev/null || true");
 
         // 2. Hapus Folder Root
         if (is_dir($projectDir)) {
-            exec('rm -rf '.escapeshellarg($projectDir));
+            File::deleteDirectory($projectDir);
         }
 
         // 3. Hapus Record Database
@@ -2464,17 +2576,21 @@ PHP;
     {
         $apiToken = config('services.cloudflare.api_token');
 
-        if (!$apiToken) return;
+        if (! $apiToken) {
+            return;
+        }
 
         $zoneName = explode('.', $domainName, 2)[1] ?? $domainName;
         $zoneId = config('services.cloudflare.zone_id');
-        
-        $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
-        if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+
+        $zoneReq = Http::withToken($apiToken)->get('https://api.cloudflare.com/client/v4/zones', ['name' => $zoneName]);
+        if ($zoneReq->successful() && ! empty($zoneReq->json('result'))) {
             $zoneId = $zoneReq->json('result.0.id');
         }
 
-        if (!$zoneId) return;
+        if (! $zoneId) {
+            return;
+        }
 
         // Cari Record ID
         $response = Http::withToken($apiToken)
@@ -2493,15 +2609,17 @@ PHP;
     public function updateSettings(Request $request, $hashid)
     {
         $project = $this->getValidProject($hashid);
-        if ($deny = $this->denyViewerWrite($project)) { return $deny; }
+        if ($deny = $this->denyViewerWrite($project)) {
+            return $deny;
+        }
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
 
         // Ambil data checkbox
         $maintenanceMode = $request->has('maintenance_mode');
         $forceHttps = $request->has('force_https');
         $underAttack = $request->has('is_under_attack');
-        
+
         $blockedIps = trim($request->input('blocked_ips', ''));
 
         // 1. Terapkan Maintenance Mode (Membuat file .maintenance untuk dibaca Nginx)
@@ -2530,7 +2648,7 @@ PHP;
 
         // 1.75. Terapkan WAF Blocked IPs
         $wafFile = "{$projectDir}/.waf_blocks";
-        if (!empty($blockedIps)) {
+        if (! empty($blockedIps)) {
             // Bersihkan input (hapus spasi ekstra)
             $ips = array_filter(array_map('trim', explode("\n", $blockedIps)));
             file_put_contents($wafFile, implode("\n", $ips));
@@ -2559,14 +2677,14 @@ PHP;
 
     private function checkDiskQuota($project, $additionalBytes = 0)
     {
-        $user = \Illuminate\Support\Facades\Auth::user() ?? $project->user;
-        $projects = \App\Models\HostingProject::where('user_id', $user->id)->get();
+        $user = Auth::user() ?? $project->user;
+        $projects = HostingProject::where('user_id', $user->id)->get();
         $totalBytes = 0;
 
         foreach ($projects as $p) {
             $dir = $this->getProjectRootDir($p);
             if ($dir && is_dir($dir)) {
-                $output = shell_exec("du -sb " . escapeshellarg($dir) . " 2>/dev/null");
+                $output = shell_exec('du -sb '.escapeshellarg($dir).' 2>/dev/null');
                 if ($output) {
                     $parts = explode("\t", trim($output));
                     if (isset($parts[0])) {
@@ -2577,7 +2695,7 @@ PHP;
         }
 
         $totalBytes += $additionalBytes;
-        
+
         // Shared Hosting: Limit global per akun (bukan per project)
         $limitBytes = in_array($user->role, ['superadmin', 'admin_hosting']) ? -1 : ($user->hosting_storage_limit_mb ?? 1024) * 1024 * 1024;
 
@@ -2595,35 +2713,35 @@ PHP;
     {
         $project = $this->getValidProject($hashid);
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
 
-        if (!is_dir($projectDir)) {
+        if (! is_dir($projectDir)) {
             return back()->with('error', 'Direktori proyek tidak ditemukan.');
         }
 
-        $zipFileName = $subdomain . '_backup_' . date('Y-m-d_H-i-s') . '.zip';
-        $zipFilePath = storage_path('app/backups/' . $zipFileName);
-        
-        if (!is_dir(storage_path('app/backups'))) {
+        $zipFileName = $subdomain.'_backup_'.date('Y-m-d_H-i-s').'.zip';
+        $zipFilePath = storage_path('app/backups/'.$zipFileName);
+
+        if (! is_dir(storage_path('app/backups'))) {
             mkdir(storage_path('app/backups'), 0755, true);
         }
 
-        $zip = new \ZipArchive();
-        if ($zip->open($zipFilePath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+        $zip = new \ZipArchive;
+        if ($zip->open($zipFilePath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator($projectDir),
                 \RecursiveIteratorIterator::LEAVES_ONLY
             );
 
             foreach ($files as $name => $file) {
-                if (!$file->isDir()) {
+                if (! $file->isDir()) {
                     $filePath = $file->getRealPath();
                     $relativePath = substr($filePath, strlen($projectDir) + 1);
                     $zip->addFile($filePath, $relativePath);
                 }
             }
             $zip->close();
-            
+
             return response()->download($zipFilePath)->deleteFileAfterSend(true);
         } else {
             return back()->with('error', 'Gagal membuat file backup (ZIP).');
@@ -2633,33 +2751,37 @@ PHP;
     public function uploadBackup(Request $request, $hashid)
     {
         $request->validate([
-            'backup_file' => 'required|file|mimes:zip|max:512000' // Max 500MB
+            'backup_file' => 'required|file|mimes:zip|max:512000', // Max 500MB
         ]);
 
         $project = $this->getValidProject($hashid);
-        if ($denyWrite = $this->denyViewerWrite($project)) { return $denyWrite; }
+        if ($denyWrite = $this->denyViewerWrite($project)) {
+            return $denyWrite;
+        }
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
 
-        if (!is_dir($projectDir)) {
+        if (! is_dir($projectDir)) {
             return back()->with('error', 'Direktori proyek tidak ditemukan.');
         }
 
         $zipFile = $request->file('backup_file');
-        
-        $zip = new \ZipArchive();
-        if ($zip->open($zipFile->getRealPath()) === TRUE) {
+
+        $zip = new \ZipArchive;
+        if ($zip->open($zipFile->getRealPath()) === true) {
             // ── ANTIZIP-SLIP: pastikan setiap entry berada di dalam projectDir ──
             $baseDir = rtrim(str_replace('\\', '/', $projectDir), '/');
             for ($i = 0; $i < $zip->numFiles; $i++) {
                 $entry = str_replace('\\', '/', $zip->getNameIndex($i));
                 if (str_contains($entry, '..') || str_starts_with($entry, '/')) {
                     $zip->close();
+
                     return back()->with('error', 'Backup ditolak: ZIP mengandung path traversal.');
                 }
-                $dest = $baseDir . '/' . $entry;
-                if ($entry !== '' && !str_starts_with($dest, $baseDir . '/')) {
+                $dest = $baseDir.'/'.$entry;
+                if ($entry !== '' && ! str_starts_with($dest, $baseDir.'/')) {
                     $zip->close();
+
                     return back()->with('error', 'Backup ditolak: ZIP berisi file di luar direktori project.');
                 }
             }
@@ -2667,24 +2789,26 @@ PHP;
             // Overwrite existing files
             $zip->extractTo($projectDir);
             $zip->close();
+
             return back()->with('success', 'Backup berhasil di-restore! File yang ada telah ditimpa.');
         } else {
             return back()->with('error', 'Gagal membuka file ZIP.');
         }
     }
+
     public function getServerStatus()
     {
-        $status = \App\Services\ServerMonitorService::getStatus();
-        
+        $status = ServerMonitorService::getStatus();
+
         return response()->json([
             'cpu' => [
                 'load_1m' => $status['cpu']['load_1m'] ?? 0,
-                'usage_percent' => $status['cpu']['usage_percent'] ?? 0
+                'usage_percent' => $status['cpu']['usage_percent'] ?? 0,
             ],
             'ram' => [
-                'percentage' => $status['ram']['percentage'] ?? 0
+                'percentage' => $status['ram']['percentage'] ?? 0,
             ],
-            'status' => (($status['cpu']['load_1m'] ?? 0) > 80 || ($status['ram']['percentage'] ?? 0) > 90) ? 'heavy_load' : 'healthy'
+            'status' => (($status['cpu']['load_1m'] ?? 0) > 80 || ($status['ram']['percentage'] ?? 0) > 90) ? 'heavy_load' : 'healthy',
         ]);
     }
 
@@ -2701,9 +2825,9 @@ PHP;
             'role' => 'required|in:viewer,editor',
         ]);
 
-        $userToInvite = \App\Models\User::where('email', $request->email)->first();
+        $userToInvite = User::where('email', $request->email)->first();
 
-        if (!$userToInvite) {
+        if (! $userToInvite) {
             return back()->with('error', 'Pengguna dengan email tersebut tidak terdaftar di Ryaze.');
         }
 
@@ -2736,13 +2860,14 @@ PHP;
     private function getProjectRootDir($project)
     {
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $baseDir = hosting_clients_dir() . "/{$subdomain}";
-        if (!is_dir($baseDir)) {
+        $baseDir = hosting_clients_dir()."/{$subdomain}";
+        if (! is_dir($baseDir)) {
             @mkdir($baseDir, 0755, true);
             clearstatcache(true, $baseDir);
         }
-        
+
         $real = realpath($baseDir);
+
         return $real !== false ? $real : $baseDir;
     }
 }

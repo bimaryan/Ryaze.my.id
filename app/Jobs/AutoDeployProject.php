@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -32,9 +33,10 @@ class AutoDeployProject implements ShouldQueue
     {
         $deploy = $this->project->deployments()->latest()->first();
 
-        if (!$deploy) {
+        if (! $deploy) {
             Log::error("[AutoDeploy] Tidak ada deployment record untuk project #{$this->project->id}");
             $this->project->update(['status' => 'error']);
+
             return;
         }
 
@@ -42,17 +44,17 @@ class AutoDeployProject implements ShouldQueue
 
         $baseDir = hosting_clients_dir();
         $subdomain = explode('.', $this->project->ryaze_domain)[0];
-        $projectDir = $baseDir . '/' . $subdomain;
+        $projectDir = $baseDir.'/'.$subdomain;
 
         try {
             $this->log($deploy, '> Preparing deployment directory...');
             $this->crossPlatformMkdir($baseDir, $deploy);
 
             $isTemplate = ($this->project->source_type === 'template') || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'template:'));
-            $isUpload   = ($this->project->source_type === 'upload')   || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'upload:'));
+            $isUpload = ($this->project->source_type === 'upload') || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'upload:'));
 
-            $this->log($deploy, "> Debug: source_type = " . ($this->project->source_type ?? 'NULL'));
-            $this->log($deploy, "> Debug: repo_source = " . ($this->project->repo_source ?? 'NULL'));
+            $this->log($deploy, '> Debug: source_type = '.($this->project->source_type ?? 'NULL'));
+            $this->log($deploy, '> Debug: repo_source = '.($this->project->repo_source ?? 'NULL'));
 
             if ($isTemplate) {
                 $this->log($deploy, "\n> ✅ Mode Template aktif!");
@@ -112,9 +114,9 @@ class AutoDeployProject implements ShouldQueue
 
                 if ($isRepo) {
                     $this->log($deploy, '> Repository found. Pulling latest changes...');
-                    $this->linuxExec("chown -R root:root " . escapeshellarg($projectDir), $deploy);
+                    $this->linuxExec('chown -R root:root '.escapeshellarg($projectDir), $deploy);
                     $this->exec(
-                        'cd ' . escapeshellarg($projectDir) . ' && git fetch --all && git reset --hard origin/' . escapeshellarg($branch),
+                        'cd '.escapeshellarg($projectDir).' && git fetch --all && git reset --hard origin/'.escapeshellarg($branch),
                         $deploy,
                         true
                     );
@@ -126,7 +128,7 @@ class AutoDeployProject implements ShouldQueue
 
                     $this->log($deploy, '> Cloning repository...');
                     $this->exec(
-                        'GIT_TERMINAL_PROMPT=0 git clone -b ' . escapeshellarg($branch) . ' ' . escapeshellarg($repoUrl) . ' ' . escapeshellarg($projectDir),
+                        'GIT_TERMINAL_PROMPT=0 git clone -b '.escapeshellarg($branch).' '.escapeshellarg($repoUrl).' '.escapeshellarg($projectDir),
                         $deploy,
                         true
                     );
@@ -136,10 +138,10 @@ class AutoDeployProject implements ShouldQueue
             $this->linuxExec("chown -R www-data:www-data {$projectDir}", $deploy);
             $this->linuxExec("find {$projectDir} -type d -not -path '*/node_modules*' -exec chmod 755 {} \;", $deploy);
             $this->linuxExec("find {$projectDir} -type f -not -path '*/node_modules*' -exec chmod 644 {} \;", $deploy);
-            $this->log($deploy, "> Permissions di-set: dir 755, file 644 (mengabaikan node_modules)");
+            $this->log($deploy, '> Permissions di-set: dir 755, file 644 (mengabaikan node_modules)');
 
             $framework = strtolower($this->project->framework);
-            $this->log($deploy, "\n> Setting up " . strtoupper($framework) . " environment...");
+            $this->log($deploy, "\n> Setting up ".strtoupper($framework).' environment...');
 
             match ($framework) {
                 'react', 'nextjs', 'vue', 'node' => $this->setupNodeFramework($deploy, $projectDir, $framework),
@@ -160,11 +162,11 @@ class AutoDeployProject implements ShouldQueue
 
             if ($framework === 'laravel') {
                 $this->linuxExec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
-                $this->log($deploy, "> Laravel storage & bootstrap/cache permissions di-set ke 777");
+                $this->log($deploy, '> Laravel storage & bootstrap/cache permissions di-set ke 777');
             }
 
             $this->log($deploy, "\n> Configuring Cloudflare DNS for {$this->project->ryaze_domain}...");
-            if (!$this->createCloudflareDNS($deploy)) {
+            if (! $this->createCloudflareDNS($deploy)) {
                 throw new \RuntimeException('Gagal mengkonfigurasi Cloudflare DNS. Periksa API Token atau pengaturan Zone ID.');
             }
 
@@ -191,15 +193,21 @@ class AutoDeployProject implements ShouldQueue
         $pm2Name = "prod_{$this->project->id}";
         $this->exec("npx -y pm2 delete {$pm2Name} 2>/dev/null || true", $deploy);
         if ($this->project->dev_pid) {
-            $this->exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true", $deploy);
+            if ($this->isLinux()) {
+                $this->exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true", $deploy);
+            }
             $this->exec("npx -y pm2 delete \"{$this->project->dev_pid}\" 2>/dev/null || true", $deploy);
         }
-        $this->exec("rm -f {$projectDir}/.port {$projectDir}/.ryaze-pm2.js {$projectDir}/index.php 2>/dev/null || true", $deploy);
-        
+        foreach (["{$projectDir}/.port", "{$projectDir}/.ryaze-pm2.js", "{$projectDir}/index.php"] as $f) {
+            if (file_exists($f)) {
+                @unlink($f);
+            }
+        }
+
         $this->project->update([
             'dev_mode' => false,
             'dev_port' => null,
-            'dev_pid' => null
+            'dev_pid' => null,
         ]);
 
         $isLaravelInertia = file_exists("{$projectDir}/artisan")
@@ -222,21 +230,26 @@ class AutoDeployProject implements ShouldQueue
         // Berikan executable permission ke node_modules/.bin
         clearstatcache();
         if (is_dir("{$projectDir}/node_modules/.bin")) {
-            $this->exec("chmod -R +x {$projectDir}/node_modules/.bin 2>&1 || true", $deploy);
-            $this->exec("chmod +x {$projectDir}/node_modules/.bin/* 2>/dev/null || true", $deploy);
-            $this->exec("find {$projectDir}/node_modules -path '*/bin/*' -type f -exec chmod +x {} \; 2>/dev/null || true", $deploy);
-            $this->log($deploy, "> Executable permission di-set untuk node_modules/.bin dan bin files");
+            $this->linuxExec("chmod -R +x {$projectDir}/node_modules/.bin 2>&1 || true", $deploy);
+            $this->linuxExec("chmod +x {$projectDir}/node_modules/.bin/* 2>/dev/null || true", $deploy);
+            $this->linuxExec("find {$projectDir}/node_modules -path '*/bin/*' -type f -exec chmod +x {} \; 2>/dev/null || true", $deploy);
+            $this->log($deploy, '> Executable permission di-set untuk node_modules/.bin dan bin files');
         } else {
             // Fallback: pastikan semua isi node_modules memiliki hak eksekusi jika .bin tidak terdeteksi
-            $this->exec("chmod -R 755 {$projectDir}/node_modules 2>/dev/null || true", $deploy);
-            $this->log($deploy, "> Executable permission fallback di-set untuk seluruh node_modules");
+            $this->linuxExec("chmod -R 755 {$projectDir}/node_modules 2>/dev/null || true", $deploy);
+            $this->log($deploy, '> Executable permission fallback di-set untuk seluruh node_modules');
         }
 
         if (in_array($framework, ['react', 'nextjs', 'vue', 'node'])) {
             // Framework 'node' tidak punya build script — langsung jalankan server
             if ($framework !== 'node') {
                 $this->log($deploy, '> Running build script...');
-                $this->exec("rm -rf {$projectDir}/dist {$projectDir}/build {$projectDir}/out 2>/dev/null || true", $deploy);
+                foreach (['dist', 'build', 'out'] as $buildDir) {
+                    $dirPath = "{$projectDir}/{$buildDir}";
+                    if (is_dir($dirPath)) {
+                        File::deleteDirectory($dirPath);
+                    }
+                }
                 $this->exec(
                     "cd {$projectDir} && npm run build 2>&1 || true",
                     $deploy,
@@ -255,83 +268,90 @@ class AutoDeployProject implements ShouldQueue
                     if (is_dir("{$projectDir}/{$staticDir}")) {
                         $hasStatic = true;
                         $this->log($deploy, "> Memindahkan hasil build statis ({$staticDir}) ke root agar Nginx dapat melayaninya...");
-                        $this->exec("cp -a {$projectDir}/{$staticDir}/* {$projectDir}/ 2>/dev/null || true", $deploy);
+                        if ($this->isLinux()) {
+                            $this->exec("cp -a {$projectDir}/{$staticDir}/* {$projectDir}/ 2>/dev/null || true", $deploy);
+                        } else {
+                            File::copyDirectory("{$projectDir}/{$staticDir}", $projectDir);
+                        }
                         $this->log($deploy, "> Berhasil memindahkan output build {$staticDir} ke root direktori.");
                         break;
                     }
                 }
 
                 // Jika tidak ada folder statis (atau frameworknya adalah 'node'), jalankan mode Server (SSR) dengan PM2
-                if (!$hasStatic || $framework === 'node') {
+                if (! $hasStatic || $framework === 'node') {
                     $this->log($deploy, '> Output statis tidak ditemukan. Mengasumsikan aplikasi berjalan di mode Server (SSR/API)...');
-                    
+
                     // Assign port
                     $port = null;
                     for ($p = 8000; $p <= 9000; $p++) {
                         $connection = @fsockopen('127.0.0.1', $p, $errCode, $errStr, 0.1);
-                        if (!is_resource($connection)) {
+                        if (! is_resource($connection)) {
                             $port = $p;
                             break;
                         }
-                        if (is_resource($connection)) fclose($connection);
+                        if (is_resource($connection)) {
+                            fclose($connection);
+                        }
                     }
 
-                    if (!$port) {
+                    if (! $port) {
                         $this->log($deploy, '> [ERROR] Tidak ada port yang tersedia untuk Node Server.');
+
                         return;
                     }
 
                     $pm2Name = "prod_{$this->project->id}";
 
-                    $startCommand = "npm start";
+                    $startCommand = 'npm start';
                     if ($framework === 'node') {
                         // Jika ada ecosystem.config.js atau server.js, jalankan itu. Jika tidak, npm start
                         if (file_exists("{$projectDir}/ecosystem.config.js")) {
-                            $startCommand = "ecosystem.config.js";
+                            $startCommand = 'ecosystem.config.js';
                         } elseif (file_exists("{$projectDir}/server.js")) {
-                            $startCommand = "server.js";
+                            $startCommand = 'server.js';
                         } elseif (file_exists("{$projectDir}/index.js")) {
-                            $startCommand = "index.js";
+                            $startCommand = 'index.js';
                         } elseif (file_exists("{$projectDir}/app.js")) {
-                            $startCommand = "app.js";
+                            $startCommand = 'app.js';
                         }
                     }
 
                     $this->log($deploy, "> Starting Node/SSR Server on port {$port} via PM2...");
-                    
-                    // Menggunakan file ecosystem config untuk PM2 agar environment variables (PORT, HOSTNAME) 
+
+                    // Menggunakan file ecosystem config untuk PM2 agar environment variables (PORT, HOSTNAME)
                     // dijamin diteruskan ke dalam proses Node/Next.js dengan benar.
                     if ($startCommand === 'npm start') {
                         $ecoConfig = "module.exports = { apps: [{ name: '{$pm2Name}', script: 'npm', args: 'run start', env: { PORT: {$port}, HOSTNAME: '127.0.0.1' } }] };";
                         file_put_contents("{$projectDir}/.ryaze-pm2.js", $ecoConfig);
-                        $pm2Cmd = "npx -y pm2 start .ryaze-pm2.js";
+                        $pm2Cmd = 'npx -y pm2 start .ryaze-pm2.js';
                     } else {
                         $pm2Cmd = "npx -y pm2 start {$startCommand} --name \"{$pm2Name}\"";
                     }
-                    
+
                     $this->exec("cd {$projectDir} && PORT={$port} HOSTNAME=127.0.0.1 {$pm2Cmd}", $deploy);
-                    
+
                     // Tunggu sebentar agar SSR server (misal Next.js) sempat bootup dan mendengarkan port
                     sleep(3);
-                    
+
                     // Buat proxy script
-                    $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty...");
+                    $this->log($deploy, '> Menyiapkan PHP Reverse Proxy untuk OpenResty...');
                     $proxyScript = $this->generatePhpReverseProxy($port, 'Node.js Application Server');
                     file_put_contents("{$projectDir}/index.php", $proxyScript);
                     if (is_dir("{$projectDir}/public")) {
                         file_put_contents("{$projectDir}/public/index.php", $proxyScript);
                     }
                     file_put_contents("{$projectDir}/.port", $port);
-                    $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
-                    
+                    $this->linuxExec("chown www-data:www-data {$projectDir}/.port", $deploy);
+
                     // Kita gunakan dev_mode = true untuk mengindikasikan ada server yang berjalan di background
                     // dan menyimpan ID PM2 di dev_pid
                     $this->project->update([
                         'dev_mode' => true,
                         'dev_port' => $port,
-                        'dev_pid' => $pm2Name
+                        'dev_pid' => $pm2Name,
                     ]);
-                    
+
                     $this->log($deploy, "> Server SSR berjalan dengan PM2 (ID: {$pm2Name}) pada port {$port}.");
                 }
             }
@@ -340,8 +360,11 @@ class AutoDeployProject implements ShouldQueue
 
     private function setupLaravel($deploy, string $projectDir): void
     {
-        $this->exec("rm -f {$projectDir}/public/hot 2>/dev/null || true", $deploy);
-        $this->log($deploy, "> Menghapus public/hot (jika ada) agar Laravel Vite menggunakan production build.");
+        $hotFile = "{$projectDir}/public/hot";
+        if (file_exists($hotFile)) {
+            @unlink($hotFile);
+        }
+        $this->log($deploy, '> Menghapus public/hot (jika ada) agar Laravel Vite menggunakan production build.');
 
         $this->log($deploy, '> Menjalankan composer install...');
         $this->runComposerInstall($deploy, $projectDir);
@@ -350,14 +373,14 @@ class AutoDeployProject implements ShouldQueue
         $this->setupLaravelEnv($deploy, $projectDir);
 
         $envPath = "{$projectDir}/.env";
-        if (!file_exists($envPath) && !file_exists("{$projectDir}/.env.example")) {
+        if (! file_exists($envPath) && ! file_exists("{$projectDir}/.env.example")) {
             file_put_contents($envPath, "APP_NAME=Laravel\nAPP_ENV=production\nAPP_DEBUG=false\n");
             $this->log($deploy, '> Membuat .env minimal (tidak ada .env.example).');
         }
 
         if (file_exists($envPath) && is_readable($envPath)) {
             $hasAppKey = preg_match('/^APP_KEY=.+$/m', (string) @file_get_contents($envPath));
-            if (!$hasAppKey) {
+            if (! $hasAppKey) {
                 $this->log($deploy, '> Men-generate APP_KEY...');
                 $this->exec("cd {$projectDir} && php artisan key:generate --force 2>&1 || true", $deploy, false);
             }
@@ -374,24 +397,28 @@ class AutoDeployProject implements ShouldQueue
         $envPath = "{$projectDir}/.env";
         $envExamplePath = "{$projectDir}/.env.example";
 
-        if (!file_exists($envPath)) {
+        if (! file_exists($envPath)) {
             if (file_exists($envExamplePath)) {
                 $this->log($deploy, '> Creating .env from .env.example...');
-                $this->exec("cp {$envExamplePath} {$envPath} && chmod 660 {$envPath}", $deploy, true);
+                File::copy($envExamplePath, $envPath);
+                $this->linuxExec("chmod 660 {$envPath}", $deploy, true);
             }
         }
 
-        $this->exec("chown www-data:www-data {$envPath} && chmod 660 {$envPath} 2>/dev/null || true", $deploy);
+        $this->linuxExec("chown www-data:www-data {$envPath} && chmod 660 {$envPath} 2>/dev/null || true", $deploy);
     }
 
     private function runLaravelPostSetup($deploy, string $projectDir): void
     {
         // Menghapus file public/hot peninggalan npm run dev di lokal agar Laravel membaca file build production
-        $this->exec("rm -f {$projectDir}/public/hot 2>/dev/null || true", $deploy);
-        $this->log($deploy, "> Menghapus public/hot (jika ada) agar Laravel menggunakan production build.");
+        $hotFile = "{$projectDir}/public/hot";
+        if (file_exists($hotFile)) {
+            @unlink($hotFile);
+        }
+        $this->log($deploy, '> Menghapus public/hot (jika ada) agar Laravel menggunakan production build.');
 
-        $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
-        $this->exec("chown -R www-data:www-data {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
+        $this->linuxExec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
+        $this->linuxExec("chown -R www-data:www-data {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
     }
 
     private function runComposerInstall($deploy, string $projectDir): void
@@ -403,11 +430,12 @@ class AutoDeployProject implements ShouldQueue
                 break;
             }
         }
-        if (!$composer) {
+        if (! $composer) {
             $composer = trim(shell_exec('which composer 2>/dev/null') ?? '');
         }
-        if (!$composer) {
+        if (! $composer) {
             $this->log($deploy, '> [WARNING] composer not found, skipping install.');
+
             return;
         }
 
@@ -424,31 +452,30 @@ class AutoDeployProject implements ShouldQueue
         $this->log($deploy, '> Setting up Python virtual environment...');
         // Gunakan --system-site-packages agar venv bisa membaca library bawaan sistem (seperti scikit-learn versi Alpine)
         $this->exec("cd {$projectDir} && python3 -m venv --system-site-packages venv", $deploy);
-        $this->exec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
-        
+        $this->linuxExec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
+
         if (file_exists("{$projectDir}/requirements.txt")) {
             $this->log($deploy, '> Mengoptimalkan requirements.txt');
             $reqFile = "{$projectDir}/requirements.txt";
             $reqs = file_get_contents($reqFile);
-            
+
             // Hapus semua versi strict/spesifik (==, >=, <=) pada SEMUA library agar selalu mengunduh versi global yang kompatibel
             $reqs = preg_replace('/[=><~]+.*$/m', '', $reqs);
-            
+
             // Hapus torchvision sesuai request user
             $reqs = preg_replace('/^torchvision.*$/m', '', $reqs);
-            
+
             // Bersihkan baris kosong
             $reqs = preg_replace('/^\s*[\r\n]+/m', '', $reqs);
-            
+
             file_put_contents($reqFile, trim($reqs));
 
             $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
-            
+
             // Install build dependencies AND pre-compiled Alpine Python ML packages
             // Ini untuk menghindari kompilasi scikit-learn, numpy, pandas dari nol yang error di Alpine
-            $this->exec("apk add --no-cache gcc g++ cmake make python3-dev py3-scikit-learn py3-numpy py3-scipy py3-pandas py3-joblib 2>/dev/null || true", $deploy);
+            $this->exec('apk add --no-cache gcc g++ cmake make python3-dev py3-scikit-learn py3-numpy py3-scipy py3-pandas py3-joblib 2>/dev/null || true', $deploy);
 
-            
             $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
         }
 
@@ -456,37 +483,44 @@ class AutoDeployProject implements ShouldQueue
         $port = null;
         for ($p = 8000; $p <= 9000; $p++) {
             $connection = @fsockopen('127.0.0.1', $p);
-            if (!is_resource($connection)) {
+            if (! is_resource($connection)) {
                 $port = $p;
                 break;
             }
-            if (is_resource($connection)) fclose($connection);
+            if (is_resource($connection)) {
+                fclose($connection);
+            }
         }
 
-        if (!$port) {
+        if (! $port) {
             $this->log($deploy, '> [ERROR] Tidak ada port yang tersedia untuk Python Server.');
+
             return;
         }
 
         // Ensure binaries installed via pip are executable
-        $this->exec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
+        $this->linuxExec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
 
         // Kill existing process if any
-        if ($this->project->dev_pid) {
+        if ($this->project->dev_pid && $this->isLinux()) {
             exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true");
         }
 
         $this->log($deploy, "> Starting Python Server on port {$port}...");
-        
+
         // Coba cari file entrypoint
         $entrypoint = 'app.py';
-        if (file_exists("{$projectDir}/main.py")) $entrypoint = 'main.py';
-        elseif (file_exists("{$projectDir}/server.py")) $entrypoint = 'server.py';
-        elseif (file_exists("{$projectDir}/wsgi.py")) $entrypoint = 'wsgi.py';
+        if (file_exists("{$projectDir}/main.py")) {
+            $entrypoint = 'main.py';
+        } elseif (file_exists("{$projectDir}/server.py")) {
+            $entrypoint = 'server.py';
+        } elseif (file_exists("{$projectDir}/wsgi.py")) {
+            $entrypoint = 'wsgi.py';
+        }
 
         // Gunicorn disarankan untuk Flask/Django
         $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
-        
+
         if ($hasGunicorn) {
             $module = str_replace('.py', '', $entrypoint);
             $command = "cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!";
@@ -494,24 +528,24 @@ class AutoDeployProject implements ShouldQueue
             // Fallback native python run (Pastikan app mendengarkan PORT dari environment)
             $command = "cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
         }
-        
+
         $pid = trim(shell_exec($command));
 
         if ($pid) {
             $this->log($deploy, "> Python server running on PID: {$pid} (Port: {$port})");
-            $this->log($deploy, "> Menyiapkan PHP Reverse Proxy untuk OpenResty (mengatasi isolasi Docker)...");
+            $this->log($deploy, '> Menyiapkan PHP Reverse Proxy untuk OpenResty (mengatasi isolasi Docker)...');
             $proxyScript = $this->generatePhpReverseProxy($port, 'Python Application Server');
             file_put_contents("{$projectDir}/index.php", $proxyScript);
             if (is_dir("{$projectDir}/public")) {
                 file_put_contents("{$projectDir}/public/index.php", $proxyScript);
             }
             file_put_contents("{$projectDir}/.port", $port);
-            $this->exec("chown www-data:www-data {$projectDir}/.port", $deploy);
-            
+            $this->linuxExec("chown www-data:www-data {$projectDir}/.port", $deploy);
+
             $this->project->update([
                 'dev_mode' => true,
                 'dev_port' => $port,
-                'dev_pid' => $pid
+                'dev_pid' => $pid,
             ]);
         } else {
             $this->log($deploy, '> [ERROR] Gagal menjalankan server Python.');
@@ -519,8 +553,6 @@ class AutoDeployProject implements ShouldQueue
 
         $this->log($deploy, '> Python setup complete.');
     }
-
-
 
     private function createCloudflareDNS($deploy): bool
     {
@@ -531,25 +563,27 @@ class AutoDeployProject implements ShouldQueue
             '/'
         ));
 
-        if (!$apiToken || !$tunnelUrl) {
+        if (! $apiToken || ! $tunnelUrl) {
             $this->log($deploy, '> [WARNING] Cloudflare credentials incomplete, skipping DNS setup.');
+
             return true;
         }
 
         // Ambil Zone ID secara dinamis
         $zoneName = explode('.', $domainName, 2)[1] ?? $domainName;
         $zoneId = config('services.cloudflare.zone_id');
-        $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
-        if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+        $zoneReq = Http::withToken($apiToken)->get('https://api.cloudflare.com/client/v4/zones', ['name' => $zoneName]);
+        if ($zoneReq->successful() && ! empty($zoneReq->json('result'))) {
             $zoneId = $zoneReq->json('result.0.id');
         }
 
-        if (!$zoneId) {
-            $this->log($deploy, '> [WARNING] Cloudflare Zone ID not found for ' . $zoneName);
+        if (! $zoneId) {
+            $this->log($deploy, '> [WARNING] Cloudflare Zone ID not found for '.$zoneName);
+
             return true;
         }
 
-        $existing = \Illuminate\Support\Facades\Http::withToken($apiToken)
+        $existing = Http::withToken($apiToken)
             ->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
                 'type' => 'CNAME',
                 'name' => $domainName,
@@ -557,6 +591,7 @@ class AutoDeployProject implements ShouldQueue
 
         if ($existing->successful() && count($existing->json('result', [])) > 0) {
             $this->log($deploy, '> DNS record already exists. Skipping.');
+
             return true;
         }
 
@@ -571,6 +606,7 @@ class AutoDeployProject implements ShouldQueue
 
         if ($response->successful()) {
             $this->log($deploy, '> DNS record created successfully!');
+
             return true;
         }
 
@@ -584,7 +620,7 @@ class AutoDeployProject implements ShouldQueue
     {
         $unsetEnv = 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
 
-        $fullCommand = $unsetEnv . "({$command}) 2>&1; echo \"__EXIT_CODE__:$?\"";
+        $fullCommand = $unsetEnv."({$command}) 2>&1; echo \"__EXIT_CODE__:$?\"";
 
         $raw = shell_exec($fullCommand) ?? '';
 
@@ -592,7 +628,7 @@ class AutoDeployProject implements ShouldQueue
         $output = $raw;
 
         if (preg_match('/\n?__EXIT_CODE__:(\d+)\s*$/', $raw, $matches)) {
-            $exitCode = (int)$matches[1];
+            $exitCode = (int) $matches[1];
             $output = trim(substr($raw, 0, strrpos($raw, "\n__EXIT_CODE__:{$exitCode}")));
             if ($output === false) {
                 $output = trim(str_replace($matches[0], '', $raw));
@@ -628,10 +664,12 @@ class AutoDeployProject implements ShouldQueue
      */
     private function linuxExec(string $command, $deploy, bool $throwOnError = false): string
     {
-        if (!$this->isLinux()) {
+        if (! $this->isLinux()) {
             $this->log($deploy, "> [SKIP-WIN] {$command}");
+
             return '';
         }
+
         return $this->exec($command, $deploy, $throwOnError);
     }
 
@@ -640,8 +678,8 @@ class AutoDeployProject implements ShouldQueue
      */
     private function crossPlatformMkdir(string $path, $deploy): void
     {
-        if (!is_dir($path)) {
-            if (!mkdir($path, 0755, true) && !is_dir($path)) {
+        if (! is_dir($path)) {
+            if (! mkdir($path, 0755, true) && ! is_dir($path)) {
                 throw new \RuntimeException("Gagal membuat direktori: {$path}");
             }
             $this->log($deploy, "> Directory created: {$path}");
@@ -654,7 +692,7 @@ class AutoDeployProject implements ShouldQueue
     private function crossPlatformRmDir(string $path, $deploy): void
     {
         if (is_dir($path)) {
-            \Illuminate\Support\Facades\File::deleteDirectory($path);
+            File::deleteDirectory($path);
             $this->log($deploy, "> Directory removed: {$path}");
         }
     }
@@ -663,7 +701,7 @@ class AutoDeployProject implements ShouldQueue
     {
         $deploy->refresh();
         $deploy->update([
-            'build_logs' => $deploy->build_logs . "\n" . $text,
+            'build_logs' => $deploy->build_logs."\n".$text,
         ]);
     }
 
@@ -714,24 +752,24 @@ class AutoDeployProject implements ShouldQueue
             throw new \RuntimeException('Lokasi file ZIP tidak valid.');
         }
 
-        $zipPath = storage_path('app/' . $zipRel);
-        if (!file_exists($zipPath)) {
+        $zipPath = storage_path('app/'.$zipRel);
+        if (! file_exists($zipPath)) {
             throw new \RuntimeException("File ZIP tidak ditemukan di server: {$zipRel}. Silakan deploy ulang dari halaman Deploy.");
         }
 
         if (is_dir($projectDir)) {
-            $this->exec("rm -rf " . escapeshellarg($projectDir), $deploy);
+            File::deleteDirectory($projectDir);
         }
-        $this->exec("mkdir -p " . escapeshellarg($projectDir), $deploy);
+        File::makeDirectory($projectDir, 0755, true);
 
-        $zip = new \ZipArchive();
+        $zip = new \ZipArchive;
         if ($zip->open($zipPath) !== true) {
             throw new \RuntimeException('Gagal membuka file ZIP. Pastikan file valid dan tidak corrupt.');
         }
 
-        $maxFiles    = 10000;
-        $maxBytes    = 500 * 1024 * 1024; // 500 MB total ukuran file (tidak terkompresi, anti zip-bomb)
-        $totalBytes  = 0;
+        $maxFiles = 10000;
+        $maxBytes = 500 * 1024 * 1024; // 500 MB total ukuran file (tidak terkompresi, anti zip-bomb)
+        $totalBytes = 0;
 
         try {
             for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -764,11 +802,12 @@ class AutoDeployProject implements ShouldQueue
                     continue;
                 }
 
-                $target = $projectDir . '/' . implode('/', $segments);
+                $target = $projectDir.'/'.implode('/', $segments);
 
                 // Folder
                 if (substr($clean, -1) === '/') {
                     @mkdir($target, 0755, true);
+
                     continue;
                 }
 
@@ -792,8 +831,8 @@ class AutoDeployProject implements ShouldQueue
         }
 
         file_put_contents("{$projectDir}/.ryaze-upload", json_encode([
-            'zip'        => $zipRel,
-            'extracted'  => now()->toISOString(),
+            'zip' => $zipRel,
+            'extracted' => now()->toISOString(),
             'project_id' => $this->project->id,
         ]));
     }
@@ -953,6 +992,7 @@ class AutoDeployProject implements ShouldQueue
 HTML
         );
     }
+
     private function scaffoldTailwindPortfolio(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -1149,6 +1189,7 @@ HTML
 HTML
         );
     }
+
     private function scaffoldTailwindLanding(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -1375,6 +1416,7 @@ HTML
 HTML
         );
     }
+
     private function scaffoldTailwindBlog(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -1521,6 +1563,7 @@ HTML
 HTML
         );
     }
+
     private function scaffoldTailwindEcommerce(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -1764,6 +1807,7 @@ HTML
 HTML
         );
     }
+
     private function scaffoldTailwindAdmin(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -2043,6 +2087,7 @@ HTML
 HTML
         );
     }
+
     private function scaffoldTailwindLinkinbio(string $dir, string $name): void
     {
         @mkdir($dir, 0755, true);
@@ -2164,6 +2209,7 @@ HTML
 HTML
         );
     }
+
     private function scaffoldHtml(string $dir, string $name, string $domain): void
     {
         file_put_contents("{$dir}/index.html", <<<HTML
@@ -2267,7 +2313,7 @@ PHP
 PHP
         );
 
-        file_put_contents("{$dir}/views/404.php", "<h1>404 — Halaman tidak ditemukan</h1>");
+        file_put_contents("{$dir}/views/404.php", '<h1>404 — Halaman tidak ditemukan</h1>');
         // .htaccess di root untuk redirect ke public/
         file_put_contents("{$dir}/.htaccess", <<<'HTACCESS'
 Options -Indexes
@@ -2307,10 +2353,10 @@ PHP
                 break;
             }
         }
-        if (!$composer) {
+        if (! $composer) {
             $composer = trim(shell_exec('which composer 2>/dev/null') ?? '');
         }
-        if (!$composer) {
+        if (! $composer) {
             throw new \RuntimeException('composer binary tidak ditemukan di server.');
         }
 
@@ -2319,11 +2365,16 @@ PHP
         $tmpDir = "{$parentDir}/.tmp_{$baseName}";
 
         // Hapus direktori project dan temp jika ada
-        $this->exec("rm -rf {$dir} {$tmpDir} 2>/dev/null || true", $deploy);
-        $this->exec("mkdir -p {$parentDir}", $deploy);
+        if (is_dir($dir)) {
+            File::deleteDirectory($dir);
+        }
+        if (is_dir($tmpDir)) {
+            File::deleteDirectory($tmpDir);
+        }
+        File::makeDirectory($parentDir, 0755, true);
 
         // Tentukan versi Laravel
-        $versionConstraint = match($version) {
+        $versionConstraint = match ($version) {
             '10' => '10.*',
             '11' => '11.*',
             '12' => '12.*',
@@ -2339,16 +2390,16 @@ PHP
         );
 
         // Pindahkan dari temp ke direktori project
-        $this->log($deploy, "> Memindahkan file ke direktori project...");
+        $this->log($deploy, '> Memindahkan file ke direktori project...');
         $this->exec("mv {$tmpDir} {$dir}", $deploy);
 
         // Set permissions yang benar
-        $this->log($deploy, "> Mengatur permissions...");
-        $this->exec("cd {$dir} && chmod -R 775 storage bootstrap/cache 2>/dev/null || true", $deploy);
-        $this->exec("cd {$dir} && chmod -R 777 storage bootstrap/cache 2>/dev/null || true", $deploy);
+        $this->log($deploy, '> Mengatur permissions...');
+        $this->linuxExec("cd {$dir} && chmod -R 775 storage bootstrap/cache 2>/dev/null || true", $deploy);
+        $this->linuxExec("cd {$dir} && chmod -R 777 storage bootstrap/cache 2>/dev/null || true", $deploy);
 
         // Generate APP_KEY
-        $this->log($deploy, "> Generate APP_KEY...");
+        $this->log($deploy, '> Generate APP_KEY...');
         $this->exec("cd {$dir} && php artisan key:generate --no-interaction 2>&1 || true", $deploy, false);
 
         // Tambahkan .htaccess di root untuk redirect ke public
@@ -2674,25 +2725,31 @@ HTML
 
     private function scaffoldWordpress(string $dir, string $name, $deploy): void
     {
-        $this->log($deploy, "🚀 Mengunduh dan memasang WordPress terbaru...");
+        $this->log($deploy, '🚀 Mengunduh dan memasang WordPress terbaru...');
 
         $parentDir = dirname($dir);
         $baseName = basename($dir);
         $tmpDir = "{$parentDir}/.tmp_{$baseName}_wp";
 
-        $this->exec("rm -rf {$tmpDir} 2>/dev/null || true", $deploy);
-        $this->exec("mkdir -p {$tmpDir}", $deploy);
+        if (is_dir($tmpDir)) {
+            File::deleteDirectory($tmpDir);
+        }
+        File::makeDirectory($tmpDir, 0755, true);
 
-        $this->log($deploy, "> Mengunduh dan mengekstrak core WordPress...");
+        $this->log($deploy, '> Mengunduh dan mengekstrak core WordPress...');
         $this->exec("cd {$tmpDir} && curl -sL https://wordpress.org/latest.tar.gz | tar xz 2>&1", $deploy, true);
-        
-        $this->exec("rm -rf {$dir} 2>/dev/null || true", $deploy);
-        
-        $this->log($deploy, "> Memindahkan file ke direktori project...");
+
+        if (is_dir($dir)) {
+            File::deleteDirectory($dir);
+        }
+
+        $this->log($deploy, '> Memindahkan file ke direktori project...');
         $this->exec("mv {$tmpDir}/wordpress {$dir}", $deploy, true);
-        $this->exec("rm -rf {$tmpDir}", $deploy);
-        
-        $this->log($deploy, "✅ WordPress berhasil dipasang! Silakan buat database dan buka website untuk instalasi.");
+        if (is_dir($tmpDir)) {
+            File::deleteDirectory($tmpDir);
+        }
+
+        $this->log($deploy, '✅ WordPress berhasil dipasang! Silakan buat database dan buka website untuk instalasi.');
     }
 
     private function scaffoldVue(string $dir, string $name): void
@@ -2707,10 +2764,10 @@ HTML
             'private' => true,
             'scripts' => ['dev' => 'vite', 'build' => 'vite build', 'preview' => 'vite preview'],
             'dependencies' => ['vue' => '^3.3.4'],
-            'devDependencies' => ['@vitejs/plugin-vue' => '^4.2.3', 'vite' => '^4.4.5']
+            'devDependencies' => ['@vitejs/plugin-vue' => '^4.2.3', 'vite' => '^4.4.5'],
         ], JSON_PRETTY_PRINT));
 
-        file_put_contents("{$dir}/vite.config.js", <<<JS
+        file_put_contents("{$dir}/vite.config.js", <<<'JS'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
@@ -2736,7 +2793,7 @@ JS
 HTML
         );
 
-        file_put_contents("{$dir}/src/main.js", <<<JS
+        file_put_contents("{$dir}/src/main.js", <<<'JS'
 import { createApp } from 'vue'
 import App from './App.vue'
 
@@ -2744,7 +2801,7 @@ createApp(App).mount('#app')
 JS
         );
 
-        file_put_contents("{$dir}/src/App.vue", <<<VUE
+        file_put_contents("{$dir}/src/App.vue", <<<'VUE'
 <template>
   <div style="font-family: sans-serif; text-align: center; margin-top: 50px;">
     <h1 style="color: #42b883;">Welcome to Vue 3</h1>
@@ -2769,16 +2826,16 @@ VUE
                 'dev' => 'nuxt dev',
                 'generate' => 'nuxt generate',
                 'preview' => 'nuxt preview',
-                'postinstall' => 'nuxt prepare'
+                'postinstall' => 'nuxt prepare',
             ],
             'dependencies' => [
                 'nuxt' => '^3.12.0',
                 'vue' => '^3.4.0',
-                'vue-router' => '^4.4.0'
-            ]
+                'vue-router' => '^4.4.0',
+            ],
         ], JSON_PRETTY_PRINT));
 
-        file_put_contents("{$dir}/app.vue", <<<VUE
+        file_put_contents("{$dir}/app.vue", <<<'VUE'
 <template>
   <div style="font-family: sans-serif; padding: 20px;">
     <h1 style="color: #00DC82;">Welcome to Nuxt 3</h1>
@@ -2787,15 +2844,15 @@ VUE
 </template>
 VUE
         );
-        
-        file_put_contents("{$dir}/nuxt.config.ts", <<<TS
+
+        file_put_contents("{$dir}/nuxt.config.ts", <<<'TS'
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true }
 })
 TS
         );
-        
+
         // Tambahkan index.html statis sebagai fallback sementara
         file_put_contents("{$dir}/index.html", <<<HTML
 <!DOCTYPE html>
@@ -2831,7 +2888,7 @@ HTML
         @mkdir($dir, 0755, true);
         @mkdir("{$dir}/src", 0755, true);
         @mkdir("{$dir}/src/routes", 0755, true);
-        
+
         file_put_contents("{$dir}/package.json", json_encode([
             'name' => $safeName,
             'private' => true,
@@ -2839,18 +2896,18 @@ HTML
             'scripts' => [
                 'dev' => 'vite dev',
                 'build' => 'vite build',
-                'preview' => 'vite preview'
+                'preview' => 'vite preview',
             ],
             'devDependencies' => [
                 '@sveltejs/adapter-auto' => '^3.0.0',
                 '@sveltejs/kit' => '^2.0.0',
                 '@sveltejs/vite-plugin-svelte' => '^3.0.0',
                 'svelte' => '^4.2.7',
-                'vite' => '^5.0.3'
-            ]
+                'vite' => '^5.0.3',
+            ],
         ], JSON_PRETTY_PRINT));
 
-        file_put_contents("{$dir}/vite.config.js", <<<JS
+        file_put_contents("{$dir}/vite.config.js", <<<'JS'
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
@@ -2860,7 +2917,7 @@ export default defineConfig({
 JS
         );
 
-        file_put_contents("{$dir}/svelte.config.js", <<<JS
+        file_put_contents("{$dir}/svelte.config.js", <<<'JS'
 import adapter from '@sveltejs/adapter-auto';
 
 export default {
@@ -2871,7 +2928,7 @@ export default {
 JS
         );
 
-        file_put_contents("{$dir}/src/app.html", <<<HTML
+        file_put_contents("{$dir}/src/app.html", <<<'HTML'
 <!doctype html>
 <html lang="en">
 	<head>
@@ -2887,12 +2944,12 @@ JS
 HTML
         );
 
-        file_put_contents("{$dir}/src/routes/+page.svelte", <<<SVELTE
+        file_put_contents("{$dir}/src/routes/+page.svelte", <<<'SVELTE'
 <h1 style="color: #ff3e00;">Welcome to SvelteKit</h1>
 <p>Your fast, compiled Svelte app is running on Ryaze.</p>
 SVELTE
         );
-        
+
         // Tambahkan index.html sebagai fallback sementara (karena SvelteKit berjalan sebagai Node app)
         file_put_contents("{$dir}/index.html", <<<HTML
 <!DOCTYPE html>
@@ -2923,30 +2980,30 @@ HTML
 
     private function scaffoldGhost(string $dir, string $name, $deploy): void
     {
-        $this->log($deploy, "> Menyiapkan environment Ghost CMS (Placeholder)...");
+        $this->log($deploy, '> Menyiapkan environment Ghost CMS (Placeholder)...');
         $safeName = preg_replace('/[^a-z0-9-]/', '-', strtolower($name));
         @mkdir($dir, 0755, true);
-        
+
         file_put_contents("{$dir}/package.json", json_encode([
             'name' => $safeName,
             'version' => '1.0.0',
             'private' => true,
             'scripts' => [
-                'start' => 'node index.js'
+                'start' => 'node index.js',
             ],
             'dependencies' => [
-                'express' => '^4.18.2'
-            ]
+                'express' => '^4.18.2',
+            ],
         ], JSON_PRETTY_PRINT));
-        
-        file_put_contents("{$dir}/index.js", <<<JS
+
+        file_put_contents("{$dir}/index.js", <<<'JS'
 const express = require('express');
 const app = express();
 app.get('/', (req, res) => res.send('<div style="font-family: sans-serif; text-align: center; margin-top: 50px;"><h1>Ghost CMS Starter</h1><p>Membutuhkan konfigurasi database MySQL & Ghost-CLI secara manual lewat terminal.</p><p>Silakan akses Terminal di panel proyek Anda.</p></div>'));
 app.listen(process.env.PORT || 3000, () => console.log('Ghost placeholder running'));
 JS
         );
-        
+
         // Tambahkan index.html statis agar Nginx langsung menampilkan halaman
         file_put_contents("{$dir}/index.html", <<<HTML
 <!DOCTYPE html>

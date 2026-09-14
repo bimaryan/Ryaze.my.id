@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Hosting\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\HostingBilling;
 use App\Models\HostingDatabase;
 use App\Models\HostingDeployment;
 use App\Models\HostingPayment;
 use App\Models\HostingProject;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Vinkla\Hashids\Facades\Hashids;
 
 class DashboardController extends Controller
@@ -30,26 +33,26 @@ class DashboardController extends Controller
         $months = [];
         $newProjects = [];
         for ($i = 5; $i >= 0; $i--) {
-            $date = \Carbon\Carbon::now()->startOfMonth()->subMonths($i);
+            $date = Carbon::now()->startOfMonth()->subMonths($i);
             $months[] = $date->translatedFormat('M Y');
             $newProjects[] = HostingProject::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count();
         }
         $chartNewProjects = [
             'labels' => $months,
-            'series' => $newProjects
+            'series' => $newProjects,
         ];
 
         // 2. Pie Chart: Status Proyek
         $statusCount = HostingProject::selectRaw('status, count(*) as count')->groupBy('status')->pluck('count', 'status')->toArray();
         $chartProjectStatus = [
             'labels' => array_keys($statusCount),
-            'series' => array_values($statusCount)
+            'series' => array_values($statusCount),
         ];
 
         // 3. Line Chart: Tren Tagihan Terbayar (6 Bulan Terakhir)
         $paidBillings = [];
         for ($i = 5; $i >= 0; $i--) {
-            $date = \Carbon\Carbon::now()->startOfMonth()->subMonths($i);
+            $date = Carbon::now()->startOfMonth()->subMonths($i);
             $paidBillings[] = HostingPayment::where('status', 'paid')
                 ->whereMonth('paid_at', $date->month)
                 ->whereYear('paid_at', $date->year)
@@ -57,7 +60,7 @@ class DashboardController extends Controller
         }
         $chartBillings = [
             'labels' => $months,
-            'series' => $paidBillings
+            'series' => $paidBillings,
         ];
 
         return view('pages.hosting.admin.index', compact('stats', 'chartNewProjects', 'chartProjectStatus', 'chartBillings'));
@@ -97,18 +100,18 @@ class DashboardController extends Controller
     public function databases()
     {
         $usersWithDatabases = User::where(function ($q) {
-                $q->has('hostingDatabases')
-                  ->orHas('hostingNosqlDatabases')
-                  ->orHas('hostingPgsqlDatabases');
-            })
+            $q->has('hostingDatabases')
+                ->orHas('hostingNosqlDatabases')
+                ->orHas('hostingPgsqlDatabases');
+        })
             ->with(['hostingDatabases', 'hostingNosqlDatabases', 'hostingPgsqlDatabases'])
             ->latest()
             ->paginate(15);
-            
+
         $usersWithDatabases->getCollection()->transform(function ($user) {
             // Priority: MySQL > PgSQL > NoSQL to get the general credentials
-            $firstDb = $user->hostingDatabases->first() 
-                    ?? $user->hostingPgsqlDatabases->first() 
+            $firstDb = $user->hostingDatabases->first()
+                    ?? $user->hostingPgsqlDatabases->first()
                     ?? $user->hostingNosqlDatabases->first();
 
             if ($firstDb) {
@@ -116,11 +119,12 @@ class DashboardController extends Controller
                 $user->db_host = $firstDb->host ?? 'localhost';
                 $user->db_port = $firstDb->port ?? 3306;
                 try {
-                    $user->db_password_decrypted = \Illuminate\Support\Facades\Crypt::decryptString($firstDb->db_password);
+                    $user->db_password_decrypted = Crypt::decryptString($firstDb->db_password);
                 } catch (\Exception $e) {
                     $user->db_password_decrypted = $firstDb->db_password;
                 }
             }
+
             return $user;
         });
 
@@ -168,7 +172,7 @@ class DashboardController extends Controller
             $cleanDbName = $prefix.strtolower(trim($request->db_name));
             $cleanUsername = $existingDb->db_username;
             try {
-                $dbPassword = \Illuminate\Support\Facades\Crypt::decryptString($existingDb->db_password);
+                $dbPassword = Crypt::decryptString($existingDb->db_password);
             } catch (\Exception $e) {
                 return back()->with('error', 'Gagal mendekripsi password database lama. Silakan hapus database lama atau hubungi teknisi.');
             }
@@ -204,7 +208,7 @@ class DashboardController extends Controller
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `$cleanDbName`");
             $quotedPassword = $pdo->quote($dbPassword);
             $pdo->exec("CREATE USER IF NOT EXISTS '$cleanUsername'@'%' IDENTIFIED BY $quotedPassword");
-            
+
             // Update password in case user already exists
             $pdo->exec("ALTER USER '$cleanUsername'@'%' IDENTIFIED BY $quotedPassword");
 
@@ -216,14 +220,14 @@ class DashboardController extends Controller
 
         // Update password for other databases that might share this username
         HostingDatabase::where('db_username', $cleanUsername)->update([
-            'db_password' => \Illuminate\Support\Facades\Crypt::encryptString($dbPassword),
+            'db_password' => Crypt::encryptString($dbPassword),
         ]);
 
         HostingDatabase::create([
             'user_id' => $user->id,
             'db_name' => $cleanDbName,
             'db_username' => $cleanUsername,
-            'db_password' => \Illuminate\Support\Facades\Crypt::encryptString($dbPassword),
+            'db_password' => Crypt::encryptString($dbPassword),
             'host' => $mysqlHost,
         ]);
 
@@ -233,7 +237,9 @@ class DashboardController extends Controller
     public function destroyDatabase($hashid)
     {
         $decoded = Hashids::decode($hashid);
-        if (empty($decoded)) abort(404);
+        if (empty($decoded)) {
+            abort(404);
+        }
 
         $database = HostingDatabase::findOrFail($decoded[0]);
 
@@ -246,13 +252,13 @@ class DashboardController extends Controller
                 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
                 $pdo->exec("DROP DATABASE IF EXISTS `$database->db_name`");
-                
+
                 // Check if there are other databases using this username
                 $otherDatabasesUsingSameUsername = HostingDatabase::where('db_username', $database->db_username)
                     ->where('id', '!=', $database->id)
                     ->exists();
-                    
-                if (!$otherDatabasesUsingSameUsername) {
+
+                if (! $otherDatabasesUsingSameUsername) {
                     $pdo->exec("DROP USER IF EXISTS '$database->db_username'@'%'");
                 }
 
@@ -263,6 +269,7 @@ class DashboardController extends Controller
         }
 
         $database->delete();
+
         return back()->with('success', 'Database berhasil dihapus!');
     }
 
@@ -272,7 +279,7 @@ class DashboardController extends Controller
         $project->update(['status' => 'suspended']);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $filePath = hosting_clients_dir() . "/{$subdomain}/.suspended";
+        $filePath = hosting_clients_dir()."/{$subdomain}/.suspended";
 
         // Buat file marker agar Nginx 503
         @touch($filePath);
@@ -287,9 +294,9 @@ class DashboardController extends Controller
         $project->update(['status' => 'active']);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $filePath = hosting_clients_dir() . "/{$subdomain}/.suspended";
+        $filePath = hosting_clients_dir()."/{$subdomain}/.suspended";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $filePath = substr(base_path(), 0, 2) . str_replace('/', '\\', $filePath);
+            $filePath = substr(base_path(), 0, 2).str_replace('/', '\\', $filePath);
         }
 
         // Hapus file marker agar Nginx kembali normal
@@ -319,12 +326,12 @@ class DashboardController extends Controller
 
         // Hapus folder server (opsional, sesuaikan path)
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $projectDir = hosting_clients_dir() . "/{$subdomain}";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $projectDir = substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir);
+            $projectDir = substr(base_path(), 0, 2).str_replace('/', '\\', $projectDir);
         }
         if (is_dir($projectDir)) {
-            exec('rm -rf '.escapeshellarg($projectDir));
+            File::deleteDirectory($projectDir);
         }
 
         $project->delete();
@@ -336,20 +343,24 @@ class DashboardController extends Controller
     {
         $apiToken = config('services.cloudflare.api_token');
 
-        if (!$apiToken) return;
+        if (! $apiToken) {
+            return;
+        }
 
         $zoneName = explode('.', $domainName, 2)[1] ?? $domainName;
         $zoneId = config('services.cloudflare.zone_id');
-        
-        $zoneReq = \Illuminate\Support\Facades\Http::withToken($apiToken)->get("https://api.cloudflare.com/client/v4/zones", ['name' => $zoneName]);
-        if ($zoneReq->successful() && !empty($zoneReq->json('result'))) {
+
+        $zoneReq = Http::withToken($apiToken)->get('https://api.cloudflare.com/client/v4/zones', ['name' => $zoneName]);
+        if ($zoneReq->successful() && ! empty($zoneReq->json('result'))) {
             $zoneId = $zoneReq->json('result.0.id');
         }
 
-        if (!$zoneId) return;
+        if (! $zoneId) {
+            return;
+        }
 
         // Cari Record ID
-        $response = \Illuminate\Support\Facades\Http::withToken($apiToken)
+        $response = Http::withToken($apiToken)
             ->get("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records", [
                 'type' => 'CNAME',
                 'name' => $domainName,
@@ -358,7 +369,7 @@ class DashboardController extends Controller
         if ($response->successful() && ! empty($response->json('result'))) {
             $recordId = $response->json('result.0.id');
             // Hapus Record
-            \Illuminate\Support\Facades\Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records/{$recordId}");
+            Http::withToken($apiToken)->delete("https://api.cloudflare.com/client/v4/zones/{$zoneId}/dns_records/{$recordId}");
         }
     }
 }
