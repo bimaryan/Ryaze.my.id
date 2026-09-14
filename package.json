@@ -16,7 +16,11 @@
         "vite": "^8.0.0"
     },
     "dependencies": {
+        "@inertiajs/react": "^3.7.1",
+        "@vitejs/plugin-react": "^6.1.1",
         "dotenv": "^17.4.2",
-        "quill": "^2.0.3"
+        "quill": "^2.0.3",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0"
     }
 }

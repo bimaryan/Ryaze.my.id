@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Middleware\CheckMaintenanceMode;
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\EnsureActiveHostingSubscription;
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -29,14 +32,19 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Security headers (CSP, X-Frame-Options, etc.)
         $middleware->append(SecurityHeaders::class);
-        
+
         // Maintenance Mode
-        $middleware->append(\App\Http\Middleware\CheckMaintenanceMode::class);
+        $middleware->append(CheckMaintenanceMode::class);
+
+        // Inertia.js
+        $middleware->web(append: [
+            HandleInertiaRequests::class,
+        ]);
 
         // Role-based authorization alias
         $middleware->alias([
             'role' => CheckRole::class,
-            'active_hosting' => \App\Http\Middleware\EnsureActiveHostingSubscription::class,
+            'active_hosting' => EnsureActiveHostingSubscription::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
