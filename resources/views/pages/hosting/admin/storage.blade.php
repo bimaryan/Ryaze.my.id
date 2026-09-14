@@ -123,10 +123,16 @@
                 document.querySelectorAll('.btn-edit-storage').forEach(button => {
                     button.addEventListener('click', function() {
                         var form = document.getElementById('editStorageForm');
-                        form.action = `/admin/hosting/storage/${this.dataset.hashid}`;
+                        form.action = '/admin/hosting/storage/' + this.dataset.hashid;
                         document.getElementById('storageProjectName').textContent = this.dataset.name;
                         document.getElementById('storageLimitInput').value = this.dataset.limit;
                     });
+                });
+                document.getElementById('editStorageForm').addEventListener('submit', function(e) {
+                    if (!this.action.includes('/storage/')) {
+                        e.preventDefault();
+                        return;
+                    }
                 });
                 document.querySelectorAll('.modal-content-stop').forEach(el => {
                     el.addEventListener('click', e => e.stopPropagation());
