@@ -279,11 +279,34 @@ class DashboardController extends Controller
         $project->update(['status' => 'suspended']);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $filePath = hosting_clients_dir()."/{$subdomain}/.suspended";
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
 
         // Buat file marker agar Nginx 503
+        $filePath = "{$projectDir}/.suspended";
         @touch($filePath);
         @chmod($filePath, 0660);
+
+        // Stop PM2 process untuk framework Node-based (React, Vue, Next.js, Node)
+        if (in_array($project->framework, ['react', 'nextjs', 'vue', 'node'])) {
+            $pm2Name = "prod_{$project->id}";
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+
+            if ($isWindows) {
+                exec("pm2 delete \"{$pm2Name}\" 2>nul");
+            } else {
+                exec("docker exec -u root 1Panel-php8-aJQI sh -c 'pm2 delete \"{$pm2Name}\" 2>/dev/null || true'");
+            }
+
+            if (! empty($project->dev_pid)) {
+                if ($isWindows) {
+                    exec("pm2 delete \"{$project->dev_pid}\" 2>nul");
+                } else {
+                    exec("docker exec -u root 1Panel-php8-aJQI sh -c 'pm2 delete \"{$project->dev_pid}\" 2>/dev/null || true'");
+                }
+            }
+
+            $project->update(['dev_pid' => null]);
+        }
 
         return back()->with('success', "Project '{$project->project_name}' telah disuspend.");
     }
@@ -294,15 +317,38 @@ class DashboardController extends Controller
         $project->update(['status' => 'active']);
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
-        $filePath = hosting_clients_dir()."/{$subdomain}/.suspended";
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $filePath = substr(base_path(), 0, 2).str_replace('/', '\\', $filePath);
-        }
+        $projectDir = hosting_clients_dir()."/{$subdomain}";
+        $filePath = "{$projectDir}/.suspended";
 
         // Hapus file marker agar Nginx kembali normal
         if (file_exists($filePath)) {
             @chmod($filePath, 0666);
             @unlink($filePath);
+        }
+
+        // Restart PM2 process untuk framework Node-based
+        if (in_array($project->framework, ['react', 'nextjs', 'vue', 'node']) && is_dir($projectDir)) {
+            $pm2Name = "prod_{$project->id}";
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+            $port = (int) ($project->settings['port'] ?? 3000);
+
+            // Cari file .port untuk ambil port yang tersimpan
+            $portFile = "{$projectDir}/.port";
+            if (file_exists($portFile)) {
+                $port = (int) trim(file_get_contents($portFile));
+            }
+
+            if ($isWindows) {
+                $ecosystemFile = "{$projectDir}/.ryaze-pm2.js";
+                if (file_exists($ecosystemFile)) {
+                    exec("cd \"{$projectDir}\" && npx pm2 start .ryaze-pm2.js");
+                }
+            } else {
+                $ecosystemFile = "{$projectDir}/.ryaze-pm2.js";
+                if (file_exists($ecosystemFile)) {
+                    exec("docker exec -u root 1Panel-php8-aJQI sh -c 'cd /clients/{$subdomain} && pm2 start .ryaze-pm2.js'");
+                }
+            }
         }
 
         return back()->with('success', "Project '{$project->project_name}' berhasil diaktifkan.");

@@ -100,6 +100,18 @@ class SuspendExpiredHosting extends Command
                     @chmod($suspendFile, 0660);
                 }
 
+                // Stop PM2 process untuk framework Node-based
+                if (in_array($project->framework, ['react', 'nextjs', 'vue', 'node'])) {
+                    $pm2Name = "prod_{$project->id}";
+                    exec("pm2 delete \"{$pm2Name}\" 2>/dev/null || true");
+
+                    if (! empty($project->dev_pid)) {
+                        exec("pm2 delete \"{$project->dev_pid}\" 2>/dev/null || true");
+                    }
+
+                    $project->update(['dev_pid' => null]);
+                }
+
                 // Catat log
                 $project->deployments()->create([
                     'status' => 'failed',

@@ -430,31 +430,31 @@
                     <div class="relative flex flex-col {{ $hc['bg'] }} border {{ $isPopular ? 'border-slate-900 dark:border-indigo-500 shadow-md z-10 scale-100 lg:scale-[1.02]' : 'border-slate-200 dark:border-white/10 shadow-sm' }} rounded-2xl overflow-hidden transition-all hover:border-slate-300 dark:hover:border-white/20">
                         
                         @if ($isPopular)
-                            <div class="absolute top-0 inset-x-0 bg-slate-900 dark:bg-indigo-500 text-white dark:text-white text-[10px] font-bold text-center py-1 uppercase tracking-wider">
+                            <div class="absolute top-0 inset-x-0 bg-slate-900 dark:bg-indigo-500 text-white text-[10px] font-bold text-center py-1 uppercase tracking-wider">
                                 Paling Populer
                             </div>
                         @endif
 
                         <div class="p-8 flex-1 mt-4">
-                            <h3 class="text-lg font-semibold {{ $hc['text'] }} mb-2">{{ $plan['label'] }}</h3>
+                            <h3 class="text-lg font-semibold {{ $isPopular ? 'text-white dark:text-white' : $hc['text'] }} mb-2">{{ $plan['label'] }}</h3>
                             
                             <div class="mb-6">
                                 @if($pricing['promo'] !== null)
-                                    <span class="text-xs font-medium text-slate-400 dark:text-slate-500 line-through block mb-1">Rp {{ number_format($pricing['normal'], 0, ',', '.') }}</span>
+                                    <span class="text-xs font-medium {{ $isPopular ? 'text-violet-200 dark:text-indigo-200' : 'text-slate-400 dark:text-slate-500' }} line-through block mb-1">Rp {{ number_format($pricing['normal'], 0, ',', '.') }}</span>
                                 @else
-                                    <div class="h-4 mb-1"></div> <!-- Spacer -->
+                                    <div class="h-4 mb-1"></div>
                                 @endif
                                 <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-bold tracking-tight {{ $hc['text'] }}">Rp {{ number_format($pricing['active'], 0, ',', '.') }}</span>
-                                    <span class="{{ $isPopular ? 'text-slate-300 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400' }} text-sm">/bln</span>
+                                    <span class="text-3xl font-bold tracking-tight {{ $isPopular ? 'text-white dark:text-white' : $hc['text'] }}">Rp {{ number_format($pricing['active'], 0, ',', '.') }}</span>
+                                    <span class="{{ $isPopular ? 'text-violet-200 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400' }} text-sm">/bln</span>
                                 </div>
                             </div>
 
                             <ul class="space-y-3">
                                 @foreach ($plan['features'] as $feat)
-                                    <li class="flex items-start gap-3 text-sm {{ $isPopular ? 'text-slate-600 dark:text-indigo-100' : 'text-slate-600 dark:text-slate-400' }}">
+                                    <li class="flex items-start gap-3 text-sm {{ $isPopular ? 'text-violet-100 dark:text-indigo-100' : 'text-slate-600 dark:text-slate-400' }}">
                                         <div class="mt-1 flex-shrink-0">
-                                            <i class="fa-solid fa-check {{ $hc['check'] }} text-[10px]"></i>
+                                            <i class="fa-solid fa-check {{ $isPopular ? 'text-violet-300 dark:text-indigo-300' : $hc['check'] }} text-[10px]"></i>
                                         </div>
                                         <span>{{ $feat }}</span>
                                     </li>
@@ -463,7 +463,7 @@
                         </div>
                         
                         <div class="p-8 pt-0">
-                            <a href="{{ route('register') }}" class="flex items-center justify-center w-full {{ $hc['btn'] }} font-semibold py-2.5 rounded-full transition-colors text-sm">
+                            <a href="{{ route('register') }}" class="flex items-center justify-center w-full {{ $isPopular ? 'bg-white text-indigo-600 hover:bg-violet-50 dark:bg-white dark:text-indigo-600 dark:hover:bg-violet-50' : $hc['btn'] }} font-semibold py-2.5 rounded-full transition-colors text-sm">
                                 Pilih Paket
                             </a>
                         </div>

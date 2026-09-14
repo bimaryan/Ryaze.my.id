@@ -21,11 +21,11 @@
         
         <template x-for="msg in messages" :key="msg.id">
             <div :class="msg.sender_id == {{ $user->id }} ? 'flex justify-end' : 'flex justify-start'">
-                <div :class="msg.sender_id == {{ $user->id }} ? 'bg-indigo-600 text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white dark:bg-slate-800 border border-slate-200 text-slate-800 dark:text-slate-100 rounded-r-2xl rounded-tl-2xl'" 
+                <div :class="msg.sender_id == {{ $user->id }} ? 'bg-indigo-600 text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-r-2xl rounded-tl-2xl'" 
                      class="max-w-[75%] px-4 py-2.5 shadow-sm relative group">
-                    <p class="text-xs font-bold mb-1 opacity-75" x-text="msg.sender_id == {{ $user->id }} ? 'Anda' : msg.sender_name"></p>
+                    <p class="text-xs font-bold mb-1" :class="msg.sender_id == {{ $user->id }} ? 'text-violet-200' : 'opacity-75'" x-text="msg.sender_id == {{ $user->id }} ? 'Anda' : msg.sender_name"></p>
                     <p class="text-sm whitespace-pre-wrap" x-text="msg.message"></p>
-                    <span class="text-[10px] opacity-50 mt-1 block text-right" x-text="new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
+                    <span class="text-[10px] mt-1 block text-right" :class="msg.sender_id == {{ $user->id }} ? 'text-violet-200 opacity-70' : 'opacity-50'" x-text="new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
                 </div>
             </div>
         </template>
