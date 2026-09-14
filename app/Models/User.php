@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\CustomResetPassword;
+use App\Notifications\CustomVerifyEmail;
+use App\Traits\HasHashid;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,10 +17,10 @@ use Illuminate\Notifications\Notifiable;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use \App\Traits\HasHashid;
-
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    use HasHashid;
 
     /**
      * Get the attributes that should be cast.
@@ -52,8 +55,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sharedHostingProjects()
     {
         return $this->belongsToMany(HostingProject::class, 'hosting_project_users', 'user_id', 'project_id')
-                    ->withPivot('role')
-                    ->withTimestamps();
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
     public function hostingBillings()
@@ -102,7 +105,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendPasswordResetNotification($token)
     {
-        $this->notify(new \App\Notifications\CustomResetPassword($token));
+        $this->notify(new CustomResetPassword($token));
     }
 
     /**
@@ -112,7 +115,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new \App\Notifications\CustomVerifyEmail);
+        $this->notify(new CustomVerifyEmail);
     }
 
     public function articles()
@@ -142,54 +145,57 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Hosting Plan Definitions.
-     * Keys: plan slug. Values: ['storage_mb', 'max_projects', 'price_key', 'default_price', 'label']
+     * Reads storage, max_projects, features, and pricing from settings table.
+     * Falls back to hardcoded defaults if settings don't exist yet.
      */
     public static function hostingPlans(): array
     {
+        $s = fn (string $key, $default) => Setting::val($key, $default);
+
         return [
-            'free'  => [
-                'label'         => 'Free',
-                'storage_mb'    => 256,
-                'max_projects'  => 1,
-                'price_key'     => 'plan_free_price',
-                'promo_key'     => 'plan_free_promo',
+            'free' => [
+                'label' => 'Free',
+                'storage_mb' => (int) $s('plan_free_storage', 256),
+                'max_projects' => (int) $s('plan_free_max_projects', 1),
+                'price_key' => 'plan_free_price',
+                'promo_key' => 'plan_free_promo',
                 'default_price' => 0,
-                'color'         => 'slate',
-                'features'      => ['256 MB Storage', 'Maks. 1 Project', '1 MySQL Database', 'Subdomain Bawaan', 'Prioritas Support'],
-                'is_active'     => \App\Models\Setting::val('plan_free_active', '1') == '1',
+                'color' => 'slate',
+                'features' => array_filter(explode("\n", $s('plan_free_features', "256 MB Storage\nMaks. 1 Project\n1 MySQL Database\nSubdomain Bawaan\nPrioritas Support"))),
+                'is_active' => $s('plan_free_active', '1') == '1',
             ],
-            'starter'  => [
-                'label'         => 'Starter',
-                'storage_mb'    => 1024,
-                'max_projects'  => 3,
-                'price_key'     => 'plan_starter_price',
-                'promo_key'     => 'plan_starter_promo',
+            'starter' => [
+                'label' => 'Starter',
+                'storage_mb' => (int) $s('plan_starter_storage', 1024),
+                'max_projects' => (int) $s('plan_starter_max_projects', 3),
+                'price_key' => 'plan_starter_price',
+                'promo_key' => 'plan_starter_promo',
                 'default_price' => 15000,
-                'color'         => 'indigo',
-                'features'      => ['1 GB Storage', 'Maks. 3 Project', 'MySQL & PostgreSQL', 'Subdomain Bawaan', 'Prioritas Support'],
-                'is_active'     => \App\Models\Setting::val('plan_starter_active', '1') == '1',
+                'color' => 'indigo',
+                'features' => array_filter(explode("\n", $s('plan_starter_features', "1 GB Storage\nMaks. 3 Project\nMySQL & PostgreSQL\nSubdomain Bawaan\nPrioritas Support"))),
+                'is_active' => $s('plan_starter_active', '1') == '1',
             ],
             'pro' => [
-                'label'         => 'Pro',
-                'storage_mb'    => 3072,
-                'max_projects'  => 10,
-                'price_key'     => 'plan_pro_price',
-                'promo_key'     => 'plan_pro_promo',
+                'label' => 'Pro',
+                'storage_mb' => (int) $s('plan_pro_storage', 3072),
+                'max_projects' => (int) $s('plan_pro_max_projects', 10),
+                'price_key' => 'plan_pro_price',
+                'promo_key' => 'plan_pro_promo',
                 'default_price' => 30000,
-                'color'         => 'violet',
-                'features'      => ['3 GB Storage', 'Maks. 10 Project', 'MySQL, PostgreSQL & Redis', 'Subdomain Bawaan', 'Prioritas Support'],
-                'is_active'     => \App\Models\Setting::val('plan_pro_active', '1') == '1',
+                'color' => 'violet',
+                'features' => array_filter(explode("\n", $s('plan_pro_features', "3 GB Storage\nMaks. 10 Project\nMySQL, PostgreSQL & Redis\nSubdomain Bawaan\nPrioritas Support"))),
+                'is_active' => $s('plan_pro_active', '1') == '1',
             ],
             'business' => [
-                'label'         => 'Business',
-                'storage_mb'    => 10240,
-                'max_projects'  => -1, // -1 = unlimited
-                'price_key'     => 'plan_business_price',
-                'promo_key'     => 'plan_business_promo',
+                'label' => 'Business',
+                'storage_mb' => (int) $s('plan_business_storage', 10240),
+                'max_projects' => (int) $s('plan_business_max_projects', -1),
+                'price_key' => 'plan_business_price',
+                'promo_key' => 'plan_business_promo',
                 'default_price' => 75000,
-                'color'         => 'amber',
-                'features'      => ['10 GB Storage', 'Project Unlimited', 'Semua Database', 'Subdomain Bawaan', 'Prioritas Support'],
-                'is_active'     => \App\Models\Setting::val('plan_business_active', '1') == '1',
+                'color' => 'amber',
+                'features' => array_filter(explode("\n", $s('plan_business_features', "10 GB Storage\nProject Unlimited\nSemua Database\nSubdomain Bawaan\nPrioritas Support"))),
+                'is_active' => $s('plan_business_active', '1') == '1',
             ],
         ];
     }
@@ -205,16 +211,18 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function getPlanPricing(string $plan): array
     {
         $plans = static::hostingPlans();
-        if (!isset($plans[$plan])) return ['normal' => 0, 'promo' => null, 'active' => 0];
-        
+        if (! isset($plans[$plan])) {
+            return ['normal' => 0, 'promo' => null, 'active' => 0];
+        }
+
         $p = $plans[$plan];
-        $normal_price = isset($p['price_key']) 
-            ? (int) \App\Models\Setting::val($p['price_key'], $p['default_price'] ?? 0)
+        $normal_price = isset($p['price_key'])
+            ? (int) Setting::val($p['price_key'], $p['default_price'] ?? 0)
             : ($p['default_price'] ?? 0);
 
         $promo_price = null;
         if (isset($p['promo_key'])) {
-            $promo = \App\Models\Setting::val($p['promo_key'], null);
+            $promo = Setting::val($p['promo_key'], null);
             if ($promo !== null && $promo !== '') {
                 $promo_price = (int) $promo;
             }
@@ -241,13 +249,16 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getMaxProjects(): int
     {
-        if (in_array($this->role, ['superadmin', 'admin_hosting'])) return -1;
+        if (in_array($this->role, ['superadmin', 'admin_hosting'])) {
+            return -1;
+        }
         $activeBilling = $this->hostingBillings()
             ->where('status', 'active')
             ->where('next_due_date', '>', now())
             ->latest()
             ->first();
         $plan = $activeBilling->plan ?? 'free';
+
         return static::getPlanLimits($plan)['max_projects'];
     }
 
@@ -257,7 +268,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function canCreateMoreProjects(): bool
     {
         $max = $this->getMaxProjects();
-        if ($max === -1) return true;
+        if ($max === -1) {
+            return true;
+        }
+
         return $this->hostingProjects()->count() < $max;
     }
 
@@ -267,13 +281,13 @@ class User extends Authenticatable implements MustVerifyEmail
         $activeBilling = $hasActive ? $this->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first() : null;
         $currentPlan = $activeBilling->plan ?? 'free';
 
-        $mysqlCount = \App\Models\HostingDatabase::where('user_id', $this->id)->count();
-        $pgsqlCount = \App\Models\HostingPgsqlDatabase::where('user_id', $this->id)->count();
-        $nosqlCount = \App\Models\HostingNosqlDatabase::where('user_id', $this->id)->count();
+        $mysqlCount = HostingDatabase::where('user_id', $this->id)->count();
+        $pgsqlCount = HostingPgsqlDatabase::where('user_id', $this->id)->count();
+        $nosqlCount = HostingNosqlDatabase::where('user_id', $this->id)->count();
 
         if ($currentPlan === 'free') {
             if ($type !== 'mysql') {
-                return ['allowed' => false, 'message' => 'Paket Free hanya mendukung MySQL Database. Silakan upgrade ke Starter/Pro/Business untuk menggunakan ' . strtoupper($type) . '.'];
+                return ['allowed' => false, 'message' => 'Paket Free hanya mendukung MySQL Database. Silakan upgrade ke Starter/Pro/Business untuk menggunakan '.strtoupper($type).'.'];
             }
             if ($mysqlCount >= 1) {
                 return ['allowed' => false, 'message' => 'Paket Free hanya mengizinkan maksimal 1 MySQL Database. Silakan upgrade paket untuk membuat database lebih banyak.'];

@@ -173,6 +173,7 @@
                 {{-- Harga & Langganan Hosting --}}
                 <div>
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-tags text-indigo-500 dark:text-indigo-400 mr-2"></i> Harga Langganan Hosting (Paket)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Perubahan di sini otomatis sync ke landing page & halaman pilih paket.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- Free -->
                         <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 rounded-xl flex flex-col justify-between">
@@ -185,7 +186,20 @@
                                         <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                                     </label>
                                 </div>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Harga Paket Free selalu Rp 0.</p>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Storage (MB)</label>
+                                        <input type="number" name="plan_free_storage" value="{{ $settings['plan_free_storage'] ?? '256' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="64">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Maks. Project (-1 = unlimited)</label>
+                                        <input type="number" name="plan_free_max_projects" value="{{ $settings['plan_free_max_projects'] ?? '1' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="-1">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Fitur (satu per baris)</label>
+                                        <textarea name="plan_free_features" rows="4" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="256 MB Storage&#10;Maks. 1 Project">{{ $settings['plan_free_features'] ?? "256 MB Storage\nMaks. 1 Project\n1 MySQL Database\nSubdomain Bawaan\nPrioritas Support" }}</textarea>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -199,14 +213,26 @@
                                     <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                                 </label>
                             </div>
-                            <div class="space-y-4">
+                            <div class="space-y-3">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>
-                                    <input type="number" name="plan_starter_price" value="{{ $settings['plan_starter_price'] ?? '15000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_starter_price" value="{{ $settings['plan_starter_price'] ?? '15000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Promo (Rp)</label>
-                                    <input type="number" name="plan_starter_promo" value="{{ $settings['plan_starter_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_starter_promo" value="{{ $settings['plan_starter_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Storage (MB)</label>
+                                    <input type="number" name="plan_starter_storage" value="{{ $settings['plan_starter_storage'] ?? '1024' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="64">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Maks. Project (-1 = unlimited)</label>
+                                    <input type="number" name="plan_starter_max_projects" value="{{ $settings['plan_starter_max_projects'] ?? '3' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="-1">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Fitur (satu per baris)</label>
+                                    <textarea name="plan_starter_features" rows="4" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="1 GB Storage&#10;Maks. 3 Project">{{ $settings['plan_starter_features'] ?? "1 GB Storage\nMaks. 3 Project\nMySQL & PostgreSQL\nSubdomain Bawaan\nPrioritas Support" }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -221,14 +247,26 @@
                                     <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                                 </label>
                             </div>
-                            <div class="space-y-4">
+                            <div class="space-y-3">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>
-                                    <input type="number" name="plan_pro_price" value="{{ $settings['plan_pro_price'] ?? '30000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_pro_price" value="{{ $settings['plan_pro_price'] ?? '30000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Promo (Rp)</label>
-                                    <input type="number" name="plan_pro_promo" value="{{ $settings['plan_pro_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_pro_promo" value="{{ $settings['plan_pro_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Storage (MB)</label>
+                                    <input type="number" name="plan_pro_storage" value="{{ $settings['plan_pro_storage'] ?? '3072' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="64">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Maks. Project (-1 = unlimited)</label>
+                                    <input type="number" name="plan_pro_max_projects" value="{{ $settings['plan_pro_max_projects'] ?? '10' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="-1">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Fitur (satu per baris)</label>
+                                    <textarea name="plan_pro_features" rows="4" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="3 GB Storage&#10;Maks. 10 Project">{{ $settings['plan_pro_features'] ?? "3 GB Storage\nMaks. 10 Project\nMySQL, PostgreSQL & Redis\nSubdomain Bawaan\nPrioritas Support" }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -243,14 +281,26 @@
                                     <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                                 </label>
                             </div>
-                            <div class="space-y-4">
+                            <div class="space-y-3">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Normal (Rp)</label>
-                                    <input type="number" name="plan_business_price" value="{{ $settings['plan_business_price'] ?? '75000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Normal (Rp)</label>
+                                    <input type="number" name="plan_business_price" value="{{ $settings['plan_business_price'] ?? '75000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Promo (Rp)</label>
-                                    <input type="number" name="plan_business_promo" value="{{ $settings['plan_business_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo (Rp)</label>
+                                    <input type="number" name="plan_business_promo" value="{{ $settings['plan_business_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Storage (MB)</label>
+                                    <input type="number" name="plan_business_storage" value="{{ $settings['plan_business_storage'] ?? '10240' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="64">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Maks. Project (-1 = unlimited)</label>
+                                    <input type="number" name="plan_business_max_projects" value="{{ $settings['plan_business_max_projects'] ?? '-1' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="-1">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Fitur (satu per baris)</label>
+                                    <textarea name="plan_business_features" rows="4" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="10 GB Storage&#10;Project Unlimited">{{ $settings['plan_business_features'] ?? "10 GB Storage\nProject Unlimited\nSemua Database\nSubdomain Bawaan\nPrioritas Support" }}</textarea>
                                 </div>
                             </div>
                         </div>
