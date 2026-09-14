@@ -140,7 +140,11 @@ class PaymentCallbackController extends Controller
                                     'plan' => $selectedPlan,
                                     'plan_name' => 'Paket ' . ucfirst($selectedPlan),
                                     'amount' => $planPrice,
-                                    'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
+                                    'status' => 'active',
+                                    // Jika billing sudah expired, perpanjang dari sekarang; jika belum, perpanjang dari due date lama
+                                    'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->isPast()
+                                        ? now()->addMonth()
+                                        : \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
                                 ]);
                                 
                                 $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);

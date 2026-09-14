@@ -61,7 +61,18 @@ class DashboardController extends Controller
         // 3. Potong (Limit) hanya ambil 5 teratas untuk ditampilkan di tabel
         $projects = $allProjects->take(5);
 
-        return view('pages.hosting.user.index', compact('projects', 'stats'));
+        // 4. Data langganan
+        $activeBilling = Auth::user()->hostingBillings()
+            ->where('status', 'active')
+            ->latest('next_due_date')
+            ->first();
+        
+        $expiredBilling = Auth::user()->hostingBillings()
+            ->where('status', 'past_due')
+            ->latest('next_due_date')
+            ->first();
+
+        return view('pages.hosting.user.index', compact('projects', 'stats', 'activeBilling', 'expiredBilling'));
     }
 
     // Menampilkan form deploy baru
@@ -2195,6 +2206,10 @@ PHP;
 
         if ($invoiceAmount <= 0) {
             // Activate immediately
+            // Free plan: berlaku 10 tahun. Paid plan (gratis via voucher): berlaku 1 bulan.
+            $isFree = ($selectedPlan === 'free');
+            $newDueDate = $isFree ? now()->addYears(10) : now()->addMonth();
+
             if ($activeBilling) {
                 // Nonaktifkan semua billing aktif lain agar tidak ada duplikat
                 \App\Models\HostingBilling::where('user_id', $user->id)
@@ -2203,10 +2218,11 @@ PHP;
                     ->update(['status' => 'canceled']);
 
                 $activeBilling->update([
-                    'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
-                    'plan'               => $selectedPlan,
-                    'amount'             => 0,
-                    'next_due_date'      => now()->addYears(10),
+                    'plan_name'     => 'Paket ' . ucfirst($selectedPlan),
+                    'plan'          => $selectedPlan,
+                    'amount'        => 0,
+                    'status'        => 'active',
+                    'next_due_date' => $newDueDate,
                 ]);
             } else {
                 \App\Models\HostingBilling::create([
@@ -2217,7 +2233,7 @@ PHP;
                     'amount'             => 0,
                     'billing_cycle'      => 'monthly',
                     'status'             => 'active',
-                    'next_due_date'      => now()->addYears(10), // Paket gratis / free berlaku panjang
+                    'next_due_date'      => $newDueDate,
                 ]);
             }
             $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);
@@ -2232,7 +2248,7 @@ PHP;
                 'paid_at' => now(), 'notes' => $selectedPlan,
             ]);
             
-            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket ' . ucfirst($selectedPlan) . ' aktif secara gratis.';
+            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket ' . ucfirst($selectedPlan) . ' aktif secara gratis selama 1 bulan.';
             return back()->with('success', $msg);
         }
 
@@ -2343,11 +2359,14 @@ PHP;
                 ->where('id', '!=', $billing->id)
                 ->update(['status' => 'canceled']);
 
+            // Jika billing sudah expired, mulai dari sekarang. Jika masih aktif, perpanjang dari tanggal jatuh tempo.
+            $baseDate = \Carbon\Carbon::parse($billing->next_due_date)->isPast() ? now() : \Carbon\Carbon::parse($billing->next_due_date);
             $billing->update([
-                'plan_name' => 'Paket ' . ucfirst($selectedPlan),
-                'plan' => $selectedPlan,
-                'amount' => $invoice->amount,
-                'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
+                'plan_name'     => 'Paket ' . ucfirst($selectedPlan),
+                'plan'          => $selectedPlan,
+                'amount'        => $invoice->amount,
+                'status'        => 'active',
+                'next_due_date' => $baseDate->addMonth()
             ]);
         } else {
             \App\Models\HostingBilling::create([

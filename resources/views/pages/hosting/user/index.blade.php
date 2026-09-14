@@ -18,6 +18,49 @@
         {{-- Promo Event Banner --}}
         <x-ui.promo-banner class="mt-6 max-w-4xl mx-auto shadow-sm" />
 
+        {{-- ⚠️ EXPIRED HOSTING BANNER --}}
+        @if($expiredBilling)
+        <div class="mt-6 rounded-2xl border border-red-200 dark:border-red-500/40 bg-red-50 dark:bg-red-500/10 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div class="w-12 h-12 flex-shrink-0 rounded-xl bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-red-700 dark:text-red-300 text-sm">Langganan Hosting Anda Telah Berakhir!</h3>
+                <p class="text-xs text-red-600 dark:text-red-400 mt-0.5">
+                    Paket <strong>{{ ucfirst($expiredBilling->plan) }}</strong> Anda kadaluarsa pada 
+                    <strong>{{ \Carbon\Carbon::parse($expiredBilling->next_due_date)->translatedFormat('d F Y') }}</strong>.
+                    Semua website yang ter-deploy telah disuspend. Perpanjang sekarang untuk mengaktifkan kembali.
+                </p>
+            </div>
+            <a href="{{ route('user_hosting.subscription') }}" 
+               class="flex-shrink-0 inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition shadow-sm whitespace-nowrap">
+                <i class="fa-solid fa-rotate-right"></i> Perpanjang Sekarang
+            </a>
+        </div>
+        @elseif($activeBilling && $activeBilling->plan !== 'free')
+            @php $daysLeft = now()->diffInDays(\Carbon\Carbon::parse($activeBilling->next_due_date), false); @endphp
+            @if($daysLeft <= 7 && $daysLeft >= 0)
+            <div class="mt-6 rounded-2xl border border-amber-200 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="w-12 h-12 flex-shrink-0 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-amber-700 dark:text-amber-300 text-sm">Langganan Segera Berakhir</h3>
+                    <p class="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                        Paket <strong>{{ ucfirst($activeBilling->plan) }}</strong> Anda akan berakhir dalam 
+                        <strong>{{ $daysLeft }} hari</strong> 
+                        ({{ \Carbon\Carbon::parse($activeBilling->next_due_date)->translatedFormat('d F Y') }}).
+                        Perpanjang sekarang agar layanan tidak terganggu.
+                    </p>
+                </div>
+                <a href="{{ route('user_hosting.subscription') }}" 
+                   class="flex-shrink-0 inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition shadow-sm whitespace-nowrap">
+                    <i class="fa-solid fa-rotate-right"></i> Perpanjang
+                </a>
+            </div>
+            @endif
+        @endif
+
         {{-- Wallet & Affiliate Summary --}}
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             {{-- Ryaze Wallet --}}
