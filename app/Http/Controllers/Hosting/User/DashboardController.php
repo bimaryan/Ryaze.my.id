@@ -230,6 +230,13 @@ class DashboardController extends Controller
             return redirect()->back()->with('error', 'Batas maksimal pembuatan project untuk paket langganan Anda telah tercapai. Silakan upgrade paket.');
         }
 
+        // --- Mencegah Subdomain Collision ---
+        $ryazeDomain = $subdomain . $domainExtension;
+        $domainExists = \App\Models\HostingProject::where('ryaze_domain', $ryazeDomain)->exists();
+        if ($domainExists) {
+            return redirect()->back()->withInput()->with('error', "Subdomain '{$ryazeDomain}' sudah terpakai oleh project lain (kemungkinan karena nama yang mirip). Silakan gunakan nama project yang lebih spesifik.");
+        }
+
         $project = HostingProject::create([
             'user_id'      => $user->id,
             'project_name' => $request->project_name,
@@ -969,7 +976,7 @@ class DashboardController extends Controller
 
         try {
             if (is_dir($targetPath)) {
-                exec('rm -rf '.escapeshellarg($targetPath));
+                \Illuminate\Support\Facades\File::deleteDirectory($targetPath);
             } else {
                 if (!@unlink($targetPath)) {
                     return response()->json(['error' => 'Gagal menghapus file (izin ditolak/permission denied).'], 403);

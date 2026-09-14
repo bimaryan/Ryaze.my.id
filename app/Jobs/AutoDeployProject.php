@@ -46,7 +46,7 @@ class AutoDeployProject implements ShouldQueue
 
         try {
             $this->log($deploy, '> Preparing deployment directory...');
-            $this->exec("mkdir -p {$baseDir}", $deploy);
+            $this->crossPlatformMkdir($baseDir, $deploy);
 
             $isTemplate = ($this->project->source_type === 'template') || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'template:'));
             $isUpload   = ($this->project->source_type === 'upload')   || (is_string($this->project->repo_source) && str_starts_with($this->project->repo_source, 'upload:'));
@@ -68,10 +68,8 @@ class AutoDeployProject implements ShouldQueue
                     $this->log($deploy, "\n> [TEMPLATE] Scaffolding: {$templateKey}");
                     $this->log($deploy, '> Generating starter files directly on server (no git required)...');
 
-                    if (is_dir($projectDir)) {
-                        $this->exec("rm -rf {$projectDir}", $deploy);
-                    }
-                    $this->exec("mkdir -p {$projectDir}", $deploy);
+                    $this->crossPlatformRmDir($projectDir, $deploy);
+                    $this->crossPlatformMkdir($projectDir, $deploy);
 
                     $this->scaffoldTemplate($templateKey, $projectDir, $deploy);
 
@@ -114,7 +112,7 @@ class AutoDeployProject implements ShouldQueue
 
                 if ($isRepo) {
                     $this->log($deploy, '> Repository found. Pulling latest changes...');
-                    $this->exec("chown -R root:root " . escapeshellarg($projectDir), $deploy);
+                    $this->linuxExec("chown -R root:root " . escapeshellarg($projectDir), $deploy);
                     $this->exec(
                         'cd ' . escapeshellarg($projectDir) . ' && git fetch --all && git reset --hard origin/' . escapeshellarg($branch),
                         $deploy,
@@ -123,7 +121,7 @@ class AutoDeployProject implements ShouldQueue
                 } else {
                     if (is_dir($projectDir)) {
                         $this->log($deploy, '> Found stale directory (not a git repo). Cleaning up...');
-                        $this->exec("rm -rf " . escapeshellarg($projectDir), $deploy);
+                        $this->crossPlatformRmDir($projectDir, $deploy);
                     }
 
                     $this->log($deploy, '> Cloning repository...');
@@ -135,9 +133,9 @@ class AutoDeployProject implements ShouldQueue
                 }
             }
 
-            $this->exec("chown -R www-data:www-data {$projectDir}", $deploy);
-            $this->exec("find {$projectDir} -type d -not -path '*/node_modules*' -exec chmod 755 {} \;", $deploy);
-            $this->exec("find {$projectDir} -type f -not -path '*/node_modules*' -exec chmod 644 {} \;", $deploy);
+            $this->linuxExec("chown -R www-data:www-data {$projectDir}", $deploy);
+            $this->linuxExec("find {$projectDir} -type d -not -path '*/node_modules*' -exec chmod 755 {} \;", $deploy);
+            $this->linuxExec("find {$projectDir} -type f -not -path '*/node_modules*' -exec chmod 644 {} \;", $deploy);
             $this->log($deploy, "> Permissions di-set: dir 755, file 644 (mengabaikan node_modules)");
 
             $framework = strtolower($this->project->framework);
@@ -156,12 +154,12 @@ class AutoDeployProject implements ShouldQueue
             // sehingga PHP SPA Proxy tidak lagi diperlukan.
 
             $this->log($deploy, "\n> Applying final permissions to all generated files...");
-            $this->exec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
-            $this->exec("find {$projectDir} -type d -not -path '*/node_modules*' -exec chmod 755 {} \; 2>/dev/null || true", $deploy);
-            $this->exec("find {$projectDir} -type f -not -path '*/venv/bin/*' -not -path '*/node_modules*' -exec chmod 644 {} \; 2>/dev/null || true", $deploy);
+            $this->linuxExec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
+            $this->linuxExec("find {$projectDir} -type d -not -path '*/node_modules*' -exec chmod 755 {} \; 2>/dev/null || true", $deploy);
+            $this->linuxExec("find {$projectDir} -type f -not -path '*/venv/bin/*' -not -path '*/node_modules*' -exec chmod 644 {} \; 2>/dev/null || true", $deploy);
 
             if ($framework === 'laravel') {
-                $this->exec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
+                $this->linuxExec("chmod -R 777 {$projectDir}/storage {$projectDir}/bootstrap/cache 2>/dev/null || true", $deploy);
                 $this->log($deploy, "> Laravel storage & bootstrap/cache permissions di-set ke 777");
             }
 
@@ -614,6 +612,51 @@ class AutoDeployProject implements ShouldQueue
         }
 
         return $output;
+    }
+
+    /**
+     * Cek apakah OS saat ini adalah Linux.
+     */
+    private function isLinux(): bool
+    {
+        return strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN';
+    }
+
+    /**
+     * Jalankan command hanya jika di Linux. Di Windows, skip dan log saja.
+     * Gunakan untuk perintah seperti chown, chmod, kill, dll.
+     */
+    private function linuxExec(string $command, $deploy, bool $throwOnError = false): string
+    {
+        if (!$this->isLinux()) {
+            $this->log($deploy, "> [SKIP-WIN] {$command}");
+            return '';
+        }
+        return $this->exec($command, $deploy, $throwOnError);
+    }
+
+    /**
+     * Buat direktori secara cross-platform.
+     */
+    private function crossPlatformMkdir(string $path, $deploy): void
+    {
+        if (!is_dir($path)) {
+            if (!mkdir($path, 0755, true) && !is_dir($path)) {
+                throw new \RuntimeException("Gagal membuat direktori: {$path}");
+            }
+            $this->log($deploy, "> Directory created: {$path}");
+        }
+    }
+
+    /**
+     * Hapus direktori secara cross-platform.
+     */
+    private function crossPlatformRmDir(string $path, $deploy): void
+    {
+        if (is_dir($path)) {
+            \Illuminate\Support\Facades\File::deleteDirectory($path);
+            $this->log($deploy, "> Directory removed: {$path}");
+        }
     }
 
     private function log($deploy, string $text): void
