@@ -8,70 +8,60 @@ use Carbon\Carbon;
 
 class FixPaidPlanBillingDates extends Command
 {
-    protected $signature = 'ryaze:fix-billing-dates {--dry-run : Preview saja tanpa mengubah data}';
+    protected $signature = 'ryaze:fix-billing-dates {--force : Langsung fix tanpa konfirmasi}';
 
-    protected $description = 'Perbaiki next_due_date billing paid plan yang salah (terlanjur di-set +10 tahun, seharusnya +1 bulan dari tanggal dibuat).';
+    protected $description = 'Perbaiki next_due_date billing paid plan yang salah (terlanjur +10 tahun, seharusnya +1 bulan dari dibuat).';
 
     public function handle()
     {
-        $isDryRun = $this->option('dry-run');
+        $this->info("=== Mencari billing paid plan dengan next_due_date > 1 tahun ke depan ===");
 
-        $this->info($isDryRun ? "=== DRY RUN (tidak ada perubahan) ===" : "=== Memulai perbaikan data billing ===");
-
-        // Cari billing paid plan (bukan free) yang next_due_date-nya lebih dari 1 tahun ke depan
-        // Ini adalah billings yang salah karena seharusnya monthly (1 bulan)
+        // Cari semua billing paid (bukan free) yang next_due_date-nya lebih dari 1 tahun ke depan
+        // Ini adalah billing yang salah di-set addYears(10) padahal seharusnya addMonth()
         $wrongBillings = HostingBilling::where('plan', '!=', 'free')
             ->whereIn('status', ['active', 'past_due'])
             ->where('next_due_date', '>', now()->addYear())
+            ->orderBy('user_id')
             ->get();
-
-        $this->info("Ditemukan {$wrongBillings->count()} billing dengan tanggal yang perlu diperbaiki.");
 
         if ($wrongBillings->isEmpty()) {
             $this->info("Tidak ada billing yang perlu diperbaiki.");
             return 0;
         }
 
+        $this->warn("Ditemukan {$wrongBillings->count()} billing yang perlu diperbaiki:");
         $this->table(
-            ['ID', 'User ID', 'Plan', 'Status', 'next_due_date (lama)', 'next_due_date (baru)'],
+            ['ID', 'User ID', 'Plan', 'Dibuat', 'Due Date Lama', 'Due Date Baru'],
             $wrongBillings->map(function ($b) {
-                $newDate = Carbon::parse($b->created_at)->addMonth();
+                $correctDate = Carbon::parse($b->created_at)->addMonth();
                 return [
                     $b->id,
                     $b->user_id,
-                    $b->plan,
-                    $b->status,
-                    $b->next_due_date,
-                    $newDate,
+                    strtoupper($b->plan),
+                    Carbon::parse($b->created_at)->format('d M Y'),
+                    Carbon::parse($b->next_due_date)->format('d M Y'),
+                    $correctDate->format('d M Y'),
                 ];
             })
         );
 
-        if ($isDryRun) {
-            $this->warn("DRY RUN selesai. Jalankan tanpa --dry-run untuk menerapkan perubahan.");
-            return 0;
-        }
-
-        if (!$this->confirm("Apakah Anda yakin ingin memperbarui {$wrongBillings->count()} billing?")) {
-            $this->info("Dibatalkan.");
-            return 0;
+        if (!$this->option('force')) {
+            if (!$this->confirm("Lanjutkan perbaikan?", true)) {
+                $this->info("Dibatalkan.");
+                return 0;
+            }
         }
 
         $fixed = 0;
         foreach ($wrongBillings as $billing) {
-            // Hitung next_due_date yang benar: 1 bulan dari tanggal billing dibuat
-            $correctDueDate = Carbon::parse($billing->created_at)->addMonth();
-            
-            if (!$isDryRun) {
-                $billing->update(['next_due_date' => $correctDueDate]);
-            }
-
-            $this->line("✓ Fixed billing ID {$billing->id} (User {$billing->user_id}, Plan {$billing->plan}): {$billing->next_due_date} → {$correctDueDate}");
+            $correctDate = Carbon::parse($billing->created_at)->addMonth();
+            $billing->update(['next_due_date' => $correctDate]);
+            $this->line("  Fixed Billing #{$billing->id} User {$billing->user_id} [{$billing->plan}]: -> {$correctDate->format('d M Y')}");
             $fixed++;
         }
 
-        $this->info("\nSelesai! {$fixed} billing berhasil diperbaiki.");
-        $this->info("Jalankan 'php artisan hosting:suspend-expired' untuk suspend user yang sudah expired.");
+        $this->info("Selesai! {$fixed} billing berhasil diperbaiki.");
+        $this->info("Jalankan 'php artisan hosting:suspend-expired' untuk suspend akun yang sudah kadaluarsa.");
         return 0;
     }
 }
