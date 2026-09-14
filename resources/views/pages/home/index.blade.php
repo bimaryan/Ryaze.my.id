@@ -224,7 +224,6 @@
                     <i class="fa-brands fa-node-js text-3xl md:text-4xl stack-logo"></i>
                     <i class="fa-brands fa-python text-3xl md:text-4xl stack-logo"></i>
                     <i class="fa-brands fa-vuejs text-3xl md:text-4xl stack-logo"></i>
-                    <i class="fa-brands fa-aws text-3xl md:text-4xl stack-logo"></i>
                     <i class="fa-brands fa-docker text-3xl md:text-4xl stack-logo"></i>
                 </div>
             </div>
