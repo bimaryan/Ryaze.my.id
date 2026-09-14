@@ -43,6 +43,7 @@
                     <th scope="col" class="px-6 py-4">Nama Pengguna</th>
                     <th scope="col" class="px-6 py-4">Email Address</th>
                     <th scope="col" class="px-6 py-4">Role / Tipe Akun</th>
+                    <th scope="col" class="px-6 py-4">Expired Hosting</th>
                     <th scope="col" class="px-6 py-4">Tanggal Daftar</th>
                     <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                 </x-slot:head>
@@ -71,6 +72,22 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">
+                                @if(in_array($user->role, ['user_hosting', 'superadmin', 'admin_hosting']))
+                                    @php
+                                        $activeBilling = $user->hostingBillings->first();
+                                    @endphp
+                                    @if($activeBilling && $activeBilling->next_due_date)
+                                        <span class="text-xs font-medium {{ \Carbon\Carbon::parse($activeBilling->next_due_date)->isPast() ? 'text-red-500 dark:text-red-400' : 'text-emerald-500 dark:text-emerald-400' }}">
+                                            {{ \Carbon\Carbon::parse($activeBilling->next_due_date)->translatedFormat('d M Y') }}
+                                        </span>
+                                    @else
+                                        <span class="text-slate-400 dark:text-slate-500 text-xs italic">Belum Ada Paket</span>
+                                    @endif
+                                @else
+                                    <span class="text-slate-400 dark:text-slate-500 text-xs">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
                                 {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('d F Y, H:i') }}
                             </td>
                             <td class="px-6 py-4 text-center">
@@ -83,7 +100,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                                 <i class="fa-solid fa-users-slash text-3xl mb-3 text-slate-300 dark:text-slate-400"></i>
                                 <p>Belum ada data pengguna.</p>
                             </td>

@@ -11,7 +11,9 @@ class UserController extends Controller
     // Fungsi untuk halaman "Lihat Semua"
     public function index(\Illuminate\Http\Request $request)
     {
-        $query = User::latest();
+        $query = User::with(['hostingBillings' => function($q) {
+            $q->where('status', 'active')->latest('next_due_date');
+        }])->latest();
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
