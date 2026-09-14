@@ -21,7 +21,7 @@
     <title>{{ $title ?? 'Ryaze' }}</title>
     <meta name="description" content="{{ $description ?? '' }}">
     <link rel="canonical" href="{{ url()->current() }}">
-    @if(!empty($favicon))<link rel="icon" href="{{ asset('storage/' . $favicon) }}">@endif
+    <link rel="icon" href="{{ !empty($favicon) ? asset('storage/' . $favicon) : asset('favicon.ico') }}">
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     <script>
         window.ryazeToggleTheme = function (event) {
