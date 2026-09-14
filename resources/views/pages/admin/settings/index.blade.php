@@ -404,4 +404,21 @@
             </form>
         </x-ui.card>
     </x-ui.page-layout>
+
+    <script>
+        function formatBytes(mb) {
+            if (mb == 0) return '0 MB';
+            if (mb < 1024) return mb + ' MB';
+            if (mb < 1048576) return (mb / 1024).toFixed(2).replace(/\.?0+$/, '') + ' GB';
+            return (mb / 1048576).toFixed(2).replace(/\.?0+$/, '') + ' TB';
+        }
+        document.querySelectorAll('input[name$="_storage"]').forEach(function(input) {
+            var hint = document.createElement('p');
+            hint.className = 'text-xs text-indigo-500 dark:text-indigo-400 mt-1 font-medium';
+            input.parentNode.appendChild(hint);
+            function update() { hint.textContent = '= ' + formatBytes(parseInt(input.value) || 0); }
+            input.addEventListener('input', update);
+            update();
+        });
+    </script>
 @endsection
