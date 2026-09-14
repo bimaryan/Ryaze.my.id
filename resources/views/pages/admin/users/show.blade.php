@@ -130,6 +130,7 @@
                                 {{ $planLabel }}
                             </span>
                         </div>
+                        @if(strtolower($currentPlan) !== 'free')
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-slate-500 dark:text-slate-400">Expired Hosting</span>
                             @if($activeBilling && $activeBilling->next_due_date)
@@ -140,6 +141,7 @@
                                 <span class="text-slate-400 dark:text-slate-500 italic font-semibold">-</span>
                             @endif
                         </div>
+                        @endif
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-slate-500 dark:text-slate-400">Total Pesanan Joki</span>
                             <span class="font-semibold text-slate-800 dark:text-slate-100">{{ $user->client_orders_count ?? 0 }}</span>

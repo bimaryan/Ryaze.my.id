@@ -46,6 +46,27 @@ class SuspendExpiredHosting extends Command
             // Tandai tagihan yang jatuh tempo sebagai past_due
             if ($billing->status !== 'past_due') {
                 $billing->update(['status' => 'past_due']);
+
+                // Generate tagihan baru jika bukan paket free
+                if (strtolower($billing->plan) !== 'free') {
+                    $planPrice = \App\Models\User::getPlanPrice($billing->plan);
+                    if ($planPrice > 0) {
+                        $existingUnpaid = \App\Models\HostingPayment::where('user_id', $user->id)
+                            ->where('status', 'unpaid')
+                            ->exists();
+                            
+                        if (!$existingUnpaid) {
+                            \App\Models\HostingPayment::create([
+                                'user_id' => $user->id,
+                                'hosting_project_id' => null,
+                                'invoice_number' => 'HST-INV-' . strtoupper(uniqid()),
+                                'amount' => $planPrice,
+                                'status' => 'unpaid',
+                                'notes' => $billing->plan,
+                            ]);
+                        }
+                    }
+                }
             }
 
             $projects = \App\Models\HostingProject::where('user_id', $user->id)
@@ -60,10 +81,13 @@ class SuspendExpiredHosting extends Command
                 // Buat file .suspended di root directory (Nginx akan mendeteksinya)
                 $subdomain = explode('.', $project->ryaze_domain)[0];
                 $projectDir = hosting_clients_dir() . "/{$subdomain}";
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $projectDir = substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir);
+                }
                 $suspendFile = "{$projectDir}/.suspended";
 
                 if (is_dir($projectDir)) {
-                    touch($suspendFile);
+                    @touch($suspendFile);
                     @chmod($suspendFile, 0660);
                 }
 

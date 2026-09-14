@@ -75,13 +75,14 @@
                                 @if(in_array($user->role, ['user_hosting', 'superadmin', 'admin_hosting']))
                                     @php
                                         $activeBilling = $user->hostingBillings->first();
+                                        $currentPlan = $activeBilling ? $activeBilling->plan : 'free';
                                     @endphp
-                                    @if($activeBilling && $activeBilling->next_due_date)
+                                    @if($activeBilling && $activeBilling->next_due_date && strtolower($currentPlan) !== 'free')
                                         <span class="text-xs font-medium {{ \Carbon\Carbon::parse($activeBilling->next_due_date)->isPast() ? 'text-red-500 dark:text-red-400' : 'text-emerald-500 dark:text-emerald-400' }}">
                                             {{ \Carbon\Carbon::parse($activeBilling->next_due_date)->translatedFormat('d M Y') }}
                                         </span>
                                     @else
-                                        <span class="text-slate-400 dark:text-slate-500 text-xs italic">Belum Ada Paket</span>
+                                        <span class="text-slate-400 dark:text-slate-500 text-xs italic">-</span>
                                     @endif
                                 @else
                                     <span class="text-slate-400 dark:text-slate-500 text-xs">-</span>
