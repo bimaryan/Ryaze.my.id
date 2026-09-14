@@ -79,10 +79,14 @@ class DashboardController extends Controller
             ->latest('next_due_date')
             ->first();
 
-        $expiredBilling = Auth::user()->hostingBillings()
-            ->where('status', 'past_due')
-            ->latest('next_due_date')
-            ->first();
+        // Superadmin & admin_hosting tidak perlu显示 alert expired
+        $expiredBilling = null;
+        if (! in_array(Auth::user()->role, ['superadmin', 'admin_hosting'])) {
+            $expiredBilling = Auth::user()->hostingBillings()
+                ->where('status', 'past_due')
+                ->latest('next_due_date')
+                ->first();
+        }
 
         return view('pages.hosting.user.index', compact('projects', 'stats', 'activeBilling', 'expiredBilling'));
     }

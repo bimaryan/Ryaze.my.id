@@ -32,7 +32,6 @@
     <x-public-nav :links="[
         ['label' => 'Tentang', 'href' => url('/#about')],
         ['label' => 'Layanan', 'href' => url('/#services')],
-        ['label' => 'Portofolio', 'href' => url('/#portfolio')],
         ['label' => 'Blog', 'href' => route('blog.index')]
     ]" />
 

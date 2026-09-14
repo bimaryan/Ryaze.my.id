@@ -5,7 +5,6 @@
     og-image="{{ url('/og-image.png') }}"
     :links="[
         ['label' => 'Beranda', 'href' => url('/')],
-        ['label' => 'Portofolio', 'href' => url('/#portfolio')],
         ['label' => 'Blog', 'href' => route('blog.index')],
     ]"
     :withNav="false"

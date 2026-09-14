@@ -31,7 +31,6 @@
                         <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Jasa Pembuatan Website</a></li>
                         <li><a href="{{ url('/#services') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Shared Hosting Indonesia</a></li>
                         <li><a href="{{ url('/#pricing') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Harga Paket Hosting</a></li>
-                        <li><a href="{{ url('/#portfolio') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Portofolio</a></li>
                         <li><a href="{{ route('blog.index') }}" class="text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Blog & Tips Hosting</a></li>
                     </ul>
                 </div>

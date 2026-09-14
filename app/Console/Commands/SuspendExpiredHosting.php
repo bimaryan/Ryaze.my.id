@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\HostingBilling;
+use App\Models\HostingPayment;
 use App\Models\HostingProject;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class SuspendExpiredHosting extends Command
@@ -29,7 +31,7 @@ class SuspendExpiredHosting extends Command
      */
     public function handle()
     {
-        $this->info("Memulai pengecekan hosting expired...");
+        $this->info('Memulai pengecekan hosting expired...');
 
         // Status enum hosting_billings: active | past_due | canceled.
         // 'unpaid' BUKAN nilai yang valid di kolom ini, jadi cron lama tidak pernah jalan.
@@ -41,7 +43,14 @@ class SuspendExpiredHosting extends Command
 
         foreach ($expiredBillings as $billing) {
             $user = $billing->user;
-            if (!$user) continue;
+            if (! $user) {
+                continue;
+            }
+
+            // Superadmin & admin_hosting tidak boleh disuspend
+            if (in_array($user->role, ['superadmin', 'admin_hosting'])) {
+                continue;
+            }
 
             // Tandai tagihan yang jatuh tempo sebagai past_due
             if ($billing->status !== 'past_due') {
@@ -49,17 +58,17 @@ class SuspendExpiredHosting extends Command
 
                 // Generate tagihan baru jika bukan paket free
                 if (strtolower($billing->plan) !== 'free') {
-                    $planPrice = \App\Models\User::getPlanPrice($billing->plan);
+                    $planPrice = User::getPlanPrice($billing->plan);
                     if ($planPrice > 0) {
-                        $existingUnpaid = \App\Models\HostingPayment::where('user_id', $user->id)
+                        $existingUnpaid = HostingPayment::where('user_id', $user->id)
                             ->where('status', 'unpaid')
                             ->exists();
-                            
-                        if (!$existingUnpaid) {
-                            \App\Models\HostingPayment::create([
+
+                        if (! $existingUnpaid) {
+                            HostingPayment::create([
                                 'user_id' => $user->id,
                                 'hosting_project_id' => null,
-                                'invoice_number' => 'HST-INV-' . strtoupper(uniqid()),
+                                'invoice_number' => 'HST-INV-'.strtoupper(uniqid()),
                                 'amount' => $planPrice,
                                 'status' => 'unpaid',
                                 'notes' => $billing->plan,
@@ -69,7 +78,7 @@ class SuspendExpiredHosting extends Command
                 }
             }
 
-            $projects = \App\Models\HostingProject::where('user_id', $user->id)
+            $projects = HostingProject::where('user_id', $user->id)
                 ->where('status', 'active')
                 ->get();
 
@@ -80,9 +89,9 @@ class SuspendExpiredHosting extends Command
 
                 // Buat file .suspended di root directory (Nginx akan mendeteksinya)
                 $subdomain = explode('.', $project->ryaze_domain)[0];
-                $projectDir = hosting_clients_dir() . "/{$subdomain}";
+                $projectDir = hosting_clients_dir()."/{$subdomain}";
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                    $projectDir = substr(base_path(), 0, 2) . str_replace('/', '\\', $projectDir);
+                    $projectDir = substr(base_path(), 0, 2).str_replace('/', '\\', $projectDir);
                 }
                 $suspendFile = "{$projectDir}/.suspended";
 
@@ -94,11 +103,11 @@ class SuspendExpiredHosting extends Command
                 // Catat log
                 $project->deployments()->create([
                     'status' => 'failed',
-                    'build_logs' => "> SISTEM: Hosting disuspend otomatis karena tagihan langganan akun melewati batas waktu pembayaran.",
+                    'build_logs' => '> SISTEM: Hosting disuspend otomatis karena tagihan langganan akun melewati batas waktu pembayaran.',
                 ]);
 
                 // Todo: Send email notification
-                
+
                 $count++;
                 $this->info("Project {$project->project_name} disuspend.");
             }

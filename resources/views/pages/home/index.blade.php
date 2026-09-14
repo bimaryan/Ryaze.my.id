@@ -1,20 +1,19 @@
 <x-public-layout
     title="Jasa Pembuatan Website & Shared Hosting Indonesia"
-    description="Jasa pembuatan website, aplikasi, dan joki Tugas Akhir. Shared hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan."
+    description="Jasa pembuatan website, aplikasi, dan shared hosting Indonesia. Hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan."
     body-class="bg-slate-50 font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-indigo-600 selection:text-white relative"
     og-image="{{ url('/og-image.png') }}"
     :links="[
         ['label' => 'Tentang', 'href' => '#about'],
         ['label' => 'Layanan', 'href' => '#services'],
         ['label' => 'Harga', 'href' => '#pricing'],
-        ['label' => 'Portofolio', 'href' => '#portfolio'],
         ['label' => 'Blog', 'href' => route('blog.index')],
     ]">
 
     @push('head')
         <meta name="theme-color" content="#4f46e5">
         <meta name="robots" content="index, follow, max-image-preview:large">
-        <meta name="keywords" content="jasa pembuatan website, web hosting indonesia, hosting murah, shared hosting, jasa joki skripsi, pembuatan aplikasi web, auto deploy website, hosting laravel, jasa website polindra">
+        <meta name="keywords" content="jasa pembuatan website, web hosting indonesia, hosting murah, shared hosting, pembuatan aplikasi web, auto deploy website, hosting laravel, hosting node.js">
         <meta name="author" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}">
         <meta property="og:site_name" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}">
 
@@ -92,7 +91,7 @@
                 "name": "Apakah bisa request jasa pembuatan website atau aplikasi?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Bisa. Ryaze menerima pengerjaan sistem informasi, aplikasi SaaS, hingga prototipe fungsional Tugas Akhir atau Skripsi dengan arsitektur modern yang bersih dan terdokumentasi."
+                    "text": "Bisa. Ryaze menerima pengerjaan sistem informasi, aplikasi SaaS, website korporat, hingga prototipe fungsional dengan arsitektur modern yang bersih dan terdokumentasi."
                 }
             }, {
                 "@type": "Question",
@@ -198,10 +197,6 @@
                     class="px-8 py-3 text-sm font-semibold rounded-full text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.1)] dark:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-2">
                     Jelajahi Layanan
                 </a>
-                <a href="#portfolio"
-                    class="px-8 py-3 text-sm font-semibold rounded-full text-slate-700 dark:text-slate-300 bg-transparent border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
-                    Lihat Portofolio
-                </a>
             </div>
 
             <!-- Sleek Metrics -->
@@ -242,49 +237,53 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <!-- Text Content -->
                 <div class="reveal">
-                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-3 block">Di Balik Layar</span>
-                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">Dedikasi Terhadap Kode yang Bersih.</h2>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-3 block">Tentang Ryaze</span>
+                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">Platform Hosting & Development modern untuk bisnis Anda.</h2>
                     
                     <p class="text-base text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-                        Saya <strong>Bima Ryan Alfarizi</strong>, mahasiswa D4 Rekayasa Perangkat Lunak di Politeknik
-                        Negeri Indramayu. Visi utama saya adalah menciptakan standar rekayasa perangkat lunak yang
-                        bersih, skalabel, dan fungsional.
+                        Ryaze adalah platform shared hosting Indonesia yang dirancang untuk developer dan bisnis yang
+                        menginginkan deployment cepat, infrastruktur andal, dan kontrol penuh atas aplikasi mereka.
                     </p>
                     <p class="text-base text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-                        Ryaze dikembangkan bukan hanya sebagai penyedia layanan, tetapi sebagai ekosistem di mana kode
-                        dan infrastruktur berpadu dengan sempurna. Fokus kami ada pada efisiensi teknis dan keandalan
-                        sistem.
+                        Kami menyediakan lingkungan hosting otomatis dengan auto-deploy dari Git, SSL gratis,
+                        database lengkap, serta panel kontrol berfitur tinggi — semuanya dengan harga terjangkau.
                     </p>
 
                     <div class="flex flex-wrap gap-2">
+                        <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">AUTO DEPLOY</span>
+                        <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">SSL GRATIS</span>
                         <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">FULLSTACK WEB</span>
                         <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">SHARED SERVER</span>
-                        <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">CI/CD PIPELINE</span>
-                        <span class="px-4 py-1.5 bg-indigo-50 dark:bg-white/5 backdrop-blur-sm border border-indigo-200 dark:border-white/10 rounded-full text-[11px] font-bold tracking-[0.1em] text-indigo-600 dark:text-slate-300">GAME ENGINE</span>
                     </div>
                 </div>
 
-                <!-- Clean Profile Card -->
+                <!-- Stats Card -->
                 <div class="flex justify-center lg:justify-end reveal">
                     <div class="w-full max-w-sm">
                         <div class="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white dark:bg-white/5 dark:backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative group">
-                            <!-- Subtle card glow -->
                             <div class="absolute -inset-0.5 bg-gradient-to-br from-white/20 to-transparent opacity-0 dark:opacity-100 pointer-events-none rounded-2xl"></div>
                             
-                            <div class="aspect-[4/5] bg-slate-100 dark:bg-transparent relative overflow-hidden">
-                                <img src="{{ asset('profil/bima.jpeg') }}"
-                                    alt="Bima Ryan Alfarizi - Founder dan Lead Developer Ryaze"
-                                    class="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-                                
-                                <div class="absolute bottom-0 left-0 right-0 p-6 z-10">
-                                    <h3 class="font-bold text-white text-xl tracking-tight">Bima Ryan Alfarizi, S.Tr.Kom</h3>
-                                    <p class="text-slate-300 font-medium text-sm mt-1">Sarjana Terapan RPL Polindra</p>
+                            <div class="p-8 space-y-6">
+                                <div class="text-center">
+                                    <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <i class="fa-solid fa-rocket text-2xl text-indigo-600 dark:text-indigo-400"></i>
+                                    </div>
+                                    <h3 class="font-bold text-slate-900 dark:text-white text-xl tracking-tight">Ryaze Hosting</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 font-medium text-sm mt-1">Platform Deployment Modern</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center p-3 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+                                        <p class="text-2xl font-bold text-slate-900 dark:text-white">99.9%</p>
+                                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-1">Uptime</p>
+                                    </div>
+                                    <div class="text-center p-3 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+                                        <p class="text-2xl font-bold text-slate-900 dark:text-white">&lt;5mnt</p>
+                                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-1">Deploy</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="px-6 py-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400 relative z-10 bg-white dark:bg-transparent">
-                                <span class="flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Indramayu, ID</span>
-                                <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div> Available for Hire</span>
+                            <div class="px-6 py-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-center text-xs font-medium text-slate-500 dark:text-slate-400 relative z-10 bg-white dark:bg-transparent">
+                                <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div> Server Aktif 24/7</span>
                             </div>
                         </div>
                     </div>
@@ -313,7 +312,7 @@
                         </div>
                         <h3 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">Jasa Pembuatan Sistem</h3>
                         <p class="text-slate-500 dark:text-slate-400 text-base leading-relaxed mb-8">
-                            Pengerjaan sistem informasi, aplikasi SaaS, hingga prototipe fungsional Tugas Akhir (Skripsi). Berbasis arsitektur modern yang bersih, efisien, dan terdokumentasi.
+                            Pengerjaan sistem informasi, aplikasi SaaS, website korporat, hingga prototipe fungsional. Berbasis arsitektur modern yang bersih, efisien, dan terdokumentasi.
                         </p>
                         <ul class="space-y-4 mb-10 text-sm font-medium text-slate-600 dark:text-slate-300 flex-1">
                             <li class="flex items-center gap-3">
@@ -503,115 +502,6 @@
         </div>
     </section>
 
-    <!-- PORTFOLIO SECTION -->
-    <section id="portfolio" class="py-24 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-white/5 relative">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="mb-16 flex flex-col md:flex-row justify-between items-end gap-6 reveal">
-                <div class="max-w-2xl">
-                    <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-3 block">Showcase</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">Arsip Karya Digital.</h2>
-                    <p class="text-slate-500 dark:text-slate-400 text-lg">Eksplorasi beberapa sistem informasi, aplikasi, dan platform digital yang telah kami kembangkan.</p>
-                </div>
-                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer"
-                    class="hidden md:flex text-sm font-semibold text-slate-700 dark:text-slate-300 items-center gap-2 px-5 py-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm transition-all hover:shadow-md">
-                    <i class="fa-brands fa-github text-lg"></i> Kunjungi Repositori
-                </a>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal">
-                @forelse($portfolios as $portfolio)
-                    <div class="card-premium flex flex-col overflow-hidden bg-white/80 dark:bg-slate-800/60 group border border-slate-200/60 dark:border-white/10">
-                        @if ($portfolio->link_preview)
-                            <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer"
-                                class="block aspect-[16/10] overflow-hidden relative">
-                        @else
-                            <div class="block aspect-[16/10] overflow-hidden relative">
-                        @endif
-
-                        @if ($portfolio->image_path)
-                            <img src="{{ Storage::url($portfolio->image_path) }}" alt="{{ $portfolio->title }}"
-                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                            <!-- Premium Overlay -->
-                            <div class="absolute inset-0 bg-slate-900/10 dark:bg-slate-900/40 group-hover:bg-transparent transition-colors duration-500"></div>
-                        @else
-                            <div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-500 bg-slate-100 dark:bg-slate-800/80">
-                                <i class="fa-solid fa-image text-4xl"></i>
-                            </div>
-                        @endif
-
-                        @if ($portfolio->link_preview)
-                            </a>
-                        @else
-                            </div>
-                        @endif
-
-                        <div class="p-6 lg:p-8 flex flex-col flex-1">
-                            <div class="flex gap-2 mb-4 flex-wrap">
-                                @if ($portfolio->tags)
-                                    @foreach ($portfolio->tags as $tag)
-                                        <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 text-[10px] uppercase font-bold tracking-wider rounded-md border border-slate-200/50 dark:border-white/5">{{ $tag }}</span>
-                                    @endforeach
-                                @endif
-                            </div>
-
-                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ $portfolio->title }}</h3>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-3 mb-6 flex-1 leading-relaxed">
-                                {{ $portfolio->description }}
-                            </p>
-
-                            <div class="flex items-center gap-4 flex-wrap mt-auto pt-5 border-t border-slate-100 dark:border-white/5">
-                                @if ($portfolio->link_github)
-                                    <a href="{{ $portfolio->link_github }}" target="_blank" rel="noopener noreferrer"
-                                        class="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1.5">
-                                        <i class="fa-brands fa-github text-sm"></i> Code
-                                    </a>
-                                @endif
-                                @if ($portfolio->link_journal)
-                                    <a href="{{ $portfolio->link_journal }}" target="_blank" rel="noopener noreferrer"
-                                        class="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5">
-                                        <i class="fa-solid fa-book-open text-sm"></i> Jurnal
-                                    </a>
-                                @endif
-                                @if ($portfolio->certificate_path)
-                                    <a href="{{ Storage::url($portfolio->certificate_path) }}" target="_blank" rel="noopener noreferrer"
-                                        class="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors flex items-center gap-1.5">
-                                        <i class="fa-solid fa-certificate text-sm"></i> Sertifikat
-                                    </a>
-                                @endif
-                                @if ($portfolio->link_copyright)
-                                    <a href="{{ $portfolio->link_copyright }}" target="_blank" rel="noopener noreferrer"
-                                        class="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors flex items-center gap-1.5">
-                                        <i class="fa-solid fa-shield-halved text-sm"></i> Hak Cipta
-                                    </a>
-                                @endif
-                                @if ($portfolio->link_preview)
-                                    <a href="{{ $portfolio->link_preview }}" target="_blank" rel="noopener noreferrer"
-                                        class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors flex items-center gap-1.5 ml-auto">
-                                        Visit <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="col-span-full py-16 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl text-center bg-white/50 dark:bg-slate-800/30">
-                        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                            <i class="fa-solid fa-folder-open text-2xl"></i>
-                        </div>
-                        <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Data arsip belum tersedia.</p>
-                    </div>
-                @endforelse
-            </div>
-
-            <div class="mt-10 md:hidden flex justify-center">
-                <a href="https://github.com/bimaryan" target="_blank" rel="noopener noreferrer"
-                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm transition-all flex">
-                    <i class="fa-brands fa-github text-lg"></i> Kunjungi Repositori
-                </a>
-            </div>
-        </div>
-    </section>
-
     <!-- BLOG SECTION -->
     <section class="py-24 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700" id="blog">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
@@ -738,8 +628,8 @@
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 group-open:rotate-180 transition-transform"></i>
                     </summary>
                     <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-4">
-                        Bisa. Ryaze menerima pengerjaan sistem informasi, aplikasi SaaS, hingga prototipe fungsional
-                        Tugas Akhir atau Skripsi dengan arsitektur modern yang bersih dan terdokumentasi.
+                        Bisa. Ryaze menerima pengerjaan sistem informasi, aplikasi SaaS, website korporat,
+                        hingga prototipe fungsional dengan arsitektur modern yang bersih dan terdokumentasi.
                     </p>
                 </details>
 
