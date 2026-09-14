@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
 const navLinks = [
@@ -8,16 +8,28 @@ const navLinks = [
     { label: 'Blog', href: '/blog' },
 ];
 
-export default function PublicLayout({ children, title, description }) {
+function getInitialDark() {
+    if (typeof window === 'undefined') return false;
+    const s = localStorage.getItem('ryaze-theme');
+    if (s) return s === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function applyDark(dark) {
+    document.documentElement.classList.toggle('dark', dark);
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+}
+
+export default function PublicLayout({ children }) {
+    const { auth } = usePage().props;
+    const user = auth?.user;
     const [scrolled, setScrolled] = useState(false);
-    const [dark, setDark] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const s = localStorage.getItem('ryaze-theme');
-            if (s) return s === 'dark';
-            return window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-        return false;
-    });
+    const [dark, setDark] = useState(getInitialDark);
+
+    useEffect(() => {
+        applyDark(dark);
+        localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
+    }, [dark]);
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 1);
@@ -25,37 +37,40 @@ export default function PublicLayout({ children, title, description }) {
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    useEffect(() => {
-        document.documentElement.classList.toggle('dark', dark);
-        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-        localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
-    }, [dark]);
-
     return (
         <div className="min-h-screen flex flex-col">
-            <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-[#e5e5e5]' : ''}`}>
+            <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-[#e5e5e5] dark:bg-[#1a1025]/90 dark:border-[#2d1f42]' : ''}`}>
                 <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2.5">
                         <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
                             <span className="text-white font-black text-xs">R</span>
                         </div>
-                        <span className="font-black text-[#1a1025] text-sm tracking-tight">RYAZE</span>
+                        <span className="font-black text-[#1a1025] dark:text-white text-sm tracking-tight">RYAZE</span>
                     </Link>
                     <div className="hidden md:flex items-center gap-7">
                         {navLinks.map(l => (
-                            <a key={l.href} href={l.href} className="text-[13px] font-medium text-[#666] hover:text-[#1a1025] transition-colors">{l.label}</a>
+                            <a key={l.href} href={l.href} className="text-[13px] font-medium text-[#666] dark:text-[#999] hover:text-[#1a1025] dark:hover:text-white transition-colors">{l.label}</a>
                         ))}
                     </div>
                     <div className="flex items-center gap-3">
-                        <button onClick={() => setDark(!dark)} className="w-8 h-8 flex items-center justify-center text-[#999] hover:text-[#1a1025] transition-colors">
+                        <button onClick={() => setDark(d => !d)} className="w-8 h-8 flex items-center justify-center text-[#999] dark:text-[#666] hover:text-[#1a1025] dark:hover:text-white transition-colors">
                             <i className={`fa-solid ${dark ? 'fa-sun' : 'fa-moon'} text-sm`}></i>
                         </button>
-                        <a href="/login" className="text-[13px] font-medium text-[#666] hover:text-[#1a1025] transition-colors hidden sm:block">Masuk</a>
-                        <a href="/register" className="px-4 py-1.5 bg-[#1a1025] text-white text-[13px] font-semibold hover:bg-[#2d1f42] transition-colors">Daftar</a>
+                        {user ? (
+                            <a href={user.role === 'superadmin' ? '/admin' : '/dashboard'} className="px-4 py-1.5 bg-[#7c3aed] text-white text-[13px] font-semibold hover:bg-[#6d28d9] transition-colors">
+                                Dashboard
+                            </a>
+                        ) : (
+                            <>
+                                <a href="/login" className="text-[13px] font-medium text-[#666] dark:text-[#999] hover:text-[#1a1025] dark:hover:text-white transition-colors hidden sm:block">Masuk</a>
+                                <a href="/register" className="px-4 py-1.5 bg-[#1a1025] dark:bg-white dark:text-[#1a1025] text-white text-[13px] font-semibold hover:bg-[#2d1f42] dark:hover:bg-slate-200 transition-colors">Daftar</a>
+                            </>
+                        )}
                     </div>
                 </div>
             </nav>
 
+            <div className="dark:hidden">{/* light mode body class */}</div>
             {children}
 
             <footer className="bg-[#1a1025] border-t border-[#2d1f42]">

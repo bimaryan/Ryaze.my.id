@@ -120,8 +120,7 @@ html.dark::-webkit-scrollbar-thumb:hover {
 
 
 
-/* Flowbite modal content */
-.dark [data-modal-target] + [id] .relative,
-.dark .fixed [class*="bg-white"] {
+/* Flowbite modal content — scoped to actual Flowbite modals only */
+.dark [data-modal-target] + [id] .relative {
     background-color: #1e293b;
 }
