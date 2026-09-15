@@ -29,14 +29,14 @@ export default function Detail({ order }) {
 
     const handleRevisionSubmit = (e) => {
         e.preventDefault();
-        revisionForm.post(`/user/joki/orders/${order.hashid}/revisions`, {
+        revisionForm.post(`/user/joki/orders/${order.hashid}/revision`, {
             onSuccess: () => revisionForm.reset(),
         });
     };
 
     const handleReviewSubmit = (e) => {
         e.preventDefault();
-        reviewForm.post(`/user/joki/orders/${order.hashid}/reviews`, {
+        reviewForm.post(`/user/joki/orders/${order.hashid}/review`, {
             onSuccess: () => reviewForm.reset(),
         });
     };
@@ -228,7 +228,7 @@ export default function Detail({ order }) {
                                         <i className="fa-solid fa-check-circle"></i> Sudah di-deploy
                                     </div>
                                 ) : (
-                                    <form onSubmit={(e) => { e.preventDefault(); if (confirm('Apakah Anda yakin ingin men-deploy project ini ke Ryaze Hosting?')) router.post(`/user/joki/orders/${order.hashid}/deploy`); }}>
+                                    <form onSubmit={(e) => { e.preventDefault(); if (confirm('Apakah Anda yakin ingin men-deploy project ini ke Ryaze Hosting?')) router.post(`/user/joki/orders/${order.hashid}/deploy-hosting`); }}>
                                         <button type="submit" className="w-full bg-white dark:bg-white/20 text-[#7c3aed] dark:text-white hover:bg-white/90 dark:hover:bg-white/30 font-bold px-4 py-2.5 rounded-lg text-sm shadow-md transition-colors flex justify-center items-center gap-2">
                                             Deploy ke Ryaze Hosting
                                         </button>

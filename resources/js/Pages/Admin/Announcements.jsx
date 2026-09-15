@@ -65,7 +65,7 @@ export default function Announcements({ announcements }) {
     }
 
     function toggleStatus(hashid) {
-        router.patch(route('superadmin.announcements.status', { hashid: hashid }), {}, { preserveScroll: true });
+        router.patch(route('superadmin.announcements.status', { announcement: hashid }), {}, { preserveScroll: true });
     }
 
     function handleDelete() {
@@ -193,7 +193,7 @@ export default function Announcements({ announcements }) {
                                             <button onClick={() => toggleStatus(item.hashid)} title={item.is_active ? 'Nonaktifkan' : 'Aktifkan'} className={`p-1.5 rounded-lg transition ${item.is_active ? 'text-emerald-500 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' : 'text-[#999] dark:text-white/40 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10'}`}>
                                                 <i className={`fa-solid ${item.is_active ? 'fa-eye' : 'fa-eye-slash'}`}></i>
                                             </button>
-                                            <Link href={route('superadmin.announcements.edit', { hashid: item.hashid })} className="p-1.5 text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 hover:bg-[#ede9fe] dark:hover:bg-[#7c3aed]/20 rounded-lg transition">
+                                            <Link href={route('superadmin.announcements.edit', { announcement: item.hashid })} className="p-1.5 text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 hover:bg-[#ede9fe] dark:hover:bg-[#7c3aed]/20 rounded-lg transition">
                                                 <i className="fa-solid fa-pen-to-square"></i>
                                             </Link>
                                             <button onClick={() => setDeleteId(item.hashid)} className="p-1.5 text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-lg transition">

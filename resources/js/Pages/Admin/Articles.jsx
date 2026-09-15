@@ -68,11 +68,11 @@ export default function Articles({ articles, categories }) {
     }
 
     function toggleFeatured(hashid) {
-        router.patch(route('superadmin.articles.featured', { hashid: hashid }), {}, { preserveScroll: true });
+        router.patch(route('superadmin.articles.featured', { article: hashid }), {}, { preserveScroll: true });
     }
 
     function toggleStatus(hashid) {
-        router.patch(route('superadmin.articles.status', { hashid: hashid }), {}, { preserveScroll: true });
+        router.patch(route('superadmin.articles.status', { article: hashid }), {}, { preserveScroll: true });
     }
 
     function handleDelete() {
@@ -239,7 +239,7 @@ export default function Articles({ articles, categories }) {
                                                 <i className={`fa-solid ${article.status === 'published' ? 'fa-eye' : 'fa-eye-slash'}`}></i>
                                             </button>
                                             <Link
-                                                href={route('superadmin.articles.edit', { hashid: article.hashid })}
+                                                href={route('superadmin.articles.edit', { article: article.hashid })}
                                                 className="p-1.5 text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 hover:bg-[#ede9fe] dark:hover:bg-[#7c3aed]/20 rounded-lg transition"
                                             >
                                                 <i className="fa-solid fa-pen-to-square"></i>

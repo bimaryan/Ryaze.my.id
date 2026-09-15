@@ -156,7 +156,7 @@ export default function EditOrder({ order, consultation }) {
                     <div className="bg-white dark:bg-[#0d0d18] p-6 rounded-2xl shadow-sm border border-[#e5e5e5] dark:border-[#1a1a2e]">
                         <h3 className="font-bold text-[#333] dark:text-white mb-4 border-b border-[#e5e5e5] dark:border-[#1a1a2e] pb-2">Target Pengerjaan (Milestones)</h3>
 
-                        <form onSubmit={(e) => { e.preventDefault(); milestoneForm.post(`/admin/joki/orders/${order.hashid}/milestones`, { onSuccess: () => milestoneForm.reset() }); }}
+                        <form onSubmit={(e) => { e.preventDefault(); milestoneForm.post(`/admin/joki/orders/${order.hashid}/milestone`, { onSuccess: () => milestoneForm.reset() }); }}
                             className="mb-6 bg-[#fafafa] dark:bg-white/[0.02] p-4 rounded-lg border border-[#e5e5e5] dark:border-[#1a1a2e]">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                                 <div className="md:col-span-2">
@@ -346,7 +346,7 @@ export default function EditOrder({ order, consultation }) {
                     <div className="bg-white dark:bg-[#0d0d18] p-6 rounded-2xl shadow-sm border border-[#e5e5e5] dark:border-[#1a1a2e]">
                         <h3 className="font-bold text-[#333] dark:text-white mb-4 border-b border-[#e5e5e5] dark:border-[#1a1a2e] pb-2">Tagihan & Pembayaran</h3>
 
-                        <form onSubmit={(e) => { e.preventDefault(); paymentForm.post(`/admin/joki/orders/${order.hashid}/payments`, { onSuccess: () => paymentForm.reset() }); }}
+                        <form onSubmit={(e) => { e.preventDefault(); paymentForm.post(`/admin/joki/orders/${order.hashid}/payment`, { onSuccess: () => paymentForm.reset() }); }}
                             className="mb-5 bg-[#fafafa] dark:bg-white/[0.02] p-3 rounded-lg border border-[#e5e5e5] dark:border-[#1a1a2e]">
                             <div className="space-y-2">
                                 <input type="text" required placeholder="Nama (Cth: DP 50%)" value={paymentForm.data.payment_name} onChange={(e) => paymentForm.setData('payment_name', e.target.value)} className={inputCls} />

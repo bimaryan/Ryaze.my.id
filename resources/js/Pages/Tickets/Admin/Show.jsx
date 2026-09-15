@@ -43,7 +43,7 @@ export default function Show({ ticket }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!data.message.trim() && !data.attachment) return;
-        post(`/admin/hosting/tickets/${ticket.hashid}/replies`, {
+        post(`/admin/hosting/tickets/${ticket.hashid}/reply`, {
             onSuccess: () => {
                 reset();
                 if (textareaRef.current) textareaRef.current.style.height = 'auto';

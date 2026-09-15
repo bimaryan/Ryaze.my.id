@@ -61,7 +61,7 @@ export default function ArticleCategories({ categories }) {
                                     <td className="px-6 py-4 text-sm text-[#333] dark:text-white">{category.articles_count} artikel</td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-center gap-2">
-                                            <Link href={route('superadmin.article_categories.edit', { hashid: category.hashid })} className="p-1.5 text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 hover:bg-[#ede9fe] dark:hover:bg-[#7c3aed]/20 rounded-lg transition">
+                                            <Link href={route('superadmin.article_categories.edit', { article_category: category.hashid })} className="p-1.5 text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 hover:bg-[#ede9fe] dark:hover:bg-[#7c3aed]/20 rounded-lg transition">
                                                 <i className="fa-solid fa-pen-to-square"></i>
                                             </Link>
                                             <button onClick={() => setDeleteId(category.hashid)} className="p-1.5 text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-lg transition">

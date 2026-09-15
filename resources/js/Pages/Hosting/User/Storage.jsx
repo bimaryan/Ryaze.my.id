@@ -172,7 +172,7 @@ export default function Storage({ items, total_used, total_human, limit_bytes, l
                                             <i className={`fa-solid fa-circle text-xs mr-1 ${statusColors[project?.status] || 'text-slate-400 dark:text-slate-500'}`}></i>
                                             {project?.status}
                                         </span>
-                                        <Link href={route('user_hosting.storage.show', project?.hashid)}
+                                        <Link href={route('user_hosting.storage.show', { hashid: project?.hashid })}
                                             className="text-[#7c3aed] dark:text-[#a78bfa] hover:text-[#6d28d9] dark:hover:text-[#7c3aed] text-sm font-bold flex items-center gap-1">
                                             Detail <i className="fa-solid fa-chevron-right text-[10px]"></i>
                                         </Link>

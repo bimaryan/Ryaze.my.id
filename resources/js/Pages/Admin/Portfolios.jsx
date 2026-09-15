@@ -32,7 +32,7 @@ export default function Portfolios({ portfolios }) {
     }
 
     function toggleStatus(hashid) {
-        router.patch(route('superadmin.portfolios.status.toggle', { hashid: hashid }), {}, { preserveScroll: true });
+        router.patch(route('superadmin.portfolios.status.toggle', { portfolio: hashid }), {}, { preserveScroll: true });
     }
 
     function handleDelete() {
@@ -159,7 +159,7 @@ export default function Portfolios({ portfolios }) {
                                             <button onClick={() => toggleStatus(portfolio.hashid)} title={portfolio.is_active ? 'Jadikan Draft' : 'Aktifkan'} className={`p-1.5 rounded-lg transition ${portfolio.is_active ? 'text-emerald-500 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' : 'text-[#999] dark:text-white/40 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10'}`}>
                                                 <i className={`fa-solid ${portfolio.is_active ? 'fa-eye' : 'fa-eye-slash'}`}></i>
                                             </button>
-                                            <Link href={route('superadmin.portfolios.edit', { hashid: portfolio.hashid })} className="p-1.5 text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 hover:bg-[#ede9fe] dark:hover:bg-[#7c3aed]/20 rounded-lg transition">
+                                            <Link href={route('superadmin.portfolios.edit', { portfolio: portfolio.hashid })} className="p-1.5 text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 hover:bg-[#ede9fe] dark:hover:bg-[#7c3aed]/20 rounded-lg transition">
                                                 <i className="fa-solid fa-pen-to-square"></i>
                                             </Link>
                                             <button onClick={() => setDeleteId(portfolio.hashid)} className="p-1.5 text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-lg transition">

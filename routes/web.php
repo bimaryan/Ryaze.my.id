@@ -208,7 +208,6 @@ Route::middleware('auth')->group(function () {
             Route::get('user/hosting/template/{key}/preview', [DashboardController::class, 'previewTemplate'])->name('user_hosting.template.preview');
             Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
             Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
-            Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
             Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');
             Route::get('user/hosting/server-status', [DashboardController::class, 'getServerStatus'])->name('user_hosting.server_status');
             Route::post('user/hosting/projects/{hashid}/redeploy', [DashboardController::class, 'redeploy'])->name('user_hosting.redeploy');
@@ -246,9 +245,9 @@ Route::middleware('auth')->group(function () {
             Route::post('user/hosting/databases/{hashid}/api-key', [DatabaseController::class, 'generateApiKey'])->name('user_hosting.databases.apikey');
             Route::delete('user/hosting/databases/{hashid}', [DatabaseController::class, 'destroy'])->name('user_hosting.databases.destroy');
         // Email Management (disabled)
-        // Route::get('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'index'])->name('user_hosting.emails.index');
-        // Route::post('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'store'])->name('user_hosting.emails.store');
-        // Route::delete('user/hosting/emails/{hashid}', [\App\Http\Controllers\Hosting\User\EmailController::class, 'destroy'])->name('user_hosting.emails.destroy');
+        Route::get('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'index'])->name('user_hosting.emails.index');
+        Route::post('user/hosting/emails', [\App\Http\Controllers\Hosting\User\EmailController::class, 'store'])->name('user_hosting.emails.store');
+        Route::delete('user/hosting/emails/{hashid}', [\App\Http\Controllers\Hosting\User\EmailController::class, 'destroy'])->name('user_hosting.emails.destroy');
             Route::get('user/hosting/databases/{hashid}/export', [DatabaseController::class, 'export'])->name('user_hosting.databases.export');
             Route::post('user/hosting/databases/{hashid}/import', [DatabaseController::class, 'import'])->name('user_hosting.databases.import');
             Route::get('user/hosting/pma', [\App\Http\Controllers\Hosting\User\DatabaseController::class, 'pmaIndex'])->name('user_hosting.databases.pma');
