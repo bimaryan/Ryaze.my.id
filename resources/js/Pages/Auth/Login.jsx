@@ -47,7 +47,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
 
             <div className="min-h-screen flex items-center justify-center p-6">
                 <div className="max-w-md w-full" data-reveal>
-                    <div className="bg-[#1a1025] dark:bg-[#1a1025] px-8 py-10 text-center rounded-t-2xl">
+                    <div className="bg-[#1a1025] dark:bg-[#1a1025] px-8 py-10 text-center">
                         <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
                             <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
                                 <span className="text-white font-black text-xs">R</span>
@@ -58,7 +58,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                         <p className="text-[#a78bfa] mt-2 text-sm">Masuk untuk mengelola Joki & Hosting Anda</p>
                     </div>
 
-                    <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] rounded-b-2xl p-8">
+                    <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] p-8">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.content} />
 
@@ -70,7 +70,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                                     name="email"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
-                                    className={`w-full bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.email ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
+                                    className={`w-full bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.email ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
                                     placeholder="nama@email.com"
                                     autoComplete="email"
                                     autoFocus
@@ -90,7 +90,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                                         name="password"
                                         value={data.password}
                                         onChange={(e) => setData('password', e.target.value)}
-                                        className={`w-full pr-12 bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.password ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
+                                        className={`w-full pr-12 bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.password ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
                                         placeholder="********"
                                         autoComplete="current-password"
                                     />
@@ -124,7 +124,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                                     id="remember"
                                     checked={data.remember}
                                     onChange={(e) => setData('remember', e.target.checked)}
-                                    className="h-4 w-4 text-[#7c3aed] focus:ring-[#7c3aed] border-[#e5e5e5] dark:border-[#2d1f42] rounded cursor-pointer"
+                                    className="h-4 w-4 text-[#7c3aed] focus:ring-[#7c3aed] border-[#e5e5e5] dark:border-[#2d1f42] cursor-pointer"
                                 />
                                 <label htmlFor="remember" className="ml-2 block text-sm text-[#666] dark:text-white/60 cursor-pointer">
                                     Ingat saya
@@ -134,7 +134,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full bg-[#1a1025] dark:bg-white dark:text-[#1a1025] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#2d1f42] dark:hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full bg-[#1a1025] dark:bg-white dark:text-[#1a1025] text-white font-semibold py-3 px-4 hover:bg-[#2d1f42] dark:hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {processing ? (
                                     <>
