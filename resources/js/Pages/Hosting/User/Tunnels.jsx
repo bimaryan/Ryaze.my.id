@@ -197,7 +197,7 @@ export default function Tunnels({ tunnels }) {
                                 <span className="bg-[#7c3aed] text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
                                 <div>
                                     <p className="font-bold text-[#333] dark:text-white mb-1">Download Client</p>
-                                    <a href={route('user_hosting.tunnels.client', selectedTunnel.id)} target="_blank" rel="noopener noreferrer"
+                                    <a href={route('user_hosting.tunnels.client', { id: selectedTunnel.id })} target="_blank" rel="noopener noreferrer"
                                         className="inline-flex items-center gap-2 text-[#7c3aed] dark:text-[#a78bfa] hover:underline text-sm">
                                         <i className="fa-solid fa-download"></i> Download PHP Client
                                     </a>

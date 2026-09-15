@@ -103,7 +103,7 @@ export default function Backup({ backups }) {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
-                                        <a href={route('superadmin.backup.download', backup.name)} className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#f5f0ff] dark:bg-[#7c3aed]/10 text-[#7c3aed] dark:text-[#a78bfa] hover:bg-[#7c3aed] hover:text-white transition-colors" title="Download">
+                                        <a href={route('superadmin.backup.download', { name: backup.name })} className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#f5f0ff] dark:bg-[#7c3aed]/10 text-[#7c3aed] dark:text-[#a78bfa] hover:bg-[#7c3aed] hover:text-white transition-colors" title="Download">
                                             <i className="fa-solid fa-download"></i>
                                         </a>
                                         <button onClick={() => setDeleteName(backup.name)} className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-300 hover:bg-red-600 hover:text-white transition-colors" title="Hapus">

@@ -45,7 +45,7 @@ export default function Billing({ payments }) {
     function handleVerify(e) {
         e.preventDefault();
         if (!verifyModal) return;
-        router.put(route('admin_hosting.billing.verify', verifyModal.hashid), { status: verifyStatus }, {
+        router.put(route('admin_hosting.billing.verify', { hashid: verifyModal.hashid }), { status: verifyStatus }, {
             onSuccess: () => closeVerify(),
         });
     }

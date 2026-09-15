@@ -29,7 +29,7 @@ export default function Storage({ users }) {
 
     function handleEdit(e) {
         e.preventDefault();
-        put(route('admin_hosting.storage.update', editUser.hashid), {
+        put(route('admin_hosting.storage.update', { hashid: editUser.hashid }), {
             onSuccess: () => closeEdit(),
         });
     }
