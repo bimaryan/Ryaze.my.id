@@ -24,7 +24,7 @@
                         <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Email
                             Address</label>
                         <input type="email" name="email" id="email"
-                            class="py-3 transition-all duration-200 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
+                            class="py-3 transition-all duration-200 focus:bg-white {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
                             placeholder="nama@email.com" value="{{ old('email') }}" autofocus>
                     </div>
 
@@ -37,7 +37,7 @@
                         </div>
                         <div class="relative">
                             <input type="password" name="password" id="password"
-                                class="py-3 pr-10 transition-all duration-200 focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
+                                class="py-3 pr-10 transition-all duration-200 focus:bg-white {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : '' }} w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
                                 placeholder="********">
                             <button type="button" onclick="togglePassword('password', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
                                 <i class="fa-solid fa-eye"></i>
@@ -51,14 +51,14 @@
 
                     <div class="flex items-center">
                         <input type="checkbox" name="remember" id="remember"
-                            class="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 border-slate-300 dark:border-slate-600 rounded cursor-pointer">
+                            class="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 border-slate-300 dark:border-slate-600 cursor-pointer">
                         <label for="remember" class="ml-2 block text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
                             Ingat saya
                         </label>
                     </div>
 
                     <button type="submit"
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 ease-in-out transform hover:-translate-y-0.5">
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 shadow-md hover:shadow-lg transition-all duration-200 ease-in-out transform hover:-translate-y-0.5">
                         Masuk ke Dashboard
                     </button>
                 </form>

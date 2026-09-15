@@ -52,7 +52,7 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
     return (
         <div className={`${bodyClass || ''} min-h-screen flex flex-col`}>
             {withNav && (
-            <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-[#e5e5e5] dark:bg-[#7c3aed]/90 dark:border-[#2d1f42]' : ''}`}>
+            <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-[#e5e5e5] dark:bg-[#1a1025]/90 dark:border-[#2d1f42]' : ''}`}>
                 <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2.5">
                         <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
@@ -90,7 +90,7 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
                 </div>
 
                 {mobileMenuOpen && (
-                    <div className="md:hidden border-t border-[#e5e5e5] dark:border-[#2d1f42] bg-white/95 dark:bg-[#7c3aed]/95 backdrop-blur-md px-6 py-4 space-y-3 animate-slide-down">
+                    <div className="md:hidden border-t border-[#e5e5e5] dark:border-[#2d1f42] bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-md px-6 py-4 space-y-3 animate-slide-down">
                         {navLinks.map(l => (
                             <a
                                 key={l.href}
