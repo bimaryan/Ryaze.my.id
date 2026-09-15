@@ -15,12 +15,12 @@ class ApkBuilderController extends Controller
     public function index()
     {
         $builds = ApkBuild::where('user_id', Auth::id())->latest()->paginate(10);
-        return inertia('Hosting/User/ApkBuilder', ['builds' => $builds->toArray()]);
+        return view('pages.hosting.user.apk_builder.index', compact('builds'));
     }
 
     public function create()
     {
-        return inertia('Hosting/User/ApkBuilderCreate');
+        return view('pages.hosting.user.apk_builder.create');
     }
 
     public function store(Request $request)
@@ -88,7 +88,7 @@ class ApkBuilderController extends Controller
             abort(403);
         }
 
-        return inertia('Hosting/User/ApkBuilderProgress', ['build' => $build->toArray()]);
+        return view('pages.hosting.user.apk_builder.progress', compact('build'));
     }
 
     public function download(ApkBuild $build)

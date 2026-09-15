@@ -17,12 +17,12 @@ class TicketController extends Controller
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
             
-        return inertia('Tickets/User/Index', ['tickets' => $tickets->toArray()]);
+        return view('pages.tickets.user.index', compact('tickets'));
     }
 
     public function create()
     {
-        return inertia('Tickets/User/Create');
+        return view('pages.tickets.user.create');
     }
 
     public function store(Request $request)
@@ -63,7 +63,7 @@ class TicketController extends Controller
             broadcast(new \App\Events\TicketRepliesRead($ticket->hashid, $now));
         }
 
-        return inertia('Tickets/User/Show', ['ticket' => $ticket->toArray()]);
+        return view('pages.tickets.user.show', compact('ticket'));
     }
 
     public function markAsRead($hashid)

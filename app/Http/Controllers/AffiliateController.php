@@ -27,6 +27,6 @@ class AffiliateController extends Controller
         // Get commission history
         $commissions = $user->affiliateCommissions()->latest()->paginate(15);
         
-        return inertia('Hosting/User/Affiliate', compact('user', 'totalReferrals', 'totalCommission', 'commissions'));
+        return view('pages.hosting.user.affiliate_dashboard', compact('user', 'totalReferrals', 'totalCommission', 'commissions'));
     }
 }

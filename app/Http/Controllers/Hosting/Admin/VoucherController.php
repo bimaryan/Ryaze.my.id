@@ -11,12 +11,12 @@ class VoucherController extends Controller
     public function index()
     {
         $vouchers = Voucher::latest()->paginate(15);
-        return inertia('Hosting/Admin/Vouchers', ['vouchers' => $vouchers->toArray()]);
+        return view('pages.hosting.admin.vouchers.index', compact('vouchers'));
     }
 
     public function create()
     {
-        return inertia('Hosting/Admin/VoucherCreate');
+        return view('pages.hosting.admin.vouchers.create');
     }
 
     public function store(Request $request)
@@ -56,7 +56,7 @@ class VoucherController extends Controller
         if (empty($decoded)) abort(404);
         
         $voucher = Voucher::findOrFail($decoded[0]);
-        return inertia('Hosting/Admin/VoucherEdit', ['voucher' => $voucher->toArray()]);
+        return view('pages.hosting.admin.vouchers.edit', compact('voucher'));
     }
 
     public function update(Request $request, $hashid)

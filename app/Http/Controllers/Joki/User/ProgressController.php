@@ -18,6 +18,6 @@ class ProgressController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return inertia('Joki/User/Progress', ['activeOrders' => $activeOrders->toArray()]);
+        return view('pages.joki.user.progress', compact('activeOrders'));
     }
 }

@@ -18,6 +18,6 @@ class RiwayatController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get();
 
-        return inertia('Joki/User/Riwayat', ['historyOrders' => $historyOrders->toArray()]);
+        return view('pages.joki.user.riwayat', compact('historyOrders'));
     }
 }

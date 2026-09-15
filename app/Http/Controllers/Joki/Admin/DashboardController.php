@@ -87,7 +87,7 @@ class DashboardController extends Controller
         // Menambahkan relasi payments agar admin bisa mengecek status pembayaran di tabel
         $orders = JokiOrder::with(['client', 'service', 'payments'])->latest()->paginate(15);
 
-        return inertia('Joki/Admin/Orders', ['orders' => $orders->toArray()]);
+        return view('pages.joki.admin.orders', compact('orders'));
     }
 
     public function editOrder($hashid)
@@ -99,7 +99,7 @@ class DashboardController extends Controller
         $order = JokiOrder::with(['client', 'service'])->findOrFail($id);
         $consultation = \App\Models\ConsultationSession::where('user_id', $order->client_id)->latest()->first();
 
-        return inertia('Joki/Admin/EditOrder', ['order' => $order->toArray(), 'consultation' => $consultation ? $consultation->toArray() : null]);
+        return view('pages.joki.admin.edit_order', compact('order', 'consultation'));
     }
 
     public function updateOrder(Request $request, $hashid)
@@ -274,6 +274,6 @@ class DashboardController extends Controller
             
         $totalRevenue = $payments->sum('amount');
         
-        return inertia('Joki/Admin/Finance', ['payments' => $payments->toArray(), 'totalRevenue' => $totalRevenue]);
+        return view('pages.joki.admin.finance', compact('payments', 'totalRevenue'));
     }
 }

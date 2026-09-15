@@ -14,7 +14,7 @@ class ProfileController extends Controller
      */
     public function edit()
     {
-        return inertia('Profile/Edit', [
+        return view('pages.profile.edit', [
             'user' => Auth::user(),
         ]);
     }

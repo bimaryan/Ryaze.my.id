@@ -17,10 +17,7 @@ class EmailController extends Controller
         $emails = HostingEmail::where('user_id', Auth::id())->latest()->get();
         $projects = HostingProject::where('user_id', Auth::id())->get();
         
-        return inertia('Hosting/User/Emails', [
-            'emails' => $emails->toArray(),
-            'projects' => $projects->toArray(),
-        ]);
+        return view('pages.hosting.user.email.index', compact('emails', 'projects'));
     }
 
     public function store(Request $request)

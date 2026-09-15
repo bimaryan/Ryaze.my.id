@@ -18,7 +18,7 @@ class TicketController extends Controller
             ->orderBy('updated_at', 'desc')
             ->paginate(15);
             
-        return inertia('Tickets/Admin/Index', ['tickets' => $tickets->toArray()]);
+        return view('pages.tickets.admin.index', compact('tickets'));
     }
 
     public function show($hashid)
@@ -32,7 +32,7 @@ class TicketController extends Controller
             broadcast(new \App\Events\TicketRepliesRead($ticket->hashid, $now));
         }
 
-        return inertia('Tickets/Admin/Show', ['ticket' => $ticket->toArray()]);
+        return view('pages.tickets.admin.show', compact('ticket'));
     }
 
     public function markAsRead($hashid)

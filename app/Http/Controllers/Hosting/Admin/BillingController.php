@@ -14,7 +14,7 @@ class BillingController extends Controller
             ->latest()
             ->get();
             
-        return inertia('Hosting/Admin/Billing', ['payments' => $payments->toArray()]);
+        return view('pages.hosting.admin.billing.index', compact('payments'));
     }
 
     public function verifyPayment(Request $request, $hashid)

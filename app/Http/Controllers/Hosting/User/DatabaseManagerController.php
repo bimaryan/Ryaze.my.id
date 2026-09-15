@@ -42,11 +42,7 @@ class DatabaseManagerController extends Controller
             }
             $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-            return inertia('Hosting/User/DatabaseManager', [
-                'database' => $database,
-                'tables' => $tables,
-                'type' => $type,
-            ]);
+            return view('pages.hosting.user.database.manager', compact('database', 'tables', 'type'));
 
         } catch (PDOException $e) {
             return back()->with('error', 'Gagal terhubung ke database: ' . $e->getMessage());
@@ -115,17 +111,7 @@ class DatabaseManagerController extends Controller
             }
             $rows = $stmtRows->fetchAll(PDO::FETCH_ASSOC);
 
-            return inertia('Hosting/User/DatabaseManagerTable', [
-                'database' => $database,
-                'tables' => $tables,
-                'tableName' => $tableName,
-                'columns' => $columns,
-                'rows' => $rows,
-                'page' => $page,
-                'totalPages' => $totalPages,
-                'totalRows' => $totalRows,
-                'type' => $type,
-            ]);
+            return view('pages.hosting.user.database.manager_table', compact('database', 'tables', 'tableName', 'columns', 'rows', 'page', 'totalPages', 'totalRows', 'type'));
 
         } catch (PDOException $e) {
             return back()->with('error', 'Gagal mengeksekusi query: ' . $e->getMessage());

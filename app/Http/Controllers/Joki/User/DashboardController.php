@@ -57,14 +57,14 @@ class DashboardController extends Controller
             ->where('client_id', Auth::id())
             ->findOrFail($id);
 
-        return inertia('Joki/User/Detail', ['order' => $order->toArray()]);
+        return view('pages.joki.user.detail', compact('order'));
     }
 
     public function create()
     {
         $services = JokiService::where('is_active', true)->get();
 
-        return inertia('Joki/User/Create', ['services' => $services->toArray()]);
+        return view('pages.joki.user.create', compact('services'));
     }
 
     public function store(Request $request)
@@ -163,7 +163,7 @@ class DashboardController extends Controller
             $query->where('client_id', Auth::id());
         })->with('order')->orderBy('created_at', 'desc')->get();
 
-        return inertia('Joki/User/Billing', ['payments' => $payments->toArray()]);
+        return view('pages.joki.user.billing', compact('payments'));
     }
 
     public function submitReview(Request $request, $hashid)

@@ -112,7 +112,7 @@ class DashboardController extends Controller
     // Menampilkan form deploy baru
     public function create()
     {
-        return inertia('Hosting/User/Create');
+        return view('pages.hosting.user.create');
     }
 
     // Menampilkan daftar project
@@ -124,27 +124,26 @@ class DashboardController extends Controller
             })
             ->latest()->get();
 
-        return inertia('Hosting/User/Projects', ['projects' => $projects->toArray()]);
+        return view('pages.hosting.user.project', compact('projects'));
     }
 
     public function marketplace()
     {
         $templates = $this->availableTemplates;
 
-        return inertia('Hosting/User/Marketplace', ['templates' => $templates]);
+        return view('pages.hosting.user.marketplace', compact('templates'));
     }
 
     // Menampilkan halaman dokumentasi
     public function docs()
     {
-        return inertia('Hosting/User/Docs');
+        return view('pages.hosting.user.docs');
     }
 
     public function templates()
     {
-        return inertia('Hosting/User/Templates', [
-            'availableTemplates' => $this->availableTemplates,
-        ]);
+        $availableTemplates = $this->availableTemplates;
+        return view('pages.hosting.user.templates', compact('availableTemplates'));
     }
 
     public function previewTemplate($key)
@@ -387,14 +386,7 @@ class DashboardController extends Controller
                 }
             })->get();
 
-        return inertia('Hosting/User/Show', [
-            'project' => $project,
-            'envContent' => $envContent,
-            'wafContent' => $wafContent,
-            'diskUsage' => $diskUsage,
-            'visitorsCount' => $visitorsCount,
-            'projectEmails' => $projectEmails->toArray(),
-        ]);
+        return view('pages.hosting.user.show', compact('project', 'envContent', 'wafContent', 'diskUsage', 'visitorsCount', 'projectEmails'));
     }
 
     public function createStaging($hashid)
@@ -2281,7 +2273,7 @@ PHP;
 
     public function subscription()
     {
-        return inertia('Hosting/User/Subscription');
+        return view('pages.hosting.user.subscription');
     }
 
     public function billingHistory()
@@ -2292,7 +2284,7 @@ PHP;
             ->latest()
             ->paginate(15);
 
-        return inertia('Hosting/User/Billing', ['billings' => $billings->toArray()]);
+        return view('pages.hosting.user.billing', compact('billings'));
     }
 
     public function subscribe(Request $request)

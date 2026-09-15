@@ -124,23 +124,12 @@ class FinanceController extends Controller
                 ->sum('amount');
         }
 
-        return inertia('Admin/Finance', [
-            'transactions' => $transactions->toArray(),
-            'totalRevenue' => $totalRevenue,
-            'totalCount' => $totalCount,
-            'jokiRevenue' => $jokiRevenue,
-            'jokiCount' => $jokiCount,
-            'hostingRevenue' => $hostingRevenue,
-            'hostingCount' => $hostingCount,
-            'methods' => $methods->toArray(),
-            'availableMethods' => $availableMethods->toArray(),
-            'chartMonths' => $chartMonths,
-            'chartJoki' => $chartJoki,
-            'chartHosting' => $chartHosting,
-            'start' => $start->toDateTimeString(),
-            'end' => $end->toDateTimeString(),
-            'service' => $service,
-            'method' => $method,
-        ]);
+        return view('pages.admin.finance', compact(
+            'transactions', 'totalRevenue', 'totalCount',
+            'jokiRevenue', 'jokiCount', 'hostingRevenue', 'hostingCount',
+            'methods', 'availableMethods',
+            'chartMonths', 'chartJoki', 'chartHosting',
+            'start', 'end', 'service', 'method'
+        ));
     }
 }

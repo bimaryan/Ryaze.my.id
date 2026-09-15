@@ -79,14 +79,13 @@ class StorageController extends Controller
             'query' => request()->query()
         ]);
 
-        return inertia('Hosting/User/Storage', [
-            'items' => $paginator,
-            'total_used' => $totalUsed,
-            'total_human' => $this->formatBytes($totalUsed),
-            'limit_bytes' => $totalLimit,
-            'limit_human' => $totalLimit === -1 ? 'Unlimited' : $this->formatBytes($totalLimit),
-            'percent' => $totalLimit > 0 ? min(100, round(($totalUsed / $totalLimit) * 100, 1)) : 0,
-        ]);
+        $items = $paginator;
+        $total_used = $totalUsed;
+        $total_human = $this->formatBytes($totalUsed);
+        $limit_bytes = $totalLimit;
+        $limit_human = $totalLimit === -1 ? 'Unlimited' : $this->formatBytes($totalLimit);
+        $percent = $totalLimit > 0 ? min(100, round(($totalUsed / $totalLimit) * 100, 1)) : 0;
+        return view('pages.hosting.user.storage', compact('items', 'total_used', 'total_human', 'limit_bytes', 'limit_human', 'percent'));
     }
 
     /**
@@ -130,16 +129,13 @@ class StorageController extends Controller
             usort($breakdown, fn ($a, $b) => $b['size'] <=> $a['size']);
         }
 
-        return inertia('Hosting/User/StorageDetail', [
-            'project' => $project,
-            'used_bytes' => $totalUsed,
-            'used_human' => $this->formatBytes($totalUsed),
-            'limit_bytes' => $limit,
-            'limit_human' => $limit === -1 ? 'Unlimited' : $this->formatBytes($limit),
-            'percent' => $limit > 0 ? min(100, round(($totalUsed / $limit) * 100, 1)) : 0,
-            'breakdown' => $breakdown,
-            'project_dir' => '/' . $subdomain,
-        ]);
+        $used_bytes = $totalUsed;
+        $used_human = $this->formatBytes($totalUsed);
+        $limit_bytes = $limit;
+        $limit_human = $limit === -1 ? 'Unlimited' : $this->formatBytes($limit);
+        $percent = $limit > 0 ? min(100, round(($totalUsed / $limit) * 100, 1)) : 0;
+        $project_dir = '/' . $subdomain;
+        return view('pages.hosting.user.storage_detail', compact('project', 'used_bytes', 'used_human', 'limit_bytes', 'limit_human', 'percent', 'breakdown', 'project_dir'));
     }
 
     /**
