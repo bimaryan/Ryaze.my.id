@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useForm, Head } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 
 export default function Login({ errors, siteName, turnstileSiteKey }) {
     const [showPassword, setShowPassword] = useState(false);
+    const turnstileRef = useRef(null);
     const [turnstileToken, setTurnstileToken] = useState('');
 
     const { data, setData, post, processing } = useForm({
@@ -13,14 +14,15 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
         'cf-turnstile-response': '',
     });
 
+    useEffect(() => {
+        window.onTurnstileSuccess = (token) => setTurnstileToken(token);
+        return () => { delete window.onTurnstileSuccess; };
+    }, []);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setData('cf-turnstile-response', turnstileToken);
         post(route('login.process'));
-    };
-
-    const onTurnstileSuccess = (token) => {
-        setTurnstileToken(token);
     };
 
     useEffect(() => {
@@ -107,9 +109,10 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
 
                             <div className="flex justify-center">
                                 <div
+                                    ref={turnstileRef}
                                     className="cf-turnstile"
                                     data-sitekey={turnstileSiteKey || ''}
-                                    data-callback={onTurnstileSuccess}
+                                    data-callback="onTurnstileSuccess"
                                     data-theme="auto"
                                 ></div>
                             </div>

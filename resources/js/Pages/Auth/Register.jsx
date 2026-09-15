@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useForm, Head } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 
 export default function Register({ errors, siteName, turnstileSiteKey }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const turnstileRef = useRef(null);
     const [turnstileToken, setTurnstileToken] = useState('');
 
     const { data, setData, post, processing } = useForm({
@@ -24,9 +25,10 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
         post(route('register.process'));
     };
 
-    const onTurnstileSuccess = (token) => {
-        setTurnstileToken(token);
-    };
+    useEffect(() => {
+        window.onTurnstileSuccess = (token) => setTurnstileToken(token);
+        return () => { delete window.onTurnstileSuccess; };
+    }, []);
 
     useEffect(() => {
         const els = document.querySelectorAll('[data-reveal]');
@@ -192,7 +194,7 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                                 <div
                                     className="cf-turnstile"
                                     data-sitekey={turnstileSiteKey || ''}
-                                    data-callback={onTurnstileSuccess}
+                                    data-callback="onTurnstileSuccess"
                                     data-theme="auto"
                                 ></div>
                             </div>

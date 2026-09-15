@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useForm, Head } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 
@@ -21,9 +21,10 @@ export default function ResetPassword({ errors, siteName, token, email, turnstil
         post(route('password.update'));
     };
 
-    const onTurnstileSuccess = (token) => {
-        setTurnstileToken(token);
-    };
+    useEffect(() => {
+        window.onTurnstileSuccess = (token) => setTurnstileToken(token);
+        return () => { delete window.onTurnstileSuccess; };
+    }, []);
 
     useEffect(() => {
         const els = document.querySelectorAll('[data-reveal]');
@@ -124,7 +125,7 @@ export default function ResetPassword({ errors, siteName, token, email, turnstil
                                 <div
                                     className="cf-turnstile"
                                     data-sitekey={turnstileSiteKey || ''}
-                                    data-callback={onTurnstileSuccess}
+                                    data-callback="onTurnstileSuccess"
                                     data-theme="auto"
                                 ></div>
                             </div>
