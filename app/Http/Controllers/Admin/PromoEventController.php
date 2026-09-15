@@ -23,7 +23,7 @@ class PromoEventController extends Controller
 
         $promos = $query->latest()->paginate(10)->withQueryString();
         
-        return view('pages.admin.promo_events.index', compact('promos'));
+        return inertia('Admin/PromoEvents', ['promos' => $promos->toArray()]);
     }
 
     public function toggleStatus($hashid)
@@ -35,7 +35,7 @@ class PromoEventController extends Controller
 
     public function create()
     {
-        return view('pages.admin.promo_events.create');
+        return inertia('Admin/PromoEventCreate');
     }
 
     public function store(Request $request)
@@ -64,7 +64,7 @@ class PromoEventController extends Controller
     public function edit($hashid)
     {
         $promo_event = PromoEvent::findByHashidOrFail($hashid);
-        return view('pages.admin.promo_events.edit', compact('promo_event'));
+        return inertia('Admin/PromoEventEdit', ['promo_event' => $promo_event->toArray()]);
     }
 
     public function update(Request $request, $hashid)

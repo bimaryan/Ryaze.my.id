@@ -34,7 +34,7 @@ class BlogController extends Controller
             $q->published();
         }])->get()->reject(fn ($c) => $c->articles_count < 1)->sortBy('name')->values();
 
-        return view('pages.blog.index', compact('articles', 'categories', 'featured'));
+        return inertia('Blog/Index', ['articles' => $articles->toArray(), 'categories' => $categories->toArray(), 'featured' => $featured?->toArray()]);
     }
 
     public function show($slug)
@@ -71,7 +71,7 @@ class BlogController extends Controller
             $related = $related->merge($remaining);
         }
 
-        return view('pages.blog.show', compact('article', 'related'));
+        return inertia('Blog/Show', ['article' => $article->toArray(), 'related' => $related->toArray()]);
     }
 
     public function category($slug)
@@ -88,9 +88,9 @@ class BlogController extends Controller
             $q->published();
         }])->get()->reject(fn ($c) => $c->articles_count < 1)->sortBy('name')->values();
 
-        return view('pages.blog.index', [
-            'articles' => $articles,
-            'categories' => $categories,
+        return inertia('Blog/Index', [
+            'articles' => $articles->toArray(),
+            'categories' => $categories->toArray(),
             'featured' => null,
             'currentCategory' => $category,
         ]);

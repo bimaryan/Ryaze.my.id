@@ -12,7 +12,7 @@ class ServiceController extends Controller
     public function index()
     {
         $services = JokiService::latest()->get();
-        return view('pages.joki.admin.services.index', compact('services'));
+        return inertia('Joki/Admin/Services', ['services' => $services->toArray()]);
     }
 
     public function store(Request $request)

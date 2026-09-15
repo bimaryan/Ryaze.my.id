@@ -17,7 +17,7 @@ class SettingController extends Controller
         $settings = Setting::all()->pluck('value', 'key')->toArray();
         $articleCategories = ArticleCategory::orderBy('name')->get();
 
-        return view('pages.admin.settings.index', compact('settings', 'articleCategories'));
+        return inertia('Admin/Settings', ['settings' => $settings, 'articleCategories' => $articleCategories->toArray()]);
     }
 
     public function update(Request $request)

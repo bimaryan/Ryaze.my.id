@@ -112,7 +112,7 @@ class DashboardController extends Controller
     // Menampilkan form deploy baru
     public function create()
     {
-        return view('pages.hosting.user.create');
+        return inertia('Hosting/User/Create');
     }
 
     // Menampilkan daftar project
@@ -124,25 +124,25 @@ class DashboardController extends Controller
             })
             ->latest()->get();
 
-        return view('pages.hosting.user.project', compact('projects'));
+        return inertia('Hosting/User/Projects', ['projects' => $projects->toArray()]);
     }
 
     public function marketplace()
     {
         $templates = $this->availableTemplates;
 
-        return view('pages.hosting.user.marketplace', compact('templates'));
+        return inertia('Hosting/User/Marketplace', ['templates' => $templates]);
     }
 
     // Menampilkan halaman dokumentasi
     public function docs()
     {
-        return view('pages.hosting.user.docs');
+        return inertia('Hosting/User/Docs');
     }
 
     public function templates()
     {
-        return view('pages.hosting.user.templates', [
+        return inertia('Hosting/User/Templates', [
             'availableTemplates' => $this->availableTemplates,
         ]);
     }
@@ -387,7 +387,14 @@ class DashboardController extends Controller
                 }
             })->get();
 
-        return view('pages.hosting.user.show', compact('project', 'envContent', 'wafContent', 'diskUsage', 'visitorsCount', 'projectEmails'));
+        return inertia('Hosting/User/Show', [
+            'project' => $project,
+            'envContent' => $envContent,
+            'wafContent' => $wafContent,
+            'diskUsage' => $diskUsage,
+            'visitorsCount' => $visitorsCount,
+            'projectEmails' => $projectEmails->toArray(),
+        ]);
     }
 
     public function createStaging($hashid)
@@ -2274,7 +2281,7 @@ PHP;
 
     public function subscription()
     {
-        return view('pages.hosting.user.subscription');
+        return inertia('Hosting/User/Subscription');
     }
 
     public function billingHistory()
@@ -2285,7 +2292,7 @@ PHP;
             ->latest()
             ->paginate(15);
 
-        return view('pages.hosting.user.billing', compact('billings'));
+        return inertia('Hosting/User/Billing', ['billings' => $billings->toArray()]);
     }
 
     public function subscribe(Request $request)

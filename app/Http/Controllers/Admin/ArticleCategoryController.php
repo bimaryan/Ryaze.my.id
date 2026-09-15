@@ -19,12 +19,12 @@ class ArticleCategoryController extends Controller
         }
 
         $categories = $query->paginate(15)->withQueryString();
-        return view('pages.admin.article-categories.index', compact('categories'));
+        return inertia('Admin/ArticleCategories', ['categories' => $categories->toArray()]);
     }
 
     public function create()
     {
-        return view('pages.admin.article-categories.create');
+        return inertia('Admin/ArticleCategoryCreate');
     }
 
     public function store(Request $request)
@@ -50,7 +50,7 @@ class ArticleCategoryController extends Controller
         if (empty($decoded)) abort(404);
         
         $category = ArticleCategory::findOrFail($decoded[0]);
-        return view('pages.admin.article-categories.edit', compact('category'));
+        return inertia('Admin/ArticleCategoryEdit', ['category' => $category->toArray()]);
     }
 
     public function update(Request $request, $hashid)

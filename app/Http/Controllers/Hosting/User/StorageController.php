@@ -79,7 +79,7 @@ class StorageController extends Controller
             'query' => request()->query()
         ]);
 
-        return view('pages.hosting.user.storage', [
+        return inertia('Hosting/User/Storage', [
             'items' => $paginator,
             'total_used' => $totalUsed,
             'total_human' => $this->formatBytes($totalUsed),
@@ -130,7 +130,7 @@ class StorageController extends Controller
             usort($breakdown, fn ($a, $b) => $b['size'] <=> $a['size']);
         }
 
-        return view('pages.hosting.user.storage_detail', [
+        return inertia('Hosting/User/StorageDetail', [
             'project' => $project,
             'used_bytes' => $totalUsed,
             'used_human' => $this->formatBytes($totalUsed),

@@ -79,7 +79,7 @@ class DashboardController extends Controller
             ->latest()
             ->paginate(15);
 
-        return view('pages.hosting.admin.pending', compact('projects'));
+        return inertia('Hosting/Admin/Pending', ['projects' => $projects->toArray()]);
     }
 
     // 3. Halaman Deploy Terbaru
@@ -89,7 +89,7 @@ class DashboardController extends Controller
             ->latest()
             ->paginate(20);
 
-        return view('pages.hosting.admin.deployments', compact('deployments'));
+        return inertia('Hosting/Admin/Deployments', ['deployments' => $deployments->toArray()]);
     }
 
     // 4. Halaman Semua Project
@@ -99,7 +99,7 @@ class DashboardController extends Controller
             ->latest()
             ->paginate(15);
 
-        return view('pages.hosting.admin.projects', compact('projects'));
+        return inertia('Hosting/Admin/Projects', ['projects' => $projects->toArray()]);
     }
 
     public function databases()
@@ -135,7 +135,7 @@ class DashboardController extends Controller
 
         $users = User::select('id', 'name', 'email')->orderBy('name')->get();
 
-        return view('pages.hosting.admin.databases', compact('usersWithDatabases', 'users'));
+        return inertia('Hosting/Admin/Databases', ['usersWithDatabases' => $usersWithDatabases->toArray(), 'users' => $users->toArray()]);
     }
 
     // 6. Halaman Storage (Penyimpanan Akun)
@@ -147,7 +147,7 @@ class DashboardController extends Controller
             ->orderBy('hosting_storage_limit_mb', 'desc')
             ->paginate(15);
 
-        return view('pages.hosting.admin.storage', compact('users'));
+        return inertia('Hosting/Admin/Storage', ['users' => $users->toArray()]);
     }
 
     public function updateStorage(Request $request, $hashid)
