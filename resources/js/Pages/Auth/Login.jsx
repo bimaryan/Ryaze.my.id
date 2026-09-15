@@ -134,7 +134,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full bg-[#7c3aed] dark:bg-white dark:text-[#7c3aed] text-white font-semibold py-3 px-4 hover:bg-[#6d28d9] dark:hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full bg-[#7c3aed] text-white font-semibold py-3 px-4 hover:bg-[#6d28d9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {processing ? (
                                     <>
