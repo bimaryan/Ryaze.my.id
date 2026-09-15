@@ -9,7 +9,7 @@ export default function ArticleCategories({ categories }) {
 
     function handleDelete() {
         if (!deleteId) return;
-        router.delete(route('superadmin.article_categories.destroy', deleteId), {
+        router.delete(route('superadmin.article_categories.destroy', { article_category: deleteId }), {
             onSuccess: () => setDeleteId(null),
         });
     }

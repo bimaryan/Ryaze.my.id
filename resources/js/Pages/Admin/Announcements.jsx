@@ -65,12 +65,12 @@ export default function Announcements({ announcements }) {
     }
 
     function toggleStatus(hashid) {
-        router.patch(route('superadmin.announcements.status', hashid), {}, { preserveScroll: true });
+        router.patch(route('superadmin.announcements.status', { hashid: hashid }), {}, { preserveScroll: true });
     }
 
     function handleDelete() {
         if (!deleteId) return;
-        router.delete(route('superadmin.announcements.destroy', deleteId), {
+        router.delete(route('superadmin.announcements.destroy', { announcement: deleteId }), {
             onSuccess: () => setDeleteId(null),
         });
     }

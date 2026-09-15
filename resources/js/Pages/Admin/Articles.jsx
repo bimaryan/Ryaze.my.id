@@ -68,16 +68,16 @@ export default function Articles({ articles, categories }) {
     }
 
     function toggleFeatured(hashid) {
-        router.patch(route('superadmin.articles.featured', hashid), {}, { preserveScroll: true });
+        router.patch(route('superadmin.articles.featured', { hashid: hashid }), {}, { preserveScroll: true });
     }
 
     function toggleStatus(hashid) {
-        router.patch(route('superadmin.articles.status', hashid), {}, { preserveScroll: true });
+        router.patch(route('superadmin.articles.status', { hashid: hashid }), {}, { preserveScroll: true });
     }
 
     function handleDelete() {
         if (!deleteId) return;
-        router.delete(route('superadmin.articles.destroy', deleteId), {
+        router.delete(route('superadmin.articles.destroy', { article: deleteId }), {
             onSuccess: () => setDeleteId(null),
         });
     }

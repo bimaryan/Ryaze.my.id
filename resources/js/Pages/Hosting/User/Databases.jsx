@@ -108,10 +108,10 @@ export default function Databases({ databases, nosqlDatabases, pgsqlDatabases })
 
     function handleDelete(id, type) {
         const url = type === 'redis'
-            ? route('user_hosting.databases.nosql.destroy', id)
+            ? route('user_hosting.databases.nosql.destroy', { hashid: id })
             : type === 'pgsql'
-                ? route('user_hosting.databases.pgsql.destroy', id)
-                : route('user_hosting.databases.destroy', id);
+                ? route('user_hosting.databases.pgsql.destroy', { hashid: id })
+                : route('user_hosting.databases.destroy', { hashid: id });
         Swal.fire({
             title: 'Hapus Database?',
             text: 'Tindakan ini tidak dapat dibatalkan.',
@@ -130,7 +130,7 @@ export default function Databases({ databases, nosqlDatabases, pgsqlDatabases })
         const formData = new FormData();
         formData.append('sql_file', importData.sql_file);
         formData.append('drop_tables', importData.drop_tables ? '1' : '0');
-        postImport(route('user_hosting.databases.import', importDbId), {
+        postImport(route('user_hosting.databases.import', { hashid: importDbId }), {
             forceFormData: true,
             onSuccess: () => { setShowImportModal(false); setImportDbId(null); setImportData({ sql_file: null, drop_tables: false }); },
         });
@@ -145,7 +145,7 @@ export default function Databases({ databases, nosqlDatabases, pgsqlDatabases })
             confirmButtonColor: '#7c3aed',
             confirmButtonText: 'Ya, Regenerate!',
         }).then((result) => {
-            if (result.isConfirmed) router.post(route('user_hosting.databases.apikey', hashid));
+            if (result.isConfirmed) router.post(route('user_hosting.databases.apikey', { hashid: hashid }));
         });
     }
 

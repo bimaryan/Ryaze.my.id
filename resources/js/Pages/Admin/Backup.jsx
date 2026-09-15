@@ -25,7 +25,7 @@ export default function Backup({ backups }) {
     function handleDelete() {
         if (!deleteName) return;
         if (confirm('Hapus Backup? Yakin ingin menghapus file backup ini?')) {
-            router.delete(route('superadmin.backup.destroy', deleteName), {
+            router.delete(route('superadmin.backup.destroy', { filename: deleteName }), {
                 onSuccess: () => setDeleteName(null),
             });
         }

@@ -32,12 +32,12 @@ export default function Portfolios({ portfolios }) {
     }
 
     function toggleStatus(hashid) {
-        router.patch(route('superadmin.portfolios.status.toggle', hashid), {}, { preserveScroll: true });
+        router.patch(route('superadmin.portfolios.status.toggle', { hashid: hashid }), {}, { preserveScroll: true });
     }
 
     function handleDelete() {
         if (!deleteId) return;
-        router.delete(route('superadmin.portfolios.destroy', deleteId), {
+        router.delete(route('superadmin.portfolios.destroy', { portfolio: deleteId }), {
             onSuccess: () => setDeleteId(null),
         });
     }

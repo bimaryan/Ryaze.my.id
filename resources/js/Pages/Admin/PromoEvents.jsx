@@ -32,12 +32,12 @@ export default function PromoEvents({ promos }) {
     }
 
     function toggleStatus(hashid) {
-        router.patch(route('admin.promo_events.status', hashid), {}, { preserveScroll: true });
+        router.patch(route('admin.promo_events.status', { hashid: hashid }), {}, { preserveScroll: true });
     }
 
     function handleDelete() {
         if (!deleteId) return;
-        router.delete(route('admin.promo_events.destroy', deleteId), {
+        router.delete(route('admin.promo_events.destroy', { promo_event: deleteId }), {
             onSuccess: () => setDeleteId(null),
         });
     }

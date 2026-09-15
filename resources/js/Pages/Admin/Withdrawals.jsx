@@ -25,13 +25,13 @@ function formatDate(dateStr) {
 export default function Withdrawals({ withdrawals }) {
     function handleApprove(id) {
         if (confirm('Tandai selesai? Pastikan dana sudah ditransfer.')) {
-            router.patch(route('superadmin.withdrawals.update', id), { status: 'completed' }, { preserveScroll: true });
+            router.patch(route('superadmin.withdrawals.update', { id: id }), { status: 'completed' }, { preserveScroll: true });
         }
     }
 
     function handleReject(id) {
         if (confirm('Tolak penarikan dan kembalikan saldo ke user?')) {
-            router.patch(route('superadmin.withdrawals.update', id), { status: 'rejected' }, { preserveScroll: true });
+            router.patch(route('superadmin.withdrawals.update', { id: id }), { status: 'rejected' }, { preserveScroll: true });
         }
     }
 
