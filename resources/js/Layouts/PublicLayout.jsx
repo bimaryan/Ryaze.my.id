@@ -134,24 +134,24 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
                         <div>
                             <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Layanan</h4>
                             <ul className="space-y-2.5 text-[13px] text-[#999]">
-                                <li><a href="/#services" className="hover:text-white transition-colors">Web Development</a></li>
-                                <li><a href="/#pricing" className="hover:text-white transition-colors">Hosting</a></li>
-                                <li><a href="/consultation" className="hover:text-white transition-colors">Konsultasi</a></li>
+                                <li><a href="/#services" className="dark:text-white transition-colors">Web Development</a></li>
+                                <li><a href="/#pricing" className="dark:text-white transition-colors">Hosting</a></li>
+                                <li><a href="/consultation" className="dark:text-white transition-colors">Konsultasi</a></li>
                             </ul>
                         </div>
                         <div>
                             <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Perusahaan</h4>
                             <ul className="space-y-2.5 text-[13px] text-[#999]">
-                                <li><a href="/#about" className="hover:text-white transition-colors">Tentang</a></li>
-                                <li><a href="/blog" className="hover:text-white transition-colors">Blog</a></li>
-                                <li><a href="/#faq" className="hover:text-white transition-colors">FAQ</a></li>
+                                <li><a href="/#about" className="dark:text-white transition-colors">Tentang</a></li>
+                                <li><a href="/blog" className="dark:text-white transition-colors">Blog</a></li>
+                                <li><a href="/#faq" className="dark:text-white transition-colors">FAQ</a></li>
                             </ul>
                         </div>
                         <div>
                             <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Legal</h4>
                             <ul className="space-y-2.5 text-[13px] text-[#999]">
-                                <li><a href="/privacy" className="hover:text-white transition-colors">Privasi</a></li>
-                                <li><a href="/terms" className="hover:text-white transition-colors">Syarat</a></li>
+                                <li><a href="/privacy" className="dark:text-white transition-colors">Privasi</a></li>
+                                <li><a href="/terms" className="dark:text-white transition-colors">Syarat</a></li>
                             </ul>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
                         <p className="text-xs text-[#999]">&copy; {new Date().getFullYear()} Ryaze.</p>
                         <div className="flex items-center gap-5 text-[#999]">
                             {['fa-brands fa-github', 'fa-brands fa-instagram', 'fa-brands fa-linkedin-in'].map(icon => (
-                                <a key={icon} href="#" className="hover:text-white transition-colors"><i className={`${icon} text-sm`}></i></a>
+                                <a key={icon} href="#" className="dark:text-white transition-colors"><i className={`${icon} text-sm`}></i></a>
                             ))}
                         </div>
                     </div>
