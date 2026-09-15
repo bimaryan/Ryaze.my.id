@@ -9,7 +9,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { route as ziggyRoute } from 'ziggy-js';
 import { Ziggy } from './ziggy';
 
-window.route = (name, params, absolute) => ziggyRoute(name, params, absolute, Ziggy);
+window.route = (name, params, absolute = false) => ziggyRoute(name, params, absolute, Ziggy);
 
 createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useForm, Head } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 
@@ -19,6 +19,15 @@ export default function ForgotPassword({ errors, siteName, status, turnstileSite
     const onTurnstileSuccess = (token) => {
         setTurnstileToken(token);
     };
+
+    useEffect(() => {
+        const els = document.querySelectorAll('[data-reveal]');
+        if (!('IntersectionObserver' in window)) { els.forEach(el => el.style.opacity = '1'); return; }
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); } });
+        }, { threshold: 0.1 });
+        els.forEach(el => io.observe(el));
+    }, []);
 
     return (
         <PublicLayout title="Lupa Password" withNav={false} withFooter={false} bodyClass="bg-[#fafafa] dark:bg-[#0a0a14] font-sans antialiased">
@@ -110,25 +119,6 @@ export default function ForgotPassword({ errors, siteName, status, turnstileSite
                     </div>
                 </div>
             </div>
-
-            {status && (
-                <script>
-                    {`document.addEventListener('DOMContentLoaded', () => {
-                        if (window.hotToast) { hotToast('${status}', 'success'); }
-                    });`}
-                </script>
-            )}
-
-            <script>
-                {`document.addEventListener('DOMContentLoaded', () => {
-                    const els = document.querySelectorAll('[data-reveal]');
-                    if (!('IntersectionObserver' in window)) { els.forEach(el => el.style.opacity = '1'); return; }
-                    const io = new IntersectionObserver(entries => {
-                        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); } });
-                    }, { threshold: 0.1 });
-                    els.forEach(el => io.observe(el));
-                });`}
-            </script>
         </PublicLayout>
     );
 }

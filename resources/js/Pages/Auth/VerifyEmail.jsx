@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useForm, Head } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 
@@ -7,6 +8,15 @@ export default function VerifyEmail({ siteName, success, message, turnstileSiteK
     const handleResend = () => {
         post(route('verification.send'));
     };
+
+    useEffect(() => {
+        const els = document.querySelectorAll('[data-reveal]');
+        if (!('IntersectionObserver' in window)) { els.forEach(el => el.style.opacity = '1'); return; }
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); } });
+        }, { threshold: 0.1 });
+        els.forEach(el => io.observe(el));
+    }, []);
 
     return (
         <PublicLayout title="Verifikasi Email" withNav={false} withFooter={false} bodyClass="bg-[#fafafa] dark:bg-[#0a0a14] font-sans antialiased">
@@ -105,25 +115,6 @@ export default function VerifyEmail({ siteName, success, message, turnstileSiteK
                     </div>
                 </div>
             </div>
-
-            {(success || message) && (
-                <script>
-                    {`document.addEventListener('DOMContentLoaded', () => {
-                        if (window.hotToast) { hotToast('${success || message}', 'success'); }
-                    });`}
-                </script>
-            )}
-
-            <script>
-                {`document.addEventListener('DOMContentLoaded', () => {
-                    const els = document.querySelectorAll('[data-reveal]');
-                    if (!('IntersectionObserver' in window)) { els.forEach(el => el.style.opacity = '1'); return; }
-                    const io = new IntersectionObserver(entries => {
-                        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); } });
-                    }, { threshold: 0.1 });
-                    els.forEach(el => io.observe(el));
-                });`}
-            </script>
         </PublicLayout>
     );
 }
