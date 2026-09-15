@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class AuthController extends Controller
 {
@@ -21,7 +22,9 @@ class AuthController extends Controller
     // Menampilkan halaman login
     public function loginindex(Request $request)
     {
-        return view('pages.auth.login');
+        return Inertia::render('Auth/Login', [
+            'siteName' => \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal',
+        ]);
     }
 
     // Menampilkan halaman register
@@ -32,7 +35,9 @@ class AuthController extends Controller
             return redirect()->route('login')->with('error', 'Pendaftaran akun baru ditutup sementara.');
         }
 
-        return view('pages.auth.register');
+        return Inertia::render('Auth/Register', [
+            'siteName' => \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal',
+        ]);
     }
 
     // Memproses data login

@@ -31,6 +31,7 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'csrf' => fn () => csrf_token(),
+            'turnstileSiteKey' => config('services.turnstile.site_key'),
         ];
     }
 }

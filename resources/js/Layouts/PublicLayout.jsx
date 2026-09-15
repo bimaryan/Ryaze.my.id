@@ -34,6 +34,7 @@ export default function PublicLayout({ children }) {
     const user = auth?.user;
     const [scrolled, setScrolled] = useState(false);
     const [dark, setDark] = useState(getInitialDark);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         applyDark(dark);
@@ -45,6 +46,8 @@ export default function PublicLayout({ children }) {
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
+
+    const closeMobileMenu = () => setMobileMenuOpen(false);
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -75,8 +78,42 @@ export default function PublicLayout({ children }) {
                                 <a href="/register" className="px-4 py-1.5 bg-[#1a1025] dark:bg-white dark:text-[#1a1025] text-white text-[13px] font-semibold hover:bg-[#2d1f42] dark:hover:bg-slate-200 transition-colors">Daftar</a>
                             </>
                         )}
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="md:hidden w-9 h-9 flex items-center justify-center text-[#666] dark:text-[#999] hover:text-[#1a1025] dark:hover:text-white transition-colors"
+                            aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
+                        >
+                            <i className={`fa-solid ${mobileMenuOpen ? 'fa-xmark' : 'fa-bars'} text-lg`}></i>
+                        </button>
                     </div>
                 </div>
+
+                {mobileMenuOpen && (
+                    <div className="md:hidden border-t border-[#e5e5e5] dark:border-[#2d1f42] bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-md px-6 py-4 space-y-3 animate-slide-down">
+                        {navLinks.map(l => (
+                            <a
+                                key={l.href}
+                                href={l.href}
+                                onClick={closeMobileMenu}
+                                className="block text-[15px] font-medium text-[#666] dark:text-[#999] hover:text-[#1a1025] dark:hover:text-white transition-colors py-2"
+                            >
+                                {l.label}
+                            </a>
+                        ))}
+                        <div className="pt-2 border-t border-[#e5e5e5] dark:border-[#2d1f42] flex flex-col gap-2">
+                            {!user && (
+                                <a href="/login" onClick={closeMobileMenu} className="text-[15px] font-medium text-[#666] dark:text-[#999] hover:text-[#1a1025] dark:hover:text-white transition-colors py-2">Masuk</a>
+                            )}
+                            <a
+                                href={user ? (dashboardUrl[user.role] || dashboardUrl.default) : '/register'}
+                                onClick={closeMobileMenu}
+                                className="px-4 py-2.5 bg-[#1a1025] dark:bg-white dark:text-[#1a1025] text-white text-[15px] font-semibold hover:bg-[#2d1f42] dark:hover:bg-slate-200 transition-colors text-center"
+                            >
+                                {user ? 'Dashboard' : 'Daftar'}
+                            </a>
+                        </div>
+                    </div>
+                )}
             </nav>
 
             <div className="dark:hidden">{/* light mode body class */}</div>
@@ -84,7 +121,7 @@ export default function PublicLayout({ children }) {
 
             <footer className="bg-[#1a1025] border-t border-[#2d1f42]">
                 <div className="max-w-6xl mx-auto px-6 py-12">
-                    <div className="grid md:grid-cols-4 gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
                         <div>
                             <div className="flex items-center gap-2 mb-4">
                                 <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center"><span className="text-white font-black text-xs">R</span></div>
@@ -126,6 +163,14 @@ export default function PublicLayout({ children }) {
                     </div>
                 </div>
             </footer>
+
+            <style>{`
+                @keyframes slide-down {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-slide-down { animation: slide-down 0.2s ease-out; }
+            `}</style>
         </div>
     );
 }

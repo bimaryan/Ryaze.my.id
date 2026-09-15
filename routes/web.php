@@ -18,6 +18,7 @@ use App\Http\Controllers\Joki\User\ProgressController;
 use App\Http\Controllers\Joki\User\RiwayatController;
 use App\Http\Controllers\Blog\BlogController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/consultation', 'pages.consultation.index')->name('consultation');
@@ -53,7 +54,9 @@ Route::middleware('auth')->group(function () {
 
     // ── EMAIL VERIFICATION ─────────────────────────────────────────
     Route::get('/email/verify', function () {
-        return view('pages.auth.verify-email');
+        return Inertia::render('Auth/VerifyEmail', [
+            'siteName' => \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal',
+        ]);
     })->name('verification.notice');
 
     Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {

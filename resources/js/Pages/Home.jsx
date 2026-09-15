@@ -87,17 +87,17 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                         <p className="text-[#666] dark:text-white/70 text-lg max-w-xl mb-10 leading-relaxed">
                             Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL.
                         </p>
-                        <div className="flex flex-wrap gap-3">
-                            <a href="#pricing" className="px-7 py-3 bg-[#1a1025] dark:bg-white dark:text-[#1a1025] text-white text-sm font-semibold hover:bg-[#2d1f42] dark:hover:bg-slate-200 transition-colors">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <a href="#pricing" className="px-7 py-3 bg-[#1a1025] dark:bg-white dark:text-[#1a1025] text-white text-sm font-semibold hover:bg-[#2d1f42] dark:hover:bg-slate-200 transition-colors text-center">
                                 Lihat Paket
                             </a>
-                            <a href="#services" className="px-7 py-3 border border-[#ddd] dark:border-[#333] text-[#1a1025] dark:text-white/60 text-sm font-semibold hover:border-[#7c3aed] hover:text-[#7c3aed] transition-colors">
+                            <a href="#services" className="px-7 py-3 border border-[#ddd] dark:border-[#333] text-[#1a1025] dark:text-white/60 text-sm font-semibold hover:border-[#7c3aed] hover:text-[#7c3aed] transition-colors text-center">
                                 Pelajari Lebih Lanjut
                             </a>
                         </div>
                     </div>
 
-                    <div className="mt-20 grid grid-cols-3 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e]" data-reveal>
+                    <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e]" data-reveal>
                         {[
                             { n: '99.9%', l: 'Uptime Server' },
                             { n: '100+', l: 'Project Selesai' },
@@ -110,9 +110,9 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                         ))}
                     </div>
 
-                    <div className="mt-16 flex items-center gap-8" data-reveal>
-                        <span className="text-[10px] font-bold text-[#bbb] dark:text-white/40 uppercase tracking-[0.2em]">Tech Stack</span>
-                        <div className="flex gap-6 text-[#ccc] dark:text-white/50">
+                    <div className="mt-16 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8" data-reveal>
+                        <span className="text-[10px] font-bold text-[#bbb] dark:text-white/40 uppercase tracking-[0.2em] shrink-0">Tech Stack</span>
+                        <div className="flex flex-wrap gap-4 sm:gap-6 text-[#ccc] dark:text-white/50">
                             {['fa-brands fa-laravel', 'fa-brands fa-react', 'fa-brands fa-node-js', 'fa-brands fa-python', 'fa-brands fa-vuejs', 'fa-brands fa-docker'].map(icon => (
                                 <i key={icon} className={`${icon} text-2xl hover:text-[#7c3aed] transition-colors cursor-default`}></i>
                             ))}
@@ -124,7 +124,7 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
             {/* ═══ ABOUT ═══ */}
             <section id="about" className="bg-white dark:bg-[#0d0d18] border-y border-[#e5e5e5] dark:border-[#1a1a2e]">
                 <div className="max-w-6xl mx-auto px-6 py-24 lg:py-32">
-                    <div className="grid lg:grid-cols-12 gap-16 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
                         <div className="lg:col-span-5" data-reveal>
                             <span className="text-[11px] font-bold text-[#7c3aed] uppercase tracking-[0.2em] mb-4 block">Tentang</span>
                             <h2 className="text-4xl font-black text-[#1a1025] dark:text-white tracking-tight leading-[1.1] mb-6">
@@ -170,7 +170,7 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                                         </div>
                                     ))}
                                 </div>
-                                <div className="border-t border-[#e5e5e5] dark:border-[#1a1a2e] px-8 py-4 flex items-center gap-6 text-xs text-[#999] dark:text-white/50">
+                                <div className="border-t border-[#e5e5e5] dark:border-[#1a1a2e] px-8 py-4 flex flex-wrap items-center gap-4 text-xs text-[#999] dark:text-white/50">
                                     <span><i className="fa-solid fa-shield-halved mr-1.5 text-[#7c3aed]"></i> SSL Otomatis</span>
                                     <span><i className="fa-solid fa-database mr-1.5 text-[#7c3aed]"></i> MySQL Bawaan</span>
                                     <span><i className="fa-solid fa-terminal mr-1.5 text-[#7c3aed]"></i> Web Terminal</span>
@@ -189,7 +189,7 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                         <h2 className="text-4xl font-black text-[#1a1025] dark:text-white tracking-tight">Infrastruktur & Layanan.</h2>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e]" data-reveal>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e]" data-reveal>
                         <div className="bg-white dark:bg-[#0d0d18] p-8 lg:p-10 flex flex-col">
                             <div className="w-10 h-10 bg-[#1a1025] dark:bg-white dark:text-[#1a1025] flex items-center justify-center mb-8">
                                 <i className="fa-solid fa-code text-white dark:text-[#1a1025] text-sm"></i>
@@ -256,7 +256,7 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                         <p className="text-[#666] dark:text-white/70 text-[15px]">Transparan. Tanpa biaya tersembunyi.</p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e] mb-16" data-reveal>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e] mb-16" data-reveal>
                         {activePlans.map(([slug, plan]) => {
                             const p = planPricing[slug];
                             const pop = slug === 'pro';
@@ -317,7 +317,7 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                         </a>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e]" data-reveal>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e]" data-reveal>
                         {articles.length > 0 ? articles.map(a => (
                             <a key={a.id} href={a.url} className="bg-white dark:bg-[#0d0d18] group">
                                 {a.cover_image ? (
@@ -370,9 +370,9 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
             </section>
 
             {/* ═══ CHATBOT ═══ */}
-            <div className="fixed bottom-6 right-6 z-50">
+            <div className="fixed bottom-4 right-4 left-4 z-50 sm:bottom-6 sm:right-6 sm:left-auto">
                 {chatOpen && (
-                    <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] shadow-2xl w-80 h-96 mb-4 flex flex-col overflow-hidden">
+                    <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] shadow-2xl w-full max-w-sm sm:w-80 h-96 sm:h-96 mb-4 flex flex-col overflow-hidden">
                         <div className="bg-[#1a1025] px-4 py-3 flex justify-between items-center">
                             <div className="flex items-center gap-2">
                                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
