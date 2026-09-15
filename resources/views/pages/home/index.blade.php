@@ -183,6 +183,8 @@
                 </x-slot>
             </x-ui.promo-banner>
 
+            <x-ui.announcement-banner class="mb-10 max-w-4xl mx-auto" />
+
             <h1 class="text-5xl md:text-7xl font-bold tracking-tighter text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-b dark:from-white dark:to-slate-400 leading-tight mb-6">
                 Bangun Produk Digital Anda <br class="hidden md:block" />
                 Lebih Cepat & Kuat.

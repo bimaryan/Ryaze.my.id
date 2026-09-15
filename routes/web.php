@@ -133,6 +133,10 @@ Route::middleware('auth')->group(function () {
         // Promo Events
         Route::patch('superadmin/promo-events/{promo_event}/status', [\App\Http\Controllers\Admin\PromoEventController::class, 'toggleStatus'])->name('admin.promo_events.status');
         Route::resource('superadmin/promo-events', \App\Http\Controllers\Admin\PromoEventController::class)->names('admin.promo_events');
+
+        // Informasi / Pengumuman
+        Route::patch('superadmin/announcements/{hashid}/status', [\App\Http\Controllers\Admin\AnnouncementController::class, 'toggleStatus'])->name('superadmin.announcements.status');
+        Route::resource('superadmin/announcements', \App\Http\Controllers\Admin\AnnouncementController::class)->names('superadmin.announcements');
     });
 
     // ═══════════════════════════════════════════════════════════════

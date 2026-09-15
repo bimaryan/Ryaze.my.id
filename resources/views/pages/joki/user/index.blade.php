@@ -14,6 +14,11 @@
             </x-slot:actions>
         </x-ui.page-header>
 
+        {{-- Announcement Banner --}}
+        <div class="mt-6 max-w-4xl mx-auto">
+            <x-ui.announcement-banner />
+        </div>
+
         <div class="mt-6">
         </div>
     </x-ui.page-layout>

@@ -18,6 +18,11 @@
         {{-- Promo Event Banner --}}
         <x-ui.promo-banner class="mt-6 max-w-4xl mx-auto shadow-sm" />
 
+        {{-- Announcement Banner --}}
+        <div class="mt-6 max-w-4xl mx-auto">
+            <x-ui.announcement-banner />
+        </div>
+
         {{-- ⚠️ EXPIRED HOSTING BANNER --}}
         @if($expiredBilling)
         <div class="mt-6 rounded-2xl border border-red-200 dark:border-red-500/40 bg-red-50 dark:bg-red-500/10 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
