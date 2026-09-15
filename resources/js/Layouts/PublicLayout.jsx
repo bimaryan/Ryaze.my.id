@@ -121,46 +121,22 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
             {children}
 
             {withFooter && (
-            <footer className="bg-[#7c3aed] border-t border-[#6d28d9]">
-                <div className="max-w-6xl mx-auto px-6 py-12">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center"><span className="text-white font-black text-xs">R</span></div>
-                                <span className="font-black text-white text-sm tracking-tight">RYAZE</span>
+            <footer className="border-t border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14]">
+                <div className="max-w-6xl mx-auto px-6 py-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-6 h-6 bg-[#7c3aed] flex items-center justify-center">
+                                <span className="text-white font-black text-[10px]">R</span>
                             </div>
-                            <p className="text-[13px] text-[#999] leading-relaxed">Platform hosting & development untuk bisnis Anda.</p>
+                            <span className="font-black text-[#7c3aed] dark:text-white text-sm tracking-tight">RYAZE</span>
+                            <span className="text-[11px] text-[#999] dark:text-white/40 hidden sm:inline">&copy; {new Date().getFullYear()}</span>
                         </div>
-                        <div>
-                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Layanan</h4>
-                            <ul className="space-y-2.5 text-[13px] text-[#999]">
-                                <li><a href="/#services" className="dark:text-white transition-colors">Web Development</a></li>
-                                <li><a href="/#pricing" className="dark:text-white transition-colors">Hosting</a></li>
-                                <li><a href="/consultation" className="dark:text-white transition-colors">Konsultasi</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Perusahaan</h4>
-                            <ul className="space-y-2.5 text-[13px] text-[#999]">
-                                <li><a href="/#about" className="dark:text-white transition-colors">Tentang</a></li>
-                                <li><a href="/blog" className="dark:text-white transition-colors">Blog</a></li>
-                                <li><a href="/#faq" className="dark:text-white transition-colors">FAQ</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Legal</h4>
-                            <ul className="space-y-2.5 text-[13px] text-[#999]">
-                                <li><a href="/privacy" className="dark:text-white transition-colors">Privasi</a></li>
-                                <li><a href="/terms" className="dark:text-white transition-colors">Syarat</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="mt-10 pt-8 border-t border-[#6d28d9] flex flex-col md:flex-row items-center justify-between gap-4">
-                        <p className="text-xs text-[#999]">&copy; {new Date().getFullYear()} Ryaze.</p>
-                        <div className="flex items-center gap-5 text-[#999]">
-                            {['fa-brands fa-github', 'fa-brands fa-instagram', 'fa-brands fa-linkedin-in'].map(icon => (
-                                <a key={icon} href="#" className="dark:text-white transition-colors"><i className={`${icon} text-sm`}></i></a>
-                            ))}
+                        <div className="flex items-center gap-6 text-[13px] text-[#999] dark:text-white/50">
+                            <a href="/#about" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Tentang</a>
+                            <a href="/#services" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Layanan</a>
+                            <a href="/blog" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Blog</a>
+                            <a href="/privacy" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Privasi</a>
+                            <a href="/terms" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Syarat</a>
                         </div>
                     </div>
                 </div>

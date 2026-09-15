@@ -368,7 +368,7 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
             </section>
 
             {/* CHATBOT */}
-            <div className="fixed bottom-4 right-4 left-4 z-50 sm:bottom-6 sm:right-6 sm:left-auto">
+            {/* <div className="fixed bottom-4 right-4 left-4 z-50 sm:bottom-6 sm:right-6 sm:left-auto">
                 {chatOpen && (
                     <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] shadow-2xl w-full max-w-sm sm:w-80 h-96 sm:h-96 mb-4 flex flex-col overflow-hidden">
                         <div className="bg-[#7c3aed] px-4 py-3 flex justify-between items-center">
@@ -414,7 +414,7 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                     <i className={`fa-solid ${chatOpen ? 'fa-xmark' : 'fa-message'} text-xl`}></i>
                     {!chatOpen && <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-rose-500 border-2 border-white dark:border-[#7c3aed] rounded-full"></span>}
                 </button>
-            </div>
+            </div> */}
         </PublicLayout>
     );
 }
