@@ -109,12 +109,12 @@ class AuthController extends Controller
             ]);
 
             return match (Auth::user()->role) {
-                'superadmin' => redirect()->intended('/superadmin/dashboard'),
-                'admin_joki' => redirect()->intended('/admin/joki/dashboard'),
-                'admin_hosting' => redirect()->intended('/admin/hosting/dashboard'),
-                'user_joki' => redirect()->intended('/user/joki/dashboard'),
-                'user_hosting' => redirect()->intended('/user/hosting/dashboard'),
-                default => redirect()->intended('/dashboard'),
+                'superadmin' => Inertia::location('/superadmin/dashboard'),
+                'admin_joki' => Inertia::location('/admin/joki/dashboard'),
+                'admin_hosting' => Inertia::location('/admin/hosting/dashboard'),
+                'user_joki' => Inertia::location('/user/joki/dashboard'),
+                'user_hosting' => Inertia::location('/user/hosting/dashboard'),
+                default => Inertia::location('/dashboard'),
             };
         }
 
@@ -216,9 +216,9 @@ class AuthController extends Controller
 
         // 4. Redirect sesuai role yang dipilih saat daftar
         if ($user->role === 'user_joki') {
-            return redirect()->intended('/user/joki/dashboard');
+            return Inertia::location('/user/joki/dashboard');
         } else {
-            return redirect()->intended('/user/hosting/dashboard');
+            return Inertia::location('/user/hosting/dashboard');
         }
     }
 
