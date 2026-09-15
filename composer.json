@@ -18,6 +18,7 @@
         "midtrans/midtrans-php": "^2.6",
         "nativephp/desktop": "*",
         "predis/predis": "^3.3",
+        "tightenco/ziggy": "*",
         "vinkla/hashids": "^14.0"
     },
     "require-dev": {
