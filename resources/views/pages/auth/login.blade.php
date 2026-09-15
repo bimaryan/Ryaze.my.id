@@ -9,7 +9,7 @@
     @endpush
 
     <div class="min-h-screen flex items-center justify-center p-6">
-        <div class="max-w-md w-full bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+        <div class="max-w-md w-full bg-white dark:bg-slate-800/60 shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
 
             <div class="bg-indigo-600 px-8 py-10 text-center">
                 <h1 class="text-3xl font-bold text-white tracking-tight">{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}</h1>
