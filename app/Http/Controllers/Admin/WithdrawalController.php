@@ -12,7 +12,7 @@ class WithdrawalController extends Controller
     public function index()
     {
         $withdrawals = WalletWithdrawal::with('user')->latest()->paginate(20);
-        return view('pages.admin.withdrawals.index', compact('withdrawals'));
+        return inertia('Admin/Withdrawals', ['withdrawals' => $withdrawals]);
     }
 
     public function updateStatus(Request $request, $id)

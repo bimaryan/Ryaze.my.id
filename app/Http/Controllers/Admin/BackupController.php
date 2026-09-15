@@ -38,7 +38,7 @@ class BackupController extends Controller
             return strtotime($b['date']) - strtotime($a['date']);
         });
 
-        return view('pages.admin.backup.index', compact('backups'));
+        return inertia('Admin/Backup', ['backups' => $backups]);
     }
 
     /**

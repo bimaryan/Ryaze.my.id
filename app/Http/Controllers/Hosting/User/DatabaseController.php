@@ -17,7 +17,7 @@ class DatabaseController extends Controller
         $nosqlDatabases = \App\Models\HostingNosqlDatabase::where('user_id', Auth::id())->latest()->get();
         $pgsqlDatabases = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->latest()->get();
         
-        return view('pages.hosting.user.database.index', compact('databases', 'nosqlDatabases', 'pgsqlDatabases'));
+        return inertia('Hosting/User/Databases', ['databases' => $databases, 'nosqlDatabases' => $nosqlDatabases, 'pgsqlDatabases' => $pgsqlDatabases]);
     }
 
     public function storeNosql(Request $request)
@@ -87,7 +87,7 @@ class DatabaseController extends Controller
     {
         $databases = HostingDatabase::where('user_id', Auth::id())->latest()->get();
         $pgsqlDatabases = \App\Models\HostingPgsqlDatabase::where('user_id', Auth::id())->latest()->get();
-        return view('pages.hosting.user.database.pma', compact('databases', 'pgsqlDatabases'));
+        return inertia('Hosting/User/DatabasePma', ['databases' => $databases, 'pgsqlDatabases' => $pgsqlDatabases]);
     }
 
     public function store(Request $request)

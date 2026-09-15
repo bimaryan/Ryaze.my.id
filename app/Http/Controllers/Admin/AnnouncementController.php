@@ -26,12 +26,12 @@ class AnnouncementController extends Controller
 
         $announcements = $query->latest()->paginate(10)->withQueryString();
 
-        return view('pages.admin.announcements.index', compact('announcements'));
+        return inertia('Admin/Announcements', ['announcements' => $announcements]);
     }
 
     public function create()
     {
-        return view('pages.admin.announcements.create');
+        return inertia('Admin/AnnouncementCreate');
     }
 
     public function store(Request $request)
@@ -58,7 +58,7 @@ class AnnouncementController extends Controller
     {
         $announcement = Announcement::findByHashidOrFail($hashid);
 
-        return view('pages.admin.announcements.edit', compact('announcement'));
+        return inertia('Admin/AnnouncementEdit', ['announcement' => $announcement]);
     }
 
     public function update(Request $request, $hashid)

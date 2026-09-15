@@ -20,12 +20,12 @@ class PortfolioController extends Controller
         }
 
         $portfolios = $query->paginate(10)->withQueryString();
-        return view('pages.admin.portfolios.index', compact('portfolios'));
+        return inertia('Admin/Portfolios', ['portfolios' => $portfolios]);
     }
 
     public function create()
     {
-        return view('pages.admin.portfolios.create');
+        return inertia('Admin/PortfolioCreate');
     }
 
     public function store(Request $request)
@@ -73,7 +73,7 @@ class PortfolioController extends Controller
         if (empty($decoded)) abort(404);
         
         $portfolio = Portfolio::findOrFail($decoded[0]);
-        return view('pages.admin.portfolios.edit', compact('portfolio'));
+        return inertia('Admin/PortfolioEdit', ['portfolio' => $portfolio]);
     }
 
     public function update(Request $request, $hashid)

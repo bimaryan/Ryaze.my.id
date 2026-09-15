@@ -39,13 +39,13 @@ class ArticleController extends Controller
         $articles = $query->paginate(15)->withQueryString();
         $categories = ArticleCategory::orderBy('name')->get();
 
-        return view('pages.admin.articles.index', compact('articles', 'categories'));
+        return inertia('Admin/Articles', ['articles' => $articles, 'categories' => $categories]);
     }
 
     public function create()
     {
         $categories = ArticleCategory::orderBy('name')->get();
-        return view('pages.admin.articles.create', compact('categories'));
+        return inertia('Admin/ArticleCreate', ['categories' => $categories]);
     }
 
     public function store(Request $request)
@@ -128,7 +128,7 @@ class ArticleController extends Controller
         $article = Article::findOrFail($decoded[0]);
         $categories = ArticleCategory::orderBy('name')->get();
 
-        return view('pages.admin.articles.edit', compact('article', 'categories'));
+        return inertia('Admin/ArticleEdit', ['article' => $article, 'categories' => $categories]);
     }
 
     public function update(Request $request, $hashid)

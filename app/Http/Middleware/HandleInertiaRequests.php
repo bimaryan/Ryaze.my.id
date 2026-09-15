@@ -28,6 +28,7 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
                     'role' => $request->user()->role,
+                    'has_hosting_subscription' => $request->user()->hasActiveHostingSubscription(),
                 ] : null,
             ],
             'csrf' => fn () => csrf_token(),

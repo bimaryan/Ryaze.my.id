@@ -15,7 +15,7 @@ class WalletController extends Controller
         
         $transactions = $wallet->transactions()->latest()->paginate(15);
         
-        return view('pages.hosting.user.wallet_history', compact('wallet', 'transactions'));
+        return inertia('Wallet/History', ['wallet' => $wallet, 'transactions' => $transactions]);
     }
 
     public function topUp(Request $request)
@@ -48,7 +48,7 @@ class WalletController extends Controller
         $user = Auth::user();
         $wallet = $user->wallet()->firstOrCreate(['user_id' => $user->id], ['balance' => 0]);
         
-        return view('pages.hosting.user.wallet_withdraw', compact('wallet'));
+        return inertia('Wallet/Withdraw', ['wallet' => $wallet]);
     }
 
     public function withdrawProcess(Request $request)

@@ -85,7 +85,14 @@ class StorageController extends Controller
         $limit_bytes = $totalLimit;
         $limit_human = $totalLimit === -1 ? 'Unlimited' : $this->formatBytes($totalLimit);
         $percent = $totalLimit > 0 ? min(100, round(($totalUsed / $totalLimit) * 100, 1)) : 0;
-        return view('pages.hosting.user.storage', compact('items', 'total_used', 'total_human', 'limit_bytes', 'limit_human', 'percent'));
+        return inertia('Hosting/User/Storage', [
+            'items' => $paginator,
+            'total_used' => $totalUsed,
+            'total_human' => $this->formatBytes($totalUsed),
+            'limit_bytes' => $totalLimit,
+            'limit_human' => $totalLimit === -1 ? 'Unlimited' : $this->formatBytes($totalLimit),
+            'percent' => $totalLimit > 0 ? min(100, round(($totalUsed / $totalLimit) * 100, 1)) : 0,
+        ]);
     }
 
     /**
@@ -135,7 +142,16 @@ class StorageController extends Controller
         $limit_human = $limit === -1 ? 'Unlimited' : $this->formatBytes($limit);
         $percent = $limit > 0 ? min(100, round(($totalUsed / $limit) * 100, 1)) : 0;
         $project_dir = '/' . $subdomain;
-        return view('pages.hosting.user.storage_detail', compact('project', 'used_bytes', 'used_human', 'limit_bytes', 'limit_human', 'percent', 'breakdown', 'project_dir'));
+        return inertia('Hosting/User/StorageDetail', [
+            'project' => $project,
+            'used_bytes' => $used_bytes,
+            'used_human' => $used_human,
+            'limit_bytes' => $limit_bytes,
+            'limit_human' => $limit_human,
+            'percent' => $percent,
+            'breakdown' => $breakdown,
+            'project_dir' => $project_dir,
+        ]);
     }
 
     /**

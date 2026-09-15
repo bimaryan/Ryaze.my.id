@@ -33,7 +33,7 @@ class UserController extends Controller
 
         $users = $query->paginate(10)->withQueryString();
 
-        return view('pages.admin.users.index', compact('users'));
+        return inertia('Admin/Users', ['users' => $users]);
     }
 
     // Fungsi untuk tombol "Ikon Mata" (Detail Profil)
@@ -51,7 +51,7 @@ class UserController extends Controller
         $jokiOrders = JokiOrder::where('client_id', $id)->latest()->get();
         $hostingProjects = \App\Models\HostingProject::where('user_id', $id)->latest()->get();
 
-        return view('pages.admin.users.show', compact('user', 'jokiOrders', 'hostingProjects'));
+        return inertia('Admin/UserShow', ['user' => $user, 'jokiOrders' => $jokiOrders, 'hostingProjects' => $hostingProjects]);
     }
 
     public function updateRole(\Illuminate\Http\Request $request, $hashid)

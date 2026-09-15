@@ -13,7 +13,7 @@ class TunnelManagerController extends Controller
     public function index()
     {
         $tunnels = Tunnel::where('user_id', Auth::id())->latest()->get();
-        return view('pages.hosting.user.tunnel.index', compact('tunnels'));
+        return inertia('Hosting/User/Tunnels', ['tunnels' => $tunnels]);
     }
 
     public function store(Request $request)
