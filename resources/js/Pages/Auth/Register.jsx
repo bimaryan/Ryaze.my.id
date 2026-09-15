@@ -52,32 +52,32 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
 
             <div className="min-h-screen flex items-center justify-center p-6">
                 <div className="max-w-md w-full" data-reveal>
-                    <div className="bg-[#1a1025] dark:bg-[#1a1025] px-8 py-10 text-center rounded-t-2xl">
+                    <div className="bg-[#7c3aed] dark:bg-[#1a1025] px-8 py-10 text-center">
                         <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
-                            <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
-                                <span className="text-white font-black text-xs">R</span>
+                            <div className="w-7 h-7 bg-white flex items-center justify-center">
+                                <span className="text-[#7c3aed] font-black text-xs">R</span>
                             </div>
                             <span className="font-black text-white text-sm tracking-tight">RYAZE</span>
                         </Link>
                         <h1 className="text-3xl font-black text-white tracking-tight">Buat Akun</h1>
-                        <p className="text-[#a78bfa] mt-2 text-sm">Daftar untuk mulai pesan Joki atau Hosting</p>
+                        <p className="text-white/80 mt-2 text-sm">Daftar untuk mulai pesan Joki atau Hosting</p>
                     </div>
 
-                    <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] rounded-b-2xl p-8">
+                    <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] p-8">
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.content} />
                             {data.ref && <input type="hidden" name="ref" value={data.ref} />}
                             {data.consultation_token && <input type="hidden" name="consultation_token" value={data.consultation_token} />}
 
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-[#1a1025] dark:text-white mb-2">Nama Lengkap</label>
+                                <label htmlFor="name" className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Nama Lengkap</label>
                                 <input
                                     type="text"
                                     id="name"
                                     name="name"
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
-                                    className={`w-full bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.name ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
+                                    className={`w-full bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.name ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
                                     placeholder="John Doe"
                                     autoFocus
                                 />
@@ -85,14 +85,14 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                             </div>
 
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-[#1a1025] dark:text-white mb-2">Email Address</label>
+                                <label htmlFor="email" className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Email Address</label>
                                 <input
                                     type="email"
                                     id="email"
                                     name="email"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
-                                    className={`w-full bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.email ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
+                                    className={`w-full bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.email ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
                                     placeholder="nama@email.com"
                                     autoComplete="email"
                                 />
@@ -100,7 +100,7 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                             </div>
 
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-[#1a1025] dark:text-white mb-2">Password</label>
+                                <label htmlFor="password" className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Password</label>
                                 <div className="relative">
                                     <input
                                         type={showPassword ? 'text' : 'password'}
@@ -108,14 +108,14 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                                         name="password"
                                         value={data.password}
                                         onChange={(e) => setData('password', e.target.value)}
-                                        className={`w-full pr-12 bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.password ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
+                                        className={`w-full pr-12 bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.password ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
                                         placeholder="Min. 8 karakter"
                                         autoComplete="new-password"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#999] dark:text-white/50 hover:text-[#1a1025] dark:hover:text-white transition-colors"
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#999] dark:text-white/50 hover:text-[#7c3aed] dark:hover:text-white transition-colors"
                                     >
                                         <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
                                     </button>
@@ -131,7 +131,7 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                             </div>
 
                             <div>
-                                <label htmlFor="password_confirmation" className="block text-sm font-medium text-[#1a1025] dark:text-white mb-2">Konfirmasi Password</label>
+                                <label htmlFor="password_confirmation" className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Konfirmasi Password</label>
                                 <div className="relative">
                                     <input
                                         type={showConfirmPassword ? 'text' : 'password'}
@@ -139,14 +139,14 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                                         name="password_confirmation"
                                         value={data.password_confirmation}
                                         onChange={(e) => setData('password_confirmation', e.target.value)}
-                                        className={`w-full pr-12 bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.password_confirmation ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
+                                        className={`w-full pr-12 bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.password_confirmation ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
                                         placeholder="Ulangi password"
                                         autoComplete="new-password"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#999] dark:text-white/50 hover:text-[#1a1025] dark:hover:text-white transition-colors"
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#999] dark:text-white/50 hover:text-[#7c3aed] dark:hover:text-white transition-colors"
                                     >
                                         <i className={`fa-solid ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
                                     </button>
@@ -155,10 +155,10 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-[#1a1025] dark:text-white mb-2">Pilih Layanan Utama</label>
+                                <label className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Pilih Layanan Utama</label>
                                 <div className="grid grid-cols-2 gap-4">
                                     <label
-                                        className={`relative flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#f5f0ff] dark:has-[:checked]:bg-[#7c3aed]/10 has-[:checked]:ring-1 has-[:checked]:ring-[#7c3aed] ${errors.role ? 'border-red-500 ring-1 ring-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14] hover:bg-[#fafafa] dark:hover:bg-[#1a1a2e]'}`}
+                                        className={`relative flex items-center justify-center p-3 border cursor-pointer transition-colors has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#f5f0ff] dark:has-[:checked]:bg-[#7c3aed]/10 has-[:checked]:ring-1 has-[:checked]:ring-[#7c3aed] ${errors.role ? 'border-red-500 ring-1 ring-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14] hover:bg-[#fafafa] dark:hover:bg-[#1a1a2e]'}`}
                                     >
                                         <input
                                             type="radio"
@@ -172,7 +172,7 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                                     </label>
 
                                     <label
-                                        className={`relative flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#f5f0ff] dark:has-[:checked]:bg-[#7c3aed]/10 has-[:checked]:ring-1 has-[:checked]:ring-[#7c3aed] ${errors.role ? 'border-red-500 ring-1 ring-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14] hover:bg-[#fafafa] dark:hover:bg-[#1a1a2e]'}`}
+                                        className={`relative flex items-center justify-center p-3 border cursor-pointer transition-colors has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#f5f0ff] dark:has-[:checked]:bg-[#7c3aed]/10 has-[:checked]:ring-1 has-[:checked]:ring-[#7c3aed] ${errors.role ? 'border-red-500 ring-1 ring-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14] hover:bg-[#fafafa] dark:hover:bg-[#1a1a2e]'}`}
                                     >
                                         <input
                                             type="radio"
@@ -192,6 +192,7 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
 
                             <div className="flex justify-center">
                                 <div
+                                    ref={turnstileRef}
                                     className="cf-turnstile"
                                     data-sitekey={turnstileSiteKey || ''}
                                     data-callback="onTurnstileSuccess"
@@ -202,7 +203,7 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full bg-[#7c3aed] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#6d28d9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                                className="w-full bg-[#7c3aed] text-white font-semibold py-3 px-4 hover:bg-[#6d28d9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
                             >
                                 {processing ? (
                                     <>
