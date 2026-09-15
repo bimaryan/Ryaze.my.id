@@ -14,12 +14,12 @@ const sidebarNav = {
             { label: 'Penarikan', icon: 'fa-solid fa-money-bill-transfer', route: 'superadmin.withdrawals*', href: '/superadmin/withdrawals' },
             { label: 'Keuangan', icon: 'fa-solid fa-chart-pie', route: 'superadmin.finance', href: '/superadmin/finance' },
         ]},
-        { section: 'Joki', items: [
+        { section: 'Manajemen Joki', items: [
             { label: 'Pesanan Joki', icon: 'fa-solid fa-code-branch', route: 'admin_joki.orders*', href: '/admin/joki/orders' },
             { label: 'Layanan', icon: 'fa-solid fa-list', route: 'admin_joki.services*', href: '/admin/joki/services' },
             { label: 'Keuangan Joki', icon: 'fa-solid fa-wallet', route: 'admin_joki.finance', href: '/admin/joki/finance' },
         ]},
-        { section: 'Hosting', items: [
+        { section: 'Manajemen Hosting', items: [
             { label: 'Project', icon: 'fa-solid fa-server', route: 'admin_hosting.projects', href: '/admin/hosting/projects' },
             { label: 'Deploy', icon: 'fa-solid fa-history', route: 'admin_hosting.deployments', href: '/admin/hosting/deployments' },
             { label: 'Pending', icon: 'fa-solid fa-warning', route: 'admin_hosting.pending', href: '/admin/hosting/pending' },
@@ -28,6 +28,26 @@ const sidebarNav = {
             { label: 'Tagihan', icon: 'fa-solid fa-file-invoice-dollar', route: 'admin_hosting.billing', href: '/admin/hosting/billing' },
             { label: 'Voucher', icon: 'fa-solid fa-ticket', route: 'admin_hosting.vouchers*', href: '/admin/hosting/vouchers' },
             { label: 'Tiket', icon: 'fa-solid fa-headset', route: 'admin_hosting.tickets*', href: '/admin/hosting/tickets' },
+        ]},
+        { section: 'Klien Joki', items: [
+            { label: 'Buat Pesanan', icon: 'fa-solid fa-cart-plus', route: 'user_joki.create', href: '/user/joki/create' },
+            { label: 'Progres', icon: 'fa-solid fa-laptop-code', route: 'user_joki.progress', href: '/user/joki/progress' },
+            { label: 'Riwayat', icon: 'fa-solid fa-history', route: 'user_joki.riwayat', href: '/user/joki/riwayat' },
+            { label: 'Tagihan', icon: 'fa-solid fa-file-invoice-dollar', route: 'user_joki.billing', href: '/user/joki/billing' },
+        ]},
+        { section: 'Klien Hosting', items: [
+            { label: 'Deploy', icon: 'fa-solid fa-rocket', route: 'user_hosting.create', href: '/user/hosting/create' },
+            { label: 'Marketplace', icon: 'fa-solid fa-store', route: 'user_hosting.marketplace', href: '/user/hosting/marketplace' },
+            { label: 'Proyek', icon: 'fa-solid fa-terminal', route: 'user_hosting.projects', href: '/user/hosting/projects' },
+            { label: 'Database', icon: 'fa-solid fa-database', route: 'user_hosting.databases', href: '/user/hosting/databases' },
+            { label: 'Storage', icon: 'fa-solid fa-hard-drive', route: 'user_hosting.storage*', href: '/user/hosting/storage' },
+            { label: 'Langganan', icon: 'fa-solid fa-crown', route: 'user_hosting.subscription', href: '/user/hosting/subscription' },
+            { label: 'Billing', icon: 'fa-solid fa-file-invoice-dollar', route: 'user_hosting.billing', href: '/user/hosting/billing' },
+            { label: 'Tiket', icon: 'fa-solid fa-life-ring', route: 'user_hosting.tickets*', href: '/user/hosting/tickets' },
+        ]},
+        { section: 'Pendapatan', items: [
+            { label: 'Wallet', icon: 'fa-solid fa-wallet', route: 'user.wallet*', href: '/user/wallet' },
+            { label: 'Affiliate', icon: 'fa-solid fa-users-viewfinder', route: 'user.affiliate*', href: '/user/affiliate' },
         ]},
     ],
     admin_hosting: [
@@ -42,6 +62,20 @@ const sidebarNav = {
             { label: 'Voucher', icon: 'fa-solid fa-ticket', route: 'admin_hosting.vouchers*', href: '/admin/hosting/vouchers' },
             { label: 'Tiket', icon: 'fa-solid fa-headset', route: 'admin_hosting.tickets*', href: '/admin/hosting/tickets' },
         ]},
+        { section: 'Klien Hosting', items: [
+            { label: 'Deploy', icon: 'fa-solid fa-rocket', route: 'user_hosting.create', href: '/user/hosting/create' },
+            { label: 'Marketplace', icon: 'fa-solid fa-store', route: 'user_hosting.marketplace', href: '/user/hosting/marketplace' },
+            { label: 'Proyek', icon: 'fa-solid fa-terminal', route: 'user_hosting.projects', href: '/user/hosting/projects' },
+            { label: 'Database', icon: 'fa-solid fa-database', route: 'user_hosting.databases', href: '/user/hosting/databases' },
+            { label: 'Storage', icon: 'fa-solid fa-hard-drive', route: 'user_hosting.storage*', href: '/user/hosting/storage' },
+            { label: 'Langganan', icon: 'fa-solid fa-crown', route: 'user_hosting.subscription', href: '/user/hosting/subscription' },
+            { label: 'Billing', icon: 'fa-solid fa-file-invoice-dollar', route: 'user_hosting.billing', href: '/user/hosting/billing' },
+            { label: 'Tiket', icon: 'fa-solid fa-life-ring', route: 'user_hosting.tickets*', href: '/user/hosting/tickets' },
+        ]},
+        { section: 'Pendapatan', items: [
+            { label: 'Wallet', icon: 'fa-solid fa-wallet', route: 'user.wallet*', href: '/user/wallet' },
+            { label: 'Affiliate', icon: 'fa-solid fa-users-viewfinder', route: 'user.affiliate*', href: '/user/affiliate' },
+        ]},
     ],
     admin_joki: [
         { section: 'Joki', items: [
@@ -49,6 +83,16 @@ const sidebarNav = {
             { label: 'Pesanan', icon: 'fa-solid fa-code-branch', route: 'admin_joki.orders*', href: '/admin/joki/orders' },
             { label: 'Layanan', icon: 'fa-solid fa-list', route: 'admin_joki.services*', href: '/admin/joki/services' },
             { label: 'Keuangan', icon: 'fa-solid fa-wallet', route: 'admin_joki.finance', href: '/admin/joki/finance' },
+        ]},
+        { section: 'Klien Joki', items: [
+            { label: 'Buat Pesanan', icon: 'fa-solid fa-cart-plus', route: 'user_joki.create', href: '/user/joki/create' },
+            { label: 'Progres', icon: 'fa-solid fa-laptop-code', route: 'user_joki.progress', href: '/user/joki/progress' },
+            { label: 'Riwayat', icon: 'fa-solid fa-history', route: 'user_joki.riwayat', href: '/user/joki/riwayat' },
+            { label: 'Tagihan', icon: 'fa-solid fa-file-invoice-dollar', route: 'user_joki.billing', href: '/user/joki/billing' },
+        ]},
+        { section: 'Pendapatan', items: [
+            { label: 'Wallet', icon: 'fa-solid fa-wallet', route: 'user.wallet*', href: '/user/wallet' },
+            { label: 'Affiliate', icon: 'fa-solid fa-users-viewfinder', route: 'user.affiliate*', href: '/user/affiliate' },
         ]},
     ],
     user_hosting: [
