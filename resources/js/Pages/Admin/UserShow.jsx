@@ -65,7 +65,7 @@ export default function UserShow({ user, jokiOrders, hostingProjects }) {
 
     function handleEditRole(e) {
         e.preventDefault();
-        router.put(route('superadmin.users.role.update', user.hashid), { role }, {
+        router.put(route('superadmin.users.role.update', { hashid: user.hashid }), { role }, {
             preserveState: true,
             onSuccess: () => roleModalRef.current?.close(),
         });
@@ -85,12 +85,12 @@ export default function UserShow({ user, jokiOrders, hostingProjects }) {
                 cancelButtonText: 'Batal',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    router.patch(route('superadmin.users.status.toggle', user.hashid), {}, { preserveState: true });
+                    router.patch(route('superadmin.users.status.toggle', { hashid: user.hashid }), {}, { preserveState: true });
                 }
             });
         } else {
             if (confirm(`Apakah Anda yakin ingin ${isActive ? 'menangguhkan' : 'mengaktifkan'} akun ini?`)) {
-                router.patch(route('superadmin.users.status.toggle', user.hashid), {}, { preserveState: true });
+                router.patch(route('superadmin.users.status.toggle', { hashid: user.hashid }), {}, { preserveState: true });
             }
         }
     }
@@ -108,12 +108,12 @@ export default function UserShow({ user, jokiOrders, hostingProjects }) {
                 cancelButtonText: 'Batal',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    router.delete(route('superadmin.users.destroy', user.hashid), { preserveState: true });
+                    router.delete(route('superadmin.users.destroy', { hashid: user.hashid }), { preserveState: true });
                 }
             });
         } else {
             if (confirm('Peringatan: Aksi ini akan menghapus akun user secara permanen. Lanjutkan?')) {
-                router.delete(route('superadmin.users.destroy', user.hashid), { preserveState: true });
+                router.delete(route('superadmin.users.destroy', { hashid: user.hashid }), { preserveState: true });
             }
         }
     }
@@ -298,7 +298,7 @@ export default function UserShow({ user, jokiOrders, hostingProjects }) {
                                                 <p className="text-xs text-[#999] dark:text-white/40">Order ID: {order.order_number} | Harga: {formatRp(order.price)}</p>
                                             </div>
                                             <Link
-                                                href={route('admin_joki.orders.edit', order.hashid)}
+                                                href={route('admin_joki.orders.edit', { hashid: order.hashid })}
                                                 className="inline-block text-xs border border-[#e5e5e5] dark:border-[#1a1a2e] text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 px-4 py-2 rounded-lg hover:bg-[#7c3aed] hover:text-white hover:border-[#7c3aed] transition-all duration-200 font-semibold shadow-sm"
                                             >
                                                 Kelola Proyek

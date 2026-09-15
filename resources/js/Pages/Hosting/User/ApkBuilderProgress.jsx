@@ -19,7 +19,7 @@ export default function ApkBuilderProgress({ build }) {
 
     useEffect(() => {
         function fetchLog() {
-            fetch(route('user_hosting.apk.log', build.id))
+            fetch(route('user_hosting.apk.log', { id: build.id }))
                 .then(r => r.json())
                 .then(data => {
                     setLogs(data.log || data.logs || '');
@@ -108,7 +108,7 @@ export default function ApkBuilderProgress({ build }) {
                     </div>
                     <h3 className="text-lg font-bold text-[#333] dark:text-white mb-2">Build Selesai!</h3>
                     <p className="text-[#999] dark:text-white/40 mb-6 text-sm">APK Anda siap diunduh.</p>
-                    <a href={route('user_hosting.apk.download', build.id)}
+                    <a href={route('user_hosting.apk.download', { id: build.id })}
                         className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl text-sm font-bold transition shadow-sm">
                         <i className="fa-solid fa-download"></i> Download APK
                     </a>

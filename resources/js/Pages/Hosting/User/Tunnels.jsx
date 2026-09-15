@@ -34,7 +34,7 @@ export default function Tunnels({ tunnels }) {
             confirmButtonText: 'Ya, Hapus!',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route('user_hosting.tunnels.destroy', tunnel.id));
+                router.delete(route('user_hosting.tunnels.destroy', { id: tunnel.id }));
             }
         });
     }
@@ -109,7 +109,7 @@ export default function Tunnels({ tunnels }) {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-center gap-1">
-                                                    <a href={route('user_hosting.tunnels.client', tunnel.id)} target="_blank" rel="noopener noreferrer"
+                                                    <a href={route('user_hosting.tunnels.client', { id: tunnel.id })} target="_blank" rel="noopener noreferrer"
                                                         className="w-8 h-8 rounded-lg flex items-center justify-center text-[#7c3aed] dark:text-[#a78bfa] hover:bg-[#f5f0ff] dark:hover:bg-[#7c3aed]/10 transition" title="Download Client">
                                                         <i className="fa-solid fa-download text-sm"></i>
                                                     </a>

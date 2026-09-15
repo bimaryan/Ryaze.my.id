@@ -279,7 +279,7 @@ export default function Databases({ databases, nosqlDatabases, pgsqlDatabases })
 
                                             <div className="mt-4 pt-3 border-t border-[#e5e5e5] dark:border-[#1a1a2e] space-y-2">
                                                 <div className="flex items-center gap-2 flex-wrap">
-                                                    <a href={route('user_hosting.databases.manager', db.hashid)} target="_blank" rel="noopener noreferrer"
+                                                    <a href={route('user_hosting.databases.manager', { hashid: db.hashid })} target="_blank" rel="noopener noreferrer"
                                                         className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-[#7c3aed] rounded-lg hover:bg-[#6d28d9] transition">
                                                         <i className="fa-solid fa-server"></i> Database Manager
                                                     </a>
@@ -293,7 +293,7 @@ export default function Databases({ databases, nosqlDatabases, pgsqlDatabases })
                                                     </button>
                                                 </div>
                                                 <div className="flex items-center gap-2 flex-wrap">
-                                                    <a href={route('user_hosting.databases.export', db.hashid)} target="_blank" rel="noopener noreferrer"
+                                                    <a href={route('user_hosting.databases.export', { hashid: db.hashid })} target="_blank" rel="noopener noreferrer"
                                                         className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition">
                                                         <i className="fa-solid fa-download"></i> Export .sql
                                                     </a>
@@ -451,7 +451,7 @@ export default function Databases({ databases, nosqlDatabases, pgsqlDatabases })
                                                 </div>
                                             </div>
                                             <div className="mt-3 pt-3 border-t border-[#e5e5e5] dark:border-[#1a1a2e]">
-                                                <a href={route('user_hosting.databases.manager', db.hashid)} target="_blank" rel="noopener noreferrer"
+                                                <a href={route('user_hosting.databases.manager', { hashid: db.hashid })} target="_blank" rel="noopener noreferrer"
                                                     className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-[#7c3aed] rounded-lg hover:bg-[#6d28d9] transition">
                                                     <i className="fa-solid fa-server"></i> Database Manager
                                                 </a>

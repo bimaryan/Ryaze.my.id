@@ -104,7 +104,7 @@ export default function Projects({ projects }) {
                                                 <i className={`${fwIcon} text-xl text-[#333] dark:text-white`}></i>
                                             </div>
                                             <div>
-                                                <Link href={route('user_hosting.show', project.hashid)}
+                                                <Link href={route('user_hosting.show', { hashid: project.hashid })}
                                                     className="font-bold text-[#333] dark:text-white hover:text-[#7c3aed] dark:hover:text-[#a78bfa] text-lg line-clamp-1">
                                                     {project.project_name}
                                                 </Link>
@@ -158,7 +158,7 @@ export default function Projects({ projects }) {
                                             <i className={`fa-solid ${status.icon} mr-1.5`}></i>
                                             {project.status}
                                         </span>
-                                        <Link href={route('user_hosting.show', project.hashid)}
+                                        <Link href={route('user_hosting.show', { hashid: project.hashid })}
                                             className="text-xs font-semibold text-[#666] dark:text-white/60 hover:text-[#7c3aed] dark:hover:text-[#a78bfa] transition-colors">
                                             Kelola &rarr;
                                         </Link>

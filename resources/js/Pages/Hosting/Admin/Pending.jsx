@@ -24,7 +24,7 @@ export default function Pending({ projects }) {
             cancelButtonText: 'Batal',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.patch(route('admin_hosting.activate', project.hashid));
+                router.patch(route('admin_hosting.activate', { hashid: project.hashid }));
             }
         });
     }

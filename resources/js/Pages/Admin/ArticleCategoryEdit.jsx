@@ -9,7 +9,7 @@ export default function ArticleCategoryEdit({ category }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        put(route('superadmin.article_categories.update', category.hashid));
+        put(route('superadmin.article_categories.update', { hashid: category.hashid }));
     }
 
     const inputCls = "w-full bg-[#fafafa] dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] rounded-xl px-4 py-2.5 text-sm text-[#333] dark:text-white focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] outline-none transition";

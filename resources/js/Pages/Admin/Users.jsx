@@ -159,7 +159,7 @@ export default function Users({ users }) {
                                         <td className="px-6 py-4 text-[#666] dark:text-white/60">{formatDate(user.created_at)}</td>
                                         <td className="px-6 py-4 text-center">
                                             <Link
-                                                href={route('superadmin.users.show', user.hashid)}
+                                                href={route('superadmin.users.show', { hashid: user.hashid })}
                                                 className="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-[#7c3aed] dark:text-[#a78bfa] bg-[#f5f0ff] dark:bg-[#7c3aed]/10 hover:bg-[#7c3aed] hover:text-white transition-all duration-200 shadow-sm"
                                                 title="Detail Profil"
                                             >

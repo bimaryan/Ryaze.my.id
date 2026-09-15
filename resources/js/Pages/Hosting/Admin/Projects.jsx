@@ -90,7 +90,7 @@ export default function Projects({ projects }) {
                                     <td className="px-6 py-4 text-center">
                                         <div className="flex justify-center gap-2">
                                             <Link
-                                                href={route('user_hosting.show', project.hashid)}
+                                                href={route('user_hosting.show', { hashid: project.hashid })}
                                                 className="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm"
                                                 title="Kelola"
                                             >
@@ -100,7 +100,7 @@ export default function Projects({ projects }) {
                                             {['unpaid', 'suspended', 'error'].includes(project.status) && (
                                                 <button
                                                     onClick={() => confirmAction(`Aktifkan project ${project.project_name}?`, () => {
-                                                        router.patch(route('admin_hosting.activate', project.hashid));
+                                                        router.patch(route('admin_hosting.activate', { hashid: project.hashid }));
                                                     })}
                                                     className="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-600 hover:text-white transition-all duration-200 shadow-sm"
                                                     title="Aktifkan"
@@ -112,7 +112,7 @@ export default function Projects({ projects }) {
                                             {project.status === 'active' && (
                                                 <button
                                                     onClick={() => confirmAction(`Suspend project ${project.project_name}?`, () => {
-                                                        router.patch(route('admin_hosting.suspend', project.hashid));
+                                                        router.patch(route('admin_hosting.suspend', { hashid: project.hashid }));
                                                     })}
                                                     className="w-8 h-8 rounded-lg flex items-center justify-center text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-600 hover:text-white transition-all duration-200 shadow-sm"
                                                     title="Suspend"
@@ -133,7 +133,7 @@ export default function Projects({ projects }) {
                                                     cancelButtonText: 'Batal',
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
-                                                        router.delete(route('admin_hosting.destroy', project.hashid));
+                                                        router.delete(route('admin_hosting.destroy', { hashid: project.hashid }));
                                                     }
                                                 })}
                                                 className="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm"

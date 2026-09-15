@@ -171,7 +171,7 @@ function OverviewTab({ project, displayUrl, diskUsage, visitorsCount, fwInfo, st
 
     function handleNginxSave(e) {
         e.preventDefault();
-        postNginx(route('user_hosting.nginx.update', project.hashid));
+        postNginx(route('user_hosting.nginx.update', { hashid: project.hashid }));
     }
 
     function handleNginxReset() {
@@ -185,7 +185,7 @@ function OverviewTab({ project, displayUrl, diskUsage, visitorsCount, fwInfo, st
             confirmButtonText: 'Ya, Reset!',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route('user_hosting.nginx.reset', project.hashid));
+                router.post(route('user_hosting.nginx.reset', { hashid: project.hashid }));
             }
         });
     }
@@ -200,7 +200,7 @@ function OverviewTab({ project, displayUrl, diskUsage, visitorsCount, fwInfo, st
             confirmButtonText: 'Ya, Redeploy!',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route('user_hosting.redeploy', project.hashid));
+                router.post(route('user_hosting.redeploy', { hashid: project.hashid }));
             }
         });
     }
@@ -380,7 +380,7 @@ function BuildLogsTab({ project }) {
     const intervalRef = useRef(null);
 
     const fetchLogs = useCallback(() => {
-        fetch(route('user_hosting.build_logs', project.hashid))
+        fetch(route('user_hosting.build_logs', { hashid: project.hashid }))
             .then(r => r.json())
             .then(data => {
                 setLogs(data.logs || data.message || 'No logs available.');
@@ -453,7 +453,7 @@ function TerminalTab({ project }) {
         setProcessing(true);
         setOutput(prev => prev + `\n$ ${cmd}\n`);
 
-        router.post(route('user_hosting.terminal', project.hashid), { command: cmd }, {
+        router.post(route('user_hosting.terminal', { hashid: project.hashid }), { command: cmd }, {
             preserveState: true,
             onSuccess: (page) => {
                 const result = page.props.flash?.terminalOutput || page.props.terminalOutput || '';
@@ -526,7 +526,7 @@ function FilesTab({ project }) {
 
     function fetchFiles(path = '/') {
         setLoading(true);
-        fetch(route('user_hosting.files', project.hashid) + '?path=' + encodeURIComponent(path))
+        fetch(route('user_hosting.files', { hashid: project.hashid }) + '?path=' + encodeURIComponent(path))
             .then(r => r.json())
             .then(data => {
                 setFiles(data.files || data || []);
@@ -542,7 +542,7 @@ function FilesTab({ project }) {
     useEffect(() => { fetchFiles(); }, [project.hashid]);
 
     function openFile(file) {
-        fetch(route('user_hosting.files.read', project.hashid) + '?path=' + encodeURIComponent(currentPath + '/' + file.name))
+        fetch(route('user_hosting.files.read', { hashid: project.hashid }) + '?path=' + encodeURIComponent(currentPath + '/' + file.name))
             .then(r => r.json())
             .then(data => {
                 setEditorFile(file);
@@ -553,7 +553,7 @@ function FilesTab({ project }) {
 
     function saveFile() {
         setSaving(true);
-        router.post(route('user_hosting.files.save', project.hashid), {
+        router.post(route('user_hosting.files.save', { hashid: project.hashid }), {
             path: currentPath + '/' + editorFile.name,
             content: editorContent,
         }, {
@@ -568,7 +568,7 @@ function FilesTab({ project }) {
     function createItem(e) {
         e.preventDefault();
         if (!createName.trim()) return;
-        router.post(route('user_hosting.files.create', project.hashid), {
+        router.post(route('user_hosting.files.create', { hashid: project.hashid }), {
             type: createType,
             name: createName,
             path: currentPath,
@@ -592,7 +592,7 @@ function FilesTab({ project }) {
             confirmButtonText: 'Ya, Hapus!',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route('user_hosting.files.delete', project.hashid), {
+                router.post(route('user_hosting.files.delete', { hashid: project.hashid }), {
                     path: currentPath + '/' + file.name,
                 }, {
                     preserveState: true,
@@ -608,7 +608,7 @@ function FilesTab({ project }) {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('path', currentPath);
-        router.post(route('user_hosting.files.upload', project.hashid), formData, {
+        router.post(route('user_hosting.files.upload', { hashid: project.hashid }), formData, {
             forceFormData: true,
             preserveState: true,
             onFinish: () => {
@@ -804,7 +804,7 @@ function EnvTab({ project, envContent }) {
 
     function handleSave(e) {
         e.preventDefault();
-        post(route('user_hosting.env.update', project.hashid));
+        post(route('user_hosting.env.update', { hashid: project.hashid }));
     }
 
     return (
@@ -847,7 +847,7 @@ function SettingsTab({ project }) {
 
     function handleSave(e) {
         e.preventDefault();
-        patch(route('user_hosting.settings.update', project.hashid));
+        patch(route('user_hosting.settings.update', { hashid: project.hashid }));
     }
 
     function handleRestore(e) {
@@ -864,7 +864,7 @@ function SettingsTab({ project }) {
             if (result.isConfirmed) {
                 const formData = new FormData();
                 formData.append('backup', file);
-                router.post(route('user_hosting.backup.upload', project.hashid), formData, {
+                router.post(route('user_hosting.backup.upload', { hashid: project.hashid }), formData, {
                     forceFormData: true,
                 });
             }
@@ -883,7 +883,7 @@ function SettingsTab({ project }) {
             cancelButtonText: 'Batal',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route('user_hosting.destroy', project.hashid));
+                router.delete(route('user_hosting.destroy', { hashid: project.hashid }));
             }
         });
     }
@@ -937,7 +937,7 @@ function SettingsTab({ project }) {
                     <i className="fa-solid fa-box-archive text-[#7c3aed]"></i> Backup & Restore
                 </h3>
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <a href={route('user_hosting.backup.download', project.hashid)}
+                    <a href={route('user_hosting.backup.download', { hashid: project.hashid })}
                         className="flex-1 flex items-center gap-3 p-4 border border-[#e5e5e5] dark:border-[#1a1a2e] rounded-xl hover:border-[#7c3aed]/30 hover:bg-[#f5f0ff] dark:hover:bg-[#7c3aed]/5 transition-all">
                         <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg flex items-center justify-center">
                             <i className="fa-solid fa-download text-emerald-600 dark:text-emerald-300"></i>
@@ -987,7 +987,7 @@ function CronsTab({ project }) {
 
     function handleAdd(e) {
         e.preventDefault();
-        post(route('user_hosting.crons.store', project.hashid), {
+        post(route('user_hosting.crons.store', { hashid: project.hashid }), {
             preserveState: true,
             onSuccess: (page) => {
                 setCrons(page.props.project?.crons || []);
@@ -1006,7 +1006,7 @@ function CronsTab({ project }) {
             confirmButtonText: 'Ya, Hapus!',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route('user_hosting.crons.destroy', cron.hashid), {
+                router.delete(route('user_hosting.crons.destroy', { hashid: cron.hashid }), {
                     preserveState: true,
                     onSuccess: (page) => {
                         setCrons(page.props.project?.crons || []);
@@ -1081,7 +1081,7 @@ function TeamTab({ project, projectEmails }) {
 
     function handleInvite(e) {
         e.preventDefault();
-        post(route('user_hosting.team.invite', project.hashid), {
+        post(route('user_hosting.team.invite', { hashid: project.hashid }), {
             preserveState: true,
             onSuccess: (page) => {
                 setMembers(page.props.project?.team_members || []);

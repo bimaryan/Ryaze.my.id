@@ -33,7 +33,7 @@ function DbRow({ db, type, pmaUrl }) {
             reverseButtons: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route('admin_hosting.databases.destroy', db.hashid));
+                router.delete(route('admin_hosting.databases.destroy', { hashid: db.hashid }));
             }
         });
     }

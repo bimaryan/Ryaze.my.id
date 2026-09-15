@@ -32,7 +32,7 @@ export default function ApkBuilder({ builds }) {
             confirmButtonText: 'Ya, Hapus!',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route('user_hosting.apk.destroy', build.id));
+                router.delete(route('user_hosting.apk.destroy', { id: build.id }));
             }
         });
     }
@@ -112,12 +112,12 @@ export default function ApkBuilder({ builds }) {
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center justify-center gap-1">
                                                         {build.status === 'building' || build.status === 'pending' ? (
-                                                            <Link href={route('user_hosting.apk.progress', build.id)}
+                                                            <Link href={route('user_hosting.apk.progress', { id: build.id })}
                                                                 className="w-8 h-8 rounded-lg flex items-center justify-center text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition" title="Lihat Progres">
                                                                 <i className="fa-solid fa-spinner fa-spin text-sm"></i>
                                                             </Link>
                                                         ) : build.status === 'completed' ? (
-                                                            <a href={route('user_hosting.apk.download', build.id)}
+                                                            <a href={route('user_hosting.apk.download', { id: build.id })}
                                                                 className="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition" title="Download APK">
                                                                 <i className="fa-solid fa-download text-sm"></i>
                                                             </a>

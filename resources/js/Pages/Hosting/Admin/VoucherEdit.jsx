@@ -13,7 +13,7 @@ export default function VoucherEdit({ voucher }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        put(route('admin_hosting.vouchers.update', voucher.hashid));
+        put(route('admin_hosting.vouchers.update', { hashid: voucher.hashid }));
     }
 
     return (

@@ -41,7 +41,7 @@ export default function Vouchers({ vouchers }) {
             cancelButtonText: 'Batal',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route('admin_hosting.vouchers.destroy', voucher.hashid));
+                router.delete(route('admin_hosting.vouchers.destroy', { hashid: voucher.hashid }));
             }
         });
     }
@@ -116,7 +116,7 @@ export default function Vouchers({ vouchers }) {
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link
-                                                    href={route('admin_hosting.vouchers.edit', voucher.hashid)}
+                                                    href={route('admin_hosting.vouchers.edit', { hashid: voucher.hashid })}
                                                     className="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
                                                     title="Edit Voucher"
                                                 >

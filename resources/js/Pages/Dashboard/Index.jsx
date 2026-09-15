@@ -38,7 +38,7 @@ export default function Index({ stats, projects, activeBilling, expiredBilling }
                     </div>
                     <div className="divide-y divide-[#e5e5e5] dark:divide-[#1a1a2e]">
                         {projects?.length > 0 ? projects.map((p) => (
-                            <a key={p.id} href={route('user_hosting.show', p.hashid)} className="flex items-center justify-between px-5 py-3 hover:bg-[#fafafa] dark:hover:bg-white/[0.02] transition-colors">
+                            <a key={p.id} href={route('user_hosting.show', { hashid: p.hashid })} className="flex items-center justify-between px-5 py-3 hover:bg-[#fafafa] dark:hover:bg-white/[0.02] transition-colors">
                                 <div className="flex items-center gap-3 min-w-0">
                                     <div className="w-2 h-2 shrink-0 rounded-full bg-green-500"></div>
                                     <div className="min-w-0">

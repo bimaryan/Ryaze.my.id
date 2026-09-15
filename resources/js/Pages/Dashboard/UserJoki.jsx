@@ -26,7 +26,7 @@ export default function UserJoki({ activeOrders, stats }) {
                     </div>
                     <div className="divide-y divide-[#e5e5e5] dark:divide-[#1a1a2e]">
                         {activeOrders?.length > 0 ? activeOrders.map((o) => (
-                            <a key={o.id} href={route('user_joki.detail', o.hashid)} className="flex items-center justify-between px-5 py-3 hover:bg-[#fafafa] dark:hover:bg-white/[0.02] transition-colors">
+                            <a key={o.id} href={route('user_joki.detail', { hashid: o.hashid })} className="flex items-center justify-between px-5 py-3 hover:bg-[#fafafa] dark:hover:bg-white/[0.02] transition-colors">
                                 <div>
                                     <p className="text-[13px] font-semibold text-[#333] dark:text-white">{o.project_name}</p>
                                     <p className="text-[11px] text-[#999] dark:text-white/40">{o.service_name} &middot; {o.order_number}</p>

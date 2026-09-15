@@ -37,7 +37,7 @@ export default function PortfolioEdit({ portfolio }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        post(route('superadmin.portfolios.update', portfolio.hashid), { forceFormData: true });
+        post(route('superadmin.portfolios.update', { hashid: portfolio.hashid }), { forceFormData: true });
     }
 
     const inputCls = "w-full bg-[#fafafa] dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] rounded-xl px-4 py-2.5 text-sm text-[#333] dark:text-white focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] outline-none transition";
