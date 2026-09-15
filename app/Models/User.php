@@ -22,6 +22,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     use HasHashid;
 
+    protected $appends = ['hashid'];
+
     /**
      * Get the attributes that should be cast.
      *
