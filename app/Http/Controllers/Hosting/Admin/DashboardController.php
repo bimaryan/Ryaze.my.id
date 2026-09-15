@@ -63,7 +63,12 @@ class DashboardController extends Controller
             'series' => $paidBillings,
         ];
 
-        return view('pages.hosting.admin.index', compact('stats', 'chartNewProjects', 'chartProjectStatus', 'chartBillings'));
+        return inertia('Dashboard/AdminHosting', [
+            'stats' => $stats,
+            'chartNewProjects' => $chartNewProjects,
+            'chartProjectStatus' => $chartProjectStatus,
+            'chartBillings' => $chartBillings,
+        ]);
     }
 
     // 2. Halaman Membutuhkan Tindakan

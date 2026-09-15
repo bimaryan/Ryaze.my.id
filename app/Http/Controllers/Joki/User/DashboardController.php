@@ -14,7 +14,35 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('pages.joki.user.index');
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $activeOrders = JokiOrder::where('client_id', $user->id)
+            ->whereIn('status', ['pending', 'progress', 'review'])
+            ->with('service')
+            ->latest()
+            ->get()
+            ->map(fn ($o) => [
+                'id' => $o->id,
+                'hashid' => $o->hashid,
+                'order_number' => $o->order_number,
+                'project_name' => $o->project_name,
+                'status' => $o->status,
+                'deadline' => $o->deadline?->format('d M Y'),
+                'service_name' => $o->service?->name ?? '-',
+            ]);
+
+        $completedCount = JokiOrder::where('client_id', $user->id)->where('status', 'completed')->count();
+        $pendingCount = JokiOrder::where('client_id', $user->id)->where('status', 'pending')->count();
+        $progressCount = JokiOrder::where('client_id', $user->id)->where('status', 'progress')->count();
+
+        return inertia('Dashboard/UserJoki', [
+            'activeOrders' => $activeOrders,
+            'stats' => [
+                'active' => $activeOrders->count(),
+                'completed' => $completedCount,
+                'pending' => $pendingCount,
+                'progress' => $progressCount,
+            ],
+        ]);
     }
 
     public function detail($hashed_id)

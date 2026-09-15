@@ -63,16 +63,23 @@ class DashboardController extends Controller
         ];
 
         // 4. Kirim data ke view
-        return view('pages.joki.admin.index', compact(
-            'pendingOrders',
-            'progressOrders',
-            'reviewOrders',
-            'completedOrders',
-            'queueOrders',
-            'chartOrderStatus',
-            'chartNewOrders',
-            'chartCompletedOrders'
-        ));
+        return inertia('Dashboard/AdminJoki', [
+            'pendingOrders' => $pendingOrders,
+            'progressOrders' => $progressOrders,
+            'reviewOrders' => $reviewOrders,
+            'completedOrders' => $completedOrders,
+            'queueOrders' => $queueOrders->map(fn ($o) => [
+                'id' => $o->id,
+                'order_number' => $o->order_number,
+                'project_name' => $o->project_name,
+                'status' => $o->status,
+                'deadline' => $o->deadline?->format('d M Y'),
+                'client_name' => $o->client?->name ?? '-',
+            ]),
+            'chartOrderStatus' => $chartOrderStatus,
+            'chartNewOrders' => $chartNewOrders,
+            'chartCompletedOrders' => $chartCompletedOrders,
+        ]);
     }
 
     public function manageOrders()

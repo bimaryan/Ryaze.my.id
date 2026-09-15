@@ -116,29 +116,29 @@ class DashboardController extends Controller
             'hosting' => $hostingRev
         ];
 
-        return view('pages.admin.index', compact(
-            'totalUsers',
-            'activeJokiOrders',
-            'totalJokiOrders',
-            'activeHosting',
-            'totalHosting',
-            'jokiRevenueMonth',
-            'jokiRevenueMonthCount',
-            'jokiRevenueTotal',
-            'hostingRevenueMonth',
-            'hostingRevenueMonthCount',
-            'hostingRevenueTotal',
-            'totalRevenueMonth',
-            'totalRevenueTotal',
-            'totalDatabases',
-            'totalStorageMB',
-            'recentUsers',
-            'recentJokiOrders',
-            'recentHostingProjects',
-            'chartUserRoles',
-            'chartUserRegistrations',
-            'chartRevenue'
-        ));
+        return inertia('Dashboard/Superadmin', [
+            'totalUsers' => $totalUsers,
+            'activeJokiOrders' => $activeJokiOrders,
+            'totalJokiOrders' => $totalJokiOrders,
+            'activeHosting' => $activeHosting,
+            'totalHosting' => $totalHosting,
+            'jokiRevenueMonth' => $jokiRevenueMonth,
+            'jokiRevenueMonthCount' => $jokiRevenueMonthCount,
+            'jokiRevenueTotal' => $jokiRevenueTotal,
+            'hostingRevenueMonth' => $hostingRevenueMonth,
+            'hostingRevenueMonthCount' => $hostingRevenueMonthCount,
+            'hostingRevenueTotal' => $hostingRevenueTotal,
+            'totalRevenueMonth' => $totalRevenueMonth,
+            'totalRevenueTotal' => $totalRevenueTotal,
+            'totalDatabases' => $totalDatabases,
+            'totalStorageMB' => $totalStorageMB,
+            'recentUsers' => $recentUsers->map(fn ($u) => ['id' => $u->id, 'name' => $u->name, 'email' => $u->email, 'role' => $u->role, 'created_at' => $u->created_at->format('d M Y')]),
+            'recentJokiOrders' => $recentJokiOrders->map(fn ($o) => ['id' => $o->id, 'order_number' => $o->order_number, 'project_name' => $o->project_name, 'status' => $o->status, 'client_name' => $o->client?->name ?? '-', 'service_name' => $o->service?->name ?? '-', 'created_at' => $o->created_at->format('d M Y')]),
+            'recentHostingProjects' => $recentHostingProjects->map(fn ($p) => ['id' => $p->id, 'hashid' => $p->hashid, 'project_name' => $p->project_name, 'ryaze_domain' => $p->ryaze_domain, 'status' => $p->status, 'client_name' => $p->client?->name ?? '-', 'created_at' => $p->created_at->format('d M Y')]),
+            'chartUserRoles' => $chartUserRoles,
+            'chartUserRegistrations' => $chartUserRegistrations,
+            'chartRevenue' => $chartRevenue,
+        ]);
     }
 
     public function getServerStatus()
