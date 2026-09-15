@@ -22,7 +22,6 @@
     <meta name="description" content="{{ $description ?? '' }}">
     <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" href="{{ !empty($favicon) ? asset('storage/' . $favicon) : asset('favicon.ico') }}">
-    @routes('ziggy')
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     <script>
         window.ryazeToggleTheme = function (event) {
