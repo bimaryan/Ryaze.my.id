@@ -47,15 +47,15 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
 
             <div className="min-h-screen flex items-center justify-center p-6">
                 <div className="max-w-md w-full" data-reveal>
-                    <div className="bg-[#1a1025] dark:bg-[#1a1025] px-8 py-10 text-center">
+                    <div className="bg-[#7c3aed] dark:bg-[#1a1025] px-8 py-10 text-center">
                         <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
-                            <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
-                                <span className="text-white font-black text-xs">R</span>
+                            <div className="w-7 h-7 bg-white flex items-center justify-center">
+                                <span className="text-[#7c3aed] font-black text-xs">R</span>
                             </div>
                             <span className="font-black text-white text-sm tracking-tight">RYAZE</span>
                         </Link>
                         <h1 className="text-3xl font-black text-white tracking-tight">{siteName ?? 'Ryaze Portal'}</h1>
-                        <p className="text-[#a78bfa] mt-2 text-sm">Masuk untuk mengelola Joki & Hosting Anda</p>
+                        <p className="text-white/80 mt-2 text-sm">Masuk untuk mengelola Joki & Hosting Anda</p>
                     </div>
 
                     <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] p-8">
@@ -63,7 +63,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                             <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.content} />
 
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-[#1a1025] dark:text-white mb-2">Email Address</label>
+                                <label htmlFor="email" className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Email Address</label>
                                 <input
                                     type="email"
                                     id="email"
@@ -80,7 +80,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
 
                             <div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <label htmlFor="password" className="block text-sm font-medium text-[#1a1025] dark:text-white">Password</label>
+                                    <label htmlFor="password" className="block text-sm font-medium text-[#7c3aed] dark:text-white">Password</label>
                                     <Link href={route('password.request')} className="text-sm font-medium text-[#7c3aed] hover:text-[#6d28d9] transition-colors">Lupa password?</Link>
                                 </div>
                                 <div className="relative">
@@ -97,7 +97,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#999] dark:text-white/50 hover:text-[#1a1025] dark:hover:text-white transition-colors"
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#999] dark:text-white/50 hover:text-[#7c3aed] dark:hover:text-white transition-colors"
                                     >
                                         <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
                                     </button>
@@ -134,7 +134,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full bg-[#1a1025] dark:bg-white dark:text-[#1a1025] text-white font-semibold py-3 px-4 hover:bg-[#2d1f42] dark:hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full bg-[#7c3aed] dark:bg-white dark:text-[#7c3aed] text-white font-semibold py-3 px-4 hover:bg-[#6d28d9] dark:hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {processing ? (
                                     <>

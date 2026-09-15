@@ -121,7 +121,7 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
             {children}
 
             {withFooter && (
-            <footer className="bg-[#7c3aed] border-t border-[#2d1f42]">
+            <footer className="bg-[#7c3aed] border-t border-[#6d28d9]">
                 <div className="max-w-6xl mx-auto px-6 py-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
                         <div>
@@ -155,7 +155,7 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
                             </ul>
                         </div>
                     </div>
-                    <div className="mt-10 pt-8 border-t border-[#2d1f42] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="mt-10 pt-8 border-t border-[#6d28d9] flex flex-col md:flex-row items-center justify-between gap-4">
                         <p className="text-xs text-[#999]">&copy; {new Date().getFullYear()} Ryaze.</p>
                         <div className="flex items-center gap-5 text-[#999]">
                             {['fa-brands fa-github', 'fa-brands fa-instagram', 'fa-brands fa-linkedin-in'].map(icon => (

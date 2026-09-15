@@ -162,8 +162,8 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                                         { v: '< 5mnt', l: 'Deploy' },
                                         { v: '24/7', l: 'Support' },
                                     ].map((s, i) => (
-                                        <div key={i} className="px-6 py-6 text-center">
-                                            <p className="text-2xl font-black text-[#7c3aed] dark:text-white">{s.v}</p>
+                                        <div key={i} className="px-6 py-6 text-center flex-wrap">
+                                            <p className="text-1xl font-black text-[#7c3aed] dark:text-white">{s.v}</p>
                                             <p className="text-[10px] text-[#999] dark:text-white/50 font-bold uppercase tracking-widest mt-1">{s.l}</p>
                                         </div>
                                     ))}
