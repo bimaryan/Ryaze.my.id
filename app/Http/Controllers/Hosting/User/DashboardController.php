@@ -71,7 +71,7 @@ class DashboardController extends Controller
         ];
 
         // 3. Potong (Limit) hanya ambil 5 teratas untuk ditampilkan di tabel
-        $projects = $allProjects->take(5);
+        $projects = $allProjects->take(5)->values();
 
         // 4. Data langganan
         $activeBilling = Auth::user()->hostingBillings()
@@ -79,7 +79,7 @@ class DashboardController extends Controller
             ->latest('next_due_date')
             ->first();
 
-        // Superadmin & admin_hosting tidak perlu显示 alert expired
+        // Superadmin & admin_hosting tidak perlu menampilkan alert expired
         $expiredBilling = null;
         if (! in_array(Auth::user()->role, ['superadmin', 'admin_hosting'])) {
             $expiredBilling = Auth::user()->hostingBillings()
@@ -88,7 +88,25 @@ class DashboardController extends Controller
                 ->first();
         }
 
-        return view('pages.hosting.user.index', compact('projects', 'stats', 'activeBilling', 'expiredBilling'));
+        return inertia('Dashboard/Index', [
+            'stats' => $stats,
+            'projects' => $projects->map(fn ($p) => [
+                'id' => $p->id,
+                'hashid' => $p->hashid,
+                'project_name' => $p->project_name,
+                'ryaze_domain' => $p->ryaze_domain,
+                'framework' => $p->framework,
+                'status' => $p->status,
+            ]),
+            'activeBilling' => $activeBilling ? [
+                'plan' => $activeBilling->plan,
+                'next_due_date' => $activeBilling->next_due_date,
+            ] : null,
+            'expiredBilling' => $expiredBilling ? [
+                'plan' => $expiredBilling->plan,
+                'next_due_date' => $expiredBilling->next_due_date,
+            ] : null,
+        ]);
     }
 
     // Menampilkan form deploy baru
