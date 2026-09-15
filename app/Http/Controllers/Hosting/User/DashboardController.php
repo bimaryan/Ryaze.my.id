@@ -88,6 +88,37 @@ class DashboardController extends Controller
                 ->first();
         }
 
+        // Wallet balance
+        $walletBalance = Auth::user()->wallet?->balance ?? 0;
+
+        // Active promos
+        $promos = \App\Models\PromoEvent::where('is_active', true)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->latest()->get()
+            ->map(fn ($p) => [
+                'id' => $p->id,
+                'title' => $p->title,
+                'description' => $p->description,
+                'banner_image' => $p->banner_url ?? null,
+                'target_url' => $p->target_url ?? '#',
+            ]);
+
+        // Active announcements
+        $audience = Auth::user()->role === 'user_joki' ? 'joki' : 'hosting';
+        $announcements = \App\Models\Announcement::visible()
+            ->forAudience($audience)
+            ->orderByDesc('is_pinned')
+            ->latest()->get()
+            ->map(fn ($a) => [
+                'id' => $a->id,
+                'title' => $a->title,
+                'content' => $a->content,
+                'type' => $a->type,
+                'is_pinned' => $a->is_pinned,
+                'expires_at' => $a->expires_at?->translatedFormat('d M Y, H:i'),
+            ]);
+
         return inertia('Dashboard/Index', [
             'stats' => $stats,
             'projects' => $projects->map(fn ($p) => [
@@ -106,6 +137,10 @@ class DashboardController extends Controller
                 'plan' => $expiredBilling->plan,
                 'next_due_date' => $expiredBilling->next_due_date,
             ] : null,
+            'walletBalance' => $walletBalance,
+            'referralCode' => Auth::user()->referral_code ?? 'RYZ-' . Auth::id(),
+            'promos' => $promos,
+            'announcements' => $announcements,
         ]);
     }
 
