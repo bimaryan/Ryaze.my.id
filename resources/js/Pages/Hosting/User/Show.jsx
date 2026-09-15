@@ -62,7 +62,7 @@ const exampleNginx = `server {
     }
 }`;
 
-export default function Show({ project, envContent, wafContent, diskUsage, visitorsCount, projectEmails }) {
+export default function Show({ project, envContent = '', wafContent = '', diskUsage = null, visitorsCount = 0, projectEmails = [] }) {
     const { flash, auth } = usePage().props;
     const [activeTab, setActiveTab] = useState(() => {
         if (typeof window !== 'undefined') {

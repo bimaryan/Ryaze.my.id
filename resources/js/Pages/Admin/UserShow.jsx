@@ -51,7 +51,7 @@ function PlanBadge({ plan, label }) {
     return <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider ${cls}`}>{label}</span>;
 }
 
-export default function UserShow({ user, jokiOrders, hostingProjects }) {
+export default function UserShow({ user, jokiOrders = [], hostingProjects = [] }) {
     const roleModalRef = useRef(null);
     const [role, setRole] = useState(user?.role || 'user_hosting');
     const [deleteConfirm, setDeleteConfirm] = useState(false);
