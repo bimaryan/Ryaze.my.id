@@ -29,7 +29,7 @@ function applyDark(dark) {
     document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
 }
 
-export default function PublicLayout({ children }) {
+export default function PublicLayout({ children, withNav = true, withFooter = true, bodyClass }) {
     const { auth } = usePage().props;
     const user = auth?.user;
     const [scrolled, setScrolled] = useState(false);
@@ -50,7 +50,8 @@ export default function PublicLayout({ children }) {
     const closeMobileMenu = () => setMobileMenuOpen(false);
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className={`${bodyClass || ''} min-h-screen flex flex-col`}>
+            {withNav && (
             <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-[#e5e5e5] dark:bg-[#1a1025]/90 dark:border-[#2d1f42]' : ''}`}>
                 <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2.5">
@@ -115,10 +116,11 @@ export default function PublicLayout({ children }) {
                     </div>
                 )}
             </nav>
+            )}
 
-            <div className="dark:hidden">{/* light mode body class */}</div>
             {children}
 
+            {withFooter && (
             <footer className="bg-[#1a1025] border-t border-[#2d1f42]">
                 <div className="max-w-6xl mx-auto px-6 py-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
@@ -163,6 +165,7 @@ export default function PublicLayout({ children }) {
                     </div>
                 </div>
             </footer>
+            )}
 
             <style>{`
                 @keyframes slide-down {
