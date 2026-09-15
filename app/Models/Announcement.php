@@ -8,6 +8,7 @@ use App\Traits\HasHashid;
 class Announcement extends Model
 {
     use HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = [
         'title',

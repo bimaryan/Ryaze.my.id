@@ -1,5 +1,5 @@
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { router, Link } from '@inertiajs/react';
+import { router, Link, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 
 function formatDate(dateStr) {

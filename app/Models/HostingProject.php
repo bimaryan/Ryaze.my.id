@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class HostingProject extends Model
 {
     use \App\Traits\HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = [
         'user_id', 'project_name', 'framework', 'repo_source',

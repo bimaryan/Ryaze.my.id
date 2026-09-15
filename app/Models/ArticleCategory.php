@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class ArticleCategory extends Model
 {
     use HasFactory, HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = [
         'name',

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class JokiRevision extends Model
 {
     use \App\Traits\HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = ['order_id', 'revision_note', 'status', 'admin_reply'];
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class HostingDomain extends Model
 {
     use HasFactory, \App\Traits\HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = [
         'project_id',

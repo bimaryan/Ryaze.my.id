@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class HostingNosqlDatabase extends Model
 {
     use \App\Traits\HasHashid;
+    protected $appends = ['hashid'];
     use HasFactory;
 
     protected $fillable = [

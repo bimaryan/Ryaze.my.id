@@ -9,6 +9,8 @@ class Ticket extends Model
 {
     use HasHashid;
 
+    protected $appends = ['hashid'];
+
     protected $fillable = [
         'user_id',
         'department',

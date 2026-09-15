@@ -52,7 +52,7 @@ export default function Show({ ticket }) {
     };
 
     const handleClose = () => {
-        router.put(`/admin/hosting/tickets/${ticket.hashid}/close`);
+        router.post(`/admin/hosting/tickets/${ticket.hashid}/close`);
     };
 
     const replies = ticket?.replies || [];

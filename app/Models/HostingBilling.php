@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class HostingBilling extends Model
 {
     use \App\Traits\HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = [
         'user_id', 'hosting_project_id', 'plan_name', 'plan', 'amount',

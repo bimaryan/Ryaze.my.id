@@ -10,6 +10,7 @@ use Vinkla\Hashids\Facades\Hashids;
 class HostingDatabase extends Model
 {
     use \App\Traits\HasHashid;
+    protected $appends = ['hashid'];
 
     use HasFactory;
 

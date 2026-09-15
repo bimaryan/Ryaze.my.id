@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class HostingEnvironment extends Model
 {
     use \App\Traits\HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = [
         'hosting_project_id', 'env_key', 'env_value'

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Portfolio extends Model
 {
     use HasFactory, HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = [
         'title',

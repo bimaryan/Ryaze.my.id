@@ -144,7 +144,7 @@ export default function Settings({ settings, articleCategories }) {
         plans.forEach(p => {
             submitData[`plan_${p.key}_active`] = data[`plan_${p.key}_active`] ? '1' : '0';
         });
-        router.post(route('superadmin.settings.update'), submitData, {
+        router.put(route('superadmin.settings.update'), submitData, {
             forceFormData: true,
             preserveScroll: true,
         });

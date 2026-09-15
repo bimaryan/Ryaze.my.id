@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class JokiMilestone extends Model
 {
     use \App\Traits\HasHashid;
+    protected $appends = ['hashid'];
 
     protected $fillable = ['order_id', 'title', 'description', 'status', 'due_date'];
 
