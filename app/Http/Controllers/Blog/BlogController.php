@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BlogController extends Controller
 {
@@ -34,7 +35,12 @@ class BlogController extends Controller
             $q->published();
         }])->get()->reject(fn ($c) => $c->articles_count < 1)->sortBy('name')->values();
 
-        return view('pages.blog.index', compact('articles', 'categories', 'featured'));
+        return Inertia::render('Blog/Index', [
+            'articles' => $articles,
+            'categories' => $categories,
+            'featured' => $featured,
+            'currentCategory' => null,
+        ]);
     }
 
     public function show($slug)
@@ -44,10 +50,8 @@ class BlogController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        // Increment view count
         $article->increment('views_count');
 
-        // Related articles (same category, exclude current)
         $related = collect();
         if ($article->category_id) {
             $related = Article::published()
@@ -59,7 +63,6 @@ class BlogController extends Controller
                 ->get();
         }
 
-        // Fallback: if not enough related, fill with latest
         if ($related->count() < 3) {
             $excludeIds = $related->pluck('id')->push($article->id);
             $remaining = Article::published()
@@ -71,7 +74,10 @@ class BlogController extends Controller
             $related = $related->merge($remaining);
         }
 
-        return view('pages.blog.show', compact('article', 'related'));
+        return Inertia::render('Blog/Show', [
+            'article' => $article,
+            'related' => $related,
+        ]);
     }
 
     public function category($slug)
@@ -88,7 +94,7 @@ class BlogController extends Controller
             $q->published();
         }])->get()->reject(fn ($c) => $c->articles_count < 1)->sortBy('name')->values();
 
-        return view('pages.blog.index', [
+        return Inertia::render('Blog/Index', [
             'articles' => $articles,
             'categories' => $categories,
             'featured' => null,
