@@ -3,16 +3,15 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <nav class="fixed inset-x-0 top-0 z-50" id="main-navbar" aria-label="Navigasi utama">
-    <div class="relative bg-[#030817]/95 backdrop-blur-xl border-b border-[#1e2a46] shadow-[0_10px_30px_rgba(12,16,31,0.6)]">
+    <div class="relative bg-[#020b16]/95 backdrop-blur-xl border-b border-[#1d2a43] shadow-[0_12px_30px_rgba(2,6,23,0.9)]">
         <div class="mx-auto max-w-[1700px] px-4 lg:px-6">
-            <div class="flex items-center justify-between gap-3 h-16">
+            <div class="flex items-center justify-between gap-3 h-[68px]">
 
-                {{-- Left: Hamburger + Brand --}}
                 <div class="flex min-w-0 items-center gap-2 sm:gap-3">
                     <button x-ref="sidebarToggle" @click="sidebarOpen = !sidebarOpen"
                         :aria-expanded="sidebarOpen.toString()" aria-expanded="false"
                         aria-label="Buka atau tutup menu navigasi" aria-controls="logo-sidebar" type="button"
-                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-10 h-10 rounded-xl text-slate-200 hover:text-white hover:bg-[#1d2b4d] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-violet-500 focus:outline-none shadow-sm ring-1 ring-slate-700/80 bg-[#0c1120]">
+                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-10 h-10 rounded-xl text-slate-300 hover:text-white hover:bg-[#101c33] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-violet-500 focus:outline-none ring-1 ring-[#1d2a43] bg-[#071327]">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
                         </svg>
@@ -21,23 +20,28 @@
                     <a href="{{ url('/') }}" class="flex min-w-0 items-center gap-2.5 group">
                         @php $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value'); @endphp
                         @if($siteLogo)
-                            <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 w-auto object-contain drop-shadow-sm">
+                            <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-7 w-auto object-contain drop-shadow-[0_0_18px_rgba(124,58,237,0.45)]">
                         @else
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center shadow-[0_0_18px_rgba(124,58,237,0.4)]">
-                                <i class="fa-solid fa-code text-white text-xs"></i>
+                            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center shadow-[0_0_18px_rgba(124,58,237,0.45)]">
+                                <i class="fa-solid fa-code text-white text-[10px]"></i>
                             </div>
                         @endif
-                        <span class="text-lg font-extrabold text-white tracking-tight whitespace-nowrap">
+                        <span class="text-[15px] font-extrabold text-white tracking-tight whitespace-nowrap">
                             {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}
                         </span>
                     </a>
                 </div>
 
-                {{-- Right: Actions --}}
+                <div class="hidden md:flex items-center justify-center gap-8 text-[13px] font-medium text-slate-300">
+                    <a href="#" class="transition hover:text-white">Tentang</a>
+                    <a href="#" class="transition hover:text-white">Layanan</a>
+                    <a href="#" class="transition hover:text-white">Harga</a>
+                    <a href="#" class="transition hover:text-white">Blog</a>
+                </div>
+
                 <div class="flex items-center gap-2">
-                    {{-- Dark mode toggle --}}
                     <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                        class="relative inline-flex h-8 w-[56px] flex-shrink-0 cursor-pointer items-center rounded-full bg-[#0f172a] ring-1 ring-[#1f2d4d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-violet-500/40 shadow-inner"
+                        class="relative inline-flex h-8 w-[56px] flex-shrink-0 cursor-pointer items-center rounded-full bg-[#0b1730] ring-1 ring-[#243553] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-violet-500/40 shadow-inner"
                         role="switch">
                         <span class="pointer-events-none inline-flex h-6 w-6 transform translate-x-1 dark:translate-x-7 items-center justify-center rounded-full bg-white shadow-md transition-all duration-300 ease-in-out">
                             <i class="fa-solid fa-sun text-[9px] text-amber-500 absolute opacity-100 dark:opacity-0 transition-opacity"></i>
@@ -45,109 +49,36 @@
                         </span>
                     </button>
 
-                    {{-- Notification bell --}}
                     @php $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]); @endphp
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open"
-                            class="relative flex items-center justify-center w-10 h-10 rounded-xl text-slate-200 hover:text-white hover:bg-[#1d2b4d] transition-all duration-200 focus:outline-none ring-1 ring-[#1b2a47] bg-[#0f172a] shadow-sm"
+                            class="relative flex items-center justify-center w-10 h-10 rounded-xl text-slate-200 hover:text-white hover:bg-[#101c33] transition-all duration-200 focus:outline-none ring-1 ring-[#1d2a43] bg-[#071327]"
                             type="button">
                             <i class="fa-solid fa-bell text-base"></i>
                             @if ($unreadNotifications->count() > 0)
-                                <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-white dark:ring-[#0a0f1a]">
+                                <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-[#020b16]">
                                     {{ $unreadNotifications->count() > 9 ? '9+' : $unreadNotifications->count() }}
                                 </span>
                             @endif
                         </button>
-
-                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95 translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                            class="z-50 absolute right-0 mt-2 w-80 bg-white dark:bg-[#111827] border border-slate-200/60 dark:border-white/10 rounded-2xl shadow-2xl shadow-slate-900/10 overflow-hidden">
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/5">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-indigo-500 inline-block"></span>
-                                    <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">Notifikasi</span>
-                                    @if ($unreadNotifications->count() > 0)
-                                        <span class="px-1.5 py-0.5 text-[10px] font-bold bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 rounded-full">
-                                            {{ $unreadNotifications->count() }}
-                                        </span>
-                                    @endif
-                                </div>
-                                @if ($unreadNotifications->count() > 0)
-                                    <form action="{{ route('notifications.markAllRead') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 font-medium transition-colors">
-                                            Tandai Semua
-                                        </button>
-                                    </form>
-                                @endif
-                            </div>
-                            <div class="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-white/5">
-                                @forelse($unreadNotifications as $notification)
-                                    <a href="#" onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();"
-                                        class="flex gap-3 px-4 py-3 hover:bg-indigo-50/50 dark:hover:bg-indigo-500/5 transition-colors">
-                                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center mt-0.5">
-                                            <i class="fa-solid fa-bell text-indigo-500 dark:text-indigo-400 text-xs"></i>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm text-slate-700 dark:text-slate-300 leading-snug line-clamp-2">
-                                                {{ $notification->data['message'] ?? 'Notifikasi baru' }}
-                                            </p>
-                                            <p class="text-xs text-slate-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    </a>
-                                    <form id="mark-read-{{ $notification->id }}" action="{{ route('notifications.markRead', $notification->id) }}" method="POST" class="hidden">@csrf</form>
-                                @empty
-                                    <div class="py-10 text-center">
-                                        <i class="fa-solid fa-bell-slash text-2xl text-slate-300 dark:text-slate-600 mb-2 block"></i>
-                                        <p class="text-sm text-slate-400 dark:text-slate-500">Belum ada notifikasi baru</p>
-                                    </div>
-                                @endforelse
-                            </div>
-                        </div>
                     </div>
 
-                    {{-- Divider --}}
-                    <div class="hidden md:block w-px h-7 bg-slate-200 dark:bg-white/10 mx-1"></div>
-
-                    {{-- User info --}}
                     <div class="hidden md:flex items-center gap-2 text-right">
                         <div>
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-tight">{{ Auth::user()->name ?? 'Guest' }}</p>
-                            <p class="text-[11px] text-slate-400 dark:text-slate-500 leading-tight">
-                                {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}
-                            </p>
+                            <p class="text-sm font-semibold text-slate-200 leading-tight">{{ Auth::user()->name ?? 'Guest' }}</p>
                         </div>
                     </div>
 
-                    {{-- Avatar dropdown --}}
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open"
-                            class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white font-bold text-sm shadow-[0_0_16px_rgba(124,58,237,0.45)] hover:scale-105 transition-all duration-200 focus:outline-none ring-2 ring-[#0c1120]">
+                            class="relative flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white font-bold text-xs shadow-[0_0_18px_rgba(124,58,237,0.45)] hover:scale-[1.02] transition-all duration-200 focus:outline-none ring-2 ring-[#071327]">
                             {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                         </button>
-
-                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95 translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                            class="z-50 absolute right-0 mt-2 w-52 bg-white dark:bg-[#111827] border border-slate-200/60 dark:border-white/10 rounded-2xl shadow-2xl shadow-slate-900/10 overflow-hidden">
-                            <div class="px-4 py-3 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/10 dark:to-violet-500/10 border-b border-slate-100 dark:border-white/5">
-                                <p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{{ Auth::user()->name ?? 'Guest' }}</p>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ Auth::user()->email ?? '' }}</p>
-                            </div>
-                            <ul class="p-1.5 space-y-0.5">
-                                <li>
-                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-700 dark:hover:text-indigo-300 rounded-xl transition-colors">
-                                        <i class="fa-solid fa-user w-4 text-center text-indigo-500"></i> Profil Saya
-                                    </a>
-                                </li>
-                                <li>
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors">
-                                            <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Keluar
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
+
+                    <a href="{{ $dashboardUrl ?? url('/') }}" class="ml-1 inline-flex items-center justify-center h-9 px-4 rounded-lg bg-[#8b5cf6] text-white text-[12px] font-semibold shadow-[0_0_20px_rgba(124,58,237,0.38)] hover:bg-[#7c3aed] transition-all duration-200">
+                        Dashboard
+                    </a>
                 </div>
             </div>
         </div>
@@ -160,13 +91,13 @@
 
 <aside id="logo-sidebar"
     :class="sidebarOpen && !desktop ? 'translate-x-0' : (desktop ? 'translate-x-0' : '-translate-x-full')"
-    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-[#060d1b]/95 border-r border-[#1e2a46] shadow-[14px_0_35px_rgba(2,6,23,0.7)] w-64 sm:translate-x-0 backdrop-blur-xl"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-[#050d1b]/95 border-r border-[#1d2a43] shadow-[14px_0_35px_rgba(2,6,23,0.7)] w-64 sm:translate-x-0 backdrop-blur-xl"
     aria-label="Sidebar">
 
-    <div class="absolute top-16 left-0 right-0 h-28 bg-gradient-to-b from-indigo-50/80 to-transparent dark:from-indigo-500/5 dark:to-transparent pointer-events-none"></div>
+    <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#8b5cf6]/8 to-transparent pointer-events-none"></div>
 
     <div class="flex h-full flex-col relative">
-        <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
+        <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300/60 dark:scrollbar-thumb-slate-700">
         @php
             $role = Auth::user()->role ?? '';
 
@@ -190,13 +121,13 @@
                 'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ' .
                 ($active
                     ? 'bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white shadow-[0_10px_22px_rgba(124,58,237,0.35)]'
-                    : 'text-slate-300 hover:bg-[#101b34] hover:text-white');
+                    : 'text-slate-300 hover:bg-[#0e1a2e] hover:text-white');
 
             $iconBox = fn($active) =>
                 'flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-xs transition-all duration-200 ' .
                 ($active
-                    ? 'bg-white/20 text-white'
-                    : 'bg-[#0f172a] text-slate-300 group-hover:bg-[#1a2542] group-hover:text-violet-300');
+                    ? 'bg-white/15 text-white'
+                    : 'bg-[#0b1730] text-slate-300 group-hover:bg-[#102141] group-hover:text-violet-300');
 
             $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500';
         @endphp

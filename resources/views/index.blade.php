@@ -149,7 +149,7 @@
     </style>
 </head>
 
-<body class="bg-mesh font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100"
+<body class="bg-[#020b16] font-sans antialiased text-slate-900 dark:bg-[#020b16] dark:text-slate-100"
     x-data="{ sidebarOpen: false, desktop: window.innerWidth >= 640 }"
     :class="{ 'overflow-hidden': sidebarOpen && !desktop, 'dashboard-menu-open': sidebarOpen && !desktop }"
     @resize.window="desktop = window.innerWidth >= 640; if (desktop) sidebarOpen = false"
