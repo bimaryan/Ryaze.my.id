@@ -3,8 +3,8 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <nav class="fixed inset-x-0 top-0 z-50" id="main-navbar" aria-label="Navigasi utama">
-    <div class="relative bg-white/85 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800 shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
-        <div class="mx-auto max-w-[1600px] px-4 lg:px-6">
+    <div class="relative bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800 shadow-[0_12px_35px_rgba(15,23,42,0.08)]">
+        <div class="mx-auto max-w-[1700px] px-4 lg:px-6">
             <div class="flex items-center justify-between gap-3 h-16">
 
                 {{-- Left: Hamburger + Brand --}}
@@ -160,7 +160,7 @@
 
 <aside id="logo-sidebar"
     :class="sidebarOpen && !desktop ? 'translate-x-0' : (desktop ? 'translate-x-0' : '-translate-x-full')"
-    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-white/90 dark:bg-slate-900/90 border-r border-slate-200/80 dark:border-slate-800 shadow-[8px_0_30px_rgba(15,23,42,0.06)] w-64 sm:translate-x-0 backdrop-blur-xl"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-white/95 dark:bg-slate-900/90 border-r border-slate-200/80 dark:border-slate-800 shadow-[10px_0_30px_rgba(15,23,42,0.08)] w-64 sm:translate-x-0 backdrop-blur-xl"
     aria-label="Sidebar">
 
     <div class="absolute top-16 left-0 right-0 h-28 bg-gradient-to-b from-indigo-50/80 to-transparent dark:from-indigo-500/5 dark:to-transparent pointer-events-none"></div>
@@ -189,16 +189,16 @@
             $navLink = fn($active) =>
                 'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ' .
                 ($active
-                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/20'
-                    : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-300 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-300');
+                    ? 'bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white shadow-[0_12px_24px_rgba(124,58,237,0.28)]'
+                    : 'text-slate-600 hover:bg-[#f5f0ff] hover:text-[#6d28d9] dark:text-slate-300 dark:hover:bg-[#1a1025]/20 dark:hover:text-violet-300');
 
             $iconBox = fn($active) =>
                 'flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-xs transition-all duration-200 ' .
                 ($active
                     ? 'bg-white/20 text-white'
-                    : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600 dark:bg-slate-800 dark:text-slate-300 dark:group-hover:bg-indigo-500/20 dark:group-hover:text-indigo-300');
+                    : 'bg-slate-100 text-slate-500 group-hover:bg-[#efe6ff] group-hover:text-[#7c3aed] dark:bg-slate-800 dark:text-slate-300 dark:group-hover:bg-[#2d1f42] dark:group-hover:text-violet-300');
 
-            $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500';
+            $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-extrabold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500';
         @endphp
 
         <nav class="px-3 py-3 space-y-0.5">
@@ -449,9 +449,9 @@
         </div>
 
         {{-- Bottom user card --}}
-        <div class="flex-shrink-0 p-3 border-t border-slate-200/80 dark:border-slate-800 bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm">
-            <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 ring-1 ring-slate-200/80 dark:ring-slate-700/80 shadow-sm">
-                <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/25">
+        <div class="flex-shrink-0 p-3 border-t border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm">
+            <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl bg-gradient-to-r from-[#f5f0ff] to-white dark:from-[#1a1025]/30 dark:to-slate-800/80 ring-1 ring-slate-200/80 dark:ring-slate-700/80 shadow-sm">
+                <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] flex items-center justify-center text-white text-xs font-bold shadow-md shadow-violet-500/25">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
                 <div class="flex-1 min-w-0">
