@@ -81,14 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasActiveHostingSubscription()
     {
-        if (in_array($this->role, ['superadmin', 'admin_hosting'])) {
-            return true;
-        }
-
-        return $this->hostingBillings()
-            ->where('status', 'active')
-            ->where('next_due_date', '>', now())
-            ->exists();
+        return $this->getActivePlan() !== null;
     }
 
     public function hasActiveJokiSubscription()
@@ -244,22 +237,41 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Get the max project count for the current user's plan.
-     * Reads plan from the active billing. Returns -1 for unlimited.
+     * Get the currently active plan for the user.
+     * Returns null if no active billing and the free plan is disabled.
      */
-    public function getMaxProjects(): int
+    public function getActivePlan(): ?string
     {
         if (in_array($this->role, ['superadmin', 'admin_hosting'])) {
-            return -1;
+            return 'business'; // Full access
         }
+
         $activeBilling = $this->hostingBillings()
             ->where('status', 'active')
             ->where('next_due_date', '>', now())
             ->latest()
             ->first();
-        $plan = $activeBilling->plan ?? 'free';
 
-        return static::getPlanLimits($plan)['max_projects'];
+        if ($activeBilling) {
+            return $activeBilling->plan;
+        }
+
+        $freePlanActive = static::hostingPlans()['free']['is_active'] ?? false;
+        return $freePlanActive ? 'free' : null;
+    }
+
+    /**
+     * Get the max project count for the current user's plan.
+     * Returns 0 if no active plan, -1 for unlimited.
+     */
+    public function getMaxProjects(): int
+    {
+        $plan = $this->getActivePlan();
+        if ($plan === null) {
+            return 0; // No active plan and free plan is disabled
+        }
+
+        return static::getPlanLimits($plan)['max_projects'] ?? 0;
     }
 
     /**
@@ -277,9 +289,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function canCreateDatabase(string $type = 'mysql'): array
     {
-        $hasActive = $this->hasActiveHostingSubscription();
-        $activeBilling = $hasActive ? $this->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first() : null;
-        $currentPlan = $activeBilling->plan ?? 'free';
+        $currentPlan = $this->getActivePlan();
+
+        if ($currentPlan === null) {
+            return ['allowed' => false, 'message' => 'Anda tidak memiliki paket berlangganan aktif.'];
+        }
 
         $mysqlCount = HostingDatabase::where('user_id', $this->id)->count();
         $pgsqlCount = HostingPgsqlDatabase::where('user_id', $this->id)->count();

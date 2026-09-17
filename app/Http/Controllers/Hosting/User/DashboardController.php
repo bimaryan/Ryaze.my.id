@@ -256,6 +256,9 @@ class DashboardController extends Controller
                 return null;
             }
 
+            $activePlan = $user->getActivePlan();
+            $planLimit = User::getPlanLimits($activePlan)['storage_mb'] ?? 256;
+
             return HostingProject::create([
                 'user_id' => $user->id,
                 'project_name' => $request->project_name,
@@ -265,7 +268,7 @@ class DashboardController extends Controller
                 'source_type' => $sourceType,
                 'ryaze_domain' => $ryazeDomain,
                 'status' => 'building',
-                'storage_limit_mb' => $user->hosting_storage_limit_mb ?? User::getPlanLimits('free')['storage_mb'],
+                'storage_limit_mb' => $planLimit,
             ]);
         });
 
