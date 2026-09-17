@@ -3,8 +3,8 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <nav class="fixed inset-x-0 top-0 z-50" id="main-navbar" aria-label="Navigasi utama">
-    <div class="relative bg-white/80 dark:bg-[#0a0f1a]/85 backdrop-blur-xl border-b border-slate-200/60 dark:border-white/5 shadow-sm shadow-slate-900/5">
-        <div class="px-4 lg:px-6">
+    <div class="relative bg-white/85 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800 shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
+        <div class="mx-auto max-w-[1600px] px-4 lg:px-6">
             <div class="flex items-center justify-between gap-3 h-16">
 
                 {{-- Left: Hamburger + Brand --}}
@@ -12,7 +12,7 @@
                     <button x-ref="sidebarToggle" @click="sidebarOpen = !sidebarOpen"
                         :aria-expanded="sidebarOpen.toString()" aria-expanded="false"
                         aria-label="Buka atau tutup menu navigasi" aria-controls="logo-sidebar" type="button"
-                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus:outline-none">
+                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-300 dark:hover:text-indigo-300 dark:hover:bg-indigo-500/10 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus:outline-none shadow-sm ring-1 ring-slate-200/70 dark:ring-slate-700/70 bg-white/70">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
                         </svg>
@@ -21,9 +21,9 @@
                     <a href="{{ url('/') }}" class="flex min-w-0 items-center gap-2.5 group">
                         @php $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value'); @endphp
                         @if($siteLogo)
-                            <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 w-auto object-contain">
+                            <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 w-auto object-contain drop-shadow-sm">
                         @else
-                            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-shadow">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-shadow">
                                 <i class="fa-solid fa-code text-white text-sm"></i>
                             </div>
                         @endif
@@ -37,9 +37,9 @@
                 <div class="flex items-center gap-2">
                     {{-- Dark mode toggle --}}
                     <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                        class="relative inline-flex h-7 w-[52px] flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-200 dark:bg-indigo-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:ring-offset-2 dark:focus:ring-offset-[#0a0f1a] shadow-inner"
+                        class="relative inline-flex h-8 w-[56px] flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-200/90 dark:bg-indigo-600/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:ring-offset-2 dark:focus:ring-offset-slate-900 shadow-inner ring-1 ring-slate-200/80 dark:ring-slate-700/80"
                         role="switch">
-                        <span class="pointer-events-none inline-flex h-5 w-5 transform translate-x-1 dark:translate-x-6 items-center justify-center rounded-full bg-white shadow-md transition-all duration-300 ease-in-out">
+                        <span class="pointer-events-none inline-flex h-6 w-6 transform translate-x-1 dark:translate-x-7 items-center justify-center rounded-full bg-white shadow-md transition-all duration-300 ease-in-out">
                             <i class="fa-solid fa-sun text-[9px] text-amber-500 absolute opacity-100 dark:opacity-0 transition-opacity"></i>
                             <i class="fa-solid fa-moon text-[9px] text-indigo-600 absolute opacity-0 dark:opacity-100 transition-opacity"></i>
                         </span>
@@ -49,7 +49,7 @@
                     @php $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]); @endphp
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open"
-                            class="relative flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 transition-all duration-200 focus:outline-none"
+                            class="relative flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-300 dark:hover:text-indigo-300 dark:hover:bg-indigo-500/10 transition-all duration-200 focus:outline-none ring-1 ring-slate-200/80 dark:ring-slate-700/80 bg-white/70 shadow-sm"
                             type="button">
                             <i class="fa-solid fa-bell text-base"></i>
                             @if ($unreadNotifications->count() > 0)
@@ -121,7 +121,7 @@
                     {{-- Avatar dropdown --}}
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open"
-                            class="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm shadow-md shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-105 transition-all duration-200 focus:outline-none">
+                            class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/45 hover:scale-105 transition-all duration-200 focus:outline-none ring-2 ring-white dark:ring-slate-900">
                             {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                         </button>
 
@@ -160,10 +160,10 @@
 
 <aside id="logo-sidebar"
     :class="sidebarOpen && !desktop ? 'translate-x-0' : (desktop ? 'translate-x-0' : '-translate-x-full')"
-    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-white dark:bg-[#0a0f1a] border-r border-slate-200/80 dark:border-white/5 w-64 sm:translate-x-0"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-white/90 dark:bg-slate-900/90 border-r border-slate-200/80 dark:border-slate-800 shadow-[8px_0_30px_rgba(15,23,42,0.06)] w-64 sm:translate-x-0 backdrop-blur-xl"
     aria-label="Sidebar">
 
-    <div class="absolute top-16 left-0 right-0 h-32 bg-gradient-to-b from-indigo-50/80 to-transparent dark:from-indigo-500/5 dark:to-transparent pointer-events-none"></div>
+    <div class="absolute top-16 left-0 right-0 h-28 bg-gradient-to-b from-indigo-50/80 to-transparent dark:from-indigo-500/5 dark:to-transparent pointer-events-none"></div>
 
     <div class="flex h-full flex-col relative">
         <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
@@ -187,18 +187,18 @@
             $isUser         = in_array($role, ['superadmin', 'user_joki', 'user_hosting', 'admin_hosting', 'admin_joki']);
 
             $navLink = fn($active) =>
-                'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 ' .
+                'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ' .
                 ($active
-                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-200');
+                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/20'
+                    : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-300 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-300');
 
             $iconBox = fn($active) =>
                 'flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-xs transition-all duration-200 ' .
                 ($active
                     ? 'bg-white/20 text-white'
-                    : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 group-hover:bg-indigo-100 group-hover:text-indigo-600 dark:group-hover:bg-indigo-500/20 dark:group-hover:text-indigo-300');
+                    : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600 dark:bg-slate-800 dark:text-slate-300 dark:group-hover:bg-indigo-500/20 dark:group-hover:text-indigo-300');
 
-            $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-1.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-600';
+            $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500';
         @endphp
 
         <nav class="px-3 py-3 space-y-0.5">
@@ -449,9 +449,9 @@
         </div>
 
         {{-- Bottom user card --}}
-        <div class="flex-shrink-0 p-3 border-t border-slate-200/60 dark:border-white/5 bg-white/80 dark:bg-[#0a0f1a]/80 backdrop-blur-sm">
-            <div class="flex items-center gap-3 px-2 py-1.5">
-                <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+        <div class="flex-shrink-0 p-3 border-t border-slate-200/80 dark:border-slate-800 bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm">
+            <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 ring-1 ring-slate-200/80 dark:ring-slate-700/80 shadow-sm">
+                <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/25">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
                 <div class="flex-1 min-w-0">
@@ -460,7 +460,7 @@
                 </div>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Keluar">
+                    <button type="submit" class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Keluar">
                         <i class="fa-solid fa-right-from-bracket text-xs"></i>
                     </button>
                 </form>
