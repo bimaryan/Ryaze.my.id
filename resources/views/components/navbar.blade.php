@@ -165,7 +165,8 @@
 
     <div class="absolute top-16 left-0 right-0 h-32 bg-gradient-to-b from-indigo-50/80 to-transparent dark:from-indigo-500/5 dark:to-transparent pointer-events-none"></div>
 
-    <div class="h-full pb-28 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700 relative">
+    <div class="flex h-full flex-col relative">
+        <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
         @php
             $role = Auth::user()->role ?? '';
 
@@ -445,8 +446,10 @@
 
         </nav>
 
+        </div>
+
         {{-- Bottom user card --}}
-        <div class="absolute bottom-0 left-0 right-0 p-3 border-t border-slate-200/60 dark:border-white/5 bg-white/80 dark:bg-[#0a0f1a]/80 backdrop-blur-sm">
+        <div class="flex-shrink-0 p-3 border-t border-slate-200/60 dark:border-white/5 bg-white/80 dark:bg-[#0a0f1a]/80 backdrop-blur-sm">
             <div class="flex items-center gap-3 px-2 py-1.5">
                 <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
