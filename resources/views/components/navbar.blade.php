@@ -3,16 +3,16 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <nav class="fixed inset-x-0 top-0 z-50" id="main-navbar" aria-label="Navigasi utama">
-    <div class="relative bg-[#020b16]/95 backdrop-blur-xl border-b border-[#1d2a43] shadow-[0_12px_30px_rgba(2,6,23,0.9)]">
-        <div class="mx-auto max-w-[1700px] px-4 lg:px-6">
-            <div class="flex items-center justify-between gap-3 h-[68px]">
+    <div class="relative bg-[#040d1d]/95 backdrop-blur-xl border-b border-[#1a2542] shadow-[0_8px_28px_rgba(2,6,23,0.7)]">
+        <div class="mx-auto max-w-[1600px] px-4 lg:px-6">
+            <div class="flex items-center justify-between gap-3 h-[60px]">
 
                 <div class="flex min-w-0 items-center gap-2 sm:gap-3">
                     <button x-ref="sidebarToggle" @click="sidebarOpen = !sidebarOpen"
                         :aria-expanded="sidebarOpen.toString()" aria-expanded="false"
                         aria-label="Buka atau tutup menu navigasi" aria-controls="logo-sidebar" type="button"
-                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-10 h-10 rounded-xl text-slate-300 hover:text-white hover:bg-[#101c33] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-violet-500 focus:outline-none ring-1 ring-[#1d2a43] bg-[#071327]">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-9 h-9 rounded-lg text-slate-300 hover:text-white hover:bg-[#0d1a2d] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-violet-500 focus:outline-none ring-1 ring-[#1a2542] bg-transparent">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
                         </svg>
                     </button>
@@ -20,28 +20,28 @@
                     <a href="{{ url('/') }}" class="flex min-w-0 items-center gap-2.5 group">
                         @php $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value'); @endphp
                         @if($siteLogo)
-                            <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-7 w-auto object-contain drop-shadow-[0_0_18px_rgba(124,58,237,0.45)]">
+                            <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-7 w-auto object-contain">
                         @else
-                            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center shadow-[0_0_18px_rgba(124,58,237,0.45)]">
-                                <i class="fa-solid fa-code text-white text-[10px]"></i>
+                            <div class="w-6 h-6 rounded-md bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center shadow-[0_0_18px_rgba(124,58,237,0.35)]">
+                                <i class="fa-solid fa-code text-white text-[9px]"></i>
                             </div>
                         @endif
                         <span class="text-[15px] font-extrabold text-white tracking-tight whitespace-nowrap">
-                            {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}
+                            {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'RYAZE' }}
                         </span>
                     </a>
                 </div>
 
-                <div class="hidden md:flex items-center justify-center gap-8 text-[13px] font-medium text-slate-300">
+                <div class="hidden md:flex items-center justify-center gap-7 text-[12px] font-medium text-slate-300 tracking-wide">
                     <a href="#" class="transition hover:text-white">Tentang</a>
                     <a href="#" class="transition hover:text-white">Layanan</a>
                     <a href="#" class="transition hover:text-white">Harga</a>
                     <a href="#" class="transition hover:text-white">Blog</a>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 sm:gap-3">
                     <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                        class="relative inline-flex h-8 w-[56px] flex-shrink-0 cursor-pointer items-center rounded-full bg-[#0b1730] ring-1 ring-[#243553] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-violet-500/40 shadow-inner"
+                        class="relative inline-flex h-8 w-[54px] flex-shrink-0 cursor-pointer items-center rounded-full bg-[#0a162c] ring-1 ring-[#243553] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-violet-500/40 shadow-inner"
                         role="switch">
                         <span class="pointer-events-none inline-flex h-6 w-6 transform translate-x-1 dark:translate-x-7 items-center justify-center rounded-full bg-white shadow-md transition-all duration-300 ease-in-out">
                             <i class="fa-solid fa-sun text-[9px] text-amber-500 absolute opacity-100 dark:opacity-0 transition-opacity"></i>
@@ -49,34 +49,7 @@
                         </span>
                     </button>
 
-                    @php $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]); @endphp
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                        <button @click="open = !open"
-                            class="relative flex items-center justify-center w-10 h-10 rounded-xl text-slate-200 hover:text-white hover:bg-[#101c33] transition-all duration-200 focus:outline-none ring-1 ring-[#1d2a43] bg-[#071327]"
-                            type="button">
-                            <i class="fa-solid fa-bell text-base"></i>
-                            @if ($unreadNotifications->count() > 0)
-                                <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-[#020b16]">
-                                    {{ $unreadNotifications->count() > 9 ? '9+' : $unreadNotifications->count() }}
-                                </span>
-                            @endif
-                        </button>
-                    </div>
-
-                    <div class="hidden md:flex items-center gap-2 text-right">
-                        <div>
-                            <p class="text-sm font-semibold text-slate-200 leading-tight">{{ Auth::user()->name ?? 'Guest' }}</p>
-                        </div>
-                    </div>
-
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                        <button @click="open = !open"
-                            class="relative flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white font-bold text-xs shadow-[0_0_18px_rgba(124,58,237,0.45)] hover:scale-[1.02] transition-all duration-200 focus:outline-none ring-2 ring-[#071327]">
-                            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
-                        </button>
-                    </div>
-
-                    <a href="{{ $dashboardUrl ?? url('/') }}" class="ml-1 inline-flex items-center justify-center h-9 px-4 rounded-lg bg-[#8b5cf6] text-white text-[12px] font-semibold shadow-[0_0_20px_rgba(124,58,237,0.38)] hover:bg-[#7c3aed] transition-all duration-200">
+                    <a href="{{ $dashboardUrl ?? url('/') }}" class="inline-flex items-center justify-center h-9 px-4 rounded-lg bg-[#8b5cf6] text-white text-[12px] font-semibold shadow-[0_0_18px_rgba(124,58,237,0.35)] hover:bg-[#7c3aed] transition-all duration-200">
                         Dashboard
                     </a>
                 </div>
@@ -91,13 +64,11 @@
 
 <aside id="logo-sidebar"
     :class="sidebarOpen && !desktop ? 'translate-x-0' : (desktop ? 'translate-x-0' : '-translate-x-full')"
-    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-[#050d1b]/95 border-r border-[#1d2a43] shadow-[14px_0_35px_rgba(2,6,23,0.7)] w-64 sm:translate-x-0 backdrop-blur-xl"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-[#040d1d]/95 border-r border-[#1a2542] w-64 sm:translate-x-0 backdrop-blur-xl"
     aria-label="Sidebar">
 
-    <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#8b5cf6]/8 to-transparent pointer-events-none"></div>
-
     <div class="flex h-full flex-col relative">
-        <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300/60 dark:scrollbar-thumb-slate-700">
+        <div class="flex-1 overflow-y-auto px-3 py-3">
         @php
             $role = Auth::user()->role ?? '';
 
@@ -118,18 +89,18 @@
             $isUser         = in_array($role, ['superadmin', 'user_joki', 'user_hosting', 'admin_hosting', 'admin_joki']);
 
             $navLink = fn($active) =>
-                'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ' .
+                'group flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 ' .
                 ($active
-                    ? 'bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white shadow-[0_10px_22px_rgba(124,58,237,0.35)]'
-                    : 'text-slate-300 hover:bg-[#0e1a2e] hover:text-white');
+                    ? 'bg-[#8b5cf6]/18 text-white border border-[#8b5cf6]/25 shadow-[0_0_0_1px_rgba(139,92,246,0.15)]'
+                    : 'text-slate-300 hover:bg-[#0d1a2d] hover:text-white');
 
             $iconBox = fn($active) =>
-                'flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-xs transition-all duration-200 ' .
+                'flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-md text-[11px] transition-all duration-200 ' .
                 ($active
-                    ? 'bg-white/15 text-white'
-                    : 'bg-[#0b1730] text-slate-300 group-hover:bg-[#102141] group-hover:text-violet-300');
+                    ? 'bg-[#8b5cf6]/20 text-violet-200'
+                    : 'bg-transparent text-slate-400 group-hover:text-violet-300');
 
-            $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500';
+            $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500';
         @endphp
 
         <nav class="px-3 py-3 space-y-0.5">
