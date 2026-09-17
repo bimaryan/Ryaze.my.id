@@ -174,7 +174,7 @@
 
                 {{-- phpMyAdmin auto-login via POST --}}
                 <div class="bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="text-sm text-indigo-900">
+                    <div class="text-sm text-indigo-900 dark:text-indigo-200">
                         <strong>Manajemen Database</strong><br>
                         <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-indigo-100 dark:bg-indigo-500/20 px-1 rounded">{{ $db->db_name }}</code>.</span>
                     </div>
@@ -281,8 +281,8 @@
                 <hr class="border-slate-100 dark:border-slate-700">
 
                 {{-- Redis Actions --}}
-                <div class="bg-rose-50/50 border border-rose-100 dark:border-rose-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="text-sm text-rose-900">
+                <div class="bg-rose-50/50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="text-sm text-rose-900 dark:text-rose-200">
                         <strong>Manajemen Database</strong><br>
                         <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-rose-100 dark:bg-rose-500/20 px-1 rounded">{{ $db->db_username }}</code>.</span>
                     </div>
@@ -374,8 +374,8 @@
                 <hr class="border-slate-100 dark:border-slate-700">
 
                 {{-- PostgreSQL Management Actions --}}
-                <div class="bg-blue-50/50 border border-blue-100 dark:border-blue-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="text-sm text-blue-900">
+                <div class="bg-blue-50/50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="text-sm text-blue-900 dark:text-blue-200">
                         <strong>Manajemen Database</strong><br>
                         <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-blue-100 dark:bg-blue-500/20 px-1 rounded">{{ $db->db_username }}</code>.</span>
                     </div>
@@ -495,7 +495,7 @@
 <div id="createNosqlDbModal" class="hidden fixed inset-0 z-[55] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
     <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         {{-- Modal Header --}}
-        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-rose-50/50">
+        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-rose-50/50 dark:bg-rose-500/10">
             <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
                 <i class="fa-solid fa-server text-rose-500 dark:text-rose-400"></i> Buat Database Redis
             </h3>
@@ -570,7 +570,7 @@
 <div id="createPgsqlDbModal" class="hidden fixed inset-0 z-[55] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
     <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         {{-- Modal Header --}}
-        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-blue-50/50">
+        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-blue-50/50 dark:bg-blue-500/10">
             <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
                 <i class="fa-solid fa-database text-blue-500 dark:text-blue-400"></i> Buat Database PostgreSQL
             </h3>
@@ -656,8 +656,8 @@
         <form id="importForm" action="" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             
-            <div class="bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl text-sm text-indigo-900 mb-4">
-                <p>Mengimpor file <strong>.sql</strong> ke database: <br><code id="importDbNameDisplay" class="font-mono bg-indigo-100 dark:bg-indigo-500/20 px-1 rounded font-bold"></code></p>
+            <div class="bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl text-sm text-indigo-900 dark:text-indigo-200 mb-4">
+                <p>Mengimpor file <strong>.sql</strong> ke database: <br><code id="importDbNameDisplay" class="font-mono bg-indigo-100 dark:bg-indigo-500/20 dark:text-indigo-100 px-1 rounded font-bold"></code></p>
             </div>
 
             <div>
@@ -703,7 +703,7 @@
 
         {{-- Body --}}
         <div class="p-6 overflow-y-auto space-y-6">
-            <div class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl text-sm text-indigo-900">
+            <div class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl text-sm text-indigo-900 dark:text-indigo-200">
                 <strong>REST API Siap Pakai!</strong><br>
                 Anda bisa menggunakan Endpoint ini untuk melakukan operasi CRUD (Create, Read, Update, Delete) pada tabel apapun di database Anda secara langsung.
             </div>
