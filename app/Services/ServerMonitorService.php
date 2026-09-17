@@ -40,6 +40,7 @@ class ServerMonitorService
                                 'percentage' => $resData['diskUsage'] ?? 0,
                                 'free_gb' => 0
                             ],
+                            'disk_hdd' => self::getHddUsage(),
                             'uptime' => $resData['uptime'] ?? 'Online'
                         ];
                     }
@@ -53,6 +54,7 @@ class ServerMonitorService
         $cpu = self::getCpuLoad();
         $ram = self::getRamUsage();
         $disk = self::getDiskUsage();
+        $disk_hdd = self::getHddUsage();
         
         $uptime = self::getUptime();
 
@@ -60,6 +62,7 @@ class ServerMonitorService
             'cpu' => $cpu,
             'ram' => $ram,
             'disk' => $disk,
+            'disk_hdd' => $disk_hdd,
             'uptime' => $uptime
         ];
     }
@@ -186,6 +189,37 @@ class ServerMonitorService
     private static function getDiskUsage(): array
     {
         $path = function_exists('base_path') ? base_path() : '/';
+        $total = @disk_total_space($path);
+        $free = @disk_free_space($path);
+        $used = $total - $free;
+        
+        if ($total > 0) {
+            return [
+                'total_gb' => round($total / 1024 / 1024 / 1024, 1),
+                'used_gb' => round($used / 1024 / 1024 / 1024, 1),
+                'free_gb' => round($free / 1024 / 1024 / 1024, 1),
+                'percentage' => round(($used / $total) * 100, 1)
+            ];
+        }
+        
+        return [
+            'total_gb' => 0,
+            'used_gb' => 0,
+            'free_gb' => 0,
+            'percentage' => 0
+        ];
+    }
+
+    private static function getHddUsage(): array
+    {
+        // Try to get the path for hosting clients
+        $path = function_exists('hosting_clients_dir') ? hosting_clients_dir() : (function_exists('storage_path') ? storage_path('app/hosting_clients') : '/');
+        
+        // If directory doesn't exist, try to create it or just fallback to /
+        if (!file_exists($path)) {
+            @mkdir($path, 0755, true);
+        }
+
         $total = @disk_total_space($path);
         $free = @disk_free_space($path);
         $used = $total - $free;

@@ -168,7 +168,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
                     <!-- CPU -->
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700 relative overflow-hidden">
                         <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -198,10 +198,10 @@
                         </div>
                     </div>
 
-                    <!-- DISK -->
+                    <!-- DISK (OS) -->
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700 relative overflow-hidden">
                         <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-hard-drive"></i> Disk Space
+                            <i class="fa-solid fa-hard-drive"></i> Disk (OS)
                         </p>
                         <div class="flex items-end gap-2">
                             <h4 class="text-2xl font-black text-slate-800 dark:text-slate-100" x-text="data.disk.percentage + '%'"></h4>
@@ -210,6 +210,21 @@
                         <!-- Progress Bar -->
                         <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-3">
                             <div class="h-1.5 rounded-full transition-all duration-1000" :class="{'bg-rose-500': data.disk.percentage > 90, 'bg-amber-500': data.disk.percentage > 75, 'bg-blue-500': data.disk.percentage <= 75}" :style="`width: ${data.disk.percentage}%`"></div>
+                        </div>
+                    </div>
+
+                    <!-- DISK (HDD/Hosting) -->
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+                        <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-database"></i> Disk (Hosting)
+                        </p>
+                        <div class="flex items-end gap-2">
+                            <h4 class="text-2xl font-black text-slate-800 dark:text-slate-100" x-text="data.disk_hdd.percentage + '%'"></h4>
+                            <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 mb-1" x-text="`${data.disk_hdd.free_gb}GB Free`"></span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-3">
+                            <div class="h-1.5 rounded-full transition-all duration-1000" :class="{'bg-rose-500': data.disk_hdd.percentage > 90, 'bg-amber-500': data.disk_hdd.percentage > 75, 'bg-blue-500': data.disk_hdd.percentage <= 75}" :style="`width: ${data.disk_hdd.percentage}%`"></div>
                         </div>
                     </div>
 
@@ -233,6 +248,7 @@
                             cpu: { load_1m: 0 },
                             ram: { percentage: 0, used_mb: 0, total_mb: 0 },
                             disk: { percentage: 0, free_gb: 0 },
+                            disk_hdd: { percentage: 0, free_gb: 0 },
                             uptime: '...'
                         },
                         startMonitoring() {
