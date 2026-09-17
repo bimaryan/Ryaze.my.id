@@ -29,9 +29,9 @@
     @endphp
 
     <title>@hasSection('title')@yield('title') - {{ $siteName }}@else{{ $siteName }}@endif</title>
-    
+
     <meta name="description" content="@hasSection('seo_description')@yield('seo_description')@else{{ $siteDescription }}@endif">
-    
+
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
@@ -47,7 +47,7 @@
     @if($siteFavicon)<meta property="twitter:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
 
     <link rel="canonical" href="{{ url()->current() }}">
-    
+
     @if($siteFavicon)
         <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
     @endif
@@ -67,7 +67,7 @@
     <script nonce="{{ csp_nonce() }}">
         window.ryazeToggleTheme = function (event) {
             const isDark = document.documentElement.classList.contains('dark');
-            
+
             const toggleTheme = () => {
                 var dark = document.documentElement.classList.toggle('dark');
                 document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
@@ -96,7 +96,7 @@
                     `circle(0px at ${x}px ${y}px)`,
                     `circle(${endRadius}px at ${x}px ${y}px)`
                 ];
-                
+
                 document.documentElement.animate(
                     {
                         clipPath: isDark ? [...clipPath].reverse() : clipPath,
@@ -121,7 +121,7 @@
         });
     </script>
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}" crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ csp_nonce() }}">
-    
+
     <!-- AlpineJS -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js" nonce="{{ csp_nonce() }}"></script>
 
@@ -149,8 +149,24 @@
     </style>
 </head>
 
-<body class="bg-mesh font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+<body class="bg-mesh font-sans antialiased text-slate-900 dark:bg-slate-950 dark:text-slate-100"
+    x-data="{ sidebarOpen: false, desktop: window.innerWidth >= 640 }"
+    :class="{ 'overflow-hidden': sidebarOpen && !desktop, 'dashboard-menu-open': sidebarOpen && !desktop }"
+    @resize.window="desktop = window.innerWidth >= 640; if (desktop) sidebarOpen = false"
+    @keydown.escape.window="if (sidebarOpen) { sidebarOpen = false; $refs.sidebarToggle.focus() }"
+    @pjax:end.document="sidebarOpen = false">
     @include('components.navbar')
+
+    <div x-show="sidebarOpen && !desktop"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="sidebarOpen = false"
+         class="fixed inset-0 z-30 bg-slate-950/50 backdrop-blur-sm sm:hidden"></div>
+
     @yield('content')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js" nonce="{{ csp_nonce() }}"></script>
     @include('components.hot-toast')

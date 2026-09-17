@@ -2,22 +2,23 @@
 {{-- ║               TOP NAVBAR                            ║ --}}
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
-<nav class="fixed top-0 z-50 w-full" id="main-navbar">
+<nav class="fixed inset-x-0 top-0 z-50" id="main-navbar" aria-label="Navigasi utama">
     <div class="relative bg-white/80 dark:bg-[#0a0f1a]/85 backdrop-blur-xl border-b border-slate-200/60 dark:border-white/5 shadow-sm shadow-slate-900/5">
         <div class="px-4 lg:px-6">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center justify-between gap-3 h-16">
 
                 {{-- Left: Hamburger + Brand --}}
-                <div class="flex items-center gap-3">
-                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar"
-                        aria-controls="logo-sidebar" type="button"
-                        class="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 transition-all duration-200 focus:outline-none">
+                <div class="flex min-w-0 items-center gap-2 sm:gap-3">
+                    <button x-ref="sidebarToggle" @click="sidebarOpen = !sidebarOpen"
+                        :aria-expanded="sidebarOpen.toString()" aria-expanded="false"
+                        aria-label="Buka atau tutup menu navigasi" aria-controls="logo-sidebar" type="button"
+                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus:outline-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
                         </svg>
                     </button>
 
-                    <a href="{{ url('/') }}" class="flex items-center gap-2.5 group">
+                    <a href="{{ url('/') }}" class="flex min-w-0 items-center gap-2.5 group">
                         @php $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value'); @endphp
                         @if($siteLogo)
                             <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 w-auto object-contain">
@@ -158,7 +159,8 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform -translate-x-full bg-white dark:bg-[#0a0f1a] border-r border-slate-200/80 dark:border-white/5 sm:translate-x-0 w-64"
+    :class="sidebarOpen && !desktop ? 'translate-x-0' : (desktop ? 'translate-x-0' : '-translate-x-full')"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-white dark:bg-[#0a0f1a] border-r border-slate-200/80 dark:border-white/5 w-64 sm:translate-x-0"
     aria-label="Sidebar">
 
     <div class="absolute top-16 left-0 right-0 h-32 bg-gradient-to-b from-indigo-50/80 to-transparent dark:from-indigo-500/5 dark:to-transparent pointer-events-none"></div>
