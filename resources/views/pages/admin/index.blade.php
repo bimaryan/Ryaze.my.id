@@ -208,8 +208,19 @@
                             <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 mb-1" x-text="`${data.disk.free_gb}GB Free`"></span>
                         </div>
                         <!-- Progress Bar -->
-                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-3">
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-3 mb-2">
                             <div class="h-1.5 rounded-full transition-all duration-1000" :class="{'bg-rose-500': data.disk.percentage > 90, 'bg-amber-500': data.disk.percentage > 75, 'bg-blue-500': data.disk.percentage <= 75}" :style="`width: ${data.disk.percentage}%`"></div>
+                        </div>
+                        
+                        <!-- Health & Speed -->
+                        <div class="flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 border-t border-slate-200 dark:border-slate-700 pt-2">
+                            <span :class="{'text-emerald-500': data.disk.health === 'Healthy', 'text-rose-500': data.disk.health === 'Critical', 'text-amber-500': data.disk.health === 'Warning'}">
+                                <i class="fa-solid" :class="{'fa-heart-circle-check': data.disk.health === 'Healthy', 'fa-triangle-exclamation': data.disk.health !== 'Healthy'}"></i> <span x-text="data.disk.health"></span>
+                            </span>
+                            <span title="Read / Write Speed" class="flex gap-2">
+                                <span><i class="fa-solid fa-arrow-down text-sky-500"></i> <span x-text="data.disk.read_speed"></span>MB/s</span>
+                                <span><i class="fa-solid fa-arrow-up text-indigo-500"></i> <span x-text="data.disk.write_speed"></span>MB/s</span>
+                            </span>
                         </div>
                     </div>
 
@@ -223,8 +234,19 @@
                             <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 mb-1" x-text="`${data.disk_hdd.free_gb}GB Free`"></span>
                         </div>
                         <!-- Progress Bar -->
-                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-3">
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-3 mb-2">
                             <div class="h-1.5 rounded-full transition-all duration-1000" :class="{'bg-rose-500': data.disk_hdd.percentage > 90, 'bg-amber-500': data.disk_hdd.percentage > 75, 'bg-blue-500': data.disk_hdd.percentage <= 75}" :style="`width: ${data.disk_hdd.percentage}%`"></div>
+                        </div>
+
+                        <!-- Health & Speed -->
+                        <div class="flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 border-t border-slate-200 dark:border-slate-700 pt-2">
+                            <span :class="{'text-emerald-500': data.disk_hdd.health === 'Healthy', 'text-rose-500': data.disk_hdd.health === 'Critical', 'text-amber-500': data.disk_hdd.health === 'Warning'}">
+                                <i class="fa-solid" :class="{'fa-heart-circle-check': data.disk_hdd.health === 'Healthy', 'fa-triangle-exclamation': data.disk_hdd.health !== 'Healthy'}"></i> <span x-text="data.disk_hdd.health"></span>
+                            </span>
+                            <span title="Read / Write Speed" class="flex gap-2">
+                                <span><i class="fa-solid fa-arrow-down text-sky-500"></i> <span x-text="data.disk_hdd.read_speed"></span>MB/s</span>
+                                <span><i class="fa-solid fa-arrow-up text-indigo-500"></i> <span x-text="data.disk_hdd.write_speed"></span>MB/s</span>
+                            </span>
                         </div>
                     </div>
 
@@ -247,8 +269,8 @@
                         data: {
                             cpu: { load_1m: 0 },
                             ram: { percentage: 0, used_mb: 0, total_mb: 0 },
-                            disk: { percentage: 0, free_gb: 0 },
-                            disk_hdd: { percentage: 0, free_gb: 0 },
+                            disk: { percentage: 0, free_gb: 0, health: '...', read_speed: 0, write_speed: 0 },
+                            disk_hdd: { percentage: 0, free_gb: 0, health: '...', read_speed: 0, write_speed: 0 },
                             uptime: '...'
                         },
                         startMonitoring() {

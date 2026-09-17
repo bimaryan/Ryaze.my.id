@@ -36,11 +36,8 @@ class ServerMonitorService
                                 'used_mb' => ($resData['memoryUsed'] ?? 0) / 1024 / 1024,
                                 'total_mb' => ($resData['memoryTotal'] ?? 0) / 1024 / 1024
                             ],
-                            'disk' => [
-                                'percentage' => $resData['diskUsage'] ?? 0,
-                                'free_gb' => 0
-                            ],
-                            'disk_hdd' => self::getHddUsage(),
+                            'disk' => self::getDiskStats(function_exists('base_path') ? base_path() : '/', 'os'),
+                            'disk_hdd' => self::getDiskStats(function_exists('hosting_clients_dir') ? hosting_clients_dir() : (function_exists('storage_path') ? storage_path('app/hosting_clients') : '/'), 'hdd'),
                             'uptime' => $resData['uptime'] ?? 'Online'
                         ];
                     }
@@ -53,8 +50,10 @@ class ServerMonitorService
         // Fallback to local script
         $cpu = self::getCpuLoad();
         $ram = self::getRamUsage();
-        $disk = self::getDiskUsage();
-        $disk_hdd = self::getHddUsage();
+        $disk = self::getDiskStats(function_exists('base_path') ? base_path() : '/', 'os');
+        
+        $hddPath = function_exists('hosting_clients_dir') ? hosting_clients_dir() : (function_exists('storage_path') ? storage_path('app/hosting_clients') : '/');
+        $disk_hdd = self::getDiskStats($hddPath, 'hdd');
         
         $uptime = self::getUptime();
 
@@ -186,36 +185,8 @@ class ServerMonitorService
         ];
     }
 
-    private static function getDiskUsage(): array
+    private static function getDiskStats(string $path, string $identifier): array
     {
-        $path = function_exists('base_path') ? base_path() : '/';
-        $total = @disk_total_space($path);
-        $free = @disk_free_space($path);
-        $used = $total - $free;
-        
-        if ($total > 0) {
-            return [
-                'total_gb' => round($total / 1024 / 1024 / 1024, 1),
-                'used_gb' => round($used / 1024 / 1024 / 1024, 1),
-                'free_gb' => round($free / 1024 / 1024 / 1024, 1),
-                'percentage' => round(($used / $total) * 100, 1)
-            ];
-        }
-        
-        return [
-            'total_gb' => 0,
-            'used_gb' => 0,
-            'free_gb' => 0,
-            'percentage' => 0
-        ];
-    }
-
-    private static function getHddUsage(): array
-    {
-        // Try to get the path for hosting clients
-        $path = function_exists('hosting_clients_dir') ? hosting_clients_dir() : (function_exists('storage_path') ? storage_path('app/hosting_clients') : '/');
-        
-        // If directory doesn't exist, try to create it or just fallback to /
         if (!file_exists($path)) {
             @mkdir($path, 0755, true);
         }
@@ -223,21 +194,52 @@ class ServerMonitorService
         $total = @disk_total_space($path);
         $free = @disk_free_space($path);
         $used = $total - $free;
+        $percentage = $total > 0 ? round(($used / $total) * 100, 1) : 0;
         
+        // Cek Health
+        $health = 'Unknown';
         if ($total > 0) {
-            return [
-                'total_gb' => round($total / 1024 / 1024 / 1024, 1),
-                'used_gb' => round($used / 1024 / 1024 / 1024, 1),
-                'free_gb' => round($free / 1024 / 1024 / 1024, 1),
-                'percentage' => round(($used / $total) * 100, 1)
-            ];
+            $health = 'Healthy';
+            if ($percentage > 90) $health = 'Warning';
+            if ($percentage > 95) $health = 'Critical';
+            if (!is_writable($path)) $health = 'Read-Only';
         }
-        
+
+        // Cek Kecepatan I/O (Cache 5 Menit agar tidak membebani disk)
+        $speed = \Illuminate\Support\Facades\Cache::remember('disk_io_' . $identifier, 300, function () use ($path) {
+            $testFile = rtrim($path, '/') . '/.io_test_' . uniqid();
+            $data = str_repeat('0', 1024 * 1024 * 5); // 5 MB test file
+            
+            // Uji Tulis
+            $start = microtime(true);
+            $writeSuccess = @file_put_contents($testFile, $data);
+            $writeTime = microtime(true) - $start;
+            $writeSpeed = ($writeSuccess && $writeTime > 0) ? (5 / $writeTime) : 0;
+            
+            // Uji Baca
+            $start = microtime(true);
+            $readSuccess = @file_get_contents($testFile);
+            $readTime = microtime(true) - $start;
+            $readSpeed = ($readSuccess && $readTime > 0) ? (5 / $readTime) : 0;
+            
+            if (file_exists($testFile)) {
+                @unlink($testFile);
+            }
+            
+            return [
+                'read' => round($readSpeed, 1),
+                'write' => round($writeSpeed, 1)
+            ];
+        });
+
         return [
-            'total_gb' => 0,
-            'used_gb' => 0,
-            'free_gb' => 0,
-            'percentage' => 0
+            'total_gb' => $total > 0 ? round($total / 1024 / 1024 / 1024, 1) : 0,
+            'used_gb' => $total > 0 ? round($used / 1024 / 1024 / 1024, 1) : 0,
+            'free_gb' => $total > 0 ? round($free / 1024 / 1024 / 1024, 1) : 0,
+            'percentage' => $percentage,
+            'health' => $health,
+            'read_speed' => $speed['read'] ?? 0,
+            'write_speed' => $speed['write'] ?? 0,
         ];
     }
 }
