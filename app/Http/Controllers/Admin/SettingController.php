@@ -52,12 +52,21 @@ class SettingController extends Controller
         }
 
         if (! empty($inactivePlans)) {
-            $billingsToSuspend = HostingBilling::whereIn('plan', $inactivePlans)
+            // Find users who have an active billing for an inactive plan
+            $userIdsWithInactiveBilling = \App\Models\HostingBilling::whereIn('plan', $inactivePlans)
                 ->where('status', 'active')
-                ->get();
+                ->pluck('user_id')
+                ->toArray();
 
-            foreach ($billingsToSuspend as $billing) {
-                $projects = HostingProject::where('user_id', $billing->user_id)
+            // Find all users who now have NO active plan (e.g. they relied on the 'free' plan which is now disabled)
+            $usersWithNoPlan = \App\Models\User::whereIn('role', ['user_hosting'])->get()->filter(function ($user) {
+                return $user->getActivePlan() === null;
+            })->pluck('id')->toArray();
+
+            $userIdsToSuspend = array_unique(array_merge($userIdsWithInactiveBilling, $usersWithNoPlan));
+
+            if (!empty($userIdsToSuspend)) {
+                $projects = \App\Models\HostingProject::whereIn('user_id', $userIdsToSuspend)
                     ->whereIn('status', ['active', 'building'])
                     ->get();
 
@@ -66,17 +75,18 @@ class SettingController extends Controller
                     $project->save();
 
                     $subdomain = explode('.', $project->ryaze_domain)[0];
-                    $projectDir = hosting_clients_dir()."/{$subdomain}";
+                    $projectDir = function_exists('hosting_clients_dir') ? hosting_clients_dir()."/{$subdomain}" : storage_path("app/hosting_clients/{$subdomain}");
                     $suspendFile = "{$projectDir}/.suspended";
 
                     if (is_dir($projectDir)) {
-                        touch($suspendFile);
+                        @touch($suspendFile);
                         @chmod($suspendFile, 0660);
                     }
 
                     // Stop PM2 process untuk framework Node-based
                     if (in_array($project->framework, ['react', 'nextjs', 'vue', 'node'])) {
                         $pm2Name = "prod_{$project->id}";
+                        // Depending on environment, might need docker exec, but keeping existing logic:
                         exec("pm2 delete \"{$pm2Name}\" 2>/dev/null || true");
 
                         if (! empty($project->dev_pid)) {
