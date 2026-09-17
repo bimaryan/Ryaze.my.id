@@ -2371,7 +2371,9 @@ PHP
         if (is_dir($tmpDir)) {
             File::deleteDirectory($tmpDir);
         }
-        File::makeDirectory($parentDir, 0755, true);
+        if (! is_dir($parentDir)) {
+            File::makeDirectory($parentDir, 0755, true);
+        }
 
         // Tentukan versi Laravel
         $versionConstraint = match ($version) {
