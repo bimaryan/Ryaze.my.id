@@ -3,15 +3,15 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <nav class="fixed inset-x-0 top-0 z-50" id="main-navbar" aria-label="Navigasi utama">
-    <div class="relative bg-[#040d1d]/95 backdrop-blur-xl border-b border-[#1a2542] shadow-[0_8px_28px_rgba(2,6,23,0.7)]">
-        <div class="mx-auto max-w-[1600px] px-4 lg:px-6">
-            <div class="flex items-center justify-between gap-3 h-[60px]">
+    <div class="relative bg-[#030d1c]/95 backdrop-blur-xl border-b border-[#16263f] shadow-[0_10px_30px_rgba(2,6,23,0.8)]">
+        <div class="mx-auto max-w-[1700px] px-4 lg:px-6">
+            <div class="flex items-center justify-between gap-3 h-[62px]">
 
                 <div class="flex min-w-0 items-center gap-2 sm:gap-3">
                     <button x-ref="sidebarToggle" @click="sidebarOpen = !sidebarOpen"
                         :aria-expanded="sidebarOpen.toString()" aria-expanded="false"
                         aria-label="Buka atau tutup menu navigasi" aria-controls="logo-sidebar" type="button"
-                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-9 h-9 rounded-lg text-slate-300 hover:text-white hover:bg-[#0d1a2d] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-violet-500 focus:outline-none ring-1 ring-[#1a2542] bg-transparent">
+                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-9 h-9 rounded-lg text-slate-300 hover:text-white hover:bg-[#0f1d34] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-violet-500 focus:outline-none ring-1 ring-[#1b2c46] bg-transparent">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
                         </svg>
@@ -32,7 +32,7 @@
                     </a>
                 </div>
 
-                <div class="hidden md:flex items-center justify-center gap-7 text-[12px] font-medium text-slate-300 tracking-wide">
+                <div class="hidden md:flex items-center justify-center gap-8 text-[12px] font-medium text-slate-300 tracking-[0.08em] uppercase">
                     <a href="#" class="transition hover:text-white">Tentang</a>
                     <a href="#" class="transition hover:text-white">Layanan</a>
                     <a href="#" class="transition hover:text-white">Harga</a>
@@ -64,7 +64,7 @@
 
 <aside id="logo-sidebar"
     :class="sidebarOpen && !desktop ? 'translate-x-0' : (desktop ? 'translate-x-0' : '-translate-x-full')"
-    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-[#040d1d]/95 border-r border-[#1a2542] w-64 sm:translate-x-0 backdrop-blur-xl"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-[#040d1d]/95 border-r border-[#18263f] w-64 sm:translate-x-0 backdrop-blur-xl"
     aria-label="Sidebar">
 
     <div class="flex h-full flex-col relative">
@@ -91,14 +91,14 @@
             $navLink = fn($active) =>
                 'group flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 ' .
                 ($active
-                    ? 'bg-[#8b5cf6]/18 text-white border border-[#8b5cf6]/25 shadow-[0_0_0_1px_rgba(139,92,246,0.15)]'
+                    ? 'bg-[#8b5cf6]/12 text-white ring-1 ring-[#8b5cf6]/20'
                     : 'text-slate-300 hover:bg-[#0d1a2d] hover:text-white');
 
             $iconBox = fn($active) =>
                 'flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-md text-[11px] transition-all duration-200 ' .
                 ($active
                     ? 'bg-[#8b5cf6]/20 text-violet-200'
-                    : 'bg-transparent text-slate-400 group-hover:text-violet-300');
+                    : 'bg-transparent text-slate-500 group-hover:text-violet-300');
 
             $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500';
         @endphp
@@ -350,20 +350,19 @@
 
         </div>
 
-        {{-- Bottom user card --}}
-        <div class="flex-shrink-0 p-3 border-t border-[#1e2a46] bg-[#070e1e]/90 backdrop-blur-sm">
-            <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl bg-[#0f172a] ring-1 ring-[#1d2a46] shadow-[0_8px_20px_rgba(15,23,42,0.35)]">
-                <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_16px_rgba(124,58,237,0.45)]">
+        <div class="flex-shrink-0 p-3 border-t border-[#18263f] bg-[#060d1b]/80 backdrop-blur-sm">
+            <div class="flex items-center gap-3 px-2.5 py-2 rounded-lg bg-[#0a162c] ring-1 ring-[#1b2c46]">
+                <div class="flex-shrink-0 w-8 h-8 rounded-md bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center text-white text-[10px] font-bold">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs font-semibold text-white truncate">{{ Auth::user()->name ?? 'Guest' }}</p>
-                    <p class="text-[10px] text-slate-400 truncate">{{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}</p>
+                    <p class="text-[11px] font-semibold text-white truncate">{{ Auth::user()->name ?? 'Guest' }}</p>
+                    <p class="text-[9px] text-slate-400 truncate">{{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}</p>
                 </div>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-[#1d2b4d] transition-colors" title="Keluar">
-                        <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                    <button type="submit" class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-white hover:bg-[#0f1d34] transition-colors" title="Keluar">
+                        <i class="fa-solid fa-right-from-bracket text-[10px]"></i>
                     </button>
                 </form>
             </div>
