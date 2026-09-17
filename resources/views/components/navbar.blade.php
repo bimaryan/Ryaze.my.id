@@ -3,7 +3,7 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <nav class="fixed inset-x-0 top-0 z-50" id="main-navbar" aria-label="Navigasi utama">
-    <div class="relative bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800 shadow-[0_12px_35px_rgba(15,23,42,0.08)]">
+    <div class="relative bg-[#030817]/95 backdrop-blur-xl border-b border-[#1e2a46] shadow-[0_10px_30px_rgba(12,16,31,0.6)]">
         <div class="mx-auto max-w-[1700px] px-4 lg:px-6">
             <div class="flex items-center justify-between gap-3 h-16">
 
@@ -12,7 +12,7 @@
                     <button x-ref="sidebarToggle" @click="sidebarOpen = !sidebarOpen"
                         :aria-expanded="sidebarOpen.toString()" aria-expanded="false"
                         aria-label="Buka atau tutup menu navigasi" aria-controls="logo-sidebar" type="button"
-                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-300 dark:hover:text-indigo-300 dark:hover:bg-indigo-500/10 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus:outline-none shadow-sm ring-1 ring-slate-200/70 dark:ring-slate-700/70 bg-white/70">
+                        class="sm:hidden inline-flex shrink-0 items-center justify-center w-10 h-10 rounded-xl text-slate-200 hover:text-white hover:bg-[#1d2b4d] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-violet-500 focus:outline-none shadow-sm ring-1 ring-slate-700/80 bg-[#0c1120]">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
                         </svg>
@@ -23,11 +23,11 @@
                         @if($siteLogo)
                             <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 w-auto object-contain drop-shadow-sm">
                         @else
-                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-shadow">
-                                <i class="fa-solid fa-code text-white text-sm"></i>
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center shadow-[0_0_18px_rgba(124,58,237,0.4)]">
+                                <i class="fa-solid fa-code text-white text-xs"></i>
                             </div>
                         @endif
-                        <span class="text-lg font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent tracking-tight whitespace-nowrap">
+                        <span class="text-lg font-extrabold text-white tracking-tight whitespace-nowrap">
                             {{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal' }}
                         </span>
                     </a>
@@ -37,11 +37,11 @@
                 <div class="flex items-center gap-2">
                     {{-- Dark mode toggle --}}
                     <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                        class="relative inline-flex h-8 w-[56px] flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-200/90 dark:bg-indigo-600/90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:ring-offset-2 dark:focus:ring-offset-slate-900 shadow-inner ring-1 ring-slate-200/80 dark:ring-slate-700/80"
+                        class="relative inline-flex h-8 w-[56px] flex-shrink-0 cursor-pointer items-center rounded-full bg-[#0f172a] ring-1 ring-[#1f2d4d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-violet-500/40 shadow-inner"
                         role="switch">
                         <span class="pointer-events-none inline-flex h-6 w-6 transform translate-x-1 dark:translate-x-7 items-center justify-center rounded-full bg-white shadow-md transition-all duration-300 ease-in-out">
                             <i class="fa-solid fa-sun text-[9px] text-amber-500 absolute opacity-100 dark:opacity-0 transition-opacity"></i>
-                            <i class="fa-solid fa-moon text-[9px] text-indigo-600 absolute opacity-0 dark:opacity-100 transition-opacity"></i>
+                            <i class="fa-solid fa-moon text-[9px] text-violet-600 absolute opacity-0 dark:opacity-100 transition-opacity"></i>
                         </span>
                     </button>
 
@@ -49,7 +49,7 @@
                     @php $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]); @endphp
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open"
-                            class="relative flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-300 dark:hover:text-indigo-300 dark:hover:bg-indigo-500/10 transition-all duration-200 focus:outline-none ring-1 ring-slate-200/80 dark:ring-slate-700/80 bg-white/70 shadow-sm"
+                            class="relative flex items-center justify-center w-10 h-10 rounded-xl text-slate-200 hover:text-white hover:bg-[#1d2b4d] transition-all duration-200 focus:outline-none ring-1 ring-[#1b2a47] bg-[#0f172a] shadow-sm"
                             type="button">
                             <i class="fa-solid fa-bell text-base"></i>
                             @if ($unreadNotifications->count() > 0)
@@ -121,7 +121,7 @@
                     {{-- Avatar dropdown --}}
                     <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open"
-                            class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/45 hover:scale-105 transition-all duration-200 focus:outline-none ring-2 ring-white dark:ring-slate-900">
+                            class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white font-bold text-sm shadow-[0_0_16px_rgba(124,58,237,0.45)] hover:scale-105 transition-all duration-200 focus:outline-none ring-2 ring-[#0c1120]">
                             {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                         </button>
 
@@ -160,7 +160,7 @@
 
 <aside id="logo-sidebar"
     :class="sidebarOpen && !desktop ? 'translate-x-0' : (desktop ? 'translate-x-0' : '-translate-x-full')"
-    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-white/95 dark:bg-slate-900/90 border-r border-slate-200/80 dark:border-slate-800 shadow-[10px_0_30px_rgba(15,23,42,0.08)] w-64 sm:translate-x-0 backdrop-blur-xl"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform bg-[#060d1b]/95 border-r border-[#1e2a46] shadow-[14px_0_35px_rgba(2,6,23,0.7)] w-64 sm:translate-x-0 backdrop-blur-xl"
     aria-label="Sidebar">
 
     <div class="absolute top-16 left-0 right-0 h-28 bg-gradient-to-b from-indigo-50/80 to-transparent dark:from-indigo-500/5 dark:to-transparent pointer-events-none"></div>
@@ -189,16 +189,16 @@
             $navLink = fn($active) =>
                 'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ' .
                 ($active
-                    ? 'bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white shadow-[0_12px_24px_rgba(124,58,237,0.28)]'
-                    : 'text-slate-600 hover:bg-[#f5f0ff] hover:text-[#6d28d9] dark:text-slate-300 dark:hover:bg-[#1a1025]/20 dark:hover:text-violet-300');
+                    ? 'bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white shadow-[0_10px_22px_rgba(124,58,237,0.35)]'
+                    : 'text-slate-300 hover:bg-[#101b34] hover:text-white');
 
             $iconBox = fn($active) =>
                 'flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-xs transition-all duration-200 ' .
                 ($active
                     ? 'bg-white/20 text-white'
-                    : 'bg-slate-100 text-slate-500 group-hover:bg-[#efe6ff] group-hover:text-[#7c3aed] dark:bg-slate-800 dark:text-slate-300 dark:group-hover:bg-[#2d1f42] dark:group-hover:text-violet-300');
+                    : 'bg-[#0f172a] text-slate-300 group-hover:bg-[#1a2542] group-hover:text-violet-300');
 
-            $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-extrabold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500';
+            $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500';
         @endphp
 
         <nav class="px-3 py-3 space-y-0.5">
@@ -449,18 +449,18 @@
         </div>
 
         {{-- Bottom user card --}}
-        <div class="flex-shrink-0 p-3 border-t border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm">
-            <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl bg-gradient-to-r from-[#f5f0ff] to-white dark:from-[#1a1025]/30 dark:to-slate-800/80 ring-1 ring-slate-200/80 dark:ring-slate-700/80 shadow-sm">
-                <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] flex items-center justify-center text-white text-xs font-bold shadow-md shadow-violet-500/25">
+        <div class="flex-shrink-0 p-3 border-t border-[#1e2a46] bg-[#070e1e]/90 backdrop-blur-sm">
+            <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl bg-[#0f172a] ring-1 ring-[#1d2a46] shadow-[0_8px_20px_rgba(15,23,42,0.35)]">
+                <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_16px_rgba(124,58,237,0.45)]">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">{{ Auth::user()->name ?? 'Guest' }}</p>
-                    <p class="text-[10px] text-slate-400 dark:text-slate-500 truncate">{{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}</p>
+                    <p class="text-xs font-semibold text-white truncate">{{ Auth::user()->name ?? 'Guest' }}</p>
+                    <p class="text-[10px] text-slate-400 truncate">{{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}</p>
                 </div>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Keluar">
+                    <button type="submit" class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-[#1d2b4d] transition-colors" title="Keluar">
                         <i class="fa-solid fa-right-from-bracket text-xs"></i>
                     </button>
                 </form>
