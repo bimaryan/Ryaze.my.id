@@ -46,7 +46,7 @@
                 <div class="p-5 space-y-4">
                     {{-- phpMyAdmin auto-login via POST --}}
                     <div class="bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div class="text-sm text-indigo-900">
+                        <div class="text-sm text-indigo-900 dark:text-indigo-200">
                             <strong>Login Otomatis (MySQL)</strong><br>
                             <span class="opacity-80 text-xs">Klik tombol di samping untuk masuk ke phpMyAdmin database <code class="font-mono bg-indigo-100 dark:bg-indigo-500/20 px-1 rounded">{{ $db->db_name }}</code> tanpa harus mengetik password.</span>
                         </div>
@@ -98,8 +98,8 @@
                 </div>
 
                 <div class="p-5 space-y-4">
-                    <div class="bg-blue-50/50 border border-blue-100 dark:border-blue-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div class="text-sm text-blue-900">
+                    <div class="bg-blue-50/50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div class="text-sm text-blue-900 dark:text-blue-200">
                             <strong>Login ke pgAdmin</strong><br>
                             <span class="opacity-80 text-xs">Gunakan kredensial database Anda untuk login ke antarmuka pgAdmin.</span>
                         </div>

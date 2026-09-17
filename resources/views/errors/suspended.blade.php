@@ -17,7 +17,7 @@
         })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Dalam Pemeliharaan - Ryaze</title>
+    <title>Layanan Disuspend - Ryaze</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" nonce="{{ csp_nonce() }}">
@@ -68,12 +68,6 @@
         }
         ::-moz-selection { background: #4f46e5; color: #fff; }
         ::selection { background: #4f46e5; color: #fff; }
-        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-        @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-        .animate-spin-slow { animation: spin-slow 4s linear infinite; }
-        .animate-spin-reverse { animation: spin-reverse 3s linear infinite; }
-        .animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
     </style>
 </head>
 <body>
@@ -83,36 +77,43 @@
     <main class="relative z-10 w-full max-w-2xl mx-auto px-6 text-center">
         {{-- Decorative Icon --}}
         <div class="mb-8 inline-flex">
-            <div class="w-20 h-20 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200/50 dark:border-indigo-500/20 flex items-center justify-center rotate-3 shadow-sm relative">
-                <i class="fa-solid fa-wrench text-4xl text-indigo-500 dark:text-indigo-400 -rotate-3"></i>
-                <i class="fa-solid fa-gear text-indigo-400/60 dark:text-indigo-400/40 text-sm absolute -top-2 -right-2 animate-spin-slow"></i>
-                <i class="fa-solid fa-gear text-slate-300 dark:text-slate-500 text-[10px] absolute -bottom-1 -left-1 animate-spin-reverse"></i>
+            <div class="w-20 h-20 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-500/20 flex items-center justify-center rotate-3 shadow-sm">
+                <i class="fa-solid fa-circle-xmark text-4xl text-rose-500 dark:text-rose-400 -rotate-3"></i>
             </div>
         </div>
 
         {{-- Title --}}
         <h1 class="text-4xl md:text-5xl font-black gradient-text tracking-tighter mb-4 leading-none">
-            Sistem Dalam Pemeliharaan
+            Layanan Disuspend
         </h1>
+
+        {{-- Message --}}
+        <h2 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">
+            Website Ini Tidak Dapat Diakses
+        </h2>
 
         {{-- Description --}}
         <p class="text-base md:text-lg text-slate-500 dark:text-slate-400 mb-10 max-w-lg mx-auto leading-relaxed">
-            Ryaze sedang melakukan pemeliharaan rutin dan pembaruan sistem untuk memberikan layanan yang lebih baik. Kami akan segera kembali!
+            Layanan hosting untuk website ini telah ditangguhkan. Kemungkinan karena tagihan yang belum lunas atau masa aktif paket yang telah berakhir.
         </p>
 
         {{-- Info Box --}}
         <div class="max-w-lg mx-auto p-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm text-sm text-slate-600 dark:text-slate-300 text-left flex items-start gap-3 backdrop-blur-sm">
             <i class="fa-solid fa-circle-info text-indigo-500 dark:text-indigo-400 mt-0.5"></i>
             <div>
-                <strong class="text-slate-700 dark:text-slate-200 block mb-1">Apa yang terjadi?</strong>
-                Fitur klien sementara ditangguhkan selama proses update berlangsung. Administrator kami sedang bekerja keras menyelesaikannya secepat mungkin.
+                <strong class="text-slate-700 dark:text-slate-200 block mb-1">Ingin mengaktifkan kembali?</strong>
+                Silakan hubungi pemilik website ini atau login ke panel Ryaze untuk memperpanjang langganan hosting.
             </div>
         </div>
 
-        {{-- Auto-refresh notice --}}
-        <div class="mt-6 inline-flex items-center gap-2 text-xs text-slate-400 dark:text-slate-600">
-            <i class="fa-solid fa-rotate text-[10px]"></i>
-            Halaman ini akan memuat ulang secara otomatis setiap 60 detik.
+        {{-- Actions --}}
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+            <a href="{{ url('/') }}" class="w-full sm:w-auto inline-flex justify-center items-center gap-2.5 px-8 py-3 text-sm font-semibold rounded-full text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.1)] dark:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all">
+                <i class="fa-solid fa-home text-[11px]"></i> Kembali ke Beranda
+            </a>
+            <a href="{{ route('login') }}" class="w-full sm:w-auto inline-flex justify-center items-center gap-2.5 px-8 py-3 text-sm font-semibold rounded-full text-slate-700 dark:text-slate-200 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10 backdrop-blur-sm transition-all">
+                <i class="fa-solid fa-right-to-bracket text-[11px]"></i> Masuk ke Panel
+            </a>
         </div>
 
         {{-- Branding --}}
@@ -129,9 +130,5 @@
             </a>
         </div>
     </main>
-
-    <script nonce="{{ csp_nonce() }}">
-        setTimeout(function() { location.reload(); }, 60000);
-    </script>
 </body>
 </html>

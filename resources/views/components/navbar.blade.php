@@ -3,23 +3,20 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <nav class="fixed top-0 z-50 w-full" id="main-navbar">
-    {{-- Glassmorphism backdrop --}}
-    <div class="relative bg-white/80 dark:bg-slate-900/85 backdrop-blur-xl border-b border-slate-200/60 dark:border-slate-700/50 shadow-sm shadow-slate-900/5">
-        <div class="px-4 py-0 lg:px-6">
+    <div class="relative bg-white/80 dark:bg-[#0a0f1a]/85 backdrop-blur-xl border-b border-slate-200/60 dark:border-white/5 shadow-sm shadow-slate-900/5">
+        <div class="px-4 lg:px-6">
             <div class="flex items-center justify-between h-16">
 
                 {{-- Left: Hamburger + Brand --}}
                 <div class="flex items-center gap-3">
-                    {{-- Mobile hamburger --}}
                     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar"
                         aria-controls="logo-sidebar" type="button"
-                        class="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 transition-all duration-200 focus:outline-none">
+                        class="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 transition-all duration-200 focus:outline-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
                         </svg>
                     </button>
 
-                    {{-- Brand logo --}}
                     <a href="{{ url('/') }}" class="flex items-center gap-2.5 group">
                         @php $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value'); @endphp
                         @if($siteLogo)
@@ -37,10 +34,9 @@
 
                 {{-- Right: Actions --}}
                 <div class="flex items-center gap-2">
-
                     {{-- Dark mode toggle --}}
                     <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                        class="relative inline-flex h-7 w-13 w-[52px] flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-200 dark:bg-indigo-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 shadow-inner"
+                        class="relative inline-flex h-7 w-[52px] flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-200 dark:bg-indigo-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:ring-offset-2 dark:focus:ring-offset-[#0a0f1a] shadow-inner"
                         role="switch">
                         <span class="pointer-events-none inline-flex h-5 w-5 transform translate-x-1 dark:translate-x-6 items-center justify-center rounded-full bg-white shadow-md transition-all duration-300 ease-in-out">
                             <i class="fa-solid fa-sun text-[9px] text-amber-500 absolute opacity-100 dark:opacity-0 transition-opacity"></i>
@@ -50,23 +46,21 @@
 
                     {{-- Notification bell --}}
                     @php $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]); @endphp
-                    <div class="relative">
-                        <button id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification"
-                            class="relative flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 transition-all duration-200 focus:outline-none"
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button @click="open = !open"
+                            class="relative flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 transition-all duration-200 focus:outline-none"
                             type="button">
                             <i class="fa-solid fa-bell text-base"></i>
                             @if ($unreadNotifications->count() > 0)
-                                <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
+                                <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-white dark:ring-[#0a0f1a]">
                                     {{ $unreadNotifications->count() > 9 ? '9+' : $unreadNotifications->count() }}
                                 </span>
                             @endif
                         </button>
 
-                        {{-- Notification dropdown --}}
-                        <div id="dropdownNotification"
-                            class="z-50 hidden absolute right-0 mt-2 w-80 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/60 rounded-2xl shadow-2xl shadow-slate-900/10 overflow-hidden"
-                            aria-labelledby="dropdownNotificationButton">
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/60">
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95 translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                            class="z-50 absolute right-0 mt-2 w-80 bg-white dark:bg-[#111827] border border-slate-200/60 dark:border-white/10 rounded-2xl shadow-2xl shadow-slate-900/10 overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/5">
                                 <div class="flex items-center gap-2">
                                     <span class="w-2 h-2 rounded-full bg-indigo-500 inline-block"></span>
                                     <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">Notifikasi</span>
@@ -85,7 +79,7 @@
                                     </form>
                                 @endif
                             </div>
-                            <div class="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-700/40">
+                            <div class="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-white/5">
                                 @forelse($unreadNotifications as $notification)
                                     <a href="#" onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();"
                                         class="flex gap-3 px-4 py-3 hover:bg-indigo-50/50 dark:hover:bg-indigo-500/5 transition-colors">
@@ -111,9 +105,9 @@
                     </div>
 
                     {{-- Divider --}}
-                    <div class="hidden md:block w-px h-7 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                    <div class="hidden md:block w-px h-7 bg-slate-200 dark:bg-white/10 mx-1"></div>
 
-                    {{-- User info + Avatar dropdown --}}
+                    {{-- User info --}}
                     <div class="hidden md:flex items-center gap-2 text-right">
                         <div>
                             <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-tight">{{ Auth::user()->name ?? 'Guest' }}</p>
@@ -123,32 +117,35 @@
                         </div>
                     </div>
 
-                    <button type="button" data-dropdown-toggle="dropdown-user"
-                        class="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm shadow-md shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900">
-                        {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
-                    </button>
+                    {{-- Avatar dropdown --}}
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button @click="open = !open"
+                            class="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm shadow-md shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-105 transition-all duration-200 focus:outline-none">
+                            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                        </button>
 
-                    {{-- User dropdown --}}
-                    <div id="dropdown-user" class="z-50 hidden absolute right-4 top-16 w-52 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/60 rounded-2xl shadow-2xl shadow-slate-900/10 overflow-hidden">
-                        <div class="px-4 py-3 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/10 dark:to-violet-500/10 border-b border-slate-100 dark:border-slate-700/60">
-                            <p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{{ Auth::user()->name ?? 'Guest' }}</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ Auth::user()->email ?? '' }}</p>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95 translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                            class="z-50 absolute right-0 mt-2 w-52 bg-white dark:bg-[#111827] border border-slate-200/60 dark:border-white/10 rounded-2xl shadow-2xl shadow-slate-900/10 overflow-hidden">
+                            <div class="px-4 py-3 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-500/10 dark:to-violet-500/10 border-b border-slate-100 dark:border-white/5">
+                                <p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{{ Auth::user()->name ?? 'Guest' }}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ Auth::user()->email ?? '' }}</p>
+                            </div>
+                            <ul class="p-1.5 space-y-0.5">
+                                <li>
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-700 dark:hover:text-indigo-300 rounded-xl transition-colors">
+                                        <i class="fa-solid fa-user w-4 text-center text-indigo-500"></i> Profil Saya
+                                    </a>
+                                </li>
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors">
+                                            <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Keluar
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </div>
-                        <ul class="p-1.5 space-y-0.5">
-                            <li>
-                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-700 dark:hover:text-indigo-300 rounded-xl transition-colors">
-                                    <i class="fa-solid fa-user w-4 text-center text-indigo-500"></i> Profil Saya
-                                </a>
-                            </li>
-                            <li>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors">
-                                        <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Keluar
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -161,10 +158,9 @@
 {{-- ╚══════════════════════════════════════════════════════╝ --}}
 
 <aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform -translate-x-full bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800/80 sm:translate-x-0 w-64"
+    class="fixed top-0 left-0 z-40 h-[100dvh] pt-16 transition-transform -translate-x-full bg-white dark:bg-[#0a0f1a] border-r border-slate-200/80 dark:border-white/5 sm:translate-x-0 w-64"
     aria-label="Sidebar">
 
-    {{-- Gradient decoration at top of sidebar --}}
     <div class="absolute top-16 left-0 right-0 h-32 bg-gradient-to-b from-indigo-50/80 to-transparent dark:from-indigo-500/5 dark:to-transparent pointer-events-none"></div>
 
     <div class="h-full pb-28 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700 relative">
@@ -191,13 +187,13 @@
                 'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 ' .
                 ($active
                     ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-100');
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-200');
 
             $iconBox = fn($active) =>
                 'flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-xs transition-all duration-200 ' .
                 ($active
                     ? 'bg-white/20 text-white'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-indigo-100 group-hover:text-indigo-600 dark:group-hover:bg-indigo-500/20 dark:group-hover:text-indigo-300');
+                    : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 group-hover:bg-indigo-100 group-hover:text-indigo-600 dark:group-hover:bg-indigo-500/20 dark:group-hover:text-indigo-300');
 
             $sectionLabel = 'flex items-center gap-2 px-3 pt-5 pb-1.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-600';
         @endphp
@@ -218,9 +214,9 @@
             {{-- ── SISTEM UTAMA (SUPERADMIN) ──────────────────────────────────── --}}
             @if ($role === 'superadmin')
                 <div class="{{ $sectionLabel }}">
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                     <span>Sistem Utama</span>
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                 </div>
 
                 <a href="{{ route('superadmin.users.index') }}" class="{{ $navLink(request()->routeIs('superadmin.users*')) }}">
@@ -260,9 +256,9 @@
             {{-- ── MANAJEMEN JOKI ──────────────────────────────────────────────── --}}
             @if ($isAdminJoki)
                 <div class="{{ $sectionLabel }}">
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                     <span>Manajemen Joki</span>
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                 </div>
 
                 <a href="{{ route('admin_joki.orders') }}" class="{{ $navLink(request()->routeIs('admin_joki.orders*')) }}">
@@ -282,9 +278,9 @@
             {{-- ── MANAJEMEN HOSTING ───────────────────────────────────────────── --}}
             @if ($isAdminHosting)
                 <div class="{{ $sectionLabel }}">
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                     <span>Manajemen Hosting</span>
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                 </div>
 
                 <a href="{{ route('admin_hosting.projects') }}" class="{{ $navLink(request()->routeIs('admin_hosting.projects')) }}">
@@ -324,9 +320,9 @@
             {{-- ── LAYANAN KLIEN JOKI ──────────────────────────────────────────── --}}
             @if ($isUserJoki)
                 <div class="{{ $sectionLabel }}">
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                     <span>Layanan Joki</span>
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                 </div>
 
                 <a href="{{ route('user_joki.create') }}" class="{{ $navLink(request()->routeIs('user_joki.create')) }}">
@@ -350,14 +346,13 @@
             {{-- ── LAYANAN KLIEN HOSTING ───────────────────────────────────────── --}}
             @if ($isUserHosting)
                 <div class="{{ $sectionLabel }}">
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                     <span>Hosting</span>
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                 </div>
 
-                {{-- Deploy CTA button --}}
                 <a href="{{ route('user_hosting.create') }}"
-                    class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01] {{ request()->routeIs('user_hosting.create') ? '' : '' }}">
+                    class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01]">
                     <span class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg bg-white/20 text-white text-xs">
                         <i class="fa-solid fa-rocket"></i>
                     </span>
@@ -404,9 +399,9 @@
                 </a>
 
                 <div class="{{ $sectionLabel }}">
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                     <span>Akun</span>
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                 </div>
 
                 <a href="{{ route('user_hosting.subscription') }}" class="{{ $navLink(request()->routeIs('user_hosting.subscription')) }}">
@@ -431,9 +426,9 @@
             {{-- ── WALLET & AFFILIATE ─────────────────────────────────────────── --}}
             @if ($isUser)
                 <div class="{{ $sectionLabel }}">
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                     <span>Pendapatan</span>
-                    <span class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></span>
+                    <span class="flex-1 h-px bg-slate-200 dark:bg-white/5"></span>
                 </div>
 
                 <a href="{{ route('user.wallet.history') }}" class="{{ $navLink(request()->routeIs('user.wallet*')) }}">
@@ -449,14 +444,14 @@
         </nav>
 
         {{-- Bottom user card --}}
-        <div class="absolute bottom-0 left-0 right-0 p-3 border-t border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+        <div class="absolute bottom-0 left-0 right-0 p-3 border-t border-slate-200/60 dark:border-white/5 bg-white/80 dark:bg-[#0a0f1a]/80 backdrop-blur-sm">
             <div class="flex items-center gap-3 px-2 py-1.5">
                 <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">{{ Auth::user()->name ?? 'Guest' }}</p>
-                    <p class="text-[10px] text-slate-400 truncate">{{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}</p>
+                    <p class="text-[10px] text-slate-400 dark:text-slate-500 truncate">{{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}</p>
                 </div>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf

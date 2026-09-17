@@ -208,8 +208,8 @@
                         <div class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 rounded-lg p-4 flex items-start gap-3">
                             <i class="fa-solid fa-lightbulb text-indigo-500 dark:text-indigo-400 mt-0.5"></i>
                             <div>
-                                <h5 class="text-sm font-semibold text-indigo-900 mb-1">Lebih Praktis dari ngrok!</h5>
-                                <p class="text-sm text-indigo-800/80 leading-relaxed">
+                                <h5 class="text-sm font-semibold text-indigo-900 dark:text-indigo-200 mb-1">Lebih Praktis dari ngrok!</h5>
+                                <p class="text-sm text-indigo-800/80 dark:text-indigo-300/80 leading-relaxed">
                                     Secara fungsi, layanan ini sangat mirip dengan <strong>ngrok</strong>. Anda tidak perlu setup auth token yang rumit. Cukup jalankan script PHP yang diunduh, dan localhost Anda langsung online dengan perlindungan SSL (HTTPS) dari Ryaze!
                                 </p>
                             </div>
