@@ -29,7 +29,7 @@ function Faq({ q, a }) {
     );
 }
 
-export default function Home({ plans, planPricing, articles, starterPricing }) {
+export default function Home({ plans, planPricing, articles, starterPricing, version }) {
     const [chatOpen, setChatOpen] = useState(false);
     const [chatMsgs, setChatMsgs] = useState([]);
     const [chatInput, setChatInput] = useState('');
@@ -364,6 +364,11 @@ export default function Home({ plans, planPricing, articles, starterPricing }) {
                     <a href="/register" className="inline-flex px-8 py-3.5 bg-white text-[#7c3aed] text-sm font-semibold hover:bg-slate-100 transition-colors">
                         Mulai Sekarang
                     </a>
+                    {version && (
+                        <p className="mt-8 text-white/40 text-[11px] font-bold tracking-widest uppercase">
+                            <i className="fa-solid fa-code-branch mr-1.5"></i>{version}
+                        </p>
+                    )}
                 </div>
             </section>
 

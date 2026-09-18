@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Home;
 
+use App\Helpers\AppVersion;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Setting;
@@ -52,6 +53,7 @@ class HomeController extends Controller
             'title' => 'Jasa Pembuatan Website & Shared Hosting Indonesia',
             'description' => 'Jasa pembuatan website, aplikasi, dan shared hosting Indonesia. Hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan.',
             'favicon' => Setting::where('key', 'site_favicon')->value('value'),
+            'version' => AppVersion::get(),
         ]);
     }
 }

@@ -140,8 +140,10 @@
     class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 dark:bg-gray-900 dark:border-gray-800"
     aria-label="Sidebar">
     
-    <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-900">
+    <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-900 flex flex-col">
         @php
+            use App\Helpers\AppVersion;
+            $appVersion = AppVersion::get();
             $role = Auth::user()->role ?? '';
 
             $dashboardUrl = match ($role) {
@@ -421,5 +423,16 @@
                 </li>
             @endif
         </ul>
+
+        {{-- Version Badge --}}
+        <div class="mt-auto pt-6 border-t border-gray-100 dark:border-gray-800">
+            <div class="flex items-center justify-between px-2 py-2">
+                <span class="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest">Ryaze Portal</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20 text-[10px] font-bold text-purple-500 dark:text-purple-400 tracking-wide">
+                    <i class="fa-solid fa-code-branch text-[8px]"></i>
+                    {{ $appVersion }}
+                </span>
+            </div>
+        </div>
     </div>
 </aside>
