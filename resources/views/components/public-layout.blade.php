@@ -81,7 +81,7 @@
         </script>
     @endif
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 
     <script nonce="{{ csp_nonce() }}">
         window.ryazeToggleTheme = function (event) {
