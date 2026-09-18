@@ -31,13 +31,17 @@
             <div class="flex items-center gap-3">
                 {{-- Dark mode toggle --}}
                 <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                    class="relative hidden md:inline-flex h-8 w-14 flex-shrink-0 cursor-pointer items-center rounded-full bg-gray-200 dark:bg-purple-600/30 border border-transparent dark:border-purple-500/50 transition-all duration-300 focus:outline-none hover:bg-gray-300 dark:hover:bg-purple-500/50 shadow-inner"
-                    role="switch">
-                    <span
-                        class="pointer-events-none inline-flex h-6 w-6 transform translate-x-1 dark:translate-x-7 items-center justify-center rounded-full bg-white dark:bg-gray-900 shadow-sm transition-all duration-300 ease-in-out">
-                        <i class="fa-solid fa-sun text-[10px] text-amber-500 absolute opacity-100 dark:opacity-0 transition-opacity duration-300"></i>
-                        <i class="fa-solid fa-moon text-[10px] text-purple-400 absolute opacity-0 dark:opacity-100 transition-opacity duration-300"></i>
-                    </span>
+                    class="relative w-8 h-8 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-[#7c3aed] dark:hover:text-white transition-colors focus:outline-none">
+                    {{-- Moon: visible in light mode --}}
+                    <i class="fa-solid fa-moon text-sm
+                        absolute transition-all duration-300 ease-in-out
+                        opacity-100 scale-100 rotate-0
+                        dark:opacity-0 dark:scale-75 dark:-rotate-90"></i>
+                    {{-- Sun: visible in dark mode --}}
+                    <i class="fa-solid fa-sun text-sm
+                        absolute transition-all duration-300 ease-in-out
+                        opacity-0 scale-75 rotate-90
+                        dark:opacity-100 dark:scale-100 dark:rotate-0"></i>
                 </button>
 
                 @php $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect([]); @endphp

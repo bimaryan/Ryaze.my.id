@@ -29,6 +29,42 @@ function applyDark(dark) {
     document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
 }
 
+function toggleDarkWithAnimation(event, currentDark, setDark) {
+    const nextDark = !currentDark;
+
+    const doToggle = () => {
+        applyDark(nextDark);
+        localStorage.setItem('ryaze-theme', nextDark ? 'dark' : 'light');
+        setDark(nextDark);
+    };
+
+    if (!document.startViewTransition) {
+        doToggle();
+        return;
+    }
+
+    const x = event?.clientX ?? window.innerWidth / 2;
+    const y = event?.clientY ?? window.innerHeight / 2;
+    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+    const transition = document.startViewTransition(doToggle);
+
+    transition.ready.then(() => {
+        const clipPath = [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+        ];
+        document.documentElement.animate(
+            { clipPath: currentDark ? [...clipPath].reverse() : clipPath },
+            {
+                duration: 500,
+                easing: 'ease-in-out',
+                pseudoElement: currentDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
+            }
+        );
+    });
+}
+
 export default function PublicLayout({ children, withNav = true, withFooter = true, bodyClass }) {
     const { auth } = usePage().props;
     const user = auth?.user;
@@ -38,7 +74,6 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
 
     useEffect(() => {
         applyDark(dark);
-        localStorage.setItem('ryaze-theme', dark ? 'dark' : 'light');
     }, [dark]);
 
     useEffect(() => {
@@ -66,8 +101,8 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
                         ))}
                     </div>
                     <div className="flex items-center gap-3">
-                        <button onClick={() => setDark(d => !d)} className="w-8 h-8 flex items-center justify-center text-[#999] dark:text-[#666] hover:text-[#7c3aed] dark:hover:text-white transition-colors">
-                            <i className={`fa-solid ${dark ? 'fa-sun' : 'fa-moon'} text-sm`}></i>
+                        <button onClick={(e) => toggleDarkWithAnimation(e, dark, setDark)} className="w-8 h-8 flex items-center justify-center text-[#999] dark:text-[#666] hover:text-[#7c3aed] dark:hover:text-white transition-colors">
+                            <i className={`fa-solid ${dark ? 'fa-sun' : 'fa-moon'} text-sm transition-all duration-300`}></i>
                         </button>
                         {user ? (
                             <a href={dashboardUrl[user.role] || dashboardUrl.default} className="px-4 py-1.5 bg-[#7c3aed] text-white text-[13px] font-semibold hover:bg-[#6d28d9] transition-colors">
