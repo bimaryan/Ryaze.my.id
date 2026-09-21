@@ -55,9 +55,5 @@ Jika Anda memiliki pertanyaan, saran, atau peluang kolaborasi, jangan ragu untuk
 *   **Email:** bimaryan046@gmail.com
 *   **Instagram:** https://instagram.com/bima_ryan23
 
-## 📝 Lisensi
-
-Proyek ini didistribusikan di bawah Lisensi MIT. Lihat file `LICENSE` untuk informasi lebih lanjut.
-
 ---
 Dibuat dengan ❤️ oleh [Bima Ryan](https://github.com/bimaryan)
