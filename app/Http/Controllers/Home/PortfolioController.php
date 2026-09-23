@@ -12,7 +12,7 @@ use App\Models\TechBadge;
 
 class PortfolioController extends Controller
 {
-    public function index()
+    private function getPortfolioData()
     {
         $portfolios = Portfolio::where('is_active', true)
             ->latest()
@@ -55,9 +55,19 @@ class PortfolioController extends Controller
 
         $techBadges = TechBadge::orderBy('sort_order')->get();
 
-        return view('pages.portfolio.index', compact(
-            'portfolios', 'allTags', 'profile',
-            'educations', 'experiences', 'skillGroups', 'techBadges'
-        ));
+        return compact('portfolios', 'allTags', 'profile', 'educations', 'experiences', 'skillGroups', 'techBadges');
+    }
+
+    public function index()
+    {
+        $data = $this->getPortfolioData();
+        return view('pages.portfolio.index', $data);
+    }
+
+    public function downloadResume()
+    {
+        $data = $this->getPortfolioData();
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pages.portfolio.resume_ats', $data);
+        return $pdf->download('Resume_' . str_replace(' ', '_', $data['profile']['name']) . '.pdf');
     }
 }

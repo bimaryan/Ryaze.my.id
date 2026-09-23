@@ -565,6 +565,9 @@
                             <a href="#projects" class="px-7 py-3.5 rounded-full bg-gradient-to-r from-slate-900 to-slate-800 dark:from-white dark:to-slate-100 text-white dark:text-slate-900 text-sm font-bold hover:shadow-xl hover:shadow-slate-900/20 dark:hover:shadow-white/10 transition-all duration-300 flex items-center gap-2">
                                 <i class="fa-solid fa-folder-open text-xs" aria-hidden="true"></i> Lihat Project
                             </a>
+                            <a href="{{ route('portfolio.resume') }}" class="px-7 py-3.5 rounded-full glass-card text-slate-700 dark:text-slate-300 text-sm font-bold hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-300 flex items-center gap-2">
+                                <i class="fa-solid fa-file-pdf text-indigo-500 text-sm" aria-hidden="true"></i> Download CV (ATS)
+                            </a>
                             @if($profile['whatsapp'])
                                 <a href="https://wa.me/62{{ ltrim($profile['whatsapp'], '0') }}" target="_blank" rel="noopener" class="px-7 py-3.5 rounded-full glass-card text-slate-700 dark:text-slate-300 text-sm font-bold hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-300 flex items-center gap-2">
                                     <i class="fa-brands fa-whatsapp text-emerald-500 text-sm" aria-hidden="true"></i> Hubungi via WA
@@ -572,6 +575,72 @@
                             @endif
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- ════════════════════════════════════════════════════════
+        SERVICES
+        ════════════════════════════════════════════════════════ --}}
+        <section class="py-24 relative overflow-hidden bg-slate-50/50 dark:bg-slate-800/20 border-y border-slate-200/50 dark:border-white/5" id="services">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="gs-fade-up section-label justify-center">Layanan</span>
+                    <h2 class="gs-fade-up text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-4">
+                        Apa Yang Bisa Saya Bantu?
+                    </h2>
+                    <p class="gs-fade-up text-slate-500 dark:text-slate-400 text-base leading-relaxed">
+                        Membangun solusi digital dari hulu ke hilir dengan standar kualitas tinggi dan teknologi terkini.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @php
+                        $services = [
+                            ['icon' => 'fa-laptop-code', 'color' => 'text-indigo-500', 'bg' => 'bg-indigo-500/10', 'title' => 'Web Development', 'desc' => 'Pembuatan aplikasi berbasis web mulai dari landing page hingga sistem kompleks (SaaS, ERP, CRM) menggunakan framework modern.'],
+                            ['icon' => 'fa-server', 'color' => 'text-emerald-500', 'bg' => 'bg-emerald-500/10', 'title' => 'Hosting & Deployment', 'desc' => 'Konfigurasi server VPS, auto-deployment dengan CI/CD, optimasi Nginx/Apache, manajemen database dan scaling infrastruktur.'],
+                            ['icon' => 'fa-network-wired', 'color' => 'text-violet-500', 'bg' => 'bg-violet-500/10', 'title' => 'API Design & Integration', 'desc' => 'Perancangan RESTful API dan integrasi sistem pihak ketiga (Payment Gateway, layanan Cloud, dll) dengan struktur yang aman.'],
+                        ];
+                    @endphp
+                    @foreach($services as $i => $s)
+                        <div class="gs-fade-up section-card rounded-2xl p-8 hover:-translate-y-2 transition-transform duration-300" style="transition-delay: {{ $i * 50 }}ms">
+                            <div class="w-14 h-14 rounded-xl {{ $s['bg'] }} flex items-center justify-center mb-6">
+                                <i class="fa-solid {{ $s['icon'] }} {{ $s['color'] }} text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3">{{ $s['title'] }}</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{{ $s['desc'] }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        {{-- ════════════════════════════════════════════════════════
+        FUN FACTS (STATISTICS)
+        ════════════════════════════════════════════════════════ --}}
+        <section class="py-20 relative">
+            <div class="max-w-5xl mx-auto px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    @php
+                        $funStats = [
+                            ['val' => $portfolios->count(), 'suffix' => '+', 'label' => 'Project Selesai', 'icon' => 'fa-check-double'],
+                            ['val' => 2, 'suffix' => '+', 'label' => 'Tahun Pengalaman', 'icon' => 'fa-calendar-check'],
+                            ['val' => 4500, 'suffix' => '+', 'label' => 'Jam Ngoding', 'icon' => 'fa-code'],
+                            ['val' => 950, 'suffix' => '+', 'label' => 'Gelas Kopi', 'icon' => 'fa-mug-hot'],
+                        ];
+                    @endphp
+                    @foreach($funStats as $i => $stat)
+                        <div class="gs-scale section-card rounded-2xl p-6 text-center flex flex-col items-center justify-center relative overflow-hidden group">
+                            <div class="absolute -right-6 -bottom-6 text-slate-900/5 dark:text-white/5 group-hover:scale-110 transition-transform duration-500">
+                                <i class="fa-solid {{ $stat['icon'] }} text-8xl"></i>
+                            </div>
+                            <div class="flex items-baseline gap-1 relative z-10 mb-2">
+                                <span class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight stat-value" data-count="{{ $stat['val'] }}">0</span>
+                                <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">{{ $stat['suffix'] }}</span>
+                            </div>
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest relative z-10">{{ $stat['label'] }}</span>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -945,6 +1014,35 @@
                 @endif
             </div>
         </section>
+
+        {{-- ════════════════════════════════════════════════════════
+        GITHUB ACTIVITY
+        ════════════════════════════════════════════════════════ --}}
+        @php
+            $githubUsername = '';
+            if(!empty($profile['github'])) {
+                $parts = explode('/', parse_url($profile['github'], PHP_URL_PATH));
+                $githubUsername = end($parts);
+            }
+        @endphp
+        @if($githubUsername)
+        <section class="py-20 relative bg-slate-50/50 dark:bg-slate-800/20 border-y border-slate-200/50 dark:border-white/5">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8 text-center">
+                <span class="gs-fade-up section-label justify-center">Kontribusi</span>
+                <h2 class="gs-fade-up text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-10">
+                    GitHub Activity
+                </h2>
+                <div class="gs-scale w-full overflow-x-auto pb-4">
+                    <img src="https://ghchart.rshah.org/{{ $githubUsername }}" alt="{{ $githubUsername }}'s Github Chart" class="mx-auto min-w-[700px]">
+                </div>
+                <div class="gs-fade-up mt-6">
+                    <a href="{{ $profile['github'] }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
+                        <i class="fa-brands fa-github text-xl"></i> Follow me on GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+        @endif
 
         {{-- ════════════════════════════════════════════════════════
         CONTACT CTA

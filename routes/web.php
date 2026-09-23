@@ -35,6 +35,7 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // ── PORTFOLIO PUBLIK ────────────────────────────────────────
 Route::get('/portfolio', [\App\Http\Controllers\Home\PortfolioController::class, 'index'])->name('portfolio.index');
+Route::get('/portfolio/resume', [\App\Http\Controllers\Home\PortfolioController::class, 'downloadResume'])->name('portfolio.resume');
 
 Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
