@@ -878,8 +878,15 @@
                                     <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
                                 </button>
 
-                                <div x-show="active && active.image_path" class="w-full aspect-video overflow-hidden rounded-t-2xl bg-slate-100 dark:bg-slate-800">
-                                    <img :src="active?.image_path" :alt="active?.title" class="w-full h-full object-cover">
+                                <div x-show="active" class="w-full aspect-video overflow-hidden rounded-t-2xl bg-slate-100 dark:bg-slate-800">
+                                    <template x-if="active?.image_path">
+                                        <img :src="active?.image_path" :alt="active?.title" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!active?.image_path">
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <i class="fa-solid fa-code text-6xl opacity-10 text-indigo-400 dark:text-indigo-600" aria-hidden="true"></i>
+                                        </div>
+                                    </template>
                                 </div>
 
                                 <div class="p-6 md:p-8">
