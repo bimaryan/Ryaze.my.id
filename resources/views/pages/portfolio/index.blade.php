@@ -766,7 +766,7 @@
                 @endif
 
                 @if($portfolios->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="pf-grid">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="pf-grid" x-data="{ modal: false, active: null }">
                         @php
                             $colors = [
                                 ['bg' => 'rgba(99,102,241,0.08)', 'text' => '#6366f1'],
@@ -787,7 +787,7 @@
                                 x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
                                 x-transition:leave-end="opacity-0 scale-95" data-tags="{{ implode(',', $p->tags ?? []) }}">
 
-                                <div class="pf-img-wrap">
+                                <div class="pf-img-wrap cursor-pointer" @click="modal=true; active={{ json_encode(['title' => $p->title, 'description' => $p->description, 'tags' => $p->tags ?? [], 'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null, 'link_preview' => $p->link_preview, 'link_github' => $p->link_github, 'link_journal' => $p->link_journal, 'link_copyright' => $p->link_copyright]) }}">
                                     @if($p->image_path)
                                         <img src="{{ asset('storage/' . $p->image_path) }}" alt="{{ $p->title }}" loading="lazy" decoding="async" width="600" height="400">
                                     @else
@@ -797,17 +797,17 @@
                                     @endif
                                     <div class="pf-overlay">
                                         @if($p->link_preview)
-                                            <a href="{{ $p->link_preview }}" target="_blank" rel="noopener" class="ov-btn ov-primary">
+                                            <a href="{{ $p->link_preview }}" target="_blank" rel="noopener" class="ov-btn ov-primary" onclick="event.stopPropagation()">
                                                 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"></i> Demo
                                             </a>
                                         @endif
                                         @if($p->link_github)
-                                            <a href="{{ $p->link_github }}" target="_blank" rel="noopener" class="ov-btn ov-ghost">
+                                            <a href="{{ $p->link_github }}" target="_blank" rel="noopener" class="ov-btn ov-ghost" onclick="event.stopPropagation()">
                                                 <i class="fa-brands fa-github text-[11px]" aria-hidden="true"></i> GitHub
                                             </a>
                                         @endif
                                         @if($p->link_journal)
-                                            <a href="{{ $p->link_journal }}" target="_blank" rel="noopener" class="ov-btn ov-ghost">
+                                            <a href="{{ $p->link_journal }}" target="_blank" rel="noopener" class="ov-btn ov-ghost" onclick="event.stopPropagation()">
                                                 <i class="fa-solid fa-file-lines text-[11px]" aria-hidden="true"></i> Jurnal
                                             </a>
                                         @endif
@@ -823,31 +823,100 @@
                                             @endforeach
                                         </div>
                                     @endif
-                                    <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2">{{ $p->title }}</h3>
+                                    <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2 cursor-pointer" @click="modal=true; active={{ json_encode(['title' => $p->title, 'description' => $p->description, 'tags' => $p->tags ?? [], 'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null, 'link_preview' => $p->link_preview, 'link_github' => $p->link_github, 'link_journal' => $p->link_journal, 'link_copyright' => $p->link_copyright]) }}">{{ $p->title }}</h3>
                                     <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed flex-1 line-clamp-3">{{ $p->description }}</p>
 
-                                    @if($p->link_preview || $p->link_github || $p->link_journal || $p->link_copyright)
-                                        <div class="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-slate-200/50 dark:border-white/5">
-                                            @if($p->link_preview)
-                                                <a href="{{ $p->link_preview }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
-                                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]" aria-hidden="true"></i>Demo
-                                                </a>
-                                            @endif
-                                            @if($p->link_github)
-                                                <a href="{{ $p->link_github }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                                                    <i class="fa-brands fa-github text-[11px]" aria-hidden="true"></i>GitHub
-                                                </a>
-                                            @endif
-                                            @if($p->link_copyright)
-                                                <a href="{{ $p->link_copyright }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors ml-auto">
-                                                    <i class="fa-solid fa-copyright text-[9px]" aria-hidden="true"></i>HKI
-                                                </a>
-                                            @endif
-                                        </div>
-                                    @endif
+                                    <div class="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-slate-200/50 dark:border-white/5">
+                                        @if($p->link_preview)
+                                            <a href="{{ $p->link_preview }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+                                                <i class="fa-solid fa-arrow-up-right-from-square text-[9px]" aria-hidden="true"></i>Demo
+                                            </a>
+                                        @endif
+                                        @if($p->link_github)
+                                            <a href="{{ $p->link_github }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                                                <i class="fa-brands fa-github text-[11px]" aria-hidden="true"></i>GitHub
+                                            </a>
+                                        @endif
+                                        @if($p->link_copyright)
+                                            <a href="{{ $p->link_copyright }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors ml-auto">
+                                                <i class="fa-solid fa-copyright text-[9px]" aria-hidden="true"></i>HKI
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
+
+                        {{-- PROJECT DETAIL MODAL --}}
+                        <div x-show="modal && active" x-cloak
+                            class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition ease-in duration-200"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            @keydown.escape.window="modal=false; active=null">
+                            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="modal=false; active=null"></div>
+                            <div class="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl"
+                                x-transition:enter="transition ease-out duration-300 delay-75"
+                                x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                                @click.stop>
+
+                                {{-- Close button --}}
+                                <button @click="modal=false; active=null" class="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" aria-label="Tutup">
+                                    <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
+                                </button>
+
+                                {{-- Image --}}
+                                <div x-show="active && active.image_path" class="w-full aspect-video overflow-hidden rounded-t-2xl bg-slate-100 dark:bg-slate-800">
+                                    <img :src="active?.image_path" :alt="active?.title" class="w-full h-full object-cover">
+                                </div>
+
+                                <div class="p-6 md:p-8">
+                                    {{-- Tags --}}
+                                    <div class="flex flex-wrap gap-1.5 mb-4" x-show="active && active.tags && active.tags.length">
+                                        <template x-for="(t, i) in (active?.tags || [])" :key="i">
+                                            <span class="tpill text-[11px]" x-text="t"></span>
+                                        </template>
+                                    </div>
+
+                                    {{-- Title --}}
+                                    <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 leading-tight" x-text="active?.title"></h3>
+
+                                    {{-- Description --}}
+                                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line mb-6" x-text="active?.description"></p>
+
+                                    {{-- Links --}}
+                                    <div class="flex flex-wrap gap-3">
+                                        <template x-if="active?.link_preview">
+                                            <a :href="active.link_preview" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
+                                                <i class="fa-solid fa-arrow-up-right-from-square text-xs" aria-hidden="true"></i> Buka Demo
+                                            </a>
+                                        </template>
+                                        <template x-if="active?.link_github">
+                                            <a :href="active.link_github" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-bold hover:border-slate-300 dark:hover:border-slate-500 transition-all">
+                                                <i class="fa-brands fa-github" aria-hidden="true"></i> Source Code
+                                            </a>
+                                        </template>
+                                        <template x-if="active?.link_journal">
+                                            <a :href="active.link_journal" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-bold hover:border-slate-300 dark:hover:border-slate-500 transition-all">
+                                                <i class="fa-solid fa-file-lines" aria-hidden="true"></i> Lihat Jurnal
+                                            </a>
+                                        </template>
+                                        <template x-if="active?.link_copyright">
+                                            <a :href="active.link_copyright" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-bold hover:border-slate-300 dark:hover:border-slate-500 transition-all ml-auto">
+                                                <i class="fa-solid fa-copyright" aria-hidden="true"></i> HKI
+                                            </a>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div x-show="noResult" x-cloak class="text-center py-16">
