@@ -878,7 +878,7 @@
                                     <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
                                 </button>
 
-                                <div x-show="active" class="w-full aspect-video overflow-hidden rounded-t-2xl bg-slate-100 dark:bg-slate-800">
+                                <div x-show="active" class="w-full aspect-video overflow-hidden rounded-t-2xl pf-img-wrap">
                                     <template x-if="active?.image_path">
                                         <img :src="active?.image_path" :alt="active?.title" class="w-full h-full object-cover">
                                     </template>
