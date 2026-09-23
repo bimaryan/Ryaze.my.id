@@ -33,6 +33,9 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/kategori/{slug}', [BlogController::class, 'category'])->name('blog.category');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
+// ── PORTFOLIO PUBLIK ────────────────────────────────────────
+Route::get('/portfolio', [\App\Http\Controllers\Home\PortfolioController::class, 'index'])->name('portfolio.index');
+
 Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
     Route::get('/register', [AuthController::class, 'registerindex'])->name('register');
@@ -119,6 +122,25 @@ Route::middleware('auth')->group(function () {
         Route::patch('superadmin/withdrawals/{id}/status', [\App\Http\Controllers\Admin\WithdrawalController::class, 'updateStatus'])->name('superadmin.withdrawals.update');
         Route::resource('superadmin/portfolios', \App\Http\Controllers\Admin\PortfolioController::class)->names('superadmin.portfolios');
         Route::patch('superadmin/portfolios/{hashid}/status', [\App\Http\Controllers\Admin\PortfolioController::class, 'toggleStatus'])->name('superadmin.portfolios.status.toggle');
+
+        // Pendidikan
+        Route::resource('superadmin/educations', \App\Http\Controllers\Admin\EducationController::class)->names('superadmin.educations');
+        Route::patch('superadmin/educations/{hashid}/status', [\App\Http\Controllers\Admin\EducationController::class, 'toggleStatus'])->name('superadmin.educations.status.toggle');
+
+        // Pengalaman
+        Route::resource('superadmin/experiences', \App\Http\Controllers\Admin\ExperienceController::class)->names('superadmin.experiences');
+        Route::patch('superadmin/experiences/{hashid}/status', [\App\Http\Controllers\Admin\ExperienceController::class, 'toggleStatus'])->name('superadmin.experiences.status.toggle');
+
+        // Skill & Tech Stack
+        Route::get('superadmin/skills', [\App\Http\Controllers\Admin\SkillController::class, 'index'])->name('superadmin.skills.index');
+        Route::post('superadmin/skills/group', [\App\Http\Controllers\Admin\SkillController::class, 'storeGroup'])->name('superadmin.skills.group.store');
+        Route::put('superadmin/skills/group/{hashid}', [\App\Http\Controllers\Admin\SkillController::class, 'updateGroup'])->name('superadmin.skills.group.update');
+        Route::delete('superadmin/skills/group/{hashid}', [\App\Http\Controllers\Admin\SkillController::class, 'destroyGroup'])->name('superadmin.skills.group.destroy');
+        Route::post('superadmin/skills/skill', [\App\Http\Controllers\Admin\SkillController::class, 'storeSkill'])->name('superadmin.skills.skill.store');
+        Route::put('superadmin/skills/skill/{hashid}', [\App\Http\Controllers\Admin\SkillController::class, 'updateSkill'])->name('superadmin.skills.skill.update');
+        Route::delete('superadmin/skills/skill/{hashid}', [\App\Http\Controllers\Admin\SkillController::class, 'destroySkill'])->name('superadmin.skills.skill.destroy');
+        Route::post('superadmin/skills/badge', [\App\Http\Controllers\Admin\SkillController::class, 'storeBadge'])->name('superadmin.skills.badge.store');
+        Route::delete('superadmin/skills/badge/{hashid}', [\App\Http\Controllers\Admin\SkillController::class, 'destroyBadge'])->name('superadmin.skills.badge.destroy');
 
         // Manajemen Artikel
         Route::post('superadmin/articles/upload-image', [\App\Http\Controllers\Admin\ArticleController::class, 'uploadImage'])->name('superadmin.articles.uploadImage');

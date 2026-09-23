@@ -255,6 +255,30 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('superadmin.educations.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.educations*')) }}">
+                        <i
+                            class="fa-solid fa-graduation-cap {{ $iconBox(request()->routeIs('superadmin.educations*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Pendidikan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('superadmin.experiences.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.experiences*')) }}">
+                        <i
+                            class="fa-solid fa-briefcase {{ $iconBox(request()->routeIs('superadmin.experiences*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Pengalaman</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('superadmin.skills.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.skills*')) }}">
+                        <i
+                            class="fa-solid fa-code {{ $iconBox(request()->routeIs('superadmin.skills*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Skill & Tech</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.promo_events.index') }}"
                         class="{{ $navLink(request()->routeIs('admin.promo_events*')) }}">
                         <i
