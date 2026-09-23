@@ -766,7 +766,7 @@
                 @endif
 
                 @if($portfolios->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="pf-grid" x-data="{ modal: false, active: null }">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="pf-grid">
                         @php
                             $colors = [
                                 ['bg' => 'rgba(99,102,241,0.08)', 'text' => '#6366f1'],
@@ -787,7 +787,7 @@
                                 x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
                                 x-transition:leave-end="opacity-0 scale-95" data-tags="{{ implode(',', $p->tags ?? []) }}">
 
-                                <div class="pf-img-wrap cursor-pointer" @click="modal=true; active={{ json_encode(['title' => $p->title, 'description' => $p->description, 'tags' => $p->tags ?? [], 'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null, 'link_preview' => $p->link_preview, 'link_github' => $p->link_github, 'link_journal' => $p->link_journal, 'link_copyright' => $p->link_copyright]) }}">
+                                <div class="pf-img-wrap cursor-pointer" @click='openProject({!! json_encode(['title' => $p->title, 'description' => $p->description, 'tags' => $p->tags ?? [], 'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null, 'link_preview' => $p->link_preview, 'link_github' => $p->link_github, 'link_journal' => $p->link_journal, 'link_copyright' => $p->link_copyright], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!})'>
                                     @if($p->image_path)
                                         <img src="{{ asset('storage/' . $p->image_path) }}" alt="{{ $p->title }}" loading="lazy" decoding="async" width="600" height="400">
                                     @else
@@ -823,7 +823,7 @@
                                             @endforeach
                                         </div>
                                     @endif
-                                    <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2 cursor-pointer" @click="modal=true; active={{ json_encode(['title' => $p->title, 'description' => $p->description, 'tags' => $p->tags ?? [], 'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null, 'link_preview' => $p->link_preview, 'link_github' => $p->link_github, 'link_journal' => $p->link_journal, 'link_copyright' => $p->link_copyright]) }}">{{ $p->title }}</h3>
+                                    <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2 cursor-pointer" @click='openProject({!! json_encode(['title' => $p->title, 'description' => $p->description, 'tags' => $p->tags ?? [], 'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null, 'link_preview' => $p->link_preview, 'link_github' => $p->link_github, 'link_journal' => $p->link_journal, 'link_copyright' => $p->link_copyright], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!})'>{{ $p->title }}</h3>
                                     <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed flex-1 line-clamp-3">{{ $p->description }}</p>
 
                                     <div class="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-slate-200/50 dark:border-white/5">
@@ -856,8 +856,8 @@
                             x-transition:leave="transition ease-in duration-200"
                             x-transition:leave-start="opacity-100"
                             x-transition:leave-end="opacity-0"
-                            @keydown.escape.window="modal=false; active=null">
-                            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="modal=false; active=null"></div>
+                            @keydown.escape.window="closeModal()">
+                            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal()"></div>
                             <div class="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl"
                                 x-transition:enter="transition ease-out duration-300 delay-75"
                                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
@@ -867,12 +867,10 @@
                                 x-transition:leave-end="opacity-0 scale-95 translate-y-4"
                                 @click.stop>
 
-                                {{-- Close button --}}
-                                <button @click="modal=false; active=null" class="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" aria-label="Tutup">
+                                <button @click="closeModal()" class="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" aria-label="Tutup">
                                     <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
                                 </button>
 
-                                {{-- Image --}}
                                 <div x-show="active && active.image_path" class="w-full aspect-video overflow-hidden rounded-t-2xl bg-slate-100 dark:bg-slate-800">
                                     <img :src="active?.image_path" :alt="active?.title" class="w-full h-full object-cover">
                                 </div>
@@ -881,7 +879,7 @@
                                     {{-- Tags --}}
                                     <div class="flex flex-wrap gap-1.5 mb-4" x-show="active && active.tags && active.tags.length">
                                         <template x-for="(t, i) in (active?.tags || [])" :key="i">
-                                            <span class="tpill text-[11px]" x-text="t"></span>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" x-text="t"></span>
                                         </template>
                                     </div>
 
@@ -1176,6 +1174,18 @@
         function pfFilter() {
             return {
                 tag: '__all__',
+                modal: false,
+                active: null,
+                openProject(p) {
+                    this.active = p;
+                    this.modal = true;
+                    document.body.style.overflow = 'hidden';
+                },
+                closeModal() {
+                    this.modal = false;
+                    this.active = null;
+                    document.body.style.overflow = '';
+                },
                 get noResult() {
                     if (this.tag === '__all__') return false;
                     const cards = document.querySelectorAll('#pf-grid > [data-tags]');
