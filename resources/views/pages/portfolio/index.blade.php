@@ -1,26 +1,98 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <meta name="keywords" content="{{ $profile['name'] }}, portfolio, developer, full-stack, laravel, react, Indonesia">
-    <meta name="description" content="Full-Stack Developer & Software Engineer. Lihat bio, riwayat pendidikan, pengalaman kerja, skill, dan project yang telah dikerjakan.">
-    <title>Portfolio — {{ $profile['name'] }}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    {{-- Primary Meta --}}
+    <title>{{ $profile['name'] }} — {{ $profile['title'] }}</title>
+    <meta name="description" content="{{ $profile['bio'] }}">
+    <meta name="keywords" content="{{ $profile['name'] }}, {{ $profile['title'] }}, portfolio, developer, full-stack, laravel, react, Indonesia, {{ $profile['location'] }}">
+    <meta name="author" content="{{ $profile['name'] }}">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <link rel="canonical" href="{{ url('/portfolio') }}">
+
+    {{-- Open Graph --}}
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:site_name" content="{{ $profile['name'] }} Portfolio">
+    <meta property="og:title" content="{{ $profile['name'] }} — {{ $profile['title'] }}">
+    <meta property="og:description" content="{{ $profile['bio'] }}">
+    <meta property="og:url" content="{{ url('/portfolio') }}">
+    {{-- <meta property="og:image" content="{{ $profile['avatar'] ? asset('storage/' . $profile['avatar']) : asset('profil/bima.jpeg') }}"> --}}
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ $profile['name'] }}">
+
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $profile['name'] }} — {{ $profile['title'] }}">
+    <meta name="twitter:description" content="{{ $profile['bio'] }}">
+    {{-- <meta name="twitter:image" content="{{ $profile['avatar'] ? asset('storage/' . $profile['avatar']) : asset('profil/bima.jpeg') }}"> --}}
+    <meta name="twitter:image:alt" content="{{ $profile['name'] }}">
+
+    {{-- Theme --}}
+    <meta name="theme-color" content="#6366f1" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#030712" media="(prefers-color-scheme: dark)">
+
+    {{-- Favicon --}}
+    {{-- <link rel="icon" type="image/jpeg" sizes="32x32" href="{{ asset('profil/bima.jpeg') }}"> --}}
+    {{-- <link rel="apple-touch-icon" href="{{ asset('profil/bima.jpeg') }}"> --}}
+
+    {{-- Preconnect --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&display=swap" rel="stylesheet" nonce="{{ csp_nonce() }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" nonce="{{ csp_nonce() }}">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Fonts (preload critical, display=swap) --}}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" nonce="{{ csp_nonce() }}">
 
+    {{-- Font Awesome (deferred) --}}
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" nonce="{{ csp_nonce() }}" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" nonce="{{ csp_nonce() }}"></noscript>
+
+    @vite(['resources/css/app.css'])
+
+    {{-- Prevent FOUC dark mode --}}
     <script nonce="{{ csp_nonce() }}">
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
+        (function(){
+            var t = localStorage.getItem('theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
     </script>
+
+    {{-- Structured Data --}}
+    @php
+        $jsonLd = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Person',
+            'name' => $profile['name'],
+            'jobTitle' => $profile['title'],
+            'description' => $profile['bio'],
+            'url' => url('/portfolio'),
+            'image' => $profile['avatar'] ? asset('storage/' . $profile['avatar']) : asset('profil/bima.jpeg'),
+            'address' => [
+                '@type' => 'PostalAddress',
+                'addressCountry' => 'ID',
+            ],
+        ];
+        if ($profile['email']) {
+            $jsonLd['email'] = 'mailto:' . $profile['email'];
+        }
+        $sameAs = [];
+        if ($profile['github']) $sameAs[] = $profile['github'];
+        if ($profile['linkedin']) $sameAs[] = $profile['linkedin'];
+        if ($profile['instagram']) $sameAs[] = $profile['instagram'];
+        if ($sameAs) $jsonLd['sameAs'] = $sameAs;
+    @endphp
+    <script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 
     <style nonce="{{ csp_nonce() }}">
         *, *::before, *::after { box-sizing: border-box; }
@@ -122,6 +194,8 @@
             border: 1px solid rgba(255,255,255,.6);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            overflow: hidden;
+            word-break: break-word;
         }
         .dark .section-card { background: rgba(255,255,255,.02); border-color: rgba(255,255,255,.04); }
 
@@ -153,6 +227,30 @@
             transform: scale(1.15);
         }
         .timeline-body { margin-left: 3.6rem; padding-bottom: 2.5rem; }
+
+        @media (max-width: 640px) {
+            .timeline-dot {
+                width: 1.8rem; height: 1.8rem;
+            }
+            .timeline-body {
+                margin-left: 2.6rem;
+                padding-bottom: 1.5rem;
+            }
+            .timeline-line {
+                left: 0.9rem;
+            }
+            .section-card {
+                padding: 1rem;
+            }
+            .section-card .flex.items-start.justify-between {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .section-card .flex.items-start.justify-between > div:last-child {
+                text-align: left;
+                align-items: flex-start;
+            }
+        }
 
         /* ─── Skill bar ─── */
         .skill-bar-bg {
@@ -359,12 +457,12 @@
             </nav>
             <div class="flex items-center gap-2">
                 <button id="dark-toggle" type="button" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all" aria-label="Toggle dark mode">
-                    <i class="fa-solid fa-sun text-sm icon-sun"></i>
-                    <i class="fa-solid fa-moon text-sm icon-moon"></i>
+                    <i class="fa-solid fa-sun text-sm icon-sun" aria-hidden="true"></i>
+                    <i class="fa-solid fa-moon text-sm icon-moon" aria-hidden="true"></i>
                 </button>
                 <button id="mobile-toggle" type="button" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" aria-label="Toggle menu">
-                    <i class="fa-solid fa-bars text-sm icon-bars"></i>
-                    <i class="fa-solid fa-xmark text-sm icon-xmark"></i>
+                    <i class="fa-solid fa-bars text-sm icon-bars" aria-hidden="true"></i>
+                    <i class="fa-solid fa-xmark text-sm icon-xmark" aria-hidden="true"></i>
                 </button>
             </div>
         </div>
@@ -408,23 +506,23 @@
 
                         <div class="flex items-center gap-3 mt-1">
                             @if($profile['github'])
-                                <a href="{{ $profile['github'] }}" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all hover:scale-110">
-                                    <i class="fa-brands fa-github"></i>
+                                <a href="{{ $profile['github'] }}" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all hover:scale-110" aria-label="GitHub">
+                                    <i class="fa-brands fa-github" aria-hidden="true"></i>
                                 </a>
                             @endif
                             @if($profile['linkedin'])
-                                <a href="{{ $profile['linkedin'] }}" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all hover:scale-110">
-                                    <i class="fa-brands fa-linkedin"></i>
+                                <a href="{{ $profile['linkedin'] }}" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all hover:scale-110" aria-label="LinkedIn">
+                                    <i class="fa-brands fa-linkedin" aria-hidden="true"></i>
                                 </a>
                             @endif
                             @if($profile['instagram'])
-                                <a href="{{ $profile['instagram'] }}" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-all hover:scale-110">
-                                    <i class="fa-brands fa-instagram"></i>
+                                <a href="{{ $profile['instagram'] }}" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-all hover:scale-110" aria-label="Instagram">
+                                    <i class="fa-brands fa-instagram" aria-hidden="true"></i>
                                 </a>
                             @endif
                             @if($profile['email'])
-                                <a href="mailto:{{ $profile['email'] }}" class="w-10 h-10 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110">
-                                    <i class="fa-solid fa-envelope"></i>
+                                <a href="mailto:{{ $profile['email'] }}" class="w-10 h-10 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110" aria-label="Email">
+                                    <i class="fa-solid fa-envelope" aria-hidden="true"></i>
                                 </a>
                             @endif
                         </div>
@@ -451,7 +549,7 @@
                             @php
                                 $stats = [
                                     ['val' => $portfolios->count(), 'suffix' => '+', 'label' => 'Project Selesai'],
-                                    ['val' => 3, 'suffix' => '+', 'label' => 'Tahun Pengalaman'],
+                                    ['val' => 2, 'suffix' => '+', 'label' => 'Tahun Pengalaman'],
                                     ['val' => 100, 'suffix' => '%', 'label' => 'Komitmen Kualitas'],
                                 ];
                             @endphp
@@ -469,11 +567,11 @@
                         {{-- CTA --}}
                         <div class="gs-fade-up flex flex-wrap justify-center lg:justify-start gap-3">
                             <a href="#projects" class="px-7 py-3.5 rounded-full bg-gradient-to-r from-slate-900 to-slate-800 dark:from-white dark:to-slate-100 text-white dark:text-slate-900 text-sm font-bold hover:shadow-xl hover:shadow-slate-900/20 dark:hover:shadow-white/10 transition-all duration-300 flex items-center gap-2">
-                                <i class="fa-solid fa-folder-open text-xs"></i> Lihat Project
+                                <i class="fa-solid fa-folder-open text-xs" aria-hidden="true"></i> Lihat Project
                             </a>
                             @if($profile['whatsapp'])
                                 <a href="https://wa.me/62{{ ltrim($profile['whatsapp'], '0') }}" target="_blank" rel="noopener" class="px-7 py-3.5 rounded-full glass-card text-slate-700 dark:text-slate-300 text-sm font-bold hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-300 flex items-center gap-2">
-                                    <i class="fa-brands fa-whatsapp text-emerald-500 text-sm"></i> Hubungi via WA
+                                    <i class="fa-brands fa-whatsapp text-emerald-500 text-sm" aria-hidden="true"></i> Hubungi via WA
                                 </a>
                             @endif
                         </div>
@@ -498,20 +596,20 @@
                     @foreach($educations as $i => $edu)
                         <div class="timeline-item relative flex gap-0 gs-fade-left">
                             <div class="timeline-dot top-0" style="border-color: {{ $edu->color }}30;">
-                                <i class="fa-solid {{ $edu->icon }} text-xs" style="color: {{ $edu->color }};"></i>
+                                <i class="fa-solid {{ $edu->icon }} text-xs" aria-hidden="true" style="color: {{ $edu->color }};"></i>
                             </div>
-                            <div class="timeline-body flex-1">
+                            <div class="timeline-body flex-1 min-w-0">
                                 <div class="section-card rounded-2xl p-6 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-500">
-                                    <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
-                                        <div>
+                                    <div class="flex items-start justify-between gap-3 mb-3">
+                                        <div class="min-w-0 flex-1">
                                             <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ $edu->degree }}</h3>
                                             <p class="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">{{ $edu->institution }}</p>
                                         </div>
-                                        <div class="text-right flex-shrink-0">
-                                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{{ $edu->period }}</span>
+                                        <div class="flex-shrink-0 text-right">
+                                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap">{{ $edu->period }}</span>
                                             @if($edu->location)
-                                                <p class="text-xs text-slate-400 dark:text-slate-600 mt-0.5">
-                                                    <i class="fa-solid fa-location-dot text-[10px] mr-1"></i>{{ $edu->location }}
+                                                <p class="text-xs text-slate-400 dark:text-slate-600 mt-0.5 whitespace-nowrap">
+                                                    <i class="fa-solid fa-location-dot text-[10px] mr-1" aria-hidden="true"></i>{{ $edu->location }}
                                                 </p>
                                             @endif
                                         </div>
@@ -551,22 +649,22 @@
                     @foreach($experiences as $i => $exp)
                         <div class="timeline-item relative flex gap-0 gs-fade-right">
                             <div class="timeline-dot top-0" style="border-color:{{ $exp->color }}30;">
-                                <i class="fa-solid {{ $exp->icon }} text-xs" style="color:{{ $exp->color }};"></i>
+                                <i class="fa-solid {{ $exp->icon }} text-xs" aria-hidden="true" style="color:{{ $exp->color }};"></i>
                             </div>
-                            <div class="timeline-body flex-1">
+                            <div class="timeline-body flex-1 min-w-0">
                                 <div class="section-card rounded-2xl p-6 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-500">
-                                    <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
-                                        <div>
+                                    <div class="flex items-start justify-between gap-3 mb-3">
+                                        <div class="min-w-0 flex-1">
                                             <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ $exp->role }}</h3>
                                             <p class="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">{{ $exp->company }}</p>
                                         </div>
-                                        <div class="text-right flex-shrink-0 flex flex-col items-end gap-1">
-                                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{{ $exp->period }}</span>
-                                            <div class="flex items-center gap-1.5">
+                                        <div class="flex-shrink-0 text-right flex flex-col items-end gap-1">
+                                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap">{{ $exp->period }}</span>
+                                            <div class="flex items-center gap-1.5 flex-wrap justify-end">
                                                 <span class="tpill text-[10px]" style="background:{{ $exp->color }}12;color:{{ $exp->color }};">{{ $exp->type }}</span>
                                                 @if($exp->location)
-                                                    <span class="text-[10px] text-slate-400">
-                                                        <i class="fa-solid fa-location-dot text-[9px] mr-0.5"></i>{{ $exp->location }}
+                                                    <span class="text-[10px] text-slate-400 whitespace-nowrap">
+                                                        <i class="fa-solid fa-location-dot text-[9px] mr-0.5" aria-hidden="true"></i>{{ $exp->location }}
                                                     </span>
                                                 @endif
                                             </div>
@@ -607,7 +705,7 @@
                         <div class="gs-scale section-card rounded-2xl p-6">
                             <div class="flex items-center gap-3 mb-7">
                                 <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:{{ $group->color }}12;">
-                                    <i class="fa-solid {{ $group->icon }} text-sm" style="color:{{ $group->color }};"></i>
+                                    <i class="fa-solid {{ $group->icon }} text-sm" aria-hidden="true" style="color:{{ $group->color }};"></i>
                                 </div>
                                 <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm tracking-wide">{{ $group->label }}</h3>
                             </div>
@@ -697,23 +795,23 @@
                                         <img src="{{ asset('storage/' . $p->image_path) }}" alt="{{ $p->title }}" loading="lazy">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">
-                                            <i class="fa-solid fa-code text-4xl opacity-10 text-indigo-400 dark:text-indigo-600"></i>
+                                            <i class="fa-solid fa-code text-4xl opacity-10 text-indigo-400 dark:text-indigo-600" aria-hidden="true"></i>
                                         </div>
                                     @endif
                                     <div class="pf-overlay">
                                         @if($p->link_preview)
                                             <a href="{{ $p->link_preview }}" target="_blank" rel="noopener" class="ov-btn ov-primary">
-                                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Demo
+                                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"></i> Demo
                                             </a>
                                         @endif
                                         @if($p->link_github)
                                             <a href="{{ $p->link_github }}" target="_blank" rel="noopener" class="ov-btn ov-ghost">
-                                                <i class="fa-brands fa-github text-[11px]"></i> GitHub
+                                                <i class="fa-brands fa-github text-[11px]" aria-hidden="true"></i> GitHub
                                             </a>
                                         @endif
                                         @if($p->link_journal)
                                             <a href="{{ $p->link_journal }}" target="_blank" rel="noopener" class="ov-btn ov-ghost">
-                                                <i class="fa-solid fa-file-lines text-[11px]"></i> Jurnal
+                                                <i class="fa-solid fa-file-lines text-[11px]" aria-hidden="true"></i> Jurnal
                                             </a>
                                         @endif
                                     </div>
@@ -735,17 +833,17 @@
                                         <div class="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-slate-200/50 dark:border-white/5">
                                             @if($p->link_preview)
                                                 <a href="{{ $p->link_preview }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
-                                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>Demo
+                                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]" aria-hidden="true"></i>Demo
                                                 </a>
                                             @endif
                                             @if($p->link_github)
                                                 <a href="{{ $p->link_github }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                                                    <i class="fa-brands fa-github text-[11px]"></i>GitHub
+                                                    <i class="fa-brands fa-github text-[11px]" aria-hidden="true"></i>GitHub
                                                 </a>
                                             @endif
                                             @if($p->link_copyright)
                                                 <a href="{{ $p->link_copyright }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors ml-auto">
-                                                    <i class="fa-solid fa-copyright text-[9px]"></i>HKI
+                                                    <i class="fa-solid fa-copyright text-[9px]" aria-hidden="true"></i>HKI
                                                 </a>
                                             @endif
                                         </div>
@@ -762,7 +860,7 @@
                 @else
                     <div class="text-center py-24 gs-scale">
                         <div class="w-16 h-16 rounded-2xl glass-card flex items-center justify-center mx-auto mb-4">
-                            <i class="fa-solid fa-briefcase text-slate-300 dark:text-slate-600 text-2xl"></i>
+                            <i class="fa-solid fa-briefcase text-slate-300 dark:text-slate-600 text-2xl" aria-hidden="true"></i>
                         </div>
                         <p class="text-slate-500 dark:text-slate-400 text-sm">Project akan segera hadir.</p>
                     </div>
@@ -786,17 +884,17 @@
                 <div class="flex flex-wrap justify-center gap-4">
                     @if($profile['email'])
                         <a href="mailto:{{ $profile['email'] }}" class="px-8 py-3.5 rounded-full bg-gradient-to-r from-slate-900 to-slate-800 dark:from-white dark:to-slate-100 text-white dark:text-slate-900 text-sm font-bold hover:shadow-xl hover:shadow-slate-900/20 dark:hover:shadow-white/10 transition-all duration-300 flex items-center gap-2">
-                            <i class="fa-solid fa-envelope text-xs"></i> {{ $profile['email'] }}
+                            <i class="fa-solid fa-envelope text-xs" aria-hidden="true"></i> {{ $profile['email'] }}
                         </a>
                     @endif
                     @if($profile['whatsapp'])
                         <a href="https://wa.me/62{{ ltrim($profile['whatsapp'], '0') }}" target="_blank" rel="noopener" class="px-8 py-3.5 rounded-full glass-card text-slate-700 dark:text-slate-300 text-sm font-bold hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-300 flex items-center gap-2">
-                            <i class="fa-brands fa-whatsapp text-emerald-500"></i> WhatsApp
+                            <i class="fa-brands fa-whatsapp text-emerald-500" aria-hidden="true"></i> WhatsApp
                         </a>
                     @endif
                     @if($profile['linkedin'])
                         <a href="{{ $profile['linkedin'] }}" target="_blank" rel="noopener" class="px-8 py-3.5 rounded-full glass-card text-slate-700 dark:text-slate-300 text-sm font-bold hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 flex items-center gap-2">
-                            <i class="fa-brands fa-linkedin text-blue-500"></i> LinkedIn
+                            <i class="fa-brands fa-linkedin text-blue-500" aria-hidden="true"></i> LinkedIn
                         </a>
                     @endif
                 </div>
