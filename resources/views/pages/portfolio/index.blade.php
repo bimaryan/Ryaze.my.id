@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<html lang="id"
-    x-data="{ dark: localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) }"
-    x-init="document.documentElement.classList.toggle('dark', dark); $watch('dark', val => { localStorage.setItem('theme', val ? 'dark' : 'light'); document.documentElement.classList.toggle('dark', val) })"
-    :class="{ 'dark': dark }">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -18,6 +15,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" nonce="{{ csp_nonce() }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <script nonce="{{ csp_nonce() }}">
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
 
     <style nonce="{{ csp_nonce() }}">
         *, *::before, *::after { box-sizing: border-box; }
@@ -276,8 +279,21 @@
         }
         .nav-link:hover::after { left: 0; right: 0; }
         .nav-link:hover { color: #6366f1; }
+        .nav-link.active { color: #6366f1; }
+        .nav-link.active::after { left: 0; right: 0; }
         .dark .nav-link { color: #94a3b8; }
         .dark .nav-link:hover { color: #a5b4fc; }
+        .dark .nav-link.active { color: #a5b4fc; }
+
+        /* ─── Icon toggle ─── */
+        #dark-toggle .icon-sun { display: none; }
+        #dark-toggle .icon-moon { display: block; }
+        html.dark #dark-toggle .icon-sun { display: block; }
+        html.dark #dark-toggle .icon-moon { display: none; }
+        #mobile-toggle .icon-bars { display: block; }
+        #mobile-toggle .icon-xmark { display: none; }
+        #mobile-toggle.is-open .icon-bars { display: none; }
+        #mobile-toggle.is-open .icon-xmark { display: block; }
 
         /* ─── Glow blob ─── */
         .glow-blob {
@@ -322,7 +338,6 @@
 
     @php
         $navLinks = [
-            ['label' => 'Beranda', 'href' => url('/')],
             ['label' => 'Tentang', 'href' => '#about'],
             ['label' => 'Pendidikan', 'href' => '#education'],
             ['label' => 'Pengalaman', 'href' => '#experience'],
@@ -332,30 +347,30 @@
     @endphp
 
     {{-- NAVBAR --}}
-    <header class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-white/60 dark:bg-[#030712]/60 border-b border-slate-200/50 dark:border-white/5" x-data="{ open: false }">
+    <header id="main-nav" class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-white/60 dark:bg-[#030712]/60 border-b border-slate-200/50 dark:border-white/5">
         <div class="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="{{ url('/') }}" class="text-sm font-black tracking-tight text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                 {{ $profile['name'] }}
             </a>
-            <nav class="hidden md:flex items-center gap-8">
+            <nav class="hidden md:flex items-center gap-8" id="desktop-nav">
                 @foreach($navLinks as $link)
-                    <a href="{{ $link['href'] }}" class="nav-link">{{ $link['label'] }}</a>
+                    <a href="{{ $link['href'] }}" class="nav-link" data-section="{{ ltrim($link['href'], '#') }}">{{ $link['label'] }}</a>
                 @endforeach
             </nav>
             <div class="flex items-center gap-2">
-                <button @click="dark = !dark" type="button" class="w-9 h-9 flex items-center justify-center rounded-full glass-card text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all" aria-label="Toggle dark mode">
-                    <i class="fa-solid fa-sun text-sm" x-show="dark" x-cloak></i>
-                    <i class="fa-solid fa-moon text-sm" x-show="!dark" x-cloak></i>
+                <button id="dark-toggle" type="button" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all" aria-label="Toggle dark mode">
+                    <i class="fa-solid fa-sun text-sm icon-sun"></i>
+                    <i class="fa-solid fa-moon text-sm icon-moon"></i>
                 </button>
-                <button @click="open = !open" type="button" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full glass-card text-slate-600 dark:text-slate-300" aria-label="Toggle menu">
-                    <i class="fa-solid fa-bars text-sm" x-show="!open"></i>
-                    <i class="fa-solid fa-xmark text-sm" x-show="open" x-cloak></i>
+                <button id="mobile-toggle" type="button" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars text-sm icon-bars"></i>
+                    <i class="fa-solid fa-xmark text-sm icon-xmark"></i>
                 </button>
             </div>
         </div>
-        <nav x-show="open" x-cloak x-transition class="md:hidden border-t border-slate-200/50 dark:border-white/5 px-6 py-4 flex flex-col gap-4 bg-white/80 dark:bg-[#030712]/80 backdrop-blur-xl">
+        <nav id="mobile-nav" class="hidden md:hidden border-t border-slate-200/50 dark:border-white/5 px-6 py-4 flex flex-col gap-4 bg-white/80 dark:bg-[#030712]/80 backdrop-blur-xl">
             @foreach($navLinks as $link)
-                <a href="{{ $link['href'] }}" @click="open = false" class="nav-link">{{ $link['label'] }}</a>
+                <a href="{{ $link['href'] }}" class="nav-link mobile-nav-link" data-section="{{ ltrim($link['href'], '#') }}">{{ $link['label'] }}</a>
             @endforeach
         </nav>
     </header>
@@ -589,7 +604,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach($skillGroups as $i => $group)
-                        <div class="gs-scale section-card rounded-2xl p-6" x-data="{ visible: false }" x-intersect.once="visible = true">
+                        <div class="gs-scale section-card rounded-2xl p-6">
                             <div class="flex items-center gap-3 mb-7">
                                 <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:{{ $group->color }}12;">
                                     <i class="fa-solid {{ $group->icon }} text-sm" style="color:{{ $group->color }};"></i>
@@ -803,11 +818,57 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" nonce="{{ csp_nonce() }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" nonce="{{ csp_nonce() }}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/dist/cdn.min.js" defer nonce="{{ csp_nonce() }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/dist/intersect.min.js" defer nonce="{{ csp_nonce() }}"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js" nonce="{{ csp_nonce() }}"></script>
 
     <script nonce="{{ csp_nonce() }}">
-        // ── GSAP 60fps Animations (Framer Motion style) ────
+        // ── Dark Mode Toggle (pure JS) ──────────────────────
+        (function () {
+            const toggle = document.getElementById('dark-toggle');
+            if (!toggle) return;
+            toggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+        })();
+
+        // ── Mobile Menu Toggle (pure JS) ────────────────────
+        (function () {
+            const btn = document.getElementById('mobile-toggle');
+            const nav = document.getElementById('mobile-nav');
+            if (!btn || !nav) return;
+            btn.addEventListener('click', () => {
+                const isOpen = nav.classList.toggle('hidden') === false;
+                btn.classList.toggle('is-open', isOpen);
+            });
+            nav.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    nav.classList.add('hidden');
+                    btn.classList.remove('is-open');
+                });
+            });
+        })();
+
+        // ── Scroll Spy (active nav link) ────────────────────
+        (function () {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link[data-section]');
+            function updateActive() {
+                let current = '';
+                const scrollY = window.scrollY + 120;
+                sections.forEach(sec => {
+                    if (sec.offsetTop <= scrollY) current = sec.id;
+                });
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.section === current);
+                });
+            }
+            window.addEventListener('scroll', updateActive, { passive: true });
+            updateActive();
+        })();
+    </script>
+
+    <script nonce="{{ csp_nonce() }}">
+        // ── GSAP 60fps Animations ──────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
 
