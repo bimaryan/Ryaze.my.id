@@ -15,6 +15,36 @@
                 @csrf
                 @method('PUT')
 
+                {{-- Profil Portfolio --}}
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-user text-indigo-500 dark:text-indigo-400 mr-2"></i> Profil Portfolio</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nama Lengkap</label>
+                            <input type="text" name="profile_name" value="{{ $settings['profile_name'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Bima Ryan Alfarizi">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Title / Gelar</label>
+                            <input type="text" name="profile_title" value="{{ $settings['profile_title'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Full-Stack Developer & Software Engineer">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Bio / Deskripsi Singkat</label>
+                            <textarea name="profile_bio" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Ceritakan tentang diri Anda...">{{ $settings['profile_bio'] ?? '' }}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Lokasi</label>
+                            <input type="text" name="profile_location" value="{{ $settings['profile_location'] ?? '' }}" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Indonesia">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Foto Profil</label>
+                            @if(!empty($settings['profile_avatar']))
+                                <img src="{{ asset('storage/' . $settings['profile_avatar']) }}" alt="Avatar" class="h-14 w-14 mb-2 rounded-full border p-1 bg-slate-50 dark:bg-slate-800/60 object-cover">
+                            @endif
+                            <input type="file" name="profile_avatar" accept="image/*" class="w-full border-slate-200 dark:border-slate-700 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Identitas & SEO --}}
                 <div>
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2"><i class="fa-solid fa-id-card text-indigo-500 dark:text-indigo-400 mr-2"></i> Identitas & SEO</h3>

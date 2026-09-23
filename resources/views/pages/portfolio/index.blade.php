@@ -45,14 +45,11 @@
     {{-- Preconnect --}}
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-    {{-- Fonts (preload critical, display=swap) --}}
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap">
+    {{-- Fonts (display=swap for non-blocking) --}}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" nonce="{{ csp_nonce() }}">
 
-    {{-- Font Awesome (deferred) --}}
-    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    {{-- Font Awesome (async via CSS) --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" nonce="{{ csp_nonce() }}" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" nonce="{{ csp_nonce() }}"></noscript>
 
@@ -492,9 +489,9 @@
                         <div class="avatar-ring w-44 h-44 lg:w-56 lg:h-56">
                             <div class="avatar-inner w-full h-full" style="padding:4px;">
                                 @if($profile['avatar'])
-                                    <img src="{{ asset('storage/' . $profile['avatar']) }}" alt="{{ $profile['name'] }}" class="w-full h-full object-cover">
+                                    <img src="{{ asset('storage/' . $profile['avatar']) }}" alt="{{ $profile['name'] }}" width="224" height="224" fetchpriority="high" decoding="async" class="w-full h-full object-cover">
                                 @else
-                                    <img src="{{ asset('profil/bima.jpeg') }}" alt="{{ $profile['name'] }}" class="w-full h-full object-cover">
+                                    <img src="{{ asset('profil/bima.jpeg') }}" alt="{{ $profile['name'] }}" width="224" height="224" fetchpriority="high" decoding="async" class="w-full h-full object-cover">
                                 @endif
                             </div>
                         </div>
@@ -792,7 +789,7 @@
 
                                 <div class="pf-img-wrap">
                                     @if($p->image_path)
-                                        <img src="{{ asset('storage/' . $p->image_path) }}" alt="{{ $p->title }}" loading="lazy">
+                                        <img src="{{ asset('storage/' . $p->image_path) }}" alt="{{ $p->title }}" loading="lazy" decoding="async" width="600" height="400">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">
                                             <i class="fa-solid fa-code text-4xl opacity-10 text-indigo-400 dark:text-indigo-600" aria-hidden="true"></i>
@@ -913,8 +910,8 @@
     </footer>
 
     {{-- GSAP --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" nonce="{{ csp_nonce() }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" nonce="{{ csp_nonce() }}"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" nonce="{{ csp_nonce() }}"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" nonce="{{ csp_nonce() }}"></script>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js" nonce="{{ csp_nonce() }}"></script>
 
