@@ -269,7 +269,6 @@
         .pf-card {
             background: rgba(255,255,255,.5);
             border: 1px solid rgba(255,255,255,.6);
-            backdrop-filter: blur(8px);
             border-radius: 20px;
             overflow: hidden;
             transition: all .5s cubic-bezier(.16,1,.3,1);
@@ -769,25 +768,43 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="pf-grid">
                         @php
                             $colors = [
-                                ['bg' => 'rgba(99,102,241,0.08)', 'text' => '#6366f1'],
-                                ['bg' => 'rgba(16,185,129,0.08)', 'text' => '#059669'],
-                                ['bg' => 'rgba(245,158,11,0.08)', 'text' => '#d97706'],
-                                ['bg' => 'rgba(239,68,68,0.08)', 'text' => '#dc2626'],
-                                ['bg' => 'rgba(139,92,246,0.08)', 'text' => '#7c3aed'],
-                                ['bg' => 'rgba(14,165,233,0.08)', 'text' => '#0284c7'],
-                                ['bg' => 'rgba(236,72,153,0.08)', 'text' => '#be185d'],
-                                ['bg' => 'rgba(34,197,94,0.08)', 'text' => '#16a34a'],
+                                ['bg' => 'rgba(99,102,241,0.15)', 'text' => '#818cf8'],
+                                ['bg' => 'rgba(16,185,129,0.15)', 'text' => '#34d399'],
+                                ['bg' => 'rgba(245,158,11,0.15)', 'text' => '#fbbf24'],
+                                ['bg' => 'rgba(239,68,68,0.15)', 'text' => '#f87171'],
+                                ['bg' => 'rgba(139,92,246,0.15)', 'text' => '#a78bfa'],
+                                ['bg' => 'rgba(14,165,233,0.15)', 'text' => '#38bdf8'],
+                                ['bg' => 'rgba(236,72,153,0.15)', 'text' => '#f472b6'],
+                                ['bg' => 'rgba(34,197,94,0.15)', 'text' => '#4ade80'],
                             ];
                         @endphp
                         @foreach($portfolios as $i => $p)
+                            @php
+                                $coloredTags = [];
+                                if(!empty($p->tags)){
+                                    foreach($p->tags as $t){
+                                        $ci = abs(crc32($t)) % count($colors);
+                                        $coloredTags[] = ['name' => $t, 'bg' => $colors[$ci]['bg'], 'text' => $colors[$ci]['text']];
+                                    }
+                                }
+                                $projectData = [
+                                    'title' => $p->title,
+                                    'description' => $p->description,
+                                    'tags' => $coloredTags,
+                                    'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null,
+                                    'link_preview' => $p->link_preview,
+                                    'link_github' => $p->link_github,
+                                    'link_journal' => $p->link_journal,
+                                    'link_copyright' => $p->link_copyright
+                                ];
+                            @endphp
                             <div class="pf-card gs-scale"
                                 x-show="tag==='__all__' || {{ json_encode($p->tags ?? []) }}.includes(tag)"
                                 x-transition:enter="transition ease-out duration-400"
                                 x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
-                                x-transition:leave-end="opacity-0 scale-95" data-tags="{{ implode(',', $p->tags ?? []) }}">
+                                data-tags="{{ implode(',', $p->tags ?? []) }}">
 
-                                <div class="pf-img-wrap cursor-pointer" @click='openProject({!! json_encode(['title' => $p->title, 'description' => $p->description, 'tags' => $p->tags ?? [], 'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null, 'link_preview' => $p->link_preview, 'link_github' => $p->link_github, 'link_journal' => $p->link_journal, 'link_copyright' => $p->link_copyright], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!})'>
+                                <div class="pf-img-wrap cursor-pointer" @click='openProject({!! json_encode($projectData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!})'>
                                     @if($p->image_path)
                                         <img src="{{ asset('storage/' . $p->image_path) }}" alt="{{ $p->title }}" loading="lazy" decoding="async" width="600" height="400">
                                     @else
@@ -823,26 +840,16 @@
                                             @endforeach
                                         </div>
                                     @endif
-                                    <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2 cursor-pointer" @click='openProject({!! json_encode(['title' => $p->title, 'description' => $p->description, 'tags' => $p->tags ?? [], 'image_path' => $p->image_path ? asset('storage/' . $p->image_path) : null, 'link_preview' => $p->link_preview, 'link_github' => $p->link_github, 'link_journal' => $p->link_journal, 'link_copyright' => $p->link_copyright], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!})'>{{ $p->title }}</h3>
+                                    <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2 cursor-pointer" @click='openProject({!! json_encode($projectData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!})'>{{ $p->title }}</h3>
                                     <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed flex-1 line-clamp-3">{{ $p->description }}</p>
 
-                                    <div class="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-slate-200/50 dark:border-white/5">
-                                        @if($p->link_preview)
-                                            <a href="{{ $p->link_preview }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
-                                                <i class="fa-solid fa-arrow-up-right-from-square text-[9px]" aria-hidden="true"></i>Demo
-                                            </a>
-                                        @endif
-                                        @if($p->link_github)
-                                            <a href="{{ $p->link_github }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                                                <i class="fa-brands fa-github text-[11px]" aria-hidden="true"></i>GitHub
-                                            </a>
-                                        @endif
-                                        @if($p->link_copyright)
-                                            <a href="{{ $p->link_copyright }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors ml-auto">
+                                    @if($p->link_copyright)
+                                        <div class="flex items-center gap-3 mt-3 pt-3 border-t border-slate-200/50 dark:border-white/5">
+                                            <a href="{{ $p->link_copyright }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors" onclick="event.stopPropagation()">
                                                 <i class="fa-solid fa-copyright text-[9px]" aria-hidden="true"></i>HKI
                                             </a>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
@@ -857,7 +864,7 @@
                             x-transition:leave-start="opacity-100"
                             x-transition:leave-end="opacity-0"
                             @keydown.escape.window="closeModal()">
-                            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal()"></div>
+                            <div class="absolute inset-0 bg-black/60" @click="closeModal()"></div>
                             <div class="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl"
                                 x-transition:enter="transition ease-out duration-300 delay-75"
                                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
@@ -879,7 +886,7 @@
                                     {{-- Tags --}}
                                     <div class="flex flex-wrap gap-1.5 mb-4" x-show="active && active.tags && active.tags.length">
                                         <template x-for="(t, i) in (active?.tags || [])" :key="i">
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" x-text="t"></span>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" :style="`background:${t.bg};color:${t.text}`" x-text="t.name"></span>
                                         </template>
                                     </div>
 
@@ -1134,7 +1141,11 @@
                                 opacity: 1, scale: 1, z: 0,
                                 duration: 0.8,
                                 ease: BOUNCE,
-                                delay: i * 0.1
+                                delay: i * 0.1,
+                                onComplete: () => {
+                                    el.classList.remove('gs-scale');
+                                    gsap.set(el, { clearProps: 'all' });
+                                }
                             });
                         }
                     });
