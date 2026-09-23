@@ -435,7 +435,7 @@
                         <span class="gs-fade-up section-label rd1">Portfolio</span>
 
                         <h1 class="gs-fade-up text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-br dark:from-white dark:to-slate-400 leading-[1.05] mb-6">
-                            {{ $profile['name'] }}
+                            {{ $profile['name'] }}<span class="text-2xl md:text-3xl lg:text-4xl font-bold text-indigo-500 dark:text-indigo-400 ml-2">S.Tr.Kom</span>
                         </h1>
 
                         <p class="gs-fade-up text-lg md:text-xl font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent mb-6 tracking-tight">
