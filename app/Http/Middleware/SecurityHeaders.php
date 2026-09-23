@@ -47,7 +47,7 @@ class SecurityHeaders
             "script-src-attr 'unsafe-inline'; ".
             "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
             "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
-            "img-src 'self' data: blob: https://api.qrserver.com https://ui-avatars.com https://placehold.co https://www.google-analytics.com https://www.googletagmanager.com; ".
+            "img-src 'self' data: blob: https://api.qrserver.com https://ui-avatars.com https://placehold.co https://www.google-analytics.com https://www.googletagmanager.com https://ghchart.rshah.org; ".
             "frame-src *; ".
             "worker-src 'self' data: blob:; ".
             "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:; ".

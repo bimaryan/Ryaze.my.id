@@ -66,11 +66,8 @@
         @foreach($experiences as $exp)
             <div class="item">
                 <div class="item-header">
-                    <span class="item-title">{{ $exp->position }}</span>
-                    <span class="item-date">
-                        {{ \Carbon\Carbon::parse($exp->start_date)->format('M Y') }} - 
-                        {{ $exp->is_current ? 'Present' : \Carbon\Carbon::parse($exp->end_date)->format('M Y') }}
-                    </span>
+                    <span class="item-title">{{ $exp->role }}</span>
+                    <span class="item-date">{{ $exp->period }}</span>
                 </div>
                 <div class="item-subtitle">{{ $exp->company }}</div>
                 <div class="item-desc">
@@ -88,12 +85,9 @@
             <div class="item">
                 <div class="item-header">
                     <span class="item-title">{{ $edu->institution }}</span>
-                    <span class="item-date">
-                        {{ \Carbon\Carbon::parse($edu->start_date)->format('Y') }} - 
-                        {{ $edu->is_current ? 'Present' : \Carbon\Carbon::parse($edu->end_date)->format('Y') }}
-                    </span>
+                    <span class="item-date">{{ $edu->period }}</span>
                 </div>
-                <div class="item-subtitle">{{ $edu->degree }} {{ $edu->field_of_study ? '- ' . $edu->field_of_study : '' }}</div>
+                <div class="item-subtitle">{{ $edu->degree }}</div>
             </div>
         @endforeach
     </div>
@@ -105,7 +99,7 @@
         <div class="skills-container">
             @foreach($skillGroups as $group)
                 <div class="skill-group">
-                    <span class="skill-group-name">{{ $group->name }}:</span>
+                    <span class="skill-group-name">{{ $group->label }}:</span>
                     <span class="skill-list">
                         {{ implode(', ', $group->skills->pluck('name')->toArray()) }}
                     </span>
