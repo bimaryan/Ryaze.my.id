@@ -98,7 +98,7 @@
         *, *::before, *::after { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
         [x-cloak] { display: none !important; }
-        html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+        html { scroll-behavior: smooth; scroll-padding-top: 7.5rem; }
 
         /* ─── Background ─── */
         .bg-mesh {
@@ -384,31 +384,245 @@
         .fb-off:hover { border-color: rgba(99,102,241,.4); color: #6366f1; background: rgba(99,102,241,.06); }
         .fb-on { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; border-color: transparent; box-shadow: 0 4px 20px rgba(99,102,241,.35); }
 
-        /* ─── Navbar ─── */
-        .nav-link {
+        /* ─── Navbar (floating pill) ─── */
+        #main-nav {
+            background: transparent;
+            border: 0;
+            padding: .85rem .9rem 0;
+            pointer-events: none;
+        }
+        @media (min-width: 640px) {
+            #main-nav { padding-top: 1.1rem; }
+        }
+
+        .nav-shell {
+            pointer-events: auto;
+            max-width: 72rem;
+            margin-inline: auto;
+        }
+
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .65rem;
+            min-height: 3.35rem;
+            padding: .4rem .45rem .4rem .55rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(226, 232, 240, 0.65);
+            box-shadow:
+                0 10px 40px rgba(15, 23, 42, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(18px) saturate(1.35);
+            -webkit-backdrop-filter: blur(18px) saturate(1.35);
+            transition: background .35s ease, box-shadow .35s ease, border-color .35s ease, transform .35s ease;
+        }
+        .dark .nav-bar {
+            background: rgba(11, 15, 28, 0.62);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+        #main-nav.scrolled .nav-bar {
+            background: rgba(255, 255, 255, 0.86);
+            border-color: rgba(226, 232, 240, 0.85);
+            box-shadow:
+                0 16px 48px rgba(15, 23, 42, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        .dark #main-nav.scrolled .nav-bar {
+            background: rgba(8, 12, 24, 0.88);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 16px 48px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            min-width: 0;
+            flex-shrink: 0;
+            padding-left: .15rem;
+        }
+        .nav-monogram {
+            width: 2.05rem;
+            height: 2.05rem;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .68rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: .02em;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .nav-monogram img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .nav-brand-text {
+            display: none;
+            flex-direction: column;
+            line-height: 1.15;
+            min-width: 0;
+        }
+        @media (min-width: 480px) {
+            .nav-brand-text { display: flex; }
+        }
+        .nav-brand-name {
             font-size: .82rem;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+        .dark .nav-brand-name { color: #f8fafc; }
+        .nav-brand-sub {
+            font-size: .6rem;
             font-weight: 600;
+            color: #94a3b8;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .nav-brand:hover .nav-brand-name { color: #6366f1; }
+        .dark .nav-brand:hover .nav-brand-name { color: #a5b4fc; }
+
+        #desktop-nav {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: .1rem;
+            flex: 1;
+            min-width: 0;
+            padding: 0 .25rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+        }
+        #desktop-nav::-webkit-scrollbar { display: none; }
+        @media (min-width: 768px) {
+            #desktop-nav { display: flex; }
+        }
+
+        .nav-link {
+            font-size: .72rem;
+            font-weight: 650;
             color: #64748b;
-            transition: color .25s;
+            padding: .4rem .62rem;
+            border-radius: 9999px;
+            white-space: nowrap;
+            transition: color .2s ease, background .2s ease, box-shadow .2s ease;
             position: relative;
         }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 50%; right: 50%;
-            height: 2px;
-            background: linear-gradient(90deg, #6366f1, #8b5cf6);
-            border-radius: 99px;
-            transition: left .3s cubic-bezier(.16,1,.3,1), right .3s cubic-bezier(.16,1,.3,1);
+        .nav-link::after { display: none !important; }
+        .nav-link:hover {
+            color: #4f46e5;
+            background: rgba(99, 102, 241, 0.1);
         }
-        .nav-link:hover::after { left: 0; right: 0; }
-        .nav-link:hover { color: #6366f1; }
-        .nav-link.active { color: #6366f1; }
-        .nav-link.active::after { left: 0; right: 0; }
+        .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+        }
+        .nav-link.active:hover {
+            color: #fff;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
         .dark .nav-link { color: #94a3b8; }
-        .dark .nav-link:hover { color: #a5b4fc; }
-        .dark .nav-link.active { color: #a5b4fc; }
+        .dark .nav-link:hover {
+            color: #c7d2fe;
+            background: rgba(165, 180, 252, 0.1);
+        }
+        .dark .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+
+        .nav-cta {
+            display: none;
+            align-items: center;
+            gap: .4rem;
+            font-size: .72rem;
+            font-weight: 800;
+            color: #fff;
+            padding: .52rem .95rem;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+            transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .nav-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(99, 102, 241, 0.45);
+            filter: brightness(1.05);
+        }
+        @media (min-width: 900px) {
+            .nav-cta { display: inline-flex; }
+        }
+
+        #mobile-nav {
+            pointer-events: auto;
+            margin-top: 0;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            padding: 0 .75rem;
+            border: 1px solid transparent;
+            border-radius: 1.35rem;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(18px) saturate(1.35);
+            -webkit-backdrop-filter: blur(18px) saturate(1.35);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
+            transition: max-height .4s cubic-bezier(.16,1,.3,1), opacity .3s ease, padding .3s ease, margin .3s ease;
+        }
+        .dark #mobile-nav {
+            background: rgba(8, 12, 24, 0.92);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+        }
+        #mobile-nav.is-open {
+            margin-top: .55rem;
+            max-height: min(70vh, 34rem);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            opacity: 1;
+            padding: .75rem;
+            border-color: rgba(226, 232, 240, 0.7);
+        }
+        .dark #mobile-nav.is-open {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        #mobile-nav .nav-link {
+            display: block;
+            font-size: .88rem;
+            padding: .7rem .95rem;
+            border-radius: 0.9rem;
+            background: rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(226, 232, 240, 0.4);
+        }
+        .dark #mobile-nav .nav-link {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        #mobile-nav .nav-link.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: transparent;
+            color: #fff;
+        }
 
         /* ─── Icon toggle ─── */
         #dark-toggle .icon-sun { display: none; }
@@ -469,47 +683,83 @@
             ['label' => 'Skill', 'href' => '#skills'],
             ['label' => 'Sertifikat', 'href' => '#certifications'],
             ['label' => 'Project', 'href' => '#projects'],
+            ['label' => 'Produk', 'href' => '#products'],
             ['label' => 'Testimoni', 'href' => '#testimonials'],
             ['label' => 'GitHub', 'href' => '#github'],
+            ['label' => 'Tip', 'href' => '#tip-jar'],
             ['label' => 'Kontak', 'href' => '#contact'],
         ];
     @endphp
 
     {{-- NAVBAR --}}
-    <header id="main-nav" class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-white/60 dark:bg-[#030712]/60 border-b border-slate-200/50 dark:border-white/5">
-        <div class="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="{{ url('/') }}" class="text-sm font-black tracking-tight text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                {{ $profile['name'] }}
-            </a>
-            <nav class="hidden md:flex items-center gap-8" id="desktop-nav">
-                @foreach($navLinks as $link)
-                    <a href="{{ $link['href'] }}" class="nav-link" data-section="{{ ltrim($link['href'], '#') }}">{{ $link['label'] }}</a>
-                @endforeach
-            </nav>
-            <div class="flex items-center gap-2">
-                <button id="dark-toggle" type="button" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all" aria-label="Toggle dark mode">
-                    <i class="fa-solid fa-sun text-sm icon-sun" aria-hidden="true"></i>
-                    <i class="fa-solid fa-moon text-sm icon-moon" aria-hidden="true"></i>
-                </button>
-                <button id="mobile-toggle" type="button" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" aria-label="Toggle menu">
-                    <i class="fa-solid fa-bars text-sm icon-bars" aria-hidden="true"></i>
-                    <i class="fa-solid fa-xmark text-sm icon-xmark" aria-hidden="true"></i>
-                </button>
+    @php
+        $navInitials = collect(explode(' ', $profile['name']))
+            ->filter()
+            ->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))
+            ->take(2)
+            ->join('');
+        $brandPhoto = $profile['avatar'] ? asset('storage/' . $profile['avatar']) : null;
+    @endphp
+    <header id="main-nav" class="fixed top-0 inset-x-0 z-50">
+        <div class="nav-shell">
+            <div class="nav-bar">
+                <a href="{{ route('portfolio.index') }}" class="nav-brand" aria-label="Beranda {{ $profile['name'] }}">
+                    <span class="nav-monogram">
+                        @if($brandPhoto)
+                            <img src="{{ $brandPhoto }}" alt="{{ $profile['name'] }}" width="32" height="32" decoding="async">
+                        @else
+                            {{ $navInitials }}
+                        @endif
+                    </span>
+                    <span class="nav-brand-text">
+                        <span class="nav-brand-name">{{ $profile['name'] }}</span>
+                        <span class="nav-brand-sub">Portfolio</span>
+                    </span>
+                </a>
+
+                <nav id="desktop-nav" aria-label="Navigasi utama">
+                    @foreach($navLinks as $link)
+                        @if($link['href'] === '#contact')
+                            @continue
+                        @endif
+                        <a href="{{ $link['href'] }}" class="nav-link" data-section="{{ ltrim($link['href'], '#') }}">{{ $link['label'] }}</a>
+                    @endforeach
+                </nav>
+
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <a href="#contact" class="nav-cta">
+                        <i class="fa-solid fa-paper-plane text-[10px]" aria-hidden="true"></i>
+                        Kontak
+                    </a>
+                    <button id="dark-toggle" type="button" class="w-9 h-9 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-all" aria-label="Toggle dark mode">
+                        <i class="fa-solid fa-sun text-sm icon-sun" aria-hidden="true"></i>
+                        <i class="fa-solid fa-moon text-sm icon-moon" aria-hidden="true"></i>
+                    </button>
+                    <button id="mobile-toggle" type="button" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+                        <i class="fa-solid fa-bars text-sm icon-bars" aria-hidden="true"></i>
+                        <i class="fa-solid fa-xmark text-sm icon-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
             </div>
+
+            <nav id="mobile-nav" class="md:hidden flex flex-col gap-2" aria-label="Navigasi mobile">
+                @foreach($navLinks as $link)
+                    <a href="{{ $link['href'] }}" class="nav-link mobile-nav-link" data-section="{{ ltrim($link['href'], '#') }}">{{ $link['label'] }}</a>
+                @endforeach
+                <a href="#contact" class="mobile-nav-link mt-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-black shadow-lg shadow-indigo-500/25">
+                    <i class="fa-solid fa-paper-plane text-xs" aria-hidden="true"></i>
+                    Hubungi Saya
+                </a>
+            </nav>
         </div>
-        <nav id="mobile-nav" class="hidden md:hidden border-t border-slate-200/50 dark:border-white/5 px-6 py-4 flex flex-col gap-4 bg-white/80 dark:bg-[#030712]/80 backdrop-blur-xl">
-            @foreach($navLinks as $link)
-                <a href="{{ $link['href'] }}" class="nav-link mobile-nav-link" data-section="{{ ltrim($link['href'], '#') }}">{{ $link['label'] }}</a>
-            @endforeach
-        </nav>
     </header>
 
-    <main class="pt-16">
+    <main class="pt-24 sm:pt-28">
 
         {{-- ════════════════════════════════════════════════════════
         HERO / BIO
         ════════════════════════════════════════════════════════ --}}
-        <section class="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden" id="about">
+        <section class="relative min-h-screen flex items-center pb-20 overflow-hidden" id="about">
             <div class="absolute inset-0 bg-dot opacity-30 pointer-events-none"></div>
             <div class="glow-blob w-[600px] h-[600px] bg-indigo-400/15 dark:bg-indigo-500/10 top-[-200px] left-1/2 -translate-x-1/2"></div>
             <div class="glow-blob w-[400px] h-[400px] bg-violet-400/10 dark:bg-violet-500/8 bottom-[-100px] right-[10%]"></div>
@@ -1143,6 +1393,66 @@
         </section>
 
         {{-- ════════════════════════════════════════════════════════
+        DIGITAL PRODUCTS
+        ════════════════════════════════════════════════════════ --}}
+        <section id="products" class="py-28 relative">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+                <div class="mb-14 text-center gs-scale">
+                    <span class="section-label justify-center">Produk Digital</span>
+                    <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-4">Template & Aset Siap Pakai</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
+                        File siap download — template, e-book, dan aset digital yang saya buat sendiri. Bayar sekali, miliki selamanya.
+                    </p>
+                </div>
+
+                @if(($products ?? collect())->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        @foreach($products as $product)
+                            <div class="gs-scale section-card rounded-2xl overflow-hidden hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-500 flex flex-col">
+                                @if($product->cover_path)
+                                    <div class="aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
+                                        <img src="{{ asset('storage/' . $product->cover_path) }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                                    </div>
+                                @else
+                                    <div class="aspect-video bg-gradient-to-br from-indigo-500/10 to-violet-500/10 flex items-center justify-center">
+                                        <i class="fa-solid fa-box-open text-4xl text-indigo-300 dark:text-indigo-600" aria-hidden="true"></i>
+                                    </div>
+                                @endif
+                                <div class="p-6 flex flex-col flex-1">
+                                    <h3 class="text-lg font-black text-slate-900 dark:text-white mb-2 leading-snug">{{ $product->name }}</h3>
+                                    @if($product->description)
+                                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex-1 mb-5">{{ \Illuminate\Support\Str::limit($product->description, 140) }}</p>
+                                    @else
+                                        <div class="flex-1"></div>
+                                    @endif
+                                    <div class="flex items-center justify-between gap-3 pt-4 border-t border-slate-200/50 dark:border-white/5">
+                                        <div>
+                                            <span class="text-xl font-black text-slate-900 dark:text-white">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                            <span class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">Sekali beli</span>
+                                        </div>
+                                        <form action="{{ route('portfolio.products.checkout', $product->slug) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-black hover:shadow-lg hover:shadow-indigo-500/25 transition-all whitespace-nowrap">
+                                                Beli &amp; Download
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-16 gs-scale">
+                        <div class="w-16 h-16 rounded-2xl glass-card flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-box-open text-slate-300 dark:text-slate-600 text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Produk digital akan segera hadir.</p>
+                    </div>
+                @endif
+            </div>
+        </section>
+
+        {{-- ════════════════════════════════════════════════════════
         TESTIMONIALS
         ════════════════════════════════════════════════════════ --}}
         <section id="testimonials" class="py-24 relative overflow-hidden bg-slate-50/50 dark:bg-slate-800/20 border-y border-slate-200/50 dark:border-white/5">
@@ -1300,6 +1610,59 @@
         @endif
 
         {{-- ════════════════════════════════════════════════════════
+        TIP JAR
+        ════════════════════════════════════════════════════════ --}}
+        <section id="tip-jar" class="py-24 relative overflow-hidden bg-slate-50/50 dark:bg-slate-800/20 border-y border-slate-200/50 dark:border-white/5">
+            <div class="max-w-3xl mx-auto px-6 lg:px-8 relative z-10 text-center">
+                <div class="mb-10 gs-scale">
+                    <span class="section-label justify-center">Dukung Saya</span>
+                    <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-4">Tip Jar ☕</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
+                        Konten &amp; tools di sini gratis. Jika bermanfaat, kirim tip seikhlasnya — sangat membantu saya terus berkarya.
+                    </p>
+                </div>
+
+                <form action="{{ route('portfolio.tip') }}" method="POST"
+                    class="gs-scale glass-card rounded-3xl p-6 md:p-8 text-left"
+                    x-data="tipJar()">
+                    @csrf
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">Pilih nominal</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <template x-for="p in presets" :key="p">
+                                <button type="button" @click="select(p)"
+                                    class="px-3 py-3 rounded-xl text-sm font-black border transition-all"
+                                    :class="amount === p ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white border-transparent shadow-lg shadow-indigo-500/25' : 'bg-white/70 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:border-indigo-400'">
+                                    Rp <span x-text="fmt(p)"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="custom-amount" class="block text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">Atau nominal lain (min. Rp 10.000)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400" aria-hidden="true">Rp</span>
+                            <input type="number" name="amount" id="custom-amount" min="10000" max="10000000" step="1000"
+                                x-model.number="amount" required
+                                class="w-full bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3.5 text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                                placeholder="Masukkan nominal">
+                        </div>
+                        @error('amount')
+                            <p class="text-rose-500 text-xs mt-2" role="alert">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <button type="submit"
+                        class="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-black hover:shadow-xl hover:shadow-amber-500/25 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-heart" aria-hidden="true"></i>
+                        Kirim Tip <span x-show="amount > 0">— Rp <span x-text="fmt(amount)"></span></span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        {{-- ════════════════════════════════════════════════════════
         CONTACT CTA + FORM
         ════════════════════════════════════════════════════════ --}}
         <section id="contact" class="py-28 relative">
@@ -1417,16 +1780,35 @@
             const btn = document.getElementById('mobile-toggle');
             const nav = document.getElementById('mobile-nav');
             if (!btn || !nav) return;
+            const close = () => {
+                nav.classList.remove('is-open');
+                btn.classList.remove('is-open');
+                btn.setAttribute('aria-expanded', 'false');
+            };
+            const open = () => {
+                void nav.offsetHeight;
+                nav.classList.add('is-open');
+                btn.classList.add('is-open');
+                btn.setAttribute('aria-expanded', 'true');
+            };
             btn.addEventListener('click', () => {
-                const isOpen = nav.classList.toggle('hidden') === false;
-                btn.classList.toggle('is-open', isOpen);
+                if (nav.classList.contains('is-open')) close();
+                else open();
             });
             nav.querySelectorAll('.mobile-nav-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    nav.classList.add('hidden');
-                    btn.classList.remove('is-open');
-                });
+                link.addEventListener('click', close);
             });
+        })();
+
+        // ── Scroll state (navbar solidify) ─────────────────
+        (function () {
+            const header = document.getElementById('main-nav');
+            if (!header) return;
+            const onScroll = () => {
+                header.classList.toggle('scrolled', window.scrollY > 12);
+            };
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
         })();
 
         // ── Scroll Spy (active nav link) ────────────────────
@@ -1634,6 +2016,20 @@
                         if (tags.includes(this.tag)) any = true;
                     });
                     return !any;
+                }
+            };
+        }
+
+        // ── AlpineJS Tip Jar ──────────────────────────────
+        function tipJar() {
+            return {
+                presets: [10000, 25000, 50000, 100000],
+                amount: 25000,
+                select(p) {
+                    this.amount = p;
+                },
+                fmt(n) {
+                    return Number(n || 0).toLocaleString('id-ID');
                 }
             };
         }

@@ -265,6 +265,40 @@ class PaymentCallbackController extends Controller
             } else {
                 return response()->json(['success' => false, 'message' => 'Wallet Transaction not found'], 404);
             }
+        } elseif (str_starts_with($order_id, 'PRD-')) {
+            $purchase = \App\Models\DigitalPurchase::where('order_id', $order_id)->first();
+            if ($purchase) {
+                $statusLower = strtolower($status);
+                if (in_array($statusLower, ['completed', 'paid', 'success'])) {
+                    if ($purchase->status !== 'paid') {
+                        $purchase->update(['status' => 'paid', 'paid_at' => now()]);
+                        \Illuminate\Support\Facades\Log::info("Digital purchase paid: {$order_id}");
+                    }
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                    if ($purchase->status === 'pending') {
+                        $purchase->update(['status' => 'failed']);
+                    }
+                }
+            } else {
+                return response()->json(['success' => false, 'message' => 'Product purchase not found'], 404);
+            }
+        } elseif (str_starts_with($order_id, 'TIP-')) {
+            $tip = \App\Models\Tip::where('order_id', $order_id)->first();
+            if ($tip) {
+                $statusLower = strtolower($status);
+                if (in_array($statusLower, ['completed', 'paid', 'success'])) {
+                    if ($tip->status !== 'completed') {
+                        $tip->update(['status' => 'completed', 'paid_at' => now()]);
+                        \Illuminate\Support\Facades\Log::info("Tip completed: {$order_id} amount={$tip->amount}");
+                    }
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                    if ($tip->status === 'pending') {
+                        $tip->update(['status' => 'failed']);
+                    }
+                }
+            } else {
+                return response()->json(['success' => false, 'message' => 'Tip not found'], 404);
+            }
         } else {
             // Default ke Joki Payment
             $payment = JokiPayment::where('invoice_number', $order_id)->first();

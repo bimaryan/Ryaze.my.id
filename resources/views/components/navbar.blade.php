@@ -295,6 +295,14 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('superadmin.digital_products.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.digital_products*') || request()->routeIs('superadmin.digital_purchases*') || request()->routeIs('superadmin.tips*')) }}">
+                        <i
+                            class="fa-solid fa-box-open {{ $iconBox(request()->routeIs('superadmin.digital_products*') || request()->routeIs('superadmin.digital_purchases*') || request()->routeIs('superadmin.tips*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Produk Digital</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('superadmin.skills.index') }}"
                         class="{{ $navLink(request()->routeIs('superadmin.skills*')) }}">
                         <i

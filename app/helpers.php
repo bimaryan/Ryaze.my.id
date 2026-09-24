@@ -29,6 +29,25 @@ if (!function_exists('csp_nonce')) {
     }
 }
 
+if (!function_exists('pakasir_pay_url')) {
+    /**
+     * Bangun URL pembayaran Pakasir.
+     * Format: https://app.pakasir.com/pay/{slug}/{amount}?order_id={orderId}
+     * Opsional: $redirect diarahkan setelah pembayaran selesai.
+     */
+    function pakasir_pay_url(int $amount, string $orderId, ?string $redirect = null): string
+    {
+        $slug = config('services.pakasir.slug', 'ryaze');
+
+        $params = ['order_id' => $orderId];
+        if ($redirect) {
+            $params['redirect'] = $redirect;
+        }
+
+        return 'https://app.pakasir.com/pay/' . $slug . '/' . $amount . '?' . http_build_query($params);
+    }
+}
+
 if (!function_exists('get_framework_icon')) {
     function get_framework_icon($framework)
     {

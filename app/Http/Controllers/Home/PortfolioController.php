@@ -12,9 +12,13 @@ use App\Models\TechBadge;
 use App\Models\Testimonial;
 use App\Models\Certification;
 use App\Models\ContactMessage;
+use App\Models\DigitalProduct;
+use App\Models\DigitalPurchase;
+use App\Models\Tip;
 use App\Services\GitHubService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class PortfolioController extends Controller
 {
@@ -69,6 +73,10 @@ class PortfolioController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $products = DigitalProduct::where('is_active', true)
+            ->latest()
+            ->get();
+
         $githubUsername = '';
         if (!empty($profile['github'])) {
             $parts = explode('/', parse_url($profile['github'], PHP_URL_PATH));
@@ -79,7 +87,7 @@ class PortfolioController extends Controller
         return compact(
             'portfolios', 'allTags', 'profile', 'educations', 'experiences',
             'skillGroups', 'techBadges', 'testimonials', 'certifications',
-            'githubUsername', 'githubStats'
+            'products', 'githubUsername', 'githubStats'
         );
     }
 
@@ -128,5 +136,94 @@ class PortfolioController extends Controller
         ]);
 
         return redirect()->route('portfolio.index')->with('success', 'Pesan terkirim! Terima kasih telah menghubungi saya.');
+    }
+
+    public function checkoutProduct($slug)
+    {
+        $product = DigitalProduct::where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $orderId = 'PRD-' . strtoupper(uniqid());
+
+        DigitalPurchase::create([
+            'product_id' => $product->id,
+            'order_id' => $orderId,
+            'amount' => $product->price,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('portfolio.products.status', $orderId);
+    }
+
+    public function purchaseStatus($order_id)
+    {
+        $purchase = DigitalPurchase::with('product')
+            ->where('order_id', $order_id)
+            ->firstOrFail();
+
+        $payUrl = $purchase->status === 'pending'
+            ? pakasir_pay_url($purchase->amount, $purchase->order_id, route('portfolio.products.status', $order_id))
+            : null;
+
+        return view('pages.portfolio.purchase-status', [
+            'purchase' => $purchase,
+            'payUrl' => $payUrl,
+        ]);
+    }
+
+    public function downloadProduct($order_id)
+    {
+        $purchase = DigitalPurchase::with('product')
+            ->where('order_id', $order_id)
+            ->firstOrFail();
+
+        if (!$purchase->isPaid()) {
+            return redirect()
+                ->route('portfolio.products.status', $purchase->order_id)
+                ->with('error', 'Pembayaran belum diterima. Download terkunci.');
+        }
+
+        $product = $purchase->product;
+        if (!Storage::disk('local')->exists($product->file_path)) {
+            return redirect()
+                ->route('portfolio.products.status', $purchase->order_id)
+                ->with('error', 'File tidak ditemukan. Hubungi saya jika masalah berlanjut.');
+        }
+
+        $purchase->product->increment('download_count');
+
+        return Storage::disk('local')->download($product->file_path, $product->file_name);
+    }
+
+    public function createTip(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|integer|min:10000|max:10000000',
+        ], [
+            'amount.min' => 'Minimal tip Rp 10.000.',
+            'amount.max' => 'Maksimal tip Rp 10.000.000.',
+        ]);
+
+        $orderId = 'TIP-' . strtoupper(uniqid());
+
+        Tip::create([
+            'order_id' => $orderId,
+            'amount' => $request->integer('amount'),
+            'status' => 'pending',
+        ]);
+
+        return redirect(pakasir_pay_url(
+            $request->integer('amount'),
+            $orderId,
+            route('portfolio.tip.success', $orderId)
+        ));
+    }
+
+    public function tipSuccess($order_id)
+    {
+        $tip = Tip::where('order_id', $order_id)->firstOrFail();
+
+        return view('pages.portfolio.tip-success', compact('tip'));
     }
 }

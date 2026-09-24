@@ -40,6 +40,20 @@ Route::post('/portfolio/contact', [\App\Http\Controllers\Home\PortfolioControlle
     ->middleware('throttle:10,1')
     ->name('portfolio.contact');
 
+// ── PRODUK DIGITAL & TIP JAR ─────────────────────────────────
+Route::post('/portfolio/products/{slug}/checkout', [\App\Http\Controllers\Home\PortfolioController::class, 'checkoutProduct'])
+    ->middleware('throttle:10,1')
+    ->name('portfolio.products.checkout');
+Route::get('/pembelian/{order_id}', [\App\Http\Controllers\Home\PortfolioController::class, 'purchaseStatus'])
+    ->name('portfolio.products.status');
+Route::get('/portfolio/download/{order_id}', [\App\Http\Controllers\Home\PortfolioController::class, 'downloadProduct'])
+    ->name('portfolio.products.download');
+Route::post('/portfolio/tip', [\App\Http\Controllers\Home\PortfolioController::class, 'createTip'])
+    ->middleware('throttle:10,1')
+    ->name('portfolio.tip');
+Route::get('/tip/sukses/{order_id}', [\App\Http\Controllers\Home\PortfolioController::class, 'tipSuccess'])
+    ->name('portfolio.tip.success');
+
 Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
     Route::get('/register', [AuthController::class, 'registerindex'])->name('register');
@@ -147,6 +161,14 @@ Route::middleware('auth')->group(function () {
         Route::get('superadmin/contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('superadmin.contact_messages.index');
         Route::get('superadmin/contact-messages/{hashid}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'show'])->name('superadmin.contact_messages.show');
         Route::delete('superadmin/contact-messages/{hashid}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('superadmin.contact_messages.destroy');
+
+        // Produk Digital
+        Route::resource('superadmin/digital-products', \App\Http\Controllers\Admin\DigitalProductController::class)->except(['show'])->names('superadmin.digital_products');
+        Route::patch('superadmin/digital-products/{hashid}/status', [\App\Http\Controllers\Admin\DigitalProductController::class, 'toggleStatus'])->name('superadmin.digital_products.status.toggle');
+        Route::get('superadmin/digital-purchases', [\App\Http\Controllers\Admin\DigitalProductController::class, 'purchases'])->name('superadmin.digital_purchases.index');
+
+        // Tips
+        Route::get('superadmin/tips', [\App\Http\Controllers\Admin\TipController::class, 'index'])->name('superadmin.tips.index');
 
         // Skill & Tech Stack
         Route::get('superadmin/skills', [\App\Http\Controllers\Admin\SkillController::class, 'index'])->name('superadmin.skills.index');
