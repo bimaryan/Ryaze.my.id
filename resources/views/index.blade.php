@@ -119,6 +119,23 @@
                 htmlContainer: 'text-sm text-slate-500 dark:text-slate-400'
             }
         });
+
+        // Global delete confirm — available on every admin page (incl. after PJAX nav)
+        window.confirmDelete = function (btn, opts) {
+            const o = opts || {};
+            Swal.fire({
+                title: o.title || 'Hapus Data?',
+                text: o.text || 'Data ini akan dihapus secara permanen.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then(result => {
+                if (result.isConfirmed) btn.closest('form').submit();
+            });
+        };
     </script>
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}" crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ csp_nonce() }}">
 

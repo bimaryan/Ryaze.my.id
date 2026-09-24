@@ -36,6 +36,9 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 // ── PORTFOLIO PUBLIK ────────────────────────────────────────
 Route::get('/portfolio', [\App\Http\Controllers\Home\PortfolioController::class, 'index'])->name('portfolio.index');
 Route::get('/portfolio/resume', [\App\Http\Controllers\Home\PortfolioController::class, 'downloadResume'])->name('portfolio.resume');
+Route::post('/portfolio/contact', [\App\Http\Controllers\Home\PortfolioController::class, 'sendContact'])
+    ->middleware('throttle:10,1')
+    ->name('portfolio.contact');
 
 Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
@@ -131,6 +134,19 @@ Route::middleware('auth')->group(function () {
         // Pengalaman
         Route::resource('superadmin/experiences', \App\Http\Controllers\Admin\ExperienceController::class)->names('superadmin.experiences');
         Route::patch('superadmin/experiences/{hashid}/status', [\App\Http\Controllers\Admin\ExperienceController::class, 'toggleStatus'])->name('superadmin.experiences.status.toggle');
+
+        // Testimoni
+        Route::resource('superadmin/testimonials', \App\Http\Controllers\Admin\TestimonialController::class)->except(['show'])->names('superadmin.testimonials');
+        Route::patch('superadmin/testimonials/{hashid}/status', [\App\Http\Controllers\Admin\TestimonialController::class, 'toggleStatus'])->name('superadmin.testimonials.status.toggle');
+
+        // Sertifikat
+        Route::resource('superadmin/certifications', \App\Http\Controllers\Admin\CertificationController::class)->except(['show'])->names('superadmin.certifications');
+        Route::patch('superadmin/certifications/{hashid}/status', [\App\Http\Controllers\Admin\CertificationController::class, 'toggleStatus'])->name('superadmin.certifications.status.toggle');
+
+        // Pesan Kontak
+        Route::get('superadmin/contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('superadmin.contact_messages.index');
+        Route::get('superadmin/contact-messages/{hashid}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'show'])->name('superadmin.contact_messages.show');
+        Route::delete('superadmin/contact-messages/{hashid}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('superadmin.contact_messages.destroy');
 
         // Skill & Tech Stack
         Route::get('superadmin/skills', [\App\Http\Controllers\Admin\SkillController::class, 'index'])->name('superadmin.skills.index');

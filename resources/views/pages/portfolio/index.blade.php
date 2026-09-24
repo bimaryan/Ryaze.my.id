@@ -53,6 +53,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" nonce="{{ csp_nonce() }}" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" nonce="{{ csp_nonce() }}"></noscript>
 
+    {{-- Cloudflare Turnstile (contact form) --}}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer nonce="{{ csp_nonce() }}"></script>
+
     @vite(['resources/css/app.css'])
 
     {{-- Prevent FOUC dark mode --}}
@@ -203,6 +206,34 @@
             top: 0; bottom: 0;
             width: 2px;
             background: linear-gradient(to bottom, rgba(99,102,241,.4) 0%, rgba(99,102,241,.03) 100%);
+        }
+        .timeline-progress {
+            position: absolute;
+            left: 1.15rem;
+            top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #6366f1, #8b5cf6);
+            transform-origin: top;
+            transform: scaleY(0);
+            box-shadow: 0 0 8px rgba(99,102,241,.45);
+        }
+        .period-chip {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            padding: .3rem .7rem;
+            border-radius: 9999px;
+            color: #6366f1;
+            background: rgba(99,102,241,.1);
+            border: 1px solid rgba(99,102,241,.2);
+        }
+        .dark .period-chip {
+            color: #a5b4fc;
+            background: rgba(99,102,241,.15);
+            border-color: rgba(99,102,241,.3);
         }
         .timeline-dot {
             position: absolute;
@@ -436,7 +467,11 @@
             ['label' => 'Pendidikan', 'href' => '#education'],
             ['label' => 'Pengalaman', 'href' => '#experience'],
             ['label' => 'Skill', 'href' => '#skills'],
+            ['label' => 'Sertifikat', 'href' => '#certifications'],
             ['label' => 'Project', 'href' => '#projects'],
+            ['label' => 'Testimoni', 'href' => '#testimonials'],
+            ['label' => 'GitHub', 'href' => '#github'],
+            ['label' => 'Kontak', 'href' => '#contact'],
         ];
     @endphp
 
@@ -648,7 +683,6 @@
         {{-- ════════════════════════════════════════════════════════
         EDUCATION
         ════════════════════════════════════════════════════════ --}}
-        @if($educations->count() > 0)
         <section id="education" class="py-28 relative">
             <div class="max-w-4xl mx-auto px-6 lg:px-8">
                 <div class="mb-16 text-center gs-scale">
@@ -656,8 +690,10 @@
                     <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">Pendidikan</h2>
                 </div>
 
-                <div class="relative">
+                @if($educations->count() > 0)
+                <div class="relative timeline-wrap">
                     <div class="timeline-line"></div>
+                    <div class="timeline-progress"></div>
                     @foreach($educations as $i => $edu)
                         <div class="timeline-item relative flex gap-0 gs-fade-left">
                             <div class="timeline-dot top-0" style="border-color: {{ $edu->color }}30;">
@@ -694,14 +730,20 @@
                         </div>
                     @endforeach
                 </div>
+                @else
+                    <div class="text-center py-16 gs-scale">
+                        <div class="w-16 h-16 rounded-2xl glass-card flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-graduation-cap text-slate-300 dark:text-slate-600 text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Riwayat pendidikan akan segera hadir.</p>
+                    </div>
+                @endif
             </div>
         </section>
-        @endif
 
         {{-- ════════════════════════════════════════════════════════
         EXPERIENCE
         ════════════════════════════════════════════════════════ --}}
-        @if($experiences->count() > 0)
         <section id="experience" class="py-28 relative">
             <div class="max-w-4xl mx-auto px-6 lg:px-8">
                 <div class="mb-16 text-center gs-scale">
@@ -709,8 +751,10 @@
                     <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">Pengalaman</h2>
                 </div>
 
-                <div class="relative">
+                @if($experiences->count() > 0)
+                <div class="relative timeline-wrap">
                     <div class="timeline-line"></div>
+                    <div class="timeline-progress"></div>
                     @foreach($experiences as $i => $exp)
                         <div class="timeline-item relative flex gap-0 gs-fade-right">
                             <div class="timeline-dot top-0" style="border-color:{{ $exp->color }}30;">
@@ -724,7 +768,7 @@
                                             <p class="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">{{ $exp->company }}</p>
                                         </div>
                                         <div class="flex-shrink-0 text-right flex flex-col items-end gap-1">
-                                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap">{{ $exp->period }}</span>
+                                            <span class="period-chip">{{ $exp->period }}</span>
                                             <div class="flex items-center gap-1.5 flex-wrap justify-end">
                                                 <span class="tpill text-[10px]" style="background:{{ $exp->color }}12;color:{{ $exp->color }};">{{ $exp->type }}</span>
                                                 @if($exp->location)
@@ -750,20 +794,28 @@
                         </div>
                     @endforeach
                 </div>
+                @else
+                    <div class="text-center py-16 gs-scale">
+                        <div class="w-16 h-16 rounded-2xl glass-card flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-briefcase text-slate-300 dark:text-slate-600 text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Pengalaman karier akan segera hadir.</p>
+                    </div>
+                @endif
             </div>
         </section>
-        @endif
 
         {{-- ════════════════════════════════════════════════════════
         SKILLS
         ════════════════════════════════════════════════════════ --}}
-        @if($skillGroups->count() > 0)
         <section id="skills" class="py-28 relative">
             <div class="max-w-5xl mx-auto px-6 lg:px-8">
                 <div class="mb-16 text-center gs-scale">
                     <span class="section-label justify-center">Kemampuan Teknis</span>
                     <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">Tech Stack & Skill</h2>
                 </div>
+
+                @if($skillGroups->count() > 0)
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach($skillGroups as $i => $group)
@@ -807,9 +859,84 @@
                         </div>
                     </div>
                 @endif
+                @else
+                    <div class="text-center py-16 gs-scale">
+                        <div class="w-16 h-16 rounded-2xl glass-card flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-code text-slate-300 dark:text-slate-600 text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Tech stack akan segera hadir.</p>
+                    </div>
+                @endif
             </div>
         </section>
-        @endif
+
+        {{-- ════════════════════════════════════════════════════════
+        CERTIFICATIONS
+        ════════════════════════════════════════════════════════ --}}
+        <section id="certifications" class="py-24 relative overflow-hidden bg-slate-50/50 dark:bg-slate-800/20 border-y border-slate-200/50 dark:border-white/5">
+            <div class="max-w-5xl mx-auto px-6 lg:px-8 relative z-10">
+                <div class="mb-14 text-center gs-scale">
+                    <span class="section-label justify-center">Lisensi & Kurasi</span>
+                    <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-4">Sertifikat</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
+                        Sertifikasi profesional yang memvalidasi keahlian dan komitmen terhadap standar industri.
+                    </p>
+                </div>
+
+                @if($certifications->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($certifications as $c)
+                            <div class="gs-scale section-card rounded-2xl p-6 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-500 flex flex-col">
+                                <div class="flex items-start gap-4 mb-4">
+                                    @if($c->image_path)
+                                        <a href="{{ asset('storage/' . $c->image_path) }}" target="_blank" rel="noopener" class="w-12 h-12 rounded-xl flex-shrink-0 overflow-hidden border border-slate-200 dark:border-white/10 hover:ring-2 hover:ring-indigo-400/50 transition-all" title="Lihat gambar">
+                                            <img src="{{ asset('storage/' . $c->image_path) }}" alt="{{ $c->name }}" loading="lazy" decoding="async" width="48" height="48" class="w-full h-full object-cover">
+                                        </a>
+                                    @else
+                                        <div class="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:{{ $c->color }}12;">
+                                            <i class="fa-solid fa-certificate text-lg" style="color:{{ $c->color }};" aria-hidden="true"></i>
+                                        </div>
+                                    @endif
+                                    <div class="min-w-0 flex-1">
+                                        <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug">{{ $c->name }}</h3>
+                                        <p class="text-xs font-semibold mt-1" style="color:{{ $c->color }};">{{ $c->issuer }}</p>
+                                    </div>
+                                    @if($c->expired_at && $c->expired_at->isPast())
+                                        <span class="flex-shrink-0 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-rose-500/10 text-rose-500">Kadaluarsa</span>
+                                    @elseif(!$c->expired_at || $c->expired_at->isFuture())
+                                        <span class="flex-shrink-0 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-emerald-500/10 text-emerald-500">Valid</span>
+                                    @endif
+                                </div>
+                                @if($c->image_path)
+                                    <a href="{{ asset('storage/' . $c->image_path) }}" target="_blank" rel="noopener" class="block mb-4 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 hover:opacity-90 transition-opacity" title="Lihat sertifikat penuh">
+                                        <img src="{{ asset('storage/' . $c->image_path) }}" alt="{{ $c->name }}" loading="lazy" decoding="async" width="600" height="400" class="w-full h-36 object-cover">
+                                    </a>
+                                @endif
+                                <div class="mt-auto pt-4 border-t border-slate-200/50 dark:border-white/5 flex items-center justify-between gap-2">
+                                    <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                                        <i class="fa-regular fa-calendar mr-1" aria-hidden="true"></i>{{ $c->issued_at?->format('M Y') }}
+                                    </span>
+                                    @if($c->credential_url)
+                                        <a href="{{ $c->credential_url }}" target="_blank" rel="noopener" class="text-[11px] font-bold hover:underline" style="color:{{ $c->color }};">
+                                            Verifikasi <i class="fa-solid fa-arrow-up-right-from-square text-[9px]" aria-hidden="true"></i>
+                                        </a>
+                                    @elseif($c->credential_id)
+                                        <span class="text-[10px] font-mono text-slate-400 dark:text-slate-500">{{ $c->credential_id }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-16 gs-scale">
+                        <div class="w-16 h-16 rounded-2xl glass-card flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-certificate text-slate-300 dark:text-slate-600 text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Sertifikat akan segera hadir.</p>
+                    </div>
+                @endif
+            </div>
+        </section>
 
         {{-- ════════════════════════════════════════════════════════
         PROJECTS
@@ -1016,28 +1143,156 @@
         </section>
 
         {{-- ════════════════════════════════════════════════════════
+        TESTIMONIALS
+        ════════════════════════════════════════════════════════ --}}
+        <section id="testimonials" class="py-24 relative overflow-hidden bg-slate-50/50 dark:bg-slate-800/20 border-y border-slate-200/50 dark:border-white/5">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8 relative z-10">
+                <div class="mb-14 text-center gs-scale">
+                    <span class="section-label justify-center">Kata Mereka</span>
+                    <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-4">Testimoni</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
+                        Apa kata klien dan kolaborator tentang kerja sama selama ini.
+                    </p>
+                </div>
+
+                @if($testimonials->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($testimonials as $t)
+                            <div class="gs-scale section-card rounded-2xl p-6 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-500 flex flex-col">
+                                <div class="flex items-center gap-1 mb-4">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fa-{{ $i <= $t->rating ? 'solid' : 'regular' }} fa-star text-xs {{ $i <= $t->rating ? 'text-amber-400' : 'text-slate-300 dark:text-slate-600' }}" aria-hidden="true"></i>
+                                    @endfor
+                                </div>
+                                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex-1 mb-6">
+                                    <i class="fa-solid fa-quote-left text-indigo-300 dark:text-indigo-600 text-lg mr-1.5" aria-hidden="true"></i>{{ $t->content }}
+                                </p>
+                                <div class="flex items-center gap-3 pt-4 border-t border-slate-200/50 dark:border-white/5">
+                                    @if($t->avatar_path)
+                                        <img src="{{ asset('storage/' . $t->avatar_path) }}" alt="{{ $t->name }}" loading="lazy" decoding="async" width="40" height="40" class="w-10 h-10 rounded-full object-cover">
+                                    @else
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 text-white flex items-center justify-center text-sm font-bold">
+                                            {{ strtoupper(substr($t->name, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate">{{ $t->name }}</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ $t->role }}{{ $t->company ? ' @ ' . $t->company : '' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-16 gs-scale">
+                        <div class="w-16 h-16 rounded-2xl glass-card flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-comment-dots text-slate-300 dark:text-slate-600 text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Testimoni akan segera hadir.</p>
+                    </div>
+                @endif
+            </div>
+        </section>
+
+        {{-- ════════════════════════════════════════════════════════
         GITHUB ACTIVITY
         ════════════════════════════════════════════════════════ --}}
         @php
-            $githubUsername = '';
-            if(!empty($profile['github'])) {
+            $githubUsername = $githubUsername ?? '';
+            if(empty($githubUsername) && !empty($profile['github'])) {
                 $parts = explode('/', parse_url($profile['github'], PHP_URL_PATH));
                 $githubUsername = end($parts);
             }
         @endphp
         @if($githubUsername)
-        <section class="py-20 relative bg-slate-50/50 dark:bg-slate-800/20 border-y border-slate-200/50 dark:border-white/5">
+        <section id="github" class="py-20 relative bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-200/50 dark:border-white/5">
             <div class="max-w-6xl mx-auto px-6 lg:px-8 text-center">
                 <span class="gs-fade-up section-label justify-center">Kontribusi</span>
-                <h2 class="gs-fade-up text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-10">
+                <h2 class="gs-fade-up text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-4">
                     GitHub Activity
                 </h2>
+                <p class="gs-fade-up text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto mb-10">
+                    Statistik kontribusi open source & aktivitas publik di GitHub.
+                </p>
+
+                @if($githubStats)
+                    @php
+                        $ghCards = [
+                            ['val' => $githubStats['public_repos'], 'label' => 'Repositori Publik', 'icon' => 'fa-book-bookmark', 'color' => 'text-indigo-500', 'bg' => 'bg-indigo-500/10'],
+                            ['val' => $githubStats['followers'], 'label' => 'Followers', 'icon' => 'fa-user-group', 'color' => 'text-violet-500', 'bg' => 'bg-violet-500/10'],
+                            ['val' => $githubStats['total_stars'], 'label' => 'Total Stars', 'icon' => 'fa-star', 'color' => 'text-amber-500', 'bg' => 'bg-amber-500/10'],
+                            ['val' => $githubStats['total_forks'], 'label' => 'Total Forks', 'icon' => 'fa-code-branch', 'color' => 'text-emerald-500', 'bg' => 'bg-emerald-500/10'],
+                            ['val' => $githubStats['following'], 'label' => 'Mengikuti', 'icon' => 'fa-user-plus', 'color' => 'text-sky-500', 'bg' => 'bg-sky-500/10'],
+                        ];
+                        $ghContrib = $githubStats['contributions'];
+                        $ghYear = $githubStats['created_at'] ? \Carbon\Carbon::parse($githubStats['created_at'])->year : null;
+                    @endphp
+
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                        @foreach($ghCards as $card)
+                            <div class="gs-scale section-card rounded-2xl p-5 flex flex-col items-center justify-center">
+                                <div class="w-10 h-10 rounded-xl {{ $card['bg'] }} flex items-center justify-center mb-3">
+                                    <i class="fa-solid {{ $card['icon'] }} {{ $card['color'] }} text-sm" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight stat-value" data-count="{{ $card['val'] }}">0</span>
+                                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">{{ $card['label'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if($ghContrib['commits'] + $ghContrib['prs'] + $ghContrib['issues'] + $ghContrib['reviews'] > 0)
+                        <div class="flex flex-wrap justify-center gap-3 mb-8 gs-fade-up">
+                            @if($ghContrib['commits'] > 0)
+                                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full glass-card text-xs font-bold text-slate-600 dark:text-slate-300">
+                                    <i class="fa-solid fa-code-commit text-emerald-500" aria-hidden="true"></i> {{ $ghContrib['commits'] }} commits (30 hari)
+                                </span>
+                            @endif
+                            @if($ghContrib['prs'] > 0)
+                                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full glass-card text-xs font-bold text-slate-600 dark:text-slate-300">
+                                    <i class="fa-solid fa-code-pull-request text-violet-500" aria-hidden="true"></i> {{ $ghContrib['prs'] }} PR
+                                </span>
+                            @endif
+                            @if($ghContrib['issues'] > 0)
+                                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full glass-card text-xs font-bold text-slate-600 dark:text-slate-300">
+                                    <i class="fa-solid fa-circle-dot text-amber-500" aria-hidden="true"></i> {{ $ghContrib['issues'] }} issues
+                                </span>
+                            @endif
+                            @if($ghContrib['reviews'] > 0)
+                                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full glass-card text-xs font-bold text-slate-600 dark:text-slate-300">
+                                    <i class="fa-solid fa-eye text-sky-500" aria-hidden="true"></i> {{ $ghContrib['reviews'] }} reviews
+                                </span>
+                            @endif
+                        </div>
+                    @endif
+
+                    @if(!empty($githubStats['top_languages']))
+                        <div class="gs-fade-up mb-8">
+                            <p class="text-center text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600 mb-4">Bahasa Terpopuler</p>
+                            <div class="flex flex-wrap justify-center gap-2.5">
+                                @foreach($githubStats['top_languages'] as $lang)
+                                    <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full section-card text-xs font-bold text-slate-600 dark:text-slate-300">
+                                        <span class="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500" aria-hidden="true"></span>
+                                        {{ $lang['name'] }}
+                                        <span class="text-slate-400 dark:text-slate-500 font-semibold">({{ $lang['repos'] }})</span>
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($ghYear)
+                        <p class="gs-fade-up text-xs text-slate-400 dark:text-slate-500 mb-6">
+                            <i class="fa-brands fa-github mr-1" aria-hidden="true"></i>Bermain di GitHub sejak {{ $ghYear }}
+                        </p>
+                    @endif
+                @endif
+
                 <div class="gs-scale w-full overflow-x-auto pb-4">
-                    <img src="https://ghchart.rshah.org/{{ $githubUsername }}" alt="{{ $githubUsername }}'s Github Chart" class="mx-auto min-w-[700px]">
+                    <img src="https://ghchart.rshah.org/{{ $githubUsername }}" alt="{{ $githubUsername }}'s Github Chart" class="mx-auto min-w-[700px]" loading="lazy">
                 </div>
                 <div class="gs-fade-up mt-6">
                     <a href="{{ $profile['github'] }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
-                        <i class="fa-brands fa-github text-xl"></i> Follow me on GitHub
+                        <i class="fa-brands fa-github text-xl" aria-hidden="true"></i> Follow me on GitHub
                     </a>
                 </div>
             </div>
@@ -1045,19 +1300,21 @@
         @endif
 
         {{-- ════════════════════════════════════════════════════════
-        CONTACT CTA
+        CONTACT CTA + FORM
         ════════════════════════════════════════════════════════ --}}
-        <section class="py-28 relative">
-            <div class="max-w-3xl mx-auto px-6 text-center gs-scale">
-                <span class="section-label justify-center">Kontak</span>
-                <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-5">
-                    Ada project yang ingin dikerjakan?
-                </h2>
-                <p class="text-slate-500 dark:text-slate-400 text-base leading-relaxed mb-10 max-w-xl mx-auto">
-                    Terbuka untuk kolaborasi, freelance, dan diskusi ide. Ceritakan visi Anda dan mari kita wujudkan bersama.
-                </p>
+        <section id="contact" class="py-28 relative">
+            <div class="max-w-3xl mx-auto px-6 relative">
+                <div class="text-center gs-scale mb-10">
+                    <span class="section-label justify-center">Kontak</span>
+                    <h2 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-5">
+                        Ada project yang ingin dikerjakan?
+                    </h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-base leading-relaxed max-w-xl mx-auto">
+                        Terbuka untuk kolaborasi, freelance, dan diskusi ide. Ceritakan visi Anda dan mari kita wujudkan bersama.
+                    </p>
+                </div>
 
-                <div class="flex flex-wrap justify-center gap-4">
+                <div class="flex flex-wrap justify-center gap-4 mb-12 gs-fade-up">
                     @if($profile['email'])
                         <a href="mailto:{{ $profile['email'] }}" class="px-8 py-3.5 rounded-full bg-gradient-to-r from-slate-900 to-slate-800 dark:from-white dark:to-slate-100 text-white dark:text-slate-900 text-sm font-bold hover:shadow-xl hover:shadow-slate-900/20 dark:hover:shadow-white/10 transition-all duration-300 flex items-center gap-2">
                             <i class="fa-solid fa-envelope text-xs" aria-hidden="true"></i> {{ $profile['email'] }}
@@ -1074,6 +1331,53 @@
                         </a>
                     @endif
                 </div>
+
+                {{-- Contact Form --}}
+                <div class="section-card rounded-2xl p-6 md:p-8 gs-scale">
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">Kirim Pesan Langsung</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Saya biasanya membalas dalam 1×24 jam.</p>
+
+                    <form action="{{ route('portfolio.contact') }}" method="POST" class="space-y-5">
+                        @csrf
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="cf-name" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">Nama <span class="text-rose-500">*</span></label>
+                                <input type="text" name="name" id="cf-name" value="{{ old('name') }}" required placeholder="Nama Anda"
+                                    class="w-full bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition @error('name') border-rose-400 @enderror">
+                                @error('name') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label for="cf-email" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">Email <span class="text-rose-500">*</span></label>
+                                <input type="email" name="email" id="cf-email" value="{{ old('email') }}" required placeholder="email@domain.com"
+                                    class="w-full bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition @error('email') border-rose-400 @enderror">
+                                @error('email') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="cf-subject" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">Subjek <span class="text-rose-500">*</span></label>
+                            <input type="text" name="subject" id="cf-subject" value="{{ old('subject') }}" required placeholder="Contoh: Pembuatan Sistem Informasi"
+                                class="w-full bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition @error('subject') border-rose-400 @enderror">
+                            @error('subject') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label for="cf-message" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">Pesan <span class="text-rose-500">*</span></label>
+                            <textarea name="message" id="cf-message" rows="5" required placeholder="Ceritakan kebutuhan project Anda..."
+                                class="w-full bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition resize-y @error('message') border-rose-400 @enderror">{{ old('message') }}</textarea>
+                            @error('message') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div class="flex justify-center">
+                            <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}"></div>
+                        </div>
+                        @error('cf-turnstile-response') <p class="text-rose-500 text-xs text-center">{{ $message }}</p> @enderror
+
+                        <button type="submit" class="w-full px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold hover:shadow-xl hover:shadow-indigo-500/25 transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-xs" aria-hidden="true"></i> Kirim Pesan
+                        </button>
+                    </form>
+                </div>
             </div>
         </section>
 
@@ -1087,6 +1391,9 @@
             </p>
         </div>
     </footer>
+
+    {{-- Flash Toast --}}
+    @include('components.hot-toast')
 
     {{-- GSAP --}}
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" nonce="{{ csp_nonce() }}"></script>
@@ -1254,6 +1561,22 @@
                             });
                         }
                     });
+                });
+            });
+
+            // ── Timeline progress (scroll-scrubbed line fill) ──
+            gsap.utils.toArray('.timeline-wrap').forEach(wrap => {
+                const fill = wrap.querySelector('.timeline-progress');
+                if (!fill) return;
+                gsap.to(fill, {
+                    scaleY: 1,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: wrap,
+                        start: 'top 75%',
+                        end: 'bottom 55%',
+                        scrub: 0.4
+                    }
                 });
             });
 

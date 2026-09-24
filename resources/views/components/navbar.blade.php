@@ -271,6 +271,30 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('superadmin.testimonials.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.testimonials*')) }}">
+                        <i
+                            class="fa-solid fa-comment-dots {{ $iconBox(request()->routeIs('superadmin.testimonials*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Testimoni</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('superadmin.certifications.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.certifications*')) }}">
+                        <i
+                            class="fa-solid fa-certificate {{ $iconBox(request()->routeIs('superadmin.certifications*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Sertifikat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('superadmin.contact_messages.index') }}"
+                        class="{{ $navLink(request()->routeIs('superadmin.contact_messages*')) }}">
+                        <i
+                            class="fa-solid fa-inbox {{ $iconBox(request()->routeIs('superadmin.contact_messages*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Pesan Masuk</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('superadmin.skills.index') }}"
                         class="{{ $navLink(request()->routeIs('superadmin.skills*')) }}">
                         <i
