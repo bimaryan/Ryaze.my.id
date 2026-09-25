@@ -388,11 +388,11 @@
         #main-nav {
             background: transparent;
             border: 0;
-            padding: .85rem .9rem 0;
+            padding: .7rem .75rem 0;
             pointer-events: none;
         }
         @media (min-width: 640px) {
-            #main-nav { padding-top: 1.1rem; }
+            #main-nav { padding-top: 1.1rem; padding-inline: .9rem; }
         }
 
         .nav-shell {
@@ -405,9 +405,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: .65rem;
-            min-height: 3.35rem;
-            padding: .4rem .45rem .4rem .55rem;
+            gap: .5rem;
+            min-height: 3.25rem;
+            padding: .38rem .42rem .38rem .5rem;
             border-radius: 9999px;
             background: rgba(255, 255, 255, 0.58);
             border: 1px solid rgba(226, 232, 240, 0.65);
@@ -443,10 +443,11 @@
         .nav-brand {
             display: flex;
             align-items: center;
-            gap: .6rem;
+            gap: .55rem;
             min-width: 0;
-            flex-shrink: 0;
-            padding-left: .15rem;
+            flex-shrink: 1;
+            overflow: hidden;
+            padding-left: .1rem;
         }
         .nav-monogram {
             width: 2.05rem;
@@ -471,13 +472,10 @@
             display: block;
         }
         .nav-brand-text {
-            display: none;
+            display: flex;
             flex-direction: column;
             line-height: 1.15;
             min-width: 0;
-        }
-        @media (min-width: 480px) {
-            .nav-brand-text { display: flex; }
         }
         .nav-brand-name {
             font-size: .82rem;
@@ -485,6 +483,8 @@
             letter-spacing: -.02em;
             color: #0f172a;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .dark .nav-brand-name { color: #f8fafc; }
         .nav-brand-sub {
@@ -494,6 +494,10 @@
             letter-spacing: .04em;
             text-transform: uppercase;
             white-space: nowrap;
+        }
+        @media (max-width: 380px) {
+            .nav-brand-sub { display: none; }
+            .nav-brand-name { font-size: .78rem; }
         }
         .nav-brand:hover .nav-brand-name { color: #6366f1; }
         .dark .nav-brand:hover .nav-brand-name { color: #a5b4fc; }
@@ -754,7 +758,7 @@
         </div>
     </header>
 
-    <main class="pt-24 sm:pt-28">
+    <main class="">
 
         {{-- ════════════════════════════════════════════════════════
         HERO / BIO
@@ -765,7 +769,7 @@
             <div class="glow-blob w-[400px] h-[400px] bg-violet-400/10 dark:bg-violet-500/8 bottom-[-100px] right-[10%]"></div>
             <div class="glow-blob w-[300px] h-[300px] bg-pink-400/8 dark:bg-pink-500/5 top-[40%] left-[-5%]"></div>
 
-            <div class="max-w-6xl mx-auto px-6 lg:px-8 w-full relative z-10">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8 w-full relative z-10 mt-20">
                 <div class="flex flex-col lg:flex-row items-center lg:items-start gap-16">
 
                     {{-- Avatar --}}
@@ -903,7 +907,7 @@
         {{-- ════════════════════════════════════════════════════════
         FUN FACTS (STATISTICS)
         ════════════════════════════════════════════════════════ --}}
-        <section class="py-20 relative">
+        <section class="py-24 relative">
             <div class="max-w-5xl mx-auto px-6 lg:px-8">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     @php
@@ -933,7 +937,7 @@
         {{-- ════════════════════════════════════════════════════════
         EDUCATION
         ════════════════════════════════════════════════════════ --}}
-        <section id="education" class="py-28 relative">
+        <section id="education" class="py-24 relative">
             <div class="max-w-4xl mx-auto px-6 lg:px-8">
                 <div class="mb-16 text-center gs-scale">
                     <span class="section-label justify-center">Riwayat Pendidikan</span>
@@ -994,7 +998,7 @@
         {{-- ════════════════════════════════════════════════════════
         EXPERIENCE
         ════════════════════════════════════════════════════════ --}}
-        <section id="experience" class="py-28 relative">
+        <section id="experience" class="py-24 relative">
             <div class="max-w-4xl mx-auto px-6 lg:px-8">
                 <div class="mb-16 text-center gs-scale">
                     <span class="section-label justify-center">Karir & Pengalaman</span>
@@ -1058,7 +1062,7 @@
         {{-- ════════════════════════════════════════════════════════
         SKILLS
         ════════════════════════════════════════════════════════ --}}
-        <section id="skills" class="py-28 relative">
+        <section id="skills" class="py-24 relative">
             <div class="max-w-5xl mx-auto px-6 lg:px-8">
                 <div class="mb-16 text-center gs-scale">
                     <span class="section-label justify-center">Kemampuan Teknis</span>
@@ -1191,7 +1195,7 @@
         {{-- ════════════════════════════════════════════════════════
         PROJECTS
         ════════════════════════════════════════════════════════ --}}
-        <section id="projects" class="py-28 relative" x-data="pfFilter()">
+        <section id="projects" class="py-24 relative" x-data="pfFilter()">
             <div class="max-w-7xl mx-auto px-6 lg:px-8">
                 <div class="mb-14 text-center gs-scale">
                     <span class="section-label justify-center">Karya Terpilih</span>
@@ -1395,7 +1399,7 @@
         {{-- ════════════════════════════════════════════════════════
         DIGITAL PRODUCTS
         ════════════════════════════════════════════════════════ --}}
-        <section id="products" class="py-28 relative">
+        <section id="products" class="py-24 relative">
             <div class="max-w-7xl mx-auto px-6 lg:px-8">
                 <div class="mb-14 text-center gs-scale">
                     <span class="section-label justify-center">Produk Digital</span>
@@ -1515,7 +1519,7 @@
             }
         @endphp
         @if($githubUsername)
-        <section id="github" class="py-20 relative bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-200/50 dark:border-white/5">
+        <section id="github" class="py-24 relative bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-200/50 dark:border-white/5">
             <div class="max-w-6xl mx-auto px-6 lg:px-8 text-center">
                 <span class="gs-fade-up section-label justify-center">Kontribusi</span>
                 <h2 class="gs-fade-up text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-4">
@@ -1665,7 +1669,7 @@
         {{-- ════════════════════════════════════════════════════════
         CONTACT CTA + FORM
         ════════════════════════════════════════════════════════ --}}
-        <section id="contact" class="py-28 relative">
+        <section id="contact" class="py-24 relative">
             <div class="max-w-3xl mx-auto px-6 relative">
                 <div class="text-center gs-scale mb-10">
                     <span class="section-label justify-center">Kontak</span>
@@ -1833,6 +1837,19 @@
     <script nonce="{{ csp_nonce() }}">
         // ── GSAP 60fps Animations ──────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
+            const revealAll = () => {
+                document.querySelectorAll('.gs-fade-up, .gs-fade-left, .gs-fade-right, .gs-scale, .gs-fade-in').forEach(el => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'none';
+                    el.classList.remove('gs-fade-up', 'gs-fade-left', 'gs-fade-right', 'gs-scale', 'gs-fade-in');
+                });
+            };
+
+            if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+                revealAll();
+                return;
+            }
+
             gsap.registerPlugin(ScrollTrigger);
 
             // Global defaults — 60fps composited
@@ -1848,18 +1865,26 @@
             // ── Hero entrance (immediate, staggered) ──
             const heroTl = gsap.timeline({ delay: 0.3 });
             heroTl
-                .to('.gs-fade-left', {
+                .to('#about .gs-fade-left', {
                     opacity: 1, x: 0, z: 0,
                     duration: 1.2,
                     ease: SPRING,
                     stagger: 0.15
                 })
-                .to('.gs-fade-up', {
+                .to('#about .gs-fade-up', {
                     opacity: 1, y: 0, z: 0,
                     duration: 1,
                     ease: SMOOTH,
                     stagger: 0.1
                 }, '-=0.8');
+
+            // Fallback: pastikan konten hero tetap terlihat jika animasi gagal
+            setTimeout(() => {
+                document.querySelectorAll('#about .gs-fade-up, #about .gs-fade-left').forEach(el => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'none';
+                });
+            }, 2500);
 
             // ── Scroll-triggered: fade up ──
             gsap.utils.toArray('.gs-fade-up').forEach((el, i) => {
@@ -1873,7 +1898,8 @@
                             opacity: 1, y: 0, z: 0,
                             duration: 0.9,
                             ease: SMOOTH,
-                            delay: (i % 4) * 0.08
+                            delay: (i % 4) * 0.08,
+                            onComplete: () => el.classList.remove('gs-fade-up')
                         });
                     }
                 });

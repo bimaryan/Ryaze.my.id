@@ -72,8 +72,8 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
             `}</style>
 
             {/* HERO */}
-            <section className="relative bg-white dark:bg-[#0a0a14] overflow-hidden">
-                <div className="relative max-w-6xl mx-auto px-6 pt-32 pb-28 lg:pt-44 lg:pb-36">
+            <section className="relative min-h-screen bg-white dark:bg-[#0a0a14] overflow-hidden">
+                <div className="relative min-h-screen max-w-6xl mx-auto px-6 pt-32 pb-28 lg:pt-44 lg:pb-36 flex flex-col justify-center">
                     <div className="max-w-3xl" data-reveal>
                         <div className="inline-block px-3 py-1 bg-[#7c3aed] text-white text-[11px] font-bold tracking-widest uppercase mb-8">
                             Deployment Tersedia
@@ -120,8 +120,8 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
             </section>
 
             {/* ABOUT */}
-            <section id="about" className="bg-white dark:bg-[#0d0d18] border-y border-[#e5e5e5] dark:border-[#1a1a2e]">
-                <div className="max-w-6xl mx-auto px-6 py-24 lg:py-32">
+            <section id="about" className="min-h-screen bg-white dark:bg-[#0d0d18] border-y border-[#e5e5e5] dark:border-[#1a1a2e]">
+                <div className="min-h-screen max-w-6xl mx-auto px-6 py-24 lg:py-32 flex flex-col justify-center">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
                         <div className="lg:col-span-5" data-reveal>
                             <span className="text-[11px] font-bold text-[#7c3aed] uppercase tracking-[0.2em] mb-4 block">Tentang</span>
@@ -180,8 +180,8 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
             </section>
 
             {/* SERVICES */}
-            <section id="services" className="bg-white dark:bg-[#0a0a14]">
-                <div className="max-w-6xl mx-auto px-6 py-24 lg:py-32">
+            <section id="services" className="min-h-screen bg-white dark:bg-[#0a0a14]">
+                <div className="min-h-screen max-w-6xl mx-auto px-6 py-10 lg:py-12 flex flex-col justify-center">
                     <div className="mb-16" data-reveal>
                         <span className="text-[11px] font-bold text-[#7c3aed] uppercase tracking-[0.2em] mb-4 block">Layanan</span>
                         <h2 className="text-4xl font-black text-[#7c3aed] dark:text-white tracking-tight">Infrastruktur & Layanan.</h2>
@@ -246,8 +246,8 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
             </section>
 
             {/* PRICING */}
-            <section id="pricing" className="bg-white dark:bg-[#0d0d18] border-y border-[#e5e5e5] dark:border-[#1a1a2e]">
-                <div className="max-w-6xl mx-auto px-6 py-24 lg:py-32">
+            <section id="pricing" className="min-h-screen bg-white dark:bg-[#0d0d18] border-y border-[#e5e5e5] dark:border-[#1a1a2e]">
+                <div className="min-h-screen max-w-6xl mx-auto px-6 py-10 lg:py-12 flex flex-col justify-center">
                     <div className="mb-16" data-reveal>
                         <span className="text-[11px] font-bold text-[#7c3aed] uppercase tracking-[0.2em] mb-4 block">Harga</span>
                         <h2 className="text-4xl font-black text-[#7c3aed] dark:text-white tracking-tight mb-3">Pilih Paket Hosting</h2>
@@ -303,8 +303,8 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
             </section>
 
             {/* BLOG */}
-            <section id="blog" className="bg-white dark:bg-[#0a0a14]">
-                <div className="max-w-6xl mx-auto px-6 py-24 lg:py-32">
+            <section id="blog" className="min-h-screen bg-white dark:bg-[#0a0a14]">
+                <div className="min-h-screen max-w-6xl mx-auto px-6 py-10 lg:py-12 flex flex-col justify-center">
                     <div className="flex items-end justify-between mb-12" data-reveal>
                         <div>
                             <span className="text-[11px] font-bold text-[#7c3aed] uppercase tracking-[0.2em] mb-3 block">Blog</span>
@@ -344,8 +344,8 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
             </section>
 
             {/* FAQ */}
-            <section id="faq" className="bg-white dark:bg-[#0d0d18] border-y border-[#e5e5e5] dark:border-[#1a1a2e]">
-                <div className="max-w-3xl mx-auto px-6 py-24 lg:py-32">
+            <section id="faq" className="min-h-screen bg-white dark:bg-[#0d0d18] border-y border-[#e5e5e5] dark:border-[#1a1a2e]">
+                <div className="min-h-screen max-w-3xl mx-auto px-6 py-10 lg:py-12 flex flex-col justify-center">
                     <div className="mb-12" data-reveal>
                         <span className="text-[11px] font-bold text-[#7c3aed] uppercase tracking-[0.2em] mb-4 block">FAQ</span>
                         <h2 className="text-4xl font-black text-[#7c3aed] dark:text-white tracking-tight">Pertanyaan Umum</h2>
@@ -357,8 +357,8 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
             </section>
 
             {/* CTA */}
-            <section className="bg-[#7c3aed]">
-                <div className="max-w-6xl mx-auto px-6 py-24 lg:py-32 text-center" data-reveal>
+            <section className="min-h-screen bg-[#7c3aed]">
+                <div className="min-h-screen max-w-6xl mx-auto px-6 py-10 lg:py-12 text-center flex flex-col items-center justify-center" data-reveal>
                     <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-6">Siap Mengeksekusi Ide?</h2>
                     <p className="text-white/80 text-lg mb-10 max-w-lg mx-auto">Daftar gratis, deploy dari Git, jalankan dalam hitungan menit.</p>
                     <a href="/register" className="inline-flex px-8 py-3.5 bg-white text-[#7c3aed] text-sm font-semibold hover:bg-slate-100 transition-colors">
