@@ -61,6 +61,10 @@ Route::middleware(['throttle:10,1'])->group(function () {
     Route::post('/register', [AuthController::class, 'registerProcess'])->name('register.process');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Google OAuth Routes
+    Route::get('/auth/google', [\App\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
     // Password Reset Routes
     Route::get('forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -72,6 +76,10 @@ Route::middleware('auth')->group(function () {
     // ── PROFIL USER ───────────────────────────────────────────────
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+
+    // ── SELECT SERVICE (GOOGLE AUTH) ───────────────────────────────
+    Route::get('/select-service', [\App\Http\Controllers\Auth\GoogleController::class, 'showSelectService'])->name('auth.select_service');
+    Route::post('/select-service', [\App\Http\Controllers\Auth\GoogleController::class, 'storeService'])->name('auth.select_service.store');
 
     // ── EMAIL VERIFICATION ─────────────────────────────────────────
     Route::get('/email/verify', function () {
