@@ -45,14 +45,14 @@ class GoogleController extends Controller
             }
 
             $user = User::create([
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-                'google_id' => $googleUser->id,
-                'provider' => 'google',
-                'password' => bcrypt(Str::random(24)),
-                'role' => null, // Role null indicates they need to choose a service
-                'email_verified_at' => now(), // Auto verify for Google users
-                'status' => 'active'
+                'name'              => $googleUser->name,
+                'email'             => $googleUser->email,
+                'google_id'         => $googleUser->id,
+                'provider'          => 'google',
+                'password'          => bcrypt(Str::random(24)),
+                'role'              => null,
+                'email_verified_at' => now(), // Google users are auto-verified
+                'status'            => 'active',
             ]);
         }
 

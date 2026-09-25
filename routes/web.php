@@ -77,9 +77,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 
-    // ── SELECT SERVICE (GOOGLE AUTH) ───────────────────────────────
-    Route::get('/select-service', [\App\Http\Controllers\Auth\GoogleController::class, 'showSelectService'])->name('auth.select_service');
-    Route::post('/select-service', [\App\Http\Controllers\Auth\GoogleController::class, 'storeService'])->name('auth.select_service.store');
+    // ── SELECT SERVICE (GOOGLE AUTH) — tidak perlu verified ───────
+    Route::get('/select-service', [\App\Http\Controllers\Auth\GoogleController::class, 'showSelectService'])
+        ->name('auth.select_service')
+        ->withoutMiddleware(['verified']);
+    Route::post('/select-service', [\App\Http\Controllers\Auth\GoogleController::class, 'storeService'])
+        ->name('auth.select_service.store')
+        ->withoutMiddleware(['verified']);
 
     // ── EMAIL VERIFICATION ─────────────────────────────────────────
     Route::get('/email/verify', function () {
