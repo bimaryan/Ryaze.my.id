@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link, Head } from '@inertiajs/react';
+import { Link, Head, useForm, usePage } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 
-export default function VerifyEmail({ errors, siteName, auth }) {
+export default function VerifyEmail({ siteName }) {
+    const { auth } = usePage().props;
     const [timeLeft, setTimeLeft] = useState(60);
+    const { post, processing } = useForm({});
 
     useEffect(() => {
         if (timeLeft <= 0) return;
@@ -11,8 +13,18 @@ export default function VerifyEmail({ errors, siteName, auth }) {
         return () => clearInterval(timer);
     }, [timeLeft]);
 
+    const resend = (e) => {
+        e.preventDefault();
+        if (timeLeft > 0) return;
+        post(route('verification.send'), {
+            onSuccess: () => setTimeLeft(60),
+        });
+    };
+
     return (
-        <PublicLayout title="Verifikasi Email" withNav={false} withFooter={false} bodyClass="bg-[#fafafa] dark:bg-[#0a0a14] font-sans antialiased">
+        <PublicLayout withNav={false} withFooter={false} bodyClass="bg-[#fafafa] dark:bg-[#0a0a14] font-sans antialiased">
+            <Head title={`Verifikasi Email - ${siteName ?? 'Ryaze'}`} />
+
             <style>{`
                 [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
                 [data-reveal].revealed { opacity: 1; transform: none; }
@@ -44,26 +56,19 @@ export default function VerifyEmail({ errors, siteName, auth }) {
                                 Jika tidak ada email di inbox, cek folder spam.
                             </p>
 
-                            {errors.status && <p className="text-sm text-red-500 dark:text-red-400 text-center">{errors.status}</p>}
-
                             <div className="pt-4 border-t border-[#e5e5e5] dark:border-[#2d1f42] space-y-3">
-                                <a
-                                    href={route('verification.send')}
-                                    method="post"
+                                <button
+                                    onClick={resend}
+                                    disabled={timeLeft > 0 || processing}
                                     className={`inline-flex items-center gap-2 text-sm font-medium transition-colors ${
-                                        timeLeft > 0
+                                        timeLeft > 0 || processing
                                             ? 'text-[#999] dark:text-white/50 cursor-not-allowed'
-                                            : 'text-[#7c3aed] hover:text-[#6d28d9]'
+                                            : 'text-[#7c3aed] hover:text-[#6d28d9] cursor-pointer'
                                     }`}
-                                    onClick={(e) => {
-                                        if (timeLeft > 0) {
-                                            e.preventDefault();
-                                        }
-                                    }}
                                 >
                                     <i className="fa-solid fa-paper-plane text-xs"></i>
-                                    {timeLeft > 0 ? `Kirim ulang dalam ${timeLeft}s` : 'Kirim ulang email verifikasi'}
-                                </a>
+                                    {processing ? 'Mengirim...' : timeLeft > 0 ? `Kirim ulang dalam ${timeLeft}s` : 'Kirim ulang email verifikasi'}
+                                </button>
 
                                 <div className="pt-4 border-t border-[#e5e5e5] dark:border-[#2d1f42]">
                                     <Link href={route('login')} className="font-semibold text-[#7c3aed] hover:text-[#6d28d9] transition-colors flex items-center justify-center gap-2">
@@ -79,3 +84,4 @@ export default function VerifyEmail({ errors, siteName, auth }) {
         </PublicLayout>
     );
 }
+
