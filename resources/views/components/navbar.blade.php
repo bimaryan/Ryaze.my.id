@@ -589,6 +589,14 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('user_hosting.billing') }}"
+                        class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}">
+                        <i
+                            class="fa-solid fa-file-invoice-dollar {{ $iconBox(request()->routeIs('user_hosting.billing')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Riwayat Tagihan</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('user_hosting.tickets.index') }}"
                         class="{{ $navLink(request()->routeIs('user_hosting.tickets*')) }}">
                         <i

@@ -569,6 +569,13 @@
                         @endif
                     </a>
 
+                    <a href="{{ route('user_hosting.billing') }}"
+                        class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}">
+                        <span class="{{ $iconBox(request()->routeIs('user_hosting.billing')) }}"><i
+                                class="fa-solid fa-file-invoice-dollar"></i></span>
+                        <span>Riwayat Tagihan</span>
+                    </a>
+
                     {{-- Menyelesaikan tag yang terpotong dari prompt kamu --}}
                     <a href="{{ route('user_hosting.tickets.index') }}"
                         class="{{ $navLink(request()->routeIs('user_hosting.tickets*')) }}">
