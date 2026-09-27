@@ -80,13 +80,33 @@ class FinanceController extends Controller
                     $invoiceType = 'Upgrade Storage';
                 }
 
+                // Harga NORMAL paket (bukan promo) sebagai acuan harga asli
                 $originalPrice = $amountPaid;
+                $promoDiscount = 0;
                 if ($notes && in_array($notes, ['starter', 'pro', 'business', 'free'])) {
-                    $originalPrice = User::getPlanPrice($notes);
+                    $pricing = User::getPlanPricing($notes);
+                    $originalPrice = $pricing['normal']; // Harga normal (tanpa promo)
+
+                    // Hitung diskon promo (jika ada promo price)
+                    if ($pricing['promo'] !== null && $pricing['promo'] < $pricing['normal']) {
+                        $promoDiscount = $pricing['normal'] - $pricing['promo'];
+                    }
                 }
 
-                $discountAmount = max(0, $originalPrice - $amountPaid);
+                // Kurangi admin fee dari amount yang dibayar untuk perhitungan diskon
+                $adminFeePercentage = (float) \App\Models\Setting::val('admin_fee_percentage', '0');
+                $amountBeforeAdminFee = $amountPaid;
+                if ($adminFeePercentage > 0 && $amountPaid > 0) {
+                    // Reverse-calculate: amountPaid = base + base * fee% => base = amountPaid / (1 + fee%)
+                    $amountBeforeAdminFee = (int) round($amountPaid / (1 + ($adminFeePercentage / 100)));
+                }
+
+                // Total diskon = harga normal - harga sebelum admin fee
+                $discountAmount = max(0, $originalPrice - $amountBeforeAdminFee);
                 $discountPct    = $originalPrice > 0 ? round(($discountAmount / $originalPrice) * 100) : 0;
+
+                // Admin fee yang termasuk dalam pembayaran
+                $adminFee = $amountPaid - $amountBeforeAdminFee;
 
                 $discountType  = null;
                 $discountLabel = null;
@@ -98,7 +118,17 @@ class FinanceController extends Controller
                     $discountLabel = 'Voucher (Gratis 100%)';
                 } elseif ($paymentMethod === 'Voucher' && $discountAmount > 0) {
                     $discountType  = 'voucher';
-                    $discountLabel = 'Voucher (-' . $discountPct . '%)';
+                    $voucherDiscount = $discountAmount - $promoDiscount;
+                    if ($promoDiscount > 0 && $voucherDiscount > 0) {
+                        $discountLabel = 'Promo -Rp' . number_format($promoDiscount, 0, ',', '.') . ' + Voucher -Rp' . number_format($voucherDiscount, 0, ',', '.');
+                    } elseif ($promoDiscount > 0) {
+                        $discountLabel = 'Harga Promo (-' . round(($promoDiscount / $originalPrice) * 100) . '%)';
+                    } else {
+                        $discountLabel = 'Voucher (-Rp' . number_format($discountAmount, 0, ',', '.') . ')';
+                    }
+                } elseif ($discountAmount > 0 && $promoDiscount > 0) {
+                    $discountType  = 'promo';
+                    $discountLabel = 'Harga Promo (-' . round(($promoDiscount / $originalPrice) * 100) . '%)';
                 } elseif ($paymentMethod === 'Wallet') {
                     $discountType  = 'wallet';
                     $discountLabel = null;
@@ -125,6 +155,7 @@ class FinanceController extends Controller
                     'discount_pct'    => $discountPct,
                     'discount_type'   => $discountType,
                     'discount_label'  => $discountLabel,
+                    'admin_fee'       => $adminFee,
                     'method'          => $paymentMethod,
                     'client'          => $payment->user->name ?? '-',
                     'client_email'    => $payment->user->email ?? '-',

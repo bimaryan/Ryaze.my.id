@@ -267,6 +267,11 @@
                                             <i class="fa-solid fa-wallet text-[9px]"></i> Wallet
                                         </span>
                                     @endif
+                                    @if(isset($row['discount_type']) && $row['discount_type'] === 'promo')
+                                        <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
+                                            <i class="fa-solid fa-percent text-[9px]"></i> Promo
+                                        </span>
+                                    @endif
                                 </div>
                                 <span class="text-xs text-slate-600 dark:text-slate-300 mt-1 block">{{ $row['detail'] }}</span>
                             </td>
@@ -299,6 +304,9 @@
                                     <span class="font-mono text-sm font-bold text-emerald-600 dark:text-emerald-300">
                                         Rp{{ number_format($row['amount'], 0, ',', '.') }}
                                     </span>
+                                    @if(!empty($row['admin_fee']) && $row['admin_fee'] > 0)
+                                        <span class="text-[10px] text-slate-400 block">incl. fee Rp{{ number_format($row['admin_fee'], 0, ',', '.') }}</span>
+                                    @endif
                                 @else
                                     <span class="text-xs italic text-slate-400 dark:text-slate-500">Rp 0</span>
                                 @endif
