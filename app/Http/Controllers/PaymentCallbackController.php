@@ -141,8 +141,10 @@ class PaymentCallbackController extends Controller
                                     'plan_name' => 'Paket ' . ucfirst($selectedPlan),
                                     'amount' => $planPrice,
                                     'status' => 'active',
-                                    // Jika billing sudah expired, perpanjang dari sekarang; jika belum, perpanjang dari due date lama
-                                    'next_due_date' => \Carbon\Carbon::parse($billing->next_due_date)->isPast()
+                                    // Jika plan berubah (upgrade/downgrade), mulai periode baru dari sekarang.
+                                    // Jika perpanjangan paket yang sama dan belum expired, perpanjang dari due date lama.
+                                    // Jika sudah expired, selalu mulai dari sekarang.
+                                    'next_due_date' => ($selectedPlan !== $billing->getOriginal('plan') || \Carbon\Carbon::parse($billing->next_due_date)->isPast())
                                         ? now()->addMonth()
                                         : \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
                                 ]);
