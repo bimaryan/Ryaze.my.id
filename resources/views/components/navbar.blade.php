@@ -510,14 +510,14 @@
                         <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Deploy Aplikasi</span>
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="{{ route('user_hosting.apk.index') }}"
                         class="{{ $navLink(request()->routeIs('user_hosting.apk*')) }}">
                         <i
                             class="fa-brands fa-android {{ $iconBox(request()->routeIs('user_hosting.apk*')) }} text-center"></i>
                         <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Web to APK</span>
                     </a>
-                </li>
+                </li> --}}
                 <li>
                     <a href="{{ route('user_hosting.tunnels.index') }}"
                         class="{{ $navLink(request()->routeIs('user_hosting.tunnels*')) }}">

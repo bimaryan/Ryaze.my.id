@@ -249,7 +249,7 @@
                     </div>
 
                     <!-- Section 3 -->
-                    <div class="bg-blue-50/50 rounded-xl p-5 border border-blue-100 dark:border-blue-500/30">
+                    <div class="bg-blue-50/50 dark:bg-blue-900/20 rounded-xl p-5 border border-blue-100 dark:border-blue-500/30">
                         <h4 class="text-sm font-bold text-blue-800 dark:text-blue-200 mb-2 flex items-center"><i class="fa-solid fa-circle-info mr-2"></i> Cara Penggunaan</h4>
                         <div class="space-y-4 mt-4">
                             <div class="flex items-start">
@@ -270,12 +270,12 @@
                         </div>
                     </div>
                     
-                    <div class="bg-blue-50/50 rounded-xl p-5 border border-blue-100 dark:border-blue-500/30">
+                    <div class="bg-blue-50/50 dark:bg-blue-900/20 rounded-xl p-5 border border-blue-100 dark:border-blue-500/30">
                         <h4 class="text-sm font-bold text-blue-800 dark:text-blue-200 mb-2 flex items-center"><i class="fa-solid fa-circle-info mr-2"></i> Limitasi & Catatan Penting</h4>
-                        <ul class="list-disc list-outside pl-5 text-sm text-blue-700/80 space-y-1.5 marker:text-blue-400">
+                        <ul class="list-disc list-outside pl-5 text-sm text-blue-700/80 dark:text-blue-200/80 space-y-1.5 marker:text-blue-400">
                             <li><strong>Timeout 30 Detik:</strong> Pastikan aplikasi localhost Anda merespon dalam waktu kurang dari 30 detik. Jika lebih dari itu, pengunjung akan melihat halaman error karena batas tunggu waktu maksimal telah tercapai.</li>
                             <li><strong>Tetap Buka Terminal:</strong> Selama Anda ingin link publik Anda dapat diakses, pastikan terminal atau CMD yang menjalankan script tidak ditutup. Jika ditutup, link akan otomatis berstatus Offline.</li>
-                            <li><strong>Prasyarat:</strong> Pastikan Anda telah menginstall ekstensi <code class="bg-blue-100/50 px-1 rounded">php-curl</code> dan <code class="bg-blue-100/50 px-1 rounded">php-openssl</code> di komputer Anda.</li>
+                            <li><strong>Prasyarat:</strong> Pastikan Anda telah menginstall ekstensi <code class="bg-blue-100/50 dark:bg-blue-500/30 dark:text-blue-200 px-1 rounded">php-curl</code> dan <code class="bg-blue-100/50 dark:bg-blue-500/30 dark:text-blue-200 px-1 rounded">php-openssl</code> di komputer Anda.</li>
                         </ul>
                     </div>
                 </div>
