@@ -152,7 +152,10 @@ class User extends Authenticatable implements MustVerifyEmail
                 'max_projects' => (int) $s('plan_free_max_projects', 1),
                 'price_key' => 'plan_free_price',
                 'promo_key' => 'plan_free_promo',
+                'price_yearly_key' => null,
+                'promo_yearly_key' => null,
                 'default_price' => 0,
+                'default_price_yearly' => 0,
                 'color' => 'slate',
                 'features' => array_filter(explode("\n", $s('plan_free_features', "256 MB Storage\nMaks. 1 Project\n1 MySQL Database\nSubdomain Bawaan\nPrioritas Support"))),
                 'is_active' => $s('plan_free_active', '1') == '1',
@@ -163,7 +166,10 @@ class User extends Authenticatable implements MustVerifyEmail
                 'max_projects' => (int) $s('plan_starter_max_projects', 3),
                 'price_key' => 'plan_starter_price',
                 'promo_key' => 'plan_starter_promo',
+                'price_yearly_key' => 'plan_starter_price_yearly',
+                'promo_yearly_key' => 'plan_starter_promo_yearly',
                 'default_price' => 15000,
+                'default_price_yearly' => 150000,
                 'color' => 'indigo',
                 'features' => array_filter(explode("\n", $s('plan_starter_features', "1 GB Storage\nMaks. 3 Project\nMySQL & PostgreSQL\nSubdomain Bawaan\nPrioritas Support"))),
                 'is_active' => $s('plan_starter_active', '1') == '1',
@@ -174,7 +180,10 @@ class User extends Authenticatable implements MustVerifyEmail
                 'max_projects' => (int) $s('plan_pro_max_projects', 10),
                 'price_key' => 'plan_pro_price',
                 'promo_key' => 'plan_pro_promo',
+                'price_yearly_key' => 'plan_pro_price_yearly',
+                'promo_yearly_key' => 'plan_pro_promo_yearly',
                 'default_price' => 30000,
+                'default_price_yearly' => 300000,
                 'color' => 'violet',
                 'features' => array_filter(explode("\n", $s('plan_pro_features', "3 GB Storage\nMaks. 10 Project\nMySQL, PostgreSQL & Redis\nSubdomain Bawaan\nPrioritas Support"))),
                 'is_active' => $s('plan_pro_active', '1') == '1',
@@ -185,7 +194,10 @@ class User extends Authenticatable implements MustVerifyEmail
                 'max_projects' => (int) $s('plan_business_max_projects', -1),
                 'price_key' => 'plan_business_price',
                 'promo_key' => 'plan_business_promo',
+                'price_yearly_key' => 'plan_business_price_yearly',
+                'promo_yearly_key' => 'plan_business_promo_yearly',
                 'default_price' => 75000,
+                'default_price_yearly' => 750000,
                 'color' => 'amber',
                 'features' => array_filter(explode("\n", $s('plan_business_features', "10 GB Storage\nProject Unlimited\nSemua Database\nSubdomain Bawaan\nPrioritas Support"))),
                 'is_active' => $s('plan_business_active', '1') == '1',
@@ -201,7 +213,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return static::hostingPlans()[$plan] ?? static::hostingPlans()['free'];
     }
 
-    public static function getPlanPricing(string $plan): array
+    public static function getPlanPricing(string $plan, string $billingCycle = 'monthly'): array
     {
         $plans = static::hostingPlans();
         if (! isset($plans[$plan])) {
@@ -209,15 +221,30 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         $p = $plans[$plan];
-        $normal_price = isset($p['price_key'])
-            ? (int) Setting::val($p['price_key'], $p['default_price'] ?? 0)
-            : ($p['default_price'] ?? 0);
+        
+        if ($billingCycle === 'yearly') {
+            $normal_price = isset($p['price_yearly_key'])
+                ? (int) Setting::val($p['price_yearly_key'], $p['default_price_yearly'] ?? 0)
+                : ($p['default_price_yearly'] ?? 0);
 
-        $promo_price = null;
-        if (isset($p['promo_key'])) {
-            $promo = Setting::val($p['promo_key'], null);
-            if ($promo !== null && $promo !== '') {
-                $promo_price = (int) $promo;
+            $promo_price = null;
+            if (isset($p['promo_yearly_key'])) {
+                $promo = Setting::val($p['promo_yearly_key'], null);
+                if ($promo !== null && $promo !== '') {
+                    $promo_price = (int) $promo;
+                }
+            }
+        } else {
+            $normal_price = isset($p['price_key'])
+                ? (int) Setting::val($p['price_key'], $p['default_price'] ?? 0)
+                : ($p['default_price'] ?? 0);
+
+            $promo_price = null;
+            if (isset($p['promo_key'])) {
+                $promo = Setting::val($p['promo_key'], null);
+                if ($promo !== null && $promo !== '') {
+                    $promo_price = (int) $promo;
+                }
             }
         }
 
@@ -231,9 +258,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the price for a specific plan (reads from Settings, falls back to default).
      */
-    public static function getPlanPrice(string $plan): int
+    public static function getPlanPrice(string $plan, string $billingCycle = 'monthly'): int
     {
-        return static::getPlanPricing($plan)['active'];
+        return static::getPlanPricing($plan, $billingCycle)['active'];
     }
 
     /**

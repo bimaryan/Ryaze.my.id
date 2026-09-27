@@ -48,20 +48,31 @@
             </div>
         @endif
 
-        <div class="mb-6">
-            <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2 text-lg">
-                <i class="fa-solid fa-crown text-indigo-600 dark:text-indigo-400"></i> Pilih Paket Hosting
-            </h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-5">
-                {{ $hasActive ? 'Upgrade paket untuk menambah limit storage dan project.' : 'Pilih paket yang sesuai kebutuhan Anda dan selesaikan pembayaran untuk mulai deploy project.' }}
-            </p>
+        <div class="mb-6" x-data="{ billingCycle: 'monthly' }">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2 text-lg">
+                        <i class="fa-solid fa-crown text-indigo-600 dark:text-indigo-400"></i> Pilih Paket Hosting
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
+                        {{ $hasActive ? 'Upgrade paket untuk menambah limit storage dan project.' : 'Pilih paket yang sesuai kebutuhan Anda dan selesaikan pembayaran untuk mulai deploy project.' }}
+                    </p>
+                </div>
+                
+                <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <button @click="billingCycle = 'monthly'" :class="{'bg-white dark:bg-slate-700 shadow-sm text-slate-800 dark:text-slate-100': billingCycle === 'monthly', 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200': billingCycle !== 'monthly'}" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all">Bulanan</button>
+                    <button @click="billingCycle = 'yearly'" :class="{'bg-white dark:bg-slate-700 shadow-sm text-slate-800 dark:text-slate-100': billingCycle === 'yearly', 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200': billingCycle !== 'yearly'}" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all">Tahunan <span class="ml-1 text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-bold">HEMAT</span></button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 @foreach ($plans as $slug => $plan)
                     @if (!($plan['is_active'] ?? true))
                         @continue
                     @endif
                     @php 
-                        $pricing = \App\Models\User::getPlanPricing($slug); 
+                        $pricingM = \App\Models\User::getPlanPricing($slug, 'monthly'); 
+                        $pricingY = \App\Models\User::getPlanPricing($slug, 'yearly'); 
                         $c = $colorMap[$plan['color']]; 
                         $isPopular = $slug === 'pro';
                         $isCurrent = $slug === $currentPlan;
@@ -82,15 +93,32 @@
                                 <i class="fa-solid fa-server text-white text-base"></i>
                             </div>
                             <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-1">{{ $plan['label'] }}</h4>
+                            
                             <div class="flex flex-col mb-4">
-                                @if($pricing['promo'] !== null)
-                                    <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 line-through decoration-rose-500 decoration-2">Rp {{ number_format($pricing['normal'], 0, ',', '.') }}</span>
-                                @endif
-                                <div class="flex items-baseline gap-1">
-                                    <span class="text-2xl font-bold {{ $c['text'] }}">Rp {{ number_format($pricing['active'], 0, ',', '.') }}</span>
-                                    <span class="text-xs text-slate-400 dark:text-slate-500 font-normal">/bulan</span>
-                                </div>
+                                <template x-if="billingCycle === 'monthly'">
+                                    <div>
+                                        @if($pricingM['promo'] !== null)
+                                            <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 line-through decoration-rose-500 decoration-2">Rp {{ number_format($pricingM['normal'], 0, ',', '.') }}</span>
+                                        @endif
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-2xl font-bold {{ $c['text'] }}">Rp {{ number_format($pricingM['active'], 0, ',', '.') }}</span>
+                                            <span class="text-xs text-slate-400 dark:text-slate-500 font-normal">/bulan</span>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template x-if="billingCycle === 'yearly'">
+                                    <div>
+                                        @if($pricingY['promo'] !== null)
+                                            <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 line-through decoration-rose-500 decoration-2">Rp {{ number_format($pricingY['normal'], 0, ',', '.') }}</span>
+                                        @endif
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-2xl font-bold {{ $c['text'] }}">Rp {{ number_format($pricingY['active'], 0, ',', '.') }}</span>
+                                            <span class="text-xs text-slate-400 dark:text-slate-500 font-normal">/tahun</span>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
+
                             <ul class="space-y-2 mb-6">
                                 @foreach ($plan['features'] as $feat)
                                     <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -108,6 +136,7 @@
                                 <form action="{{ route('user_hosting.billing.subscribe') }}" method="POST" class="space-y-2">
                                     @csrf
                                     <input type="hidden" name="plan" value="{{ $slug }}">
+                                    <input type="hidden" name="billing_cycle" x-model="billingCycle">
                                     <input type="text" name="voucher_code" placeholder="Kode Voucher (Opsional)" class="uppercase font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                                     <button type="submit" class="w-full {{ $c['btn'] }} text-white font-bold px-4 py-2.5 rounded-xl shadow-sm transition-all text-sm">
                                         <i class="fa-solid fa-bolt mr-1"></i> {{ $hasActive ? 'Upgrade ke ' . $plan['label'] : 'Pilih ' . $plan['label'] }}

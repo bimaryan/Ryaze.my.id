@@ -252,6 +252,16 @@
                                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo (Rp)</label>
                                     <input type="number" name="plan_starter_promo" value="{{ $settings['plan_starter_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
                                 </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Normal Tahunan (Rp)</label>
+                                        <input type="number" name="plan_starter_price_yearly" value="{{ $settings['plan_starter_price_yearly'] ?? '150000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo Tahunan (Rp)</label>
+                                        <input type="number" name="plan_starter_promo_yearly" value="{{ $settings['plan_starter_promo_yearly'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada">
+                                    </div>
+                                </div>
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Storage (MB)</label>
                                         <input type="number" name="plan_starter_storage" value="{{ $settings['plan_starter_storage'] ?? '1024' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Contoh: 1024 (dalam MB)">
@@ -286,6 +296,16 @@
                                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo (Rp)</label>
                                     <input type="number" name="plan_pro_promo" value="{{ $settings['plan_pro_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
                                 </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Normal Tahunan (Rp)</label>
+                                        <input type="number" name="plan_pro_price_yearly" value="{{ $settings['plan_pro_price_yearly'] ?? '300000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo Tahunan (Rp)</label>
+                                        <input type="number" name="plan_pro_promo_yearly" value="{{ $settings['plan_pro_promo_yearly'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada">
+                                    </div>
+                                </div>
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Storage (MB)</label>
                                         <input type="number" name="plan_pro_storage" value="{{ $settings['plan_pro_storage'] ?? '3072' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Contoh: 1024 (dalam MB)">
@@ -319,6 +339,16 @@
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo (Rp)</label>
                                     <input type="number" name="plan_business_promo" value="{{ $settings['plan_business_promo'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada promo">
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Normal Tahunan (Rp)</label>
+                                        <input type="number" name="plan_business_price_yearly" value="{{ $settings['plan_business_price_yearly'] ?? '750000' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Harga Promo Tahunan (Rp)</label>
+                                        <input type="number" name="plan_business_promo_yearly" value="{{ $settings['plan_business_promo_yearly'] ?? '' }}" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" min="0" step="1000" placeholder="Kosongkan jika tak ada">
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Storage (MB)</label>

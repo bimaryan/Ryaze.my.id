@@ -124,11 +124,19 @@ class PaymentCallbackController extends Controller
                                 $extraStorage = max(0, $currentLimit - $oldPlanBaseStorage);
 
                                 $selectedPlan = $payment->notes ?? $billing->plan;
+                                $billingCycle = 'monthly';
+                                
+                                $decodedNotes = json_decode($payment->notes, true);
+                                if (is_array($decodedNotes)) {
+                                    $selectedPlan = $decodedNotes['plan'] ?? $billing->plan;
+                                    $billingCycle = $decodedNotes['billing_cycle'] ?? 'monthly';
+                                }
+
                                 if (!in_array($selectedPlan, ['starter', 'pro', 'business'])) {
                                     $selectedPlan = $billing->plan ?? 'starter';
                                 }
                                 $planLimits = \App\Models\User::getPlanLimits($selectedPlan);
-                                $planPrice  = \App\Models\User::getPlanPrice($selectedPlan);
+                                $planPrice  = \App\Models\User::getPlanPrice($selectedPlan, $billingCycle);
 
                                 // Nonaktifkan semua billing aktif lain agar tidak ada duplikat
                                 \App\Models\HostingBilling::where('user_id', $user->id)
@@ -136,17 +144,18 @@ class PaymentCallbackController extends Controller
                                     ->where('id', '!=', $billing->id)
                                     ->update(['status' => 'canceled']);
 
+                                $baseDate = ($selectedPlan !== $billing->getOriginal('plan') || \Carbon\Carbon::parse($billing->next_due_date)->isPast())
+                                    ? now()
+                                    : \Carbon\Carbon::parse($billing->next_due_date);
+                                $newDueDate = $billingCycle === 'yearly' ? $baseDate->addYear() : $baseDate->addMonth();
+
                                 $billing->update([
                                     'plan' => $selectedPlan,
                                     'plan_name' => 'Paket ' . ucfirst($selectedPlan),
                                     'amount' => $planPrice,
+                                    'billing_cycle' => $billingCycle,
                                     'status' => 'active',
-                                    // Jika plan berubah (upgrade/downgrade), mulai periode baru dari sekarang.
-                                    // Jika perpanjangan paket yang sama dan belum expired, perpanjang dari due date lama.
-                                    // Jika sudah expired, selalu mulai dari sekarang.
-                                    'next_due_date' => ($selectedPlan !== $billing->getOriginal('plan') || \Carbon\Carbon::parse($billing->next_due_date)->isPast())
-                                        ? now()->addMonth()
-                                        : \Carbon\Carbon::parse($billing->next_due_date)->addMonth()
+                                    'next_due_date' => $newDueDate
                                 ]);
                                 
                                 $user->update(['hosting_storage_limit_mb' => $planLimits['storage_mb'] + $extraStorage]);
@@ -157,11 +166,21 @@ class PaymentCallbackController extends Controller
 
                                 // Read selected plan from invoice notes
                                 $selectedPlan = $payment->notes ?? 'starter';
+                                $billingCycle = 'monthly';
+                                
+                                $decodedNotes = json_decode($payment->notes, true);
+                                if (is_array($decodedNotes)) {
+                                    $selectedPlan = $decodedNotes['plan'] ?? 'starter';
+                                    $billingCycle = $decodedNotes['billing_cycle'] ?? 'monthly';
+                                }
+
                                 if (!in_array($selectedPlan, ['starter', 'pro', 'business'])) {
                                     $selectedPlan = 'starter';
                                 }
                                 $planLimits = \App\Models\User::getPlanLimits($selectedPlan);
-                                $planPrice  = \App\Models\User::getPlanPrice($selectedPlan);
+                                $planPrice  = \App\Models\User::getPlanPrice($selectedPlan, $billingCycle);
+
+                                $newDueDate = $billingCycle === 'yearly' ? now()->addYear() : now()->addMonth();
 
                                 \App\Models\HostingBilling::create([
                                     'user_id'            => $user->id,
@@ -169,8 +188,8 @@ class PaymentCallbackController extends Controller
                                     'plan_name'          => 'Paket ' . ucfirst($selectedPlan),
                                     'plan'               => $selectedPlan,
                                     'amount'             => $planPrice,
-                                    'billing_cycle'      => 'monthly',
-                                    'next_due_date'      => now()->addMonth(),
+                                    'billing_cycle'      => $billingCycle,
+                                    'next_due_date'      => $newDueDate,
                                     'status'             => 'active',
                                 ]);
 

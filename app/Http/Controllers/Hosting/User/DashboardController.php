@@ -2277,11 +2277,16 @@ PHP;
     {
         $user = Auth::user();
 
-        $request->validate(['plan' => 'required|in:free,starter,pro,business']);
+        $request->validate([
+            'plan' => 'required|in:free,starter,pro,business',
+            'billing_cycle' => 'nullable|in:monthly,yearly'
+        ]);
+
+        $billingCycle = $request->billing_cycle ?? 'monthly';
 
         if ($user->hasActiveHostingSubscription()) {
             $activeBilling = $user->hostingBillings()->where('status', 'active')->where('next_due_date', '>', now())->latest()->first();
-            if ($activeBilling && $activeBilling->plan === $request->plan) {
+            if ($activeBilling && $activeBilling->plan === $request->plan && $activeBilling->billing_cycle === $billingCycle) {
                 return back()->with('error', 'Anda sudah berlangganan paket ini.');
             }
         }
@@ -2293,7 +2298,7 @@ PHP;
         }
 
         $planLimits = User::getPlanLimits($selectedPlan);
-        $planPrice = User::getPlanPrice($selectedPlan);
+        $planPrice = User::getPlanPrice($selectedPlan, $billingCycle);
 
         $voucherFinalPrice = null;
         $voucherMessage = null;
@@ -2325,7 +2330,7 @@ PHP;
             // Activate immediately
             // Free plan: berlaku 10 tahun. Paid plan (gratis via voucher): berlaku 1 bulan.
             $isFree = ($selectedPlan === 'free');
-            $newDueDate = $isFree ? now()->addYears(10) : now()->addMonth();
+            $newDueDate = $isFree ? now()->addYears(10) : ($billingCycle === 'yearly' ? now()->addYear() : now()->addMonth());
 
             if ($activeBilling) {
                 // Nonaktifkan semua billing aktif lain agar tidak ada duplikat
@@ -2338,6 +2343,7 @@ PHP;
                     'plan_name' => 'Paket '.ucfirst($selectedPlan),
                     'plan' => $selectedPlan,
                     'amount' => 0,
+                    'billing_cycle' => $billingCycle,
                     'status' => 'active',
                     'next_due_date' => $newDueDate,
                 ]);
@@ -2348,7 +2354,7 @@ PHP;
                     'plan_name' => 'Paket '.ucfirst($selectedPlan),
                     'plan' => $selectedPlan,
                     'amount' => 0,
-                    'billing_cycle' => 'monthly',
+                    'billing_cycle' => $billingCycle,
                     'status' => 'active',
                     'next_due_date' => $newDueDate,
                 ]);
@@ -2362,10 +2368,10 @@ PHP;
                 'user_id' => $user->id, 'hosting_project_id' => null,
                 'invoice_number' => 'HST-INV-'.strtoupper(uniqid()),
                 'amount' => 0, 'status' => 'paid', 'payment_method' => $planPrice == 0 ? 'Free Plan' : 'Voucher',
-                'paid_at' => now(), 'notes' => $selectedPlan,
+                'paid_at' => now(), 'notes' => json_encode(['plan' => $selectedPlan, 'billing_cycle' => $billingCycle]),
             ]);
 
-            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket '.ucfirst($selectedPlan).' aktif secara gratis selama 1 bulan.';
+            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket '.ucfirst($selectedPlan).' aktif secara gratis selama 1 ' . ($billingCycle === 'yearly' ? 'tahun' : 'bulan') . '.';
 
             return back()->with('success', $msg);
         }
@@ -2378,11 +2384,11 @@ PHP;
             HostingPayment::create([
                 'user_id' => $user->id, 'hosting_project_id' => null,
                 'invoice_number' => 'HST-INV-'.strtoupper(uniqid()),
-                'amount' => $invoiceAmount, 'status' => 'unpaid', 'notes' => $selectedPlan,
+                'amount' => $invoiceAmount, 'status' => 'unpaid', 'notes' => json_encode(['plan' => $selectedPlan, 'billing_cycle' => $billingCycle]),
             ]);
         } else {
             $existingInvoice->update([
-                'amount' => $invoiceAmount, 'invoice_number' => 'HST-INV-'.strtoupper(uniqid()), 'notes' => $selectedPlan,
+                'amount' => $invoiceAmount, 'invoice_number' => 'HST-INV-'.strtoupper(uniqid()), 'notes' => json_encode(['plan' => $selectedPlan, 'billing_cycle' => $billingCycle]),
             ]);
         }
 
@@ -2471,6 +2477,14 @@ PHP;
         $extraStorage = max(0, $currentLimit - $oldPlanBaseStorage);
 
         $selectedPlan = $invoice->notes;
+        $billingCycle = 'monthly';
+        
+        $decodedNotes = json_decode($invoice->notes, true);
+        if (is_array($decodedNotes)) {
+            $selectedPlan = $decodedNotes['plan'] ?? 'starter';
+            $billingCycle = $decodedNotes['billing_cycle'] ?? 'monthly';
+        }
+        
         $planLimits = User::getPlanLimits($selectedPlan);
 
         if ($billing) {
@@ -2482,22 +2496,25 @@ PHP;
 
             // Jika billing sudah expired, mulai dari sekarang. Jika masih aktif, perpanjang dari tanggal jatuh tempo.
             $baseDate = Carbon::parse($billing->next_due_date)->isPast() ? now() : Carbon::parse($billing->next_due_date);
+            $newDueDate = $billingCycle === 'yearly' ? $baseDate->addYear() : $baseDate->addMonth();
             $billing->update([
                 'plan_name' => 'Paket '.ucfirst($selectedPlan),
                 'plan' => $selectedPlan,
                 'amount' => $invoice->amount,
+                'billing_cycle' => $billingCycle,
                 'status' => 'active',
-                'next_due_date' => $baseDate->addMonth(),
+                'next_due_date' => $newDueDate,
             ]);
         } else {
+            $newDueDate = $billingCycle === 'yearly' ? now()->addYear() : now()->addMonth();
             HostingBilling::create([
                 'user_id' => $user->id,
                 'hosting_project_id' => null,
                 'plan_name' => 'Paket '.ucfirst($selectedPlan),
                 'plan' => $selectedPlan,
                 'amount' => $invoice->amount,
-                'billing_cycle' => 'monthly',
-                'next_due_date' => now()->addMonth(),
+                'billing_cycle' => $billingCycle,
+                'next_due_date' => $newDueDate,
                 'status' => 'active',
             ]);
         }

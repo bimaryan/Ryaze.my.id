@@ -399,11 +399,18 @@
 
     <!-- PRICING SECTION -->
     <section id="pricing" class="py-24 bg-slate-50 dark:bg-[#030712] border-b border-slate-200 dark:border-white/5 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="mb-16 text-center reveal">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10" x-data="{ billingCycle: 'monthly' }">
+            <div class="mb-12 text-center reveal">
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-3 block">Harga Transparan</span>
                 <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">Pilih Paket Hosting</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto">Deploy project Anda sekarang. Mulai dari harga terjangkau dengan fitur lengkap, siap scale sesuai kebutuhan.</p>
+                <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto mb-8">Deploy project Anda sekarang. Mulai dari harga terjangkau dengan fitur lengkap, siap scale sesuai kebutuhan.</p>
+                
+                <div class="flex justify-center reveal">
+                    <div class="flex items-center bg-slate-200/50 dark:bg-white/5 p-1 rounded-xl border border-slate-200 dark:border-white/10 backdrop-blur-sm inline-flex">
+                        <button @click="billingCycle = 'monthly'" :class="{'bg-white dark:bg-white/10 shadow-sm text-slate-900 dark:text-white': billingCycle === 'monthly', 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200': billingCycle !== 'monthly'}" class="px-5 py-2 text-sm font-medium rounded-lg transition-all">Bulanan</button>
+                        <button @click="billingCycle = 'yearly'" :class="{'bg-white dark:bg-white/10 shadow-sm text-slate-900 dark:text-white': billingCycle === 'yearly', 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200': billingCycle !== 'yearly'}" class="px-5 py-2 text-sm font-medium rounded-lg transition-all">Tahunan <span class="ml-1 text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-bold">HEMAT</span></button>
+                    </div>
+                </div>
             </div>
             
             @php
@@ -422,7 +429,8 @@
                         @continue
                     @endif
                     @php
-                        $pricing = \App\Models\User::getPlanPricing($slug);
+                        $pricingM = \App\Models\User::getPlanPricing($slug, 'monthly');
+                        $pricingY = \App\Models\User::getPlanPricing($slug, 'yearly');
                         $hc = $homeColorMap[$plan['color']];
                         $isPopular = $slug === 'pro';
                     @endphp
@@ -439,15 +447,32 @@
                             <h3 class="text-lg font-semibold {{ $isPopular ? 'text-white dark:text-white' : $hc['text'] }} mb-2">{{ $plan['label'] }}</h3>
                             
                             <div class="mb-6">
-                                @if($pricing['promo'] !== null)
-                                    <span class="text-xs font-medium {{ $isPopular ? 'text-violet-200 dark:text-indigo-200' : 'text-slate-400 dark:text-slate-500' }} line-through block mb-1">Rp {{ number_format($pricing['normal'], 0, ',', '.') }}</span>
-                                @else
-                                    <div class="h-4 mb-1"></div>
-                                @endif
-                                <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-bold tracking-tight {{ $isPopular ? 'text-white dark:text-white' : $hc['text'] }}">Rp {{ number_format($pricing['active'], 0, ',', '.') }}</span>
-                                    <span class="{{ $isPopular ? 'text-violet-200 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400' }} text-sm">/bln</span>
-                                </div>
+                                <template x-if="billingCycle === 'monthly'">
+                                    <div>
+                                        @if($pricingM['promo'] !== null)
+                                            <span class="text-xs font-medium {{ $isPopular ? 'text-violet-200 dark:text-indigo-200' : 'text-slate-400 dark:text-slate-500' }} line-through block mb-1">Rp {{ number_format($pricingM['normal'], 0, ',', '.') }}</span>
+                                        @else
+                                            <div class="h-4 mb-1"></div>
+                                        @endif
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-3xl font-bold tracking-tight {{ $isPopular ? 'text-white dark:text-white' : $hc['text'] }}">Rp {{ number_format($pricingM['active'], 0, ',', '.') }}</span>
+                                            <span class="{{ $isPopular ? 'text-violet-200 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400' }} text-sm">/bln</span>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template x-if="billingCycle === 'yearly'">
+                                    <div>
+                                        @if($pricingY['promo'] !== null)
+                                            <span class="text-xs font-medium {{ $isPopular ? 'text-violet-200 dark:text-indigo-200' : 'text-slate-400 dark:text-slate-500' }} line-through block mb-1">Rp {{ number_format($pricingY['normal'], 0, ',', '.') }}</span>
+                                        @else
+                                            <div class="h-4 mb-1"></div>
+                                        @endif
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-3xl font-bold tracking-tight {{ $isPopular ? 'text-white dark:text-white' : $hc['text'] }}">Rp {{ number_format($pricingY['active'], 0, ',', '.') }}</span>
+                                            <span class="{{ $isPopular ? 'text-violet-200 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400' }} text-sm">/thn</span>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
 
                             <ul class="space-y-3">
