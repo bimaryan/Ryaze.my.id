@@ -123,6 +123,32 @@
                                        class="w-full pl-10 pr-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             </div>
                         </div>
+
+                        <!-- Basic Auth Section -->
+                        <div class="border-t border-slate-100 dark:border-slate-700 pt-4 mt-4">
+                            <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3"><i class="fa-solid fa-lock text-indigo-500 mr-2"></i>Keamanan & Kustomisasi (Opsional)</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Auth Username</label>
+                                    <input type="text" name="auth_username" placeholder="Kosongkan jika tidak perlu"
+                                           class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Auth Password</label>
+                                    <input type="password" name="auth_password" placeholder="Kosongkan jika tidak perlu"
+                                           class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5"><i class="fa-solid fa-info-circle mr-1"></i> Isi keduanya untuk memproteksi tunnel dengan HTTP Basic Auth.</p>
+                        </div>
+                        
+                        <!-- Custom Domain Section -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Custom Domain</label>
+                            <input type="text" name="custom_domain" placeholder="Misal: api.domain-saya.com"
+                                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5"><i class="fa-solid fa-info-circle mr-1"></i> Jangan lupa arahkan CNAME domain Anda ke tunnel ini setelah dibuat.</p>
+                        </div>
                     </div>
                     <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
                         <button type="button" onclick="document.getElementById('createTunnelModal').classList.add('hidden')"

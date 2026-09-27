@@ -22,14 +22,20 @@ class TunnelManagerController extends Controller
             'name' => 'required|string|max:255',
             'subdomain' => 'required|string|max:63|unique:tunnels,subdomain|regex:/^[a-z0-9-]+$/i',
             'target_port' => 'required|integer|min:1|max:65535',
+            'auth_username' => 'nullable|string|max:255',
+            'auth_password' => 'nullable|string|max:255',
+            'custom_domain' => 'nullable|string|max:255|unique:tunnels,custom_domain',
         ]);
 
         $tunnel = Tunnel::create([
             'user_id' => Auth::id(),
             'name' => $request->name,
             'subdomain' => strtolower($request->subdomain),
+            'custom_domain' => $request->custom_domain ? strtolower($request->custom_domain) : null,
             'secret' => Str::random(32),
             'target_port' => $request->target_port,
+            'auth_username' => $request->auth_username,
+            'auth_password' => $request->auth_password,
             'status' => 'inactive',
         ]);
 
@@ -712,6 +718,16 @@ BAT;
 
         if (!$this->validTunnel($subdomain, $secret)) {
             return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $tunnel = Tunnel::where('subdomain', $subdomain)->first();
+        if ($tunnel && $tunnel->auth_username && $tunnel->auth_password) {
+            $authUser = $request->header('PHP_AUTH_USER');
+            $authPass = $request->header('PHP_AUTH_PW');
+            
+            if ($authUser !== $tunnel->auth_username || $authPass !== $tunnel->auth_password) {
+                return response('Unauthorized', 401, ['WWW-Authenticate' => 'Basic realm="Ryaze Tunnel"']);
+            }
         }
 
         // Fast-fail if tunnel client is definitely offline
