@@ -59,14 +59,49 @@ class FinanceController extends Controller
                 $query->where('payment_method', $method);
             }
             foreach ($query->get() as $payment) {
+                $paymentMethod = $payment->payment_method ?: 'Manual';
+                $notes = $payment->notes;
+                $amount = (int) $payment->amount;
+
+                // Tentukan tipe diskon/pembayaran khusus
+                $discountType = null;
+                if ($paymentMethod === 'Free Plan') {
+                    $discountType = 'free';
+                } elseif ($paymentMethod === 'Voucher') {
+                    $discountType = 'voucher';
+                } elseif ($amount === 0 && $paymentMethod !== 'Free Plan') {
+                    $discountType = 'free'; // gratis via cara lain
+                }
+
+                // Buat label paket yang lebih deskriptif
+                $planLabel = null;
+                if ($notes && in_array($notes, ['starter', 'pro', 'business', 'free'])) {
+                    $planLabel = 'Paket ' . ucfirst($notes);
+                } elseif ($notes) {
+                    $planLabel = $notes;
+                } elseif ($payment->project) {
+                    $planLabel = $payment->project->project_name ?? '-';
+                }
+
+                // Prefix invoice untuk tipe transaksi
+                $invoiceNum = $payment->invoice_number ?? '-';
+                $invoiceType = null;
+                if (str_starts_with($invoiceNum, 'HST-INV-')) {
+                    $invoiceType = 'Langganan';
+                } elseif (str_starts_with($invoiceNum, 'HST-UPG-')) {
+                    $invoiceType = 'Upgrade Storage';
+                }
+
                 $rows->push([
-                    'source' => 'hosting',
-                    'invoice' => $payment->invoice_number ?? '-',
-                    'paid_at' => $payment->paid_at,
-                    'amount' => (int) $payment->amount,
-                    'method' => $payment->payment_method ?: 'Manual',
-                    'client' => $payment->user->name ?? '-',
-                    'detail' => $payment->notes ?? ($payment->project->project_name ?? '-'),
+                    'source'        => 'hosting',
+                    'invoice'       => $invoiceNum,
+                    'invoice_type'  => $invoiceType,
+                    'paid_at'       => $payment->paid_at,
+                    'amount'        => $amount,
+                    'method'        => $paymentMethod,
+                    'client'        => $payment->user->name ?? '-',
+                    'detail'        => $planLabel ?? '-',
+                    'discount_type' => $discountType,
                 ]);
             }
         }

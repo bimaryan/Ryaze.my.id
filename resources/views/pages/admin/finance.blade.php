@@ -158,7 +158,7 @@
                         <th class="px-6 py-4">Waktu Lunas</th>
                         <th class="px-6 py-4">Invoice</th>
                         <th class="px-6 py-4">Klien / User</th>
-                        <th class="px-6 py-4">Layanan</th>
+                        <th class="px-6 py-4">Layanan / Paket</th>
                         <th class="px-6 py-4">Metode</th>
                         <th class="px-6 py-4 text-right">Nominal</th>
                     </x-slot:head>
@@ -174,18 +174,44 @@
                                 {{ $row['client'] }}
                             </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold {{ $row['source'] === 'joki' ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/30' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-500/30' }}">
-                                    {{ $row['source'] === 'joki' ? 'Joki' : 'Hosting' }}
-                                </span>
-                                <span class="text-xs text-slate-500 dark:text-slate-400 ms-2">{{ $row['detail'] }}</span>
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    {{-- Badge sumber (Joki / Hosting) --}}
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold {{ $row['source'] === 'joki' ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/30' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-500/30' }}">
+                                        {{ $row['source'] === 'joki' ? 'Joki' : 'Hosting' }}
+                                    </span>
+                                    {{-- Badge tipe transaksi hosting (Langganan / Upgrade Storage) --}}
+                                    @if(!empty($row['invoice_type']))
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                                            {{ $row['invoice_type'] }}
+                                        </span>
+                                    @endif
+                                    {{-- Badge diskon / gratis --}}
+                                    @if(isset($row['discount_type']))
+                                        @if($row['discount_type'] === 'voucher')
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30">
+                                                <i class="fa-solid fa-tag text-[10px]"></i> Voucher
+                                            </span>
+                                        @elseif($row['discount_type'] === 'free')
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30">
+                                                <i class="fa-solid fa-gift text-[10px]"></i> Gratis
+                                            </span>
+                                        @endif
+                                    @endif
+                                    {{-- Nama paket / detail --}}
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">{{ $row['detail'] }}</span>
+                                </div>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="text-xs font-medium bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700">
                                     {{ $row['method'] }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-right font-mono font-medium text-emerald-600 dark:text-emerald-300">
-                                + Rp{{ number_format($row['amount'], 0, ',', '.') }}
+                            <td class="px-6 py-4 text-right font-mono font-medium {{ $row['amount'] > 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-slate-400 dark:text-slate-500' }}">
+                                @if($row['amount'] > 0)
+                                    + Rp{{ number_format($row['amount'], 0, ',', '.') }}
+                                @else
+                                    <span class="italic">Rp 0 (Gratis)</span>
+                                @endif
                             </td>
                         </tr>
                     @empty
