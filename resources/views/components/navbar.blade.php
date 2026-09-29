@@ -503,11 +503,19 @@
                 <li class="{{ $sectionLabel }}" x-show="!$store.sidebar.collapsed" x-cloak>Hosting</li>
 
                 <li>
+                    <a href="{{ route('user_hosting.create') }}"
+                        class="{{ $navLink(request()->routeIs('user_hosting.create')) }}">
+                        <i
+                            class="fa-solid fa-rocket {{ $iconBox(request()->routeIs('user_hosting.create')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Deploy Aplikasi</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('user_hosting.marketplace') }}"
                         class="{{ $navLink(request()->routeIs('user_hosting.marketplace')) }}">
                         <i
-                            class="fa-solid fa-rocket {{ $iconBox(request()->routeIs('user_hosting.marketplace')) }} text-center"></i>
-                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Deploy Aplikasi</span>
+                            class="fa-solid fa-store {{ $iconBox(request()->routeIs('user_hosting.marketplace')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>App Marketplace</span>
                     </a>
                 </li>
                 {{-- <li>
