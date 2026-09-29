@@ -436,6 +436,66 @@
                             </div>
                         </label>
 
+                        {{-- Flask (Python) --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="flask_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-python text-xl text-yellow-500 dark:text-yellow-400"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-sm">Flask App</p>
+                                        <span class="text-[10px] bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 rounded-full font-medium">Python</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Starter Flask dengan routing, template Jinja2, dan struktur MVC ringan. Cocok untuk web app atau REST API sederhana.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- FastAPI (Python) --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="fastapi_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-teal-100 dark:bg-teal-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-python text-xl text-teal-500 dark:text-teal-400"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-sm">FastAPI</p>
+                                        <span class="text-[10px] bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 px-2 py-0.5 rounded-full font-medium">Python</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">REST API modern berbasis FastAPI dengan async support, auto dokumentasi Swagger UI, dan validasi data via Pydantic.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
+                        {{-- Django (Python) --}}
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="template_key" value="django_starter" class="peer hidden">
+                            <div class="p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl peer-checked:border-indigo-600 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-green-100 dark:bg-green-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fa-brands fa-python text-xl text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-sm">Django App</p>
+                                        <span class="text-[10px] bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full font-medium">Python</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Framework Python full-stack dengan ORM, admin panel bawaan, autentikasi, dan arsitektur MVT yang terstruktur.</p>
+                                <div class="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                                    <i class="fa-solid fa-gear fa-spin" style="animation-duration:3s"></i> Auto build
+                                </div>
+                            </div>
+                        </label>
+
                     </div>
                 </div>
 

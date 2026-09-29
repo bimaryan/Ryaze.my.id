@@ -463,39 +463,64 @@ class AutoDeployProject implements ShouldQueue
     private function setupPython($deploy, string $projectDir): void
     {
         $this->log($deploy, '> Setting up Python virtual environment...');
+
+        // 1. Wajib: requirements.txt harus ada
+        if (! file_exists("{$projectDir}/requirements.txt")) {
+            throw new \RuntimeException(
+                '[Python Deploy] File requirements.txt tidak ditemukan di root repository. ' .
+                'Silakan tambahkan requirements.txt yang berisi semua dependensi Python kamu, lalu redeploy.'
+            );
+        }
+
+        // 2. Buat virtual environment
         // Gunakan --system-site-packages agar venv bisa membaca library bawaan sistem (seperti scikit-learn versi Alpine)
         $this->exec("cd {$projectDir} && python3 -m venv --system-site-packages venv", $deploy);
         $this->linuxExec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
 
-        if (file_exists("{$projectDir}/requirements.txt")) {
-            $this->log($deploy, '> Mengoptimalkan requirements.txt');
-            $reqFile = "{$projectDir}/requirements.txt";
-            $reqs = file_get_contents($reqFile);
+        // 3. Bersihkan requirements.txt dari versi yang terlalu ketat
+        $this->log($deploy, '> Mengoptimalkan requirements.txt (menghapus version pins yang ketat)...');
+        $reqFile = "{$projectDir}/requirements.txt";
+        $reqs    = file_get_contents($reqFile);
+        $reqs    = preg_replace('/[=><~]+.*$/m', '', $reqs);
+        $reqs    = preg_replace('/^torchvision.*$/m', '', $reqs);
+        $reqs    = preg_replace('/^\s*[\r\n]+/m', '', $reqs);
+        file_put_contents($reqFile, trim($reqs));
 
-            // Hapus semua versi strict/spesifik (==, >=, <=) pada SEMUA library agar selalu mengunduh versi global yang kompatibel
-            $reqs = preg_replace('/[=><~]+.*$/m', '', $reqs);
+        // 4. Install Alpine build tools & ML packages
+        // Ini untuk menghindari kompilasi scikit-learn, numpy, pandas dari nol yang error di Alpine
+        $this->exec('apk add --no-cache gcc g++ cmake make python3-dev py3-scikit-learn py3-numpy py3-scipy py3-pandas py3-joblib 2>/dev/null || true', $deploy);
 
-            // Hapus torchvision sesuai request user
-            $reqs = preg_replace('/^torchvision.*$/m', '', $reqs);
+        // 5. Install dependencies
+        $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
+        $this->exec("cd {$projectDir} && venv/bin/python -m pip install --upgrade pip --no-cache-dir 2>&1 || true", $deploy);
+        $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
 
-            // Bersihkan baris kosong
-            $reqs = preg_replace('/^\s*[\r\n]+/m', '', $reqs);
+        // 6. Deteksi framework (Flask / FastAPI / Django)
+        $this->log($deploy, '> Mendeteksi Python framework...');
+        $reqContent = strtolower(file_get_contents("{$projectDir}/requirements.txt"));
+        $isDjango   = str_contains($reqContent, 'django');
+        $isFastApi  = str_contains($reqContent, 'fastapi') || str_contains($reqContent, 'starlette');
 
-            file_put_contents($reqFile, trim($reqs));
+        $frameworkDetected = $isDjango ? 'Django' : ($isFastApi ? 'FastAPI' : 'Flask/Generic');
+        $this->log($deploy, "> Framework terdeteksi: {$frameworkDetected}");
 
-            $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
-
-            // Install build dependencies AND pre-compiled Alpine Python ML packages
-            // Ini untuk menghindari kompilasi scikit-learn, numpy, pandas dari nol yang error di Alpine
-            $this->exec('apk add --no-cache gcc g++ cmake make python3-dev py3-scikit-learn py3-numpy py3-scipy py3-pandas py3-joblib 2>/dev/null || true', $deploy);
-
-            $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
+        // Install uvicorn untuk FastAPI jika belum ada
+        if ($isFastApi && ! file_exists("{$projectDir}/venv/bin/uvicorn")) {
+            $this->exec("cd {$projectDir} && venv/bin/pip install uvicorn[standard] gunicorn 2>&1 || true", $deploy);
         }
 
-        // Allocate a dynamic port for OpenResty reverse proxy (using dev_port)
+        // Install gunicorn untuk Flask jika belum ada
+        if (! $isDjango && ! $isFastApi && ! file_exists("{$projectDir}/venv/bin/gunicorn")) {
+            $this->exec("cd {$projectDir} && venv/bin/pip install gunicorn 2>&1 || true", $deploy);
+        }
+
+        // Ensure binaries installed via pip are executable
+        $this->linuxExec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
+
+        // 7. Cari port kosong
         $port = null;
         for ($p = 8000; $p <= 9000; $p++) {
-            $connection = @fsockopen('127.0.0.1', $p);
+            $connection = @fsockopen('127.0.0.1', $p, $errCode, $errStr, 0.1);
             if (! is_resource($connection)) {
                 $port = $p;
                 break;
@@ -506,64 +531,105 @@ class AutoDeployProject implements ShouldQueue
         }
 
         if (! $port) {
-            $this->log($deploy, '> [ERROR] Tidak ada port yang tersedia untuk Python Server.');
-
-            return;
+            throw new \RuntimeException('[Python Deploy] Tidak ada port yang tersedia (8000-9000 semua terpakai).');
         }
 
-        // Ensure binaries installed via pip are executable
-        $this->linuxExec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
-
-        // Kill existing process if any
+        // 8. Bunuh proses lama (jika redeploy)
+        $pm2Name = "prod_{$this->project->id}";
+        $this->exec("npx -y pm2 delete {$pm2Name} 2>/dev/null || true", $deploy);
         if ($this->project->dev_pid && $this->isLinux()) {
             exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true");
         }
-
-        $this->log($deploy, "> Starting Python Server on port {$port}...");
-
-        // Coba cari file entrypoint
-        $entrypoint = 'app.py';
-        if (file_exists("{$projectDir}/main.py")) {
-            $entrypoint = 'main.py';
-        } elseif (file_exists("{$projectDir}/server.py")) {
-            $entrypoint = 'server.py';
-        } elseif (file_exists("{$projectDir}/wsgi.py")) {
-            $entrypoint = 'wsgi.py';
-        }
-
-        // Gunicorn disarankan untuk Flask/Django
-        $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
-
-        if ($hasGunicorn) {
-            $module = str_replace('.py', '', $entrypoint);
-            $command = "cd {$projectDir} && PORT={$port} nohup venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2 > {$projectDir}/.dev-server.log 2>&1 & echo $!";
-        } else {
-            // Fallback native python run (Pastikan app mendengarkan PORT dari environment)
-            $command = "cd {$projectDir} && PORT={$port} FLASK_RUN_PORT={$port} nohup venv/bin/python {$entrypoint} > {$projectDir}/.dev-server.log 2>&1 & echo $!";
-        }
-
-        $pid = trim(shell_exec($command));
-
-        if ($pid) {
-            $this->log($deploy, "> Python server running on PID: {$pid} (Port: {$port})");
-            $this->log($deploy, '> Menyiapkan PHP Reverse Proxy untuk OpenResty (mengatasi isolasi Docker)...');
-            $proxyScript = $this->generatePhpReverseProxy($port, 'Python Application Server');
-            file_put_contents("{$projectDir}/index.php", $proxyScript);
-            if (is_dir("{$projectDir}/public")) {
-                file_put_contents("{$projectDir}/public/index.php", $proxyScript);
+        foreach (["{$projectDir}/.port", "{$projectDir}/.ryaze-pm2.json", "{$projectDir}/index.php"] as $f) {
+            if (file_exists($f)) {
+                @unlink($f);
             }
-            file_put_contents("{$projectDir}/.port", $port);
-            $this->linuxExec("chown www-data:www-data {$projectDir}/.port", $deploy);
-
-            $this->project->update([
-                'dev_mode' => true,
-                'dev_port' => $port,
-                'dev_pid' => $pid,
-            ]);
-        } else {
-            $this->log($deploy, '> [ERROR] Gagal menjalankan server Python.');
         }
 
+        // 9. Cari entrypoint file
+        $entryFile = 'app.py';
+        foreach (['main.py', 'server.py', 'application.py', 'run.py', 'app.py', 'wsgi.py'] as $candidate) {
+            if (file_exists("{$projectDir}/{$candidate}")) {
+                $entryFile = $candidate;
+                break;
+            }
+        }
+        $module = str_replace('.py', '', $entryFile);
+
+        // 10. Tentukan perintah start berdasarkan framework
+        $this->log($deploy, "> Starting Python ({$frameworkDetected}) server on port {$port} via PM2...");
+
+        if ($isDjango) {
+            // Django: deteksi nama project dari folder yang berisi wsgi.py
+            $djangoProject = null;
+            foreach (glob("{$projectDir}/*/wsgi.py") as $wsgiFile) {
+                $djangoProject = basename(dirname($wsgiFile));
+                break;
+            }
+            if ($djangoProject) {
+                $pm2ScriptArgs = "venv/bin/gunicorn {$djangoProject}.wsgi:application -b 127.0.0.1:{$port} --workers 2";
+            } else {
+                $pm2ScriptArgs = "venv/bin/python manage.py runserver 127.0.0.1:{$port}";
+            }
+        } elseif ($isFastApi) {
+            // FastAPI/Starlette: gunakan uvicorn
+            $hasUvicorn = file_exists("{$projectDir}/venv/bin/uvicorn");
+            if ($hasUvicorn) {
+                $pm2ScriptArgs = "venv/bin/uvicorn {$module}:app --host 127.0.0.1 --port {$port} --workers 2";
+            } else {
+                $pm2ScriptArgs = "venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} -k uvicorn.workers.UvicornWorker --workers 2";
+            }
+        } else {
+            // Flask atau Python generic -> gunicorn
+            $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
+            if ($hasGunicorn) {
+                $pm2ScriptArgs = "venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2";
+            } else {
+                $pm2ScriptArgs = "PORT={$port} FLASK_RUN_PORT={$port} venv/bin/python {$entryFile}";
+            }
+        }
+
+        // 11. Buat PM2 ecosystem config (konsisten dengan Node.js)
+        $ecoConfig = json_encode([
+            'apps' => [[
+                'name'          => $pm2Name,
+                'script'        => 'bash',
+                'args'          => "-c \"{$pm2ScriptArgs}\"",
+                'cwd'           => $projectDir,
+                'env'           => [
+                    'PORT'             => $port,
+                    'PYTHONUNBUFFERED' => '1',
+                ],
+                'error_file'    => "{$projectDir}/.pm2-error.log",
+                'out_file'      => "{$projectDir}/.pm2-out.log",
+                'restart_delay' => 5000,
+            ]],
+        ], JSON_PRETTY_PRINT);
+
+        file_put_contents("{$projectDir}/.ryaze-pm2.json", $ecoConfig);
+        $this->exec("cd {$projectDir} && npx -y pm2 start .ryaze-pm2.json", $deploy);
+
+        // Tunggu agar server sempat bootup
+        sleep(5);
+
+        // 12. Buat .port file dan PHP reverse proxy
+        $this->log($deploy, '> Menyiapkan PHP Reverse Proxy untuk OpenResty...');
+        $proxyScript = $this->generatePhpReverseProxy($port, 'Python Application Server');
+        file_put_contents("{$projectDir}/index.php", $proxyScript);
+        if (is_dir("{$projectDir}/public")) {
+            file_put_contents("{$projectDir}/public/index.php", $proxyScript);
+        }
+        file_put_contents("{$projectDir}/.port", $port);
+        $this->linuxExec("chown www-data:www-data {$projectDir}/.port {$projectDir}/index.php 2>/dev/null || true", $deploy);
+
+        // 13. Simpan info ke database
+        $this->project->update([
+            'dev_mode' => true,
+            'dev_port' => $port,
+            'dev_pid'  => $pm2Name,
+        ]);
+
+        $this->log($deploy, "> Python ({$frameworkDetected}) server berjalan via PM2 (ID: {$pm2Name}) pada port {$port}.");
         $this->log($deploy, '> Python setup complete.');
     }
 
@@ -745,6 +811,9 @@ class AutoDeployProject implements ShouldQueue
             'node_express' => $this->scaffoldNode($dir, $projectName),
             'ghost_cms' => $this->scaffoldGhost($dir, $projectName, $deploy),
             'wordpress' => $this->scaffoldWordpress($dir, $projectName, $deploy),
+            'flask_starter' => $this->scaffoldFlask($dir, $projectName),
+            'fastapi_starter' => $this->scaffoldFastApi($dir, $projectName),
+            'django_starter' => $this->scaffoldDjango($dir, $projectName),
             'tailwind_starter' => $this->scaffoldTailwind($dir, $projectName),
             'tailwind_portfolio' => $this->scaffoldTailwindPortfolio($dir, $projectName),
             'tailwind_landing' => $this->scaffoldTailwindLanding($dir, $projectName),
@@ -755,6 +824,233 @@ class AutoDeployProject implements ShouldQueue
             default => throw new \RuntimeException("Unknown template key: {$key}"),
         };
     }
+
+    // ──────────────────────────────────────────────────────────
+    // Python Scaffold Methods
+    // ──────────────────────────────────────────────────────────
+
+    private function scaffoldFlask(string $dir, string $projectName): void
+    {
+        file_put_contents("{$dir}/requirements.txt", "flask\ngunicorn\n");
+
+        file_put_contents("{$dir}/app.py", implode("\n", [
+            'from flask import Flask, render_template, jsonify',
+            '',
+            'app = Flask(__name__)',
+            '',
+            "@app.route('/')",
+            'def index():',
+            "    return render_template('index.html', title='Flask App')",
+            '',
+            "@app.route('/api/hello')",
+            'def hello():',
+            "    return jsonify({'message': 'Hello from Flask!', 'status': 'ok'})",
+            '',
+            "if __name__ == '__main__':",
+            '    import os',
+            "    port = int(os.environ.get('PORT', 5000))",
+            "    app.run(host='0.0.0.0', port=port, debug=False)",
+        ]));
+
+        @mkdir("{$dir}/templates", 0755, true);
+        file_put_contents("{$dir}/templates/index.html", implode("\n", [
+            '<!DOCTYPE html>',
+            '<html lang="id">',
+            '<head>',
+            '    <meta charset="UTF-8">',
+            '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+            '    <title>{{ title }}</title>',
+            '    <script src="https://cdn.tailwindcss.com"></script>',
+            '</head>',
+            '<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-center gap-6 p-8">',
+            '    <div class="text-center space-y-4 max-w-lg">',
+            '        <div class="w-20 h-20 bg-yellow-400/20 border border-yellow-400/30 rounded-2xl flex items-center justify-center mx-auto text-5xl">🐍</div>',
+            '        <h1 class="text-4xl font-black">{{ title }}</h1>',
+            '        <p class="text-slate-400">Flask starter siap! Edit <code class="bg-slate-800 px-2 py-0.5 rounded text-yellow-400">app.py</code> untuk mulai coding.</p>',
+            '        <a href="/api/hello" class="inline-block mt-4 bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-xl transition">Coba API →</a>',
+            '    </div>',
+            '</body>',
+            '</html>',
+        ]));
+
+        @mkdir("{$dir}/static", 0755, true);
+        file_put_contents("{$dir}/static/.gitkeep", '');
+    }
+
+    private function scaffoldFastApi(string $dir, string $projectName): void
+    {
+        file_put_contents("{$dir}/requirements.txt", "fastapi\nuvicorn[standard]\ngunicorn\npydantic\n");
+
+        file_put_contents("{$dir}/main.py", implode("\n", [
+            'from fastapi import FastAPI',
+            'from fastapi.responses import HTMLResponse',
+            'from pydantic import BaseModel',
+            '',
+            'app = FastAPI(',
+            '    title="FastAPI Starter",',
+            '    description="REST API modern dengan FastAPI + Pydantic",',
+            '    version="1.0.0"',
+            ')',
+            '',
+            'class MessageResponse(BaseModel):',
+            '    message: str',
+            '    status: str',
+            '',
+            '@app.get("/", response_class=HTMLResponse)',
+            'async def root():',
+            '    return """',
+            '    <!DOCTYPE html><html lang="id">',
+            '    <head><meta charset="UTF-8"><title>FastAPI Starter</title>',
+            '    <script src="https://cdn.tailwindcss.com"></script></head>',
+            '    <body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-center gap-6 p-8">',
+            '        <div class="text-center space-y-4 max-w-lg">',
+            '            <div class="w-20 h-20 bg-teal-400/20 border border-teal-400/30 rounded-2xl flex items-center justify-center mx-auto text-5xl">⚡</div>',
+            '            <h1 class="text-4xl font-black">FastAPI Starter</h1>',
+            '            <p class="text-slate-400">API kamu sudah live! Buka dokumentasi interaktif Swagger UI di bawah.</p>',
+            '            <div class="flex gap-3 justify-center flex-wrap">',
+            '                <a href="/docs" class="bg-teal-500 hover:bg-teal-400 text-black font-bold px-6 py-3 rounded-xl transition">Swagger UI →</a>',
+            '                <a href="/api/hello" class="bg-slate-800 hover:bg-slate-700 font-bold px-6 py-3 rounded-xl transition">Coba API</a>',
+            '            </div>',
+            '        </div>',
+            '    </body></html>',
+            '    """',
+            '',
+            '@app.get("/api/hello", response_model=MessageResponse)',
+            'async def hello():',
+            '    return {"message": "Hello from FastAPI!", "status": "ok"}',
+        ]));
+    }
+
+    private function scaffoldDjango(string $dir, string $projectName): void
+    {
+        $slug = preg_replace('/[^a-zA-Z0-9_]/', '_', strtolower($projectName));
+        if (! $slug || is_numeric($slug[0])) {
+            $slug = 'myproject';
+        }
+
+        file_put_contents("{$dir}/requirements.txt", "django\ngunicorn\n");
+
+        // manage.py
+        file_put_contents("{$dir}/manage.py", implode("\n", [
+            '#!/usr/bin/env python',
+            'import os, sys',
+            '',
+            'def main():',
+            "    os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{$slug}.settings')",
+            '    try:',
+            '        from django.core.management import execute_from_command_line',
+            '    except ImportError as exc:',
+            '        raise ImportError("Django tidak ditemukan.") from exc',
+            '    execute_from_command_line(sys.argv)',
+            '',
+            "if __name__ == '__main__':",
+            '    main()',
+        ]));
+
+        // Project package
+        @mkdir("{$dir}/{$slug}", 0755, true);
+        file_put_contents("{$dir}/{$slug}/__init__.py", '');
+
+        file_put_contents("{$dir}/{$slug}/settings.py", implode("\n", [
+            'from pathlib import Path',
+            'BASE_DIR = Path(__file__).resolve().parent.parent',
+            "SECRET_KEY = 'django-insecure-ryaze-please-change-me'",
+            'DEBUG = False',
+            "ALLOWED_HOSTS = ['*']",
+            'INSTALLED_APPS = [',
+            "    'django.contrib.admin',",
+            "    'django.contrib.auth',",
+            "    'django.contrib.contenttypes',",
+            "    'django.contrib.sessions',",
+            "    'django.contrib.messages',",
+            "    'django.contrib.staticfiles',",
+            "    'main',",
+            ']',
+            'MIDDLEWARE = [',
+            "    'django.middleware.security.SecurityMiddleware',",
+            "    'django.contrib.sessions.middleware.SessionMiddleware',",
+            "    'django.middleware.common.CommonMiddleware',",
+            "    'django.middleware.csrf.CsrfViewMiddleware',",
+            "    'django.contrib.auth.middleware.AuthenticationMiddleware',",
+            "    'django.contrib.messages.middleware.MessageMiddleware',",
+            "    'django.middleware.clickjacking.XFrameOptionsMiddleware',",
+            ']',
+            "ROOT_URLCONF = '{$slug}.urls'",
+            'TEMPLATES = [{"BACKEND": "django.template.backends.django.DjangoTemplates", "DIRS": [BASE_DIR / "templates"], "APP_DIRS": True, "OPTIONS": {"context_processors": ["django.template.context_processors.debug", "django.template.context_processors.request", "django.contrib.auth.context_processors.auth", "django.contrib.messages.context_processors.messages"]}}]',
+            "WSGI_APPLICATION = '{$slug}.wsgi.application'",
+            'DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}',
+            "STATIC_URL = '/static/'",
+            'STATIC_ROOT = BASE_DIR / "staticfiles"',
+            "DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'",
+        ]));
+
+        file_put_contents("{$dir}/{$slug}/urls.py", implode("\n", [
+            'from django.contrib import admin',
+            'from django.urls import path, include',
+            'urlpatterns = [',
+            "    path('admin/', admin.site.urls),",
+            "    path('', include('main.urls')),",
+            ']',
+        ]));
+
+        file_put_contents("{$dir}/{$slug}/wsgi.py", implode("\n", [
+            'import os',
+            'from django.core.wsgi import get_wsgi_application',
+            "os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{$slug}.settings')",
+            'application = get_wsgi_application()',
+        ]));
+
+        // main app
+        @mkdir("{$dir}/main", 0755, true);
+        file_put_contents("{$dir}/main/__init__.py", '');
+
+        file_put_contents("{$dir}/main/views.py", implode("\n", [
+            'from django.shortcuts import render',
+            'from django.http import JsonResponse',
+            '',
+            'def index(request):',
+            "    return render(request, 'index.html', {'title': 'Django App'})",
+            '',
+            'def hello_api(request):',
+            "    return JsonResponse({'message': 'Hello from Django!', 'status': 'ok'})",
+        ]));
+
+        file_put_contents("{$dir}/main/urls.py", implode("\n", [
+            'from django.urls import path',
+            'from . import views',
+            'urlpatterns = [',
+            "    path('', views.index, name='index'),",
+            "    path('api/hello', views.hello_api, name='hello_api'),",
+            ']',
+        ]));
+
+        // templates
+        @mkdir("{$dir}/templates", 0755, true);
+        file_put_contents("{$dir}/templates/index.html", implode("\n", [
+            '<!DOCTYPE html>',
+            '<html lang="id">',
+            '<head>',
+            '    <meta charset="UTF-8">',
+            '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+            '    <title>{{ title }}</title>',
+            '    <script src="https://cdn.tailwindcss.com"></script>',
+            '</head>',
+            '<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-center gap-6 p-8">',
+            '    <div class="text-center space-y-4 max-w-lg">',
+            '        <div class="w-20 h-20 bg-green-400/20 border border-green-400/30 rounded-2xl flex items-center justify-center mx-auto text-5xl">🦄</div>',
+            '        <h1 class="text-4xl font-black">{{ title }}</h1>',
+            '        <p class="text-slate-400">Django starter siap! Edit <code class="bg-slate-800 px-2 py-0.5 rounded text-green-400">main/views.py</code> untuk mulai coding.</p>',
+            '        <div class="flex gap-3 justify-center flex-wrap">',
+            '            <a href="/admin" class="bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-xl transition">Admin Panel →</a>',
+            '            <a href="/api/hello" class="bg-slate-800 hover:bg-slate-700 font-bold px-6 py-3 rounded-xl transition">Coba API</a>',
+            '        </div>',
+            '    </div>',
+            '</body>',
+            '</html>',
+        ]));
+    }
+
+    // ──────────────────────────────────────────────────────────
 
     private function extractUploadZip($deploy, string $projectDir): void
     {
