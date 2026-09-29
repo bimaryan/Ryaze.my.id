@@ -472,10 +472,25 @@ class AutoDeployProject implements ShouldQueue
             );
         }
 
-        // 2. Buat virtual environment
-        // Gunakan --system-site-packages agar venv bisa membaca library bawaan sistem (seperti scikit-learn versi Alpine)
-        $this->exec("cd {$projectDir} && python3 -m venv --system-site-packages venv", $deploy);
+        // 2. Pastikan python3 + venv tersedia (Alpine tidak selalu punya python3 pre-installed)
+        $this->log($deploy, '> Memastikan Python3 tersedia di sistem...');
+        $this->exec('which python3 || apk add --no-cache python3 py3-pip python3-dev py3-virtualenv', $deploy);
+        $this->exec('python3 --version', $deploy);
+
+        // 3. Buat virtual environment
+        // Coba python3 -m venv, fallback ke virtualenv (Alpine kadang butuh py3-virtualenv)
+        $this->exec("cd {$projectDir} && (python3 -m venv --system-site-packages venv || virtualenv --system-site-packages venv)", $deploy);
         $this->linuxExec("chmod -R +x {$projectDir}/venv/bin 2>/dev/null || true", $deploy);
+
+        // Alpine venv hanya buat 'python3', bukan 'python' — buat symlink agar kompatibel
+        $this->linuxExec("test -f {$projectDir}/venv/bin/python || ln -sf python3 {$projectDir}/venv/bin/python", $deploy);
+
+        // Pastikan pip tersedia di venv (Alpine kadang skip pip saat venv dibuat)
+        $this->exec("cd {$projectDir} && venv/bin/python3 -m ensurepip --upgrade 2>/dev/null || true", $deploy);
+        $this->exec("cd {$projectDir} && venv/bin/python3 -m pip install --upgrade pip --no-cache-dir 2>&1 || true", $deploy);
+
+        $this->log($deploy, '> Verifikasi venv...');
+        $this->exec("ls {$projectDir}/venv/bin/", $deploy);
 
         // 3. Bersihkan requirements.txt dari versi yang terlalu ketat
         $this->log($deploy, '> Mengoptimalkan requirements.txt (menghapus version pins yang ketat)...');
@@ -492,8 +507,7 @@ class AutoDeployProject implements ShouldQueue
 
         // 5. Install dependencies
         $this->log($deploy, '> Installing Python dependencies from requirements.txt...');
-        $this->exec("cd {$projectDir} && venv/bin/python -m pip install --upgrade pip --no-cache-dir 2>&1 || true", $deploy);
-        $this->exec("cd {$projectDir} && venv/bin/python -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
+        $this->exec("cd {$projectDir} && venv/bin/python3 -m pip install --no-cache-dir -r requirements.txt 2>&1 || true", $deploy);
 
         // 6. Deteksi framework (Flask / FastAPI / Django)
         $this->log($deploy, '> Mendeteksi Python framework...');
@@ -506,12 +520,12 @@ class AutoDeployProject implements ShouldQueue
 
         // Install uvicorn untuk FastAPI jika belum ada
         if ($isFastApi && ! file_exists("{$projectDir}/venv/bin/uvicorn")) {
-            $this->exec("cd {$projectDir} && venv/bin/pip install uvicorn[standard] gunicorn 2>&1 || true", $deploy);
+            $this->exec("cd {$projectDir} && venv/bin/python3 -m pip install uvicorn[standard] gunicorn 2>&1 || true", $deploy);
         }
 
         // Install gunicorn untuk Flask jika belum ada
         if (! $isDjango && ! $isFastApi && ! file_exists("{$projectDir}/venv/bin/gunicorn")) {
-            $this->exec("cd {$projectDir} && venv/bin/pip install gunicorn 2>&1 || true", $deploy);
+            $this->exec("cd {$projectDir} && venv/bin/python3 -m pip install gunicorn 2>&1 || true", $deploy);
         }
 
         // Ensure binaries installed via pip are executable
@@ -620,7 +634,12 @@ class AutoDeployProject implements ShouldQueue
             file_put_contents("{$projectDir}/public/index.php", $proxyScript);
         }
         file_put_contents("{$projectDir}/.port", $port);
-        $this->linuxExec("chown www-data:www-data {$projectDir}/.port {$projectDir}/index.php 2>/dev/null || true", $deploy);
+        // Pastikan seluruh direktori bisa diakses oleh www-data (OpenResty/PHP-FPM)
+        // tanpa ini, OpenResty akan return 403 Forbidden karena direktori dimiliki root
+        $this->linuxExec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
+        $this->linuxExec("find {$projectDir} -type d -exec chmod 755 {} \\; 2>/dev/null || true", $deploy);
+        $this->linuxExec("find {$projectDir} -type f -exec chmod 644 {} \\; 2>/dev/null || true", $deploy);
+        $this->linuxExec("chmod 755 {$projectDir}/venv/bin/* 2>/dev/null || true", $deploy);
 
         // 13. Simpan info ke database
         $this->project->update([

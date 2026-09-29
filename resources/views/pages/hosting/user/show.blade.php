@@ -240,16 +240,7 @@
                                     <i class="fa-solid fa-rotate"></i> Redeploy Sekarang
                                 </button>
                             </form>
-                            @if (!str_starts_with($project->ryaze_domain, 'staging-'))
-                            <form action="{{ route('user_hosting.staging.create', $project->hashid) }}" method="POST"
-                                class="mt-2">
-                                @csrf
-                                <button type="submit"
-                                    class="w-full flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-bold py-2 px-4 rounded-lg transition-colors text-sm">
-                                    <i class="fa-solid fa-flask"></i> Buat Staging
-                                </button>
-                            </form>
-                            @endif
+
                         </div>
                     </div>
 
