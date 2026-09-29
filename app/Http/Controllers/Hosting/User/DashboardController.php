@@ -166,6 +166,9 @@ class DashboardController extends Controller
         'tailwind_ecommerce' => ['framework' => 'html'],
         'tailwind_admin' => ['framework' => 'html'],
         'tailwind_linkinbio' => ['framework' => 'html'],
+        'flask_starter' => ['framework' => 'python'],
+        'fastapi_starter' => ['framework' => 'python'],
+        'django_starter' => ['framework' => 'python'],
     ];
 
     // Memproses data dan memulai Deploy Otomatis
@@ -177,8 +180,9 @@ class DashboardController extends Controller
             'all_input' => $request->all(),
         ]);
 
-        if ($request->input('framework') === 'python') {
-            return redirect()->back()->with('error', 'Untuk deploy aplikasi Python, silakan hubungi admin melalui Tiket Bantuan terlebih dahulu.');
+        // Blokir deploy Python via Git/repo biasa — harus pakai template atau upload
+        if ($request->input('framework') === 'python' && $sourceType === 'repo') {
+            return redirect()->back()->with('error', 'Untuk deploy aplikasi Python via GitHub, silakan hubungi admin melalui Tiket Bantuan. Atau gunakan Starter Template Python yang tersedia.');
         }
 
         $availableFrameworks = Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,python,node,vue');
