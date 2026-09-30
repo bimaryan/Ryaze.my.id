@@ -13,6 +13,15 @@ export default function VerifyEmail({ siteName }) {
         return () => clearInterval(timer);
     }, [timeLeft]);
 
+    useEffect(() => {
+        const els = document.querySelectorAll('[data-reveal]');
+        if (!('IntersectionObserver' in window)) { els.forEach(el => el.style.opacity = '1'); return; }
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); } });
+        }, { threshold: 0.1 });
+        els.forEach(el => io.observe(el));
+    }, []);
+
     const resend = (e) => {
         e.preventDefault();
         if (timeLeft > 0) return;
