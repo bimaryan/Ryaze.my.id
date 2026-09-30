@@ -608,7 +608,7 @@ class AutoDeployProject implements ShouldQueue
             'apps' => [[
                 'name'          => $pm2Name,
                 'script'        => 'bash',
-                'args'          => "-c \"{$pm2ScriptArgs}\"",
+                'args'          => ['-c', $pm2ScriptArgs],
                 'cwd'           => $projectDir,
                 'env'           => [
                     'PORT'             => $port,
