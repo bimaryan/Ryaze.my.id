@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useForm, Head } from '@inertiajs/react';
+import { Link, useForm, Head, usePage } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 
 export default function ForgotPassword({ errors, siteName, turnstileSiteKey }) {
+    const { flash } = usePage().props;
     const turnstileRef = useRef(null);
     const turnstileWidgetId = useRef(null);
     const [turnstileToken, setTurnstileToken] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const { data, setData, post, processing } = useForm({
         email: '',
@@ -52,7 +54,14 @@ export default function ForgotPassword({ errors, siteName, turnstileSiteKey }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         setData('cf-turnstile-response', turnstileToken);
-        post(route('password.email'));
+        post(route('password.email'), {
+            onSuccess: () => {
+                setShowSuccess(true);
+                setData('email', '');
+                setData('cf-turnstile-response', '');
+                setTurnstileToken('');
+            },
+        });
     };
 
     useEffect(() => {
@@ -89,46 +98,72 @@ export default function ForgotPassword({ errors, siteName, turnstileSiteKey }) {
                     </div>
 
                     <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] p-8">
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.content} />
-                            <input type="hidden" name="cf-turnstile-response" value={data['cf-turnstile-response']} />
-
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Email Address</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
-                                    className={`w-full bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.email ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
-                                    placeholder="nama@email.com"
-                                    autoFocus
-                                />
-                                {errors.email && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.email}</p>}
+                        {showSuccess || flash?.success ? (
+                            <div className="text-center space-y-5">
+                                <div className="flex justify-center">
+                                    <div className="w-14 h-14 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                        <i className="fa-solid fa-envelope-circle-check text-2xl text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-bold text-[#7c3aed] dark:text-white">Email Terkirim!</h2>
+                                    <p className="mt-2 text-sm text-[#666] dark:text-white/60">
+                                        Link reset password telah dikirim ke email Anda.<br />
+                                        Silakan cek inbox atau folder spam.
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setShowSuccess(false)}
+                                    className="w-full bg-[#7c3aed] text-white font-semibold py-3 px-4 hover:bg-[#6d28d9] transition-colors flex items-center justify-center gap-2"
+                                >
+                                    Kirim Ulang
+                                </button>
+                                <Link href={route('login')} className="block text-sm font-medium text-[#7c3aed] hover:text-[#6d28d9] transition-colors">
+                                    Kembali ke Login
+                                </Link>
                             </div>
+                        ) : (
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.content} />
+                                <input type="hidden" name="cf-turnstile-response" value={data['cf-turnstile-response']} />
 
-                            {errors['cf-turnstile-response'] && <p className="text-sm text-red-500 dark:text-red-400 text-center">{errors['cf-turnstile-response']}</p>}
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Email Address</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={data.email}
+                                        onChange={(e) => setData('email', e.target.value)}
+                                        className={`w-full bg-[#fafafa] dark:bg-[#0a0a14] border ${errors.email ? 'border-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42]'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all`}
+                                        placeholder="nama@email.com"
+                                        autoFocus
+                                    />
+                                    {errors.email && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.email}</p>}
+                                </div>
 
-                            <div className="flex justify-center">
-                                <div ref={turnstileRef}></div>
-                            </div>
+                                {errors['cf-turnstile-response'] && <p className="text-sm text-red-500 dark:text-red-400 text-center">{errors['cf-turnstile-response']}</p>}
 
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="w-full bg-[#7c3aed] text-white font-semibold py-3 px-4 hover:bg-[#6d28d9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                            >
-                                {processing ? (
-                                    <>
-                                        <i className="fa-solid fa-spinner fa-spin text-sm"></i>
-                                        <span>Memproses...</span>
-                                    </>
-                                ) : (
-                                    'Kirim Instruksi Reset'
-                                )}
-                            </button>
-                        </form>
+                                <div className="flex justify-center">
+                                    <div ref={turnstileRef}></div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full bg-[#7c3aed] text-white font-semibold py-3 px-4 hover:bg-[#6d28d9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {processing ? (
+                                        <>
+                                            <i className="fa-solid fa-spinner fa-spin text-sm"></i>
+                                            <span>Memproses...</span>
+                                        </>
+                                    ) : (
+                                        'Kirim Instruksi Reset'
+                                    )}
+                                </button>
+                            </form>
+                        )}
 
                         <div className="mt-8 text-center text-sm text-[#666] dark:text-white/60">
                             Ingat password Anda?
