@@ -42,19 +42,20 @@ export default function Register({ errors, siteName, turnstileSiteKey }) {
             }
         };
 
+        let interval;
         if (window.turnstile) {
             renderWidget();
         } else {
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 if (window.turnstile) {
                     clearInterval(interval);
                     renderWidget();
                 }
             }, 100);
-            return () => clearInterval(interval);
         }
 
         return () => {
+            if (interval) clearInterval(interval);
             if (turnstileWidgetId.current) {
                 try { window.turnstile.remove(turnstileWidgetId.current); } catch (e) {}
                 turnstileWidgetId.current = null;

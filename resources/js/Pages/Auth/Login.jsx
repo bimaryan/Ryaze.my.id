@@ -32,21 +32,22 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
             }
         };
 
+        let interval;
         // If Turnstile script is already loaded
         if (window.turnstile) {
             renderWidget();
         } else {
             // Wait for the script to load
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 if (window.turnstile) {
                     clearInterval(interval);
                     renderWidget();
                 }
             }, 100);
-            return () => clearInterval(interval);
         }
 
         return () => {
+            if (interval) clearInterval(interval);
             if (turnstileWidgetId.current) {
                 try { window.turnstile.remove(turnstileWidgetId.current); } catch (e) {}
                 turnstileWidgetId.current = null;
