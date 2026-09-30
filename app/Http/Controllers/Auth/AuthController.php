@@ -195,6 +195,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'hosting_storage_limit_mb' => User::getPlanLimits('free')['storage_mb'],
             'referral_code' => Str::random(8),
             'referred_by' => $referrerId,
         ]);

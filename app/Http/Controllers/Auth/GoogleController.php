@@ -51,6 +51,7 @@ class GoogleController extends Controller
                 'provider'          => 'google',
                 'password'          => bcrypt(Str::random(24)),
                 'role'              => null,
+                'hosting_storage_limit_mb' => User::getPlanLimits('free')['storage_mb'],
                 'email_verified_at' => now(), // Google users are auto-verified
                 'status'            => 'active',
             ]);
