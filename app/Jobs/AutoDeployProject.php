@@ -343,6 +343,8 @@ class AutoDeployProject implements ShouldQueue
                     }
 
                     $this->exec("cd {$projectDir} && PORT={$port} HOSTNAME=127.0.0.1 {$pm2Cmd}", $deploy);
+                    $this->exec("npx -y pm2 save", $deploy);
+                    $this->exec("npx -y pm2 startup 2>/dev/null || true", $deploy);
 
                     // Tunggu sebentar agar SSR server (misal Next.js) sempat bootup dan mendengarkan port
                     sleep(3);
@@ -622,6 +624,8 @@ class AutoDeployProject implements ShouldQueue
 
         file_put_contents("{$projectDir}/.ryaze-pm2.json", $ecoConfig);
         $this->exec("cd {$projectDir} && npx -y pm2 start .ryaze-pm2.json", $deploy);
+        $this->exec("npx -y pm2 save", $deploy);
+        $this->exec("npx -y pm2 startup 2>/dev/null || true", $deploy);
 
         // Tunggu agar server sempat bootup
         sleep(5);

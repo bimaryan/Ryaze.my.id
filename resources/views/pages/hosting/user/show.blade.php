@@ -46,29 +46,10 @@
                     <i class="fa-solid {{ $statusIcon }}"></i>
                     {{ $project->status }}
                 </span>
-                @if (in_array($project->framework, ['react', 'nextjs', 'vue', 'python']))
-                    @if ($project->dev_mode)
-                        <div class="flex items-center gap-2">
-                            <a href="https://dev{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
-                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
-                            </a>
-                            <form action="{{ route('user_hosting.dev.stop', $project->hashid) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="inline-flex justify-center items-center bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/40 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
-                                    <i class="fa-solid fa-stop text-[10px]"></i> Matikan Dev
-                                </button>
-                            </form>
-                        </div>
-                    @else
-                        <div class="flex items-center gap-2">
-                            <form action="{{ route('user_hosting.dev.start', $project->hashid) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="inline-flex justify-center items-center bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/40 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 dark:hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
-                                    <i class="fa-solid fa-play text-[10px]"></i> Nyalakan Dev Server
-                                </button>
-                            </form>
-                        </div>
-                    @endif
+                @if ($project->dev_mode && in_array($project->framework, ['react', 'nextjs', 'vue', 'python']))
+                    <a href="https://dev{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
+                    </a>
                 @endif
                 <a href="{{ route('user_hosting.projects') }}" class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm">
                     &larr; Kembali
