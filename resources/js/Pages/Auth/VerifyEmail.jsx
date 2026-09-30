@@ -44,7 +44,7 @@ export default function VerifyEmail({ siteName }) {
                     <div className="bg-[#7c3aed] dark:bg-[#1a1025] px-8 py-10 text-center relative">
                         <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
                             <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
-                                <span className="text-[#7c3aed] font-black text-xs">R</span>
+                                <span className="text-white font-black text-xs">R</span>
                             </div>
                             <span className="font-black text-white text-sm tracking-tight">RYAZE</span>
                         </Link>
