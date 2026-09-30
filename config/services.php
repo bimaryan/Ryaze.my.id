@@ -169,5 +169,14 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Hosting Container Names
+    |--------------------------------------------------------------------------
+    | Untuk networking cross-container (nginx -> PHP container).
+    | IP container PHP digunakan sebagai proxy target di nginx.
+    */
+    'php_container' => env('PHP_CONTAINER_NAME', '1Panel-php8-aJQI'),
+
 ];
 

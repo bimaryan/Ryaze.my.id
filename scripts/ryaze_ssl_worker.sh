@@ -60,8 +60,8 @@ server {
 
     set_by_lua_block \$app_port {
         local subdomain = "$SUBDOMAIN"
-        local file_path = "/www/sites/hosting_clients/" .. subdomain .. "/.port"
-        local file = io.open(file_path, "r")
+        local base_path = "/www/sites/hosting_clients/" .. subdomain
+        local file = io.open(base_path .. "/.port", "r")
         if file then
             local port = file:read("*l")
             file:close()
@@ -73,6 +73,23 @@ server {
             end
         end
         return ""
+    }
+
+    set_by_lua_block \$app_proxy_host {
+        local subdomain = "$SUBDOMAIN"
+        local base_path = "/www/sites/hosting_clients/" .. subdomain
+        local file = io.open(base_path .. "/.proxy-host", "r")
+        if file then
+            local host = file:read("*l")
+            file:close()
+            if host then
+                host = host:gsub("%s+", "")
+                if host ~= "" then
+                    return host
+                end
+            end
+        end
+        return "127.0.0.1"
     }
 
     proxy_http_version 1.1;
@@ -124,7 +141,7 @@ server {
     }
 
     location @app_proxy {
-        proxy_pass http://127.0.0.1:\$app_port;
+        proxy_pass http://\$app_proxy_host:\$app_port;
     }
 }
 EOF
@@ -164,8 +181,8 @@ server {
 
     set_by_lua_block \$app_port {
         local subdomain = "$SUBDOMAIN"
-        local file_path = "/www/sites/hosting_clients/" .. subdomain .. "/.port"
-        local file = io.open(file_path, "r")
+        local base_path = "/www/sites/hosting_clients/" .. subdomain
+        local file = io.open(base_path .. "/.port", "r")
         if file then
             local port = file:read("*l")
             file:close()
@@ -177,6 +194,23 @@ server {
             end
         end
         return ""
+    }
+
+    set_by_lua_block \$app_proxy_host {
+        local subdomain = "$SUBDOMAIN"
+        local base_path = "/www/sites/hosting_clients/" .. subdomain
+        local file = io.open(base_path .. "/.proxy-host", "r")
+        if file then
+            local host = file:read("*l")
+            file:close()
+            if host then
+                host = host:gsub("%s+", "")
+                if host ~= "" then
+                    return host
+                end
+            end
+        end
+        return "127.0.0.1"
     }
 
     proxy_http_version 1.1;
@@ -228,7 +262,7 @@ server {
     }
 
     location @app_proxy {
-        proxy_pass http://127.0.0.1:\$app_port;
+        proxy_pass http://\$app_proxy_host:\$app_port;
     }
 }
 EOF

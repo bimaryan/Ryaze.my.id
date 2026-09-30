@@ -332,31 +332,30 @@ class AutoDeployProject implements ShouldQueue
 
                     $this->log($deploy, "> Starting Node/SSR Server on port {$port} via PM2...");
 
-                    // Menggunakan file ecosystem config untuk PM2 agar environment variables (PORT, HOSTNAME)
-                    // dijamin diteruskan ke dalam proses Node/Next.js dengan benar.
+                    // Bind 0.0.0.0 agar bisa diakses cross-container (Docker network)
                     if ($startCommand === 'npm start') {
-                        $ecoConfig = "module.exports = { apps: [{ name: '{$pm2Name}', script: 'npm', args: 'run start', env: { PORT: {$port}, HOSTNAME: '127.0.0.1' } }] };";
+                        $ecoConfig = "module.exports = { apps: [{ name: '{$pm2Name}', script: 'npm', args: 'run start', env: { PORT: {$port}, HOSTNAME: '0.0.0.0' } }] };";
                         file_put_contents("{$projectDir}/.ryaze-pm2.js", $ecoConfig);
                         $pm2Cmd = 'npx -y pm2 start .ryaze-pm2.js';
                     } else {
                         $pm2Cmd = "npx -y pm2 start {$startCommand} --name \"{$pm2Name}\"";
                     }
 
-                    $this->exec("cd {$projectDir} && PORT={$port} HOSTNAME=127.0.0.1 {$pm2Cmd}", $deploy);
+                    $this->exec("cd {$projectDir} && PORT={$port} HOSTNAME=0.0.0.0 {$pm2Cmd}", $deploy);
                     $this->exec("npx -y pm2 save", $deploy);
                     $this->exec("npx -y pm2 startup 2>/dev/null || true", $deploy);
 
                     // Tunggu sebentar agar SSR server (misal Next.js) sempat bootup dan mendengarkan port
                     sleep(3);
 
-                    // Buat proxy script
-                    $this->log($deploy, '> Menyiapkan PHP Reverse Proxy untuk OpenResty...');
-                    $proxyScript = $this->generatePhpReverseProxy($port, 'Node.js Application Server');
-                    file_put_contents("{$projectDir}/index.php", $proxyScript);
-                    if (is_dir("{$projectDir}/public")) {
-                        file_put_contents("{$projectDir}/public/index.php", $proxyScript);
-                    }
+                    // Nginx proxy langsung ke daemon — hapus PHP reverse proxy
+                    $this->log($deploy, '> Menyiapkan Nginx Reverse Proxy langsung ke daemon...');
+                    $proxyHost = $this->writeProxyHostFile($projectDir, $deploy);
+                    $this->log($deploy, "> Proxy target: {$proxyHost}:{$port}");
                     file_put_contents("{$projectDir}/.port", $port);
+                    foreach (["{$projectDir}/index.php", "{$projectDir}/public/index.php"] as $f) {
+                        if (file_exists($f)) { @unlink($f); }
+                    }
                     $this->linuxExec("chown www-data:www-data {$projectDir}/.port", $deploy);
 
                     // Kita gunakan dev_mode = true untuk mengindikasikan ada server yang berjalan di background
@@ -583,23 +582,23 @@ class AutoDeployProject implements ShouldQueue
                 break;
             }
             if ($djangoProject) {
-                $pm2ScriptArgs = "venv/bin/gunicorn {$djangoProject}.wsgi:application -b 127.0.0.1:{$port} --workers 2";
+                $pm2ScriptArgs = "venv/bin/gunicorn {$djangoProject}.wsgi:application -b 0.0.0.0:{$port} --workers 2";
             } else {
-                $pm2ScriptArgs = "venv/bin/python manage.py runserver 127.0.0.1:{$port}";
+                $pm2ScriptArgs = "venv/bin/python manage.py runserver 0.0.0.0:{$port}";
             }
         } elseif ($isFastApi) {
             // FastAPI/Starlette: gunakan uvicorn
             $hasUvicorn = file_exists("{$projectDir}/venv/bin/uvicorn");
             if ($hasUvicorn) {
-                $pm2ScriptArgs = "venv/bin/uvicorn {$module}:app --host 127.0.0.1 --port {$port} --workers 2";
+                $pm2ScriptArgs = "venv/bin/uvicorn {$module}:app --host 0.0.0.0 --port {$port} --workers 2";
             } else {
-                $pm2ScriptArgs = "venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} -k uvicorn.workers.UvicornWorker --workers 2";
+                $pm2ScriptArgs = "venv/bin/gunicorn {$module}:app -b 0.0.0.0:{$port} -k uvicorn.workers.UvicornWorker --workers 2";
             }
         } else {
             // Flask atau Python generic -> gunicorn
             $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
             if ($hasGunicorn) {
-                $pm2ScriptArgs = "venv/bin/gunicorn {$module}:app -b 127.0.0.1:{$port} --workers 2";
+                $pm2ScriptArgs = "venv/bin/gunicorn {$module}:app -b 0.0.0.0:{$port} --workers 2";
             } else {
                 $pm2ScriptArgs = "PORT={$port} FLASK_RUN_PORT={$port} venv/bin/python {$entryFile}";
             }
@@ -630,14 +629,17 @@ class AutoDeployProject implements ShouldQueue
         // Tunggu agar server sempat bootup
         sleep(5);
 
-        // 12. Buat .port file dan PHP reverse proxy
-        $this->log($deploy, '> Menyiapkan PHP Reverse Proxy untuk OpenResty...');
-        $proxyScript = $this->generatePhpReverseProxy($port, 'Python Application Server');
-        file_put_contents("{$projectDir}/index.php", $proxyScript);
-        if (is_dir("{$projectDir}/public")) {
-            file_put_contents("{$projectDir}/public/index.php", $proxyScript);
-        }
+        // 12. Buat .port dan .proxy-host untuk Nginx (reverse proxy langsung ke daemon)
+        $this->log($deploy, '> Menyiapkan Nginx Reverse Proxy langsung ke aplikasi daemon...');
+        $proxyHost = $this->writeProxyHostFile($projectDir, $deploy);
+        $this->log($deploy, "> Proxy target: {$proxyHost}:{$port}");
         file_put_contents("{$projectDir}/.port", $port);
+        // Hapus PHP reverse proxy lama jika ada agar nginx langsung proxy ke daemon
+        foreach (["{$projectDir}/index.php", "{$projectDir}/public/index.php"] as $f) {
+            if (file_exists($f)) {
+                @unlink($f);
+            }
+        }
         // Pastikan seluruh direktori bisa diakses oleh www-data (OpenResty/PHP-FPM)
         // tanpa ini, OpenResty akan return 403 Forbidden karena direktori dimiliki root
         $this->linuxExec("chown -R www-data:www-data {$projectDir} 2>/dev/null || true", $deploy);
@@ -801,6 +803,9 @@ class AutoDeployProject implements ShouldQueue
 
     private function log($deploy, string $text): void
     {
+        if (! $deploy) {
+            return;
+        }
         $deploy->refresh();
         $deploy->update([
             'build_logs' => $deploy->build_logs."\n".$text,
@@ -3367,8 +3372,9 @@ HTML
         );
     }
 
-    private function generatePhpReverseProxy(int $port, string $serverName): string
+    private function generatePhpReverseProxy(int $port, string $serverName, string $bindHost = '127.0.0.1'): string
     {
+        $escapedHost = var_export($bindHost, true);
         return <<<PHP
 <?php
 /**
@@ -3376,7 +3382,7 @@ HTML
  * Proxies traffic from OpenResty to the internal application daemon.
  */
 \$port = {$port};
-\$host = '127.0.0.1';
+\$host = {$escapedHost};
 \$path = \$_SERVER['REQUEST_URI'];
 \$method = \$_SERVER['REQUEST_METHOD'];
 \$headers = getallheaders();
@@ -3447,5 +3453,63 @@ foreach (\$lines as \$line) {
 echo \$resBody;
 curl_close(\$ch);
 PHP;
+    }
+
+    /**
+     * Resolve alamat host untuk reverse proxy (nginx -> application daemon).
+     *
+     * Di arsitektur container terpisah (PHP/Python di container berbeda dari nginx),
+     * proxy ke 127.0.0.1 akan gagal (502 Bad Gateway). Method ini menulis file
+     * `.proxy-host` di direktori project berisi IP target yang benar, dengan urutan:
+     *   1. File override manual `.proxy-host` (jika diisi admin)
+     *   2. IP Docker container PHP (container tempat PM2 berjalan)
+     *   3. Fallback `127.0.0.1` (single host)
+     *
+     * Nilai ini juga dibaca oleh nginx (Lua) saat membangun proxy_pass.
+     */
+    private function writeProxyHostFile(string $projectDir, $deploy = null): string
+    {
+        $overrideFile = "{$projectDir}/.proxy-host";
+        if (file_exists($overrideFile)) {
+            $override = trim((string) @file_get_contents($overrideFile));
+            if ($override !== '' && $override !== '127.0.0.1') {
+                $this->log($deploy, "> [PROXY] Manual .proxy-host ditemukan: {$override}");
+
+                return $override;
+            }
+        }
+
+        $host = '127.0.0.1';
+        if ($this->isLinux()) {
+            $container = config('services.php_container', '1Panel-php8-aJQI');
+            foreach (
+                [
+                    "docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' {$container} 2>/dev/null",
+                    "docker inspect --format '{{.NetworkSettings.IPAddress}}' {$container} 2>/dev/null",
+                    "getent hosts {$container} | awk '{print \$1}'",
+                ] as $cmd
+            ) {
+                $out = trim((string) @shell_exec($cmd));
+                if ($out !== '' && preg_match('/^\d+\.\d+\.\d+\.\d+$/', $out)) {
+                    $host = $out;
+                    break;
+                }
+            }
+        } elseif (defined('PHP_OS_FAMILY') && PHP_OS_FAMILY === 'Windows') {
+            foreach (['host.docker.internal', '172.17.0.1'] as $candidate) {
+                $out = trim((string) @shell_exec("ping -n 1 -w 200 {$candidate} >nul 2>&1 && echo ok"));
+                if ($out === 'ok') {
+                    $host = $candidate;
+                    break;
+                }
+            }
+        }
+
+        @file_put_contents("{$projectDir}/.proxy-host", $host);
+        if ($host !== '127.0.0.1') {
+            $this->log($deploy, "> [PROXY] Target host terdeteksi: {$host}");
+        }
+
+        return $host;
     }
 }
