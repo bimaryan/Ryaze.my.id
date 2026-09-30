@@ -1,18 +1,62 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useForm, Head } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 
-export default function ResetPassword({ errors, siteName }) {
+export default function ResetPassword({ errors, siteName, token, email, turnstileSiteKey }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const turnstileRef = useRef(null);
+    const turnstileWidgetId = useRef(null);
+    const [turnstileToken, setTurnstileToken] = useState('');
 
     const { data, setData, post, processing } = useForm({
+        token: token,
+        email: email,
         password: '',
         password_confirmation: '',
+        'cf-turnstile-response': '',
     });
+
+    useEffect(() => {
+        const renderWidget = () => {
+            if (turnstileRef.current && window.turnstile && turnstileSiteKey) {
+                if (turnstileWidgetId.current) {
+                    try { window.turnstile.remove(turnstileWidgetId.current); } catch (e) {}
+                    turnstileWidgetId.current = null;
+                }
+                turnstileRef.current.innerHTML = '';
+                turnstileWidgetId.current = window.turnstile.render(turnstileRef.current, {
+                    sitekey: turnstileSiteKey,
+                    callback: (token) => setTurnstileToken(token),
+                    theme: 'auto',
+                });
+            }
+        };
+
+        let interval;
+        if (window.turnstile) {
+            renderWidget();
+        } else {
+            interval = setInterval(() => {
+                if (window.turnstile) {
+                    clearInterval(interval);
+                    renderWidget();
+                }
+            }, 100);
+        }
+
+        return () => {
+            if (interval) clearInterval(interval);
+            if (turnstileWidgetId.current) {
+                try { window.turnstile.remove(turnstileWidgetId.current); } catch (e) {}
+                turnstileWidgetId.current = null;
+            }
+        };
+    }, [turnstileSiteKey]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setData('cf-turnstile-response', turnstileToken);
         post(route('password.update'));
     };
 
@@ -27,6 +71,10 @@ export default function ResetPassword({ errors, siteName }) {
 
     return (
         <PublicLayout title="Reset Password" withNav={false} withFooter={false} bodyClass="bg-[#fafafa] dark:bg-[#0a0a14] font-sans antialiased">
+            <Head>
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+            </Head>
+
             <style>{`
                 [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
                 [data-reveal].revealed { opacity: 1; transform: none; }
@@ -48,6 +96,9 @@ export default function ResetPassword({ errors, siteName }) {
                     <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] p-8">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.content} />
+                            <input type="hidden" name="token" value={data.token} />
+                            <input type="hidden" name="email" value={data.email} />
+                            <input type="hidden" name="cf-turnstile-response" value={data['cf-turnstile-response']} />
 
                             <div>
                                 <label htmlFor="password" className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Password Baru</label>
@@ -101,6 +152,12 @@ export default function ResetPassword({ errors, siteName }) {
                                     </button>
                                 </div>
                                 {errors.password_confirmation && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.password_confirmation}</p>}
+                            </div>
+
+                            {errors['cf-turnstile-response'] && <p className="text-sm text-red-500 dark:text-red-400 text-center">{errors['cf-turnstile-response']}</p>}
+
+                            <div className="flex justify-center">
+                                <div ref={turnstileRef}></div>
                             </div>
 
                             <button
