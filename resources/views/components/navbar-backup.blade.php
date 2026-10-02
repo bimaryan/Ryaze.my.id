@@ -546,6 +546,12 @@
                                 class="fa-solid fa-book-open"></i></span>
                         <span>Dokumentasi</span>
                     </a>
+                    <a href="{{ route('user_hosting.whois.index') }}"
+                        class="{{ $navLink(request()->routeIs('user_hosting.whois*')) }}">
+                        <span class="{{ $iconBox(request()->routeIs('user_hosting.whois*')) }}"><i
+                                class="fa-solid fa-magnifying-glass"></i></span>
+                        <span>Cek Domain</span>
+                    </a>
 
                     <div class="{{ $sectionLabel }} mt-4">
                         <span

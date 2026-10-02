@@ -12,6 +12,7 @@ use App\Http\Controllers\Hosting\User\DatabaseController;
 use App\Http\Controllers\Hosting\User\StorageController;
 use App\Http\Controllers\Hosting\User\DomainController;
 use App\Http\Controllers\Hosting\User\CronController;
+use App\Http\Controllers\Hosting\User\WhoisController;
 use App\Http\Controllers\Joki\Admin\DashboardController as JokiAdminDashboardController;
 use App\Http\Controllers\Joki\User\DashboardController as UserJokiDashboardController;
 use App\Http\Controllers\Joki\User\ProgressController;
@@ -257,6 +258,11 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/billing/subscribe', [DashboardController::class, 'subscribe'])->name('user_hosting.billing.subscribe');
         Route::post('user/hosting/billing/pay-wallet', [DashboardController::class, 'payWithWallet'])->name('user_hosting.billing.pay_wallet');
         Route::get('user/hosting/docs', [DashboardController::class, 'docs'])->name('user_hosting.docs');
+        // WHOIS / RDAP Lookup
+        Route::get('user/hosting/whois', [WhoisController::class, 'index'])->name('user_hosting.whois.index');
+        Route::post('user/hosting/whois/lookup', [WhoisController::class, 'lookup'])
+            ->middleware('throttle:20,1')
+            ->name('user_hosting.whois.lookup');
         // Tiket Bantuan (User)
         Route::get('user/hosting/tickets', [\App\Http\Controllers\User\TicketController::class, 'index'])->name('user_hosting.tickets.index');
         Route::get('user/hosting/tickets/create', [\App\Http\Controllers\User\TicketController::class, 'create'])->name('user_hosting.tickets.create');

@@ -585,6 +585,14 @@
                         <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Dokumentasi</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('user_hosting.whois.index') }}"
+                        class="{{ $navLink(request()->routeIs('user_hosting.whois*')) }}">
+                        <i
+                            class="fa-solid fa-magnifying-glass {{ $iconBox(request()->routeIs('user_hosting.whois*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Cek Domain</span>
+                    </a>
+                </li>
 
                 <li class="{{ $sectionLabel }} mt-4" x-show="!$store.sidebar.collapsed" x-cloak>Akun</li>
 
