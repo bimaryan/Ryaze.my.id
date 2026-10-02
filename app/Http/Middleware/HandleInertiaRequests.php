@@ -16,6 +16,9 @@ class HandleInertiaRequests extends Middleware
 
     public function share(Request $request): array
     {
+        $navLinks = config('nav.links');
+        $footerLinks = config('nav.footer_links');
+
         return [
             ...parent::share($request),
             'flash' => [
@@ -32,6 +35,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'csrf' => fn () => csrf_token(),
             'turnstileSiteKey' => config('services.turnstile.site_key'),
+            'navLinks' => $navLinks,
+            'footerLinks' => $footerLinks,
         ];
     }
 }

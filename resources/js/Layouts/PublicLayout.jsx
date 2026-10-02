@@ -10,15 +10,6 @@ const dashboardUrl = {
     default: '/user/hosting/dashboard',
 };
 
-const navLinks = [
-    { label: 'Tentang', href: '/#about' },
-    { label: 'Layanan', href: '/#services' },
-    { label: 'Harga', href: '/#pricing' },
-    { label: 'Cek Domain', href: '/whois' },
-    { label: 'Speed Test', href: '/speed-test' },
-    { label: 'Blog', href: '/blog' },
-];
-
 function getInitialDark() {
     if (typeof window === 'undefined') return false;
     const s = localStorage.getItem('ryaze-theme');
