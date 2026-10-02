@@ -4,24 +4,25 @@
 
 @section('content')
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-        <x-ui.page-header
-            title="WHOIS Domain Lookup"
-            subtitle="Cek informasi registrasi & DNS suatu domain (registrar, tanggal kedaluwarsa, nameserver, status, dan record DNS)."
-            icon="fa-magnifying-glass"
-            iconColor="indigo">
-        </x-ui.page-header>
+        <div class="mb-8">
+            <span class="text-[11px] font-bold text-[#7c3aed] dark:text-[#a78bfa] uppercase tracking-[0.2em] mb-3 block">Domain Tools</span>
+            <h1 class="text-3xl sm:text-4xl font-black text-[#7c3aed] dark:text-white tracking-tight">WHOIS Domain Lookup</h1>
+            <p class="text-[#666] dark:text-white/60 text-[15px] mt-2 max-w-2xl leading-relaxed">
+                Cek informasi registrasi &amp; DNS suatu domain (registrar, tanggal kedaluwarsa, nameserver, status, dan record DNS).
+            </p>
+        </div>
 
-        <div class="bg-white dark:bg-slate-800/60 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6" x-data="whoisLookup()">
+        <div class="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] p-6 sm:p-8" x-data="whoisLookup()">
             {{-- Form Pencarian --}}
             <form id="whois-form" class="max-w-3xl" @submit.prevent="search()">
                 @csrf
-                <label for="domain-input" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-3">
+                <label for="domain-input" class="block text-[13px] font-semibold text-[#444] dark:text-white/80 mb-3">
                     Nama Domain <span class="text-rose-500 dark:text-rose-400">*</span>
                 </label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                            <i class="fa-solid fa-globe text-slate-400 dark:text-slate-500"></i>
+                            <i class="fa-solid fa-globe text-[#999] dark:text-white/40"></i>
                         </div>
                         <input
                             type="text"
@@ -31,12 +32,12 @@
                             autocomplete="off"
                             spellcheck="false"
                             required
-                            class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 dark:focus:border-indigo-500 transition font-mono text-sm">
+                            class="w-full pl-11 pr-4 py-3 border border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14] text-[#444] dark:text-white/80 placeholder-[#bbb] dark:placeholder-white/30 focus:outline-none focus:border-[#7c3aed] transition font-mono text-sm">
                     </div>
                     <button
                         type="submit"
                         id="whois-submit"
-                        class="inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl transition shadow-sm shadow-indigo-200 dark:shadow-none whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="inline-flex justify-center items-center gap-2 bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-semibold px-6 py-3 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fa-solid fa-magnifying-glass text-sm"></i>
                         <span id="whois-submit-text">Cek Domain</span>
                     </button>
@@ -48,8 +49,8 @@
                 {{-- Loading State --}}
                 <div x-show="loading" class="flex flex-col items-center justify-center py-16 gap-4">
                     <div class="relative">
-                        <div class="w-16 h-16 border-4 border-indigo-100 dark:border-indigo-900/40 rounded-full"></div>
-                        <div class="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-indigo-600 rounded-full animate-spin"></div>
+                        <div class="w-16 h-16 border-4 border-[#f5f0ff] dark:border-[#7c3aed]/30 rounded-full"></div>
+                        <div class="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-[#7c3aed] rounded-full animate-spin"></div>
                     </div>
                     <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Mengambil data domain...</p>
                     <p class="text-xs text-slate-400 dark:text-slate-600" x-text="loadingDomain"></p>
@@ -83,8 +84,8 @@
                     {{-- Header Domain --}}
                     <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-700">
                         <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg flex items-center justify-center">
-                                <i class="fa-solid fa-globe text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                            <div class="w-11 h-11 bg-[#f5f0ff] dark:bg-[#7c3aed]/20 flex items-center justify-center">
+                                <i class="fa-solid fa-globe text-[#7c3aed] dark:text-[#a78bfa] text-lg"></i>
                             </div>
                             <div>
                                 <p class="font-mono font-bold text-lg text-slate-800 dark:text-slate-100" x-text="result?.domain"></p>
@@ -94,7 +95,7 @@
                         <button
                             type="button"
                             @click="copyRaw()"
-                            class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 px-3 py-2 rounded-lg transition">
+                            class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-[#7c3aed] dark:hover:text-[#a78bfa] bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#7c3aed]/50 dark:hover:border-[#7c3aed]/50 px-3 py-2 transition-colors">
                             <i class="fa-regular fa-copy"></i> Salin Ringkasan
                         </button>
                     </div>

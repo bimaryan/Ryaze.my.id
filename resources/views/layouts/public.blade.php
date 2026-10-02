@@ -99,30 +99,30 @@
     </style>
 </head>
 
-<body class="bg-slate-100 font-sans antialiased text-slate-900 dark:bg-[#020b16] dark:text-slate-100">
+<body class="bg-white font-sans antialiased text-slate-900 dark:bg-[#0a0a14] dark:text-white">
 
-    {{-- Public Navbar (standalone, bukan layout dashboard) --}}
-    <nav class="fixed top-0 inset-x-0 z-50 bg-white/90 dark:bg-[#0a0a14]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+    {{-- Public Navbar (standalone, tema menyatu dengan landing page) --}}
+    <nav class="fixed top-0 inset-x-0 z-50 bg-white/90 dark:bg-[#1a1025]/90 backdrop-blur-md border-b border-[#e5e5e5] dark:border-[#2d1f42]">
+        <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
             <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                <div class="w-7 h-7 bg-blue-600 text-white flex items-center justify-center rounded-lg">
-                    <span class="font-black text-xs">R</span>
+                <div class="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
+                    <span class="text-white font-black text-xs">R</span>
                 </div>
-                <span class="font-black text-slate-800 dark:text-white text-sm tracking-tight">{{ $siteName }}</span>
+                <span class="font-black text-[#7c3aed] dark:text-white text-sm tracking-tight">{{ $siteName }}</span>
             </a>
             <div class="flex items-center gap-4">
-                <a href="{{ route('whois.index') }}" class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors hidden sm:inline-flex items-center gap-1.5">
-                    <i class="fa-solid fa-magnifying-glass"></i> Cek Domain
+                <a href="{{ route('whois.index') }}" class="text-[13px] font-medium text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors hidden sm:inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i> Cek Domain
                 </a>
                 <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                    class="w-8 h-8 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-white transition-colors">
+                    class="w-8 h-8 flex items-center justify-center text-[#999] dark:text-[#666] hover:text-[#7c3aed] dark:hover:text-white transition-colors">
                     <i class="fa-solid fa-moon text-sm"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <main class="pt-16">
+    <main class="pt-14">
         @yield('content')
     </main>
 
