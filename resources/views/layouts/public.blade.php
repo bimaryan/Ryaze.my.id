@@ -78,6 +78,8 @@
     {{-- AlpineJS --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js" nonce="{{ csp_nonce() }}"></script>
 
+    @stack('head')
+
     <style>
         ::view-transition-old(root),
         ::view-transition-new(root) {

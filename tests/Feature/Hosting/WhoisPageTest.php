@@ -19,6 +19,10 @@ class WhoisPageTest extends TestCase
         $resp->assertSee('WHOIS Domain Lookup', false);
         $resp->assertDontSee('logo-sidebar', false);
         $resp->assertDontSee('pjax-container', false);
+        $resp->assertSee('application/ld+json', false);
+        $resp->assertSee('WebPage', false);
+        $resp->assertSee('BreadcrumbList', false);
+        $resp->assertSee('rel="canonical"', false);
     }
 
     public function test_lookup_validates_invalid_domain_format(): void

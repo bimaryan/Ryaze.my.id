@@ -1,6 +1,57 @@
 @extends('layouts.public')
 
 @section('title', 'WHOIS Domain Lookup')
+@section('seo_description', 'Cek informasi registrasi domain WHOIS/RDAP gratis: registrar, tanggal registrasi & kedaluwarsa, nameserver, status, dan record DNS.')
+
+@push('head')
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:image" content="{{ url('/og-image.png') }}">
+    <meta property="twitter:image" content="{{ url('/og-image.png') }}">
+
+    {{-- JSON-LD: WebPage --}}
+    <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+    {
+        "@@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "WHOIS Domain Lookup",
+        "description": "Cek informasi registrasi domain WHOIS/RDAP gratis: registrar, tanggal registrasi & kedaluwarsa, nameserver, status, dan record DNS.",
+        "url": "{{ url()->current() }}",
+        "inLanguage": "id-ID",
+        "publisher": {
+            "@type": "Organization",
+            "name": "{{ \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze' }}",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "{{ url('/og-image.png') }}",
+                "width": 1200,
+                "height": 630
+            }
+        }
+    }
+    </script>
+
+    {{-- JSON-LD: BreadcrumbList --}}
+    <script type="application/ld+json" nonce="{{ csp_nonce() }}">
+    {
+        "@@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Beranda",
+            "item": "{{ url('/') }}"
+        }, {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "WHOIS Domain Lookup",
+            "item": "{{ url()->current() }}"
+        }]
+    }
+    </script>
+@endpush
 
 @section('content')
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
