@@ -28,11 +28,19 @@ class WhoisController extends Controller
      */
     public function lookup(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'domain' => 'required|string|min:3|max:253',
-        ]);
+        // Validasi manual (bukan $request->validate()) agar selalu merespons JSON
+        // meskipun route tidak di-prefix api/ — lihat shouldRenderJsonWhen di
+        // bootstrap/app.php yang hanya render JSON untuk api/*.
+        $domainInput = (string) $request->input('domain', '');
 
-        $domain = $this->normalizeDomain($validated['domain']);
+        if (trim($domainInput) === '' || strlen($domainInput) < 3 || strlen($domainInput) > 253) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Domain wajib diisi (3-253 karakter). Contoh: example.com atau ryaze.my.id',
+            ], 422);
+        }
+
+        $domain = $this->normalizeDomain($domainInput);
 
         if ($domain === '' || ! $this->isValidDomain($domain)) {
             return response()->json([

@@ -217,8 +217,10 @@
     </x-ui.page-layout>
 
     <script nonce="{{ csp_nonce() }}">
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('whoisLookup', () => ({
+        // Daftarkan sebagai global function (bukan via event alpine:init) agar
+        // tetap tersedia setelah navigasi PJAX me-replace konten halaman ini.
+        window.whoisLookup = function () {
+            return {
                 loading: false,
                 error: false,
                 errorMessage: '',
@@ -314,7 +316,7 @@
                         Swal.fire({ icon: 'error', title: 'Gagal menyalin', text: 'Browser memblokir akses clipboard.' });
                     }
                 },
-            }));
-        });
+            };
+        };
     </script>
 @endsection
