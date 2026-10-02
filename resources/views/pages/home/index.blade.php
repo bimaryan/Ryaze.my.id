@@ -70,7 +70,7 @@
                 "name": "Teknologi apa saja yang didukung hosting Ryaze?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Hosting Ryaze mendukung Node.js, PHP (termasuk Laravel), Python, React, Vue.js, dan website statis HTML. Setiap project di-deploy otomatis dari repositori Git Anda."
+                    "text": "Hosting Ryaze mendukung Node.js, PHP (termasuk Laravel), React, Vue.js, dan website statis HTML. Setiap project di-deploy otomatis dari repositori Git Anda."
                 }
             }, {
                 "@type": "Question",
@@ -222,7 +222,6 @@
                     <i class="fa-brands fa-laravel text-3xl md:text-4xl stack-logo"></i>
                     <i class="fa-brands fa-react text-3xl md:text-4xl stack-logo"></i>
                     <i class="fa-brands fa-node-js text-3xl md:text-4xl stack-logo"></i>
-                    <i class="fa-brands fa-python text-3xl md:text-4xl stack-logo"></i>
                     <i class="fa-brands fa-vuejs text-3xl md:text-4xl stack-logo"></i>
                     <i class="fa-brands fa-docker text-3xl md:text-4xl stack-logo"></i>
                 </div>
@@ -375,7 +374,7 @@
                         <ul class="space-y-4 mb-10 text-sm font-medium text-slate-600 dark:text-slate-300 flex-1">
                             <li class="flex items-center gap-3">
                                 <div class="flex-shrink-0 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-check"></i></div>
-                                Auto Deploy (Node, PHP, Python, dsb)
+                                Auto Deploy (Node, PHP, Laravel, dsb)
                             </li>
                             <li class="flex items-center gap-3">
                                 <div class="flex-shrink-0 text-slate-400 dark:text-slate-500"><i class="fa-solid fa-check"></i></div>
@@ -619,7 +618,7 @@
                         <i class="fa-solid fa-chevron-down text-xs text-slate-400 dark:text-slate-500 group-open:rotate-180 transition-transform"></i>
                     </summary>
                     <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-4">
-                        Hosting Ryaze mendukung Node.js, PHP (termasuk Laravel), Python, React, Vue.js, dan website
+                        Hosting Ryaze mendukung Node.js, PHP (termasuk Laravel), React, Vue.js, dan website
                         statis HTML. Setiap project di-deploy otomatis dari repositori Git Anda.
                     </p>
                 </details>

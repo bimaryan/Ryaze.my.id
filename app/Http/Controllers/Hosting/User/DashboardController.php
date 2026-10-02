@@ -47,7 +47,7 @@ class DashboardController extends Controller
      */
     private array $allowedCommands = [
         'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'whoami', 'date',
-        'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
+        'php', 'composer', 'npm', 'npx', 'node',
         'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'apk', 'source', 'chmod', 'clear', 'chown',
         'tar', 'unzip', 'zip', 'ping',
     ];
@@ -166,9 +166,6 @@ class DashboardController extends Controller
         'tailwind_ecommerce' => ['framework' => 'html'],
         'tailwind_admin' => ['framework' => 'html'],
         'tailwind_linkinbio' => ['framework' => 'html'],
-        'flask_starter' => ['framework' => 'python'],
-        'fastapi_starter' => ['framework' => 'python'],
-        'django_starter' => ['framework' => 'python'],
     ];
 
     // Memproses data dan memulai Deploy Otomatis
@@ -180,12 +177,7 @@ class DashboardController extends Controller
             'all_input' => $request->all(),
         ]);
 
-        // Blokir deploy Python via Git/repo biasa — harus pakai template atau upload
-        if ($request->input('framework') === 'python' && $sourceType === 'repo') {
-            return redirect()->back()->with('error', 'Untuk deploy aplikasi Python via GitHub, silakan hubungi admin melalui Tiket Bantuan. Atau gunakan Starter Template Python yang tersedia.');
-        }
-
-        $availableFrameworks = Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,python,node,vue');
+        $availableFrameworks = Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,node,vue');
         $allowedFrameworks = implode(',', array_map('trim', explode(',', $availableFrameworks)));
 
         $subdomain = trim(strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', trim($request->project_name))), '-');
@@ -1417,9 +1409,9 @@ class DashboardController extends Controller
             return $deny;
         }
 
-        // Only allow React/Next.js/Vue/Python frameworks
-        if (! in_array($project->framework, ['react', 'nextjs', 'vue', 'python'])) {
-            return back()->with('error', 'Dev Server hanya tersedia untuk React, Next.js, Vue, dan Python!');
+        // Only allow React/Next.js/Vue frameworks
+        if (! in_array($project->framework, ['react', 'nextjs', 'vue'])) {
+            return back()->with('error', 'Dev Server hanya tersedia untuk React, Next.js, dan Vue!');
         }
 
         $subdomain = explode('.', $project->ryaze_domain)[0];
@@ -1484,7 +1476,7 @@ class DashboardController extends Controller
             }
 
             // PHP is already running inside the container (e.g. 1Panel-php8-aJQI), so just run it directly.
-            // We assume pm2 and npm/python are installed globally inside the PHP container.
+            // We assume pm2 and npm are installed globally inside the PHP container.
             return "cd {$projectDir} && {$cmd} 2>&1";
         };
 
@@ -1492,23 +1484,6 @@ class DashboardController extends Controller
             shell_exec($pm2Wrapper("pm2 start npm --name \"{$appName}\" -- run dev -- --port {$port}"));
         } elseif ($project->framework === 'nextjs') {
             shell_exec($pm2Wrapper("pm2 start npm --name \"{$appName}\" -- run dev -- -p {$port}"));
-        } elseif ($project->framework === 'python') {
-            $entrypoint = 'app.py';
-            if (file_exists("{$projectDir}/main.py")) {
-                $entrypoint = 'main.py';
-            } elseif (file_exists("{$projectDir}/server.py")) {
-                $entrypoint = 'server.py';
-            } elseif (file_exists("{$projectDir}/wsgi.py")) {
-                $entrypoint = 'wsgi.py';
-            }
-
-            $hasGunicorn = file_exists("{$projectDir}/venv/bin/gunicorn");
-            if ($hasGunicorn) {
-                $module = str_replace('.py', '', $entrypoint);
-                shell_exec($pm2Wrapper("PORT={$port} pm2 start venv/bin/gunicorn --name \"{$appName}\" -- {$module}:app -b 127.0.0.1:{$port} --workers 2"));
-            } else {
-                shell_exec($pm2Wrapper("PORT={$port} FLASK_RUN_PORT={$port} pm2 start venv/bin/python --name \"{$appName}\" -- {$entrypoint}"));
-            }
         }
 
         $pid = $appName; // PM2 name as identifier
@@ -1989,17 +1964,6 @@ PHP;
             $interactiveArtisan = ['migrate', 'migrate:fresh', 'migrate:refresh', 'migrate:reset', 'db:seed', 'db:wipe', 'key:generate'];
             if (array_intersect($tokens, $interactiveArtisan) && ! in_array('--force', $tokens, true)) {
                 $tokens[] = '--force';
-            }
-        } elseif ($project->framework === 'python') {
-            // ── Python venv alias ──
-            $venvMap = [
-                'python3' => 'venv/bin/python3',
-                'python' => 'venv/bin/python',
-                'pip3' => 'venv/bin/pip3',
-                'pip' => 'venv/bin/pip',
-            ];
-            if (isset($venvMap[$firstWord])) {
-                $tokens[0] = $venvMap[$firstWord];
             }
         }
 
@@ -2574,7 +2538,7 @@ PHP;
         // 1. Hapus Record DNS Cloudflare
         $this->deleteCloudflareDNS($project->ryaze_domain);
 
-        // 1.5. Hentikan Proses Background (PM2 / Python / Node)
+        // 1.5. Hentikan Proses Background (PM2 / Node)
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         if (! $isWindows) {
             if ($project->dev_pid) {

@@ -62,7 +62,7 @@ class CronController extends Controller
 
         $allowedCronCommands = [
             'ls', 'cat', 'head', 'tail', 'wc', 'grep', 'find', 'echo', 'pwd', 'date',
-            'php', 'composer', 'npm', 'npx', 'node', 'python', 'python3', 'pip', 'pip3',
+            'php', 'composer', 'npm', 'npx', 'node',
             'mkdir', 'touch', 'cp', 'mv', 'rm', 'git', 'curl', 'source', 'chmod', 'chown',
             'tar', 'unzip', 'zip', 'clear', 'true', 'false',
         ];

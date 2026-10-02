@@ -50,11 +50,32 @@ return [
     | Cloudflare DNS Management
     |--------------------------------------------------------------------------
     */
+
     'cloudflare' => [
         'zone_id' => env('CLOUDFLARE_ZONE_ID'),
         'api_token' => env('CLOUDFLARE_API_TOKEN'),
         'tunnel_url' => env('CLOUDFLARE_TUNNEL_URL'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cloudflare Tunnel (Zero Trust) — Published Application Routes
+    |--------------------------------------------------------------------------
+    | Untuk mendaftarkan ingress rule pada tunnel yang remotely-managed
+    | (dikelola lewat dashboard). Token WAJIB punya scope Zero Trust/Tunnel
+    | (akun-level), BERBEDA dari CLOUDFLARE_API_TOKEN yang hanya zone-scoped.
+    | Tanpa ini, route subdomain tidak terdaftar otomatis & web jadi 502.
+    */
+
+    'cloudflare_tunnel' => [
+        'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+        'tunnel_id' => env('CLOUDFLARE_TUNNEL_ID'),
+        'api_token' => env('CLOUDFLARE_TUNNEL_API_TOKEN'),
+        // URL origin yang direach cloudflared (biasanya nginx/OpenResty di host).
+        // Default: nginx container mempublish port 80 di host.
+        'service' => env('CLOUDFLARE_TUNNEL_SERVICE', 'http://localhost:80'),
+    ],
+
 
     /*
     |--------------------------------------------------------------------------

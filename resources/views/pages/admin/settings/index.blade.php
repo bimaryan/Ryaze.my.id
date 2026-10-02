@@ -136,7 +136,7 @@
                         </div>
 
                         <div x-data="{
-                            tags: '{{ $settings['available_frameworks'] ?? 'html,php,laravel,react,nextjs,python,node,vue' }}'.split(',').filter(t => t.trim() !== ''),
+                            tags: '{{ $settings['available_frameworks'] ?? 'html,php,laravel,react,nextjs,node,vue' }}'.split(',').filter(t => t.trim() !== ''),
                             newTag: '',
                             addTag() {
                                 let tag = this.newTag.trim().toLowerCase().replace(/[^a-z0-9]/g, '');

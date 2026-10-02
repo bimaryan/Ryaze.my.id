@@ -46,7 +46,7 @@
                     <i class="fa-solid {{ $statusIcon }}"></i>
                     {{ $project->status }}
                 </span>
-                @if ($project->dev_mode && in_array($project->framework, ['react', 'nextjs', 'vue', 'python']))
+                @if ($project->dev_mode && in_array($project->framework, ['react', 'nextjs', 'vue']))
                     <a href="https://dev{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
                     </a>

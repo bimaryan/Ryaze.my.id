@@ -7,7 +7,7 @@ function rupiah(n) {
 
 const faqData = [
     { q: 'Apa itu Ryaze?', a: 'Platform hosting & development. Auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap.' },
-    { q: 'Teknologi apa yang didukung?', a: 'Node.js, PHP/Laravel, Python, React, Vue.js, Next.js, dan HTML statis. Deploy otomatis dari repositori Git.' },
+    { q: 'Teknologi apa yang didukung?', a: 'Node.js, PHP/Laravel, React, Vue.js, Next.js, dan HTML statis. Deploy otomatis dari repositori Git.' },
     { q: 'SSL tersedia?', a: 'Ya. Setiap project otomatis dapat sertifikat SSL gratis via Let\'s Encrypt.' },
     { q: 'Database tersedia?', a: 'Ya. MySQL bawaan, dikelola lewat panel, mini phpMyAdmin, dan API key.' },
     { q: 'Bisa pesan website/aplikasi?', a: 'Bisa. Sistem informasi, SaaS, website korporat, prototipe fungsional — arsitektur modern, bersih, terdokumentasi.' },
@@ -111,7 +111,7 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
                     <div className="mt-16 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8" data-reveal>
                         <span className="text-[10px] font-bold text-[#bbb] dark:text-white/40 uppercase tracking-[0.2em] shrink-0">Tech Stack</span>
                         <div className="flex flex-wrap gap-4 sm:gap-6 text-[#ccc] dark:text-white/50">
-                            {['fa-brands fa-laravel', 'fa-brands fa-react', 'fa-brands fa-node-js', 'fa-brands fa-python', 'fa-brands fa-vuejs', 'fa-brands fa-docker'].map(icon => (
+                            {['fa-brands fa-laravel', 'fa-brands fa-react', 'fa-brands fa-node-js', 'fa-brands fa-vuejs', 'fa-brands fa-docker'].map(icon => (
                                 <i key={icon} className={`${icon} text-2xl hover:text-[#7c3aed] transition-colors cursor-default`}></i>
                             ))}
                         </div>
@@ -230,7 +230,7 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
                                 </p>
                             </div>
                             <ul className="space-y-3 mb-8 text-sm text-[#444] dark:text-white/60 relative z-10">
-                                {['Auto Deploy (Node, PHP, Python)', 'Database MySQL & SSL Gratis', 'File Manager & Web Terminal'].map(f => (
+                                {['Auto Deploy (Node, PHP, Laravel)', 'Database MySQL & SSL Gratis', 'File Manager & Web Terminal'].map(f => (
                                     <li key={f} className="flex items-center gap-3">
                                         <span className="w-4 h-4 bg-[#f5f0ff] dark:bg-[#1a1025]/10 flex items-center justify-center flex-shrink-0"><i className="fa-solid fa-check text-[8px] text-[#7c3aed]"></i></span>
                                         {f}

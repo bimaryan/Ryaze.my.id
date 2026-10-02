@@ -134,7 +134,7 @@
                             <div class="text-slate-400 dark:text-slate-500 mb-2 border-b border-slate-700 pb-1"># Perintah Operasional yang Diizinkan (Whitelist):</div>
                             <div class="leading-relaxed text-emerald-400 dark:text-emerald-300">
                                 ls, cat, head, tail, wc, grep, find, echo, pwd, whoami, date, mkdir, touch, cp, mv, rm, chmod, chown, nano, curl <br>
-                                git, php, composer, npm, npx, node, python, python3, pip, pip3
+                                git, php, composer, npm, npx, node
                             </div>
                         </div>
                     </div>
@@ -154,7 +154,7 @@
                         <h4 class="font-semibold text-slate-900 dark:text-slate-50 text-sm mb-2">Praktik Manajemen Kuota</h4>
                         <ul class="list-disc list-inside space-y-1.5 text-slate-600 dark:text-slate-300 text-sm">
                             <li>Jika penyimpanan Anda menyentuh angka 100%, upaya modifikasi basis data atau proses instalasi library pada proyek Anda (seperti <code>npm install</code>) akan mulai menolak untuk berfungsi (gagal).</li>
-                            <li>Terapkan aturan pada file <code>.gitignore</code> Anda agar tidak menyertakan folder <code>vendor</code> (PHP), <code>node_modules</code> (Node.js), atau <code>venv</code> (Python). Sistem kami mampu merakit ulang komponen tersebut saat waktu <i>deployment</i>, sehingga menghemat konsumsi kuota mentah Anda.</li>
+                            <li>Terapkan aturan pada file <code>.gitignore</code> Anda agar tidak menyertakan folder <code>vendor</code> (PHP) atau <code>node_modules</code> (Node.js). Sistem kami mampu merakit ulang komponen tersebut saat waktu <i>deployment</i>, sehingga menghemat konsumsi kuota mentah Anda.</li>
                             <li>Anda selalu dapat <strong>Meningkatkan Paket</strong> (Upgrade Storage) melalui saluran pembayaran terintegrasi <strong>Pakasir</strong> pada halaman Profil / Penyimpanan.</li>
                         </ul>
                     </div>
@@ -171,72 +171,6 @@
                     </p>
                 </section>
 
-                <!-- Section 8: Python -->
-                <section>
-                    <h2 class="text-lg font-bold text-slate-900 dark:text-slate-50 mb-3 flex items-center gap-2">
-                        8. Panduan Khusus Deployment Python
-                    </h2>
-                    <p class="mb-5 text-slate-600 dark:text-slate-300 text-sm">
-                        Infrastruktur Ryaze telah dioptimasi secara mendalam untuk mendukung deployment aplikasi berbasis Python seperti Flask, Django, FastAPI, hingga model Machine Learning. Kami menerapkan tingkat isolasi dan efisiensi sekelas *enterprise* agar aplikasi Anda berjalan stabil.
-                    </p>
-
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="font-semibold text-slate-900 dark:text-slate-50 text-sm mb-1">1. Isolasi Virtual Environment Otomatis</h4>
-                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                                Untuk mencegah konflik versi library antar aplikasi, setiap proyek Python Anda diisolasi menggunakan <i>Virtual Environment</i> (<code class="font-mono bg-slate-100 dark:bg-slate-700/50 text-xs px-1 rounded">venv</code>). Saat Anda melakukan <i>deployment</i> pertama kali atau menekan tombol <i>Redeploy</i>, sistem kami akan secara otomatis membaca file <code class="font-mono bg-slate-100 dark:bg-slate-700/50 text-xs px-1 rounded">requirements.txt</code> dan menginstal seluruh dependensi Anda langsung ke dalam ruang isolasi proyek tersebut. Anda tidak perlu mengatur environment secara manual.
-                            </p>
-                        </div>
-                        
-                        <div>
-                            <h4 class="font-semibold text-slate-900 dark:text-slate-50 text-sm mb-1">2. Web Terminal Auto-Alias</h4>
-                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                                Jika Anda perlu menginstal library tambahan secara manual di tengah proses pengembangan, Anda dapat langsung menggunakan fitur Web Terminal. Cukup ketikkan perintah standar seperti <code class="font-mono text-xs bg-slate-100 dark:bg-slate-700/50 px-1 rounded text-indigo-600 dark:text-indigo-400">pip install nama_library</code> atau menjalankan script dengan <code class="font-mono text-xs bg-slate-100 dark:bg-slate-700/50 px-1 rounded text-indigo-600 dark:text-indigo-400">python script.py</code>. Tembok keamanan cerdas kami akan secara otomatis menerjemahkan dan mengarahkan perintah tersebut ke dalam ekosistem <i>venv</i> proyek Anda (berubah menjadi <code class="font-mono text-xs bg-slate-100 dark:bg-slate-700/50 px-1 rounded">venv/bin/pip</code>). Sistem ini menjamin 100% keamanan server global.
-                            </p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-semibold text-slate-900 dark:text-slate-50 text-sm mb-1">3. Pre-compiled Data Science Library</h4>
-                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                                Menginstal library komputasi berat (seperti Numpy, Pandas, atau OpenCV) dari <i>source code</i> di lingkungan Linux bisa memakan waktu hingga puluhan menit dan memonopoli resource CPU. Untuk mengatasi ini, Ryaze telah menginjeksi <i>pre-compiled binaries</i> bawaan sistem untuk library Data Science populer (<strong>Numpy, Pandas, dan Scikit-Learn</strong>). Hal ini membuat proses instalasi environment Anda menjadi instan dan menjaga server tetap ringan.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
-                            <h4 class="font-semibold text-slate-900 dark:text-slate-50 text-sm mb-2">4. Aturan Binding PORT Dinamis (Kritis & Wajib)</h4>
-                            <p class="text-sm text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
-                                Arsitektur jaringan Ryaze menggunakan sistem <i>Dynamic Port Allocation</i> yang dipadukan dengan Nginx Reverse Proxy. Oleh karena itu, aplikasi Python Anda <strong>TIDAK DIIZINKAN</strong> untuk mengikat port secara statis/hardcode (misalnya: <code>port 5000</code> atau <code>8000</code>). Aplikasi Anda <strong>wajib</strong> membaca nomor port yang dibagikan oleh sistem melalui variabel lingkungan <code class="font-mono text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-500/40 px-1 rounded">PORT</code>. Jika hal ini tidak dipatuhi, aplikasi Anda tidak akan bisa diakses dari luar (mengalami 502 Bad Gateway).
-                            </p>
-                            
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="bg-slate-900 text-slate-300 dark:text-slate-400 font-mono text-xs p-4 rounded-lg shadow-sm">
-                                    <div class="text-slate-500 dark:text-slate-400 mb-2 border-b border-slate-700 pb-1"># Contoh implementasi di Flask</div>
-                                    <div class="leading-relaxed mt-2">
-                                        <span class="text-fuchsia-400 dark:text-fuchsia-300">import</span> os<br>
-                                        <span class="text-fuchsia-400 dark:text-fuchsia-300">from</span> flask <span class="text-fuchsia-400 dark:text-fuchsia-300">import</span> Flask<br><br>
-                                        app = Flask(__name__)<br><br>
-                                        <span class="text-fuchsia-400 dark:text-fuchsia-300">if</span> __name__ == <span class="text-emerald-400 dark:text-emerald-300">'__main__'</span>:<br>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-sky-400 dark:text-sky-300">port</span> = <span class="text-yellow-200">int</span>(os.environ.get(<span class="text-emerald-400 dark:text-emerald-300">'PORT'</span>, <span class="text-orange-300">8080</span>))<br>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;app.run(host=<span class="text-emerald-400 dark:text-emerald-300">'0.0.0.0'</span>, port=port)
-                                    </div>
-                                </div>
-                                <div class="bg-slate-900 text-slate-300 dark:text-slate-400 font-mono text-xs p-4 rounded-lg shadow-sm">
-                                    <div class="text-slate-500 dark:text-slate-400 mb-2 border-b border-slate-700 pb-1"># Contoh implementasi di FastAPI / Uvicorn</div>
-                                    <div class="leading-relaxed mt-2">
-                                        <span class="text-fuchsia-400 dark:text-fuchsia-300">import</span> os<br>
-                                        <span class="text-fuchsia-400 dark:text-fuchsia-300">import</span> uvicorn<br>
-                                        <span class="text-fuchsia-400 dark:text-fuchsia-300">from</span> fastapi <span class="text-fuchsia-400 dark:text-fuchsia-300">import</span> FastAPI<br><br>
-                                        app = FastAPI()<br><br>
-                                        <span class="text-fuchsia-400 dark:text-fuchsia-300">if</span> __name__ == <span class="text-emerald-400 dark:text-emerald-300">'__main__'</span>:<br>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-sky-400 dark:text-sky-300">port</span> = <span class="text-yellow-200">int</span>(os.environ.get(<span class="text-emerald-400 dark:text-emerald-300">'PORT'</span>, <span class="text-orange-300">8080</span>))<br>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;uvicorn.run(app, host=<span class="text-emerald-400 dark:text-emerald-300">'0.0.0.0'</span>, port=port)
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                
                 <hr class="border-slate-100 dark:border-slate-700 my-6">
                 
                 <div class="text-center">

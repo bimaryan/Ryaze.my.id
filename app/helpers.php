@@ -58,7 +58,6 @@ if (!function_exists('get_framework_icon')) {
             'laravel' => ['icon' => 'fa-brands fa-laravel', 'color' => 'text-red-500'],
             'react' => ['icon' => 'fa-brands fa-react', 'color' => 'text-sky-500'],
             'nextjs' => ['icon' => 'fa-brands fa-node-js', 'color' => 'text-slate-800'],
-            'python' => ['icon' => 'fa-brands fa-python', 'color' => 'text-yellow-500'],
             'node' => ['icon' => 'fa-brands fa-node', 'color' => 'text-emerald-500'],
             'vue' => ['icon' => 'fa-brands fa-vuejs', 'color' => 'text-emerald-500'],
         ];
