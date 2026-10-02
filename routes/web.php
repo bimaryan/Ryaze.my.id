@@ -61,6 +61,12 @@ Route::post('/whois/lookup', [WhoisController::class, 'lookup'])
     ->middleware('throttle:20,1')
     ->name('whois.lookup');
 
+// ── SPEED TEST (PUBLIK) ──────────────────────────────────────
+Route::get('/speed-test', [\App\Http\Controllers\SpeedTestController::class, 'index'])->name('speed-test.index');
+Route::get('/speed-test/ping', [\App\Http\Controllers\SpeedTestController::class, 'ping'])->name('speed-test.ping');
+Route::get('/speed-test/download', [\App\Http\Controllers\SpeedTestController::class, 'download'])->name('speed-test.download');
+Route::post('/speed-test/upload', [\App\Http\Controllers\SpeedTestController::class, 'upload'])->name('speed-test.upload');
+
 Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
     Route::get('/register', [AuthController::class, 'registerindex'])->name('register');

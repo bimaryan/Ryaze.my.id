@@ -28,6 +28,7 @@ class SeoRenderTest extends TestCase
         $response->assertOk();
         $this->assertStringStartsWith('text/xml', $response->headers->get('Content-Type'));
         $response->assertSee(url('/whois'), false);
+        $response->assertSee(url('/speed-test'), false);
     }
 
     public function test_blog_pages_render(): void
