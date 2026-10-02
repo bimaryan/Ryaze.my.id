@@ -59,7 +59,7 @@ function toggleDarkWithAnimation(event, currentDark, setDark) {
 }
 
 export default function PublicLayout({ children, withNav = true, withFooter = true, bodyClass }) {
-    const { auth } = usePage().props;
+    const { auth, navLinks, footerLinks } = usePage().props;
     const user = auth?.user;
     const [scrolled, setScrolled] = useState(false);
     const [dark, setDark] = useState(getInitialDark);
@@ -160,11 +160,9 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
                             <span className="text-[11px] text-[#999] dark:text-white/40 hidden sm:inline">&copy; {new Date().getFullYear()}</span>
                         </div>
                         <div className="flex items-center gap-6 text-[13px] text-[#999] dark:text-white/50">
-                            <a href="/#about" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Tentang</a>
-                            <a href="/#services" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Layanan</a>
-                            <a href="/blog" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Blog</a>
-                            <a href="/privacy" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Privasi</a>
-                            <a href="/terms" className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">Syarat</a>
+                            {footerLinks.map(l => (
+                                <a key={l.href} href={l.href} className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">{l.label}</a>
+                            ))}
                         </div>
                     </div>
                 </div>
