@@ -17,6 +17,8 @@ class WhoisPageTest extends TestCase
         $resp->assertOk();
         $resp->assertSee('window.whoisLookup', false);
         $resp->assertSee('WHOIS Domain Lookup', false);
+        $resp->assertDontSee('logo-sidebar', false);
+        $resp->assertDontSee('pjax-container', false);
     }
 
     public function test_lookup_validates_invalid_domain_format(): void

@@ -1,7 +1,9 @@
-@extends('index')
+@extends('layouts.public')
+
+@section('title', 'WHOIS Domain Lookup')
 
 @section('content')
-    <x-ui.page-layout>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         <x-ui.page-header
             title="WHOIS Domain Lookup"
             subtitle="Cek informasi registrasi & DNS suatu domain (registrar, tanggal kedaluwarsa, nameserver, status, dan record DNS)."
@@ -211,11 +213,11 @@
                 </div>
             </div>
         </div>
-    </x-ui.page-layout>
+    </div>
 
     <script nonce="{{ csp_nonce() }}">
         // Daftarkan sebagai global function (bukan via event alpine:init) agar
-        // tetap tersedia setelah navigasi PJAX me-replace konten halaman ini.
+        // tetap tersedia saat Alpine meng-inisialisasi elemen x-data halaman ini.
         window.whoisLookup = function () {
             return {
                 loading: false,
