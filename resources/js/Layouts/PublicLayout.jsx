@@ -15,6 +15,7 @@ const navLinks = [
     { label: 'Layanan', href: '/#services' },
     { label: 'Harga', href: '/#pricing' },
     { label: 'Cek Domain', href: '/whois' },
+    { label: 'Speed Test', href: '/speed-test' },
     { label: 'Blog', href: '/blog' },
 ];
 
