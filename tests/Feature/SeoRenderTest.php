@@ -27,6 +27,7 @@ class SeoRenderTest extends TestCase
         $response = $this->get('/sitemap.xml');
         $response->assertOk();
         $this->assertStringStartsWith('text/xml', $response->headers->get('Content-Type'));
+        $response->assertSee(url('/whois'), false);
     }
 
     public function test_blog_pages_render(): void
