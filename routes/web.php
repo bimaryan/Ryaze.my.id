@@ -55,6 +55,12 @@ Route::post('/portfolio/tip', [\App\Http\Controllers\Home\PortfolioController::c
 Route::get('/tip/sukses/{order_id}', [\App\Http\Controllers\Home\PortfolioController::class, 'tipSuccess'])
     ->name('portfolio.tip.success');
 
+// ── WHOIS / RDAP LOOKUP (PUBLIK) ─────────────────────────────
+Route::get('/whois', [WhoisController::class, 'index'])->name('whois.index');
+Route::post('/whois/lookup', [WhoisController::class, 'lookup'])
+    ->middleware('throttle:20,1')
+    ->name('whois.lookup');
+
 Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('/login', [AuthController::class, 'loginindex'])->name('login');
     Route::get('/register', [AuthController::class, 'registerindex'])->name('register');
@@ -258,11 +264,6 @@ Route::middleware('auth')->group(function () {
         Route::post('user/hosting/billing/subscribe', [DashboardController::class, 'subscribe'])->name('user_hosting.billing.subscribe');
         Route::post('user/hosting/billing/pay-wallet', [DashboardController::class, 'payWithWallet'])->name('user_hosting.billing.pay_wallet');
         Route::get('user/hosting/docs', [DashboardController::class, 'docs'])->name('user_hosting.docs');
-        // WHOIS / RDAP Lookup
-        Route::get('user/hosting/whois', [WhoisController::class, 'index'])->name('user_hosting.whois.index');
-        Route::post('user/hosting/whois/lookup', [WhoisController::class, 'lookup'])
-            ->middleware('throttle:20,1')
-            ->name('user_hosting.whois.lookup');
         // Tiket Bantuan (User)
         Route::get('user/hosting/tickets', [\App\Http\Controllers\User\TicketController::class, 'index'])->name('user_hosting.tickets.index');
         Route::get('user/hosting/tickets/create', [\App\Http\Controllers\User\TicketController::class, 'create'])->name('user_hosting.tickets.create');

@@ -14,6 +14,7 @@ const navLinks = [
     { label: 'Tentang', href: '/#about' },
     { label: 'Layanan', href: '/#services' },
     { label: 'Harga', href: '/#pricing' },
+    { label: 'Cek Domain', href: '/whois' },
     { label: 'Blog', href: '/blog' },
 ];
 

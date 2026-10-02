@@ -39,9 +39,6 @@
                         <span id="whois-submit-text">Cek Domain</span>
                     </button>
                 </div>
-                <p class="mt-3 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Data diambil dari <strong>RDAP</strong> (Registration Data Access Protocol — standar resmi ICANN, pengganti WHOIS) serta resolver DNS publik. Masukkan domain tanpa <code class="font-mono">https://</code> atau <code class="font-mono">www.</code>.
-                </p>
             </form>
 
             {{-- Area Hasil --}}
@@ -249,7 +246,7 @@
                     submitBtn.disabled = true;
                     submitText.textContent = 'Mencari...';
 
-                    fetch('{{ route('user_hosting.whois.lookup') }}', {
+                    fetch('{{ route('whois.lookup') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
