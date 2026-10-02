@@ -350,6 +350,8 @@
 
             // Intercept GET Forms (Search)
             document.body.addEventListener('submit', function (e) {
+                // Jangan bajak form yang sudah dicegah oleh handler lain (mis. WHOIS lookup)
+                if (e.defaultPrevented) return;
                 const form = e.target.closest('form');
                 if (form && form.method.toUpperCase() === 'GET' && form.action) {
                     if (isSameOrigin(form.action)) {

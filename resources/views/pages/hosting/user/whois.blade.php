@@ -9,9 +9,9 @@
             iconColor="indigo">
         </x-ui.page-header>
 
-        <div class="bg-white dark:bg-slate-800/60 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+        <div class="bg-white dark:bg-slate-800/60 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6" x-data="whoisLookup()">
             {{-- Form Pencarian --}}
-            <form id="whois-form" class="max-w-3xl">
+            <form id="whois-form" class="max-w-3xl" @submit.prevent="search()">
                 @csrf
                 <label for="domain-input" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-3">
                     Nama Domain <span class="text-rose-500 dark:text-rose-400">*</span>
@@ -45,7 +45,7 @@
             </form>
 
             {{-- Area Hasil --}}
-            <div id="whois-result" class="mt-8" x-data="whoisLookup()" x-cloak>
+            <div id="whois-result" class="mt-8" x-cloak>
                 {{-- Loading State --}}
                 <div x-show="loading" class="flex flex-col items-center justify-center py-16 gap-4">
                     <div class="relative">
@@ -228,13 +228,8 @@
                 result: null,
 
                 init() {
-                    const form = document.getElementById('whois-form');
-                    if (form) {
-                        form.addEventListener('submit', (e) => {
-                            e.preventDefault();
-                            this.search();
-                        });
-                    }
+                    // Submit-in ditangani lewat @submit.prevent="search()" pada <form>,
+                    // sehingga preventDefault selalu terpasang dalam scope Alpine.
                 },
 
                 search() {

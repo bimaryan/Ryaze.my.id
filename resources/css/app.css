@@ -12,6 +12,11 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+/* Sembunyikan elemen x-cloak sebelum Alpine siap (cegah flash konten mentah) */
+[x-cloak] {
+    display: none !important;
+}
+
 /* Quill editor — tema gelap bila halaman memakai .dark */
 .dark .ql-toolbar.ql-snow {
     background-color: #1e293b;
