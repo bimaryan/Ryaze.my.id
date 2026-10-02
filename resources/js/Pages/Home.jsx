@@ -1,4 +1,5 @@
 import PublicLayout from '../Layouts/PublicLayout';
+import { Head, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
 function rupiah(n) {
@@ -30,6 +31,7 @@ function Faq({ q, a }) {
 }
 
 export default function Home({ plans, planPricing, articles, starterPricing, version }) {
+    const { csrf_token } = usePage().props;
     const [chatOpen, setChatOpen] = useState(false);
     const [chatMsgs, setChatMsgs] = useState([]);
     const [chatInput, setChatInput] = useState('');
@@ -54,7 +56,7 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
         setChatMsgs(prev => [...prev, { id: Date.now(), text, user: true }]);
         setChatLoading(true);
         try {
-            const r = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }, body: JSON.stringify({ message: text, history: chatHistory }) });
+            const r = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf_token }, body: JSON.stringify({ message: text, history: chatHistory }) });
             if (r.ok) { const d = await r.json(); if (d.reply) { setChatMsgs(p => [...p, { id: Date.now() + 1, text: d.reply, user: false }]); setChatHistory(p => [...p.slice(-8), { role: 'user', content: text }, { role: 'assistant', content: d.reply }]); } }
         } catch {}
         setChatLoading(false);
@@ -62,8 +64,72 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
 
     const activePlans = Object.entries(plans).filter(([, p]) => p.is_active);
 
+    const siteName = 'Ryaze';
+    const pageUrl = 'https://ryaze.my.id';
+    const ogImage = `${pageUrl}/og-image.png`;
+
+    const faqJsonLd = {
+        '@@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqData.map((f, i) => ({
+            '@type': 'Question',
+            name: f.q,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: f.a
+            }
+        }))
+    };
+
+    const webPageJsonLd = {
+        '@@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'Jasa Pembuatan Website & Shared Hosting Indonesia',
+        description: 'Platform hosting & development modern. Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap.',
+        url: pageUrl,
+        inLanguage: 'id-ID',
+        publisher: {
+            '@type': 'Organization',
+            name: 'Ryaze',
+            logo: {
+                '@type': 'ImageObject',
+                url: `${pageUrl}/og-image.png`,
+                width: 1200,
+                height: 630
+            }
+        }
+    };
+
+    const breadcrumbJsonLd = {
+        '@@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://ryaze.my.id/' }
+        ]
+    };
+
     return (
-        <PublicLayout title="Jasa Pembuatan Website & Shared Hosting Indonesia" description="Platform hosting & development modern.">
+        <>
+            <Head title="Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze">
+                <meta name="description" content="Platform hosting & development modern. Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://ryaze.my.id/" />
+                <meta property="og:title" content="Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze" />
+                <meta property="og:description" content="Platform hosting & development modern. Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap." />
+                <meta property="og:image" content="https://ryaze.my.id/og-image.png" />
+                <meta property="og:site_name" content="Ryaze" />
+                <meta property="og:locale" content="id_ID" />
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://ryaze.my.id/" />
+                <meta property="twitter:title" content="Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze" />
+                <meta property="twitter:description" content="Platform hosting & development modern. Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap." />
+                <meta property="twitter:image" content="https://ryaze.my.id/og-image.png" />
+                <link rel="canonical" href="https://ryaze.my.id/" />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+            </Head>
+            <PublicLayout>
             <style>{`
                 [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
                 [data-reveal].revealed { opacity: 1; transform: none; }
@@ -421,5 +487,6 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
                 </button>
             </div> */}
         </PublicLayout>
-    );
+    </>
+);
 }
