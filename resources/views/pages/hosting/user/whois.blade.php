@@ -74,7 +74,7 @@
                     </div>
                     <div>
                         <p class="font-bold text-emerald-800 dark:text-emerald-300 text-base mb-1">Domain Tersedia</p>
-                        <p class="text-sm text-emerald-700 dark:text-emerald-400/90" x-text="result.message"></p>
+                        <p class="text-sm text-emerald-700 dark:text-emerald-400/90" x-text="result?.message"></p>
                         <p class="text-xs text-emerald-600/70 dark:text-emerald-500/70 mt-2">Catatan: hasil RDAP bisa tertunda. Pastikan dengan registrar sebelum membeli.</p>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                                 <i class="fa-solid fa-globe text-indigo-600 dark:text-indigo-400 text-lg"></i>
                             </div>
                             <div>
-                                <p class="font-mono font-bold text-lg text-slate-800 dark:text-slate-100" x-text="result.domain"></p>
+                                <p class="font-mono font-bold text-lg text-slate-800 dark:text-slate-100" x-text="result?.domain"></p>
                                 <p class="text-xs text-slate-400 dark:text-slate-600">Domain terdaftar</p>
                             </div>
                         </div>
@@ -104,37 +104,37 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60">
                             <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">Registrar</p>
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="result.whois.registrar || 'Tidak tersedia'"></p>
+                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="result?.whois?.registrar || 'Tidak tersedia'"></p>
                         </div>
                         <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60">
                             <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">DNSSEC</p>
                             <p class="text-sm font-semibold flex items-center gap-1.5"
-                               :class="result.whois.dnssec.enabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'">
-                                <i class="fa-solid" :class="result.whois.dnssec.enabled ? 'fa-shield-halved' : 'fa-shield'"></i>
-                                <span x-text="result.whois.dnssec.enabled ? 'Aktif (signed)' : 'Tidak aktif'"></span>
+                               :class="result?.whois?.dnssec?.enabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'">
+                                <i class="fa-solid" :class="result?.whois?.dnssec?.enabled ? 'fa-shield-halved' : 'fa-shield'"></i>
+                                <span x-text="result?.whois?.dnssec?.enabled ? 'Aktif (signed)' : 'Tidak aktif'"></span>
                             </p>
                         </div>
                         <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60">
                             <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">Tanggal Registrasi</p>
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="formatDate(result.whois.registered_at)"></p>
+                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="formatDate(result?.whois?.registered_at)"></p>
                         </div>
                         <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60">
                             <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">Tanggal Kedaluwarsa</p>
-                            <p class="text-sm font-semibold flex items-center gap-1.5" x-text="formatDate(result.whois.expires_at)"></p>
+                            <p class="text-sm font-semibold flex items-center gap-1.5" x-text="formatDate(result?.whois?.expires_at)"></p>
                         </div>
                         <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60 md:col-span-2">
                             <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">Update Terakhir</p>
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="formatDate(result.whois.updated_at)"></p>
+                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="formatDate(result?.whois?.updated_at)"></p>
                         </div>
                     </div>
 
                     {{-- Status --}}
-                    <div x-show="result.whois.status && result.whois.status.length > 0">
+                    <div x-show="result?.whois?.status && result.whois.status.length > 0">
                         <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-flag text-slate-400 dark:text-slate-600 text-xs"></i> Status Domain
                         </h3>
                         <div class="flex flex-wrap gap-2">
-                            <template x-for="status in result.whois.status" :key="status">
+                            <template x-for="status in (result?.whois?.status || [])" :key="status">
                                 <span class="inline-flex items-center text-[11px] font-medium px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 font-mono">
                                     <span x-text="status"></span>
                                 </span>
@@ -143,12 +143,12 @@
                     </div>
 
                     {{-- Nameservers --}}
-                    <div x-show="result.whois.nameservers && result.whois.nameservers.length > 0">
+                    <div x-show="result?.whois?.nameservers && result.whois.nameservers.length > 0">
                         <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-server text-slate-400 dark:text-slate-600 text-xs"></i> Nameserver
                         </h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <template x-for="ns in result.whois.nameservers" :key="ns">
+                            <template x-for="ns in (result?.whois?.nameservers || [])" :key="ns">
                                 <div class="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60 rounded-lg px-3.5 py-2.5">
                                     <i class="fa-solid fa-dns text-slate-300 dark:text-slate-600 text-xs"></i>
                                     <span class="font-mono text-xs text-slate-700 dark:text-slate-300" x-text="ns"></span>
@@ -158,12 +158,12 @@
                     </div>
 
                     {{-- Abuse Contact --}}
-                    <div x-show="result.whois.abuse && (result.whois.abuse.email || result.whois.abuse.phone)">
+                    <div x-show="result?.whois?.abuse && (result.whois.abuse.email || result.whois.abuse.phone)">
                         <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-circle-exclamation text-slate-400 dark:text-slate-600 text-xs"></i> Kontak Abuse Registrar
                         </h3>
                         <div class="flex flex-wrap gap-3">
-                            <template x-for="(value, key) in { email: result.whois.abuse.email, phone: result.whois.abuse.phone }" :key="key">
+                            <template x-for="(value, key) in { email: result?.whois?.abuse?.email, phone: result?.whois?.abuse?.phone }" :key="key">
                                 <div x-show="value" class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60 rounded-lg px-3.5 py-2.5">
                                     <i class="fa-solid text-slate-300 dark:text-slate-600 text-xs" :class="key === 'email' ? 'fa-envelope' : 'fa-phone'"></i>
                                     <span class="text-xs text-slate-700 dark:text-slate-300 font-mono" x-text="value"></span>
@@ -183,13 +183,13 @@
                         </div>
 
                         <div class="space-y-4" x-show="hasDnsRecords()">
-                            <template x-for="(records, type) in result.dns" :key="type">
+                            <template x-for="(records, type) in (result?.dns || {})" :key="type">
                                 <div x-show="records && records.length > 0">
                                     <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-2">
-                                        <span x-text="type"></span> <span x-text="`(${records.length})`"></span>
+                                        <span x-text="type"></span> <span x-text="`(${records?.length})`"></span>
                                     </p>
                                     <div class="flex flex-col gap-1.5">
-                                        <template x-for="(record, idx) in records" :key="type + '-' + idx">
+                                        <template x-for="(record, idx) in (records || [])" :key="type + '-' + idx">
                                             <div class="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60 rounded-lg px-3.5 py-2">
                                                 <span class="font-mono text-xs text-slate-700 dark:text-slate-300 break-all" x-text="record.ip || record.host || record.value"></span>
                                                 <span x-show="record.priority !== undefined" class="ml-auto text-[10px] font-mono text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
@@ -298,7 +298,7 @@
 
                 async copyRaw() {
                     if (!this.result) return;
-                    const w = this.result.whois;
+                    const w = this.result.whois || {};
                     const lines = [
                         `Domain: ${this.result.domain}`,
                         `Registrar: ${w.registrar || '-'}`,
