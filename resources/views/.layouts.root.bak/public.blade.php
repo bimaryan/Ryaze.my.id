@@ -116,6 +116,9 @@
                 <a href="{{ route('whois.index') }}" class="text-[13px] font-medium text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors hidden sm:inline-flex items-center gap-1.5">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i> Cek Domain
                 </a>
+                <a href="{{ route('speed-test.index') }}" class="text-[13px] font-medium text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors hidden sm:inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-gauge-high text-xs"></i> Speed Test
+                </a>
                 <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
                     class="w-8 h-8 flex items-center justify-center text-[#999] dark:text-[#666] hover:text-[#7c3aed] dark:hover:text-white transition-colors">
                     <i class="fa-solid fa-moon text-sm"></i>
