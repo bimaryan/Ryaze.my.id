@@ -128,6 +128,34 @@ class TwoFactorAuthTest extends TestCase
         $this->assertNull($user->two_factor_confirmed_at, 'Kode salah tidak boleh mengaktifkan 2FA.');
     }
 
+    // ── Tombol "Salin Semua Kode" ────────────────────────────────────────────
+
+    public function test_copy_all_codes_button_does_not_break_the_attribute(): void
+    {
+        $user = $this->makeUser();
+        $this->enableTwoFactor($user);
+
+        $response = $this->actingAs($user)
+            ->withSession(['recovery_codes' => ['ABCD-1234', 'WXYZ-5678']])
+            ->get(route('two-factor.recovery-codes'));
+
+        $response->assertOk();
+
+        $html = $response->getContent();
+
+        // Regresi: kode pernah disisipkan lewat @json() di dalam atribut
+        // onclick="...", sehingga tanda kutip menutup atribut lebih awal dan
+        // handler-nya tidak pernah jalan.
+        $this->assertStringNotContainsString('onclick="navigator.clipboard', $html);
+        $this->assertStringNotContainsString('writeText("', $html);
+
+        // Kode harus tetap tampil di DOM agar bisa disalin oleh JS.
+        $this->assertStringContainsString('id="copy-recovery-codes"', $html);
+        $this->assertStringContainsString('recovery-code', $html);
+        $this->assertStringContainsString('ABCD-1234', $html);
+        $this->assertStringContainsString('WXYZ-5678', $html);
+    }
+
     // ── Login challenge ──────────────────────────────────────────────────────
 
     public function test_login_with_two_factor_redirects_to_challenge_and_is_not_authenticated(): void
