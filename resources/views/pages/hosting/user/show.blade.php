@@ -47,7 +47,7 @@
                     {{ $project->status }}
                 </span>
                 @if ($project->dev_mode && in_array($project->framework, ['react', 'nextjs', 'vue']))
-                    <a href="https://dev{{ $project->dev_port }}.ryaze.my.id" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
+                    <a href="https://dev{{ $project->dev_port }}.{{ ltrim(substr($project->ryaze_domain, strlen(explode('.', $project->ryaze_domain)[0])), '.') }}" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
                     </a>
                 @endif
@@ -210,7 +210,7 @@
                                 <span class="block text-slate-500 dark:text-slate-400 text-xs mb-1">Root Directory</span>
                                 <span
                                     class="font-mono text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded block truncate">
-                                    /{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
+                                    /{{ explode('.', $project->ryaze_domain)[0] }}
                                 </span>
                             </div>
                             <form action="{{ route('user_hosting.redeploy', $project->hashid) }}" method="POST"
@@ -506,7 +506,7 @@ NGINX_CONF
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-terminal text-emerald-400/80 text-xs shrink-0"></i>
                             <span class="text-slate-400/80 text-[11px] font-mono tracking-wide truncate" id="terminal-cwd-display">
-                                /{{ str_replace('.ryaze.my.id', '', $project->ryaze_domain) }}
+                                /{{ explode('.', $project->ryaze_domain)[0] }}
                             </span>
                         </div>
                     </div>
@@ -1503,9 +1503,10 @@ NGINX_CONF
         var cwdDisplay = document.getElementById('terminal-cwd-display');
         var termUrl = fixUrl('{{ route('user_hosting.terminal', $project->hashid) }}');
         var csrfToken = '{{ csrf_token() }}';
-        @php $__projectRoot = str_replace(DIRECTORY_SEPARATOR, '/', hosting_clients_dir()) . '/' . str_replace('.ryaze.my.id', '', $project->ryaze_domain); @endphp
+        @php $__projectRoot = str_replace(DIRECTORY_SEPARATOR, '/', hosting_clients_dir()) . '/' . explode('.', $project->ryaze_domain)[0]; @endphp
         var projectRoot = @json($__projectRoot);
         var projectSlug = '{{ $project->ryaze_domain }}';
+        var projectDomainBase = '{{ ltrim(substr($project->ryaze_domain, strlen(explode('.', $project->ryaze_domain)[0])), '.') }}';
 
         var cmdHistory = [],
             histIdx = -1,
@@ -3398,7 +3399,7 @@ b.classList.toggle('dark:text-slate-400', !on);
                         <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-microchip text-emerald-400 dark:text-emerald-300"></i><span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Dev Server</span></div>
                         <div class="text-sm text-white font-mono">${devPort ? ideEsc(devPort) : '—'}</div>
                         <div class="mb-2"><span class="text-[9px] px-1.5 py-0.5 rounded-full ${devActive ? 'bg-emerald-600/30 text-emerald-300' : 'bg-slate-700 text-slate-400 dark:text-slate-500'}">${devActive ? 'AKTIF' : 'NONAKTIF'}</span></div>
-                        ${devActive && devPort ? `<a href="https://dev${ideEsc(devPort)}.ryaze.my.id" target="_blank" class="inline-block text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1 rounded transition-colors"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>` : '<span class="text-[9px] text-slate-600 dark:text-slate-300">Aktifkan dari tab Overview</span>'}
+                        ${devActive && devPort ? `<a href="https://dev${ideEsc(devPort)}.${ideEsc(projectDomainBase)}" target="_blank" class="inline-block text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1 rounded transition-colors"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>` : '<span class="text-[9px] text-slate-600 dark:text-slate-300">Aktifkan dari tab Overview</span>'}
                     </div>
                 </div>`;
         }

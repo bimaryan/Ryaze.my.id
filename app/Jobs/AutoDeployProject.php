@@ -529,6 +529,41 @@ class AutoDeployProject implements ShouldQueue
         return true;
     }
 
+    /**
+     * Daftarkan ingress rule pada Cloudflare Tunnel (remotely-managed).
+     *
+     * Tanpa rule ini request hanya sampai di tunnel lalu ditolak karena
+     * tidak ada routing ke nginx -> 502 Bad Gateway.
+     *
+     * Sengaja TIDAK melempar exception: bila token Zero Trust belum
+     * dikonfigurasi, andalkan wildcard ingress rule yang sudah ada di
+     * dashboard. Deploy tetap dianggap sukses.
+     */
+    private function registerTunnelRoute($deploy): void
+    {
+        $hostname = $this->project->ryaze_domain;
+
+        try {
+            $tunnel = app(\App\Services\CloudflareTunnelService::class);
+
+            if (! $tunnel->isConfigured()) {
+                $this->log($deploy, '> [INFO] Cloudflare Tunnel belum dikonfigurasi (CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_TUNNEL_ID / CLOUDFLARE_TUNNEL_API_TOKEN kosong). Melewati registrasi route; pastikan wildcard ingress rule tersedia di dashboard Zero Trust.');
+
+                return;
+            }
+
+            $service = config('services.cloudflare_tunnel.service', 'http://localhost:80');
+
+            if ($tunnel->registerRoute($hostname, $service)) {
+                $this->log($deploy, "> Tunnel route terdaftar: {$hostname} -> {$service}");
+            } else {
+                $this->log($deploy, "> [WARNING] Gagal mendaftarkan tunnel route untuk {$hostname}.");
+            }
+        } catch (\Throwable $e) {
+            $this->log($deploy, '> [WARNING] Error saat registrasi tunnel route: '.$e->getMessage());
+        }
+    }
+
     private function exec(string $command, $deploy, bool $throwOnError = false): string
     {
         $unsetEnv = 'unset APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL LOG_CHANNEL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD BROADCAST_DRIVER CACHE_DRIVER QUEUE_CONNECTION SESSION_DRIVER SESSION_LIFETIME REDIS_HOST REDIS_PASSWORD REDIS_PORT; ';
