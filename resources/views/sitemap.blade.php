@@ -18,12 +18,7 @@
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
     </url>
-    <url>
-        <loc>{{ route('speed-test.index') }}</loc>
-        <lastmod>{{ now()->tz('UTC')->toAtomString() }}</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
+    
     @foreach ($articles as $article)
     <url>
         <loc>{{ route('blog.show', $article->slug) }}</loc>
