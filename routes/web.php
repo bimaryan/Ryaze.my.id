@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Hosting\Admin\DashboardController as HostingAdminDashboardController;
 use App\Http\Controllers\Hosting\User\DashboardController;
@@ -85,7 +86,29 @@ Route::middleware(['throttle:10,1'])->group(function () {
     Route::post('reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
+
+// ── 2FA LOGIN CHALLENGE (setelah password benar, sebelum sesi penuh) ────────
+Route::middleware(['throttle:10,1'])->group(function () {
+    Route::get('/two-factor-challenge', [TwoFactorController::class, 'challenge'])
+        ->name('two-factor.challenge');
+    Route::post('/two-factor-challenge/verify', [TwoFactorController::class, 'verifyChallenge'])
+        ->name('two-factor.challenge.verify');
+});
 Route::middleware('auth')->group(function () {
+
+    // ── TWO-FACTOR AUTHENTICATION (2FA) ─────────────────────────────
+    Route::get('/profile/two-factor', [TwoFactorController::class, 'setup'])->name('two-factor.setup');
+    Route::post('/profile/two-factor/generate', [TwoFactorController::class, 'generate'])
+        ->middleware('throttle:10,1')->name('two-factor.generate');
+    Route::post('/profile/two-factor/confirm', [TwoFactorController::class, 'confirm'])
+        ->middleware('throttle:10,1')->name('two-factor.confirm');
+    Route::get('/profile/two-factor/recovery-codes', [TwoFactorController::class, 'recoveryCodes'])
+        ->name('two-factor.recovery-codes');
+    Route::post('/profile/two-factor/recovery-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])
+        ->middleware('throttle:10,1')->name('two-factor.recovery-codes.regenerate');
+    Route::delete('/profile/two-factor', [TwoFactorController::class, 'disable'])
+        ->middleware('throttle:10,1')->name('two-factor.disable');
+
     // ── PROFIL USER ───────────────────────────────────────────────
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');

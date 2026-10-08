@@ -120,9 +120,13 @@
             <x-ui.card>
                 <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
                     <h2 class="text-sm font-bold text-slate-800 dark:text-slate-100">Two-Factor Authentication (2FA)</h2>
-                    @if(auth()->user()->two_factor_secret)
+                    @if(auth()->user()->two_factor_confirmed_at)
                         <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
                             <i class="fa-solid fa-shield-check"></i> Aktif
+                        </span>
+                    @elseif(auth()->user()->two_factor_secret)
+                        <span class="bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-clock"></i> Belum Selesai
                         </span>
                     @else
                         <span class="bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
@@ -136,21 +140,47 @@
                         Tambahkan lapisan keamanan ekstra ke akun Anda menggunakan aplikasi autentikator (seperti Google Authenticator).
                     </p>
 
-                    @if(!auth()->user()->two_factor_secret)
-                        <form action="#" method="POST" onsubmit="event.preventDefault(); Swal.fire('Info', 'Fitur 2FA Setup sedang dalam pengembangan MVP.', 'info');">
+                    @if(auth()->user()->two_factor_confirmed_at)
+                        <div class="flex flex-wrap gap-3">
+                            <a href="{{ route('two-factor.recovery-codes') }}"
+                                class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-sm font-bold py-2.5 px-6 rounded-lg transition-colors">
+                                <i class="fa-solid fa-key mr-1"></i> Kode Pemulihan
+                            </a>
+                            <form action="{{ route('two-factor.disable') }}" method="POST" id="twofa-disable-form"
+                                onsubmit="event.preventDefault(); twofaPromptDisable(); return false;">
+                                @csrf
+                                @method('DELETE')
+                                <input type="hidden" name="password" id="twofa-disable-password">
+                                <input type="hidden" name="code" id="twofa-disable-code">
+                                <button type="submit"
+                                    class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
+                                    Nonaktifkan 2FA
+                                </button>
+                            </form>
+                        </div>
+                    @elseif(auth()->user()->two_factor_secret)
+                        <form action="{{ route('two-factor.confirm') }}" method="POST" class="space-y-4 max-w-sm">
                             @csrf
-                            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
-                                Aktifkan 2FA
+                            <p class="text-sm text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info"></i> Setup belum selesai. Masukkan kode dari aplikasi
+                                autentikator untuk mengaktifkan 2FA.
+                            </p>
+                            <input type="text" name="code" required inputmode="numeric" pattern="\d{6}" maxlength="6"
+                                placeholder="000000" autofocus
+                                class="w-full text-center text-sm tracking-[0.4em] bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:border-indigo-500 outline-none transition">
+                            @error('code')
+                                <p class="text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                            @enderror
+                            <button type="submit"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
+                                Selesaikan Setup
                             </button>
                         </form>
                     @else
-                        <form action="#" method="POST" onsubmit="event.preventDefault(); Swal.fire({title: 'Nonaktifkan 2FA?', text: 'Apakah Anda yakin ingin menonaktifkan pengamanan ekstra ini?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya', cancelButtonText: 'Batal'}).then(res => { if(res.isConfirmed) { Swal.fire('Info', 'Fitur 2FA Disable sedang dalam pengembangan MVP.', 'info'); } }); return false;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
-                                Nonaktifkan 2FA
-                            </button>
-                        </form>
+                        <a href="{{ route('two-factor.setup') }}"
+                            class="inline-block bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
+                            Aktifkan 2FA
+                        </a>
                     @endif
                 </div>
             </x-ui.card>
@@ -158,3 +188,48 @@
         </div>
     </x-ui.page-layout>
 @endsection
+
+@push('scripts')
+    <script nonce="{{ csp_nonce() }}">
+        // Dipanggil oleh form "Nonaktifkan 2FA": kumpulkan password + OTP
+        // sebelum form benar-benar disubmit.
+        function twofaPromptDisable() {
+            Swal.fire({
+                title: 'Konfirmasi Nonaktifkan 2FA',
+                html: `
+                    <input id="swal-password" type="password" placeholder="Password akun"
+                        class="swal2-input" autocomplete="current-password">
+                    <input id="swal-otp" type="text" inputmode="numeric" maxlength="6" placeholder="Kode OTP 6 digit"
+                        class="swal2-input" style="letter-spacing:.4em;text-align:center">
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Nonaktifkan',
+                cancelButtonText: 'Batal',
+                focusConfirm: false,
+                preConfirm: function () {
+                    const password = document.getElementById('swal-password').value;
+                    const code = document.getElementById('swal-otp').value;
+
+                    if (!password) {
+                        Swal.showValidationMessage('Password wajib diisi.');
+                        return false;
+                    }
+
+                    if (!/^\d{6}$/.test(code)) {
+                        Swal.showValidationMessage('Kode OTP harus 6 digit.');
+                        return false;
+                    }
+
+                    document.getElementById('twofa-disable-password').value = password;
+                    document.getElementById('twofa-disable-code').value = code;
+
+                    return true;
+                },
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    document.getElementById('twofa-disable-form').submit();
+                }
+            });
+        }
+    </script>
+@endpush

@@ -15,6 +15,11 @@ use Inertia\Inertia;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected readonly \App\Services\TotpService $totp
+    ) {
+    }
+
     private const MAX_ATTEMPTS = 5;
 
     private const LOCKOUT_MINUTES = 5;
@@ -97,6 +102,18 @@ class AuthController extends Controller
                 ])->onlyInput('email');
             }
 
+            // ── 2FA CHALLENGE ────────────────────────────────────────────
+            // Akun dengan 2FA aktif belum boleh dianggap login penuh.
+            // Simpan identitas di session sementara lalu arahkan keOTP.
+            if ($this->totp->hasTwoFactorEnabled(Auth::user())) {
+                $request->session()->put('2fa.user_id', Auth::user()->id);
+                $request->session()->put('2fa.remember', $remember);
+
+                Auth::logout();
+                $request->session()->regenerate();
+
+                return redirect()->route('two-factor.challenge');
+            }
             $request->session()->regenerate();
 
             // Reset counter & catat login sukses
