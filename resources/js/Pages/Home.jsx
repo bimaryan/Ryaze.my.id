@@ -84,22 +84,23 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
     };
 
     const activePromos = Array.isArray(promos) ? promos : [];
+    const [paused, setPaused] = useState(false);
+
+    useEffect(() => {
+        if (activePromos.length < 2 || paused) return;
+        const t = setInterval(() => setSlide(s => (s === activePromos.length - 1 ? 0 : s + 1)), 5000);
+        return () => clearInterval(t);
+    }, [activePromos.length, paused]);
+
+    const goSlide = (i) => {
+        setSlide(activePromos.length ? (i + activePromos.length) % activePromos.length : 0);
+    };
 
     // Sudah login sebagai user hosting? Langsung ke halaman pilih paket,
     // kalau belum arahkan ke halaman register (sembunyikan billing cycle di URL register).
     const userRole = auth?.user?.role;
     const canSubscribe = ['user_hosting', 'admin_hosting', 'superadmin'].includes(userRole);
     const planCtaHref = canSubscribe ? `/user/hosting/subscription?cycle=${cycle}` : '/register';
-
-    useEffect(() => {
-        if (activePromos.length < 2) return;
-        const t = setInterval(() => setSlide(s => (s === activePromos.length - 1 ? 0 : s + 1)), 5000);
-        return () => clearInterval(t);
-    }, [activePromos.length]);
-
-    const goSlide = (i) => {
-        setSlide(activePromos.length ? (i + activePromos.length) % activePromos.length : 0);
-    };
 
     const siteName = 'Ryaze';
     const pageUrl = 'https://ryaze.my.id';
@@ -177,62 +178,73 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
             {/* HERO */}
             <section className="relative min-h-screen bg-white dark:bg-[#0a0a14] overflow-hidden">
                 <div className="relative min-h-screen max-w-6xl mx-auto px-6 pt-32 pb-28 lg:pt-44 lg:pb-36 flex flex-col justify-center">
-                    <div className="max-w-3xl" data-reveal>
-                        {activePromos.length > 0 ? (
-                            <div className="relative mb-8 border border-[#e5e5e5] dark:border-[#1a1a2e] group">
-                                <div className="overflow-hidden">
-                                    <div
-                                        className="flex transition-transform duration-500 ease-in-out"
-                                        style={{ transform: `translateX(-${slide * 100}%)` }}
-                                    >
-                                        {activePromos.map((p, i) => (
-                                            <div key={p.id ?? i} className="w-full shrink-0">
+                    {activePromos.length > 0 && (
+                        <div
+                            className="relative mb-8 w-full max-w-3xl mx-auto group"
+                            data-reveal
+                            onMouseEnter={() => setPaused(true)}
+                            onMouseLeave={() => setPaused(false)}
+                        >
+                            <div className="overflow-hidden border border-[#e5e5e5] dark:border-[#1a1a2e]">
+                                <div
+                                    className="flex transition-transform duration-500 ease-in-out"
+                                    style={{ transform: `translateX(-${slide * 100}%)` }}
+                                >
+                                    {activePromos.map((p, i) => (
+                                        <div key={p.id ?? i} className="w-full shrink-0">
+                                            {p.banner_url ? (
                                                 <a
                                                     href={p.target_url || '#pricing'}
-                                                    className="block bg-[#7c3aed] px-6 py-5 text-center hover:bg-[#6d28d9] transition-colors"
+                                                    className="block bg-white dark:bg-[#0d0d18]"
                                                 >
-                                                    <p className="text-sm font-bold text-white tracking-tight sm:text-base">{p.title}</p>
-                                                    {p.description && (
-                                                        <p className="text-[#ede9fe] text-xs sm:text-sm mt-1.5 line-clamp-2">{p.description}</p>
-                                                    )}
-                                                    {p.banner_url && (
-                                                        <img src={p.banner_url} alt={p.title} className="mt-4 mx-auto w-full max-w-2xl h-auto object-contain" />
-                                                    )}
+                                                    <img src={p.banner_url} alt={p.title} className="w-full h-auto object-contain" />
                                                 </a>
-                                            </div>
+                                            ) : (
+                                                <div className="bg-[#7c3aed] px-6 py-6 sm:py-8 text-center min-h-[140px] flex flex-col justify-center">
+                                                    <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">{p.title}</h3>
+                                                    {p.description && (
+                                                        <p className="text-[#ede9fe] mt-2 text-sm max-w-2xl mx-auto">{p.description}</p>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {activePromos.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={() => goSlide(slide - 1)}
+                                        aria-label="Promo sebelumnya"
+                                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/25 hover:bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-300"
+                                    >
+                                        <i className="fa-solid fa-chevron-left text-[10px]"></i>
+                                    </button>
+                                    <button
+                                        onClick={() => goSlide(slide + 1)}
+                                        aria-label="Promo berikutnya"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/25 hover:bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-300"
+                                    >
+                                        <i className="fa-solid fa-chevron-right text-[10px]"></i>
+                                    </button>
+                                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                                        {activePromos.map((p, i) => (
+                                            <button
+                                                key={p.id ?? i}
+                                                onClick={() => goSlide(i)}
+                                                aria-label={`Promo ${i + 1}`}
+                                                className={`h-2 transition-all duration-300 ${slide === i ? 'bg-[#7c3aed] w-6' : 'bg-[#7c3aed]/30 w-2 hover:bg-[#7c3aed]/60'}`}
+                                            />
                                         ))}
                                     </div>
-                                </div>
-                                {activePromos.length > 1 && (
-                                    <>
-                                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-                                            {activePromos.map((p, i) => (
-                                                <button
-                                                    key={p.id ?? i}
-                                                    onClick={() => goSlide(i)}
-                                                    aria-label={`Promo ${i + 1}`}
-                                                    className={`h-2 transition-all duration-300 ${slide === i ? 'bg-white w-6' : 'bg-white/50 w-2 hover:bg-white/80'}`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <button
-                                            onClick={() => goSlide(slide - 1)}
-                                            aria-label="Promo sebelumnya"
-                                            className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/25 hover:bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                        >
-                                            <i className="fa-solid fa-chevron-left text-[10px]"></i>
-                                        </button>
-                                        <button
-                                            onClick={() => goSlide(slide + 1)}
-                                            aria-label="Promo berikutnya"
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/25 hover:bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                        >
-                                            <i className="fa-solid fa-chevron-right text-[10px]"></i>
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        ) : (
+                                </>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="max-w-3xl" data-reveal>
+                        {activePromos.length === 0 && (
                             <div className="inline-block px-3 py-1 bg-[#7c3aed] text-white text-[11px] font-bold tracking-widest uppercase mb-8">
                                 Deployment Tersedia
                             </div>
