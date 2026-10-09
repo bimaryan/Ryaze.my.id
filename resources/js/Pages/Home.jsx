@@ -30,8 +30,10 @@ function Faq({ q, a }) {
     );
 }
 
-export default function Home({ plans, planPricing, articles, starterPricing, version }) {
-    const { csrf_token } = usePage().props;
+export default function Home({ plans, planPricing, planPricingYearly, articles, starterPricing, starterPricingYearly, promos = [], version }) {
+    const { csrf_token, auth } = usePage().props;
+    const [cycle, setCycle] = useState('monthly');
+    const [slide, setSlide] = useState(0);
     const [chatOpen, setChatOpen] = useState(false);
     const [chatMsgs, setChatMsgs] = useState([]);
     const [chatInput, setChatInput] = useState('');
@@ -63,6 +65,41 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
     };
 
     const activePlans = Object.entries(plans).filter(([, p]) => p.is_active);
+
+    const isYearly = cycle === 'yearly';
+
+    // Harga paket sesuai siklus aktif. Paket tanpa harga tahunan (mis. Free)
+    // otomatis memakai harga bulanan x 12.
+    const priceOf = (slug) => {
+        const monthly = (planPricing && planPricing[slug]) || { normal: 0, promo: null, active: 0 };
+        if (!isYearly) return { ...monthly, unit: '/bln' };
+        const yearly = (planPricingYearly && planPricingYearly[slug]) || { normal: 0, promo: null, active: 0 };
+        // Paket gratis (Free) tetap ditampilkan apa adanya.
+        if (!monthly.active) return { ...monthly, unit: '/bln' };
+        // Paket tanpa harga tahunan -> hitung dari bulanan x 12.
+        if (!yearly.active) {
+            return { normal: monthly.normal * 12, promo: null, active: monthly.active * 12, unit: '/thn' };
+        }
+        return { ...yearly, unit: '/thn' };
+    };
+
+    const activePromos = Array.isArray(promos) ? promos : [];
+
+    // Sudah login sebagai user hosting? Langsung ke halaman pilih paket,
+    // kalau belum arahkan ke halaman register (sembunyikan billing cycle di URL register).
+    const userRole = auth?.user?.role;
+    const canSubscribe = ['user_hosting', 'admin_hosting', 'superadmin'].includes(userRole);
+    const planCtaHref = canSubscribe ? `/user/hosting/subscription?cycle=${cycle}` : '/register';
+
+    useEffect(() => {
+        if (activePromos.length < 2) return;
+        const t = setInterval(() => setSlide(s => (s === activePromos.length - 1 ? 0 : s + 1)), 5000);
+        return () => clearInterval(t);
+    }, [activePromos.length]);
+
+    const goSlide = (i) => {
+        setSlide(activePromos.length ? (i + activePromos.length) % activePromos.length : 0);
+    };
 
     const siteName = 'Ryaze';
     const pageUrl = 'https://ryaze.my.id';
@@ -141,9 +178,65 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
             <section className="relative min-h-screen bg-white dark:bg-[#0a0a14] overflow-hidden">
                 <div className="relative min-h-screen max-w-6xl mx-auto px-6 pt-32 pb-28 lg:pt-44 lg:pb-36 flex flex-col justify-center">
                     <div className="max-w-3xl" data-reveal>
-                        <div className="inline-block px-3 py-1 bg-[#7c3aed] text-white text-[11px] font-bold tracking-widest uppercase mb-8">
-                            Deployment Tersedia
-                        </div>
+                        {activePromos.length > 0 ? (
+                            <div className="relative mb-8 border border-[#e5e5e5] dark:border-[#1a1a2e] group">
+                                <div className="overflow-hidden">
+                                    <div
+                                        className="flex transition-transform duration-500 ease-in-out"
+                                        style={{ transform: `translateX(-${slide * 100}%)` }}
+                                    >
+                                        {activePromos.map((p, i) => (
+                                            <div key={p.id ?? i} className="w-full shrink-0">
+                                                <a
+                                                    href={p.target_url || '#pricing'}
+                                                    className="block bg-[#7c3aed] px-6 py-5 text-center hover:bg-[#6d28d9] transition-colors"
+                                                >
+                                                    <p className="text-sm font-bold text-white tracking-tight sm:text-base">{p.title}</p>
+                                                    {p.description && (
+                                                        <p className="text-[#ede9fe] text-xs sm:text-sm mt-1.5 line-clamp-2">{p.description}</p>
+                                                    )}
+                                                    {p.banner_url && (
+                                                        <img src={p.banner_url} alt={p.title} className="mt-4 mx-auto w-full max-w-2xl h-auto object-contain" />
+                                                    )}
+                                                </a>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                {activePromos.length > 1 && (
+                                    <>
+                                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
+                                            {activePromos.map((p, i) => (
+                                                <button
+                                                    key={p.id ?? i}
+                                                    onClick={() => goSlide(i)}
+                                                    aria-label={`Promo ${i + 1}`}
+                                                    className={`h-2 transition-all duration-300 ${slide === i ? 'bg-white w-6' : 'bg-white/50 w-2 hover:bg-white/80'}`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <button
+                                            onClick={() => goSlide(slide - 1)}
+                                            aria-label="Promo sebelumnya"
+                                            className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/25 hover:bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                        >
+                                            <i className="fa-solid fa-chevron-left text-[10px]"></i>
+                                        </button>
+                                        <button
+                                            onClick={() => goSlide(slide + 1)}
+                                            aria-label="Promo berikutnya"
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/25 hover:bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                        >
+                                            <i className="fa-solid fa-chevron-right text-[10px]"></i>
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="inline-block px-3 py-1 bg-[#7c3aed] text-white text-[11px] font-bold tracking-widest uppercase mb-8">
+                                Deployment Tersedia
+                            </div>
+                        )}
                         <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black text-[#7c3aed] dark:text-white leading-[1.05] tracking-[-0.03em] mb-6">
                             Bangun produk digital,<br />
                             <span className="text-[#6d28d9]">deploy dalam hitungan menit.</span>
@@ -284,11 +377,15 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
                                 <div className="flex items-end justify-between mb-3">
                                     <h3 className="text-2xl font-black text-[#7c3aed] dark:text-white">Shared App Hosting</h3>
                                     <div className="text-right">
-                                        {starterPricing.promo > 0 && <span className="text-xs text-[#999] dark:text-white/50 price-strike block">Rp {rupiah(starterPricing.normal)}</span>}
-                                        <div className="flex items-baseline gap-1">
-                                            <span className="text-2xl font-black text-[#7c3aed] dark:text-white">Rp {rupiah(starterPricing.active)}</span>
-                                            <span className="text-xs text-[#999] dark:text-white/50">/bln</span>
-                                        </div>
+                                        {(() => { const sp = isYearly ? ((starterPricingYearly && starterPricingYearly.active) ? starterPricingYearly : { ...starterPricing, normal: starterPricing.normal * 12, promo: null, active: starterPricing.active * 12 }) : starterPricing; return (
+                                            <>
+                                                {sp.promo !== null && <span className="text-xs text-[#999] dark:text-white/50 price-strike block">Rp {rupiah(sp.normal)}</span>}
+                                                <div className="flex items-baseline gap-1">
+                                                    <span className="text-2xl font-black text-[#7c3aed] dark:text-white">Rp {rupiah(sp.active)}</span>
+                                                    <span className="text-xs text-[#999] dark:text-white/50">{isYearly ? '/thn' : '/bln'}</span>
+                                                </div>
+                                            </>
+                                        ); })()}
                                     </div>
                                 </div>
                                 <p className="text-[#666] dark:text-white/70 text-[15px] leading-relaxed mb-8">
@@ -318,11 +415,30 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
                         <span className="text-[11px] font-bold text-[#7c3aed] uppercase tracking-[0.2em] mb-4 block">Harga</span>
                         <h2 className="text-4xl font-black text-[#7c3aed] dark:text-white tracking-tight mb-3">Pilih Paket Hosting</h2>
                         <p className="text-[#666] dark:text-white/70 text-[15px]">Transparan. Tanpa biaya tersembunyi.</p>
+                        <div className="mt-8 inline-flex items-center border border-[#e5e5e5] dark:border-[#1a1a2e] bg-[#f5f0ff] dark:bg-[#1a1025]/20 p-1">
+                            {[
+                                { key: 'monthly', label: 'Bulanan' },
+                                { key: 'yearly', label: 'Tahunan', badge: 'HEMAT' },
+                            ].map(c => (
+                                <button
+                                    key={c.key}
+                                    onClick={() => setCycle(c.key)}
+                                    className={`px-5 py-2 text-sm font-semibold transition-colors ${cycle === c.key ? 'bg-[#7c3aed] text-white' : 'text-[#666] dark:text-white/60 hover:text-[#7c3aed]'}`}
+                                >
+                                    {c.label}
+                                    {c.badge && (
+                                        <span className={`ml-2 text-[10px] font-bold px-1.5 py-0.5 tracking-wide ${cycle === c.key ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'}`}>
+                                            {c.badge}
+                                        </span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#e5e5e5] dark:bg-[#1a1a2e] border border-[#e5e5e5] dark:border-[#1a1a2e] mb-16" data-reveal>
                         {activePlans.map(([slug, plan]) => {
-                            const p = planPricing[slug];
+                            const p = priceOf(slug);
                             const pop = slug === 'pro';
                             return (
                                 <div key={slug} className={`${pop ? 'bg-[#7c3aed] dark:bg-[#6d28d9] text-white border-[#7c3aed] dark:border-[#3d2f52]' : 'bg-white dark:bg-[#0d0d18] border-[#e5e5e5] dark:border-[#1a1a2e]'} p-8 flex flex-col relative`}>
@@ -333,8 +449,13 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
                                         {p.promo === null && <div className="h-4 mb-1"></div>}
                                         <div className="flex items-baseline gap-1">
                                             <span className={`text-3xl font-black tracking-tight ${pop ? 'text-white' : 'text-[#7c3aed] dark:text-white'}`}>Rp {rupiah(p.active)}</span>
-                                            <span className={`text-sm ${pop ? 'text-[#e9d5ff]' : 'text-[#999] dark:text-white/50'}`}>/bln</span>
+                                            <span className={`text-sm ${pop ? 'text-[#e9d5ff]' : 'text-[#999] dark:text-white/50'}`}>{p.unit}</span>
                                         </div>
+                                        {isYearly && p.active > 0 && (
+                                            <span className={`text-[11px] mt-1 ${pop ? 'text-[#e9d5ff]' : 'text-[#999] dark:text-white/50'}`}>
+                                                setara Rp {rupiah(Math.round(p.active / 12))}/bln
+                                            </span>
+                                        )}
                                     </div>
                                     <ul className="space-y-2.5 flex-1">
                                         {plan.features.map(f => (
@@ -344,7 +465,7 @@ export default function Home({ plans, planPricing, articles, starterPricing, ver
                                             </li>
                                         ))}
                                     </ul>
-                                    <a href="/register" className={`mt-8 flex items-center justify-center w-full py-2.5 text-sm font-semibold transition-colors ${pop ? 'bg-white text-[#7c3aed] hover:bg-slate-100' : 'bg-[#7c3aed] text-white hover:bg-[#6d28d9]'}`}>
+                                    <a href={planCtaHref} className={`mt-8 flex items-center justify-center w-full py-2.5 text-sm font-semibold transition-colors ${pop ? 'bg-white text-[#7c3aed] hover:bg-slate-100' : 'bg-[#7c3aed] text-white hover:bg-[#6d28d9]'}`}>
                                         Pilih Paket
                                     </a>
                                 </div>

@@ -48,7 +48,7 @@
             </div>
         @endif
 
-        <div class="mb-6" x-data="{ billingCycle: 'monthly' }">
+        <div class="mb-6" x-data="{ billingCycle: '{{ request('cycle') === 'yearly' ? 'yearly' : 'monthly' }}' }">
             <div class="flex items-center justify-between mb-5">
                 <div>
                     <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2 text-lg">

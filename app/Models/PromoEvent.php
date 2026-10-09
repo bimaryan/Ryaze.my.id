@@ -26,6 +26,12 @@ class PromoEvent extends Model
 
     public function getBannerUrlAttribute()
     {
-        return $this->banner_image ? \Illuminate\Support\Facades\Storage::url($this->banner_image) : null;
+        if (! $this->banner_image) {
+            return null;
+        }
+
+        // Pakai asset() supaya mengikuti host/scheme request aktif (mis. https),
+        // bukan APP_URL yang bisa masih http.
+        return asset('storage/'.$this->banner_image);
     }
 }

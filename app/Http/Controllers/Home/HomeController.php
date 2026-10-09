@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Home;
 use App\Helpers\AppVersion;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\PromoEvent;
 use App\Models\Setting;
 use App\Models\User;
 use Inertia\Inertia;
@@ -17,9 +18,25 @@ class HomeController extends Controller
 
         $homePlans = User::hostingPlans();
         $planPricing = [];
+        $planPricingYearly = [];
         foreach ($homePlans as $slug => $plan) {
-            $planPricing[$slug] = User::getPlanPricing($slug);
+            $planPricing[$slug] = User::getPlanPricing($slug, 'monthly');
+            $planPricingYearly[$slug] = User::getPlanPricing($slug, 'yearly');
         }
+
+        $promos = PromoEvent::where('is_active', true)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->latest()
+            ->get()
+            ->map(fn ($p) => [
+                'id' => $p->id,
+                'title' => $p->title,
+                'description' => $p->description,
+                'banner_url' => $p->banner_url,
+                'target_url' => $p->target_url,
+            ])
+            ->values();
 
         return Inertia::render('Home', [
             'plans' => collect($homePlans)->map(fn ($p) => [
@@ -31,6 +48,7 @@ class HomeController extends Controller
                 'is_active' => $p['is_active'],
             ])->toArray(),
             'planPricing' => $planPricing,
+            'planPricingYearly' => $planPricingYearly,
             'articles' => $articles->map(fn ($a) => [
                 'id' => $a->id,
                 'title' => $a->title,
@@ -42,7 +60,9 @@ class HomeController extends Controller
                 'reading_time' => $a->reading_time,
                 'url' => route('blog.show', $a->slug),
             ]),
-            'starterPricing' => User::getPlanPricing('starter'),
+            'starterPricing' => User::getPlanPricing('starter', 'monthly'),
+            'starterPricingYearly' => User::getPlanPricing('starter', 'yearly'),
+            'promos' => $promos,
             'siteName' => Setting::where('key', 'site_name')->value('value') ?? 'Ryaze',
             'socialLinks' => [
                 'github' => Setting::val('social_github'),
