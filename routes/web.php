@@ -369,6 +369,13 @@ Route::middleware('auth')->group(function () {
             Route::post('user/hosting/projects/{hashid}/dev/stop', [DashboardController::class, 'stopDevServer'])->name('user_hosting.dev.stop');
             Route::post('user/hosting/projects/{hashid}/staging', [DashboardController::class, 'createStaging'])->name('user_hosting.staging.create');
             Route::post('user/hosting/projects/{hashid}/domains', [DomainController::class, 'store'])->name('user_hosting.domains.store');
+            // Halaman Domains terpisah (ala Vercel): tambah domain dulu tanpa
+            // project, lalu sambungkan lewat tab Domains di halaman project.
+            Route::get('user/hosting/domains', [DomainController::class, 'index'])->name('user_hosting.domains.index');
+            Route::post('user/hosting/domains', [DomainController::class, 'store'])->name('user_hosting.domains.create');
+            Route::get('user/hosting/domains/{hashid}', [DomainController::class, 'show'])->name('user_hosting.domains.show');
+            Route::post('user/hosting/domains/{hashid}/assign', [DomainController::class, 'assign'])->name('user_hosting.domains.assign');
+            Route::post('user/hosting/domains/{hashid}/detach', [DomainController::class, 'detach'])->name('user_hosting.domains.detach');
             Route::post('user/hosting/domains/{hashid}/status', [DomainController::class, 'checkStatus'])->name('user_hosting.domains.status');
             Route::delete('user/hosting/domains/{hashid}', [DomainController::class, 'destroy'])->name('user_hosting.domains.destroy');
             Route::post('user/hosting/projects/{hashid}/crons', [CronController::class, 'store'])->name('user_hosting.crons.store');

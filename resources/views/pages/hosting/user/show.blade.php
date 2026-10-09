@@ -94,6 +94,10 @@
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-envelope"></i> <span>Email</span>
             </button> --}}
+            <button data-tab="domains" id="tab-domains" onclick="switchTab('domains')"
+                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                <i class="fa-solid fa-globe"></i> <span>Domains</span>
+            </button>
             <button data-tab="crons" id="tab-crons" onclick="switchTab('crons')"
                 class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
                 <i class="fa-solid fa-clock"></i> <span>Cron Jobs</span>
@@ -1230,6 +1234,105 @@ NGINX_CONF
             </div>
         </div>
 
+        {{-- TAB: DOMAINS --}}
+        <div id="panel-domains" class="tab-panel hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <h3 class="font-bold text-slate-800 dark:text-slate-100">Custom Domain</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Domain yang melayani project ini. Kelola daftarnya di halaman Domains.</p>
+                    </div>
+                    <a href="{{ route('user_hosting.domains.index') }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-globe"></i>
+                        Buka Halaman Domains
+                    </a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
+                                <th class="px-6 py-4">Domain</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                            @php
+                                $linkedDomains = $project->domains()->whereNotNull('cf_zone_id')->latest()->get();
+                            @endphp
+                            @forelse($linkedDomains as $d)
+                                @php
+                                    $isActiveDomain = $d->ssl_status === 'active';
+                                @endphp
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <span class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                            <i class="fa-solid fa-globe text-indigo-500 dark:text-indigo-400 text-xs"></i>
+                                            {{ $d->domain_name }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        @if ($isActiveDomain)
+                                            <span class="inline-block px-2 py-1 rounded text-xs font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">Aktif</span>
+                                        @else
+                                            <span class="inline-block px-2 py-1 rounded text-xs font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300">Menunggu NS</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ route('user_hosting.domains.show', $d->hashid) }}"
+                                                class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Kelola</a>
+                                            <form action="{{ route('user_hosting.domains.detach', $d->hashid) }}" method="POST" class="inline"
+                                                  onsubmit="event.preventDefault(); swConfirm('Lepas dari project?', 'Domain tidak dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                                @csrf
+                                                <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition">Lepas</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-6 py-12 text-center">
+                                        <i class="fa-solid fa-globe text-2xl text-slate-300 dark:text-slate-600 mb-2"></i>
+                                        <p class="text-sm text-slate-500 dark:text-slate-400">Project ini belum punya custom domain.</p>
+                                        <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Tambahkan domain dulu di halaman Domains, lalu sambungkan ke project ini.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @php
+                $freeDomains = \App\Models\HostingDomain::where('user_id', Auth::id())
+                    ->whereNull('project_id')
+                    ->where('ssl_status', 'active')
+                    ->get();
+            @endphp
+            @if($freeDomains->isNotEmpty() && $project->user_id == Auth::id())
+            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Domain Tersedia Milik Anda</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Domain aktif yang belum dipakai project mana pun. Satu klik untuk menyambungkannya ke project ini.</p>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @foreach($freeDomains as $fd)
+                        <form action="{{ route('user_hosting.domains.assign', $fd->hashid) }}" method="POST"
+                              class="flex items-center gap-3 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition">
+                            @csrf
+                            <input type="hidden" name="project_id" value="{{ $project->id }}">
+                            <i class="fa-solid fa-globe text-indigo-500 dark:text-indigo-400"></i>
+                            <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{ $fd->domain_name }}</span>
+                            <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition">Sambungkan</button>
+                        </form>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+
         {{-- TAB: TEAM ACCESS --}}
         <div id="panel-team" class="tab-panel hidden space-y-6">
             <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -1496,18 +1599,23 @@ NGINX_CONF
     {{-- ── SCRIPT 3: Tab switching ──────────────────────────────────────────── --}}
     <script nonce="{{ csp_nonce() }}">
         window.switchTab = function(name) {
+            const panel = document.getElementById('panel-' + name);
+            if (!panel) {
+                console.warn('[Ryaze] Tab "' + name + '" tidak punya panel, diabaikan.');
+                return;
+            }
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => {
                 b.classList.remove('bg-indigo-600', 'text-white', 'shadow');
                 b.classList.add('text-slate-500', 'dark:text-slate-400');
             });
-            document.getElementById('panel-' + name).classList.remove('hidden');
+            panel.classList.remove('hidden');
             const btn = document.getElementById('tab-' + name);
             if(btn) {
                 btn.classList.add('bg-indigo-600', 'text-white', 'shadow');
                 btn.classList.remove('text-slate-500', 'dark:text-slate-400');
             }
-            if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input').focus(), 80);
+            if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input')?.focus(), 80);
             
             // Auto-load file manager saat dibuka
             if (name === 'files') {

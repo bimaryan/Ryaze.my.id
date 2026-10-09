@@ -546,6 +546,14 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('user_hosting.domains.index') }}"
+                        class="{{ $navLink(request()->routeIs('user_hosting.domains.*')) }}">
+                        <i
+                            class="fa-solid fa-globe {{ $iconBox(request()->routeIs('user_hosting.domains.*')) }} text-center"></i>
+                        <span class="ms-3" x-show="!$store.sidebar.collapsed" x-cloak>Domains</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('user_hosting.projects') }}"
                         class="{{ $navLink(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}">
                         <i

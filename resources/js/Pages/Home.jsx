@@ -233,7 +233,7 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
                             onMouseEnter={() => setPaused(true)}
                             onMouseLeave={() => setPaused(false)}
                         >
-                            <div className="overflow-hidden border border-[#e5e5e5] dark:border-[#1a1a2e]">
+                            <div className="rounded-2xl overflow-hidden shadow-2xl shadow-[#7c3aed]/25 dark:shadow-black/50 ring-1 ring-black/5 dark:ring-white/10 transition-shadow duration-300 group-hover:shadow-[#7c3aed]/40">
                                 <div
                                     className="flex transition-transform duration-500 ease-in-out"
                                     style={{ transform: `translateX(-${slide * 100}%)` }}
@@ -248,12 +248,21 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
                                                     <img src={p.banner_url} alt={p.title} className="w-full h-auto object-contain" />
                                                 </a>
                                             ) : (
-                                                <div className="bg-[#7c3aed] px-6 py-8 sm:py-10 text-center min-h-[160px] flex flex-col justify-center">
-                                                    <span className="text-[10px] font-bold text-white/70 tracking-[0.2em] uppercase mb-3">Promo</span>
-                                                    <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">{p.title}</h3>
-                                                    {p.description && (
-                                                        <p className="text-[#ede9fe] mt-2 text-sm max-w-2xl mx-auto">{p.description}</p>
-                                                    )}
+                                                <div className="relative overflow-hidden bg-gradient-to-br from-[#7c3aed] via-[#6d28d9] to-[#4c1d95] px-6 py-12 sm:py-16 text-center">
+                                                    {/* Lapisan dekoratif supaya card tidak terasa flat */}
+                                                    <div className="absolute -top-16 -right-10 w-56 h-56 bg-white/10 rounded-full blur-2xl"></div>
+                                                    <div className="absolute -bottom-20 -left-12 w-64 h-64 bg-fuchsia-400/20 rounded-full blur-3xl"></div>
+                                                    <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '36px 36px' }}></div>
+
+                                                    <div className="relative">
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-[10px] font-bold text-white tracking-[0.2em] uppercase mb-5">
+                                                            <i className="fa-solid fa-bolt text-[9px]"></i> Promo
+                                                        </span>
+                                                        <h3 className="text-xl sm:text-3xl font-black text-white tracking-tight drop-shadow-sm max-w-3xl mx-auto">{p.title}</h3>
+                                                        {p.description && (
+                                                            <p className="text-[#ede9fe] mt-3 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{p.description}</p>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
@@ -266,24 +275,24 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
                                     <button
                                         onClick={() => goSlide(slide - 1)}
                                         aria-label="Promo sebelumnya"
-                                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/25 hover:bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-300"
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/35 hover:bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all duration-300 backdrop-blur-sm"
                                     >
-                                        <i className="fa-solid fa-chevron-left text-[10px]"></i>
+                                        <i className="fa-solid fa-chevron-left text-[11px]"></i>
                                     </button>
                                     <button
                                         onClick={() => goSlide(slide + 1)}
                                         aria-label="Promo berikutnya"
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/25 hover:bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-300"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/35 hover:bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all duration-300 backdrop-blur-sm"
                                     >
-                                        <i className="fa-solid fa-chevron-right text-[10px]"></i>
+                                        <i className="fa-solid fa-chevron-right text-[11px]"></i>
                                     </button>
-                                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                                    <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
                                         {activePromos.map((p, i) => (
                                             <button
                                                 key={p.id ?? i}
                                                 onClick={() => goSlide(i)}
                                                 aria-label={`Promo ${i + 1}`}
-                                                className={`h-2 transition-all duration-300 ${slide === i ? 'bg-[#7c3aed] w-6' : 'bg-[#7c3aed]/30 w-2 hover:bg-[#7c3aed]/60'}`}
+                                                className={`h-2 rounded-full transition-all duration-300 ${slide === i ? 'bg-white w-7 shadow-md' : 'bg-white/45 w-2 hover:bg-white/75'}`}
                                             />
                                         ))}
                                     </div>
