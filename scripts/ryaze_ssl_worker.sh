@@ -102,6 +102,71 @@ server {
 
     error_page 418 = @app_proxy;
 
+
+    # =========================================================================
+    # WAF (blocked IP) + DDoS Protection (rate limit)
+    # =========================================================================
+    # resty.limit.req dipakai karena directive limit_req nginx tidak bisa
+    # dipakai di dalam blok if dan rate-nya tidak bisa dinamis.
+    access_by_lua_block {
+        local base = "/www/sites/hosting_clients/$SUBDOMAIN"
+
+        -- IP asli. Cloudflare tunnel membuat \$remote_addr selalu 127.0.0.1,
+        -- jadi ambil entry pertama X-Forwarded-For.
+        local client = ngx.var.http_x_forwarded_for or ""
+        client = string.gsub(client, "^%s*(.-)%s*$", "%1")
+        client = string.gsub(client, ",.*\$", "")
+        if client == "" then client = ngx.var.http_cf_connecting_ip or "" end
+        if client == "" then client = ngx.var.remote_addr or "0.0.0.0" end
+
+        -- 1. WAF: IP yang diblokir pemilik situs
+        local waf = io.open(base .. "/.waf_blocks", "r")
+        if waf then
+            local blocked = waf:read("*a") or ""
+            waf:close()
+            if client ~= "" then
+                for line in string.gmatch(blocked, "[^\r\n]+") do
+                    line = string.gsub(line, "^%s*(.-)%s*$", "%1")
+                    if line ~= "" and line == client then
+                        ngx.status = 403
+                        ngx.header["Content-Type"] = "text/plain; charset=utf-8"
+                        ngx.say("403 Forbidden\nYour IP has been blocked by the site owner.")
+                        return ngx.exit(403)
+                    end
+                end
+            end
+        end
+
+        -- 2. DDoS Protection: mode serangan vs normal
+        local under_attack = io.open(base .. "/.rate_limit", "r")
+        local rate, burst
+        if under_attack then
+            under_attack:close()
+            rate, burst = 5, 20
+        else
+            rate, burst = 30, 60
+        end
+
+        local limit_req = require "resty.limit.req"
+        local lim, err = limit_req.new("ryz_rl_store", rate, burst)
+        if lim then
+            -- Argumen kedua WAJIB true (commit), tanpa itu counter tidak
+            -- pernah ditulis sehingga limit tidak berefek.
+            local delay, err2 = lim:incoming(client, true)
+            if not delay then
+                if err2 ~= "rejected" then
+                    ngx.log(ngx.ERR, "rate limit error: ", err2)
+                end
+                ngx.status = 429
+                ngx.header["Content-Type"] = "text/plain; charset=utf-8"
+                ngx.header["Retry-After"] = "1"
+                ngx.say("429 Too Many Requests\nRate limit exceeded. Please try again shortly.")
+                return ngx.exit(429)
+            end
+        else
+            ngx.log(ngx.ERR, "gagal membuat limiter: ", err)
+        end
+    }
     location / {
         if (\$app_port != "") {
             return 418;
@@ -223,6 +288,71 @@ server {
 
     error_page 418 = @app_proxy;
 
+
+    # =========================================================================
+    # WAF (blocked IP) + DDoS Protection (rate limit)
+    # =========================================================================
+    # resty.limit.req dipakai karena directive limit_req nginx tidak bisa
+    # dipakai di dalam blok if dan rate-nya tidak bisa dinamis.
+    access_by_lua_block {
+        local base = "/www/sites/hosting_clients/$SUBDOMAIN"
+
+        -- IP asli. Cloudflare tunnel membuat \$remote_addr selalu 127.0.0.1,
+        -- jadi ambil entry pertama X-Forwarded-For.
+        local client = ngx.var.http_x_forwarded_for or ""
+        client = string.gsub(client, "^%s*(.-)%s*$", "%1")
+        client = string.gsub(client, ",.*\$", "")
+        if client == "" then client = ngx.var.http_cf_connecting_ip or "" end
+        if client == "" then client = ngx.var.remote_addr or "0.0.0.0" end
+
+        -- 1. WAF: IP yang diblokir pemilik situs
+        local waf = io.open(base .. "/.waf_blocks", "r")
+        if waf then
+            local blocked = waf:read("*a") or ""
+            waf:close()
+            if client ~= "" then
+                for line in string.gmatch(blocked, "[^\r\n]+") do
+                    line = string.gsub(line, "^%s*(.-)%s*$", "%1")
+                    if line ~= "" and line == client then
+                        ngx.status = 403
+                        ngx.header["Content-Type"] = "text/plain; charset=utf-8"
+                        ngx.say("403 Forbidden\nYour IP has been blocked by the site owner.")
+                        return ngx.exit(403)
+                    end
+                end
+            end
+        end
+
+        -- 2. DDoS Protection: mode serangan vs normal
+        local under_attack = io.open(base .. "/.rate_limit", "r")
+        local rate, burst
+        if under_attack then
+            under_attack:close()
+            rate, burst = 5, 20
+        else
+            rate, burst = 30, 60
+        end
+
+        local limit_req = require "resty.limit.req"
+        local lim, err = limit_req.new("ryz_rl_store", rate, burst)
+        if lim then
+            -- Argumen kedua WAJIB true (commit), tanpa itu counter tidak
+            -- pernah ditulis sehingga limit tidak berefek.
+            local delay, err2 = lim:incoming(client, true)
+            if not delay then
+                if err2 ~= "rejected" then
+                    ngx.log(ngx.ERR, "rate limit error: ", err2)
+                end
+                ngx.status = 429
+                ngx.header["Content-Type"] = "text/plain; charset=utf-8"
+                ngx.header["Retry-After"] = "1"
+                ngx.say("429 Too Many Requests\nRate limit exceeded. Please try again shortly.")
+                return ngx.exit(429)
+            end
+        else
+            ngx.log(ngx.ERR, "gagal membuat limiter: ", err)
+        end
+    }
     location / {
         if (\$app_port != "") {
             return 418;
