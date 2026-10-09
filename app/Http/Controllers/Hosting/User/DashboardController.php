@@ -346,17 +346,45 @@ class DashboardController extends Controller
             }
 
             if ($validLogPath) {
-                // If it's a shared log (ryaze.my.id or hosting_clients), we must grep for the specific subdomain first
-                if (str_contains($validLogPath, 'ryaze.my.id/log') || str_contains($validLogPath, 'ryz.my.id/log') || str_contains($validLogPath, 'safetalkai.my.id/log') || str_contains($validLogPath, 'hosting_clients/log')) {
-                    $wcCommand = sprintf("grep %s %s | awk '{print $1}' | sort | uniq | wc -l", escapeshellarg($project->ryaze_domain), escapeshellarg($validLogPath));
-                } else {
-                    $wcCommand = sprintf("awk '{print $1}' %s | sort | uniq | wc -l", escapeshellarg($validLogPath));
+                // Trafik masuk lewat Cloudflare tunnel, jadi $remote_addr di
+                // access.log SELALU 127.0.0.1. IP asli ada di field terakhir
+                // ($http_x_forwarded_for pada log_format "main"), sehingga
+                // menghitung kolom pertama selalu menghasilkan 1.
+                //
+                // Parsing dilakukan di PHP, bukan lewat awk di shell: `exec()`
+                // memakai /bin/sh yang memecah `;` di dalam program awk.
+                $isSharedLog = str_contains($validLogPath, 'ryaze.my.id/log')
+                    || str_contains($validLogPath, 'ryz.my.id/log')
+                    || str_contains($validLogPath, 'safetalkai.my.id/log')
+                    || str_contains($validLogPath, 'hosting_clients/log');
+
+                // Batasi baris agar file log yg besar tidak membebani memory.
+                $grepCommand = $isSharedLog
+                    ? sprintf('grep -a -F %s %s | tail -n 20000', escapeshellarg($project->ryaze_domain), escapeshellarg($validLogPath))
+                    : sprintf('tail -n 20000 %s', escapeshellarg($validLogPath));
+
+                $logLines = [];
+                $grepReturnVar = 0;
+                @exec($grepCommand, $logLines, $grepReturnVar);
+
+                $uniqueIps = [];
+                foreach ($logLines as $line) {
+                    // Field terakhir yang diapit tanda kutip adalah XFF.
+                    $xff = preg_match('/"([^"]*)"\s*$/', $line, $matches) ? trim($matches[1]) : '';
+
+                    if ($xff !== '') {
+                        // Entry pertama XFF = client asli (sebelum proxy).
+                        $ip = trim(explode(',', $xff)[0]);
+                    } else {
+                        $ip = trim(explode(' ', $line)[0]);
+                    }
+
+                    if ($ip !== '') {
+                        $uniqueIps[$ip] = true;
+                    }
                 }
 
-                exec($wcCommand, $wcOutput, $wcReturnVar);
-                if ($wcReturnVar === 0 && isset($wcOutput[0])) {
-                    $visitorsCount = (int) $wcOutput[0];
-                }
+                $visitorsCount = count($uniqueIps);
             }
         }
 
