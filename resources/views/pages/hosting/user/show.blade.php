@@ -42,9 +42,11 @@
                     };
                 @endphp
                 <span
+                    id="project-status-badge"
+                    data-status="{{ $project->status }}"
                     class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide {{ $statusClass }}">
                     <i class="fa-solid {{ $statusIcon }}"></i>
-                    {{ $project->status }}
+                    <span id="project-status-text">{{ $project->status }}</span>
                 </span>
                 @if ($project->dev_mode && in_array($project->framework, ['react', 'nextjs', 'vue']))
                     <a href="https://dev{{ $project->dev_port }}.{{ ltrim(substr($project->ryaze_domain, strlen(explode('.', $project->ryaze_domain)[0])), '.') }}" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
@@ -1418,6 +1420,44 @@ NGINX_CONF
         var buildLogPulse = document.getElementById('build-log-pulse');
         var buildLogInterval = null;
 
+        // Badge status di header & panel Overview di-render server-side,
+        // jadi harus di-toggle manual lewat JS saat status berubah.
+        var STATUS_STYLE = {
+            active:   ['bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300', 'fa-circle-check'],
+            building: ['bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 animate-pulse', 'fa-spinner fa-spin'],
+            unpaid:   ['bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 font-bold', 'fa-file-invoice-dollar'],
+        };
+        var STATUS_DEFAULT = ['bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300', 'fa-triangle-exclamation'];
+
+        function applyProjectStatus(status) {
+            if (!status) return;
+            var badge = document.getElementById('project-status-badge');
+            var text  = document.getElementById('project-status-text');
+            var icon  = badge ? badge.querySelector('i') : null;
+            var style = STATUS_STYLE[status] || STATUS_DEFAULT;
+
+            if (badge && badge.dataset.status === status) return;
+
+            if (badge) {
+                badge.className = badge.className.replace(/\b(bg-|text-|animate-pulse|font-bold)[^\s]*/g, '').trim();
+                badge.className += ' ' + style[0];
+                badge.dataset.status = status;
+            }
+            if (icon) icon.className = 'fa-solid ' + style[1];
+            if (text) text.textContent = status;
+
+            // Muat ulang supaya panel Overview (iframe preview / pesan error)
+            // ikut ter-render sesuai status terbaru.
+            if (typeof swAlert === 'function') {
+                swAlert(
+                    status === 'active' ? 'success' : 'warning',
+                    status === 'active' ? 'Deployment selesai' : 'Deployment berhenti',
+                    'Status project: ' + status
+                );
+            }
+            setTimeout(() => window.location.reload(), 1200);
+        }
+
         function refreshBuildLogs() {
             fetch(buildLogUrl, {
                     headers: {
@@ -1442,6 +1482,7 @@ NGINX_CONF
                             clearInterval(buildLogInterval);
                             buildLogInterval = null;
                         }
+                        applyProjectStatus(data.status);
                     }
                 }).catch(() => {});
         }

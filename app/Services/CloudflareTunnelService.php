@@ -69,8 +69,11 @@ class CloudflareTunnelService
         }
 
         $ingress = $resp->json('result.config.ingress');
+        if (! is_array($ingress)) {
+            return [];
+        }
 
-        return is_array($ingress) ? $ingress : [];
+        return array_map([$this, 'normalizeRule'], $ingress);
     }
 
     /**
@@ -145,6 +148,25 @@ class CloudflareTunnelService
     }
 
     /**
+     * Cloudflare mengembalikan `originRequest: []` (array kosong) untuk rule
+     * yang tidak punya opsi origin request. API menolak array tersebut saat
+     * PUT ("cannot unmarshal array into Go struct field ... originRequest of
+     * type config.OriginRequestConfig"). Buang bila kosong agar payload valid.
+     *
+     * @param  array<string,mixed>  $rule
+     * @return array<string,mixed>
+     */
+    private function normalizeRule(array $rule): array
+    {
+        if (array_key_exists('originRequest', $rule)
+            && (! is_array($rule['originRequest']) || $rule['originRequest'] === [])) {
+            unset($rule['originRequest']);
+        }
+
+        return $rule;
+    }
+
+    /**
      * Simpan ulang daftar ingress rules ke Cloudflare.
      */
     private function putIngressRules(array $ingress, string $action): bool
@@ -156,7 +178,7 @@ class CloudflareTunnelService
 
         $resp = Http::withToken($this->apiToken)
             ->put("{$this->apiBasePath()}/configurations", [
-                'config' => ['ingress' => $ingress],
+                'config' => ['ingress' => array_map([$this, 'normalizeRule'], $ingress)],
             ]);
 
         if (! $resp->successful()) {
