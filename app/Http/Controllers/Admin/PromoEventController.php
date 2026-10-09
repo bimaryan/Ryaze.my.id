@@ -4,11 +4,44 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PromoEvent;
+use App\Services\PromoAiWriter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class PromoEventController extends Controller
 {
+    /**
+     * Bantu admin membuat copywriting promo dengan AI.
+     * Endpoint ini hanya mengisi field di form, tidak menyimpan data.
+     */
+    public function generateDescription(Request $request, PromoAiWriter $writer)
+    {
+        $data = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'brief' => 'nullable|string|max:500',
+            'with_title' => 'nullable|boolean',
+        ]);
+
+        try {
+            $result = $writer->generate(
+                $data['title'] ?? '',
+                $data['brief'] ?? null,
+                $request->boolean('with_title'),
+            );
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'message' => $e instanceof \RuntimeException
+                    ? $e->getMessage()
+                    : 'Gagal membuat deskripsi AI. Coba lagi.',
+            ], 422);
+        }
+
+        return response()->json($result);
+    }
+
     public function index(Request $request)
     {
         $query = PromoEvent::query();

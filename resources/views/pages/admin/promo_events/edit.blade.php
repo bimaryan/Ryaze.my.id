@@ -35,6 +35,7 @@
 
                     <div>
                         <label for="description" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Deskripsi Promo</label>
+                        @include('pages.admin.promo_events.partials.ai-description')
                         <textarea name="description" id="description" rows="3" class="transition-all @error('description') border-red-500 @enderror w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">{{ old('description', $promo_event->description) }}</textarea>
                         @error('description') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>

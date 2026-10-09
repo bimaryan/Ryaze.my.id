@@ -236,6 +236,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('superadmin/article-categories', \App\Http\Controllers\Admin\ArticleCategoryController::class)->names('superadmin.article_categories');
         
         // Promo Events
+        Route::post('superadmin/promo-events/generate-description', [\App\Http\Controllers\Admin\PromoEventController::class, 'generateDescription'])
+            ->middleware('throttle:15,1')
+            ->name('admin.promo_events.generate_description');
         Route::patch('superadmin/promo-events/{promo_event}/status', [\App\Http\Controllers\Admin\PromoEventController::class, 'toggleStatus'])->name('admin.promo_events.status');
         Route::resource('superadmin/promo-events', \App\Http\Controllers\Admin\PromoEventController::class)->names('admin.promo_events');
     });
