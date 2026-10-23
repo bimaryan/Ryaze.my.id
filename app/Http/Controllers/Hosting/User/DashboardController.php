@@ -188,7 +188,7 @@ class DashboardController extends Controller
             $request->validate([
                 'template_key' => 'required|in:'.implode(',', array_keys($this->availableTemplates)),
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
             ]);
 
             $templateKey = $request->input('template_key');
@@ -203,7 +203,7 @@ class DashboardController extends Controller
             $request->validate([
                 'project_zip' => 'required|file|mimes:zip|max:51200',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
                 'framework' => 'required|in:'.$allowedFrameworks,
             ]);
 
@@ -222,7 +222,7 @@ class DashboardController extends Controller
             $request->validate([
                 'repo_source' => 'required|url',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
                 'framework' => 'required|in:'.$allowedFrameworks,
                 'branch' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9_\/\-.]*$/'],
             ]);
