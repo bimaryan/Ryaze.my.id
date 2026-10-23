@@ -489,7 +489,7 @@
                                 <option value=".ryaze.my.id">.ryaze.my.id</option>
                                 <option value=".ryz.my.id">.ryz.my.id</option>
                                 <option value=".safetalkai.my.id">.safetalkai.my.id</option>
-                                <option value=".ryze.cloud">.ryze.cloud</option>
+                                <option value=".ryaze.cloud">.ryaze.cloud</option>
                             </select>
                         </div>
                         <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center">
