@@ -284,8 +284,10 @@ class DomainController extends Controller
             mkdir($mapDir, 0755, true);
         }
 
+        $subdomainName = preg_replace('/\.(ryaze|ryz|safetalkai)\.my\.id$/i', '', $ryazeDomain);
+
         foreach ($domain->hostnames() as $hostname) {
-            file_put_contents("{$mapDir}/{$hostname}", $ryazeDomain);
+            file_put_contents("{$mapDir}/{$hostname}", $subdomainName);
         }
 
         $notes[] = 'Domain sudah serves project '.$domain->project->project_name.'.';
