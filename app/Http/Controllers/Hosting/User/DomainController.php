@@ -178,6 +178,8 @@ class DomainController extends Controller
 
         $this->syncRouting($domain);
 
+        $this->regenerateNginxConfig($domain, $project);
+
         return back()->with('success', "Domain {$domain->domain_name} sekarang melayani project {$project->project_name}.");
     }
 
@@ -316,6 +318,50 @@ class DomainController extends Controller
         }
 
         return implode('', $notes);
+    }
+
+    /**
+     * Regenerate nginx config for custom domain + reload.
+     * Dipanggil setiap kali domain disambungkan ke project agar proxy_pass
+     * Host header menunjuk ke ryaze_domain yang benar.
+     */
+    private function regenerateNginxConfig(HostingDomain $domain, HostingProject $project): void
+    {
+        $nginxConfDir = '/opt/1panel/apps/openresty/openresty/conf/conf.d';
+        $confFile = $nginxConfDir . '/' . $domain->domain_name . '.conf';
+        $ryazeDomain = $project->ryaze_domain;
+
+        if (file_exists($confFile)) {
+            $content = file_get_contents($confFile);
+            $content = preg_replace(
+                '/(\s*proxy_set_header\s+Host\s+)[^\s;]+/',
+                '$1' . $ryazeDomain,
+                $content
+            );
+            @file_put_contents($confFile, $content);
+        } else {
+            $config = <<<NGINX
+server {
+    listen 80;
+    server_name {$domain->domain_name};
+
+    location /.well-known/acme-challenge/ {
+        root /www/letsencrypt;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1;
+        proxy_set_header Host {$ryazeDomain};
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+NGINX;
+            @file_put_contents($confFile, $config);
+        }
+
+        @exec('docker exec 1Panel-openresty-iLJL nginx -s reload 2>/dev/null');
     }
 
     /** Kebalikan mapping nginx + cabut ingress rule tunnel. */
