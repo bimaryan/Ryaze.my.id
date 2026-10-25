@@ -164,7 +164,7 @@
                                                 Kelola
                                             </a>
                                             <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST" class="inline"
-                                                  onsubmit="event.preventDefault(); swConfirm('Hapus {{ $domain->domain_name }}?', '{{ $domain->isChild() ? 'DNS record' : 'Zone Cloudflare' }} dan routing hostname ini akan dihapus permanen.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                                  onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus {{ $domain->domain_name }}?', '{{ $domain->isChild() ? 'DNS record' : 'Zone Cloudflare' }} dan routing hostname ini akan dihapus permanen.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition">
                                                     <i class="fa-solid fa-trash"></i>

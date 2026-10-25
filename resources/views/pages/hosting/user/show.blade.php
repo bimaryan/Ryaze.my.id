@@ -1350,7 +1350,7 @@ NGINX_CONF
 
                                             @if ($d->redirect)
                                                 <form action="{{ route('user_hosting.domains.redirect.destroy', $d->hashid) }}" method="POST" class="pt-2 mt-2 border-t border-slate-200 dark:border-slate-700"
-                                                      onsubmit="event.preventDefault(); swConfirm('Hapus redirect?', 'Domain ini akan dilayani normal lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                                      onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus redirect?', 'Domain ini akan dilayani normal lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition">
                                                         <i class="fa-solid fa-trash mr-1"></i> Hapus Redirect
@@ -1364,7 +1364,7 @@ NGINX_CONF
                                             <a href="{{ route('user_hosting.domains.show', $d->hashid) }}"
                                                 class="ui-chip">Kelola</a>
                                             <form action="{{ route('user_hosting.domains.detach', $d->hashid) }}" method="POST" class="inline"
-                                                  onsubmit="event.preventDefault(); swConfirm('Lepas dari project?', 'Domain tidak dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                                  onsubmit="event.preventDefault(); let f = this; swConfirm('Lepas dari project?', 'Domain tidak dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                                 @csrf
                                                 <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition">Lepas</button>
                                             </form>

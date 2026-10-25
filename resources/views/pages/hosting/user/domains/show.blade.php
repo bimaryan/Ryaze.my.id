@@ -170,7 +170,7 @@
                                         <span class="text-xs text-slate-400 dark:text-slate-500 italic">Belum disambungkan</span>
                                     @endif
                                     <form action="{{ route('user_hosting.domains.destroy', $child->hashid) }}" method="POST" class="inline"
-                                          onsubmit="event.preventDefault(); swConfirm('Hapus {{ $child->domain_name }}?', 'DNS record dan routing subdomain ini akan dihapus.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                          onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus {{ $child->domain_name }}?', 'DNS record dan routing subdomain ini akan dihapus.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="ui-icon-btn ui-icon-btn-danger" title="Hapus">
                                             <i class="fa-solid fa-trash text-xs"></i>
@@ -199,7 +199,7 @@
                                 Buka Project
                             </a>
                             <form action="{{ route('user_hosting.domains.detach', $domain->hashid) }}" method="POST"
-                                  onsubmit="event.preventDefault(); swConfirm('Lepas dari project?', 'Hostname tidak akan dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                  onsubmit="event.preventDefault(); let f = this; swConfirm('Lepas dari project?', 'Hostname tidak akan dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                 @csrf
                                 <button type="submit" class="ui-btn ui-btn-md ui-btn-primary w-full">
                                     Lepas dari Project
@@ -251,7 +251,7 @@
                             @endif
                         </p>
                         <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST"
-                              onsubmit="event.preventDefault(); swConfirm('Hapus {{ $domain->domain_name }}?', '{{ $isChild ? 'DNS record dan routing' : 'Zone Cloudflare dan routing' }} akan dihapus permanen.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                              onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus {{ $domain->domain_name }}?', '{{ $isChild ? 'DNS record dan routing' : 'Zone Cloudflare dan routing' }} akan dihapus permanen.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                             @csrf @method('DELETE')
                             <button type="submit" class="ui-btn ui-btn-md ui-btn-danger w-full">
                                 <i class="fa-solid fa-trash mr-1.5"></i> Hapus {{ $isChild ? 'Subdomain' : 'Domain' }}

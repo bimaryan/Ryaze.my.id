@@ -120,7 +120,7 @@
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 <form action="{{ route('superadmin.info_updates.destroy', $update->hashid) }}" method="POST" class="inline"
-                                    onsubmit="event.preventDefault(); swConfirm('Hapus info update?', '{{ $update->title }} akan hilang dari halaman user.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                    onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus info update?', '{{ $update->title }} akan hilang dari halaman user.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                     @csrf @method('DELETE')
                                     <button type="submit" title="Hapus"
                                         class="ui-icon-btn ui-icon-btn-danger">
