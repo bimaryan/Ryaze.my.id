@@ -327,7 +327,7 @@ class DomainController extends Controller
      */
     private function regenerateNginxConfig(HostingDomain $domain, HostingProject $project): void
     {
-        $nginxConfDir = '/opt/1panel/apps/openresty/openresty/conf/conf.d';
+        $nginxConfDir = '/opt/1panel/apps/openresty/openresty/conf/conf.d/custom_domains';
         $confFile = $nginxConfDir . '/' . $domain->domain_name . '.conf';
         $ryazeDomain = $project->ryaze_domain;
 
@@ -340,6 +340,7 @@ class DomainController extends Controller
             );
             @file_put_contents($confFile, $content);
         } else {
+            @mkdir($nginxConfDir, 0755, true);
             $config = <<<NGINX
 server {
     listen 80;
