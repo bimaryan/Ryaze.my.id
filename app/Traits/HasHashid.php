@@ -6,7 +6,17 @@ use Vinkla\Hashids\Facades\Hashids;
 
 trait HasHashid
 {
-    protected $appends = ['hashid'];
+    /**
+     * Laravel memanggil initialize{Trait} saat model dibuat.
+     * $appends akan bentrok fatal dengan properti $appends milik Eloquent
+     * Model jika dideklarasikan langsung di trait, jadi di-push per instance.
+     */
+    public function initializeHasHashid(): void
+    {
+        if (!in_array('hashid', $this->appends)) {
+            $this->appends[] = 'hashid';
+        }
+    }
 
     /**
      * Alias Hash ID untuk URL yang elegan
