@@ -106,7 +106,7 @@
                                 Buka Project
                             </a>
                             <form action="{{ route('user_hosting.domains.detach', $domain->hashid) }}" method="POST"
-                                  onsubmit="event.preventDefault(); swConfirm('Lepas dari project?', 'Domain tidak akan dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                  onsubmit="event.preventDefault(); let f = this; swConfirm('Lepas dari project?', 'Domain tidak akan dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                 @csrf
                                 <button type="submit" class="inline-flex w-full items-center justify-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">
                                     Lepas dari Project
@@ -149,7 +149,7 @@
                             Menghapus domain akan menghapus zone-nya di Cloudflare, semua DNS record, dan routing di tunnel. Tindakan ini tidak bisa dibatalkan.
                         </p>
                         <form action="{{ route('user_hosting.domains.destroy', $domain->hashid) }}" method="POST"
-                              onsubmit="event.preventDefault(); swConfirm('Hapus domain?', 'Zone Cloudflare dan routing domain ini akan dihapus permanen.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                              onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus domain?', 'Zone Cloudflare dan routing domain ini akan dihapus permanen.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                             @csrf @method('DELETE')
                             <button type="submit" class="inline-flex w-full items-center justify-center px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
                                 <i class="fa-solid fa-trash mr-1.5"></i> Hapus Domain
@@ -160,4 +160,24 @@
             </div>
         </div>
     </x-ui.page-layout>
+
+    @push('scripts')
+        <script>
+            function swConfirm(title, text, icon = 'warning') {
+                return Swal.fire({
+                    title,
+                    text,
+                    icon,
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Ya, lanjutkan',
+                    cancelButtonText: 'Batal',
+                    customClass: {
+                        popup: 'rounded-xl text-sm'
+                    }
+                });
+            }
+        </script>
+    @endpush
 @endsection

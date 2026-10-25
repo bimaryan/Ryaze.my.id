@@ -1284,7 +1284,7 @@ NGINX_CONF
                                             <a href="{{ route('user_hosting.domains.show', $d->hashid) }}"
                                                 class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Kelola</a>
                                             <form action="{{ route('user_hosting.domains.detach', $d->hashid) }}" method="POST" class="inline"
-                                                  onsubmit="event.preventDefault(); swConfirm('Lepas dari project?', 'Domain tidak dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                                  onsubmit="event.preventDefault(); let f = this; swConfirm('Lepas dari project?', 'Domain tidak dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                                 @csrf
                                                 <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition">Lepas</button>
                                             </form>
