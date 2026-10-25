@@ -6,6 +6,8 @@ use Vinkla\Hashids\Facades\Hashids;
 
 trait HasHashid
 {
+    protected $appends = ['hashid'];
+
     /**
      * Alias Hash ID untuk URL yang elegan
      *

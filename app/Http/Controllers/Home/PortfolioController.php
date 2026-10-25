@@ -213,11 +213,17 @@ class PortfolioController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect(pakasir_pay_url(
+        $payUrl = pakasir_pay_url(
             $request->integer('amount'),
             $orderId,
             route('portfolio.tip.success', $orderId)
-        ));
+        );
+
+        if (!$payUrl) {
+            return redirect()->route('portfolio.index')->with('error', 'Gagal membuat transaksi pembayaran. Silakan coba lagi.');
+        }
+
+        return redirect()->away($payUrl);
     }
 
     public function tipSuccess($order_id)

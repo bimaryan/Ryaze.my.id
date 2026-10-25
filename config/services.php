@@ -43,6 +43,9 @@ return [
     'pakasir' => [
         'slug' => env('PAKASIR_SLUG', 'ryaze'),
         'api_key' => env('PAKASIR_API_KEY'),
+        // Secret untuk verifikasi header X-Secret pada webhook v2.
+        // Ambil/reset di halaman detail proyek di dashboard Pakasir.
+        'webhook_secret' => env('PAKASIR_WEBHOOK_SECRET'),
     ],
 
     /*

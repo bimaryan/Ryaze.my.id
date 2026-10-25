@@ -41,47 +41,63 @@ class PaymentCallbackController extends Controller
     public function handleWebhook(Request $request)
     {
         \Illuminate\Support\Facades\Log::info('Pakasir Webhook Hit:', $request->all());
-        
+
+        // Verifikasi header secret — webhook asli dari Pakasir selalu
+        // mengirim X-Secret yang cocok dengan yang di dashboard proyek.
+        $webhookSecret = config('services.pakasir.webhook_secret');
+        $receivedSecret = (string) $request->header('X-Secret', '');
+
+        if (!$webhookSecret || $receivedSecret === '' || !hash_equals($webhookSecret, $receivedSecret)) {
+            \Illuminate\Support\Facades\Log::warning('Pakasir webhook rejected: invalid or missing X-Secret from IP: ' . $request->ip());
+            return response()->json(['success' => false, 'message' => 'Invalid webhook secret'], 401);
+        }
+
         $notification = $request->all();
+        $txnId = $notification['txn_id'] ?? null;
         $order_id = $notification['order_id'] ?? null;
         $amount = $notification['amount'] ?? null;
 
-        if (!$order_id || !$amount) {
-            return response()->json(['success' => false, 'message' => 'Missing order_id or amount'], 400);
+        if (!$txnId || !$order_id || $amount === null) {
+            return response()->json(['success' => false, 'message' => 'Missing txn_id, order_id or amount'], 400);
         }
 
-        // Jangan pernah percaya amount/order_id dari payload webhook mentah —
-        // semua penentuan status berdasar hasil cross-check resmi Pakasir.
+        // Jangan pernah percaya amount/order_id/status dari payload webhook mentah —
+        // semua penentuan status berdasar hasil cross-check API v2 resmi Pakasir.
         $apiKey = config('services.pakasir.api_key');
         $projectSlug = config('services.pakasir.slug');
-        
+
         if (!$apiKey || !$projectSlug) {
             \Illuminate\Support\Facades\Log::error('Pakasir API Key or Slug is missing in .env');
             return response()->json(['success' => false, 'message' => 'Server Configuration Error'], 500);
         }
 
         try {
-            $verifyResponse = \Illuminate\Support\Facades\Http::get('https://app.pakasir.com/api/transactiondetail', [
-                'project' => $projectSlug,
-                'amount' => $amount,
-                'order_id' => $order_id,
-                'api_key' => $apiKey
-            ]);
+            // GET /api/v2/transaction-status/{slug}/{txn_id}
+            // Rate limit: 4 detik sekali per transaksi (webhook hanya dikirim
+            // sekali per pembayaran, jadi aman).
+            $verifyResponse = \Illuminate\Support\Facades\Http::withHeaders(['X-Api-Key' => $apiKey])
+                ->timeout(15)
+                ->get("https://app.pakasir.com/api/v2/transaction-status/{$projectSlug}/{$txnId}");
 
             if (!$verifyResponse->successful()) {
-                \Illuminate\Support\Facades\Log::warning("Fake Webhook attempt detected for Order ID: {$order_id} from IP: " . $request->ip());
+                \Illuminate\Support\Facades\Log::warning("Fake Webhook attempt detected for Order ID: {$order_id} (txn {$txnId}) from IP: " . $request->ip());
                 return response()->json(['success' => false, 'message' => 'Transaction verification failed'], 401);
             }
 
-            $transactionData = $verifyResponse->json('transaction');
+            $transactionData = $verifyResponse->json();
             if (!$transactionData) {
                 return response()->json(['success' => false, 'message' => 'Invalid transaction data from Pakasir'], 401);
             }
 
             // ════ SECURITY: pastikan transaksi yang dikembalikan Pakasir
-            // benar-benar milik order_id & amount yang diminta (anti swap/replay).
+            // benar-benar milik txn_id & amount yang diwebhook (anti swap/replay).
+            $verifiedTxnId = $transactionData['txn_id'] ?? null;
             $verifiedOrderId = $transactionData['order_id'] ?? null;
             $verifiedAmount = $transactionData['amount'] ?? null;
+            if ((string)$verifiedTxnId !== (string)$txnId) {
+                \Illuminate\Support\Facades\Log::warning("Pakasir mismatch txn_id: webhook={$txnId}, verified={$verifiedTxnId}, IP=" . $request->ip());
+                return response()->json(['success' => false, 'message' => 'Transaction ID mismatch'], 401);
+            }
             if ((string)$verifiedOrderId !== (string)$order_id) {
                 \Illuminate\Support\Facades\Log::warning("Pakasir mismatch order_id: webhook={$order_id}, verified={$verifiedOrderId}, IP=" . $request->ip());
                 return response()->json(['success' => false, 'message' => 'Order ID mismatch'], 401);
@@ -91,6 +107,7 @@ class PaymentCallbackController extends Controller
                 return response()->json(['success' => false, 'message' => 'Amount mismatch'], 401);
             }
 
+            // Status resmi v2: pending | completed | canceled.
             $status = $transactionData['status'] ?? null;
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Pakasir Webhook Verification Error: ' . $e->getMessage());
@@ -234,7 +251,7 @@ class PaymentCallbackController extends Controller
                             $this->distributeAffiliateCommission($user, $payment->amount, 'Pembayaran Langganan Hosting');
                         }
                     }
-                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'canceled', 'expired'])) {
                     $payment->update(['status' => 'failed']);
                 }
             } else {
@@ -261,7 +278,7 @@ class PaymentCallbackController extends Controller
                             $this->distributeAffiliateCommission($user, $payment->amount, 'Pembayaran Upgrade Storage Hosting');
                         }
                     }
-                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'canceled', 'expired'])) {
                     $payment->update(['status' => 'failed']);
                 }
             } else {
@@ -280,7 +297,7 @@ class PaymentCallbackController extends Controller
                             $wallet->user->notify(new \App\Notifications\SystemNotification('Top Up Wallet sebesar Rp ' . number_format($transaction->amount, 0, ',', '.') . ' berhasil ditambahkan.', 'success'));
                         }
                     }
-                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'canceled', 'expired'])) {
                     $transaction->update(['status' => 'failed']);
                 }
             } else {
@@ -295,7 +312,7 @@ class PaymentCallbackController extends Controller
                         $purchase->update(['status' => 'paid', 'paid_at' => now()]);
                         \Illuminate\Support\Facades\Log::info("Digital purchase paid: {$order_id}");
                     }
-                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'canceled', 'expired'])) {
                     if ($purchase->status === 'pending') {
                         $purchase->update(['status' => 'failed']);
                     }
@@ -312,7 +329,7 @@ class PaymentCallbackController extends Controller
                         $tip->update(['status' => 'completed', 'paid_at' => now()]);
                         \Illuminate\Support\Facades\Log::info("Tip completed: {$order_id} amount={$tip->amount}");
                     }
-                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'canceled', 'expired'])) {
                     if ($tip->status === 'pending') {
                         $tip->update(['status' => 'failed']);
                     }
@@ -337,7 +354,7 @@ class PaymentCallbackController extends Controller
                         $payment->order->client->notify(new \App\Notifications\SystemNotification('Pembayaran joki Anda ('.$payment->invoice_number.') telah kami terima. Admin segera memprosesnya.', 'success'));
                         $this->distributeAffiliateCommission($payment->order->client, $payment->amount, 'Pembayaran Layanan Joki');
                     }
-                } elseif (in_array($statusLower, ['failed', 'cancelled', 'expired'])) {
+                } elseif (in_array($statusLower, ['failed', 'cancelled', 'canceled', 'expired'])) {
                     $payment->update(['status' => 'failed']);
                 }
             } else {

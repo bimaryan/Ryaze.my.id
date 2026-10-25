@@ -77,7 +77,7 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if ($tx->status === 'pending' && $tx->reference_id && str_starts_with($tx->reference_id, 'WLT-TOPUP-'))
-                            <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug', 'ryaze') }}/{{ $tx->amount }}?order_id={{ $tx->reference_id }}" 
+                            <a href="{{ route('payment.pakasir', ['order_id' => $tx->reference_id]) }}"
                                target="_blank"
                                class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded text-xs font-bold transition shadow-sm">
                                 <i class="fa-solid fa-credit-card"></i> Bayar

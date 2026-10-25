@@ -29,22 +29,68 @@ if (!function_exists('csp_nonce')) {
     }
 }
 
-if (!function_exists('pakasir_pay_url')) {
+if (!function_exists('pakasir_create_transaction')) {
     /**
-     * Bangun URL pembayaran Pakasir.
-     * Format: https://app.pakasir.com/pay/{slug}/{amount}?order_id={orderId}
-     * Opsional: $redirect diarahkan setelah pembayaran selesai.
+     * Buat (atau ambil) transaksi Pakasir API v2.
+     * Endpoint: POST /api/v2/create-transaction/{slug}/{order_id}
+     * API ini bersifat "find or create" — pemanggilan berulang dengan
+     * parameter & body yang sama selalu mengembalikan transaksi yang sama.
+     * Rate limit: 2 request per detik.
      */
-    function pakasir_pay_url(int $amount, string $orderId, ?string $redirect = null): string
+    function pakasir_create_transaction(int $amount, string $orderId, string $method = 'payment_link'): ?array
     {
+        $apiKey = config('services.pakasir.api_key');
         $slug = config('services.pakasir.slug', 'ryaze');
 
-        $params = ['order_id' => $orderId];
+        if (!$apiKey) {
+            \Illuminate\Support\Facades\Log::error('Pakasir API Key is missing in .env');
+            return null;
+        }
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders(['X-Api-Key' => $apiKey])
+                ->timeout(15)
+                ->post("https://app.pakasir.com/api/v2/create-transaction/{$slug}/{$orderId}", [
+                    'method' => $method,
+                    'amount' => $amount,
+                ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Pakasir create-transaction error: ' . $e->getMessage());
+            return null;
+        }
+
+        if (!$response->successful()) {
+            \Illuminate\Support\Facades\Log::error('Pakasir create-transaction failed', [
+                'order_id' => $orderId,
+                'status_code' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            return null;
+        }
+
+        return $response->json();
+    }
+}
+
+if (!function_exists('pakasir_pay_url')) {
+    /**
+     * Bangun URL pembayaran Pakasir API v2 (payment link).
+     * Format: https://app.pakasir.com/pay-v2/{txn_id}?redirect={url}
+     * Opsional: $redirect diarahkan setelah pembayaran selesai.
+     */
+    function pakasir_pay_url(int $amount, string $orderId, ?string $redirect = null): ?string
+    {
+        $txn = pakasir_create_transaction($amount, $orderId);
+        if (!$txn || empty($txn['txn_id'])) {
+            return null;
+        }
+
+        $params = [];
         if ($redirect) {
             $params['redirect'] = $redirect;
         }
 
-        return 'https://app.pakasir.com/pay/' . $slug . '/' . $amount . '?' . http_build_query($params);
+        return 'https://app.pakasir.com/pay-v2/' . $txn['txn_id'] . ($params ? '?' . http_build_query($params) : '');
     }
 }
 

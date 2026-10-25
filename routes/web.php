@@ -56,6 +56,12 @@ Route::post('/portfolio/tip', [\App\Http\Controllers\Home\PortfolioController::c
 Route::get('/tip/sukses/{order_id}', [\App\Http\Controllers\Home\PortfolioController::class, 'tipSuccess'])
     ->name('portfolio.tip.success');
 
+// ── PAKASIR PAYMENT GATEWAY (API v2) ────────────────────────
+// Semua tombol bayar diarahkan ke sini; nominal diambil dari database.
+Route::get('/payment/pakasir', [\App\Http\Controllers\PakasirPayController::class, 'pay'])
+    ->middleware('throttle:10,1')
+    ->name('payment.pakasir');
+
 // ── WHOIS / RDAP LOOKUP (PUBLIK) ─────────────────────────────
 Route::get('/whois', [WhoisController::class, 'index'])->name('whois.index');
 Route::post('/whois/lookup', [WhoisController::class, 'lookup'])

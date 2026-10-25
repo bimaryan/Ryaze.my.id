@@ -47,7 +47,7 @@
                         <p class="text-indigo-600 dark:text-indigo-400 text-xs mt-0.5">Selesaikan tagihan Anda sebesar Rp {{ number_format($upgradeInvoice->amount, 0, ',', '.') }} untuk memperbesar total kapasitas akun Anda.</p>
                     </div>
                 </div>
-                <a href="https://app.pakasir.com/pay/{{ config('services.pakasir.slug', 'ryaze') }}/{{ $upgradeInvoice->amount }}?order_id={{ $upgradeInvoice->invoice_number }}" target="_blank" class="shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm">
+                <a href="{{ route('payment.pakasir', ['order_id' => $upgradeInvoice->invoice_number]) }}" target="_blank" class="shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm">
                     <i class="fa-solid fa-credit-card"></i> Bayar via Pakasir
                 </a>
             </div>

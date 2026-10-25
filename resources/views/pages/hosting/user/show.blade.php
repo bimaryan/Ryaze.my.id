@@ -3663,8 +3663,7 @@ b.classList.toggle('dark:text-slate-400', !on);
             document.getElementById('modalPaymentAmount').innerText = formattedAmount;
             document.getElementById('modalPaymentInvoice').innerText = invoice;
             
-            let pakasirSlug = @json(config('services.pakasir.slug', 'ryaze'));
-            let pakasirUrl = `https://app.pakasir.com/pay/${pakasirSlug}/${amount}?order_id=${invoice}`;
+            let pakasirUrl = "{{ route('payment.pakasir') }}?order_id=" + encodeURIComponent(invoice);
             document.getElementById('btnPakasir').href = pakasirUrl;
 
             let adminWa = @json(\App\Models\Setting::val('contact_whatsapp', ''));
