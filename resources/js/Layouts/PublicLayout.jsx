@@ -146,10 +146,14 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
             </nav>
             )}
 
-            {children}
+            {/* flex-1 + bg dasar: halaman pendek tetap mengisi layar dan
+                celah di atas footer tidak terlihat seperti "lubang" */}
+            <div className="flex-1 bg-white dark:bg-[#0a0a14]">
+                {children}
+            </div>
 
             {withFooter && (
-            <footer className="border-t border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14]">
+            <footer className="mt-auto border-t border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14]">
                 <div className="max-w-6xl mx-auto px-6 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-2.5">

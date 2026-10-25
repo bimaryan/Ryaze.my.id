@@ -139,6 +139,112 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Katalog fitur bawaan yang bisa dicentang per paket (checkbox di admin).
+     *
+     * Baris Storage dan Maks. Project TIDAK ada di sini karena dibuat otomatis
+     * dari field `plan_*_storage` dan `plan_*_max_projects`.
+     *
+     * @return array<string, array<int, string>> grup => daftar label fitur
+     */
+    public static function planFeatureCatalog(): array
+    {
+        return [
+            'Database' => [
+                '1 MySQL Database',
+                'MySQL & PostgreSQL',
+                'MySQL, PostgreSQL & Redis',
+                'Semua Database',
+            ],
+            'Domain' => [
+                'Subdomain Bawaan',
+                'Custom Domain & Subdomain',
+            ],
+            'Lainnya' => [
+                'Prioritas Support',
+            ],
+        ];
+    }
+
+    /**
+     * Semua opsi fitur dalam satu flat list, urut sesuai katalog.
+     *
+     * @return array<int, string>
+     */
+    public static function planFeatureOptions(): array
+    {
+        $groups = array_values(static::planFeatureCatalog());
+
+        return $groups ? array_values(array_merge(...$groups)) : [];
+    }
+
+    /**
+     * Label baris Storage yang dibuat otomatis dari kapasitas dalam MB.
+     */
+    public static function storageLabel(int $storageMb): string
+    {
+        if ($storageMb < 1024) {
+            return $storageMb.' MB Storage';
+        }
+
+        $gb = $storageMb / 1024;
+        $label = floor($gb) == $gb
+            ? (string) (int) $gb
+            : rtrim(rtrim(number_format($gb, 2, '.', ''), '0'), '.');
+
+        return $label.' GB Storage';
+    }
+
+    /**
+     * Label baris Maks. Project yang dibuat otomatis (-1 = unlimited).
+     */
+    public static function projectLabel(int $maxProjects): string
+    {
+        return $maxProjects < 0 ? 'Project Unlimited' : 'Maks. '.$maxProjects.' Project';
+    }
+
+    /**
+     * Deteksi baris fitur lama yang sudah diwakili field Storage / Maks. Project
+     * supaya tidak ikut tersimpan lagi sebagai teks bebas.
+     */
+    public static function isAutoManagedFeature(string $line): bool
+    {
+        return (bool) preg_match('/\bstorage\b|^\d+(\.\d+)?\s*(mb|gb)\b/i', $line)
+            || (bool) preg_match('/^maks\.?\s*\d+\s*projects?\b/i', $line)
+            || (bool) preg_match('/\bproject unlimited\b|\bunlimited project\b/i', $line);
+    }
+
+    /**
+     * Susun daftar fitur final sebuah paket:
+     * [Storage otomatis] + [Maks. Project otomatis] + [fitur tercentang] + [teks custom lama].
+     *
+     * @return array<int, string>
+     */
+    public static function buildPlanFeatures(int $storageMb, int $maxProjects, mixed $stored): array
+    {
+        $lines = array_filter(
+            array_map('trim', explode("\n", (string) $stored)),
+            fn (string $line) => $line !== ''
+        );
+
+        $selected = [];
+        foreach ($lines as $line) {
+            if (! static::isAutoManagedFeature($line)) {
+                $selected[] = $line;
+            }
+        }
+
+        $catalog = static::planFeatureOptions();
+        $ordered = array_values(array_intersect($catalog, $selected));
+        $custom = array_values(array_diff($selected, $catalog));
+
+        return array_values(array_filter(array_merge(
+            [static::storageLabel($storageMb), static::projectLabel($maxProjects)],
+            $ordered,
+            $custom,
+        )));
+    }
+
+    /**
      * Hosting Plan Definitions.
      * Reads storage, max_projects, features, and pricing from settings table.
      * Falls back to hardcoded defaults if settings don't exist yet.
@@ -159,7 +265,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'default_price' => 0,
                 'default_price_yearly' => 0,
                 'color' => 'slate',
-                'features' => array_filter(explode("\n", $s('plan_free_features', "256 MB Storage\nMaks. 1 Project\n1 MySQL Database\nSubdomain Bawaan\nPrioritas Support"))),
+                'features' => static::buildPlanFeatures((int) $s('plan_free_storage', 256), (int) $s('plan_free_max_projects', 1), $s('plan_free_features', "256 MB Storage\nMaks. 1 Project\n1 MySQL Database\nSubdomain Bawaan\nPrioritas Support")),
                 'is_active' => $s('plan_free_active', '1') == '1',
             ],
             'starter' => [
@@ -173,7 +279,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'default_price' => 15000,
                 'default_price_yearly' => 150000,
                 'color' => 'indigo',
-                'features' => array_filter(explode("\n", $s('plan_starter_features', "1 GB Storage\nMaks. 3 Project\nMySQL & PostgreSQL\nSubdomain Bawaan\nPrioritas Support"))),
+                'features' => static::buildPlanFeatures((int) $s('plan_starter_storage', 1024), (int) $s('plan_starter_max_projects', 3), $s('plan_starter_features', "1 GB Storage\nMaks. 3 Project\nMySQL & PostgreSQL\nSubdomain Bawaan\nPrioritas Support")),
                 'is_active' => $s('plan_starter_active', '1') == '1',
             ],
             'pro' => [
@@ -187,7 +293,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'default_price' => 30000,
                 'default_price_yearly' => 300000,
                 'color' => 'violet',
-                'features' => array_filter(explode("\n", $s('plan_pro_features', "3 GB Storage\nMaks. 10 Project\nMySQL, PostgreSQL & Redis\nSubdomain Bawaan\nPrioritas Support"))),
+                'features' => static::buildPlanFeatures((int) $s('plan_pro_storage', 3072), (int) $s('plan_pro_max_projects', 10), $s('plan_pro_features', "3 GB Storage\nMaks. 10 Project\nMySQL, PostgreSQL & Redis\nCustom Domain & Subdomain\nPrioritas Support")),
                 'is_active' => $s('plan_pro_active', '1') == '1',
             ],
             'business' => [
@@ -201,7 +307,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'default_price' => 75000,
                 'default_price_yearly' => 750000,
                 'color' => 'amber',
-                'features' => array_filter(explode("\n", $s('plan_business_features', "10 GB Storage\nProject Unlimited\nSemua Database\nSubdomain Bawaan\nPrioritas Support"))),
+                'features' => static::buildPlanFeatures((int) $s('plan_business_storage', 10240), (int) $s('plan_business_max_projects', -1), $s('plan_business_features', "10 GB Storage\nProject Unlimited\nSemua Database\nCustom Domain & Subdomain\nPrioritas Support")),
                 'is_active' => $s('plan_business_active', '1') == '1',
             ],
         ];
@@ -314,6 +420,47 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return $this->hostingProjects()->count() < $max;
+    }
+
+    /**
+     * Custom domain (tokoanda.com) dan subdomain dari domain sendiri
+     * (blog.tokoanda.com) hanya untuk paket Pro & Business.
+     *
+     * Yang dikunci HANYA pembuatan hostname baru. Domain yang sudah ada tetap
+     * bisa disambungkan, dilepas, dan dilayani supaya situs customer yang
+     * sedang jalan tidak ikut mati kalau paketnya turun.
+     */
+    public function canManageCustomDomain(): array
+    {
+        $currentPlan = $this->getActivePlan();
+
+        if ($currentPlan === null) {
+            return [
+                'allowed' => false,
+                'message' => 'Anda tidak memiliki paket berlangganan aktif.',
+            ];
+        }
+
+        if (in_array($currentPlan, static::customDomainPlans(), true)) {
+            return ['allowed' => true, 'message' => ''];
+        }
+
+        $labels = collect(static::hostingPlans())
+            ->only(static::customDomainPlans())
+            ->map(fn ($plan) => $plan['label'])
+            ->join(' atau ');
+
+        return [
+            'allowed' => false,
+            'message' => 'Custom domain & subdomain hanya tersedia di paket '.$labels
+                .'. Paket Anda saat ini belum mendukung, silakan upgrade.',
+        ];
+    }
+
+    /** Paket yang boleh memakai custom domain & subdomain. */
+    public static function customDomainPlans(): array
+    {
+        return ['pro', 'business'];
     }
 
     public function canCreateDatabase(string $type = 'mysql'): array

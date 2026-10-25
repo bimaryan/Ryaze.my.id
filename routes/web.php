@@ -24,6 +24,10 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/consultation', 'pages.consultation.index')->name('consultation');
+
+// Info Update — halaman publik, tanpa login.
+Route::get('/updates', [\App\Http\Controllers\Update\InfoUpdateController::class, 'index'])->name('updates.index');
+Route::get('/updates/{slug}', [\App\Http\Controllers\Update\InfoUpdateController::class, 'show'])->name('updates.show');
 Route::get('/sitemap.xml', function () {
     $articles = \App\Models\Article::where('status', 'published')->orderBy('created_at', 'desc')->get();
     $categories = \App\Models\ArticleCategory::has('articles')->orderBy('name')->get();
@@ -55,12 +59,6 @@ Route::post('/portfolio/tip', [\App\Http\Controllers\Home\PortfolioController::c
     ->name('portfolio.tip');
 Route::get('/tip/sukses/{order_id}', [\App\Http\Controllers\Home\PortfolioController::class, 'tipSuccess'])
     ->name('portfolio.tip.success');
-
-// ── PAKASIR PAYMENT GATEWAY (API v2) ────────────────────────
-// Semua tombol bayar diarahkan ke sini; nominal diambil dari database.
-Route::get('/payment/pakasir', [\App\Http\Controllers\PakasirPayController::class, 'pay'])
-    ->middleware('throttle:10,1')
-    ->name('payment.pakasir');
 
 // ── WHOIS / RDAP LOOKUP (PUBLIK) ─────────────────────────────
 Route::get('/whois', [WhoisController::class, 'index'])->name('whois.index');
@@ -165,6 +163,12 @@ Route::middleware('auth')->group(function () {
     // SUPERADMIN ONLY
     // ═══════════════════════════════════════════════════════════════
     Route::middleware(['role:superadmin', 'verified'])->group(function () {
+
+        // Katalog komponen UI — alat bantu pengembangan: satu halaman yang
+        // menampilkan seluruh komponen design-system dalam keadaan nyata
+        // (light & dark) supaya mudah dicek sebelum dipakai.
+        Route::view('/dev/ui-showcase', 'dev.ui-showcase')->name('dev.ui-showcase');
+
         Route::get('superadmin/dashboard', [AdminDashboardController::class, 'index'])->name('superadmin.dashboard');
         Route::get('superadmin/server-status', [AdminDashboardController::class, 'getServerStatus'])->name('superadmin.server_status');
 
@@ -247,6 +251,16 @@ Route::middleware('auth')->group(function () {
             ->name('admin.promo_events.generate_description');
         Route::patch('superadmin/promo-events/{promo_event}/status', [\App\Http\Controllers\Admin\PromoEventController::class, 'toggleStatus'])->name('admin.promo_events.status');
         Route::resource('superadmin/promo-events', \App\Http\Controllers\Admin\PromoEventController::class)->names('admin.promo_events');
+
+        // Info Update — info/pengumuman yang ditulis superadmin dan dibaca user
+        // di halaman publik /updates.
+        Route::post('superadmin/info-updates/generate-description', [\App\Http\Controllers\Admin\InfoUpdateController::class, 'generateDescription'])
+            ->middleware('throttle:15,1')
+            ->name('superadmin.info_updates.generate_description');
+        Route::patch('superadmin/info-updates/{hashid}/status', [\App\Http\Controllers\Admin\InfoUpdateController::class, 'toggleStatus'])->name('superadmin.info_updates.status');
+        Route::resource('superadmin/info-updates', \App\Http\Controllers\Admin\InfoUpdateController::class)
+            ->parameters(['info_update' => 'hashid'])
+            ->names('superadmin.info_updates');
     });
 
     // ═══════════════════════════════════════════════════════════════
@@ -379,10 +393,15 @@ Route::middleware('auth')->group(function () {
             // project, lalu sambungkan lewat tab Domains di halaman project.
             Route::get('user/hosting/domains', [DomainController::class, 'index'])->name('user_hosting.domains.index');
             Route::post('user/hosting/domains', [DomainController::class, 'store'])->name('user_hosting.domains.create');
+            // Subdomain dari domain milik user sendiri (blog.tokoanda.com).
+            Route::post('user/hosting/domains/subdomain', [DomainController::class, 'storeSubdomain'])->name('user_hosting.domains.subdomain.store');
             Route::get('user/hosting/domains/{hashid}', [DomainController::class, 'show'])->name('user_hosting.domains.show');
             Route::post('user/hosting/domains/{hashid}/assign', [DomainController::class, 'assign'])->name('user_hosting.domains.assign');
             Route::post('user/hosting/domains/{hashid}/detach', [DomainController::class, 'detach'])->name('user_hosting.domains.detach');
             Route::post('user/hosting/domains/{hashid}/status', [DomainController::class, 'checkStatus'])->name('user_hosting.domains.status');
+            // Redirect domain ala Vercel: Temporary (302/307) & Permanent (301/308)
+            Route::post('user/hosting/domains/{hashid}/redirect', [DomainController::class, 'storeRedirect'])->name('user_hosting.domains.redirect.store');
+            Route::delete('user/hosting/domains/{hashid}/redirect', [DomainController::class, 'destroyRedirect'])->name('user_hosting.domains.redirect.destroy');
             Route::delete('user/hosting/domains/{hashid}', [DomainController::class, 'destroy'])->name('user_hosting.domains.destroy');
             Route::post('user/hosting/projects/{hashid}/crons', [CronController::class, 'store'])->name('user_hosting.crons.store');
             Route::delete('user/hosting/crons/{hashid}', [CronController::class, 'destroy'])->name('user_hosting.crons.destroy');
@@ -440,7 +459,13 @@ Route::middleware('auth')->group(function () {
         Route::put('admin/joki/revisions/{hashid}/reply', [JokiAdminDashboardController::class, 'replyRevision'])->name('admin_joki.revision.reply');
         
         // Manajemen Layanan Joki
-        Route::resource('admin/joki/services', \App\Http\Controllers\Joki\Admin\ServiceController::class)->names('admin_joki.services');
+        // Hanya aksi yang benar-benar dipakai: form create & edit sudah
+        // tertanam di halaman index (bukan halaman terpisah), jadi route
+        // resource create/edit/show sengaja tidak didaftarkan — kalau
+        // didaftarkan tanpa method-nya, visiting /create akan 500.
+        Route::resource('admin/joki/services', \App\Http\Controllers\Joki\Admin\ServiceController::class)
+            ->only(['index', 'store', 'update', 'destroy'])
+            ->names('admin_joki.services');
         
         // Rekap Keuangan Joki
         Route::get('admin/joki/finance', [JokiAdminDashboardController::class, 'financeReport'])->name('admin_joki.finance');

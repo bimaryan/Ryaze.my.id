@@ -645,6 +645,12 @@ class AutoDeployProject implements ShouldQueue
         }
     }
 
+    /**
+     * Tulis satu baris ke build log.
+     *
+     * Semua teks必经 lewat sini — termasuk output mentah dari git/npm/artisan —
+     * jadi ini titik yang benar untuk menyembunyikan path server asli dari user.
+     */
     private function log($deploy, string $text): void
     {
         if (! $deploy) {
@@ -652,8 +658,26 @@ class AutoDeployProject implements ShouldQueue
         }
         $deploy->refresh();
         $deploy->update([
-            'build_logs' => $deploy->build_logs."\n".$text,
+            'build_logs' => $deploy->build_logs."\n".$this->sanitizePaths($text),
         ]);
+    }
+
+    /**
+     * Ganti path absolut server dengan bentuk yang aman ditampilkan ke user.
+     *
+     * Contoh: /www/sites/hosting_clients/toko  ->  /sites/toko
+     */
+    private function sanitizePaths(string $text): string
+    {
+        $base = rtrim(str_replace('\\', '/', hosting_clients_dir()), '/');
+
+        if ($base === '' || $base === '/') {
+            return $text;
+        }
+
+        $text = str_replace('\\', '/', $text);
+
+        return str_replace($base, '/sites', $text);
     }
 
     private function markAsFailed($deploy): void

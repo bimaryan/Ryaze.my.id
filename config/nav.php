@@ -15,12 +15,14 @@ return [
         ['label' => 'Cek Domain', 'href' => '/whois', 'route' => 'whois.index'],
         
         ['label' => 'Blog', 'href' => '/blog', 'route' => 'blog.index'],
+        ['label' => 'Info Update', 'href' => '/updates', 'route' => 'updates.index'],
     ],
 
     'footer_links' => [
         ['label' => 'Tentang', 'href' => '/#about'],
         ['label' => 'Layanan', 'href' => '/#services'],
         ['label' => 'Blog', 'href' => '/blog'],
+        ['label' => 'Info Update', 'href' => '/updates'],
         ['label' => 'Privasi', 'href' => '/privacy'],
         ['label' => 'Syarat', 'href' => '/terms'],
     ],
