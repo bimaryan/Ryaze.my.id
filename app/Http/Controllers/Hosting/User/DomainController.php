@@ -270,11 +270,11 @@ class DomainController extends Controller
      */
     private function syncRouting(HostingDomain $domain): string
     {
-        $subdomain = $domain->project?->subdomain;
+        $ryazeDomain = $domain->project?->ryaze_domain;
         $notes = [];
 
-        if (! $subdomain) {
-            return ' (Peringatan: project belum punya subdomain, mapping nginx dilewati.)';
+        if (! $ryazeDomain) {
+            return ' (Peringatan: project belum punya ryaze_domain, mapping nginx dilewati.)';
         }
 
         $mapDir = hosting_clients_dir().'/.domains';
@@ -283,7 +283,7 @@ class DomainController extends Controller
         }
 
         foreach ($domain->hostnames() as $hostname) {
-            file_put_contents("{$mapDir}/{$hostname}", $subdomain);
+            file_put_contents("{$mapDir}/{$hostname}", $ryazeDomain);
         }
 
         $notes[] = 'Domain sudah serves project '.$domain->project->project_name.'.';
