@@ -10,8 +10,8 @@
             iconColor="indigo">
             <x-slot:actions>
                 <a href="{{ route('user_hosting.dashboard') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                    &larr; Kembali
+                    class="ui-btn ui-btn-md ui-btn-icon ui-btn-secondary" title="Kembali" aria-label="Kembali">
+                    <i class="fa-solid fa-arrow-left"></i>
                 </a>
             </x-slot:actions>
         </x-ui.page-header>
@@ -32,7 +32,7 @@
 
         @if ($hasActive)
             @php $planColor = $colorMap[$plans[$currentPlan]['color'] ?? 'indigo']['badge'] ?? 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/40'; @endphp
-            <div class="mb-6 bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 flex items-center justify-between gap-4">
+            <div class="ui-card mb-6 p-5 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-500/20 rounded-xl flex items-center justify-center">
                         <i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-300"></i>
@@ -61,7 +61,7 @@
                 
                 <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
                     <button @click="billingCycle = 'monthly'" :class="{'bg-white dark:bg-slate-700 shadow-sm text-slate-800 dark:text-slate-100': billingCycle === 'monthly', 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200': billingCycle !== 'monthly'}" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all">Bulanan</button>
-                    <button @click="billingCycle = 'yearly'" :class="{'bg-white dark:bg-slate-700 shadow-sm text-slate-800 dark:text-slate-100': billingCycle === 'yearly', 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200': billingCycle !== 'yearly'}" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all">Tahunan <span class="ml-1 text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-bold">HEMAT</span></button>
+                    <button @click="billingCycle = 'yearly'" :class="{'bg-white dark:bg-slate-700 shadow-sm text-slate-800 dark:text-slate-100': billingCycle === 'yearly', 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200': billingCycle !== 'yearly'}" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all">Tahunan <span class="ui-badge ui-badge-success ml-1 text-[10px] px-1.5">HEMAT</span></button>
                 </div>
             </div>
 
@@ -77,18 +77,18 @@
                         $isPopular = $slug === 'pro';
                         $isCurrent = $slug === $currentPlan;
                     @endphp
-                    <div class="relative bg-white dark:bg-slate-800/60 rounded-2xl border {{ $isPopular ? 'border-violet-400 shadow-lg shadow-violet-100' : 'border-slate-200 dark:border-slate-700 shadow-sm' }} {{ $isCurrent ? 'opacity-80' : '' }} overflow-hidden flex flex-col">
+                    <div class="ui-card relative {{ $isPopular ? 'border-violet-400 shadow-violet-100' : 'border-slate-200 shadow-sm' }} {{ $isCurrent ? 'opacity-80' : '' }} overflow-hidden flex flex-col">
                         @if ($isPopular)
                             <div class="absolute top-0 inset-x-0 h-1 bg-violet-500"></div>
                         @endif
                         
                         @if ($isCurrent)
-                            <div class="absolute top-3 right-3"><span class="text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40 px-2 py-0.5 rounded-full">SAAT INI</span></div>
+                            <div class="absolute top-3 right-3"><span class="ui-badge ui-badge-success text-[10px] border">SAAT INI</span></div>
                         @elseif ($isPopular)
-                            <div class="absolute top-3 right-3"><span class="text-[10px] font-bold bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/40 px-2 py-0.5 rounded-full">POPULER</span></div>
+                            <div class="absolute top-3 right-3"><span class="ui-badge ui-badge-accent text-[10px] border">POPULER</span></div>
                         @endif
 
-                        <div class="p-6 flex-1">
+                        <div class="p-6 flex-1 min-w-0">
                             <div class="w-10 h-10 {{ $c['bg'] }} rounded-xl flex items-center justify-center mb-4">
                                 <i class="fa-solid fa-server text-white text-base"></i>
                             </div>
@@ -101,7 +101,7 @@
                                             <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 line-through decoration-rose-500 decoration-2">Rp {{ number_format($pricingM['normal'], 0, ',', '.') }}</span>
                                         @endif
                                         <div class="flex items-baseline gap-1">
-                                            <span class="text-2xl font-bold {{ $c['text'] }}">Rp {{ number_format($pricingM['active'], 0, ',', '.') }}</span>
+                                            <span class="text-2xl font-bold {{ $c['text'] }} tabular-nums break-words"> {{ number_format($pricingM['active'], 0, ',', '.') }}</span>
                                             <span class="text-xs text-slate-400 dark:text-slate-500 font-normal">/bulan</span>
                                         </div>
                                     </div>
@@ -112,7 +112,7 @@
                                             <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 line-through decoration-rose-500 decoration-2">Rp {{ number_format($pricingY['normal'], 0, ',', '.') }}</span>
                                         @endif
                                         <div class="flex items-baseline gap-1">
-                                            <span class="text-2xl font-bold {{ $c['text'] }}">Rp {{ number_format($pricingY['active'], 0, ',', '.') }}</span>
+                                            <span class="text-2xl font-bold {{ $c['text'] }} tabular-nums break-words"> {{ number_format($pricingY['active'], 0, ',', '.') }}</span>
                                             <span class="text-xs text-slate-400 dark:text-slate-500 font-normal">/tahun</span>
                                         </div>
                                     </div>
@@ -137,7 +137,7 @@
                                     @csrf
                                     <input type="hidden" name="plan" value="{{ $slug }}">
                                     <input type="hidden" name="billing_cycle" x-model="billingCycle">
-                                    <input type="text" name="voucher_code" placeholder="Kode Voucher (Opsional)" class="uppercase font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                    <input type="text" name="voucher_code" placeholder="Kode Voucher (Opsional)" class="ui-field ui-field-sm uppercase font-mono">
                                     <button type="submit" class="w-full {{ $c['btn'] }} text-white font-bold px-4 py-2.5 rounded-xl shadow-sm transition-all text-sm">
                                         <i class="fa-solid fa-bolt mr-1"></i> {{ $hasActive ? 'Upgrade ke ' . $plan['label'] : 'Pilih ' . $plan['label'] }}
                                     </button>

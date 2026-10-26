@@ -10,6 +10,7 @@ use App\Models\HostingBilling;
 use App\Models\HostingEmail;
 use App\Models\HostingPayment;
 use App\Models\HostingProject;
+use App\Models\InfoUpdate;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\Voucher;
@@ -88,7 +89,22 @@ class DashboardController extends Controller
                 ->first();
         }
 
-        return view('pages.hosting.user.index', compact('projects', 'stats', 'activeBilling', 'expiredBilling'));
+        // 5. Info update yang tampil ke user: aktif DAN sudah masuk
+        //    jadwal tayang. Diprioritaskan yang berprioritas tinggi
+        //    lalu yang terbaru.
+        $infoUpdates = InfoUpdate::published()
+            ->orderByDesc('priority')
+            ->orderByDesc('published_at')
+            ->limit(5)
+            ->get();
+
+        return view('pages.hosting.user.index', compact(
+            'projects',
+            'stats',
+            'activeBilling',
+            'expiredBilling',
+            'infoUpdates',
+        ));
     }
 
     // Menampilkan form deploy baru
@@ -188,7 +204,7 @@ class DashboardController extends Controller
             $request->validate([
                 'template_key' => 'required|in:'.implode(',', array_keys($this->availableTemplates)),
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryaze.cloud',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
             ]);
 
             $templateKey = $request->input('template_key');
@@ -203,7 +219,7 @@ class DashboardController extends Controller
             $request->validate([
                 'project_zip' => 'required|file|mimes:zip|max:51200',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryaze.cloud',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
                 'framework' => 'required|in:'.$allowedFrameworks,
             ]);
 
@@ -222,7 +238,7 @@ class DashboardController extends Controller
             $request->validate([
                 'repo_source' => 'required|url',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryaze.cloud',
+                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
                 'framework' => 'required|in:'.$allowedFrameworks,
                 'branch' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9_\/\-.]*$/'],
             ]);
@@ -1884,12 +1900,29 @@ PHP;
         $deployment = $project->deployments->first();
 
         return response()->json([
-            'build_logs' => $deployment?->build_logs ?? '',
+            // Disanitasi saat dibaca juga, supaya log lama yang tersimpan
+            // sebelum sanitasi masuk ke AutoDeployProject tidak ikut bocor.
+            'build_logs' => $this->sanitizeBuildLogs($deployment?->build_logs ?? ''),
             'status' => $project->status,
             'deployment_status' => $deployment?->status,
             'website_url' => 'https://'.$project->ryaze_domain,
             'last_updated' => $deployment?->updated_at?->toDateTimeString(),
         ]);
+    }
+
+    /**
+     * Sembunyikan path absolut server dari build log yang ditampilkan ke user.
+     * Lihat AutoDeployProject::sanitizePaths() untuk versi saat penulisan.
+     */
+    private function sanitizeBuildLogs(string $logs): string
+    {
+        $base = rtrim(str_replace('\\', '/', hosting_clients_dir()), '/');
+
+        if ($base === '' || $base === '/') {
+            return $logs;
+        }
+
+        return str_replace($base, '/sites', str_replace('\\', '/', $logs));
     }
 
     // Memproses perintah dari Web Terminal (HARDENED)

@@ -53,59 +53,63 @@
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
                     </a>
                 @endif
-                <a href="{{ route('user_hosting.projects') }}" class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm">
-                    &larr; Kembali
+                <a href="{{ route('user_hosting.projects') }}" class="ui-btn ui-btn-sm ui-btn-icon ui-btn-secondary" title="Kembali" aria-label="Kembali">
+                    <i class="fa-solid fa-arrow-left"></i>
                 </a>
             </x-slot:actions>
         </x-ui.page-header>
 
         {{-- Tab Navigation --}}
-        <div class="flex flex-wrap gap-2 mb-6 mt-6 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-1.5 shadow-sm w-full">
+        {{-- overflow-x-auto supaya tab tidak saling dorok saat layar sempit;
+             -mx-1.5 + px-1.5 supaya shadow tidak terpotong wrapper scroll. --}}
+        <div class="mb-6 mt-6 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm -mx-1.5 px-1.5">
+        <div class="flex flex-nowrap gap-1 overflow-x-auto p-1.5 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button data-tab="overview" id="tab-overview" onclick="switchTab('overview')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow">
+                class="ui-tab ui-tab-active">
                 <i class="fa-solid fa-chart-simple"></i> <span>Overview</span>
             </button>
             <button data-tab="logs" id="tab-logs" onclick="switchTab('logs')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-scroll"></i> <span>Build Logs</span>
             </button>
             <button data-tab="terminal" id="tab-terminal" onclick="switchTab('terminal')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-terminal"></i> <span>Terminal</span>
             </button>
             <button data-tab="files" id="tab-files" onclick="switchTab('files')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-folder-tree"></i> <span>Root Files</span>
             </button>
             <button data-tab="ide" id="tab-ide" onclick="switchTab('ide')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-laptop-code"></i> <span>IDE VS Code</span>
             </button>
             <button data-tab="env" id="tab-env" onclick="switchTab('env')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-key"></i> <span>.env</span>
             </button>
             <button data-tab="settings" id="tab-settings" onclick="switchTab('settings')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-gears"></i> <span>Settings</span>
             </button>
 
             {{-- <button data-tab="email" id="tab-email"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-envelope"></i> <span>Email</span>
             </button> --}}
             <button data-tab="domains" id="tab-domains" onclick="switchTab('domains')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-globe"></i> <span>Domains</span>
             </button>
             <button data-tab="crons" id="tab-crons" onclick="switchTab('crons')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-clock"></i> <span>Cron Jobs</span>
             </button>
             <button data-tab="team" id="tab-team" onclick="switchTab('team')"
-                class="tab-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40">
+                class="ui-tab">
                 <i class="fa-solid fa-users"></i> <span>Team Access</span>
             </button>
+        </div>
         </div>
 
         {{-- TAB: OVERVIEW --}}
@@ -113,7 +117,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-6">
                     @if ($project->status == 'active')
-                        <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        <div class="ui-card overflow-hidden">
                             <div class="bg-slate-100 dark:bg-slate-700/50 px-4 py-2.5 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
                                 <div class="flex gap-1.5">
                                     <div class="w-3 h-3 rounded-full bg-rose-400"></div>
@@ -174,7 +178,7 @@
                     @endif
                 </div>
                 <div class="space-y-4">
-                    <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <div class="ui-card p-6 min-w-0">
                         <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2 text-sm">Detail Deployment</h3>
                         <div class="space-y-4 text-sm">
                             <div>
@@ -204,7 +208,7 @@
                             <div>
                                 <span class="block text-slate-500 dark:text-slate-400 text-xs mb-1">Branch</span>
                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 font-mono text-slate-700 dark:text-slate-200 text-xs">
+                                    class="ui-badge ui-badge-neutral border font-mono">
                                     <i class="fa-solid fa-code-branch mr-1.5"></i> {{ $project->branch }}
                                 </span>
                             </div>
@@ -215,7 +219,7 @@
                             <div>
                                 <span class="block text-slate-500 dark:text-slate-400 text-xs mb-1">Root Directory</span>
                                 <span
-                                    class="font-mono text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded block truncate">
+                                    class="ui-badge ui-badge-neutral font-mono border block truncate">
                                     /{{ explode('.', $project->ryaze_domain)[0] }}
                                 </span>
                             </div>
@@ -223,7 +227,7 @@
                                 class="mt-2">
                                 @csrf
                                 <button type="submit"
-                                    class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
+                                    class="ui-btn ui-btn-md ui-btn-primary w-full">
                                     <i class="fa-solid fa-rotate"></i> Redeploy Sekarang
                                 </button>
                             </form>
@@ -340,20 +344,25 @@ server {
 NGINX_CONF
                         );
                         $nginxStatus = $project->nginx_status;
+                    // PHP hanya memutuskan MAKNA (varian + ikon + label);
+                    // kelasnya diambil dari design-system lewat <x-ui.badge>.
+                    // Kalau warna ditulis manual di sini, setiap status baru
+                    // wajib=dict warna baru lagi, dan hasilnya pasti tidak konsisten.
                     $nginxBadge = match ($nginxStatus) {
-                        'pending' => ['text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/40', 'fa-clock', 'Diproses'],
-                        'applied' => ['text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/40', 'fa-circle-check', 'Aktif'],
-                        'failed'  => ['text-rose-600 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/40', 'fa-circle-xmark', 'Gagal'],
-                        'reset'   => ['text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700', 'fa-rotate-left', 'Default'],
-                        default   => ['text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700', 'fa-minus', 'Belum diatur'],
+                        'pending' => ['warning', 'fa-clock', 'Diproses'],
+                        'applied' => ['success', 'fa-circle-check', 'Aktif'],
+                        'failed'  => ['danger',  'fa-circle-xmark', 'Gagal'],
+                        'reset'   => ['neutral', 'fa-rotate-left', 'Default'],
+                        default   => ['neutral', 'fa-minus', 'Belum diatur'],
                     };
                     @endphp
-                    <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 mt-4">
+                    <div class="ui-card p-6 mt-4">
                         <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2 text-sm">
                             <i class="fa-solid fa-server text-indigo-500 dark:text-indigo-400"></i> Konfigurasi Nginx (OpenResty)
-                            <span class="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider {{ $nginxBadge[0] }}">
-                                <i class="fa-solid {{ $nginxBadge[1] }} {{ $nginxStatus === 'pending' ? 'fa-spin' : '' }}"></i> {{ $nginxBadge[2] }}
-                            </span>
+                            <x-ui.badge :variant="$nginxBadge[0]" :icon="'fa-solid ' . $nginxBadge[1] . ($nginxStatus === 'pending' ? ' fa-spin' : '')"
+                                class="ml-auto text-[10px] uppercase tracking-wider">
+                                {{ $nginxBadge[2] }}
+                            </x-ui.badge>
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
                             Sesuaikan config server untuk
@@ -374,19 +383,19 @@ NGINX_CONF
                         <form action="{{ route('user_hosting.nginx.update', $project->hashid) }}" method="POST">
                             @csrf
                             <textarea name="nginx_config" rows="12" spellcheck="false"
-                                class="w-full font-mono text-[11px] leading-relaxed bg-slate-900 text-emerald-300 border border-slate-800 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500/30 outline-none transition resize-y"
+                                class="ui-field font-mono text-[11px] leading-relaxed bg-slate-900 text-emerald-300 border-slate-800 focus:ring-indigo-500/30 resize-y"
                                 placeholder="# Contoh: server {&#10;    listen 80;&#10;    server_name {{ $d }};&#10;    ...&#10;}">{{ $project->nginx_custom }}</textarea>
                             <div class="flex flex-wrap items-center gap-2 mt-3">
                                 <button type="submit"
-                                    class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                                    class="ui-btn ui-btn-md ui-btn-primary">
                                     <i class="fa-solid fa-paper-plane"></i> Simpan &amp; Terapkan
                                 </button>
                                 <button type="button" onclick="document.getElementById('nginx_example').classList.toggle('hidden')"
-                                    class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                                    class="ui-btn ui-btn-md ui-btn-secondary">
                                     <i class="fa-solid fa-eye"></i> Contoh Config
                                 </button>
                                 <button type="button" onclick="copyNginxExample()"
-                                    class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                                    class="ui-btn ui-btn-md ui-btn-secondary">
                                     <i class="fa-solid fa-copy"></i> Salin Contoh
                                 </button>
                             </div>
@@ -407,7 +416,7 @@ NGINX_CONF
                     </div>
 
                     {{-- QR Code Scan --}}
-                    <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 mt-4 text-center">
+                    <div class="ui-card p-6 mt-4 text-center">
                         <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2 text-sm flex items-center justify-center gap-2">
                             <i class="fa-solid fa-qrcode text-indigo-500 dark:text-indigo-400"></i> Scan QR Code
                         </h3>
@@ -420,7 +429,7 @@ NGINX_CONF
                     </div>
 
                     {{-- Resource Monitoring --}}
-                    <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 mt-4">
+                    <div class="ui-card p-6 mt-4">
                         <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2 text-sm flex items-center gap-2">
                             <i class="fa-solid fa-chart-pie text-indigo-500 dark:text-indigo-400"></i> Statistik Penggunaan
                         </h3>
@@ -446,7 +455,7 @@ NGINX_CONF
             </div>
 
             {{-- CPU & RAM Usage Chart --}}
-            <div class="mt-6 bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <div class="ui-card mt-6 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
                         <i class="fa-solid fa-microchip text-indigo-500 dark:text-indigo-400"></i> Server Resource Usage (Last 24h)
@@ -550,7 +559,7 @@ NGINX_CONF
                         spellcheck="false" placeholder="Enter command..."
                         class="flex-1 bg-transparent text-slate-100 font-mono text-sm outline-none placeholder-slate-600/50 caret-emerald-400 min-w-0">
                     <button data-action="run-command"
-                        class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] shrink-0 group/btn">
+                        class="ui-icon-btn ui-icon-btn-primary w-8 h-8 bg-emerald-500/10 hover:bg-emerald-500 hover:text-white duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] group/btn">
                         <i class="fa-solid fa-arrow-turn-down -rotate-90 text-xs group-hover/btn:translate-x-0.5 transition-transform"></i>
                     </button>
                 </div>
@@ -569,7 +578,7 @@ NGINX_CONF
 
         {{-- TAB: FILE MANAGER --}}
         <div id="panel-files" class="tab-panel hidden relative">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden relative">
+            <div class="ui-card overflow-hidden relative">
                 <div
                     class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2 min-w-0">
@@ -587,7 +596,7 @@ NGINX_CONF
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
                         <button data-action="new-file"
-                            class="text-xs bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                            class="ui-btn ui-btn-sm ui-btn-ghost">
                             <i class="fa-solid fa-file-circle-plus text-emerald-500 dark:text-emerald-400 mr-1"></i><span
                                 class="hidden sm:inline">New File</span>
                         </button>
@@ -596,31 +605,33 @@ NGINX_CONF
                             <i class="fa-solid fa-paste mr-1"></i><span class="hidden sm:inline">Paste</span>
                         </button>
                         <button data-action="new-dir"
-                            class="text-xs bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                            class="ui-btn ui-btn-sm ui-btn-ghost">
                             <i class="fa-solid fa-folder-plus text-amber-500 dark:text-amber-400 mr-1"></i><span class="hidden sm:inline">New
                                 Folder</span>
                         </button>
-                        <label
-                            class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition-colors cursor-pointer">
+                        <label class="ui-btn ui-btn-sm ui-btn-primary cursor-pointer">
                             <i class="fa-solid fa-cloud-arrow-up mr-1"></i><span class="hidden sm:inline">Upload</span>
                             {{-- onchange diganti data-action --}}
                             <input type="file" id="upload-input" class="hidden" data-action="upload-file">
                         </label>
                         <button data-action="refresh-files"
-                            class="text-xs bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                            class="ui-btn ui-btn-sm ui-btn-ghost">
                             <i class="fa-solid fa-rotate-right"></i>
                         </button>
                     </div>
                 </div>
                 <div class="overflow-x-auto h-[500px] relative">
-                    <table class="w-full text-sm text-left text-slate-600 dark:text-slate-300 table-fixed">
+                    {{-- min-w: tanpa ini kolom "Aksi" (6 ikon) memaksa tabel melebar
+                         melebihi container, lalu scroll horizontal ikut menggeser kolom
+                         Nama sampai terpotong di sisi kiri. --}}
+                    <table class="w-full min-w-[720px] text-sm text-left text-slate-600 dark:text-slate-300 table-fixed">
                         <thead
                             class="bg-white dark:bg-slate-800/60 text-xs uppercase font-semibold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-10 shadow-sm">
                             <tr>
                                 <th class="px-6 py-3">Nama</th>
-                                <th class="px-4 py-3 w-24">Ukuran</th>
-                                <th class="px-4 py-3 hidden sm:table-cell">Diubah</th>
-                                <th class="px-4 py-3 w-28 text-right">Aksi</th>
+                                <th class="px-4 py-3 w-20 sm:w-24">Ukuran</th>
+                                <th class="px-4 py-3 hidden md:table-cell w-28 lg:w-36">Diubah</th>
+                                <th class="px-4 py-3 w-36 sm:w-44 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="file-manager-body" class="divide-y divide-slate-50 font-mono text-[13px]"></tbody>
@@ -644,13 +655,13 @@ NGINX_CONF
                             <button data-action="close-editor"
                                 class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-xs transition font-semibold">Batal</button>
                             <button data-action="save-editor"
-                                class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded text-xs transition font-semibold flex items-center gap-1.5">
+                                class="ui-btn ui-btn-sm ui-btn-primary">
                                 <i class="fa-solid fa-save"></i> Simpan
                             </button>
                         </div>
                     </div>
-                    <div id="monaco-editor-container" class="flex-1 w-full bg-[#1e1e1e] relative z-0"></div>
-                    <textarea id="file-editor-textarea" spellcheck="false" class="hidden flex-1 w-full bg-slate-900 text-emerald-400 dark:text-emerald-300 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
+                    <div id="monaco-editor-container" class="flex-1 min-w-0 w-full bg-[#1e1e1e] relative z-0"></div>
+                    <textarea id="file-editor-textarea" spellcheck="false" class="hidden flex-1 min-w-0 w-full bg-slate-900 text-emerald-400 dark:text-emerald-300 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
                     <div id="editor-loader"
                         class="hidden absolute inset-0 bg-slate-900/80 flex items-center justify-center z-40">
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500 dark:text-indigo-400"></i>
@@ -665,20 +676,20 @@ NGINX_CONF
                 
                 <!-- Activity Bar -->
                 <div class="w-12 bg-[#333333] flex flex-col items-center py-2 shrink-0 border-r border-[#1e1e1e] z-10">
-                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-white border-l-2 border-indigo-500 hover:text-white transition-colors" data-target="ide-sidebar-explorer" title="Explorer">
+                    <button class="ide-activity-btn ui-ide-activity ui-ide-activity-active" data-target="ide-sidebar-explorer" title="Explorer">
                         <i class="fa-regular fa-copy text-xl"></i>
                     </button>
-                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 dark:text-slate-400 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-search" title="Search">
+                    <button class="ide-activity-btn ui-ide-activity" data-target="ide-sidebar-search" title="Search">
                         <i class="fa-solid fa-magnifying-glass text-xl"></i>
                     </button>
-                    <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 dark:text-slate-400 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-extensions" title="Extensions">
+                    <button class="ide-activity-btn ui-ide-activity" data-target="ide-sidebar-extensions" title="Extensions">
                         <i class="fa-solid fa-cubes text-xl"></i>
                     </button>
                     <div class="mt-auto mb-2">
-                        <button class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 dark:text-slate-400 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-sidebar-settings" title="Settings / Themes">
+                        <button class="ide-activity-btn ui-ide-activity" data-target="ide-sidebar-settings" title="Settings / Themes">
                             <i class="fa-solid fa-gear text-xl"></i>
                         </button>
-                        <button id="ide-ai-activity-btn" class="ide-activity-btn w-12 h-12 flex items-center justify-center text-slate-500 dark:text-slate-400 border-l-2 border-transparent hover:text-white transition-colors" data-target="ide-right-chat" title="Ryaze AI">
+                        <button id="ide-ai-activity-btn" class="ide-activity-btn ui-ide-activity" data-target="ide-right-chat" title="Ryaze AI">
                             <i class="fa-brands fa-galactic-senate text-xl"></i>
                         </button>
                     </div>
@@ -707,7 +718,7 @@ NGINX_CONF
                             <i class="fa-solid fa-folder text-amber-500 dark:text-amber-400 shrink-0"></i>
                             <span class="truncate">{{ $project->ryaze_domain }}</span>
                         </div>
-                        <div id="ide-sidebar-tree" class="flex-1 overflow-y-auto text-sm text-[#cccccc] py-2 font-mono" style="font-size: 13px;">
+                        <div id="ide-sidebar-tree" class="flex-1 min-w-0 overflow-y-auto text-sm text-[#cccccc] py-2 font-mono" style="font-size: 13px;">
                             <!-- JS akan merender tree file -->
                         </div>
                     </div>
@@ -725,7 +736,7 @@ NGINX_CONF
                                 </label>
                             </div>
                         </div>
-                        <div id="ide-search-results" class="flex-1 overflow-y-auto px-2 py-2 text-xs font-mono">
+                        <div id="ide-search-results" class="flex-1 min-w-0 overflow-y-auto px-2 py-2 text-xs font-mono">
                             <div class="text-slate-500 dark:text-slate-400 text-center mt-10">Ketik dan tekan Enter untuk mencari</div>
                         </div>
                     </div>
@@ -752,14 +763,14 @@ NGINX_CONF
                         <div class="px-4 py-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-[#333]">
                             <span>Extensions</span>
                         </div>
-                        <div class="p-4 flex-1 overflow-y-auto">
+                        <div class="p-4 flex-1 min-w-0 overflow-y-auto">
                             <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">Ekstensi tema — klik "Terapkan" untuk langsung mengubah tema editor.</p>
                             <div class="mb-4 flex gap-3 items-start">
                                 <div class="w-10 h-10 rounded bg-[#282c34] border border-[#3e4451] shrink-0"></div>
                                 <div class="w-full">
                                     <p class="text-sm text-slate-200 font-semibold leading-tight">One Dark Pro</p>
                                     <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Theme · Atom One Dark</p>
-                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors" onclick="applyIdeTheme('one-dark-pro', this)">Terapkan</button>
+                                    <button class="ui-btn ui-btn-sm ui-btn-primary w-full" onclick="applyIdeTheme('one-dark-pro', this)">Terapkan</button>
                                 </div>
                             </div>
                             <div class="mb-4 flex gap-3 items-start">
@@ -767,7 +778,7 @@ NGINX_CONF
                                 <div class="w-full">
                                     <p class="text-sm text-slate-200 font-semibold leading-tight">Dracula</p>
                                     <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Theme · Dracula Official</p>
-                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors" onclick="applyIdeTheme('dracula', this)">Terapkan</button>
+                                    <button class="ui-btn ui-btn-sm ui-btn-primary w-full" onclick="applyIdeTheme('dracula', this)">Terapkan</button>
                                 </div>
                             </div>
                             <div class="mb-4 flex gap-3 items-start">
@@ -775,7 +786,7 @@ NGINX_CONF
                                 <div class="w-full">
                                     <p class="text-sm text-slate-200 font-semibold leading-tight">Dark+ (default)</p>
                                     <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Theme · Bawaan Monaco</p>
-                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors" onclick="applyIdeTheme('vs-dark', this)">Terapkan</button>
+                                    <button class="ui-btn ui-btn-sm ui-btn-primary w-full" onclick="applyIdeTheme('vs-dark', this)">Terapkan</button>
                                 </div>
                             </div>
                             <div class="mb-4 flex gap-3 items-start">
@@ -783,7 +794,7 @@ NGINX_CONF
                                 <div class="w-full">
                                     <p class="text-sm text-slate-200 font-semibold leading-tight">Light+ (default)</p>
                                     <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Theme · Bawaan Monaco</p>
-                                    <button class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded w-full transition-colors" onclick="applyIdeTheme('vs', this)">Terapkan</button>
+                                    <button class="ui-btn ui-btn-sm ui-btn-primary w-full" onclick="applyIdeTheme('vs', this)">Terapkan</button>
                                 </div>
                             </div>
                         </div>
@@ -821,12 +832,12 @@ NGINX_CONF
                             <button id="ide-popout-btn" title="Buka di jendela baru" class="text-slate-500 dark:text-slate-400 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
                                 <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
                             </button>
-                            <button id="ide-save-btn" data-action="ide-save" class="hidden text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded transition-colors flex items-center gap-1.5 font-semibold">
+                            <button id="ide-save-btn" data-action="ide-save" class="ui-btn ui-btn-sm ui-btn-primary hidden">
                                 <i class="fa-solid fa-save"></i> Simpan
                             </button>
                         </div>
                     </div>
-                    <div id="ide-monaco-container" class="flex-1 relative w-full bg-[#1e1e1e]">
+                    <div id="ide-monaco-container" class="flex-1 min-w-0 relative w-full bg-[#1e1e1e]">
                         <div id="ide-empty-state" class="absolute inset-0 flex items-center justify-center flex-col gap-4 opacity-30">
                             <i class="fa-solid fa-laptop-code text-7xl text-slate-500 dark:text-slate-400"></i>
                             <p class="text-slate-400 dark:text-slate-500 font-mono">Pilih file dari explorer untuk mengedit</p>
@@ -839,20 +850,20 @@ NGINX_CONF
                     <!-- Bottom Panel (VS Code-style) -->
                     <div id="ide-bottom-panel" class="h-56 bg-[#181818] border-t border-[#333] flex flex-col shrink-0 hidden">
                         <div class="h-9 bg-[#252526] border-b border-[#1e1e1e] flex items-stretch shrink-0 overflow-x-auto scrollbar-hide">
-                            <button data-panel-tab="problems" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                            <button data-panel-tab="problems" class="ui-ide-tab ide-panel-tab">
                                 <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Problems
                                 <span id="problems-count" class="text-[9px] bg-rose-600/40 text-rose-300 px-1.5 rounded-full hidden">0</span>
                             </button>
-                            <button data-panel-tab="output" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                            <button data-panel-tab="output" class="ui-ide-tab ide-panel-tab">
                                 <i class="fa-solid fa-rectangle-list text-[10px]"></i> Output
                             </button>
-                            <button data-panel-tab="debug" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                            <button data-panel-tab="debug" class="ui-ide-tab ide-panel-tab">
                                 <i class="fa-solid fa-bug text-[10px]"></i> Debug Console
                             </button>
-                            <button data-panel-tab="terminal" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                            <button data-panel-tab="terminal" class="ui-ide-tab ide-panel-tab">
                                 <i class="fa-solid fa-terminal text-[10px]"></i> Terminal
                             </button>
-                            <button data-panel-tab="ports" class="ide-panel-tab px-3 text-[11px] flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap">
+                            <button data-panel-tab="ports" class="ui-ide-tab ide-panel-tab">
                                 <i class="fa-solid fa-plug text-[10px]"></i> Ports
                             </button>
                             <div class="ml-auto flex items-center gap-0.5 px-1.5">
@@ -863,7 +874,7 @@ NGINX_CONF
                                 <button id="ide-panel-hide" title="Hide Panel" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 dark:text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-down text-[11px]"></i></button>
                             </div>
                         </div>
-                        <div class="flex-1 relative overflow-hidden">
+                        <div class="flex-1 min-w-0 relative overflow-hidden">
                             <div id="ide-panel-problems" class="ide-panel-view absolute inset-0 overflow-y-auto hidden"></div>
                             <div id="ide-panel-output" class="ide-panel-view absolute inset-0 overflow-y-auto hidden"></div>
                             <div id="ide-panel-debug" class="ide-panel-view absolute inset-0 hidden flex flex-col"></div>
@@ -887,7 +898,7 @@ NGINX_CONF
                             <div class="flex items-center gap-1.5">
                                 <button id="ide-chat-new" title="New Chat" class="text-slate-400 dark:text-slate-500 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-plus text-[10px]"></i></button>
                                 <button id="ide-chat-history" title="Riwayat Percakapan" class="text-slate-500 dark:text-slate-400 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-clock-rotate-left text-[10px]"></i></button>
-                                <button id="ide-chat-clear" title="Hapus percakapan ini" class="text-slate-500 dark:text-slate-400 hover:text-rose-400 transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                <button id="ide-chat-clear" title="Hapus percakapan ini" class="ui-icon-btn ui-icon-btn-danger w-6 h-6 hover:bg-[#333]"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
                                 <button id="ide-collapse-right" title="Tutup Panel AI" class="text-slate-500 dark:text-slate-400 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
                             </div>
                         </div>
@@ -898,15 +909,15 @@ NGINX_CONF
                             </div>
                         </div>
                         <div class="px-3 pt-2 flex gap-1.5 flex-wrap shrink-0">
-                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 text-slate-300 dark:text-slate-400 hover:text-white px-2 py-1 rounded-full transition-colors border border-[#444]">Perbaiki kode</button>
-                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 text-slate-300 dark:text-slate-400 hover:text-white px-2 py-1 rounded-full transition-colors border border-[#444]">Analisis bug</button>
-                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 text-slate-300 dark:text-slate-400 hover:text-white px-2 py-1 rounded-full transition-colors border border-[#444]">Buat file</button>
-                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 text-slate-300 dark:text-slate-400 hover:text-white px-2 py-1 rounded-full transition-colors border border-[#444]">Jelaskan</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 hover:text-white border-[#444]">Perbaiki kode</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 hover:text-white border-[#444]">Analisis bug</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 hover:text-white border-[#444]">Buat file</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 hover:text-white border-[#444]">Jelaskan</button>
                         </div>
                         <div class="p-3 border-t border-[#333] bg-[#252526] shrink-0">
                             <div id="grok-chat-form" class="flex flex-col gap-2">
                                 <textarea id="grok-chat-input" rows="2" class="w-full bg-[#3c3c3c] text-white text-xs px-3 py-2 rounded outline-none border border-[#444] focus:border-indigo-500 resize-none" placeholder="Tanya Ryaze AI... (Enter untuk kirim, Shift+Enter untuk baris baru)"></textarea>
-                                <button type="button" id="grok-chat-send-btn" class="bg-indigo-600 text-white px-3 py-1.5 rounded text-xs hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
+                                <button type="button" id="grok-chat-send-btn" class="ui-btn ui-btn-sm ui-btn-primary">
                                     <i class="fa-solid fa-paper-plane"></i> Kirim
                                 </button>
                             </div>
@@ -918,7 +929,7 @@ NGINX_CONF
 
         {{-- TAB: ENV --}}
         <div id="panel-env" class="tab-panel hidden">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden max-w-3xl">
+            <div class="ui-card overflow-hidden max-w-3xl">
                 <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
                     <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-key text-amber-500 dark:text-amber-400"></i> Environment Variables
@@ -936,7 +947,7 @@ NGINX_CONF
                     </div>
                     <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/60 flex justify-end">
                         <button type="submit"
-                            class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors text-sm">
+                            class="ui-btn ui-btn-md ui-btn-primary">
                             <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan .env
                         </button>
                     </div>
@@ -946,7 +957,7 @@ NGINX_CONF
 
         {{-- TAB: SETTINGS --}}
         <div id="panel-settings" class="tab-panel hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="ui-card overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
                     <h3 class="font-bold text-slate-800 dark:text-slate-100">Konfigurasi Aplikasi</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Atur parameter dasar environment project.</p>
@@ -966,10 +977,7 @@ NGINX_CONF
                                 <input type="checkbox" name="maintenance_mode" value="1" class="sr-only peer"
                                     {{ $project->maintenance_mode ?? false ? 'checked' : '' }}>
                                 <div
-                                    class="w-11 h-6 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:bg-amber-500
-                                    after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-                                    after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all
-                                    peer-checked:after:translate-x-full">
+                                    class="peer ui-switch ui-switch-warning">
                                 </div>
                             </label>
                         </div>
@@ -984,10 +992,7 @@ NGINX_CONF
                                 <input type="checkbox" name="force_https" value="1" class="sr-only peer"
                                     {{ $project->force_https ?? true ? 'checked' : '' }}>
                                 <div
-                                    class="w-11 h-6 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:bg-emerald-500
-                                    after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-                                    after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all
-                                    peer-checked:after:translate-x-full">
+                                    class="peer ui-switch ui-switch-success">
                                 </div>
                             </label>
                         </div>
@@ -1001,10 +1006,7 @@ NGINX_CONF
                                 <input type="checkbox" name="is_under_attack" value="1" class="sr-only peer"
                                     {{ $project->is_under_attack ?? false ? 'checked' : '' }}>
                                 <div
-                                    class="w-11 h-6 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:bg-rose-600
-                                    after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-                                    after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all
-                                    peer-checked:after:translate-x-full">
+                                    class="peer ui-switch ui-switch-danger">
                                 </div>
                             </label>
                         </div>
@@ -1013,12 +1015,12 @@ NGINX_CONF
                                 <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Blokir IP (WAF)</h4>
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Masukkan daftar alamat IP yang ingin diblokir (satu IP per baris). Pengunjung dengan IP ini akan mendapatkan pesan 403 Forbidden.</p>
                             </div>
-                            <textarea name="blocked_ips" rows="4" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 font-mono text-sm p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="192.168.1.1&#10;10.0.0.5" spellcheck="false">{{ old('blocked_ips', $wafContent) }}</textarea>
+                            <textarea name="blocked_ips" rows="4" class="ui-field text-slate-700 dark:text-slate-200 font-mono focus:outline-none" placeholder="192.168.1.1&#10;10.0.0.5" spellcheck="false">{{ old('blocked_ips', $wafContent) }}</textarea>
                         </div>
                     </div>
                     <div class="bg-slate-50 dark:bg-slate-800/60 px-6 py-3 border-t border-slate-200 dark:border-slate-700 flex justify-end">
                         <button type="submit"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-5 rounded-lg transition-colors shadow-sm">
+                            class="ui-btn ui-btn-md ui-btn-primary">
                             Simpan Perubahan
                         </button>
                     </div>
@@ -1026,7 +1028,7 @@ NGINX_CONF
             </div>
 
             {{-- Backup & Restore --}}
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="ui-card overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
                     <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-box-archive text-indigo-500 dark:text-indigo-400"></i> Backup & Restore
@@ -1048,7 +1050,7 @@ NGINX_CONF
                             @csrf
                             <div class="flex gap-2">
                                 <input type="file" name="backup_file" accept=".zip" required class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800">
-                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors shrink-0">
+                                <button type="submit" class="ui-btn ui-btn-md ui-btn-primary shrink-0">
                                     <i class="fa-solid fa-upload"></i> Restore
                                 </button>
                             </div>
@@ -1058,7 +1060,7 @@ NGINX_CONF
             </div>
 
             {{-- Danger Zone --}}
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-rose-200 dark:border-rose-500/40 overflow-hidden">
+            <div class="ui-card border-rose-200 dark:border-rose-500/40 overflow-hidden">
                 <div class="px-6 py-4 border-b border-rose-100 dark:border-rose-500/30 bg-rose-50/50 dark:bg-rose-500/10">
                     <h3 class="font-bold text-rose-600 dark:text-rose-300 flex items-center gap-2">
                         <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
@@ -1079,7 +1081,7 @@ NGINX_CONF
                             @csrf @method('DELETE')
                             {{-- data-action menggantikan onclick --}}
                             <button type="button" data-action="confirm-delete"
-                                class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-5 rounded-lg transition-all flex items-center justify-center gap-2">
+                                class="ui-btn ui-btn-md ui-btn-danger w-full sm:w-auto">
                                 <i class="fa-solid fa-trash-can"></i> Hapus Permanen
                             </button>
                         </form>
@@ -1093,7 +1095,7 @@ NGINX_CONF
         {{-- TAB: EMAIL --}}
         {{--
         <div id="panel-email" class="tab-panel hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="ui-card overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-slate-800 dark:text-slate-100">Kelola Email</h3>
@@ -1120,10 +1122,10 @@ NGINX_CONF
                         <div class="md:col-span-1">
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Password</label>
                             <input type="password" name="password" placeholder="Min. 8 karakter" required minlength="8"
-                                class="transition-all w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                                class="ui-field">
                         </div>
                         <div class="md:col-span-1">
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-sm hover:shadow-md">
+                            <button type="submit" class="ui-btn ui-btn-md ui-btn-primary w-full">
                                 Tambah Email
                             </button>
                         </div>
@@ -1144,7 +1146,7 @@ NGINX_CONF
                                     <tr class="bg-white dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40">
                                         <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-100">{{ $email->email_address }}</td>
                                         <td class="px-6 py-4">
-                                            <span class="text-emerald-600 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 px-2 py-1 rounded text-xs font-bold">Active</span>
+                                            <span class="ui-badge ui-badge-success">Active</span>
                                         </td>
                                         <td class="px-6 py-4 text-xs font-medium text-slate-700 dark:text-slate-200">{{ $email->quota_mb }} MB</td>
                                         <td class="px-6 py-4 text-right">
@@ -1174,7 +1176,7 @@ NGINX_CONF
 
 
         <div id="panel-crons" class="tab-panel hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="ui-card overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-slate-800 dark:text-slate-100">Cron Jobs</h3>
@@ -1187,15 +1189,15 @@ NGINX_CONF
                         <div class="md:col-span-1">
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Command</label>
                             <input type="text" name="command" placeholder="php artisan schedule:run" required
-                                class="transition-all w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                                class="ui-field">
                         </div>
                         <div class="md:col-span-1">
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Schedule (Cron Expr)</label>
                             <input type="text" name="schedule_expression" placeholder="* * * * *" required value="* * * * *"
-                                class="transition-all w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none font-mono">
+                                class="ui-field font-mono">
                         </div>
                         <div class="md:col-span-1">
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-sm hover:shadow-md">
+                            <button type="submit" class="ui-btn ui-btn-md ui-btn-primary w-full">
                                 Tambah Cron
                             </button>
                         </div>
@@ -1236,14 +1238,14 @@ NGINX_CONF
 
         {{-- TAB: DOMAINS --}}
         <div id="panel-domains" class="tab-panel hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="ui-card overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex flex-wrap justify-between items-center gap-3">
                     <div>
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100">Custom Domain</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Domain yang melayani project ini. Kelola daftarnya di halaman Domains.</p>
+                        <h3 class="font-bold text-slate-800 dark:text-slate-100">Domain &amp; Subdomain</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Semua hostname yang melayani project ini. Kelola daftarnya di halaman Domains.</p>
                     </div>
                     <a href="{{ route('user_hosting.domains.index') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-lg transition shadow-sm">
+                        class="ui-btn ui-btn-md ui-btn-primary">
                         <i class="fa-solid fa-globe"></i>
                         Buka Halaman Domains
                     </a>
@@ -1254,12 +1256,17 @@ NGINX_CONF
                             <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                                 <th class="px-6 py-4">Domain</th>
                                 <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4">Redirect</th>
                                 <th class="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-sm">
                             @php
-                                $linkedDomains = $project->domains()->whereNotNull('cf_zone_id')->latest()->get();
+                                // Semua jenis hostname bisa dilayani project ini:
+                                // custom domain maupun subdomain. Jangan saring
+                                // berdasarkan cf_zone_id — subdomain memang tidak punya zone.
+                                $linkedDomains = $project->domains()->with(['parent', 'redirect'])->latest()->get();
+                                $redirectStatuses = \App\Models\HostingDomainRedirect::statusOptions();
                             @endphp
                             @forelse($linkedDomains as $d)
                                 @php
@@ -1268,21 +1275,94 @@ NGINX_CONF
                                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                                     <td class="px-6 py-4">
                                         <span class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                            <i class="fa-solid fa-globe text-indigo-500 dark:text-indigo-400 text-xs"></i>
+                                            <i class="fa-solid {{ $d->isChild() ? 'fa-sitemap' : 'fa-globe' }} {{ $d->isChild() ? 'text-sky-500 dark:text-sky-400' : 'text-indigo-500 dark:text-indigo-400' }} text-xs"></i>
                                             {{ $d->domain_name }}
                                         </span>
+                                        @if ($d->isChild())
+                                            <span class="block text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                                                {{ \App\Models\HostingDomain::TYPE_PLATFORM === $d->type ? 'Subdomain platform' : 'Subdomain' }}
+                                                @if ($d->parent)
+                                                    &middot; dari {{ $d->parent->domain_name }}
+                                                @endif
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4">
                                         @if ($isActiveDomain)
-                                            <span class="inline-block px-2 py-1 rounded text-xs font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">Aktif</span>
+                                            <span class="ui-badge ui-badge-success inline-block">Aktif</span>
                                         @else
-                                            <span class="inline-block px-2 py-1 rounded text-xs font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300">Menunggu NS</span>
+                                            <span class="ui-badge ui-badge-warning inline-block">Menunggu NS</span>
                                         @endif
+                                    </td>
+                                    {{-- Redirect to Another Domain (ala Vercel) --}}
+                                    <td class="px-6 py-4" x-data="{ open: {{ $d->redirect ? 'true' : 'false' }} }">
+                                        @if ($d->redirect)
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase{{ $d->redirect->isPermanent() ? 'ui-badge ui-badge-accent' : 'ui-badge ui-badge-info' }}">
+                                                    {{ $d->redirect->kindLabel() }} ({{ $d->redirect->status_code }})
+                                                </span>
+                                                <span class="text-xs text-slate-600 dark:text-slate-300 font-mono break-all">{{ $d->redirect->target }}</span>
+                                            </div>
+                                        @else
+                                            <button type="button" x-on:click="open = true"
+                                                class="ui-chip">
+                                                <i class="fa-solid fa-arrow-right-arrow-left text-[10px]"></i> Redirect
+                                            </button>
+                                        @endif
+
+                                        <div x-show="open" x-cloak class="mt-3 p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800/40">
+                                            <p class="text-xs font-semibold text-slate-700 dark:text-slate-200 mb-2">Redirect to Another Domain</p>
+
+                                            <form action="{{ route('user_hosting.domains.redirect.store', $d->hashid) }}" method="POST" class="space-y-2">
+                                                @csrf
+                                                <div>
+                                                    <label class="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1" for="target_{{ $d->id }}">Destination URL</label>
+                                                    <input type="url" name="target" id="target_{{ $d->id }}" required
+                                                           placeholder="https://toko-baru.com"
+                                                           value="{{ old('target', $d->redirect->target ?? '') }}"
+                                                           class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1" for="status_{{ $d->id }}">Type</label>
+                                                    <select name="status_code" id="status_{{ $d->id }}"
+                                                            class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                                        @foreach ($redirectStatuses as $code => $label)
+                                                            <option value="{{ $code }}" @selected((int) old('status_code', $d->redirect->status_code ?? 308) === $code)>{{ $label }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <p class="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                                                    <i class="fa-solid fa-circle-info mr-1"></i>
+                                                    Permanent ikut ter-cache browser, jadi hanya pakai kalau domain lama benar-benar dipindah permanen.
+                                                </p>
+                                                <div class="flex items-center gap-2 pt-1">
+                                                    <button type="submit" class="ui-btn ui-btn-sm ui-btn-primary">
+                                                        <i class="fa-solid fa-check mr-1"></i> Simpan
+                                                    </button>
+                                                    @if ($d->redirect)
+                                                        <button type="button" x-on:click="open = false"
+                                                            class="ui-btn ui-btn-sm ui-btn-secondary">
+                                                            Batal
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </form>
+
+                                            @if ($d->redirect)
+                                                <form action="{{ route('user_hosting.domains.redirect.destroy', $d->hashid) }}" method="POST" class="pt-2 mt-2 border-t border-slate-200 dark:border-slate-700"
+                                                      onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus redirect?', 'Domain ini akan dilayani normal lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
+                                                    @csrf @method('DELETE')
+                                                    <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition">
+                                                        <i class="fa-solid fa-trash mr-1"></i> Hapus Redirect
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-end gap-2">
                                             <a href="{{ route('user_hosting.domains.show', $d->hashid) }}"
-                                                class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Kelola</a>
+                                                class="ui-chip">Kelola</a>
                                             <form action="{{ route('user_hosting.domains.detach', $d->hashid) }}" method="POST" class="inline"
                                                   onsubmit="event.preventDefault(); let f = this; swConfirm('Lepas dari project?', 'Domain tidak dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                                 @csrf
@@ -1293,7 +1373,7 @@ NGINX_CONF
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-12 text-center">
+                                    <td colspan="4" class="px-6 py-12 text-center">
                                         <i class="fa-solid fa-globe text-2xl text-slate-300 dark:text-slate-600 mb-2"></i>
                                         <p class="text-sm text-slate-500 dark:text-slate-400">Project ini belum punya custom domain.</p>
                                         <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Tambahkan domain dulu di halaman Domains, lalu sambungkan ke project ini.</p>
@@ -1312,10 +1392,10 @@ NGINX_CONF
                     ->get();
             @endphp
             @if($freeDomains->isNotEmpty() && $project->user_id == Auth::id())
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="ui-card overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Domain Tersedia Milik Anda</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Domain aktif yang belum dipakai project mana pun. Satu klik untuk menyambungkannya ke project ini.</p>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Hostname Tersedia Milik Anda</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Domain atau subdomain aktif yang belum dipakai project mana pun. Satu klik untuk menyambungkannya ke project ini.</p>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-3">
                     @foreach($freeDomains as $fd)
@@ -1323,9 +1403,9 @@ NGINX_CONF
                               class="flex items-center gap-3 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition">
                             @csrf
                             <input type="hidden" name="project_id" value="{{ $project->id }}">
-                            <i class="fa-solid fa-globe text-indigo-500 dark:text-indigo-400"></i>
-                            <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{ $fd->domain_name }}</span>
-                            <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition">Sambungkan</button>
+                            <i class="fa-solid {{ $fd->isChild() ? 'fa-sitemap text-sky-500 dark:text-sky-400' : 'fa-globe text-indigo-500 dark:text-indigo-400' }}"></i>
+                            <span class="flex-1 min-w-0 text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{ $fd->domain_name }}</span>
+                            <button type="submit" class="ui-btn ui-btn-sm ui-btn-primary">Sambungkan</button>
                         </form>
                     @endforeach
                 </div>
@@ -1335,7 +1415,7 @@ NGINX_CONF
 
         {{-- TAB: TEAM ACCESS --}}
         <div id="panel-team" class="tab-panel hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="ui-card overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-slate-800 dark:text-slate-100">Team Access & Collaborators</h3>
@@ -1346,15 +1426,15 @@ NGINX_CONF
                     @if($project->user_id == Auth::id())
                     <form action="{{ route('user_hosting.team.invite', $project->hashid) }}" method="POST" class="flex flex-col sm:flex-row gap-4">
                         @csrf
-                        <div class="flex-1 w-full sm:w-auto">
+                        <div class="flex-1 min-w-0 w-full sm:w-auto">
                             <input type="email" name="email" placeholder="Alamat email anggota baru" required
-                                class="transition-all w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                                class="ui-field">
                         </div>
-                        <select name="role" class="transition-all w-full sm:w-auto bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                        <select name="role" class="ui-field sm:w-auto">
                             <option value="viewer">Viewer (Hanya Lihat)</option>
                             <option value="editor">Editor (Bisa Ubah)</option>
                         </select>
-                        <button type="submit" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
+                        <button type="submit" class="ui-btn ui-btn-md ui-btn-primary w-full sm:w-auto">
                             Undang Anggota
                         </button>
                     </form>
@@ -1381,9 +1461,9 @@ NGINX_CONF
                                         </td>
                                         <td class="px-6 py-4">
                                             @if($member->pivot->role == 'editor')
-                                                <span class="bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded text-xs font-bold">Editor</span>
+                                                <span class="ui-badge ui-badge-primary">Editor</span>
                                             @else
-                                                <span class="bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-2 py-1 rounded text-xs font-bold">Viewer</span>
+                                                <span class="ui-badge ui-badge-neutral">Viewer</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 text-right">
@@ -1605,15 +1685,17 @@ NGINX_CONF
                 return;
             }
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('bg-indigo-600', 'text-white', 'shadow');
-                b.classList.add('text-slate-500', 'dark:text-slate-400');
+            // Tab aktif ditandai dengan .ui-tab-active dari design-system.css,
+            // bukan lagi rangkaian class Tailwind yang disSusun manual.
+            document.querySelectorAll('.ui-tab[data-tab]').forEach(b => {
+                b.classList.remove('ui-tab-active');
+                b.setAttribute('aria-selected', 'false');
             });
             panel.classList.remove('hidden');
             const btn = document.getElementById('tab-' + name);
-            if(btn) {
-                btn.classList.add('bg-indigo-600', 'text-white', 'shadow');
-                btn.classList.remove('text-slate-500', 'dark:text-slate-400');
+            if (btn) {
+                btn.classList.add('ui-tab-active');
+                btn.setAttribute('aria-selected', 'true');
             }
             if (name === 'terminal') setTimeout(() => document.getElementById('terminal-input')?.focus(), 80);
             
@@ -1875,10 +1957,10 @@ NGINX_CONF
                                     `<span class="text-xs text-slate-300 dark:text-slate-400 italic select-none px-1">sistem</span>`;
                             } else if (isDir) {
                                 actions = `
-                                    <button class="file-action text-indigo-400 dark:text-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-1 transition-colors" data-op="copy" title="Copy">
+                                    <button class="ui-btn ui-btn-md ui-btn-link file-action px-1" data-op="copy" title="Copy">
                                         <i class="fa-solid fa-copy"></i>
                                     </button>
-                                    <button class="file-action text-purple-400 dark:text-purple-300 hover:text-purple-600 dark:hover:text-purple-400 px-1 transition-colors" data-op="cut" title="Cut">
+                                    <button class="file-action text-indigo-400 dark:text-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-1 transition-colors" data-op="cut" title="Cut">
                                         <i class="fa-solid fa-scissors"></i>
                                     </button>
                                     <button class="file-action text-amber-400 dark:text-amber-300 hover:text-amber-600 dark:hover:text-amber-400 px-1 transition-colors" data-op="rename" title="Rename">
@@ -1892,10 +1974,10 @@ NGINX_CONF
                                     <button class="file-action text-sky-400 dark:text-sky-300 hover:text-sky-600 dark:hover:text-sky-400 px-1 transition-colors" data-op="edit" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
-                                    <button class="file-action text-indigo-400 dark:text-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-1 transition-colors" data-op="copy" title="Copy">
+                                    <button class="ui-btn ui-btn-md ui-btn-link file-action px-1" data-op="copy" title="Copy">
                                         <i class="fa-solid fa-copy"></i>
                                     </button>
-                                    <button class="file-action text-purple-400 dark:text-purple-300 hover:text-purple-600 dark:hover:text-purple-400 px-1 transition-colors" data-op="cut" title="Cut">
+                                    <button class="file-action text-indigo-400 dark:text-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-1 transition-colors" data-op="cut" title="Cut">
                                         <i class="fa-solid fa-scissors"></i>
                                     </button>
                                     <button class="file-action text-amber-400 dark:text-amber-300 hover:text-amber-600 dark:hover:text-amber-400 px-1 transition-colors" data-op="rename" title="Rename">
@@ -1929,11 +2011,11 @@ NGINX_CONF
                                                 : 'text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 cursor-pointer'} truncate">
                                             ${item.name}
                                         </a>
-                                        ${locked ? '<span class="text-[10px] bg-slate-100 dark:bg-slate-700/50 text-slate-400 dark:text-slate-500 px-1.5 py-0.5 rounded font-mono shrink-0">protected</span>' : ''}
+                                        ${locked ? '<span class="ui-badge ui-badge-neutral text-[10px] px-1.5 font-mono shrink-0">protected</span>' : ''}
                                     </div>
                                 </td>
                                 <td class="px-4 py-2.5 text-slate-400 dark:text-slate-500 text-xs whitespace-nowrap">${item.size}</td>
-                                <td class="px-4 py-2.5 text-slate-400 dark:text-slate-500 text-xs hidden sm:table-cell whitespace-nowrap">${item.modified}</td>
+                                <td class="px-4 py-2.5 text-slate-400 dark:text-slate-500 text-xs hidden md:table-cell whitespace-nowrap">${item.modified}</td>
                                 <td class="px-4 py-2.5 text-right whitespace-nowrap">${actions}</td>`;
                             tbody.appendChild(tr);
                         });
@@ -2431,7 +2513,7 @@ NGINX_CONF
             const actionsHtml = !isProtected(item.name) ? `
                 <div class="hidden group-hover:flex items-center gap-2 ml-auto pl-2 bg-[#2a2d2e] text-[11px] text-slate-400">
                     <button class="hover:text-indigo-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'copy')" title="Copy"><i class="fa-solid fa-copy"></i></button>
-                    <button class="hover:text-purple-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'cut')" title="Cut"><i class="fa-solid fa-scissors"></i></button>
+                    <button class="hover:text-indigo-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'cut')" title="Cut"><i class="fa-solid fa-scissors"></i></button>
                 </div>
             ` : '';
 
@@ -2440,7 +2522,7 @@ NGINX_CONF
                 row.innerHTML =
                     `<span class="ide-chev w-[14px] text-center text-[9px] text-slate-500 dark:text-slate-400 shrink-0">${expanded ? '&#9662;' : '&#9656;'}</span>` +
                     `<i class="fa-solid ${expanded ? 'fa-folder-open text-amber-400 dark:text-amber-300' : 'fa-folder text-amber-500 dark:text-amber-400'} text-[13px] shrink-0"></i>` +
-                    `<span class="truncate text-[#cccccc] flex-1">${item.name}</span>` + actionsHtml;
+                    `<span class="truncate text-[#cccccc] flex-1 min-w-0">${item.name}</span>` + actionsHtml;
                 row.onclick = (e) => {
                     e.stopPropagation();
                     ideSelectedPath = item.path;
@@ -2459,7 +2541,7 @@ NGINX_CONF
                 row.innerHTML =
                     `<span class="ide-chev w-[14px] shrink-0"></span>` +
                     `<i class="${icon} text-[13px] shrink-0"></i>` +
-                    `<span class="truncate ${locked ? 'opacity-50' : 'text-[#cccccc]'} flex-1">${item.name}</span>` + actionsHtml;
+                    `<span class="truncate ${locked ? 'opacity-50' : 'text-[#cccccc]'} flex-1 min-w-0">${item.name}</span>` + actionsHtml;
                 row.onclick = (e) => {
                     e.stopPropagation();
                     if (locked) {
@@ -2794,13 +2876,9 @@ NGINX_CONF
 
         function ideSetActiveButton(btn) {
             document.querySelectorAll('.ide-activity-btn').forEach(b => {
-                b.classList.remove('text-white', 'border-indigo-500');
-                b.classList.add('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+                b.classList.remove('ui-ide-activity-active');
             });
-            if (btn) {
-                btn.classList.remove('text-slate-500', 'dark:text-slate-400', 'border-transparent');
-                btn.classList.add('text-white', 'border-indigo-500');
-            }
+            if (btn) btn.classList.add('ui-ide-activity-active');
         }
 
         function ideSetLeftSidebar(open) {
@@ -2973,7 +3051,7 @@ NGINX_CONF
                 .replace(/```([a-z]*)(?:<br>)?([\s\S]*?)```/g, (match, lang, code) => {
                     let rawCode = code.replace(/<br>/g, '\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
                     let base64Code = btoa(unescape(encodeURIComponent(rawCode.trim())));
-                    return `<div class="relative group my-2"><div class="absolute right-1 top-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"><button type="button" onclick="window.applyAiCode('${base64Code}')" class="bg-indigo-600 text-white text-[9px] px-1.5 py-0.5 rounded cursor-pointer hover:bg-indigo-500 shadow"><i class="fa-solid fa-wand-magic-sparkles"></i> Terapkan</button></div><pre class="bg-black/30 p-2 pt-6 rounded overflow-x-auto border border-[#444] text-[11px] relative"><code>${code}</code></pre></div>`;
+                    return `<div class="relative group my-2"><div class="absolute right-1 top-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"><button type="button" onclick="window.applyAiCode('${base64Code}')" class="ui-btn ui-btn-sm ui-btn-primary text-[9px]"><i class="fa-solid fa-wand-magic-sparkles"></i> Terapkan</button></div><pre class="bg-black/30 p-2 pt-6 rounded overflow-x-auto border border-[#444] text-[11px] relative"><code>${code}</code></pre></div>`;
                 })
                 .replace(/`([^`]+)`/g, '<code class="bg-black/30 px-1 py-0.5 rounded text-[11px] text-amber-300">$1</code>');
         }
@@ -3258,11 +3336,7 @@ NGINX_CONF
         function ideActivatePanelTab(tab) {
             ideBottomTab = tab;
             document.querySelectorAll('.ide-panel-tab').forEach(b => {
-                const on = b.dataset.panelTab === tab;
-                b.classList.toggle('text-white', on);
-                b.classList.toggle('text-slate-500', 'dark:text-slate-400', !on);
-b.classList.toggle('dark:text-slate-400', !on);
-                b.classList.toggle('border-indigo-500', on);
+                b.classList.toggle('ui-ide-tab-active', b.dataset.panelTab === tab);
             });
             document.querySelectorAll('.ide-panel-view').forEach(v => v.classList.add('hidden'));
             document.getElementById('ide-panel-' + tab).classList.remove('hidden');
@@ -3291,10 +3365,10 @@ b.classList.toggle('dark:text-slate-400', !on);
                     <span class="text-emerald-400 dark:text-emerald-300 font-mono">${ideEsc(name)}</span>
                     <button class="ide-term-pane-kill ml-auto w-5 h-5 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-600 dark:text-slate-300 hover:text-white transition-colors" title="Kill Terminal"><i class="fa-solid fa-xmark text-[9px]"></i></button>
                 </div>
-                <div class="ide-term-out flex-1 overflow-y-auto p-2 font-mono text-[12px] leading-relaxed text-slate-200"></div>
+                <div class="ide-term-out flex-1 min-w-0 overflow-y-auto p-2 font-mono text-[12px] leading-relaxed text-slate-200"></div>
                 <div class="flex items-center gap-2 px-2 pb-2 shrink-0">
                     <span class="ide-term-prompt text-indigo-400 font-mono text-xs select-none whitespace-nowrap">${ideEsc(projectSlug)} $</span>
-                    <input class="ide-term-input flex-1 bg-transparent text-slate-100 font-mono text-xs outline-none" placeholder="ketik perintah, lalu Enter..." autocomplete="off" spellcheck="false">
+                    <input class="ide-term-input flex-1 min-w-0 bg-transparent text-slate-100 font-mono text-xs outline-none" placeholder="ketik perintah, lalu Enter..." autocomplete="off" spellcheck="false">
                 </div>`;
             const t = {
                 id, name, paneEl: pane, split: !!opts.split,
@@ -3459,8 +3533,8 @@ b.classList.toggle('dark:text-slate-400', !on);
             const n = ideProblems.length;
             if (n) { count.textContent = n; count.classList.remove('hidden'); } else { count.classList.add('hidden'); }
             host.innerHTML = `<div class="flex items-center gap-2 px-3 py-2 border-b border-[#333] bg-[#252526] sticky top-0 z-10">
-                <button id="ide-problems-scan" class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded transition-colors"><i class="fa-solid fa-broom mr-1"></i>Scan PHP</button>
-                <button id="ide-problems-clear" class="text-[10px] bg-[#3c3c3c] hover:bg-[#4a4a4a] text-slate-300 dark:text-slate-400 px-2.5 py-1 rounded transition-colors"><i class="fa-solid fa-trash-can mr-1"></i>Clear</button>
+                <button id="ide-problems-scan" class="ui-btn ui-btn-sm ui-btn-primary"><i class="fa-solid fa-broom mr-1"></i>Scan PHP</button>
+                <button id="ide-problems-clear" class="ui-btn ui-btn-sm ui-btn-secondary"><i class="fa-solid fa-trash-can mr-1"></i>Clear</button>
             </div>`;
             if (!n) {
                 host.insertAdjacentHTML('beforeend', '<div class="p-6 text-center text-slate-600 dark:text-slate-300 text-xs"><i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-300 text-xl mb-2"></i><br>Tidak ada masalah yang terdeteksi.</div>');
@@ -3511,7 +3585,7 @@ b.classList.toggle('dark:text-slate-400', !on);
                 .then(data => {
                     host.innerHTML = `<div class="sticky top-0 z-10 flex items-center gap-2 px-3 py-2 border-b border-[#333] bg-[#252526]">
                         <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">laravel.log — 250 baris terakhir</span>
-                        <button id="ide-log-refresh" class="ml-auto text-[10px] bg-[#3c3c3c] hover:bg-[#4a4a4a] text-slate-300 dark:text-slate-400 px-2.5 py-1 rounded transition-colors"><i class="fa-solid fa-rotate-right mr-1"></i>Refresh</button>
+                        <button id="ide-log-refresh" class="ui-btn ui-btn-sm ui-btn-secondary ml-auto"><i class="fa-solid fa-rotate-right mr-1"></i>Refresh</button>
                     </div>`;
                     host.insertAdjacentHTML('beforeend', `<pre class="p-3 font-mono text-[11px] text-slate-300 dark:text-slate-400 whitespace-pre-wrap break-words">${ideEsc(data.content || '')}</pre>`);
                     document.getElementById('ide-log-refresh')?.addEventListener('click', ideRefreshLogTail);
@@ -3542,13 +3616,13 @@ b.classList.toggle('dark:text-slate-400', !on);
                         <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-globe text-indigo-400"></i><span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">HTTPS / HTTP</span></div>
                         <div class="text-sm text-white font-mono">443 / 80</div>
                         <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate mb-2">${ideEsc(projectSlug)}</div>
-                        <a href="https://${ideEsc(projectSlug)}" target="_blank" class="inline-block text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>
+                        <a href="https://${ideEsc(projectSlug)}" target="_blank" class="ui-btn ui-btn-sm ui-btn-primary inline-block"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>
                     </div>
                     <div class="border border-[#333] rounded p-3 bg-[#1e1e1e]">
                         <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-microchip text-emerald-400 dark:text-emerald-300"></i><span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Dev Server</span></div>
                         <div class="text-sm text-white font-mono">${devPort ? ideEsc(devPort) : '—'}</div>
                         <div class="mb-2"><span class="text-[9px] px-1.5 py-0.5 rounded-full ${devActive ? 'bg-emerald-600/30 text-emerald-300' : 'bg-slate-700 text-slate-400 dark:text-slate-500'}">${devActive ? 'AKTIF' : 'NONAKTIF'}</span></div>
-                        ${devActive && devPort ? `<a href="https://dev${ideEsc(devPort)}.${ideEsc(projectDomainBase)}" target="_blank" class="inline-block text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1 rounded transition-colors"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>` : '<span class="text-[9px] text-slate-600 dark:text-slate-300">Aktifkan dari tab Overview</span>'}
+                        ${devActive && devPort ? `<a href="https://dev${ideEsc(devPort)}.${ideEsc(projectDomainBase)}" target="_blank" class="ui-btn ui-btn-sm ui-btn-success inline-block"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>` : '<span class="text-[9px] text-slate-600 dark:text-slate-300">Aktifkan dari tab Overview</span>'}
                     </div>
                 </div>`;
         }
@@ -3602,10 +3676,10 @@ b.classList.toggle('dark:text-slate-400', !on);
     </style>
 
     <!-- Payment Modal -->
-    <div id="paymentModal" tabindex="-1" class="hidden fixed inset-0 z-[100] flex items-center justify-center w-full h-full bg-slate-900/50 backdrop-blur-sm p-4">
+    <div id="paymentModal" tabindex="-1" class="ui-modal-overlay hidden z-[100]">
         <div class="relative bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div class="flex items-center justify-between p-4 border-b">
-                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
+                <h3 class="ui-modal-title">
                     Pilih Metode Pembayaran
                 </h3>
                 <button type="button" onclick="closePaymentModal()" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center">
@@ -3623,7 +3697,7 @@ b.classList.toggle('dark:text-slate-400', !on);
                 <!-- Option 1: Pakasir -->
                 <a id="btnPakasir" href="#" target="_blank" onclick="closePaymentModal()" class="flex items-center justify-between p-4 border-2 border-slate-100 dark:border-slate-700 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10 transition-all group">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg flex items-center justify-center shrink-0 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                             <i class="fa-solid fa-bolt text-xl"></i>
                         </div>
                         <div>
@@ -3637,7 +3711,7 @@ b.classList.toggle('dark:text-slate-400', !on);
                 <!-- Option 2: DANA -->
                 <div class="p-4 border-2 border-slate-100 dark:border-slate-700 rounded-xl space-y-3 mt-4">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-300">
+                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 rounded-lg flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-300">
                             <i class="fa-solid fa-wallet text-xl"></i>
                         </div>
                         <div>
@@ -3663,7 +3737,8 @@ b.classList.toggle('dark:text-slate-400', !on);
             document.getElementById('modalPaymentAmount').innerText = formattedAmount;
             document.getElementById('modalPaymentInvoice').innerText = invoice;
             
-            let pakasirUrl = "{{ route('payment.pakasir') }}?order_id=" + encodeURIComponent(invoice);
+            let pakasirSlug = @json(config('services.pakasir.slug', 'ryaze'));
+            let pakasirUrl = `https://app.pakasir.com/pay/${pakasirSlug}/${amount}?order_id=${invoice}`;
             document.getElementById('btnPakasir').href = pakasirUrl;
 
             let adminWa = @json(\App\Models\Setting::val('contact_whatsapp', ''));

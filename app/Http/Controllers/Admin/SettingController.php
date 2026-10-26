@@ -34,6 +34,29 @@ class SettingController extends Controller
         }
 
         foreach ($data as $key => $value) {
+            // Input checkbox dikirim sebagai array -> simpan sebagai teks satu baris.
+            if (is_array($value)) {
+                $value = collect($value)
+                    ->filter(fn ($item) => is_scalar($item))
+                    ->map(fn ($item) => trim((string) $item))
+                    ->reject(fn ($item) => $item === '')
+                    ->values()
+                    ->implode("\n");
+            }
+
+            // Baris Storage & Maks. Project dibuat otomatis, jadi jangan disimpan lagi.
+            if (is_string($value) && str_ends_with($key, '_features')) {
+                $value = collect(explode("\n", $value))
+                    ->map(fn ($line) => trim($line))
+                    ->reject(fn ($line) => $line === '' || \App\Models\User::isAutoManagedFeature($line))
+                    ->values()
+                    ->implode("\n");
+            }
+
+            $data[$key] = $value;
+        }
+
+        foreach ($data as $key => $value) {
             Setting::updateOrCreate(
                 ['key' => $key],
                 ['value' => $value]

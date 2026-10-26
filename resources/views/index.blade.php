@@ -136,6 +136,24 @@
                 if (result.isConfirmed) btn.closest('form').submit();
             });
         };
+
+        // Global confirm — available on every page (incl. after PJAX nav).
+        // Dipakai oleh onsubmit handler: event.preventDefault(); swConfirm(...).then(r => { if(r.isConfirmed) f.submit(); });
+        window.swConfirm = function (title, text, icon = 'warning') {
+            return Swal.fire({
+                title,
+                text,
+                icon,
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Ya, lanjutkan',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-xl text-sm'
+                }
+            });
+        };
     </script>
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}" crossorigin="anonymous" referrerpolicy="no-referrer" nonce="{{ csp_nonce() }}">
 
