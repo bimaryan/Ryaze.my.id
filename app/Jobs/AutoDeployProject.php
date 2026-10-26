@@ -164,6 +164,22 @@ class AutoDeployProject implements ShouldQueue
                 $this->log($deploy, '> Laravel storage & bootstrap/cache permissions di-set ke 777');
             }
 
+            // Tulis nginx mapping (.domains/<hostname> => <folder>) agar nginx
+            // bisa resolve document root untuk hostname project ini. Ini wajib
+            // untuk ekstensi domain seperti *.ryze.cloud yang TIDAK cocok dengan
+            // pola regex subdomain platform (*.my.id) — tanpa mapping, request ke
+            // project baru via ekstensi tersebut akan jadi UNKNOWN_DOMAIN (404).
+            $mapDir = hosting_clients_dir().'/.domains';
+            if (! is_dir($mapDir)) {
+                mkdir($mapDir, 0755, true);
+            }
+            $mapFile = $mapDir.'/'.$this->project->ryaze_domain;
+            if (file_put_contents($mapFile, $subdomain) === false) {
+                $this->log($deploy, "> [WARNING] Gagal menulis nginx mapping untuk {$this->project->ryaze_domain}");
+            } else {
+                $this->log($deploy, "> Nginx mapping {$this->project->ryaze_domain} => {$subdomain} written.");
+            }
+
             $this->log($deploy, "\n> Configuring Cloudflare DNS for {$this->project->ryaze_domain}...");
             if (! $this->createCloudflareDNS($deploy)) {
                 throw new \RuntimeException('Gagal mengkonfigurasi Cloudflare DNS. Periksa API Token atau pengaturan Zone ID.');
