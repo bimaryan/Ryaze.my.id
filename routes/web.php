@@ -83,6 +83,17 @@ Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::get('reset-password/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+
+    if (app()->isLocal()) {
+        Route::get('/dev/login-as/{role}', function ($role) {
+            $user = \App\Models\User::where('role', $role)->first();
+            if ($user) {
+                \Illuminate\Support\Facades\Auth::login($user);
+                return redirect()->to($role === 'superadmin' ? route('superadmin.dashboard') : route('user_hosting.dashboard'));
+            }
+            return 'User not found';
+        });
+    }
     Route::post('reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
