@@ -394,77 +394,79 @@
 {{--
     Auto-scroll sidebar ke menu yang sedang aktif.
 
-    Sidebar bisa setinggi 2452px sementara viewport hanya 720px,
-    sehingga halaman seperti /superadmin/backup menaruh item aktif
-    di BAWAH area yang terlihat — user menekan tombol di sidebar
-    tapi tidak tahu halaman mana yang terbuka, dan scrollbar tetap
-    di posisi atas.
-
-    Perilaku:
-      - hanya scroll bila item aktif memang terpotong; menu di
-        atas tidak pernah membuat sidebar "berganti tempat"
-      - item aktif diberi sedikit ruang kosong di atas dan bawah
-        supaya tidak menempel tepi
-      - dijalankan ulang setelah sidebar dibuka di layar kecil
-        (saathidden -> flex, posisi baru bisa dihitung)
+    Memastikan menu yang sedang aktif (aria-current="page") selalu
+    berada di area tengah vertikal container sidebar secara proporsional
+    (comfort eye-level view), baik saat page load awal, navigasi PJAX,
+    maupun resize window / mobile drawer.
 --}}
 <script nonce="{{ csp_nonce() }}">
     (function () {
-        const scrollActiveIntoView = () => {
+        const scrollActiveIntoView = (instant = false) => {
             const scroller = document.getElementById('sidebar-scroll');
             if (!scroller) return;
 
             const active = scroller.querySelector('[aria-current="page"]');
             if (!active) return;
 
-            // Posisi item aktif di dalam scroller, TIDAK bergantung
-            // pada scroll sekarang: dihitung dari offsetTop terhadap
-            // scroller langsung.
-            //
-            // activeTop  > scrollTop  -> item ada di BAWAH area terlihat
-            // activeBottom < scrollTop -> item ada di ATAS area terlihat
-            //
-            // Kita mau item aktif berada dengan sedikit ruang di
-            // bawah viewport scroller (bukan tepat di tepi bawah),
-            // supaya konteks sekelompok menu-nya kelihatan.
-            const pad = 24;
-            const activeTop = active.offsetTop - scroller.offsetTop;
-            const activeBottom = activeTop + active.offsetHeight;
+            const scrollerRect = scroller.getBoundingClientRect();
+            const activeRect = active.getBoundingClientRect();
 
-            const viewTop = scroller.scrollTop;
-            const viewBottom = viewTop + scroller.clientHeight;
+            // Jika sidebar sedang tersembunyi (misal drawer mobile tertutup)
+            if (scrollerRect.height <= 0 || scroller.clientHeight <= 0) return;
 
-            // Sudah pas (ada ruang di atas DAN di bawah) -> diamkan.
-            if (activeTop >= viewTop + pad && activeBottom <= viewBottom - pad) return;
+            // Hitung posisi relatif item terhadap viewport scroller
+            const relTop = activeRect.top - scrollerRect.top;
+            const activeHeight = active.offsetHeight || activeRect.height;
+            const scrollerHeight = scroller.clientHeight;
 
-            // Scroll sehingga activeBottom berada di viewBottom - pad.
-            let target = activeBottom - scroller.clientHeight + pad;
+            // Target scroll untuk menempatkan item tepat di tengah vertikal scroller
+            const currentScroll = scroller.scrollTop;
+            const itemCenterInContent = currentScroll + relTop + (activeHeight / 2);
+            const targetScroll = itemCenterInContent - (scrollerHeight / 2);
 
-            // Kalau item-nya muat dari atas, align ke atas saja.
-            if (activeTop - pad >= 0 && activeTop < viewTop) {
-                target = activeTop - pad;
-            }
+            const maxScroll = scroller.scrollHeight - scrollerHeight;
+            const finalScroll = Math.max(0, Math.min(Math.round(targetScroll), maxScroll));
 
-            const max = scroller.scrollHeight - scroller.clientHeight;
+            // Jika posisi sudah berada di area tengah (toleransi 16px), tidak perlu animasi ulang
+            if (Math.abs(currentScroll - finalScroll) < 16) return;
+
             scroller.scrollTo({
-                top: Math.max(0, Math.min(target, max)),
-                behavior: 'smooth',
+                top: finalScroll,
+                behavior: instant ? 'auto' : 'smooth',
             });
         };
 
-        // Setelah DOM siap.
-        document.addEventListener('DOMContentLoaded', scrollActiveIntoView);
+        const triggerAutoScroll = (instant = false) => {
+            requestAnimationFrame(() => {
+                scrollActiveIntoView(instant);
+            });
+        };
 
-        // Setelah navigasi PJAX selesai mengganti konten.
-        document.addEventListener('pjax:end', scrollActiveIntoView);
+        // Saat DOM siap (initial page load)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                triggerAutoScroll(true);
+                // Cadangan timeout kecil setelah styling/font stabil
+                setTimeout(() => triggerAutoScroll(true), 60);
+            });
+        } else {
+            triggerAutoScroll(true);
+            setTimeout(() => triggerAutoScroll(true), 60);
+        }
 
-        // Sidebar dibuka di layar kecil: dari -translate-x-full
-        // menjadi translate-x-0, posisi item ikut berubah.
+        // Cadangan setelah seluruh aset (font & gambar) selesai dimuat penuh
+        window.addEventListener('load', () => triggerAutoScroll(true));
 
+        // Setelah navigasi PJAX selesai memuat halaman baru
+        document.addEventListener('pjax:end', () => {
+            setTimeout(() => triggerAutoScroll(false), 50);
+        });
+
+        // Saat window di-resize (desktop toggle atau orientasi mobile)
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(scrollActiveIntoView, 150);
+            resizeTimer = setTimeout(() => triggerAutoScroll(false), 120);
         });
     })();
 </script>
