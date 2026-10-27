@@ -327,7 +327,7 @@
             <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" title="Online"></div>
             <div class="flex items-center gap-1.5 truncate">
                 <span class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 truncate">Ryaze Portal</span>
-                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60 shrink-0">v{{ $appVersion }}</span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60 shrink-0">{{ str_starts_with($appVersion, 'v') ? $appVersion : 'v' . $appVersion }}</span>
             </div>
         </div>
 
@@ -360,6 +360,34 @@
     }
     .dark #logo-sidebar a[aria-current="page"]:hover {
         background-color: rgb(99 102 241 / 0.18);
+    }
+
+    /* Sleek, minimal custom scrollbar for sidebar */
+    #sidebar-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+    }
+    #sidebar-scroll::-webkit-scrollbar {
+        width: 5px;
+    }
+    #sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    #sidebar-scroll::-webkit-scrollbar-thumb {
+        background-color: rgba(148, 163, 184, 0.35);
+        border-radius: 9999px;
+    }
+    #sidebar-scroll::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(148, 163, 184, 0.6);
+    }
+    .dark #sidebar-scroll {
+        scrollbar-color: rgba(71, 85, 105, 0.5) transparent;
+    }
+    .dark #sidebar-scroll::-webkit-scrollbar-thumb {
+        background-color: rgba(71, 85, 105, 0.5);
+    }
+    .dark #sidebar-scroll::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(100, 116, 139, 0.7);
     }
 </style>
 
