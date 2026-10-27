@@ -1,68 +1,50 @@
-@props(['title', 'value', 'icon', 'color'])
+@props(['title', 'value', 'icon', 'color' => 'emerald', 'subtitle' => null, 'href' => null])
 
 @php
-    // Kelas Tailwind TIDAK boleh dibangun dinamis (JIT tidak akan men-generate).
-    // Selalu gunakan string lengkap dari map di bawah.
     $colorMap = [
         'emerald' => [
-            'hover_border' => 'hover:border-emerald-200 dark:hover:border-emerald-500/40',
-            'bg_deco' => 'bg-emerald-50 dark:bg-emerald-500/10',
-            'icon_bg' => 'bg-emerald-100 dark:bg-emerald-500/20',
-            'icon_text' => 'text-emerald-600 dark:text-emerald-300',
-            'icon_hover_bg' => 'group-hover:bg-emerald-600',
+            'icon_box' => 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20',
+            'hover_border' => 'hover:border-emerald-300 dark:hover:border-emerald-500/40',
         ],
         'rose' => [
-            'hover_border' => 'hover:border-rose-200 dark:hover:border-rose-500/40',
-            'bg_deco' => 'bg-rose-50 dark:bg-rose-500/10',
-            'icon_bg' => 'bg-rose-100 dark:bg-rose-500/20',
-            'icon_text' => 'text-rose-600 dark:text-rose-300',
-            'icon_hover_bg' => 'group-hover:bg-rose-600',
+            'icon_box' => 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20',
+            'hover_border' => 'hover:border-rose-300 dark:hover:border-rose-500/40',
         ],
         'sky' => [
-            'hover_border' => 'hover:border-sky-200 dark:hover:border-sky-500/40',
-            'bg_deco' => 'bg-sky-50 dark:bg-sky-500/10',
-            'icon_bg' => 'bg-sky-100 dark:bg-sky-500/20',
-            'icon_text' => 'text-sky-600 dark:text-sky-300',
-            'icon_hover_bg' => 'group-hover:bg-sky-600',
+            'icon_box' => 'bg-sky-50 text-sky-600 border-sky-100 dark:bg-sky-500/10 dark:text-sky-400 dark:border-sky-500/20',
+            'hover_border' => 'hover:border-sky-300 dark:hover:border-sky-500/40',
         ],
         'indigo' => [
-            'hover_border' => 'hover:border-indigo-200 dark:hover:border-indigo-500/40',
-            'bg_deco' => 'bg-indigo-50 dark:bg-indigo-500/10',
-            'icon_bg' => 'bg-indigo-100 dark:bg-indigo-500/20',
-            'icon_text' => 'text-indigo-600 dark:text-indigo-300',
-            'icon_hover_bg' => 'group-hover:bg-indigo-600',
+            'icon_box' => 'bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-500/10 dark:text-indigo-400 dark:border-indigo-500/20',
+            'hover_border' => 'hover:border-indigo-300 dark:hover:border-indigo-500/40',
         ],
         'amber' => [
-            'hover_border' => 'hover:border-amber-200 dark:hover:border-amber-500/40',
-            'bg_deco' => 'bg-amber-50 dark:bg-amber-500/10',
-            'icon_bg' => 'bg-amber-100 dark:bg-amber-500/20',
-            'icon_text' => 'text-amber-600 dark:text-amber-300',
-            'icon_hover_bg' => 'group-hover:bg-amber-600',
+            'icon_box' => 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20',
+            'hover_border' => 'hover:border-amber-300 dark:hover:border-amber-500/40',
         ],
         'violet' => [
-            'hover_border' => 'hover:border-violet-200 dark:hover:border-violet-500/40',
-            'bg_deco' => 'bg-violet-50 dark:bg-violet-500/10',
-            'icon_bg' => 'bg-violet-100 dark:bg-violet-500/20',
-            'icon_text' => 'text-violet-600 dark:text-violet-300',
-            'icon_hover_bg' => 'group-hover:bg-violet-600',
+            'icon_box' => 'bg-purple-50 text-purple-600 border-purple-100 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20',
+            'hover_border' => 'hover:border-purple-300 dark:hover:border-purple-500/40',
+        ],
+        'blue' => [
+            'icon_box' => 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20',
+            'hover_border' => 'hover:border-blue-300 dark:hover:border-blue-500/40',
         ],
     ];
     $palette = $colorMap[$color] ?? $colorMap['emerald'];
+    $tag = $href ? 'a' : 'div';
 @endphp
 
-<div
-    class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between group transition-all duration-300 hover:shadow-md dark:bg-slate-800/60 dark:border-slate-700 {{ $palette['hover_border'] }} hover:-translate-y-1 relative overflow-hidden">
-    <div
-        class="absolute -right-4 -top-4 w-24 h-24 {{ $palette['bg_deco'] }} rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0">
+<{{ $tag }} @if($href) href="{{ $href }}" @endif
+    class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors {{ $palette['hover_border'] }}">
+    <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border {{ $palette['icon_box'] }}">
+        <i class="fa-solid {{ $icon }} text-lg"></i>
     </div>
-    <div class="relative z-10 flex justify-between items-start">
-        <div>
-            <p class="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">{{ $title }}</p>
-            <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ $value }}</h3>
-        </div>
-        <div
-            class="w-12 h-12 flex items-center justify-center rounded-xl {{ $palette['icon_bg'] }} {{ $palette['icon_text'] }} {{ $palette['icon_hover_bg'] }} group-hover:text-white transition-colors duration-300">
-            <i class="fa-solid {{ $icon }} text-xl"></i>
-        </div>
+    <div class="min-w-0 flex-1">
+        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 truncate">{{ $title }}</p>
+        <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight truncate">{{ $value }}</h3>
+        @if($subtitle)
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate mt-1">{{ $subtitle }}</p>
+        @endif
     </div>
-</div>
+</{{ $tag }}>

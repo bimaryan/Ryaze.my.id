@@ -78,36 +78,7 @@
                 });
             };
 
-            // Jika browser tidak support View Transitions API, gunakan mode standar
-            if (!document.startViewTransition) {
-                toggleTheme();
-                return;
-            }
-
-            // Ambil titik kordinat klik untuk animasi melingkar
-            const x = event?.clientX ?? window.innerWidth / 2;
-            const y = event?.clientY ?? window.innerHeight / 2;
-            const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-
-            const transition = document.startViewTransition(toggleTheme);
-
-            transition.ready.then(() => {
-                const clipPath = [
-                    `circle(0px at ${x}px ${y}px)`,
-                    `circle(${endRadius}px at ${x}px ${y}px)`
-                ];
-
-                document.documentElement.animate(
-                    {
-                        clipPath: isDark ? [...clipPath].reverse() : clipPath,
-                    },
-                    {
-                        duration: 500,
-                        easing: 'ease-in-out',
-                        pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
-                    }
-                );
-            });
+            toggleTheme();
         };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" nonce="{{ csp_nonce() }}"></script>
@@ -162,26 +133,7 @@
 
     <!-- ApexCharts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" nonce="{{ csp_nonce() }}"></script>
-    <style>
-        /* View Transition API untuk animasi Dark Mode */
-        ::view-transition-old(root),
-        ::view-transition-new(root) {
-            animation: none;
-            mix-blend-mode: normal;
-        }
-        ::view-transition-old(root) {
-            z-index: 2147483646;
-        }
-        ::view-transition-new(root) {
-            z-index: 1;
-        }
-        .dark::view-transition-old(root) {
-            z-index: 1;
-        }
-        .dark::view-transition-new(root) {
-            z-index: 2147483646;
-        }
-    </style>
+
 </head>
 
 <body class="bg-slate-100 font-sans antialiased text-slate-900 dark:bg-[#020b16] dark:text-slate-100"

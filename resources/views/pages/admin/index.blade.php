@@ -6,159 +6,119 @@
         <!-- Header -->
         <x-ui.page-header title="Dashboard" />
 
-
         <div class="mt-6 space-y-6">
 
             <!-- Main KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 <!-- Total Users -->
-                <div
-                    class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500/40 hover:-translate-y-1 relative overflow-hidden">
-                    <div
-                        class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 dark:bg-blue-500/10 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20">
+                        <i class="fa-solid fa-users text-lg"></i>
                     </div>
-                    <div class="relative z-10 flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Pengguna</p>
-                            <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ number_format($totalUsers) }}</h3>
-                        </div>
-                        <div
-                            class="w-12 h-12 flex items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fa-solid fa-users text-xl"></i>
-                        </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 truncate">Total Pengguna</p>
+                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{{ number_format($totalUsers) }}</h3>
+                        <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 mt-1 truncate">
+                            <i class="fa-solid fa-arrow-trend-up text-[9px]"></i> Akun aktif terdaftar
+                        </p>
                     </div>
                 </div>
 
                 <!-- Joki Orders -->
-                <div
-                    class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/40 hover:-translate-y-1 relative overflow-hidden">
-                    <div
-                        class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 dark:bg-indigo-500/10 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-purple-50 text-purple-600 border border-purple-100 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20">
+                        <i class="fa-solid fa-code-branch text-lg"></i>
                     </div>
-                    <div class="relative z-10 flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Pesanan Joki Aktif</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ number_format($activeJokiOrders) }}</h3>
-                                <span class="text-sm text-slate-400 dark:text-slate-500 font-medium">/ {{ number_format($totalJokiOrders) }}
-                                    Total</span>
-                            </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 truncate">Pesanan Joki Aktif</p>
+                        <div class="flex items-baseline gap-1.5">
+                            <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{{ number_format($activeJokiOrders) }}</h3>
+                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">/ {{ number_format($totalJokiOrders) }} total</span>
                         </div>
-                        <div
-                            class="w-12 h-12 flex items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fa-solid fa-code-branch text-xl"></i>
-                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-1 truncate">
+                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-purple-500"></span> Dalam pengerjaan
+                        </p>
                     </div>
                 </div>
 
                 <!-- Total Revenue -->
-                <div
-                    class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-sky-200 dark:hover:border-sky-500/40 hover:-translate-y-1 relative overflow-hidden">
-                    <div
-                        class="absolute -right-4 -top-4 w-24 h-24 bg-sky-50 dark:bg-sky-500/10 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-sky-50 text-sky-600 border border-sky-100 dark:bg-sky-500/10 dark:text-sky-400 dark:border-sky-500/20">
+                        <i class="fa-solid fa-wallet text-lg"></i>
                     </div>
-                    <div class="relative z-10 flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Pendapatan (Bulan Ini)</p>
-                            <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Rp
-                                {{ number_format($totalRevenueMonth, 0, ',', '.') }}</h3>
-                            <div class="text-xs text-slate-400 dark:text-slate-500 mt-1.5 space-y-0.5">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="inline-block w-2 h-2 rounded-full bg-indigo-500"></span>
-                                    Joki: Rp {{ number_format($jokiRevenueMonth, 0, ',', '.') }}
-                                    ({{ number_format($jokiRevenueMonthCount) }} transaksi)
-                                </div>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-                                    Hosting: Rp {{ number_format($hostingRevenueMonth, 0, ',', '.') }}
-                                    ({{ number_format($hostingRevenueMonthCount) }} transaksi)
-                                </div>
-                            </div>
-                            <a href="{{ route('superadmin.finance') }}"
-                                class="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-300 mt-2 transition-colors">
-                                <i class="fa-solid fa-chart-pie"></i> Lihat Laporan Keuangan
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center justify-between gap-2">
+                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 truncate">Pendapatan Bulan Ini</p>
+                            <a href="{{ route('superadmin.finance') }}" class="text-[11px] font-semibold text-sky-600 dark:text-sky-400 hover:underline inline-flex items-center gap-1 shrink-0" title="Lihat Laporan Keuangan">
+                                Detail <i class="fa-solid fa-arrow-right text-[9px]"></i>
                             </a>
                         </div>
-                        <div
-                            class="w-12 h-12 flex items-center justify-center rounded-xl bg-sky-100 dark:bg-sky-500/20 text-sky-600 dark:text-sky-300 group-hover:bg-sky-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fa-solid fa-wallet text-xl"></i>
-                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight truncate">
+                            Rp {{ number_format($totalRevenueMonth, 0, ',', '.') }}
+                        </h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-1">
+                            Joki: Rp {{ number_format($jokiRevenueMonth, 0, ',', '.') }} • Hosting: Rp {{ number_format($hostingRevenueMonth, 0, ',', '.') }}
+                        </p>
                     </div>
                 </div>
 
                 <!-- Hosting Projects -->
-                <div
-                    class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-500/40 hover:-translate-y-1 relative overflow-hidden">
-                    <div
-                        class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 dark:bg-emerald-500/10 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 transition-colors">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">
+                        <i class="fa-solid fa-server text-lg"></i>
                     </div>
-                    <div class="relative z-10 flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Hosting Aktif</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ number_format($activeHosting) }}</h3>
-                                <span class="text-sm text-slate-400 dark:text-slate-500 font-medium">/ {{ number_format($totalHosting) }}
-                                    Total</span>
-                            </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 truncate">Hosting Aktif</p>
+                        <div class="flex items-baseline gap-1.5">
+                            <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{{ number_format($activeHosting) }}</h3>
+                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">/ {{ number_format($totalHosting) }} total</span>
                         </div>
-                        <div
-                            class="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fa-solid fa-server text-xl"></i>
-                        </div>
+                        <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 mt-1 truncate">
+                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Layanan berjalan normal
+                        </p>
                     </div>
                 </div>
 
                 <!-- Databases -->
-                <a href="{{ route('admin_hosting.databases') }}"
-                    class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-orange-200 dark:hover:border-orange-500/40 hover:-translate-y-1 relative overflow-hidden block">
-                    <div
-                        class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 dark:bg-orange-500/10 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-amber-50 text-amber-600 border border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">
+                        <i class="fa-solid fa-database text-lg"></i>
                     </div>
-                    <div class="relative z-10 flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Database</p>
-                            <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ number_format($totalDatabases) }}</h3>
-                        </div>
-                        <div
-                            class="w-12 h-12 flex items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-300 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fa-solid fa-database text-xl"></i>
-                        </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 truncate">Total Database</p>
+                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{{ number_format($totalDatabases) }}</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-1 truncate">
+                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span> MySQL & NoSQL aktif
+                        </p>
                     </div>
-                </a>
+                </div>
 
                 <!-- Storage -->
-                <a href="{{ route('admin_hosting.storage') }}"
-                    class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between group transition-all duration-300 hover:shadow-md hover:border-teal-200 dark:hover:border-teal-500/40 hover:-translate-y-1 relative overflow-hidden block">
-                    <div
-                        class="absolute -right-4 -top-4 w-24 h-24 bg-teal-50 dark:bg-teal-500/10 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-teal-50 text-teal-600 border border-teal-100 dark:bg-teal-500/10 dark:text-teal-400 dark:border-teal-500/20">
+                        <i class="fa-solid fa-hard-drive text-lg"></i>
                     </div>
-                    <div class="relative z-10 flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Penyimpanan Teralokasi</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
-                                    {{ $totalStorageMB >= 1024 ? number_format($totalStorageMB / 1024, 1) : number_format($totalStorageMB) }}
-                                </h3>
-                                <span
-                                    class="text-sm text-slate-400 dark:text-slate-500 font-medium">{{ $totalStorageMB >= 1024 ? 'GB' : 'MB' }}</span>
-                            </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 truncate">Penyimpanan Teralokasi</p>
+                        <div class="flex items-baseline gap-1">
+                            <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                                {{ $totalStorageMB >= 1024 ? number_format($totalStorageMB / 1024, 1) : number_format($totalStorageMB) }}
+                            </h3>
+                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">{{ $totalStorageMB >= 1024 ? 'GB' : 'MB' }}</span>
                         </div>
-                        <div
-                            class="w-12 h-12 flex items-center justify-center rounded-xl bg-teal-100 dark:bg-teal-500/20 text-teal-600 dark:text-teal-300 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fa-solid fa-hard-drive text-xl"></i>
-                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-1 truncate">
+                            <span>Limit alokasi penyimpanan</span>
+                        </p>
                     </div>
-                </a>
-            </div>
-
+                </div>
             </div>
 
             <!-- Server Health Status -->
-            <div x-data="serverHealth()" x-init="startMonitoring()" class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        <i class="fa-solid fa-server text-indigo-500 dark:text-indigo-400"></i> Status Kesehatan Server
-                    </h3>
+            <div x-data="serverHealth()" x-init="startMonitoring()">
+                <div class="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm flex flex-wrap items-center justify-between border border-slate-200/80 dark:border-slate-800 mb-6 gap-4 dark:bg-slate-900">
+                    <p class="text-lg font-bold text-indigo-600 dark:text-slate-100 flex items-center gap-2">
+                        Status Kesehatan Server
+                    </p>
                     <div class="flex items-center gap-2">
                         <span class="relative flex h-3 w-3">
                             <span :class="{'bg-emerald-400': !loading && !error, 'bg-rose-400': error, 'bg-slate-400': loading}" class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"></span>
@@ -170,7 +130,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
                     <!-- CPU -->
-                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 relative overflow-hidden">
                         <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                             <i class="fa-solid fa-microchip"></i> CPU Load (1m)
                         </p>
@@ -184,7 +144,7 @@
                     </div>
 
                     <!-- RAM -->
-                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 relative overflow-hidden">
                         <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                             <i class="fa-solid fa-memory"></i> RAM Usage
                         </p>
@@ -199,7 +159,7 @@
                     </div>
 
                     <!-- DISK (OS) -->
-                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 relative overflow-hidden">
                         <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                             <i class="fa-solid fa-hard-drive"></i> Disk (OS)
                         </p>
@@ -225,7 +185,7 @@
                     </div>
 
                     <!-- DISK (HDD/Hosting) -->
-                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 relative overflow-hidden">
                         <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                             <i class="fa-solid fa-database"></i> Disk (Hosting)
                         </p>
@@ -251,7 +211,7 @@
                     </div>
 
                     <!-- UPTIME -->
-                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700 flex flex-col justify-center items-center text-center">
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-center items-center text-center">
                         <i class="fa-solid fa-clock text-slate-300 dark:text-slate-400 text-2xl mb-2"></i>
                         <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Server Uptime</p>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100" x-text="data.uptime"></h4>
@@ -314,20 +274,20 @@
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Line Chart: Pendaftaran Pengguna -->
-                <div class="lg:col-span-2 bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Tren Pendaftaran Pengguna</h3>
+                <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800">
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-4">Tren Pendaftaran Pengguna</h3>
                     <div id="chart-user-registrations"></div>
                 </div>
 
                 <!-- Pie Chart: Tipe Pengguna -->
-                <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Distribusi Peran Pengguna</h3>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800">
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-4">Distribusi Peran Pengguna</h3>
                     <div id="chart-user-roles" class="flex justify-center"></div>
                 </div>
 
                 <!-- Bar Chart: Pendapatan -->
-                <div class="lg:col-span-3 bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Perbandingan Pendapatan Joki vs Hosting (6 Bulan Terakhir)</h3>
+                <div class="lg:col-span-3 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800">
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-4">Perbandingan Pendapatan Joki vs Hosting (6 Bulan Terakhir)</h3>
                     <div id="chart-revenue"></div>
                 </div>
             </div>
@@ -335,51 +295,44 @@
             <!-- Detailed Revenue Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Joki Revenue -->
-                <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="flex items-center justify-between mb-4">
+                <div>
+                    <div class="flex items-center justify-between mb-4 bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                                <i class="fa-solid fa-laptop-code"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Pendapatan Joki Code</h3>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Pendapatan Joki Code</h3>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
                             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Bulan Ini</p>
-                            <p class="text-xl font-bold text-indigo-700 dark:text-indigo-300">Rp
+                            <p class="text-xl font-bold text-indigo-600">Rp
                                 {{ number_format($jokiRevenueMonth, 0, ',', '.') }}</p>
                         </div>
-                        <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
                             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Keseluruhan
                             </p>
-                            <p class="text-xl font-bold text-slate-700 dark:text-slate-200">Rp
+                            <p class="text-xl font-bold text-indigo-600">Rp
                                 {{ number_format($jokiRevenueTotal, 0, ',', '.') }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Hosting Revenue -->
-                <div class="bg-white dark:bg-slate-800/60 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="flex items-center justify-between mb-4">
+                <div>
+                    <div class="flex items-center justify-between mb-4 bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm">
                         <div class="flex items-center gap-3">
-                            <div
-                                class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 flex items-center justify-center">
-                                <i class="fa-solid fa-cloud"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Pendapatan Hosting</h3>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Pendapatan Hosting</h3>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
                             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Bulan Ini</p>
-                            <p class="text-xl font-bold text-emerald-700 dark:text-emerald-300">Rp
+                            <p class="text-xl font-bold text-indigo-600">Rp
                                 {{ number_format($hostingRevenueMonth, 0, ',', '.') }}</p>
                         </div>
-                        <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
                             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Keseluruhan
                             </p>
-                            <p class="text-xl font-bold text-slate-700 dark:text-slate-200">Rp
+                            <p class="text-xl font-bold text-indigo-600">Rp
                                 {{ number_format($hostingRevenueTotal, 0, ',', '.') }}</p>
                         </div>
                     </div>
@@ -390,14 +343,13 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <!-- Recent Joki Orders -->
-                <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
-                    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800/60">
-                        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-code-pull-request text-indigo-500 dark:text-indigo-400"></i>
+                <div>
+                    <div class="p-4 border-b mb-4 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/80 dark:border-slate-800 flex justify-between items-center">
+                        <h2 class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                             Pesanan Joki Terbaru
                         </h2>
                         <a href="{{ route('admin_joki.orders') ?? '#' }}"
-                            class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Lihat
+                            class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">Lihat
                             Semua</a>
                     </div>
                     <div class="overflow-x-auto flex-1">
@@ -408,25 +360,25 @@
                                 <th scope="col" class="px-6 py-3 text-right">Harga</th>
                             </x-slot:head>
                             @forelse($recentJokiOrders as $order)
-                                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50">
                                     <td class="px-6 py-3">
                                         <div class="font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[150px]">
-                                            {{ $order->project_name ?? 'Tanpa Nama' }}</div>
+                                             {{ $order->project_name ?? 'Tanpa Nama' }}</div>
                                         <div class="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]">
                                             {{ $order->client->name ?? 'Unknown' }}</div>
                                     </td>
                                     <td class="px-6 py-3">
                                         @php
                                             $statusColors = [
-                                                'pending' => 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/40',
-                                                'progress' => 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/40',
-                                                'review' => 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/40',
-                                                'completed' => 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/40',
-                                                'cancelled' => 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200 dark:border-red-500/40',
+                                                'pending' => 'bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20',
+                                                'progress' => 'bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20',
+                                                'review' => 'bg-purple-50 text-purple-700 border-purple-200/80 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20',
+                                                'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20',
+                                                'cancelled' => 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20',
                                             ];
                                             $colorClass =
                                                 $statusColors[$order->status] ??
-                                                'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700';
+                                                'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700';
                                         @endphp
                                         <span
                                             class="px-2.5 py-1 rounded-md text-xs font-medium border {{ $colorClass }}">
@@ -448,14 +400,14 @@
                 </div>
 
                 <!-- Recent Hosting Projects -->
-                <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
-                    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800/60">
-                        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <div class="">
+                    <div class="p-4 border-b mb-4 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/80 dark:border-slate-800 flex justify-between items-center">
+                        <h2 class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                             <i class="fa-solid fa-server text-emerald-500 dark:text-emerald-400"></i>
                             Proyek Hosting Terbaru
                         </h2>
                         <a href="{{ route('admin_hosting.projects') ?? '#' }}"
-                            class="text-sm font-semibold text-emerald-600 dark:text-emerald-300 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">Lihat
+                            class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300">Lihat
                             Semua</a>
                     </div>
                     <div class="overflow-x-auto flex-1">
@@ -466,7 +418,7 @@
                                 <th scope="col" class="px-6 py-3 text-right">Status</th>
                             </x-slot:head>
                             @forelse($recentHostingProjects as $project)
-                                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50">
                                     <td class="px-6 py-3">
                                         <div class="font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[150px]">
                                             {{ $project->project_name }}</div>
@@ -475,20 +427,20 @@
                                     </td>
                                     <td class="px-6 py-3">
                                         <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700">
                                             {{ ucfirst($project->framework) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-3 text-right">
                                         @php
                                             $hostingStatusColors = [
-                                                'active' => 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/40',
-                                                'suspended' => 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200 dark:border-red-500/40',
-                                                'building' => 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/40',
+                                                'active' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20',
+                                                'suspended' => 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20',
+                                                'building' => 'bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20',
                                             ];
                                             $hColorClass =
                                                 $hostingStatusColors[$project->status] ??
-                                                'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700';
+                                                'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700';
                                         @endphp
                                         <span
                                             class="px-2.5 py-1 rounded-md text-xs font-medium border {{ $hColorClass }}">
@@ -509,19 +461,19 @@
             </div>
 
             <!-- Recent Users Table -->
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800/60">
-                    <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800 overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                    <h2 class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-user-plus text-blue-500 dark:text-blue-400"></i>
                         Pendaftar Klien Terbaru
                     </h2>
                     <a href="{{ route('superadmin.users.index') }}"
-                        class="text-sm font-semibold text-blue-600 dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">Kelola Pengguna
+                        class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Kelola Pengguna
                         &rarr;</a>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <x-ui.table>
+                    <x-ui.table class="border-0 shadow-none rounded-none">
                         <x-slot:head>
                             <th scope="col" class="px-6 py-4">Nama Klien</th>
                             <th scope="col" class="px-6 py-4">Email</th>
@@ -530,10 +482,10 @@
                             <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                         </x-slot:head>
                         @forelse($recentUsers as $user)
-                            <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50">
                                 <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100 flex items-center gap-3">
                                     <div
-                                        class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold text-sm uppercase shadow-sm">
+                                        class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20 flex items-center justify-center font-bold text-sm uppercase shadow-sm">
                                         {{ substr($user->name, 0, 1) }}
                                     </div>
                                     {{ $user->name }}
@@ -552,7 +504,7 @@
                                         </span>
                                     @else
                                         <span
-                                            class="px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                            class="px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700">
                                             {{ ucfirst(str_replace('_', ' ', $user->role ?? 'User')) }}
                                         </span>
                                     @endif
@@ -561,7 +513,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <a href="{{ route('superadmin.users.show', $user->hashid) }}"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-500/40 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10 transition-all shadow-sm"
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-500/40 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 shadow-sm"
                                         title="Detail Profil">
                                         <i class="fa-solid fa-arrow-right"></i>
                                     </a>

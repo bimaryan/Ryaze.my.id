@@ -24,12 +24,12 @@
                         <th class="px-6 py-4 whitespace-nowrap text-center">Aksi</th>
                     </x-slot:head>
                             @forelse($activeOrders as $order)
-                                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50">
                                     <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100 whitespace-nowrap">
                                         {{ $order->project_name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
-                                            class="bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs px-2.5 py-1 rounded-md font-medium">
+                                            class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 text-xs px-2.5 py-1 rounded-md font-medium">
                                             {{ $order->tech_stack ?? 'Menunggu Info' }}
                                         </span>
                                     </td>

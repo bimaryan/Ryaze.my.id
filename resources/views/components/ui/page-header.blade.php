@@ -1,13 +1,13 @@
 @props(['title', 'description' => null, 'icon' => 'cube', 'iconColor' => 'indigo'])
 
 <div
-    class="p-4 bg-white rounded-lg shadow-sm flex flex-wrap items-center justify-between border border-slate-200 mb-6 gap-4 dark:bg-slate-800/60 dark:border-slate-700">
+    class="p-4 sm:p-5 bg-white rounded-2xl shadow-sm flex flex-wrap items-center justify-between border border-slate-200/80 dark:border-slate-800 mb-6 gap-4 dark:bg-slate-900">
     <div class="flex items-center gap-4">
         @if (isset($iconSlot))
             {{ $iconSlot }}
         @endif
         <div>
-            <p class="text-lg font-semibold text-indigo-600">{{ $title }}</p>
+            <p class="text-lg font-semibold">{{ $title }}</p>
             @if (isset($subtitle))
                 <div class="mt-0.5">
                     {{ $subtitle }}
@@ -17,17 +17,6 @@
     </div>
 
     <div class="flex flex-wrap items-center gap-3">
-        @if (isset($actions))
-            <div class="flex flex-wrap items-center gap-2">
-                {{ $actions }}
-            </div>
-        @endif
-        @if (request()->routeIs('*.dashboard'))
-            <div
-                class="hidden md:flex px-5 py-2.5 bg-slate-100 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 items-center gap-2 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300">
-                <i class="fa-regular fa-calendar text-slate-400 dark:text-slate-500"></i>
-                {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
-            </div>
-        @endif
+        <p class="text-sm">{{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
     </div>
 </div>
