@@ -472,6 +472,11 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// ── PAKASIR PAYMENT (redirect ke payment link API v2) ────────
+Route::get('/payment/pakasir', [\App\Http\Controllers\PakasirPayController::class, 'pay'])
+    ->middleware('throttle:20,1')
+    ->name('payment.pakasir');
+
 // ── CHATBOT ROUTE ────────────────────────────────────────────
 Route::post('/chat', [\App\Http\Controllers\ChatbotController::class, 'chat'])
     ->middleware('throttle:10,1') // Maks 10 pesan/menit per IP (Groq berbayar & anti-abuse)
