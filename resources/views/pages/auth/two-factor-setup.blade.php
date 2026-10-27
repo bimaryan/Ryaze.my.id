@@ -205,7 +205,7 @@
                         startStage.classList.add('hidden');
                         setupStage.classList.remove('hidden');
                     } catch (e) {
-                        alert('Gagal memuat QR code. Silakan coba lagi.');
+                        hotToast('Gagal memuat QR code. Silakan coba lagi.', 'error');
                     } finally {
                         startBtn.disabled = false;
                         startBtn.innerHTML = original;

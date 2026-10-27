@@ -59,14 +59,14 @@
                                             <form action="{{ route('superadmin.withdrawals.update', $w->id) }}" method="POST">
                                                 @csrf @method('PATCH')
                                                 <input type="hidden" name="status" value="completed">
-                                                <button type="submit" class="bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-bold transition" onclick="return confirm('Tandai selesai? Pastikan dana sudah ditransfer.')">
+                                                <button type="submit" class="bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-bold transition" onclick="event.preventDefault(); let f = this.closest('form'); swConfirm('Selesaikan Penarikan?', 'Pastikan dana sudah ditransfer sebelum menandai selesai.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                     <i class="fa-solid fa-check"></i> Selesai
                                                 </button>
                                             </form>
                                             <form action="{{ route('superadmin.withdrawals.update', $w->id) }}" method="POST">
                                                 @csrf @method('PATCH')
                                                 <input type="hidden" name="status" value="rejected">
-                                                <button type="submit" class="bg-rose-100 dark:bg-rose-500/20 hover:bg-rose-200 text-rose-700 dark:text-rose-300 px-3 py-1.5 rounded-lg text-xs font-bold transition" onclick="return confirm('Tolak penarikan dan kembalikan saldo ke user?')">
+                                                <button type="submit" class="bg-rose-100 dark:bg-rose-500/20 hover:bg-rose-200 text-rose-700 dark:text-rose-300 px-3 py-1.5 rounded-lg text-xs font-bold transition" onclick="event.preventDefault(); let f = this.closest('form'); swConfirm('Tolak Penarikan?', 'Saldo akan dikembalikan ke user.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                     <i class="fa-solid fa-xmark"></i> Tolak
                                                 </button>
                                             </form>

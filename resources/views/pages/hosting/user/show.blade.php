@@ -1570,11 +1570,11 @@ NGINX_CONF
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({ icon: 'success', title: 'Tersalin!', text: 'Config contoh disalin ke clipboard.', timer: 1500, showConfirmButton: false });
                     } else {
-                        alert('Config contoh disalin ke clipboard.');
+                        hotToast('Config contoh disalin ke clipboard.', 'success');
                     }
                 });
             } else {
-                alert('Salin manual: pilih teks contoh di bawah.');
+                hotToast('Salin manual: pilih teks contoh di bawah.', 'info');
             }
         }
 
@@ -3119,10 +3119,11 @@ NGINX_CONF
         }
 
         function ideDeleteChat(id) {
-            if (!confirm('Hapus percakapan ini?')) return;
-            fetch(ideChatDelUrl.replace('__CHAT__', id), { method: 'DELETE', headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' } })
-                .then(r => r.json())
-                .then(() => {
+            swConfirm('Hapus percakapan ini?', 'Pesan akan dihapus permanen.').then(res => {
+                if (!res.isConfirmed) return;
+                fetch(ideChatDelUrl.replace('__CHAT__', id), { method: 'DELETE', headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' } })
+                    .then(r => r.json())
+                    .then(() => {
                     if (ideChatId === id) {
                         ideChatId = null;
                         ideChatWelcome();
@@ -3130,7 +3131,8 @@ NGINX_CONF
                     document.getElementById('ide-chat-list').classList.remove('hidden');
                     ideRefreshChatList();
                     hotToast('Percakapan dihapus', 'success');
-                }).catch(() => hotToast('Gagal menghapus', 'error'));
+                    }).catch(() => hotToast('Gagal menghapus', 'error'));
+            });
         }
 
         function ideCreateChat() {

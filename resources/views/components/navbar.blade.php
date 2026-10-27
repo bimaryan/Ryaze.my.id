@@ -172,544 +172,194 @@
 
 {{-- SIDEBAR --}}
 <aside id="logo-sidebar"
-    :class="`${sidebarOpen && !desktop ? 'translate-x-0 shadow-2xl' : (desktop ? 'translate-x-0' : '-translate-x-full')} ${$store.sidebar.collapsed ? 'lg:w-20' : 'lg:w-64'}`"
-    class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-all duration-300 ease-in-out bg-white border-r border-slate-200 dark:bg-slate-900 dark:border-slate-800"
+    :class="`${sidebarOpen && !desktop ? 'translate-x-0 shadow-2xl' : (desktop ? 'translate-x-0' : '-translate-x-full')} ${$store.sidebar.collapsed ? 'sm:w-20 w-64' : 'w-64'}`"
+    class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-all duration-200 ease-in-out bg-white border-r border-slate-200 dark:bg-slate-900 dark:border-slate-800 flex flex-col"
     aria-label="Sidebar">
 
-    <div id="sidebar-scroll" class="ui-sidebar-scroll bg-white dark:bg-slate-900">
+    @php
+        use App\Helpers\AppVersion;
+        $appVersion = AppVersion::get();
+        $role = Auth::user()->role ?? '';
 
-        {{-- Desktop collapse toggle --}}
-        <div class="hidden lg:flex mb-2" :class="$store.sidebar.collapsed ? 'justify-center' : 'justify-end'">
-            <button @click="$store.sidebar.toggle()" type="button"
-                class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-white transition-colors focus:outline-none"
-                :aria-label="$store.sidebar.collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'"
-                :title="$store.sidebar.collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'">
-                <i class="fa-solid fa-angles-left text-xs transition-transform duration-300"
-                    :class="$store.sidebar.collapsed ? 'rotate-180' : ''"></i>
-            </button>
-        </div>
-        @php
-            use App\Helpers\AppVersion;
-            $appVersion = AppVersion::get();
-            $role = Auth::user()->role ?? '';
+        $dashboardUrl = match ($role) {
+            'superadmin' => route('superadmin.dashboard'),
+            'admin_joki' => route('admin_joki.dashboard'),
+            'admin_hosting' => route('admin_hosting.dashboard'),
+            'user_joki' => route('user_joki.dashboard'),
+            'user_hosting' => route('user_hosting.dashboard'),
+            default => url('/'),
+        };
 
-            $dashboardUrl = match ($role) {
-                'superadmin' => route('superadmin.dashboard'),
-                'admin_joki' => route('admin_joki.dashboard'),
-                'admin_hosting' => route('admin_hosting.dashboard'),
-                'user_joki' => route('user_joki.dashboard'),
-                'user_hosting' => route('user_hosting.dashboard'),
-                default => url('/'),
-            };
+        $isAdmin = in_array($role, ['superadmin', 'admin_joki', 'admin_hosting']);
+        $isAdminHosting = in_array($role, ['superadmin', 'admin_hosting']);
+        $isAdminJoki = in_array($role, ['superadmin', 'admin_joki']);
+        $isUserHosting = in_array($role, ['superadmin', 'user_hosting', 'admin_hosting']);
+        $isUserJoki = in_array($role, ['superadmin', 'user_joki', 'admin_joki']);
+        $isUser = in_array($role, ['superadmin', 'user_joki', 'user_hosting', 'admin_hosting', 'admin_joki']);
 
-            $isAdmin = in_array($role, ['superadmin', 'admin_joki', 'admin_hosting']);
-            $isAdminHosting = in_array($role, ['superadmin', 'admin_hosting']);
-            $isAdminJoki = in_array($role, ['superadmin', 'admin_joki']);
-            $isUserHosting = in_array($role, ['superadmin', 'user_hosting', 'admin_hosting']);
-            $isUserJoki = in_array($role, ['superadmin', 'user_joki', 'admin_joki']);
-            $isUser = in_array($role, ['superadmin', 'user_joki', 'user_hosting', 'admin_hosting', 'admin_joki']);
-
-            // Item aktif: highlight lembut + rail penanda di tepi kiri
-            // (lihat blok <style> di bawah). Sengaja TIDAK pakai pill
-            // indigo solid — bikin penuh warna dan garis penandanya
-            // jadi kelihatan nyambung asal-asalan.
-            $navLink = fn($active) => 'ui-sidebar-link group ' .
-                ($active
-                    ? 'bg-indigo-600/10 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300 font-semibold'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white');
-
-            // Atribut penanda menu aktif. Dipakai oleh CSS (garis
-            // penanda saat sidebar dicuit) dan JS auto-scroll.
-            // WAJIB dibungkus {!! !!}: kalau tidak, Blade meng-escape
-            // tanda kutip dan hasilnya `aria-current="&quot;page&quot;"`,
-            // yaitu nilai dengan kutip literal — selector
-            // [aria-current="page"] tidak akan pernah cocok.
-            $navCurrent = fn($active) => $active
-                ? new \Illuminate\Support\HtmlString('aria-current="page"')
+        // Structured helper for clean, consistent rendering
+        $item = function ($url, $label, $icon, $active, $badge = null) {
+            $activeClass = $active
+                ? 'bg-indigo-50/90 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-semibold'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white';
+            $iconActive = $active
+                ? 'text-indigo-600 dark:text-indigo-400'
+                : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300';
+            $ariaCurrent = $active ? 'aria-current="page"' : '';
+            $indicator = $active
+                ? '<span class="absolute left-0 top-1.5 bottom-1.5 w-1 bg-indigo-600 dark:bg-indigo-500 rounded-r" :class="$store.sidebar.collapsed ? \'hidden\' : \'\'"></span>'
+                : '';
+            $badgeHtml = $badge
+                ? '<span class="ms-auto inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-800/60" x-show="!$store.sidebar.collapsed" x-cloak>' . e($badge) . '</span>'
                 : '';
 
-            $iconBox = fn($active) => 'flex-shrink-0 w-5 h-5 transition duration-75 ' .
-                ($active
-                    ? 'text-indigo-600 dark:text-indigo-400'
-                    : 'text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-white');
-
-            $sectionLabel =
-                'mt-5 mb-2 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider dark:text-slate-400';
-        @endphp
-
-        <ul class="space-y-1.5 font-medium">
-            {{-- Dashboard --}}
+            return '
             <li>
-                <a href="{{ $dashboardUrl }}" class="{{ $navLink(request()->routeIs('*.dashboard')) }}" {{ $navCurrent(request()->routeIs('*.dashboard')) }}>
-                    <i
-                        class="fa-solid fa-table-columns {{ $iconBox(request()->routeIs('*.dashboard')) }} text-center"></i>
-                    <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Dashboard</span>
+                <a href="' . e($url) . '"
+                   ' . $ariaCurrent . '
+                   title="' . e($label) . '"
+                   class="group relative flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors duration-150 ' . $activeClass . '"
+                   :class="$store.sidebar.collapsed ? \'justify-center px-2\' : \'\'">
+                    ' . $indicator . '
+                    <span class="w-5 h-5 flex items-center justify-center shrink-0 ' . $iconActive . '">
+                        <i class="' . e($icon) . ' text-sm"></i>
+                    </span>
+                    <span class="truncate leading-none" x-show="!$store.sidebar.collapsed" x-cloak>' . e($label) . '</span>
+                    ' . $badgeHtml . '
                 </a>
+            </li>';
+        };
+
+        $section = function ($title) {
+            return '
+            <li class="pt-4 pb-1 px-3 select-none" x-show="!$store.sidebar.collapsed" x-cloak>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">' . e($title) . '</span>
             </li>
+            <li class="my-2 border-t border-slate-100 dark:border-slate-800/80 mx-2" x-show="$store.sidebar.collapsed" x-cloak></li>';
+        };
+    @endphp
+
+    <div id="sidebar-scroll" class="ui-sidebar-scroll min-h-0 bg-white dark:bg-slate-900">
+        <ul class="space-y-0.5">
+            {{-- Dashboard --}}
+            {!! $item($dashboardUrl, 'Dashboard', 'fa-solid fa-table-columns', request()->routeIs('*.dashboard')) !!}
 
             {{-- ── SISTEM UTAMA (SUPERADMIN) ──────────────────────────────────── --}}
             @if ($role === 'superadmin')
-                <li class="{{ $sectionLabel }}" x-show="!$store.sidebar.collapsed" x-cloak>Sistem Utama</li>
-
-                <li>
-                    <a href="{{ route('superadmin.users.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.users*')) }}" {{ $navCurrent(request()->routeIs('superadmin.users*')) }}>
-                        <i
-                            class="fa-solid fa-users {{ $iconBox(request()->routeIs('superadmin.users*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Data Pengguna</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.portfolios.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.portfolios*')) }}" {{ $navCurrent(request()->routeIs('superadmin.portfolios*')) }}>
-                        <i
-                            class="fa-solid fa-briefcase {{ $iconBox(request()->routeIs('superadmin.portfolios*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Portofolio</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.educations.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.educations*')) }}" {{ $navCurrent(request()->routeIs('superadmin.educations*')) }}>
-                        <i
-                            class="fa-solid fa-graduation-cap {{ $iconBox(request()->routeIs('superadmin.educations*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Pendidikan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.experiences.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.experiences*')) }}" {{ $navCurrent(request()->routeIs('superadmin.experiences*')) }}>
-                        <i
-                            class="fa-solid fa-briefcase {{ $iconBox(request()->routeIs('superadmin.experiences*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Pengalaman</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.testimonials.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.testimonials*')) }}" {{ $navCurrent(request()->routeIs('superadmin.testimonials*')) }}>
-                        <i
-                            class="fa-solid fa-comment-dots {{ $iconBox(request()->routeIs('superadmin.testimonials*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Testimoni</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.certifications.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.certifications*')) }}" {{ $navCurrent(request()->routeIs('superadmin.certifications*')) }}>
-                        <i
-                            class="fa-solid fa-certificate {{ $iconBox(request()->routeIs('superadmin.certifications*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Sertifikat</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.contact_messages.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.contact_messages*')) }}" {{ $navCurrent(request()->routeIs('superadmin.contact_messages*')) }}>
-                        <i
-                            class="fa-solid fa-inbox {{ $iconBox(request()->routeIs('superadmin.contact_messages*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Pesan Masuk</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.digital_products.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.digital_products*') || request()->routeIs('superadmin.digital_purchases*') || request()->routeIs('superadmin.tips*')) }}" {{ $navCurrent(request()->routeIs('superadmin.digital_products*') || request()->routeIs('superadmin.digital_purchases*') || request()->routeIs('superadmin.tips*')) }}>
-                        <i
-                            class="fa-solid fa-box-open {{ $iconBox(request()->routeIs('superadmin.digital_products*') || request()->routeIs('superadmin.digital_purchases*') || request()->routeIs('superadmin.tips*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Produk Digital</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.skills.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.skills*')) }}" {{ $navCurrent(request()->routeIs('superadmin.skills*')) }}>
-                        <i
-                            class="fa-solid fa-code {{ $iconBox(request()->routeIs('superadmin.skills*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Skill & Tech</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.promo_events.index') }}"
-                        class="{{ $navLink(request()->routeIs('admin.promo_events*')) }}" {{ $navCurrent(request()->routeIs('admin.promo_events*')) }}>
-                        <i
-                            class="fa-solid fa-bullhorn {{ $iconBox(request()->routeIs('admin.promo_events*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Promo Event</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.info_updates.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.info_updates*')) }}" {{ $navCurrent(request()->routeIs('superadmin.info_updates*')) }}>
-                        <i
-                            class="fa-solid fa-bullhorn {{ $iconBox(request()->routeIs('superadmin.info_updates*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Info Update</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.articles.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.articles*') || request()->routeIs('superadmin.article_categories*')) }}" {{ $navCurrent(request()->routeIs('superadmin.articles*') || request()->routeIs('superadmin.article_categories*')) }}>
-                        <i
-                            class="fa-solid fa-newspaper {{ $iconBox(request()->routeIs('superadmin.articles*') || request()->routeIs('superadmin.article_categories*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Manajemen Blog</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.settings') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.settings*')) }}" {{ $navCurrent(request()->routeIs('superadmin.settings*')) }}>
-                        <i
-                            class="fa-solid fa-sliders {{ $iconBox(request()->routeIs('superadmin.settings*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Pengaturan Sistem</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.backup.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.backup*')) }}" {{ $navCurrent(request()->routeIs('superadmin.backup*')) }}>
-                        <i
-                            class="fa-solid fa-box-archive {{ $iconBox(request()->routeIs('superadmin.backup*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Sistem Backup</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.withdrawals.index') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.withdrawals*')) }}" {{ $navCurrent(request()->routeIs('superadmin.withdrawals*')) }}>
-                        <i
-                            class="fa-solid fa-money-bill-transfer {{ $iconBox(request()->routeIs('superadmin.withdrawals*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Kelola Penarikan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('superadmin.finance') }}"
-                        class="{{ $navLink(request()->routeIs('superadmin.finance')) }}" {{ $navCurrent(request()->routeIs('superadmin.finance')) }}>
-                        <i
-                            class="fa-solid fa-chart-pie {{ $iconBox(request()->routeIs('superadmin.finance')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Laporan Keuangan</span>
-                    </a>
-                </li>
+                {!! $section('Sistem Utama') !!}
+                {!! $item(route('superadmin.users.index'), 'Data Pengguna', 'fa-solid fa-users', request()->routeIs('superadmin.users*')) !!}
+                {!! $item(route('superadmin.portfolios.index'), 'Portofolio', 'fa-solid fa-briefcase', request()->routeIs('superadmin.portfolios*')) !!}
+                {!! $item(route('superadmin.educations.index'), 'Pendidikan', 'fa-solid fa-graduation-cap', request()->routeIs('superadmin.educations*')) !!}
+                {!! $item(route('superadmin.experiences.index'), 'Pengalaman', 'fa-solid fa-briefcase', request()->routeIs('superadmin.experiences*')) !!}
+                {!! $item(route('superadmin.testimonials.index'), 'Testimoni', 'fa-solid fa-comment-dots', request()->routeIs('superadmin.testimonials*')) !!}
+                {!! $item(route('superadmin.certifications.index'), 'Sertifikat', 'fa-solid fa-certificate', request()->routeIs('superadmin.certifications*')) !!}
+                {!! $item(route('superadmin.contact_messages.index'), 'Pesan Masuk', 'fa-solid fa-inbox', request()->routeIs('superadmin.contact_messages*')) !!}
+                {!! $item(route('superadmin.digital_products.index'), 'Produk Digital', 'fa-solid fa-box-open', request()->routeIs('superadmin.digital_products*') || request()->routeIs('superadmin.digital_purchases*') || request()->routeIs('superadmin.tips*')) !!}
+                {!! $item(route('superadmin.skills.index'), 'Skill & Tech', 'fa-solid fa-code', request()->routeIs('superadmin.skills*')) !!}
+                {!! $item(route('admin.promo_events.index'), 'Promo Event', 'fa-solid fa-bullhorn', request()->routeIs('admin.promo_events*')) !!}
+                {!! $item(route('superadmin.info_updates.index'), 'Info Update', 'fa-solid fa-bullhorn', request()->routeIs('superadmin.info_updates*')) !!}
+                {!! $item(route('superadmin.articles.index'), 'Manajemen Blog', 'fa-solid fa-newspaper', request()->routeIs('superadmin.articles*') || request()->routeIs('superadmin.article_categories*')) !!}
+                {!! $item(route('superadmin.settings'), 'Pengaturan Sistem', 'fa-solid fa-sliders', request()->routeIs('superadmin.settings*')) !!}
+                {!! $item(route('superadmin.backup.index'), 'Sistem Backup', 'fa-solid fa-box-archive', request()->routeIs('superadmin.backup*')) !!}
+                {!! $item(route('superadmin.withdrawals.index'), 'Kelola Penarikan', 'fa-solid fa-money-bill-transfer', request()->routeIs('superadmin.withdrawals*')) !!}
+                {!! $item(route('superadmin.finance'), 'Laporan Keuangan', 'fa-solid fa-chart-pie', request()->routeIs('superadmin.finance')) !!}
             @endif
 
             {{-- ── MANAJEMEN JOKI ──────────────────────────────────────────────── --}}
             @if ($isAdminJoki)
-                <li class="{{ $sectionLabel }}" x-show="!$store.sidebar.collapsed" x-cloak>Manajemen Joki</li>
-
-                <li>
-                    <a href="{{ route('admin_joki.orders') }}"
-                        class="{{ $navLink(request()->routeIs('admin_joki.orders*')) }}" {{ $navCurrent(request()->routeIs('admin_joki.orders*')) }}>
-                        <i
-                            class="fa-solid fa-code-branch {{ $iconBox(request()->routeIs('admin_joki.orders*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Kelola Pesanan Joki</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_joki.services.index') }}"
-                        class="{{ $navLink(request()->routeIs('admin_joki.services*')) }}" {{ $navCurrent(request()->routeIs('admin_joki.services*')) }}>
-                        <i
-                            class="fa-solid fa-list-check {{ $iconBox(request()->routeIs('admin_joki.services*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Manajemen Layanan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_joki.finance') }}"
-                        class="{{ $navLink(request()->routeIs('admin_joki.finance')) }}" {{ $navCurrent(request()->routeIs('admin_joki.finance')) }}>
-                        <i
-                            class="fa-solid fa-wallet {{ $iconBox(request()->routeIs('admin_joki.finance')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Keuangan Joki</span>
-                    </a>
-                </li>
+                {!! $section('Manajemen Joki') !!}
+                {!! $item(route('admin_joki.orders'), 'Kelola Pesanan Joki', 'fa-solid fa-code-branch', request()->routeIs('admin_joki.orders*')) !!}
+                {!! $item(route('admin_joki.services.index'), 'Manajemen Layanan', 'fa-solid fa-list-check', request()->routeIs('admin_joki.services*')) !!}
+                {!! $item(route('admin_joki.finance'), 'Keuangan Joki', 'fa-solid fa-wallet', request()->routeIs('admin_joki.finance')) !!}
             @endif
 
             {{-- ── MANAJEMEN HOSTING ───────────────────────────────────────────── --}}
             @if ($isAdminHosting)
-                <li class="{{ $sectionLabel }}" x-show="!$store.sidebar.collapsed" x-cloak>Manajemen Hosting</li>
-
-                <li>
-                    <a href="{{ route('admin_hosting.projects') }}"
-                        class="{{ $navLink(request()->routeIs('admin_hosting.projects')) }}" {{ $navCurrent(request()->routeIs('admin_hosting.projects')) }}>
-                        <i
-                            class="fa-solid fa-server {{ $iconBox(request()->routeIs('admin_hosting.projects')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Kelola Project</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_hosting.deployments') }}"
-                        class="{{ $navLink(request()->routeIs('admin_hosting.deployments')) }}" {{ $navCurrent(request()->routeIs('admin_hosting.deployments')) }}>
-                        <i
-                            class="fa-solid fa-clock-rotate-left {{ $iconBox(request()->routeIs('admin_hosting.deployments')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Riwayat Deploy</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_hosting.pending') }}"
-                        class="{{ $navLink(request()->routeIs('admin_hosting.pending')) }}" {{ $navCurrent(request()->routeIs('admin_hosting.pending')) }}>
-                        <i
-                            class="fa-solid fa-triangle-exclamation {{ $iconBox(request()->routeIs('admin_hosting.pending')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Butuh Tindakan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_hosting.databases') }}"
-                        class="{{ $navLink(request()->routeIs('admin_hosting.databases')) }}" {{ $navCurrent(request()->routeIs('admin_hosting.databases')) }}>
-                        <i
-                            class="fa-solid fa-database {{ $iconBox(request()->routeIs('admin_hosting.databases')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Semua Database</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_hosting.storage') }}"
-                        class="{{ $navLink(request()->routeIs('admin_hosting.storage')) }}" {{ $navCurrent(request()->routeIs('admin_hosting.storage')) }}>
-                        <i
-                            class="fa-solid fa-hard-drive {{ $iconBox(request()->routeIs('admin_hosting.storage')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Limit Penyimpanan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_hosting.billing') }}"
-                        class="{{ $navLink(request()->routeIs('admin_hosting.billing')) }}" {{ $navCurrent(request()->routeIs('admin_hosting.billing')) }}>
-                        <i
-                            class="fa-solid fa-file-invoice-dollar {{ $iconBox(request()->routeIs('admin_hosting.billing')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Kelola Tagihan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_hosting.vouchers.index') }}"
-                        class="{{ $navLink(request()->routeIs('admin_hosting.vouchers*')) }}" {{ $navCurrent(request()->routeIs('admin_hosting.vouchers*')) }}>
-                        <i
-                            class="fa-solid fa-ticket {{ $iconBox(request()->routeIs('admin_hosting.vouchers*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Kelola Voucher</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin_hosting.tickets.index') }}"
-                        class="{{ $navLink(request()->routeIs('admin_hosting.tickets*')) }}" {{ $navCurrent(request()->routeIs('admin_hosting.tickets*')) }}>
-                        <i
-                            class="fa-solid fa-headset {{ $iconBox(request()->routeIs('admin_hosting.tickets*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Kelola Tiket</span>
-                    </a>
-                </li>
+                {!! $section('Manajemen Hosting') !!}
+                {!! $item(route('admin_hosting.projects'), 'Kelola Project', 'fa-solid fa-server', request()->routeIs('admin_hosting.projects')) !!}
+                {!! $item(route('admin_hosting.deployments'), 'Riwayat Deploy', 'fa-solid fa-clock-rotate-left', request()->routeIs('admin_hosting.deployments')) !!}
+                {!! $item(route('admin_hosting.pending'), 'Butuh Tindakan', 'fa-solid fa-triangle-exclamation', request()->routeIs('admin_hosting.pending')) !!}
+                {!! $item(route('admin_hosting.databases'), 'Semua Database', 'fa-solid fa-database', request()->routeIs('admin_hosting.databases')) !!}
+                {!! $item(route('admin_hosting.storage'), 'Limit Penyimpanan', 'fa-solid fa-hard-drive', request()->routeIs('admin_hosting.storage')) !!}
+                {!! $item(route('admin_hosting.billing'), 'Kelola Tagihan', 'fa-solid fa-file-invoice-dollar', request()->routeIs('admin_hosting.billing')) !!}
+                {!! $item(route('admin_hosting.vouchers.index'), 'Kelola Voucher', 'fa-solid fa-ticket', request()->routeIs('admin_hosting.vouchers*')) !!}
+                {!! $item(route('admin_hosting.tickets.index'), 'Kelola Tiket', 'fa-solid fa-headset', request()->routeIs('admin_hosting.tickets*')) !!}
             @endif
 
             {{-- ── LAYANAN KLIEN JOKI ──────────────────────────────────────────── --}}
             @if ($isUserJoki)
-                <li class="{{ $sectionLabel }}" x-show="!$store.sidebar.collapsed" x-cloak>Layanan Joki</li>
-
-                <li>
-                    <a href="{{ route('user_joki.create') }}"
-                        class="{{ $navLink(request()->routeIs('user_joki.create')) }}" {{ $navCurrent(request()->routeIs('user_joki.create')) }}>
-                        <i
-                            class="fa-solid fa-cart-plus {{ $iconBox(request()->routeIs('user_joki.create')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Buat Pesanan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_joki.progress') }}"
-                        class="{{ $navLink(request()->routeIs('user_joki.progress')) }}" {{ $navCurrent(request()->routeIs('user_joki.progress')) }}>
-                        <i
-                            class="fa-solid fa-laptop-code {{ $iconBox(request()->routeIs('user_joki.progress')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Progres Pengerjaan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_joki.riwayat') }}"
-                        class="{{ $navLink(request()->routeIs('user_joki.riwayat')) }}" {{ $navCurrent(request()->routeIs('user_joki.riwayat')) }}>
-                        <i
-                            class="fa-solid fa-clock-rotate-left {{ $iconBox(request()->routeIs('user_joki.riwayat')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Riwayat Selesai</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_joki.billing') }}"
-                        class="{{ $navLink(request()->routeIs('user_joki.billing')) }}" {{ $navCurrent(request()->routeIs('user_joki.billing')) }}>
-                        <i
-                            class="fa-solid fa-file-invoice-dollar {{ $iconBox(request()->routeIs('user_joki.billing')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Riwayat Tagihan</span>
-                    </a>
-                </li>
+                {!! $section('Layanan Joki') !!}
+                {!! $item(route('user_joki.create'), 'Buat Pesanan', 'fa-solid fa-cart-plus', request()->routeIs('user_joki.create')) !!}
+                {!! $item(route('user_joki.progress'), 'Progres Pengerjaan', 'fa-solid fa-laptop-code', request()->routeIs('user_joki.progress')) !!}
+                {!! $item(route('user_joki.riwayat'), 'Riwayat Selesai', 'fa-solid fa-clock-rotate-left', request()->routeIs('user_joki.riwayat')) !!}
+                {!! $item(route('user_joki.billing'), 'Riwayat Tagihan', 'fa-solid fa-file-invoice-dollar', request()->routeIs('user_joki.billing')) !!}
             @endif
 
             {{-- ── LAYANAN KLIEN HOSTING ───────────────────────────────────────── --}}
             @if ($isUserHosting)
-                <li class="{{ $sectionLabel }}" x-show="!$store.sidebar.collapsed" x-cloak>Hosting</li>
+                {!! $section('Hosting') !!}
+                {!! $item(route('user_hosting.create'), 'Deploy Aplikasi', 'fa-solid fa-rocket', request()->routeIs('user_hosting.create')) !!}
+                {!! $item(route('user_hosting.marketplace'), 'App Marketplace', 'fa-solid fa-store', request()->routeIs('user_hosting.marketplace')) !!}
+                {!! $item(route('user_hosting.tunnels.index'), 'Local Tunnels', 'fa-solid fa-network-wired', request()->routeIs('user_hosting.tunnels*'), 'Beta') !!}
+                {!! $item(route('user_hosting.templates'), 'Galeri Template', 'fa-solid fa-layer-group', request()->routeIs('user_hosting.templates')) !!}
+                {!! $item(route('user_hosting.domains.index'), 'Domains', 'fa-solid fa-globe', request()->routeIs('user_hosting.domains.*')) !!}
+                {!! $item(route('user_hosting.projects'), 'Proyek Aktif', 'fa-solid fa-terminal', request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) !!}
+                {!! $item(route('user_hosting.databases'), 'Database', 'fa-solid fa-database', request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) !!}
+                {!! $item(route('user_hosting.databases.pma'), 'DB Manager', 'fa-solid fa-table-columns', request()->routeIs('user_hosting.databases.pma')) !!}
+                {!! $item(route('user_hosting.storage'), 'File & Storage', 'fa-solid fa-folder-open', request()->routeIs('user_hosting.storage*')) !!}
+                {!! $item(route('user_hosting.docs'), 'Dokumentasi', 'fa-solid fa-book-open', request()->routeIs('user_hosting.docs*')) !!}
+                {!! $item(route('whois.index'), 'Cek Domain', 'fa-solid fa-magnifying-glass', request()->routeIs('whois*')) !!}
 
-                <li>
-                    <a href="{{ route('user_hosting.create') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.create')) }}" {{ $navCurrent(request()->routeIs('user_hosting.create')) }}>
-                        <i
-                            class="fa-solid fa-rocket {{ $iconBox(request()->routeIs('user_hosting.create')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Deploy Aplikasi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.marketplace') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.marketplace')) }}" {{ $navCurrent(request()->routeIs('user_hosting.marketplace')) }}>
-                        <i
-                            class="fa-solid fa-store {{ $iconBox(request()->routeIs('user_hosting.marketplace')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>App Marketplace</span>
-                    </a>
-                </li>
-                {{-- <li>
-                    <a href="{{ route('user_hosting.apk.index') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.apk*')) }}" {{ $navCurrent(request()->routeIs('user_hosting.apk*')) }}>
-                        <i
-                            class="fa-brands fa-android {{ $iconBox(request()->routeIs('user_hosting.apk*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Web to APK</span>
-                    </a>
-                </li> --}}
-                <li>
-                    <a href="{{ route('user_hosting.tunnels.index') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.tunnels*')) }}" {{ $navCurrent(request()->routeIs('user_hosting.tunnels*')) }}>
-                        <i
-                            class="fa-solid fa-network-wired {{ $iconBox(request()->routeIs('user_hosting.tunnels*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Local Tunnels</span>
-                        <span
-                            class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-indigo-800 bg-indigo-100 rounded-full dark:bg-indigo-900 dark:text-indigo-300"
-                            x-show="!$store.sidebar.collapsed" x-cloak>Beta</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.templates') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.templates')) }}" {{ $navCurrent(request()->routeIs('user_hosting.templates')) }}>
-                        <i
-                            class="fa-solid fa-layer-group {{ $iconBox(request()->routeIs('user_hosting.templates')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Galeri Template</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.domains.index') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.domains.*')) }}" {{ $navCurrent(request()->routeIs('user_hosting.domains.*')) }}>
-                        <i
-                            class="fa-solid fa-globe {{ $iconBox(request()->routeIs('user_hosting.domains.*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Domains</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.projects') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}" {{ $navCurrent(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}>
-                        <i
-                            class="fa-solid fa-terminal {{ $iconBox(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Proyek Aktif</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.databases') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }}" {{ $navCurrent(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }}>
-                        <i
-                            class="fa-solid fa-database {{ $iconBox(request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Database</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.databases.pma') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.databases.pma')) }}" {{ $navCurrent(request()->routeIs('user_hosting.databases.pma')) }}>
-                        <i
-                            class="fa-solid fa-table-columns {{ $iconBox(request()->routeIs('user_hosting.databases.pma')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>DB Manager</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.storage') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.storage*')) }}" {{ $navCurrent(request()->routeIs('user_hosting.storage*')) }}>
-                        <i
-                            class="fa-solid fa-folder-open {{ $iconBox(request()->routeIs('user_hosting.storage*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>File & Storage</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.docs') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.docs*')) }}" {{ $navCurrent(request()->routeIs('user_hosting.docs*')) }}>
-                        <i
-                            class="fa-solid fa-book-open {{ $iconBox(request()->routeIs('user_hosting.docs*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Dokumentasi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('whois.index') }}"
-                        class="{{ $navLink(request()->routeIs('whois*')) }}" {{ $navCurrent(request()->routeIs('whois*')) }}>
-                        <i
-                            class="fa-solid fa-magnifying-glass {{ $iconBox(request()->routeIs('whois*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Cek Domain</span>
-                    </a>
-                </li>
-
-                <li class="{{ $sectionLabel }} mt-4" x-show="!$store.sidebar.collapsed" x-cloak>Akun</li>
-
-                <li>
-                    <a href="{{ route('user_hosting.subscription') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.subscription')) }}" {{ $navCurrent(request()->routeIs('user_hosting.subscription')) }}>
-                        <i
-                            class="fa-solid fa-crown {{ $iconBox(request()->routeIs('user_hosting.subscription')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Langganan Paket</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.billing') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.billing')) }}" {{ $navCurrent(request()->routeIs('user_hosting.billing')) }}>
-                        <i
-                            class="fa-solid fa-file-invoice-dollar {{ $iconBox(request()->routeIs('user_hosting.billing')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Riwayat Tagihan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('user_hosting.tickets.index') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.tickets*')) }}" {{ $navCurrent(request()->routeIs('user_hosting.tickets*')) }}>
-                        <i
-                            class="fa-solid fa-headset {{ $iconBox(request()->routeIs('user_hosting.tickets*')) }} text-center"></i>
-                        <span class="ui-sidebar-label" x-show="!$store.sidebar.collapsed" x-cloak>Pusat Bantuan</span>
-                    </a>
-                </li>
+                {!! $section('Akun') !!}
+                {!! $item(route('user_hosting.subscription'), 'Langganan Paket', 'fa-solid fa-crown', request()->routeIs('user_hosting.subscription')) !!}
+                {!! $item(route('user_hosting.billing'), 'Riwayat Tagihan', 'fa-solid fa-file-invoice-dollar', request()->routeIs('user_hosting.billing')) !!}
+                {!! $item(route('user_hosting.tickets.index'), 'Pusat Bantuan', 'fa-solid fa-headset', request()->routeIs('user_hosting.tickets*')) !!}
             @endif
         </ul>
+    </div>
 
-        {{-- Version Badge --}}
-        <div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
-            <div class="flex items-center px-2 py-2"
-                :class="$store.sidebar.collapsed ? 'justify-center' : 'justify-between'">
-                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest"
-                    x-show="!$store.sidebar.collapsed" x-cloak>Ryaze Portal</span>
-                <span
-                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 text-[10px] font-bold text-indigo-500 dark:text-indigo-400 tracking-wide">
-                    <i class="fa-solid fa-code-branch text-[8px]"></i>
-                    <span x-show="!$store.sidebar.collapsed" x-cloak>{{ $appVersion }}</span>
-                </span>
+    {{-- Pinned Footer: Status, Version & Collapse Toggle --}}
+    <div class="shrink-0 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 px-3 py-2.5 flex items-center transition-all duration-200"
+        :class="$store.sidebar.collapsed ? 'justify-center' : 'justify-between'">
+
+        {{-- App Info & Version --}}
+        <div class="flex items-center gap-2 min-w-0" x-show="!$store.sidebar.collapsed" x-cloak>
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" title="Online"></div>
+            <div class="flex items-center gap-1.5 truncate">
+                <span class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 truncate">Ryaze Portal</span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60 shrink-0">v{{ $appVersion }}</span>
             </div>
         </div>
+
+        {{-- Desktop Collapse Toggle Button --}}
+        <button @click="$store.sidebar.toggle()" type="button"
+            class="hidden sm:flex w-7 h-7 items-center justify-center rounded-md text-slate-400 hover:text-indigo-600 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+            :aria-label="$store.sidebar.collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'"
+            :title="$store.sidebar.collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'">
+            <i class="fa-solid fa-angles-left text-xs transition-transform duration-200"
+                :class="$store.sidebar.collapsed ? 'rotate-180' : ''"></i>
+        </button>
     </div>
 </aside>
 
-{{-- Sidebar collapse styling (desktop only) --}}
+{{-- Sidebar collapse styling --}}
 <style>
-    @media (min-width: 1024px) {
-        #logo-sidebar[class*="lg:w-20"] a {
+    @media (min-width: 640px) {
+        #logo-sidebar[class*="sm:w-20"] a {
             justify-content: center;
         }
 
-        #logo-sidebar[class*="lg:w-20"] a i {
+        #logo-sidebar[class*="sm:w-20"] a i {
             margin: 0;
         }
     }
 
-    /* Penanda menu aktif: rail vertikal yang menempel rapi di tepi
-       kiri sidebar, bukan garis kecil yang mengambang jauh dari
-       item. Tetap kelihatan walau sidebar dicuit (labelnya
-       disembunyikan), karena posisinya dihitung dari tepi sidebar. */
-    #logo-sidebar a[aria-current="page"] {
-        position: relative;
-    }
-
-    #logo-sidebar a[aria-current="page"]::before {
-        content: "";
-        position: absolute;
-        /* -0.75rem = tepat sebesar padding px-3 milik .ui-sidebar-scroll,
-           jadi rail-nya nyangkut di tepi sidebar, bukan di tengah. */
-        left: -0.75rem;
-        top: 50%;
-        translate: 0 -50%;
-        height: 1.5rem;
-        width: 4px;
-        /* Radius hanya di sisi kanan: ujung kirinya rata dengan tepi
-           sidebar, tidak terpotong bulat. */
-        border-radius: 0 4px 4px 0;
-        background-color: var(--color-indigo-600);
-    }
-
-    /* Hover di menu aktif harus tetap nuansa indigo. Tanpa ini,
-       state hover item biasa (bg-slate-100) menimpa highlight
-       aktif dan item aktif mendadak jadi abu-abu.
-       Specificity ID (1,2,1) mengalahkan utility Tailwind (0,2,0). */
+    /* Active link hover: tetap beraksen indigo */
     #logo-sidebar a[aria-current="page"]:hover {
-        background-color: rgb(79 70 229 / 0.15);
+        background-color: rgb(79 70 229 / 0.12);
+    }
+    .dark #logo-sidebar a[aria-current="page"]:hover {
+        background-color: rgb(99 102 241 / 0.18);
     }
 </style>
 

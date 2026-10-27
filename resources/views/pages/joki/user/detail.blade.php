@@ -189,7 +189,7 @@
                             @else
                                 <form action="{{ route('user_joki.deploy_hosting', $order->hashid) }}" method="POST">
                                     @csrf
-                                    <button type="submit" onclick="return confirm('Apakah Anda yakin ingin men-deploy project ini ke Ryaze Hosting? (Memerlukan penyimpanan aktif)')"
+                                    <button type="submit" onclick="event.preventDefault(); let f = this.closest('form'); swConfirm('Deploy ke Ryaze Hosting?', 'Memerlukan penyimpanan aktif. Lanjutkan?').then(res => { if(res.isConfirmed) f.submit(); }); return false;"
                                         class="w-full bg-white dark:bg-slate-800/60 text-indigo-700 dark:text-indigo-300 hover:bg-slate-50 dark:hover:bg-slate-700/40 font-bold px-4 py-2.5 rounded-lg text-sm shadow-md transition-colors flex justify-center items-center gap-2">
                                         Deploy ke Ryaze Hosting
                                     </button>

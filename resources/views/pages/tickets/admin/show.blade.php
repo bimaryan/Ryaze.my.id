@@ -12,7 +12,7 @@
         </x-slot:iconSlot>
         <x-slot:actions>
             @if($ticket->status != 'closed')
-                <form action="{{ route('admin_hosting.tickets.close', $ticket->hashid) }}" method="POST" class="inline">
+                <form action="{{ route('admin_hosting.tickets.close', $ticket->hashid) }}" method="POST" class="inline" onsubmit="event.preventDefault(); let f = this; swConfirm('Tutup Tiket?', 'Tiket yang ditutup tidak bisa dibuka kembali.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                     @csrf
                     <button type="submit" class="bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 hover:bg-rose-200 px-4 py-2 rounded-lg font-bold transition text-sm flex items-center gap-2 shadow-sm border border-rose-200 dark:border-rose-500/40">
                         <i class="fa-solid fa-lock"></i> Tutup Tiket
@@ -75,7 +75,7 @@
         <div class="lg:col-span-3 flex flex-col h-[700px] bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden">
             
             {{-- Chat Messages Area --}}
-            <div id="chat-messages-area" class="flex-1 overflow-y-auto p-6 bg-[#efeae2] flex flex-col gap-6">
+            <div id="chat-messages-area" class="flex-1 overflow-y-auto p-6 bg-[#efeae2] dark:bg-[#0b141a] flex flex-col gap-6">
                 @foreach($ticket->replies as $reply)
                     @php
                         $isAdmin = $reply->user->role == 'admin_hosting' || $reply->user->role == 'superadmin';
@@ -98,8 +98,8 @@
 
                             {{-- Bubble --}}
                             <div class="flex flex-col {{ $isAdmin ? 'items-end' : 'items-start' }}">
-                                <div class="{{ $isAdmin ? 'bg-[#d9fdd3] dark:bg-slate-700 text-slate-800 dark:text-slate-100 rounded-l-xl rounded-br-xl' : 'bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
-                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 pb-1 {{ $isAdmin ? 'text-right' : 'text-left' }}">
+                                <div class="{{ $isAdmin ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-slate-800 dark:text-[#e9edef] rounded-l-xl rounded-br-xl' : 'bg-white dark:bg-[#202c33] border border-slate-200 dark:border-[#202c33] text-slate-800 dark:text-[#e9edef] rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
+                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 dark:border-white/10 pb-1 {{ $isAdmin ? 'text-right' : 'text-left' }}">
                                         {{ $isAdmin ? 'Anda (Support)' : $reply->user->name }} &bull; {{ $reply->created_at->format('H:i') }}
                                         @if($isAdmin)
                                             <span class="ml-1 ticket-read-status" data-reply-id="{{ $reply->id }}">
@@ -128,7 +128,7 @@
             </div>
 
             {{-- Reply Form --}}
-            <div class="px-4 py-3 bg-[#f0f2f5] border-t border-slate-200 dark:border-slate-700 flex flex-col relative">
+            <div class="px-4 py-3 bg-[#f0f2f5] dark:bg-[#1f2c34] border-t border-slate-200 dark:border-slate-700 flex flex-col relative">
                 <div id="typing-indicator" class="hidden text-[13px] text-slate-500 dark:text-slate-400 italic mb-2 px-1 transition-all duration-300">
                     <i class="fa-solid fa-pen-nib mr-1"></i> <span id="typing-name"></span> sedang mengetik...
                 </div>
@@ -149,12 +149,12 @@
                         
                         <input type="file" name="attachment" id="attachment-input" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="previewAttachment(this)">
 
-                        <div class="flex-1 bg-white dark:bg-slate-800/60 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-end px-2 py-1.5">
+                        <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-3xl shadow-sm border border-slate-200 dark:border-[#2a3942] flex items-end px-2 py-1.5">
                             <button type="button" id="emoji-btn" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
                                 <i class="fa-regular fa-face-smile"></i>
                             </button>
 
-                            <textarea name="message" id="message-input" rows="1" class="bg-transparent border-none px-2 py-1.5 text-[15px] focus:ring-0 focus:outline-none resize-none m-0 w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
+                            <textarea name="message" id="message-input" rows="1" class="bg-transparent border-none px-2 py-1.5 text-[15px] focus:ring-0 focus:outline-none resize-none m-0 w-full text-slate-800 dark:text-[#e9edef] placeholder-slate-500 dark:placeholder-[#8696a0]" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
 
                             <button type="button" onclick="document.getElementById('attachment-input').click()" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
                                 <i class="fa-solid fa-paperclip"></i>
@@ -278,8 +278,8 @@
 
                             <!-- Bubble -->
                             <div class="flex flex-col ${e.is_admin ? 'items-end' : 'items-start'}">
-                                <div class="${e.is_admin ? 'bg-[#d9fdd3] dark:bg-slate-700 text-slate-800 dark:text-slate-100 rounded-l-xl rounded-br-xl' : 'bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-r-xl rounded-bl-xl shadow-sm'} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
-                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 pb-1 ${e.is_admin ? 'text-right' : 'text-left'}">
+                                <div class="${e.is_admin ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-slate-800 dark:text-[#e9edef] rounded-l-xl rounded-br-xl' : 'bg-white dark:bg-[#202c33] border border-slate-200 dark:border-[#202c33] text-slate-800 dark:text-[#e9edef] rounded-r-xl rounded-bl-xl shadow-sm'} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
+                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 dark:border-white/10 pb-1 ${e.is_admin ? 'text-right' : 'text-left'}">
                                         ${e.is_admin ? 'Anda (Support)' : e.user_name} &bull; ${e.created_at.split(', ')[1] || e.created_at}
                                         ${e.is_admin ? `
                                             <span class="ml-1 ticket-read-status" data-reply-id="${e.id}">
@@ -361,12 +361,13 @@
             })
             .then(res => res.json())
             .then(() => {
-                textarea.value = '';
+                if(typeof removeAttachment === 'function') removeAttachment();
+                window.location.reload();
                 if(typeof removeAttachment === 'function') removeAttachment();
             })
             .catch(err => {
                 console.error('Error sending message:', err);
-                alert('Gagal mengirim pesan. Silakan coba lagi.');
+                hotToast('Gagal mengirim pesan. Silakan coba lagi.', 'error');
             })
             .finally(() => {
                 submitBtn.innerHTML = originalBtnContent;
