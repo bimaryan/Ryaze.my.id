@@ -55,7 +55,7 @@
                                    class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded text-xs font-bold transition shadow-sm">
                                     <i class="fa-solid fa-credit-card"></i> Pakasir
                                 </a>
-                                <form action="{{ route('user_hosting.billing.pay_wallet') }}" method="POST" class="m-0 p-0 inline-block" onsubmit="return confirm('Bayar tagihan ini menggunakan Saldo Wallet Anda?')">
+                                <form action="{{ route('user_hosting.billing.pay_wallet') }}" method="POST" class="m-0 p-0 inline-block" onsubmit="event.preventDefault(); let f = this; swConfirm('Bayar dengan Saldo?', 'Tagihan ini akan dibayar menggunakan saldo wallet Anda.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                     @csrf
                                     <input type="hidden" name="invoice_number" value="{{ $bill->invoice_number }}">
                                     <button type="submit" class="ui-btn ui-btn-sm ui-btn-primary">

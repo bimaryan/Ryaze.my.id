@@ -402,7 +402,7 @@ NGINX_CONF
                         </form>
 
                         <form action="{{ route('user_hosting.nginx.reset', $project->hashid) }}" method="POST" class="mt-2"
-                            onsubmit="return confirm('Kembalikan konfigurasi Nginx ke default?')">
+                            onsubmit="event.preventDefault(); let f = this; swConfirm('Reset Nginx?', 'Konfigurasi Nginx akan dikembalikan ke default.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                             @csrf
                             <button type="submit"
                                 class="w-full inline-flex items-center justify-center gap-2 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 text-rose-600 dark:text-rose-300 text-xs font-bold py-2 rounded-lg transition-colors">
