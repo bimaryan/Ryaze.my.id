@@ -22,6 +22,12 @@
                     @if(request()->has('role'))
                         <input type="hidden" name="role" value="{{ request('role') }}">
                     @endif
+                    <select name="status" class="w-full sm:w-40 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <option value="">Semua Status</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                        <option value="suspended" {{ request('status') == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                    </select>
                     <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-solid fa-search text-slate-400 dark:text-slate-500"></i>
@@ -32,7 +38,7 @@
                         Cari
                     </button>
                     @if(request()->has('search') && request()->search != '')
-                        <a href="{{ route('superadmin.users.index', request()->has('role') ? ['role' => request('role')] : []) }}" class="p-2 ms-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                        <a href="{{ route('superadmin.users.index', array_filter(['role' => request('role'), 'status' => request('status')])) }}" class="p-2 ms-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition">
                             Reset
                         </a>
                     @endif
@@ -45,6 +51,7 @@
                     <th scope="col" class="px-6 py-4">Role / Tipe Akun</th>
                     <th scope="col" class="px-6 py-4">Expired Hosting</th>
                     <th scope="col" class="px-6 py-4">Tanggal Daftar</th>
+                    <th scope="col" class="px-6 py-4">Status</th>
                     <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                 </x-slot:head>
                             @forelse($users as $user)
@@ -91,6 +98,15 @@
                             <td class="px-6 py-4">
                                 {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('d F Y, H:i') }}
                             </td>
+                            <td class="px-6 py-4">
+                                @if ($user->status == 'active')
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40">Aktif</span>
+                                @elseif ($user->status == 'suspended')
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-500/40">Suspended</span>
+                                @else
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Tidak Aktif</span>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 text-center">
                                 <a href="{{ route('superadmin.users.show', $user->hashid) }}"
                                     class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip"
@@ -101,7 +117,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                            <td colspan="7" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                                 <i class="fa-solid fa-users-slash text-3xl mb-3 text-slate-300 dark:text-slate-400"></i>
                                 <p>Belum ada data pengguna.</p>
                             </td>

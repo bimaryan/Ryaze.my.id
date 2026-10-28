@@ -248,6 +248,7 @@
             @if ($role === 'superadmin')
                 {!! $section('Sistem Utama') !!}
                 {!! $item(route('superadmin.users.index'), 'Data Pengguna', 'fa-solid fa-users', request()->routeIs('superadmin.users*')) !!}
+                {!! $item(route('superadmin.users.index', ['status' => 'inactive']), 'Pengguna Tidak Aktif', 'fa-solid fa-user-slash', request()->routeIs('superadmin.users*') && request('status') == 'inactive') !!}
                 {!! $item(route('superadmin.portfolios.index'), 'Portofolio', 'fa-solid fa-briefcase', request()->routeIs('superadmin.portfolios*')) !!}
                 {!! $item(route('superadmin.educations.index'), 'Pendidikan', 'fa-solid fa-graduation-cap', request()->routeIs('superadmin.educations*')) !!}
                 {!! $item(route('superadmin.experiences.index'), 'Pengalaman', 'fa-solid fa-briefcase', request()->routeIs('superadmin.experiences*')) !!}

@@ -31,6 +31,12 @@ class UserController extends Controller
             }
         }
 
+        // Filter berdasarkan status user (aktif / tidak aktif / suspended)
+        $statusFilter = $request->query('status');
+        if ($statusFilter && in_array($statusFilter, ['active', 'inactive', 'suspended'])) {
+            $query->where('status', $statusFilter);
+        }
+
         $users = $query->paginate(10)->withQueryString();
 
         return view('pages.admin.users.index', compact('users'));

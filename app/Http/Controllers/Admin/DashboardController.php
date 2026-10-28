@@ -17,6 +17,9 @@ class DashboardController extends Controller
     {
         // 1. Hitung Total Pengguna
         $totalUsers = User::count();
+        $activeUsers = User::where('status', 'active')->count();
+        $inactiveUsers = User::where('status', 'inactive')->count();
+        $suspendedUsers = User::where('status', 'suspended')->count();
 
         // 2. Hitung Pesanan Joki (Aktif & Total)
         $activeJokiOrders = JokiOrder::whereIn('status', ['pending', 'progress', 'review'])->count();
@@ -118,6 +121,9 @@ class DashboardController extends Controller
 
         return view('pages.admin.index', compact(
             'totalUsers',
+            'activeUsers',
+            'inactiveUsers',
+            'suspendedUsers',
             'activeJokiOrders',
             'totalJokiOrders',
             'activeHosting',

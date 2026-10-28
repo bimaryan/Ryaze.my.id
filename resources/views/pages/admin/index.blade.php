@@ -18,8 +18,10 @@
                     <div class="min-w-0 flex-1">
                         <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 truncate">Total Pengguna</p>
                         <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{{ number_format($totalUsers) }}</h3>
-                        <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 mt-1 truncate">
-                            <i class="fa-solid fa-arrow-trend-up text-[9px]"></i> Akun aktif terdaftar
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-1 truncate">
+                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span> {{ number_format($activeUsers) }} akun aktif
+                            <span class="text-slate-300 dark:text-slate-600">•</span>
+                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-rose-500"></span> {{ number_format($inactiveUsers) }} tidak aktif
                         </p>
                     </div>
                 </div>
