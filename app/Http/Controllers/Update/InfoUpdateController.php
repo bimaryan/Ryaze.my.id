@@ -82,13 +82,14 @@ class InfoUpdateController extends Controller
     private function transform(InfoUpdate $update): array
     {
         $date = $update->published_at ?? $update->created_at;
+        $desc = $this->cleanMojibake($update->description);
 
         return [
             'id' => $update->id,
-            'title' => $update->title,
+            'title' => $this->cleanMojibake($update->title),
             'slug' => $update->slug,
-            'excerpt' => Str::limit($update->description, 220),
-            'description' => $update->description,
+            'excerpt' => Str::limit($desc, 220),
+            'description' => $desc,
             'category' => $update->category,
             'priority' => $update->priority,
             'version' => $update->version,
@@ -97,6 +98,19 @@ class InfoUpdateController extends Controller
             'author' => $update->author?->name,
             'url' => route('updates.show', $update->slug),
         ];
+    }
+
+    private function cleanMojibake(?string $text): ?string
+    {
+        if ($text === null) {
+            return null;
+        }
+
+        return str_replace(
+            ['â€™', 'â€œ', 'â€', 'â€“', 'â€”', 'â€˜', 'â€¦'],
+            ["'", '"', '"', '-', '-', "'", '...'],
+            $text
+        );
     }
 
     /** Daftar kategori + jumlah update aktif per kategori. */

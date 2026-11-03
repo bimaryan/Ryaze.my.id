@@ -2,13 +2,13 @@
 
 @section('content')
     <x-ui.page-layout>
-        <x-ui.page-header 
-            title="Dashboard Joki Code" 
-            subtitle="Pantau status pesanan dan proyek terbaru Anda di sini." 
+        <x-ui.page-header
+            title="Dashboard Joki Code"
+            eyebrow="Layanan Joki · Ringkasan"
+            subtitle="Pantau status pesanan dan proyek terbaru Anda di sini."
             icon="fa-solid fa-gauge">
             <x-slot:actions>
-                <a href="{{ route('user_joki.create') }}"
-                    class="inline-flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                <a href="{{ route('user_joki.create') }}" class="ui-btn-primary font-mono text-[11px] uppercase tracking-[0.15em]">
                     + Pesan Joki Baru
                 </a>
             </x-slot:actions>

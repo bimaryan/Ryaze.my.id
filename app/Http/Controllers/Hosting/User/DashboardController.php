@@ -125,64 +125,11 @@ class DashboardController extends Controller
         return view('pages.hosting.user.project', compact('projects'));
     }
 
-    public function marketplace()
-    {
-        $templates = $this->availableTemplates;
-
-        return view('pages.hosting.user.marketplace', compact('templates'));
-    }
-
     // Menampilkan halaman dokumentasi
     public function docs()
     {
         return view('pages.hosting.user.docs');
     }
-
-    public function templates()
-    {
-        return view('pages.hosting.user.templates', [
-            'availableTemplates' => $this->availableTemplates,
-        ]);
-    }
-
-    public function previewTemplate($key)
-    {
-        if (! array_key_exists($key, $this->availableTemplates)) {
-            abort(404, 'Template not found');
-        }
-
-        // This expects the view to be stored in resources/views/previews/{key}.blade.php
-        if (view()->exists('previews.'.$key)) {
-            return view('previews.'.$key);
-        }
-
-        abort(404, 'Preview not available for this template yet.');
-    }
-
-    private array $availableTemplates = [
-        'html_landing' => ['framework' => 'html'],
-        'php_basic' => ['framework' => 'php'],
-        'wordpress' => ['framework' => 'php'],
-        'ghost_cms' => ['framework' => 'node'],
-        'laravel_starter' => ['framework' => 'laravel'],
-        'laravel_starter_10' => ['framework' => 'laravel'],
-        'laravel_starter_11' => ['framework' => 'laravel'],
-        'laravel_starter_12' => ['framework' => 'laravel'],
-        'laravel_starter_13' => ['framework' => 'laravel'],
-        'react_starter' => ['framework' => 'react'],
-        'nextjs_starter' => ['framework' => 'nextjs'],
-        'vue_starter' => ['framework' => 'vue'],
-        'nuxt_starter' => ['framework' => 'vue'],
-        'svelte_starter' => ['framework' => 'node'],
-        'node_express' => ['framework' => 'node'],
-        'tailwind_starter' => ['framework' => 'html'],
-        'tailwind_portfolio' => ['framework' => 'html'],
-        'tailwind_landing' => ['framework' => 'html'],
-        'tailwind_blog' => ['framework' => 'html'],
-        'tailwind_ecommerce' => ['framework' => 'html'],
-        'tailwind_admin' => ['framework' => 'html'],
-        'tailwind_linkinbio' => ['framework' => 'html'],
-    ];
 
     // Memproses data dan memulai Deploy Otomatis
     public function store(Request $request)
@@ -199,22 +146,7 @@ class DashboardController extends Controller
         $subdomain = trim(strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', trim($request->project_name))), '-');
         $domainExtension = $request->input('domain_extension', '.ryaze.my.id');
 
-        if ($sourceType === 'template') {
-            // ── Mode Template ──────────────────────────────────────────────
-            $request->validate([
-                'template_key' => 'required|in:'.implode(',', array_keys($this->availableTemplates)),
-                'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
-                'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
-            ]);
-
-            $templateKey = $request->input('template_key');
-            $template = $this->availableTemplates[$templateKey];
-            // Simpan key template di repo_source dengan prefix 'template:'
-            // AutoDeploy akan membaca ini dan generate file langsung tanpa clone
-            $repoSource = 'template:'.$templateKey;
-            $branch = 'main';
-            $framework = $template['framework'];
-        } elseif ($sourceType === 'upload') {
+        if ($sourceType === 'upload') {
             // ── Mode Upload ZIP ────────────────────────────────────────────
             $request->validate([
                 'project_zip' => 'required|file|mimes:zip|max:51200',
@@ -294,15 +226,12 @@ class DashboardController extends Controller
             'repo_source' => $project->repo_source,
         ]);
 
-        $isTemplate = $sourceType === 'template';
         $isUpload = $sourceType === 'upload';
         $project->deployments()->create([
             'status' => 'queued',
-            'build_logs' => $isTemplate
-                ? "> Memulai deploy dari Template...\n> Mengambil template starter code..."
-                : ($isUpload
-                    ? "> Memulai deploy dari ZIP upload...\n> Mengekstrak file ZIP..."
-                    : "> Memulai proses Deploy awal...\n> Mengambil repository..."),
+            'build_logs' => $isUpload
+                ? "> Memulai deploy dari ZIP upload...\n> Mengekstrak file ZIP..."
+                : "> Memulai proses Deploy awal...\n> Mengambil repository...",
         ]);
         AutoDeployProject::dispatch($project);
 

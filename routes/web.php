@@ -272,6 +272,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('superadmin/info-updates', \App\Http\Controllers\Admin\InfoUpdateController::class)
             ->parameters(['info_update' => 'hashid'])
             ->names('superadmin.info_updates');
+
+        // Antrean verifikasi QRIS gabungan (hosting + joki) khusus superadmin.
+        Route::get('superadmin/payment-confirmations', [\App\Http\Controllers\PaymentConfirmationController::class, 'all'])
+            ->name('superadmin.confirmations');
     });
 
     // ═══════════════════════════════════════════════════════════════
@@ -294,6 +298,9 @@ Route::middleware('auth')->group(function () {
         // Kelola Tagihan Hosting
         Route::get('admin/hosting/billing', [\App\Http\Controllers\Hosting\Admin\BillingController::class, 'index'])->name('admin_hosting.billing');
         Route::put('admin/hosting/billing/{hashid}/verify', [\App\Http\Controllers\Hosting\Admin\BillingController::class, 'verifyPayment'])->name('admin_hosting.billing.verify');
+
+        // Antrean Konfirmasi Pembayaran QRIS
+        Route::get('admin/hosting/payment-confirmations', [\App\Http\Controllers\PaymentConfirmationController::class, 'hosting'])->name('admin_hosting.confirmations');
 
         // Kelola Voucher Hosting
         Route::get('admin/hosting/vouchers', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'index'])->name('admin_hosting.vouchers.index');
@@ -330,17 +337,10 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/tickets/{hashid}', [\App\Http\Controllers\User\TicketController::class, 'show'])->name('user_hosting.tickets.show');
         Route::post('user/hosting/tickets/{hashid}/reply', [\App\Http\Controllers\User\TicketController::class, 'reply'])->name('user_hosting.tickets.reply');
         Route::post('user/hosting/tickets/{hashid}/mark-read', [\App\Http\Controllers\User\TicketController::class, 'markAsRead'])->name('user_hosting.tickets.markAsRead');
-        Route::get('user/hosting/tunnels', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'index'])->name('user_hosting.tunnels.index');
-        Route::post('user/hosting/tunnels', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'store'])->name('user_hosting.tunnels.store');
-        Route::delete('user/hosting/tunnels/{id}', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'destroy'])->name('user_hosting.tunnels.destroy');
-        Route::get('user/hosting/tunnels/{id}/client', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'downloadClient'])->name('user_hosting.tunnels.client');
 
         // Butuh Langganan Aktif
         Route::middleware(['active_hosting'])->group(function () {
             Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
-            Route::get('user/hosting/marketplace', [DashboardController::class, 'marketplace'])->name('user_hosting.marketplace');
-            Route::get('user/hosting/templates', [DashboardController::class, 'templates'])->name('user_hosting.templates');
-            Route::get('user/hosting/template/{key}/preview', [DashboardController::class, 'previewTemplate'])->name('user_hosting.template.preview');
             Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
             Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
             Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
@@ -430,7 +430,6 @@ Route::middleware('auth')->group(function () {
             Route::get('user/hosting/apk/{build}/download', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'download'])->name('user_hosting.apk.download');
             Route::get('user/hosting/apk/{build}/log', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'log'])->name('user_hosting.apk.log');
             Route::delete('user/hosting/apk/{build}', [\App\Http\Controllers\Hosting\User\ApkBuilderController::class, 'destroy'])->name('user_hosting.apk.destroy');
-        // Tunnel Manager
         });
     });
 
@@ -467,6 +466,7 @@ Route::middleware('auth')->group(function () {
         Route::post('admin/joki/orders/{hashid}/milestone', [JokiAdminDashboardController::class, 'storeMilestone'])->name('admin_joki.milestone.store');
         Route::post('admin/joki/orders/{hashid}/payment', [JokiAdminDashboardController::class, 'storePayment'])->name('admin_joki.payment.store');
         Route::put('admin/joki/payments/{hashid}/verify', [JokiAdminDashboardController::class, 'verifyPayment'])->name('admin_joki.payment.verify');
+        Route::get('admin/joki/payment-confirmations', [\App\Http\Controllers\PaymentConfirmationController::class, 'joki'])->name('admin_joki.confirmations');
         Route::put('admin/joki/revisions/{hashid}/reply', [JokiAdminDashboardController::class, 'replyRevision'])->name('admin_joki.revision.reply');
         
         // Manajemen Layanan Joki
@@ -488,12 +488,21 @@ Route::get('/payment/pakasir', [\App\Http\Controllers\PakasirPayController::clas
     ->middleware('throttle:20,1')
     ->name('payment.pakasir');
 
+// ── QRIS DINAMIS PAYMENT ─────────────────────────────────────
+Route::get('/payment/qris/{order_id}', [\App\Http\Controllers\QrisPaymentController::class, 'show'])
+    ->name('payment.qris');
+Route::get('/payment/qris/{order_id}/status', [\App\Http\Controllers\QrisPaymentController::class, 'checkStatus'])
+    ->name('payment.qris.status');
+Route::post('/payment/qris/{order_id}/confirm', [\App\Http\Controllers\QrisPaymentController::class, 'confirm'])
+    ->middleware('throttle:10,1')
+    ->name('payment.qris.confirm');
+
+// ── VERIFIKASI KONFIRMASI QRIS (admin hosting / admin joki / superadmin) ──
+Route::put('/admin/payment-confirmations/{hashid}/verify', [\App\Http\Controllers\PaymentConfirmationController::class, 'verify'])
+    ->middleware(['role:admin_hosting,admin_joki,superadmin', 'verified'])
+    ->name('payment_confirmations.verify');
+
 // ── CHATBOT ROUTE ────────────────────────────────────────────
 Route::post('/chat', [\App\Http\Controllers\ChatbotController::class, 'chat'])
     ->middleware('throttle:10,1') // Maks 10 pesan/menit per IP (Groq berbayar & anti-abuse)
     ->name('chat.send');
-
-// ── TUNNEL ROUTE (Catch-all for tunneling) ───────────────────
-Route::any('/t/{subdomain}/{path?}', [\App\Http\Controllers\TunnelController::class, 'handleProxyRequest'])
-    ->where('path', '.*')
-    ->name('tunnel.proxy');

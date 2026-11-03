@@ -40,20 +40,20 @@
         :root {
             --bg: #ffffff;
             --panel: #ffffff;
-            --grid-gap: #e5e5e5;
-            --border: #e5e5e5;
-            --text: #0a0a14;
-            --primary: #7c3aed;
-            --primary-dark: #6d28d9;
-            --muted: #666666;
-            --faint: #999999;
-            --ghost: #bbbbbb;
+            --grid-gap: #E3EAF1;
+            --border: #E3EAF1;
+            --text: #0A1322;
+            --primary: #1D5B96;
+            --primary-dark: #2A6FAD;
+            --muted: #525252;
+            --faint: #8A9BAE;
+            --ghost: #94A3B4;
         }
         .dark {
-            --bg: #0a0a14;
-            --panel: #0d0d18;
-            --grid-gap: #1a1a2e;
-            --border: #2d1f42;
+            --bg: #0A1322;
+            --panel: #0D1828;
+            --grid-gap: #1B2C44;
+            --border: #1B2C44;
             --text: #ffffff;
             --muted: rgba(255, 255, 255, 0.7);
             --faint: rgba(255, 255, 255, 0.5);
@@ -189,8 +189,8 @@
         .footer-links a:hover { color: var(--primary); }
         .dark .footer-links a:hover { color: #fff; }
 
-        ::-moz-selection { background: #7c3aed; color: #fff; }
-        ::selection { background: #7c3aed; color: #fff; }
+        ::-moz-selection { background: #1D5B96; color: #fff; }
+        ::selection { background: #1D5B96; color: #fff; }
 
         @media (max-width: 640px) { .hide-sm { display: none; } }
     </style>

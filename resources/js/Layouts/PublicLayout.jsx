@@ -22,45 +22,15 @@ function applyDark(dark) {
     document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
 }
 
-function toggleDarkWithAnimation(event, currentDark, setDark) {
-    const nextDark = !currentDark;
-
-    const doToggle = () => {
-        applyDark(nextDark);
-        localStorage.setItem('ryaze-theme', nextDark ? 'dark' : 'light');
-        setDark(nextDark);
-    };
-
-    if (!document.startViewTransition) {
-        doToggle();
-        return;
-    }
-
-    const x = event?.clientX ?? window.innerWidth / 2;
-    const y = event?.clientY ?? window.innerHeight / 2;
-    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-
-    const transition = document.startViewTransition(doToggle);
-
-    transition.ready.then(() => {
-        const clipPath = [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
-        ];
-        document.documentElement.animate(
-            { clipPath: currentDark ? [...clipPath].reverse() : clipPath },
-            {
-                duration: 500,
-                easing: 'ease-in-out',
-                pseudoElement: currentDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
-            }
-        );
-    });
-}
-
 export default function PublicLayout({ children, withNav = true, withFooter = true, bodyClass }) {
     const { auth, navLinks, footerLinks } = usePage().props;
+    const { url } = usePage();
     const user = auth?.user;
+    const currentPath = (url || '/').split('?')[0].replace(/\/+$/, '') || '/';
+    const isActive = (href) => {
+        const path = (href || '/').split('?')[0].replace(/\/+$/, '') || '/';
+        return path === '/' ? currentPath === '/' : currentPath === path || currentPath.startsWith(path + '/');
+    };
     const [scrolled, setScrolled] = useState(false);
     const [dark, setDark] = useState(getInitialDark);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -75,68 +45,110 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
+    const toggleDark = () => {
+        const next = !dark;
+        applyDark(next);
+        localStorage.setItem('ryaze-theme', next ? 'dark' : 'light');
+        setDark(next);
+    };
+
     const closeMobileMenu = () => setMobileMenuOpen(false);
 
     return (
         <div className={`${bodyClass || ''} min-h-screen flex flex-col`}>
             {withNav && (
-            <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-[#e5e5e5] dark:bg-[#1a1025]/90 dark:border-[#2d1f42]' : ''}`}>
-                <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
-                            <span className="text-white font-black text-xs">R</span>
-                        </div>
-                        <span className="font-black text-[#7c3aed] dark:text-white text-sm tracking-tight">RYAZE</span>
+            <nav className={`fixed top-0 inset-x-0 z-50 bg-white/85 dark:bg-[#0A1322]/85 backdrop-blur-xl border-b border-[#E3EAF1] dark:border-[#1B2C44] transition-shadow duration-300 ${scrolled ? 'shadow-[0_1px_0_0_rgba(29,91,150,0.08),0_8px_24px_-12px_rgba(15,26,42,0.12)] dark:shadow-[0_1px_0_0_rgba(107,168,220,0.06),0_8px_24px_-12px_rgba(0,0,0,0.5)]' : ''}`}>
+                <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-3 group shrink-0">
+                        <img
+                            src="/icon/logo_ryaze.png"
+                            alt="Ryaze"
+                            width={32}
+                            height={32}
+                            className="h-8 w-8 object-contain ring-1 ring-[#E3EAF1] dark:ring-[#24384F] group-hover:ring-[#1D5B96] dark:group-hover:ring-[#6BA8DC] transition-all duration-300"
+                        />
+                        <span className="font-black text-[#0F1A2A] dark:text-white text-[15px] tracking-[-0.02em] leading-none">RYAZE</span>
                     </Link>
-                    <div className="hidden md:flex items-center gap-7">
+
+                    {/* Desktop links — mono tab style */}
+                    <div className="hidden md:flex items-stretch h-16 -mx-2">
                         {navLinks.map(l => (
-                            <a key={l.href} href={l.href} className="text-[13px] font-medium text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors">{l.label}</a>
+                            <a
+                                key={l.href}
+                                href={l.href}
+                                className={`relative flex items-center px-4 font-mono text-[11px] uppercase tracking-[0.15em] transition-colors duration-200 ${
+                                    isActive(l.href)
+                                        ? 'text-[#1D5B96] dark:text-[#6BA8DC]'
+                                        : 'text-[#525252] dark:text-white/45 hover:text-[#0F1A2A] dark:hover:text-white'
+                                }`}
+                            >
+                                {l.label}
+                                <span className={`absolute inset-x-4 bottom-0 h-[2px] bg-[#1D5B96] dark:bg-[#6BA8DC] transition-transform duration-300 origin-left ${isActive(l.href) ? 'scale-x-100' : 'scale-x-0'}`}></span>
+                            </a>
                         ))}
                     </div>
-                    <div className="flex items-center gap-3">
-                        <button onClick={(e) => toggleDarkWithAnimation(e, dark, setDark)} className="w-8 h-8 flex items-center justify-center text-[#999] dark:text-[#666] hover:text-[#7c3aed] dark:hover:text-white transition-colors">
-                            <i className={`fa-solid ${dark ? 'fa-sun' : 'fa-moon'} text-sm transition-all duration-300`}></i>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                        <button
+                            onClick={toggleDark}
+                            className="w-9 h-9 flex items-center justify-center text-[#737373] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] hover:bg-[#EDF4FB] dark:hover:bg-[#6BA8DC]/10 transition-colors"
+                            aria-label="Ganti tema"
+                        >
+                            <i className={`fa-solid ${dark ? 'fa-sun' : 'fa-moon'} text-[13px] transition-all duration-300`}></i>
                         </button>
                         {user ? (
-                            <a href={dashboardUrl[user.role] || dashboardUrl.default} className="px-4 py-1.5 bg-[#7c3aed] text-white text-[13px] font-semibold hover:bg-[#6d28d9] transition-colors">
+                            <a href={dashboardUrl[user.role] || dashboardUrl.default} className="ml-1 inline-flex items-center gap-2 px-4 py-2 bg-[#1D5B96] hover:bg-[#164A7C] text-white text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors">
                                 Dashboard
+                                <i className="fa-solid fa-arrow-right text-[9px] opacity-70"></i>
                             </a>
                         ) : (
                             <>
-                                <a href="/login" className="text-[13px] font-medium text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors hidden sm:block">Masuk</a>
-                                <a href="/register" className="px-4 py-1.5 bg-[#7c3aed] text-white text-[13px] font-semibold hover:bg-[#6d28d9] transition-colors">Daftar</a>
+                                <a href="/login" className="hidden sm:inline-flex items-center px-4 py-2 font-mono text-[11px] uppercase tracking-[0.15em] text-[#525252] dark:text-white/50 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors">Masuk</a>
+                                <a href="/register" className="inline-flex items-center px-4 py-2 bg-[#1D5B96] hover:bg-[#164A7C] text-white text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors">
+                                    Daftar
+                                </a>
                             </>
                         )}
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="md:hidden w-9 h-9 flex items-center justify-center text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors"
+                            className="md:hidden w-9 h-9 flex items-center justify-center text-[#525252] dark:text-white/50 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] hover:bg-[#EDF4FB] dark:hover:bg-[#6BA8DC]/10 transition-colors"
                             aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
                         >
-                            <i className={`fa-solid ${mobileMenuOpen ? 'fa-xmark' : 'fa-bars'} text-lg`}></i>
+                            <i className={`fa-solid ${mobileMenuOpen ? 'fa-xmark' : 'fa-bars'} text-base`}></i>
                         </button>
                     </div>
                 </div>
 
+                {/* Mobile menu */}
                 {mobileMenuOpen && (
-                    <div className="md:hidden border-t border-[#e5e5e5] dark:border-[#2d1f42] bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-md px-6 py-4 space-y-3 animate-slide-down">
+                    <div className="md:hidden border-t border-[#E3EAF1] dark:border-[#1B2C44] bg-white/95 dark:bg-[#0A1322]/95 backdrop-blur-md px-6 py-2 animate-slide-down">
                         {navLinks.map(l => (
                             <a
                                 key={l.href}
                                 href={l.href}
                                 onClick={closeMobileMenu}
-                                className="block text-[15px] font-medium text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors py-2"
+                                className={`flex items-center justify-between py-3.5 border-b border-[#EDF2F7] dark:border-[#152238] font-mono text-[11px] uppercase tracking-[0.15em] transition-colors ${
+                                    isActive(l.href)
+                                        ? 'text-[#1D5B96] dark:text-[#6BA8DC]'
+                                        : 'text-[#525252] dark:text-white/45'
+                                }`}
                             >
                                 {l.label}
+                                <span className={`w-1.5 h-1.5 bg-[#1D5B96] dark:bg-[#6BA8DC] ${isActive(l.href) ? 'opacity-100' : 'opacity-0'}`}></span>
                             </a>
                         ))}
-                        <div className="pt-2 border-t border-[#e5e5e5] dark:border-[#2d1f42] flex flex-col gap-2">
+                        <div className="pt-4 pb-2 flex flex-col gap-2">
                             {!user && (
-                                <a href="/login" onClick={closeMobileMenu} className="text-[15px] font-medium text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors py-2">Masuk</a>
+                                <a href="/login" onClick={closeMobileMenu} className="block text-center py-2.5 font-mono text-[11px] uppercase tracking-[0.15em] text-[#525252] dark:text-white/50 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors">
+                                    Masuk
+                                </a>
                             )}
                             <a
                                 href={user ? (dashboardUrl[user.role] || dashboardUrl.default) : '/register'}
                                 onClick={closeMobileMenu}
-                                className="px-4 py-2.5 bg-[#7c3aed] text-white text-[15px] font-semibold hover:bg-[#6d28d9] transition-colors text-center"
+                                className="block text-center py-2.5 bg-[#1D5B96] hover:bg-[#164A7C] text-white text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors"
                             >
                                 {user ? 'Dashboard' : 'Daftar'}
                             </a>
@@ -148,24 +160,22 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
 
             {/* flex-1 + bg dasar: halaman pendek tetap mengisi layar dan
                 celah di atas footer tidak terlihat seperti "lubang" */}
-            <div className="flex-1 bg-white dark:bg-[#0a0a14]">
+            <div className="flex-1 bg-slate-50 dark:bg-[#0A1322]">
                 {children}
             </div>
 
             {withFooter && (
-            <footer className="mt-auto border-t border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14]">
+            <footer className="mt-auto border-t border-[#E3EAF1] dark:border-[#1B2C44] bg-white dark:bg-[#0A1322]">
                 <div className="max-w-6xl mx-auto px-6 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-2.5">
-                            <div className="w-6 h-6 bg-[#7c3aed] flex items-center justify-center">
-                                <span className="text-white font-black text-[10px]">R</span>
-                            </div>
-                            <span className="font-black text-[#7c3aed] dark:text-white text-sm tracking-tight">RYAZE</span>
-                            <span className="text-[11px] text-[#999] dark:text-white/40 hidden sm:inline">&copy; {new Date().getFullYear()}</span>
+                            <img src="/icon/logo_ryaze.png" alt="Ryaze" width={24} height={24} className="h-6 w-6 object-contain ring-1 ring-[#E3EAF1] dark:ring-[#24384F]" />
+                            <span className="font-black text-[#0F1A2A] dark:text-white text-sm tracking-tight">RYAZE</span>
+                            <span className="font-mono text-[10px] text-[#94A3B4] dark:text-white/30 hidden sm:inline tracking-[0.1em]">&copy; {new Date().getFullYear()}</span>
                         </div>
-                        <div className="flex items-center gap-6 text-[13px] text-[#999] dark:text-white/50">
+                        <div className="flex items-center gap-6">
                             {footerLinks.map(l => (
-                                <a key={l.href} href={l.href} className="hover:text-[#7c3aed] dark:hover:text-white transition-colors">{l.label}</a>
+                                <a key={l.href} href={l.href} className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#737373] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors">{l.label}</a>
                             ))}
                         </div>
                     </div>

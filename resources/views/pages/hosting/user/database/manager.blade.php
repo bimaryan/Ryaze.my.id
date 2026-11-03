@@ -4,11 +4,12 @@
 <x-ui.page-layout>
     <x-ui.page-header 
         title="Database Manager" 
+        eyebrow="Editor Data"
         subtitle="Kelola tabel dan isi database {{ $database->db_name }}" 
         icon="fa-table" 
         iconColor="indigo">
         <x-slot:actions>
-            <a href="{{ route('user_hosting.databases') }}" class="inline-flex justify-center items-center bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+            <a href="{{ route('user_hosting.databases') }}" class="ui-btn ui-btn-md ui-btn-secondary">
                 <i class="fa-solid fa-arrow-left mr-2"></i> Kembali
             </a>
         </x-slot:actions>
@@ -17,19 +18,23 @@
     <div class="flex flex-col md:flex-row gap-6">
         <!-- Sidebar: Daftar Tabel -->
         <div class="w-full md:w-64 shrink-0">
-            <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-6">
-                <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 font-bold text-slate-700 dark:text-slate-200 text-sm flex justify-between items-center">
-                    <span><i class="fa-solid fa-list mr-1"></i> Daftar Tabel</span>
-                    <span class="bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-[10px] px-2 py-0.5 rounded-full">{{ count($tables) }}</span>
+            <div class="ui-panel overflow-hidden sticky top-6">
+                <div class="ui-panel-head px-4 py-3 bg-[#F4F8FC] dark:bg-[#12233A]">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-list text-[10px] text-[#1D5B96] dark:text-[#6BA8DC]"></i>
+                        <span class="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#525252] dark:text-white/40">Daftar Tabel</span>
+                        <span class="font-mono text-[10px] text-[#1D5B96] dark:text-[#6BA8DC] border border-[#C9D5E2] dark:border-[#2A4463] bg-[#E8F0F9] dark:bg-[#0F1D30] px-1.5 py-px">{{ count($tables) }}</span>
+                    </span>
+                    <span class="ui-status"><span class="ui-status-dot"></span>{{ $database->db_name }}</span>
                 </div>
-                <div class="p-2 max-h-[60vh] overflow-y-auto">
+                <div class="p-2 max-h-[60vh] overflow-y-auto divide-y divide-[#EDF2F7] dark:divide-[#24384F]">
                     @forelse($tables as $tbl)
-                        <a href="{{ route('user_hosting.databases.manager.table', ['hashid' => $database->hashid, 'table' => $tbl]) }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10 hover:text-indigo-700 dark:hover:text-indigo-400 dark:hover:text-indigo-300 rounded-lg transition-colors {{ (isset($tableName) && $tableName === $tbl) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 font-semibold' : '' }}">
-                            <i class="fa-regular fa-folder-open text-slate-400 dark:text-slate-500"></i>
+                        <a href="{{ route('user_hosting.databases.manager.table', ['hashid' => $database->hashid, 'table' => $tbl]) }}" class="flex items-center gap-2 px-3 py-2 text-sm font-mono text-[#525252] dark:text-white/70 hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors {{ (isset($tableName) && $tableName === $tbl) ? 'bg-[#E8F0F9] dark:bg-[#12233A] text-[#1D5B96] dark:text-[#6BA8DC] font-semibold' : '' }}">
+                            <i class="fa-regular fa-folder-open text-[#8A9BAE] dark:text-white/45 text-xs"></i>
                             <span class="truncate">{{ $tbl }}</span>
                         </a>
                     @empty
-                        <div class="text-center py-6 text-slate-400 dark:text-slate-500 text-xs">
+                        <div class="text-center py-6 font-mono text-[10px] uppercase tracking-[0.2em] text-[#94A3B4] dark:text-white/30">
                             Tidak ada tabel ditemukan.
                         </div>
                     @endforelse

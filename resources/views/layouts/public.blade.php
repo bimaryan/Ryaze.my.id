@@ -68,9 +68,9 @@
     <script nonce="{{ csp_nonce() }}">
         window.Swal = Swal.mixin({
             customClass: {
-                popup: 'rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700',
-                title: 'text-xl font-bold text-slate-800 dark:text-slate-100',
-                htmlContainer: 'text-sm text-slate-500 dark:text-slate-400'
+                popup: 'shadow-none border border-[#E3EAF1] dark:border-[#1B2C44]',
+                title: 'text-xl font-bold text-[#0F1A2A] dark:text-white',
+                htmlContainer: 'text-sm text-[#525252] dark:text-white/60'
             }
         });
     </script>
@@ -101,32 +101,69 @@
     </style>
 </head>
 
-<body class="bg-white font-sans antialiased text-slate-900 dark:bg-[#0a0a14] dark:text-white">
+<body class="bg-[#F4F8FC] dark:bg-[#0A1322] font-sans antialiased text-[#0F1A2A] dark:text-white min-h-screen flex flex-col">
+    @php
+        $isWhoisPage = request()->routeIs('whois.*');
+        $publicLogo = asset('icon/logo_ryaze.png');
+    @endphp
 
-    {{-- Public Navbar (standalone, tema menyatu dengan landing page) --}}
-    <nav class="fixed top-0 inset-x-0 z-50 bg-white/90 dark:bg-[#1a1025]/90 backdrop-blur-md border-b border-[#e5e5e5] dark:border-[#2d1f42]">
-        <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-            <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                <div class="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
-                    <span class="text-white font-black text-xs">R</span>
-                </div>
-                <span class="font-black text-[#7c3aed] dark:text-white text-sm tracking-tight">{{ $siteName }}</span>
+    {{-- Navbar public — cermin PublicLayout.jsx: mono tab, border 1px, flat --}}
+    <nav class="fixed top-0 inset-x-0 z-50 bg-white/85 dark:bg-[#0A1322]/85 backdrop-blur-xl border-b border-[#E3EAF1] dark:border-[#1B2C44]">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="{{ url('/') }}" class="flex items-center gap-3 group shrink-0">
+                <img src="{{ $publicLogo }}" alt="Ryaze" width="32" height="32"
+                    class="h-8 w-8 object-contain ring-1 ring-[#E3EAF1] dark:ring-[#24384F] group-hover:ring-[#1D5B96] dark:group-hover:ring-[#6BA8DC] transition-all duration-300">
+                <span class="font-black text-[#0F1A2A] dark:text-white text-[15px] tracking-[-0.02em] leading-none">RYAZE</span>
             </a>
-            <div class="flex items-center gap-4">
-                <a href="{{ route('whois.index') }}" class="text-[13px] font-medium text-[#666] dark:text-[#999] hover:text-[#7c3aed] dark:hover:text-white transition-colors hidden sm:inline-flex items-center gap-1.5">
-                    <i class="fa-solid fa-magnifying-glass text-xs"></i> Cek Domain
+
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <a href="{{ route('whois.index') }}"
+                    class="relative hidden sm:inline-flex items-center h-16 px-4 font-mono text-[11px] uppercase tracking-[0.15em] transition-colors duration-200 {{ $isWhoisPage ? 'text-[#1D5B96] dark:text-[#6BA8DC]' : 'text-[#525252] dark:text-white/45 hover:text-[#0F1A2A] dark:hover:text-white' }}">
+                    Cek Domain
+                    <span class="absolute inset-x-4 bottom-0 h-[2px] bg-[#1D5B96] dark:bg-[#6BA8DC] transition-transform duration-300 origin-left {{ $isWhoisPage ? 'scale-x-100' : 'scale-x-0' }}"></span>
                 </a>
+
                 <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                    class="w-8 h-8 flex items-center justify-center text-[#999] dark:text-[#666] hover:text-[#7c3aed] dark:hover:text-white transition-colors">
-                    <i class="fa-solid fa-moon text-sm"></i>
+                    class="w-9 h-9 flex items-center justify-center text-[#737373] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] hover:bg-[#E8F0F9] dark:hover:bg-[#6BA8DC]/10 transition-colors">
+                    <i class="fa-solid fa-moon text-[13px] dark:hidden"></i>
+                    <i class="fa-solid fa-sun text-[13px] hidden dark:inline"></i>
                 </button>
+
+                @auth
+                    <a href="{{ route('user_hosting.dashboard') }}"
+                        class="ml-1 inline-flex items-center gap-2 px-4 py-2 bg-[#1D5B96] hover:bg-[#2A6FAD] text-white text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors">
+                        Dashboard <i class="fa-solid fa-arrow-right text-[9px] opacity-70"></i>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}"
+                        class="hidden sm:inline-flex items-center px-4 py-2 font-mono text-[11px] uppercase tracking-[0.15em] text-[#525252] dark:text-white/50 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors">Masuk</a>
+                    <a href="{{ route('register') }}"
+                        class="inline-flex items-center px-4 py-2 bg-[#1D5B96] hover:bg-[#2A6FAD] text-white text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors">Daftar</a>
+                @endauth
             </div>
         </div>
     </nav>
 
-    <main class="pt-14">
+    <main class="pt-16 flex-1">
         @yield('content')
     </main>
+
+    <footer class="mt-auto border-t border-[#E3EAF1] dark:border-[#1B2C44] bg-white dark:bg-[#0A1322]">
+        <div class="max-w-6xl mx-auto px-6 py-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2.5">
+                    <img src="{{ $publicLogo }}" alt="Ryaze" width="24" height="24" class="h-6 w-6 object-contain ring-1 ring-[#E3EAF1] dark:ring-[#24384F]">
+                    <span class="font-black text-[#0F1A2A] dark:text-white text-sm tracking-tight">RYAZE</span>
+                    <span class="font-mono text-[10px] text-[#94A3B4] dark:text-white/30 hidden sm:inline tracking-[0.1em]">&copy; {{ date('Y') }}</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="{{ url('/') }}" class="font-mono text-[10px] uppercase tracking-[0.15em] text-[#737373] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors">Beranda</a>
+                    <a href="{{ route('whois.index') }}" class="font-mono text-[10px] uppercase tracking-[0.15em] text-[#737373] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors">Cek Domain</a>
+                    <a href="{{ route('user_hosting.docs') }}" class="font-mono text-[10px] uppercase tracking-[0.15em] text-[#737373] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors">Dokumentasi</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     @stack('scripts')
 

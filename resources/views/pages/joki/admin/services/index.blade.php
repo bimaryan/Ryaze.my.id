@@ -2,19 +2,21 @@
 
 @section('content')
     <x-ui.page-layout>
-        <x-ui.page-header 
-            title="Manajemen Layanan Joki" 
-            subtitle="Kelola tipe layanan joki, harga dasar, dan status aktifnya." 
-            icon="fa-solid fa-list">
+        <x-ui.page-header
+            title="Manajemen Layanan Joki"
+            eyebrow="Admin Joki · Katalog Layanan"
+            subtitle="Kelola tipe layanan joki, harga dasar, dan status aktifnya."
+            icon="fa-solid fa-list"
+        >
             <x-slot:actions>
-                <button id="btnOpenCreateModal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                <button id="btnOpenCreateModal" class="ui-btn-primary">
                     + Tambah Layanan
                 </button>
             </x-slot:actions>
         </x-ui.page-header>
 
         @if ($errors->any())
-            <div class="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/40 text-rose-700 dark:text-rose-300">
+            <div class="mt-6 p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-300 dark:border-rose-500/40 text-rose-700 dark:text-rose-300">
                 <div class="flex items-start gap-3">
                     <i class="fa-solid fa-circle-exclamation mt-1"></i>
                     <div>
@@ -30,59 +32,61 @@
         @endif
 
         {{-- Table --}}
-        <x-ui.table>
-            <x-slot:head>
-                <th class="px-6 py-4">Nama Layanan</th>
-                <th class="px-6 py-4">Harga Dasar</th>
-                <th class="px-6 py-4">Status</th>
-                <th class="px-6 py-4 text-right">Aksi</th>
-            </x-slot:head>
-                        @forelse ($services as $service)
-                            <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
-                                <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-800 dark:text-slate-100">{{ $service->name }}</div>
-                                    <div class="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">{{ Str::limit($service->description, 50) }}</div>
-                                </td>
-                                <td class="px-6 py-4 font-mono font-medium">Rp{{ number_format($service->base_price, 0, ',', '.') }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap inline-block {{ $service->is_active ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300' }}">
-                                        {{ $service->is_active ? 'Aktif' : 'Tidak Aktif' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button class="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm tooltip btn-edit-modal" 
-                                            title="Edit Layanan"
-                                            data-id="{{ $service->hashid }}"
-                                            data-name="{{ $service->name }}"
-                                            data-desc="{{ $service->description }}"
-                                            data-price="{{ $service->base_price }}"
-                                            data-active="{{ $service->is_active ? '1' : '0' }}">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </button>
-                                        <form action="{{ route('admin_joki.services.destroy', $service->hashid) }}" method="POST" class="inline form-delete-service">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 hover:bg-red-600 hover:text-white transition-all duration-200 shadow-sm tooltip" title="Hapus Layanan">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="px-6 py-10 text-center text-slate-400 dark:text-slate-500">Belum ada layanan yang ditambahkan.</td>
-                            </tr>
-                        @endforelse
-        </x-ui.table>
+        <div class="mt-6">
+            <x-ui.table>
+                <x-slot:head>
+                    <th class="px-6 py-4">Nama Layanan</th>
+                    <th class="px-6 py-4">Harga Dasar</th>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4 text-right">Aksi</th>
+                </x-slot:head>
+                @forelse ($services as $service)
+                    <tr class="hover:bg-[#F4F8FC] dark:hover:bg-[#0D1828]">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-[#0F1A2A] dark:text-white">{{ $service->name }}</div>
+                            <div class="text-xs text-[#94A3B4] dark:text-white/35 truncate max-w-xs">{{ Str::limit($service->description, 50) }}</div>
+                        </td>
+                        <td class="px-6 py-4 font-mono font-medium text-[#0F1A2A] dark:text-white">Rp{{ number_format($service->base_price, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4">
+                            <span class="ui-badge whitespace-nowrap {{ $service->is_active ? 'ui-badge-success' : 'ui-badge-danger' }}">
+                                {{ $service->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="ui-icon-btn ui-icon-btn-primary tooltip btn-edit-modal"
+                                    title="Edit Layanan"
+                                    data-id="{{ $service->hashid }}"
+                                    data-name="{{ $service->name }}"
+                                    data-desc="{{ $service->description }}"
+                                    data-price="{{ $service->base_price }}"
+                                    data-active="{{ $service->is_active ? '1' : '0' }}">
+                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                </button>
+                                <form action="{{ route('admin_joki.services.destroy', $service->hashid) }}" method="POST" class="inline form-delete-service">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="ui-icon-btn ui-icon-btn-danger tooltip" title="Hapus Layanan">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-10 text-center text-[#94A3B4] dark:text-white/35 font-mono text-[11px] uppercase tracking-[0.2em]">Belum ada layanan yang ditambahkan.</td>
+                    </tr>
+                @endforelse
+            </x-ui.table>
+        </div>
 
     {{-- Modal Create --}}
-    <div id="createModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
-        <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden scale-95 transition-transform duration-300 transform">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
-                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Tambah Layanan Joki</h3>
-                <button id="btnCloseCreateModal" type="button" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
+    <div id="createModal" class="fixed inset-0 z-50 hidden bg-[#0A1322]/60 flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+        <div class="ui-panel w-full max-w-lg overflow-hidden scale-95 transition-transform duration-300 transform">
+            <div class="ui-panel-head p-5">
+                <h3 class="ui-modal-title">Tambah Layanan Joki</h3>
+                <button id="btnCloseCreateModal" type="button" class="ui-icon-btn ui-icon-btn-danger">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -90,27 +94,27 @@
                 @csrf
                 <div class="p-6 space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nama Layanan</label>
-                        <input type="text" name="name" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label class="ui-eyebrow-muted block mb-1.5">Nama Layanan</label>
+                        <input type="text" name="name" required class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:border-[#1D5B96] outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Deskripsi</label>
-                        <textarea name="description" rows="3" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
+                        <label class="ui-eyebrow-muted block mb-1.5">Deskripsi</label>
+                        <textarea name="description" rows="3" required class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:border-[#1D5B96] outline-none transition"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Dasar (Rp)</label>
-                        <input type="number" name="base_price" required min="0" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label class="ui-eyebrow-muted block mb-1.5">Harga Dasar (Rp)</label>
+                        <input type="number" name="base_price" required min="0" class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm font-mono focus:border-[#1D5B96] outline-none transition">
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="checkbox" name="is_active" id="is_active" value="1" checked class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500">
-                        <label for="is_active" class="text-sm font-medium text-slate-700 dark:text-slate-200">Aktifkan Layanan</label>
+                        <input type="checkbox" name="is_active" id="is_active" value="1" checked class="accent-[#1D5B96] w-4 h-4">
+                        <label for="is_active" class="text-sm font-medium text-[#525252] dark:text-white/70">Aktifkan Layanan</label>
                     </div>
                 </div>
-                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-end gap-3">
-                    <button type="button" id="btnCancelCreateModal" class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                <div class="p-5 border-t border-[#E3EAF1] dark:border-[#1B2C44] bg-[#FAFBFD] dark:bg-[#0D1828] flex justify-end gap-3">
+                    <button type="button" id="btnCancelCreateModal" class="ui-btn-secondary">
                         Batal
                     </button>
-                    <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm transition-all">
+                    <button type="submit" class="ui-btn-primary">
                         Simpan Layanan
                     </button>
                 </div>
@@ -119,11 +123,11 @@
     </div>
 
     {{-- Modal Edit --}}
-    <div id="editModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
-        <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden scale-95 transition-transform duration-300 transform">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
-                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Edit Layanan Joki</h3>
-                <button type="button" id="btnCloseEditModal" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
+    <div id="editModal" class="fixed inset-0 z-50 hidden bg-[#0A1322]/60 flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+        <div class="ui-panel w-full max-w-lg overflow-hidden scale-95 transition-transform duration-300 transform">
+            <div class="ui-panel-head p-5">
+                <h3 class="ui-modal-title">Edit Layanan Joki</h3>
+                <button type="button" id="btnCloseEditModal" class="ui-icon-btn ui-icon-btn-danger">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -132,27 +136,27 @@
                 @method('PUT')
                 <div class="p-6 space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nama Layanan</label>
-                        <input type="text" name="name" id="edit_name" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label class="ui-eyebrow-muted block mb-1.5">Nama Layanan</label>
+                        <input type="text" name="name" id="edit_name" required class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:border-[#1D5B96] outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Deskripsi</label>
-                        <textarea name="description" id="edit_description" rows="3" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
+                        <label class="ui-eyebrow-muted block mb-1.5">Deskripsi</label>
+                        <textarea name="description" id="edit_description" rows="3" required class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:border-[#1D5B96] outline-none transition"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Harga Dasar (Rp)</label>
-                        <input type="number" name="base_price" id="edit_base_price" required min="0" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        <label class="ui-eyebrow-muted block mb-1.5">Harga Dasar (Rp)</label>
+                        <input type="number" name="base_price" id="edit_base_price" required min="0" class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm font-mono focus:border-[#1D5B96] outline-none transition">
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500">
-                        <label for="edit_is_active" class="text-sm font-medium text-slate-700 dark:text-slate-200">Aktifkan Layanan</label>
+                        <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="accent-[#1D5B96] w-4 h-4">
+                        <label for="edit_is_active" class="text-sm font-medium text-[#525252] dark:text-white/70">Aktifkan Layanan</label>
                     </div>
                 </div>
-                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-end gap-3">
-                    <button type="button" id="btnCancelEditModal" class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                <div class="p-5 border-t border-[#E3EAF1] dark:border-[#1B2C44] bg-[#FAFBFD] dark:bg-[#0D1828] flex justify-end gap-3">
+                    <button type="button" id="btnCancelEditModal" class="ui-btn-secondary">
                         Batal
                     </button>
-                    <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm transition-all">
+                    <button type="submit" class="ui-btn-primary">
                         Simpan Perubahan
                     </button>
                 </div>
@@ -201,13 +205,13 @@
                 btn.addEventListener('click', function () {
                     const id = this.getAttribute('data-id');
                     const form = document.getElementById('editForm');
-                    
+
                     form.action = `/admin/joki/services/${id}`;
                     document.getElementById('edit_name').value = this.getAttribute('data-name');
                     document.getElementById('edit_description').value = this.getAttribute('data-desc');
                     document.getElementById('edit_base_price').value = this.getAttribute('data-price');
                     document.getElementById('edit_is_active').checked = this.getAttribute('data-active') === '1';
-                    
+
                     openModal(editModal);
                 });
             });
@@ -229,7 +233,7 @@
                         text: 'Yakin ingin menghapus layanan ini?',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
+                        confirmButtonColor: '#e11d48',
                         cancelButtonColor: '#94a3b8',
                         confirmButtonText: 'Ya, hapus!',
                         cancelButtonText: 'Batal'

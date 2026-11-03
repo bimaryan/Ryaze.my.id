@@ -82,10 +82,12 @@ class UserHostingFeatureTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->post('/user/hosting/store', [
-            'source_type' => 'template',
-            'template_key' => 'html_landing',
+            'source_type' => 'repo',
+            'repo_source' => 'https://github.com/laravel/laravel.git',
             'project_name' => 'My Hosting Site Unique',
             'domain_extension' => '.ryaze.my.id',
+            'framework' => 'laravel',
+            'branch' => 'main',
         ]);
 
         $response->assertSessionHasNoErrors();

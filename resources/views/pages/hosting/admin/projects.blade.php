@@ -122,7 +122,7 @@
                             text: this.getAttribute('data-msg'),
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonColor: '#4f46e5',
+                            confirmButtonColor: '#1D5B96',
                             cancelButtonColor: '#d33',
                             confirmButtonText: 'Ya, Lanjutkan!'
                         }).then((result) => {

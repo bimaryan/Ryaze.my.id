@@ -227,8 +227,8 @@
                         text: "Semua data di dalam database ini akan hilang permanen!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
-                        cancelButtonColor: '#94a3b8',
+                        confirmButtonColor: '#e11d48',
+                        cancelButtonColor: '#94A3B4',
                         confirmButtonText: 'Ya, Hapus!',
                         cancelButtonText: 'Batal',
                         reverseButtons: true,
@@ -237,8 +237,8 @@
                             title: document.documentElement.classList.contains('dark') ? 'text-slate-100' : '',
                             htmlContainer: document.documentElement.classList.contains('dark') ? 'text-slate-300' : ''
                         },
-                        background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#fff',
-                        color: document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b'
+                        background: document.documentElement.classList.contains('dark') ? '#12233A' : '#fff',
+                        color: document.documentElement.classList.contains('dark') ? '#EDF2F7' : '#12233A'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             btn.closest('form').submit();

@@ -8,6 +8,8 @@
         {{-- Header --}}
         <x-ui.page-header 
             title="Manajemen Database" 
+            eyebrow="MySQL · NoSQL · PostgreSQL"
+            status="ONLINE"
             subtitle="Kelola database MySQL untuk aplikasi Anda." 
             icon="fa-database" 
             iconColor="purple">
@@ -19,67 +21,67 @@
                 @endphp
 
                 @if($canMysql['allowed'])
-                    <button id="btn-open-create-modal" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    <button id="btn-open-create-modal" class="ui-btn-primary font-mono text-[11px] uppercase tracking-[0.15em]">
                         + MySQL
                     </button>
                 @else
-                    <button id="btn-open-create-modal" data-locked="true" onclick="Swal.fire('Batas Tercapai', '{{ $canMysql['message'] }}', 'warning')" class="inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                        <i class="fa-solid fa-lock mr-2"></i> MySQL Penuh
+                    <button id="btn-open-create-modal" data-locked="true" onclick="Swal.fire('Batas Tercapai', '{{ $canMysql['message'] }}', 'warning')" class="ui-btn-secondary font-mono text-[11px] uppercase tracking-[0.15em]">
+                        <i class="fa-solid fa-lock mr-2 text-[10px]"></i> MySQL Penuh
                     </button>
                 @endif
 
                 @if($canNosql['allowed'])
-                    <button id="btn-open-create-nosql-modal" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    <button id="btn-open-create-nosql-modal" class="hidden ui-btn-primary font-mono text-[11px] uppercase tracking-[0.15em]">
                         + Redis
                     </button>
                 @else
-                    <button id="btn-open-create-nosql-modal" data-locked="true" onclick="Swal.fire('Fitur Terkunci', '{{ $canNosql['message'] }}', 'warning')" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                        <i class="fa-solid fa-lock mr-2"></i> Redis Terkunci
+                    <button id="btn-open-create-nosql-modal" data-locked="true" onclick="Swal.fire('Fitur Terkunci', '{{ $canNosql['message'] }}', 'warning')" class="hidden ui-btn-secondary font-mono text-[11px] uppercase tracking-[0.15em]">
+                        <i class="fa-solid fa-lock mr-2 text-[10px]"></i> Redis Terkunci
                     </button>
                 @endif
 
                 @if($canPgsql['allowed'])
-                    <button id="btn-open-create-pgsql-modal" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    <button id="btn-open-create-pgsql-modal" class="hidden ui-btn-primary font-mono text-[11px] uppercase tracking-[0.15em]">
                         + PostgreSQL
                     </button>
                 @else
-                    <button id="btn-open-create-pgsql-modal" data-locked="true" onclick="Swal.fire('Fitur Terkunci', '{{ $canPgsql['message'] }}', 'warning')" class="hidden inline-flex justify-center items-center flex-shrink-0 w-full sm:w-auto bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                        <i class="fa-solid fa-lock mr-2"></i> PostgreSQL Terkunci
+                    <button id="btn-open-create-pgsql-modal" data-locked="true" onclick="Swal.fire('Fitur Terkunci', '{{ $canPgsql['message'] }}', 'warning')" class="hidden ui-btn-secondary font-mono text-[11px] uppercase tracking-[0.15em]">
+                        <i class="fa-solid fa-lock mr-2 text-[10px]"></i> PostgreSQL Terkunci
                     </button>
                 @endif
             </x-slot:actions>
         </x-ui.page-header>
 
     {{-- Tabs --}}
-    <div class="mb-6 flex space-x-1 bg-slate-100 dark:bg-slate-700/50 p-1 rounded-xl max-w-fit">
-        <button id="btn-tab-mysql" class="px-4 py-2 text-sm font-medium rounded-lg bg-white dark:bg-slate-800/60 shadow-sm text-slate-800 dark:text-slate-100" onclick="showTab('mysql')">
-            <i class="fa-solid fa-database mr-1.5 text-indigo-500 dark:text-indigo-400"></i> MySQL
+    <div class="mb-6 flex items-stretch border-b border-[#E3EAF1] dark:border-[#2A4463]">
+        <button id="btn-tab-mysql" class="px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] border-b-2 -mb-px border-[#1D5B96] dark:border-[#6BA8DC] text-[#1D5B96] dark:text-[#6BA8DC] transition-colors" onclick="showTab('mysql')">
+            <i class="fa-solid fa-database mr-2 text-[10px]"></i> MySQL
         </button>
-        <button id="btn-tab-nosql" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition" onclick="showTab('nosql')">
-            <i class="fa-solid fa-server mr-1.5 text-rose-500 dark:text-rose-400"></i> Redis (NoSQL)
+        <button id="btn-tab-nosql" class="px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] border-b-2 -mb-px border-transparent text-[#525252] dark:text-white/45 hover:text-[#0F1A2A] dark:hover:text-white transition-colors" onclick="showTab('nosql')">
+            <i class="fa-solid fa-server mr-2 text-[10px]"></i> Redis (NoSQL)
         </button>
-        <button id="btn-tab-pgsql" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition" onclick="showTab('pgsql')">
-            <i class="fa-solid fa-database mr-1.5 text-blue-500 dark:text-blue-400"></i> PostgreSQL
+        <button id="btn-tab-pgsql" class="px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] border-b-2 -mb-px border-transparent text-[#525252] dark:text-white/45 hover:text-[#0F1A2A] dark:hover:text-white transition-colors" onclick="showTab('pgsql')">
+            <i class="fa-solid fa-database mr-2 text-[10px]"></i> PostgreSQL
         </button>
     </div>
 
     {{-- Database Cards (MySQL) --}}
     <div id="tab-mysql" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         @forelse ($databases as $db)
-        <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-md transition-shadow">
+        <div class="ui-panel overflow-hidden">
             {{-- Card Header --}}
-            <div class="border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-4 flex justify-between items-center">
+            <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A] px-5 py-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                    <div class="ui-icon-box w-10 h-10">
                         <i class="fa-solid fa-database text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">{{ $db->db_name }}</h3>
-                        <span class="text-xs font-medium text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-500/30">Active</span>
+                        <h3 class="font-mono font-semibold text-[15px] text-[#0F1A2A] dark:text-white">{{ $db->db_name }}</h3>
+                        <span class="ui-status"><span class="ui-status-dot"></span> Active</span>
                     </div>
                 </div>
                 <button data-action="{{ route('user_hosting.databases.destroy', $db->hashid) }}"
-                    class="btn-delete-db text-slate-400 dark:text-slate-500 hover:text-rose-500 p-2 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors" title="Hapus Database">
+                    class="btn-delete-db text-[#8A9BAE] dark:text-white/45 hover:text-rose-500 p-2 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Hapus Database">
                     <i class="fa-regular fa-trash-can"></i>
                 </button>
             </div>
@@ -87,17 +89,17 @@
             <div class="p-5 space-y-4">
                 {{-- Host & Port --}}
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Host</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="host-{{ $db->hashid }}">{{ $db->host }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Host</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="host-{{ $db->hashid }}">{{ $db->host }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->host }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Port</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="port-{{ $db->hashid }}">{{ $db->port ?? 3306 }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->port ?? 3306 }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Port</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="port-{{ $db->hashid }}">{{ $db->port ?? 3306 }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->port ?? 3306 }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -105,23 +107,23 @@
 
                 {{-- Username & Password --}}
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Username</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="user-{{ $db->hashid }}">{{ $db->db_username }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Username</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="user-{{ $db->hashid }}">{{ $db->db_username }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Password</span>
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Password</span>
                         <input type="password" readonly value="{{ $db->db_password }}"
                             id="pass-{{ $db->hashid }}"
-                            class="text-sm font-mono text-slate-800 dark:text-slate-100 bg-transparent outline-none w-full">
-                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity bg-white dark:bg-slate-800/60">
-                            <button class="text-slate-300 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded btn-toggle-pass" data-target="pass-{{ $db->hashid }}">
+                            class="text-sm font-mono text-[#0F1A2A] dark:text-white bg-transparent outline-none w-full">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity bg-white dark:bg-[#0F1D30]">
+                            <button class="text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#525252] dark:hover:text-[#C9D5E2] p-1 btn-toggle-pass" data-target="pass-{{ $db->hashid }}">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
-                            <button class="text-slate-300 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 p-1 rounded btn-copy" data-copy="{{ $db->db_password }}">
+                            <button class="text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] p-1 btn-copy" data-copy="{{ $db->db_password }}">
                                 <i class="fa-regular fa-copy"></i>
                             </button>
                         </div>
@@ -131,36 +133,36 @@
                 {{-- REST API Settings --}}
                 <div class="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-3">
                     {{-- Endpoint URL --}}
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
                         <div class="flex items-center justify-between mb-1">
-                            <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">API Endpoint</span>
-                            <span class="text-[10px] text-emerald-500 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-100 dark:border-emerald-500/30"><i class="fa-solid fa-bolt"></i> Auto REST</span>
+                            <span class="ui-eyebrow-muted">API Endpoint</span>
+                            <span class="ui-eyebrow text-[10px] px-1.5 py-0.5 border border-[#E3EAF1] dark:border-[#2A4463]"><i class="fa-solid fa-bolt"></i> Auto REST</span>
                         </div>
                         <input type="text" readonly value="{{ url('/api/v1/db/' . $db->hashid) }}"
-                            class="text-sm font-mono text-slate-800 dark:text-slate-100 bg-transparent outline-none w-full pr-12">
-                        <div class="absolute bottom-2 right-2 bg-white dark:bg-slate-800/60">
-                            <button class="text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 p-1.5 rounded btn-copy" data-copy="{{ url('/api/v1/db/' . $db->hashid) }}" title="Copy URL">
+                            class="text-sm font-mono text-[#0F1A2A] dark:text-white bg-transparent outline-none w-full pr-12">
+                        <div class="absolute bottom-2 right-2 bg-white dark:bg-[#0F1D30]">
+                            <button class="text-[#8A9BAE] dark:text-white/45 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] p-1.5 btn-copy" data-copy="{{ url('/api/v1/db/' . $db->hashid) }}" title="Copy URL">
                                 <i class="fa-regular fa-copy"></i>
                             </button>
                         </div>
                     </div>
 
                     {{-- API Key --}}
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
                         <div class="flex items-center justify-between mb-1">
-                            <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">REST API Key</span>
+                            <span class="ui-eyebrow-muted">REST API Key</span>
                         </div>
                         <input type="password" readonly value="{{ $db->api_key ?? 'Generate API Key dulu...' }}"
                             id="apikey-{{ $db->hashid }}"
-                            class="text-sm font-mono text-slate-800 dark:text-slate-100 bg-transparent outline-none w-full pr-24">
-                        <div class="absolute bottom-2 right-2 flex gap-1 bg-white dark:bg-slate-800/60">
-                            <button onclick="event.preventDefault(); document.getElementById('gen-apikey-{{ $db->hashid }}').submit();" class="text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 p-1.5 rounded" title="Regenerate API Key">
+                            class="text-sm font-mono text-[#0F1A2A] dark:text-white bg-transparent outline-none w-full pr-24">
+                        <div class="absolute bottom-2 right-2 flex gap-1 bg-white dark:bg-[#0F1D30]">
+                            <button onclick="event.preventDefault(); document.getElementById('gen-apikey-{{ $db->hashid }}').submit();" class="text-[#8A9BAE] dark:text-white/45 hover:text-emerald-600 dark:hover:text-emerald-400 p-1.5" title="Regenerate API Key">
                                 <i class="fa-solid fa-rotate-right"></i>
                             </button>
-                            <button class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 p-1.5 rounded btn-toggle-pass" data-target="apikey-{{ $db->hashid }}" title="Toggle Visibility">
+                            <button class="text-[#8A9BAE] dark:text-white/45 hover:text-[#525252] dark:hover:text-[#C9D5E2] p-1.5 btn-toggle-pass" data-target="apikey-{{ $db->hashid }}" title="Toggle Visibility">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
-                            <button class="text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 p-1.5 rounded btn-copy" data-copy="{{ $db->api_key }}" title="Copy API Key">
+                            <button class="text-[#8A9BAE] dark:text-white/45 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] p-1.5 btn-copy" data-copy="{{ $db->api_key }}" title="Copy API Key">
                                 <i class="fa-regular fa-copy"></i>
                             </button>
                         </div>
@@ -170,31 +172,31 @@
                     </div>
                 </div>
 
-                <hr class="border-slate-100 dark:border-slate-700">
+                <hr class="border-[#EDF2F7] dark:border-[#2A4463]">
 
                 {{-- phpMyAdmin auto-login via POST --}}
-                <div class="bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="text-sm text-indigo-900 dark:text-indigo-200">
+                <div class="bg-[#E8F0F9]/50 dark:bg-[#1D5B96]/10 border border-[#C9D5E2] dark:border-[#1D5B96]/30 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="text-sm text-[#0F1A2A] dark:text-[#6BA8DC]">
                         <strong>Manajemen Database</strong><br>
-                        <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-indigo-100 dark:bg-indigo-500/20 px-1 rounded">{{ $db->db_name }}</code>.</span>
+                        <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-[#E8F0F9] dark:bg-[#1D5B96]/20 px-1">{{ $db->db_name }}</code>.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <a href="{{ route('user_hosting.databases.manager', $db->hashid) }}" class="bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <a href="{{ route('user_hosting.databases.manager', $db->hashid) }}" class="ui-btn ui-btn-primary">
                             <i class="fa-solid fa-table-list"></i> Database Manager
                         </a>
-                        <button onclick="openApiTesterModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="bg-orange-500 text-white hover:bg-orange-600 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <button onclick="openApiTesterModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="ui-btn ui-btn-secondary">
                             <i class="fa-solid fa-flask"></i> Test API
                         </button>
-                        <button onclick="openApiDocsModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="bg-slate-800 text-white hover:bg-slate-900 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <button onclick="openApiDocsModal('{{ url('/api/v1/db/' . $db->hashid) }}', '{{ $db->api_key }}')" class="ui-btn ui-btn-secondary">
                             <i class="fa-solid fa-code"></i> API Docs
                         </button>
-                        <a href="{{ route('user_hosting.databases.export', $db->hashid) }}" data-pjax="0" target="_blank" class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <a href="{{ route('user_hosting.databases.export', $db->hashid) }}" data-pjax="0" target="_blank" class="ui-btn ui-btn-secondary">
                             <i class="fa-solid fa-download"></i> Export (.sql)
                         </a>
-                        <button onclick="openImportModal('{{ $db->hashid }}', '{{ $db->db_name }}')" class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <button onclick="openImportModal('{{ $db->hashid }}', '{{ $db->db_name }}')" class="ui-btn ui-btn-secondary">
                             <i class="fa-solid fa-upload"></i> Import
                         </button>
-                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-slate-900 p-3 rounded-lg text-left mt-2\'><code class=\'text-emerald-400 dark:text-emerald-300 text-xs font-mono break-all\'>mysql -h {{ $db->host }} -P {{ $db->port ?? 3306 }} -u {{ $db->db_username }} -p\'{{ $db->db_password }}\' {{ $db->db_name }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'rounded-xl text-sm' }})" class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-[#12233A] p-3 text-left mt-2\'><code class=\'text-emerald-400 dark:text-emerald-300 text-xs font-mono break-all\'>mysql -h {{ $db->host }} -P {{ $db->port ?? 3306 }} -u {{ $db->db_username }} -p\'{{ $db->db_password }}\' {{ $db->db_name }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'text-sm' }})" class="ui-btn ui-btn-secondary">
                             <i class="fa-solid fa-terminal"></i> Connection String
                         </button>
                     </div>
@@ -202,12 +204,12 @@
             </div>
         </div>
         @empty
-        <div class="col-span-full bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 p-16 text-center flex flex-col items-center">
-            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700/50 text-slate-300 dark:text-slate-400 rounded-full flex items-center justify-center mb-4">
+        <div class="col-span-full ui-panel p-16 text-center flex flex-col items-center">
+            <div class="w-16 h-16 border border-[#EDF2F7] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#12233A] text-[#C9D5E2] dark:text-white/40 flex items-center justify-center mb-4">
                 <i class="fa-solid fa-database text-3xl"></i>
             </div>
-            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-200 mb-1">Belum ada Database MySQL</h3>
-            <p class="text-slate-500 dark:text-slate-400 text-sm">Klik "Buat Database" untuk memulai.</p>
+            <h3 class="ui-display text-lg mb-1">Belum ada Database MySQL</h3>
+            <p class="ui-eyebrow-muted text-[11px]">Klik "Buat Database" untuk memulai.</p>
         </div>
         @endforelse
     </div>
@@ -215,20 +217,20 @@
     {{-- Database Cards (NoSQL / Redis) --}}
     <div id="tab-nosql" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
         @forelse ($nosqlDatabases ?? [] as $db)
-        <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-md transition-shadow">
+        <div class="ui-panel overflow-hidden">
             {{-- Card Header --}}
-            <div class="border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-4 flex justify-between items-center">
+            <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A] px-5 py-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/30 text-rose-600 dark:text-rose-300 flex items-center justify-center">
+                    <div class="ui-icon-box w-10 h-10">
                         <i class="fa-solid fa-server text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">Redis <span class="text-xs text-slate-400 dark:text-slate-500 font-normal">({{ $db->db_username }})</span></h3>
-                        <span class="text-xs font-medium text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-500/30">Active</span>
+                        <h3 class="font-mono font-semibold text-[15px] text-[#0F1A2A] dark:text-white">Redis <span class="text-xs text-[#8A9BAE] dark:text-white/45 font-normal">({{ $db->db_username }})</span></h3>
+                        <span class="ui-status"><span class="ui-status-dot"></span> Active</span>
                     </div>
                 </div>
                 <button data-action="{{ route('user_hosting.databases.nosql.destroy', $db->hashid) }}"
-                    class="btn-delete-db text-slate-400 dark:text-slate-500 hover:text-rose-500 p-2 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors" title="Hapus Database">
+                    class="btn-delete-db text-[#8A9BAE] dark:text-white/45 hover:text-rose-500 p-2 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Hapus Database">
                     <i class="fa-regular fa-trash-can"></i>
                 </button>
             </div>
@@ -236,17 +238,17 @@
             <div class="p-5 space-y-4">
                 {{-- Host & Port --}}
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Host</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="host-nosql-{{ $db->hashid }}">{{ $db->host }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Host</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="host-nosql-{{ $db->hashid }}">{{ $db->host }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->host }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Port</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="port-nosql-{{ $db->hashid }}">{{ $db->port }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->port }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Port</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="port-nosql-{{ $db->hashid }}">{{ $db->port }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->port }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
@@ -254,40 +256,40 @@
 
                 {{-- Kredensial --}}
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Prefix / Username</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="user-nosql-{{ $db->hashid }}">{{ $db->db_username }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Prefix / Username</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="user-nosql-{{ $db->hashid }}">{{ $db->db_username }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
                     
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Password</span>
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Password</span>
                         <input type="password" readonly value="{{ $db->db_password }}"
                             id="pass-nosql-{{ $db->hashid }}"
-                            class="text-sm font-mono text-slate-800 dark:text-slate-100 bg-transparent outline-none w-full">
-                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity bg-white dark:bg-slate-800/60">
-                            <button class="text-slate-300 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded btn-toggle-pass" data-target="pass-nosql-{{ $db->hashid }}">
+                            class="text-sm font-mono text-[#0F1A2A] dark:text-white bg-transparent outline-none w-full">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity bg-white dark:bg-[#0F1D30]">
+                            <button class="text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#525252] dark:hover:text-[#C9D5E2] p-1 btn-toggle-pass" data-target="pass-nosql-{{ $db->hashid }}">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
-                            <button class="text-slate-300 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1 rounded btn-copy" data-copy="{{ $db->db_password }}">
+                            <button class="text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] p-1 btn-copy" data-copy="{{ $db->db_password }}">
                                 <i class="fa-regular fa-copy"></i>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <hr class="border-slate-100 dark:border-slate-700">
+                <hr class="border-[#EDF2F7] dark:border-[#2A4463]">
 
                 {{-- Redis Actions --}}
-                <div class="bg-rose-50/50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="text-sm text-rose-900 dark:text-rose-200">
+                <div class="bg-[#F4F8FC] dark:bg-[#12233A] border border-[#E3EAF1] dark:border-[#2A4463] p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="text-sm text-[#0F1A2A] dark:text-white/85">
                         <strong>Manajemen Database</strong><br>
-                        <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-rose-100 dark:bg-rose-500/20 px-1 rounded">{{ $db->db_username }}</code>.</span>
+                        <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-[#E8F0F9] dark:bg-[#12233A] px-1">{{ $db->db_username }}</code>.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-slate-900 p-3 rounded-lg text-left mt-2\'><code class=\'text-emerald-400 dark:text-emerald-300 text-xs font-mono break-all\'>redis-cli -h {{ $db->host }} -p {{ $db->port }} --user {{ $db->db_username }} -a {{ $db->db_password }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'rounded-xl text-sm' }})" class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-[#12233A] p-3 text-left mt-2\'><code class=\'text-emerald-400 dark:text-emerald-300 text-xs font-mono break-all\'>redis-cli -h {{ $db->host }} -p {{ $db->port }} --user {{ $db->db_username }} -a {{ $db->db_password }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'text-sm' }})" class="ui-btn ui-btn-secondary">
                             <i class="fa-solid fa-terminal"></i> Connection String
                         </button>
                     </div>
@@ -295,13 +297,13 @@
             </div>
         </div>
         @empty
-        <div class="col-span-full bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 p-16 text-center flex flex-col items-center">
-            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700/50 text-slate-300 dark:text-slate-400 rounded-full flex items-center justify-center mb-4">
+        <div class="col-span-full ui-panel p-16 text-center flex flex-col items-center">
+            <div class="w-16 h-16 border border-[#EDF2F7] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#12233A] text-[#C9D5E2] dark:text-white/40 flex items-center justify-center mb-4">
                 <i class="fa-solid fa-server text-3xl"></i>
             </div>
-            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-200 mb-1">Belum ada Database NoSQL</h3>
-            <p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Klik tombol di bawah untuk membuat database Redis.</p>
-            <button id="btn-open-create-nosql-modal-empty" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm px-4 py-2 rounded-xl transition shadow-sm">
+            <h3 class="ui-display text-lg mb-1">Belum ada Database NoSQL</h3>
+            <p class="ui-eyebrow-muted text-[11px] mb-4">Klik tombol di bawah untuk membuat database Redis.</p>
+            <button id="btn-open-create-nosql-modal-empty" class="ui-btn-primary px-4 py-2">
                 Buat Database Redis
             </button>
         </div>
@@ -311,79 +313,79 @@
     {{-- Database Cards (PostgreSQL) --}}
     <div id="tab-pgsql" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
         @forelse ($pgsqlDatabases ?? [] as $db)
-        <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-md transition-shadow">
-            <div class="border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-4 flex justify-between items-center">
+        <div class="ui-panel overflow-hidden">
+            <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A] px-5 py-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/30 text-blue-600 dark:text-blue-300 flex items-center justify-center">
+                    <div class="w-10 h-10 bg-[#E8F0F9] dark:bg-[#1D5B96]/10 border border-[#EDF2F7] dark:border-[#1D5B96]/30 text-[#1D5B96] dark:text-[#6BA8DC] flex items-center justify-center">
                         <i class="fa-solid fa-database text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">{{ $db->db_name }}</h3>
-                        <span class="text-xs font-medium text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-500/30">Active</span>
+                        <h3 class="font-mono font-semibold text-[15px] text-[#0F1A2A] dark:text-white">{{ $db->db_name }}</h3>
+                        <span class="ui-status"><span class="ui-status-dot"></span> Active</span>
                     </div>
                 </div>
                 <button data-action="{{ route('user_hosting.databases.pgsql.destroy', $db->hashid) }}"
-                    class="btn-delete-db text-slate-400 dark:text-slate-500 hover:text-blue-500 p-2 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors" title="Hapus Database">
+                    class="btn-delete-db text-[#8A9BAE] dark:text-white/45 hover:text-[#1D5B96] p-2 hover:bg-[#E8F0F9] dark:hover:bg-[#1D5B96]/10 transition-colors" title="Hapus Database">
                     <i class="fa-regular fa-trash-can"></i>
                 </button>
             </div>
 
             <div class="p-5 space-y-4">
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Host</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="host-pgsql-{{ $db->hashid }}">{{ $db->host }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->host }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Host</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="host-pgsql-{{ $db->hashid }}">{{ $db->host }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->host }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Port</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="port-pgsql-{{ $db->hashid }}">{{ $db->port }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->port }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Port</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="port-pgsql-{{ $db->hashid }}">{{ $db->port }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->port }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Username/DB</span>
-                        <code class="text-sm font-mono text-slate-800 dark:text-slate-100 break-all" id="user-pgsql-{{ $db->hashid }}">{{ $db->db_username }}</code>
-                        <button class="absolute top-2 right-2 text-slate-300 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-800/60 rounded p-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Username/DB</span>
+                        <code class="text-sm font-mono text-[#0F1A2A] dark:text-white break-all" id="user-pgsql-{{ $db->hashid }}">{{ $db->db_username }}</code>
+                        <button class="absolute top-2 right-2 text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] bg-white dark:bg-[#0F1D30] p-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity btn-copy" data-copy="{{ $db->db_username }}">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                     </div>
                     
-                    <div class="flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/60 relative group">
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-1">Password</span>
+                    <div class="flex flex-col ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] p-3 relative group">
+                        <span class="ui-eyebrow-muted mb-1.5">Password</span>
                         <input type="password" readonly value="{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}"
                             id="pass-pgsql-{{ $db->hashid }}"
-                            class="text-sm font-mono text-slate-800 dark:text-slate-100 bg-transparent outline-none w-full">
-                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-slate-400 dark:text-slate-500 transition-opacity bg-white dark:bg-slate-800/60">
-                            <button class="text-slate-300 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded btn-toggle-pass" data-target="pass-pgsql-{{ $db->hashid }}">
+                            class="text-sm font-mono text-[#0F1A2A] dark:text-white bg-transparent outline-none w-full">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-100 text-[#8A9BAE] dark:text-white/45 transition-opacity bg-white dark:bg-[#0F1D30]">
+                            <button class="text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#525252] dark:hover:text-[#C9D5E2] p-1 btn-toggle-pass" data-target="pass-pgsql-{{ $db->hashid }}">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
-                            <button class="text-slate-300 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 p-1 rounded btn-copy" data-copy="{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}">
+                            <button class="text-[#C9D5E2] dark:text-[#8A9BAE] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] p-1 btn-copy" data-copy="{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}">
                                 <i class="fa-regular fa-copy"></i>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <hr class="border-slate-100 dark:border-slate-700">
+                <hr class="border-[#EDF2F7] dark:border-[#2A4463]">
 
                 {{-- PostgreSQL Management Actions --}}
-                <div class="bg-blue-50/50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/30 p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="text-sm text-blue-900 dark:text-blue-200">
+                <div class="bg-[#E8F0F9]/50 dark:bg-[#1D5B96]/10 border border-[#EDF2F7] dark:border-[#1D5B96]/30 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="text-sm text-[#0F1A2A] dark:text-[#C9D5E2]">
                         <strong>Manajemen Database</strong><br>
-                        <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-blue-100 dark:bg-blue-500/20 px-1 rounded">{{ $db->db_username }}</code>.</span>
+                        <span class="opacity-80 text-xs">Pilih aksi untuk database <code class="font-mono bg-[#E8F0F9] dark:bg-[#1D5B96]/20 px-1">{{ $db->db_username }}</code>.</span>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <a href="{{ route('user_hosting.databases.manager', $db->hashid) }}?type=pgsql" class="bg-blue-600 text-white hover:bg-blue-700 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <a href="{{ route('user_hosting.databases.manager', $db->hashid) }}?type=pgsql" class="ui-btn ui-btn-primary">
                             <i class="fa-solid fa-table-list"></i> Database Manager
                         </a>
-                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-slate-900 p-3 rounded-lg text-left mt-2\'><code class=\'text-emerald-400 dark:text-emerald-300 text-xs font-mono break-all\'>PGPASSWORD=\'{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}\' psql -h {{ $db->host }} -p {{ $db->port }} -U {{ $db->db_username }} -d {{ $db->db_username }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'rounded-xl text-sm' }})" class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all text-xs font-bold py-2 px-3 rounded-2xl shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <button onclick="Swal.fire({title: 'CLI Connection', html: '<div class=\'bg-[#12233A] p-3 text-left mt-2\'><code class=\'text-emerald-400 dark:text-emerald-300 text-xs font-mono break-all\'>PGPASSWORD=\'{{ \Illuminate\Support\Facades\Crypt::decryptString($db->db_password) }}\' psql -h {{ $db->host }} -p {{ $db->port }} -U {{ $db->db_username }} -d {{ $db->db_username }}</code></div>', icon: 'info', confirmButtonText: 'Tutup', customClass: { popup: 'text-sm' }})" class="ui-btn ui-btn-secondary">
                             <i class="fa-solid fa-terminal"></i> Connection String
                         </button>
                     </div>
@@ -391,26 +393,25 @@
             </div>
         </div>
         @empty
-        <div class="col-span-full bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 p-16 text-center flex flex-col items-center">
-            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700/50 text-slate-300 dark:text-slate-400 rounded-full flex items-center justify-center mb-4">
+        <div class="col-span-full ui-panel p-16 text-center flex flex-col items-center">
+            <div class="w-16 h-16 border border-[#EDF2F7] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#12233A] text-[#C9D5E2] dark:text-white/40 flex items-center justify-center mb-4">
                 <i class="fa-solid fa-database text-3xl"></i>
             </div>
-            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-200 mb-1">Belum ada Database PostgreSQL</h3>
-            <p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Klik tombol di atas untuk membuat database PostgreSQL.</p>
+            <h3 class="ui-display text-lg mb-1">Belum ada Database PostgreSQL</h3>
+            <p class="ui-eyebrow-muted text-[11px] mb-4">Klik tombol di atas untuk membuat database PostgreSQL.</p>
         </div>
         @endforelse
     </div>
 
 
 <div id="createDbModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
-    <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="ui-panel w-full max-w-md overflow-hidden">
         {{-- Modal Header --}}
-        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
-                <i class="fa-solid fa-database text-indigo-500 dark:text-indigo-400"></i> Buat Database Baru
+        <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A]">
+            <h3 class="ui-eyebrow text-[11px] flex items-center gap-2">
+                <i class="fa-solid fa-database text-[#1D5B96] dark:text-[#6BA8DC]"></i> Buat Database Baru
             </h3>
-            <button class="btn-close-modal"
-                class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
+            <button class="btn-close-modal text-[#8A9BAE] dark:text-white/45 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -420,70 +421,69 @@
 
             {{-- Nama DB --}}
             <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
+                <label class="block text-sm font-semibold text-[#0F1A2A] dark:text-white/85 mb-1.5">
                     Nama Database <span class="text-rose-500 dark:text-rose-400">*</span>
                 </label>
-                <div class="flex rounded-xl overflow-hidden border border-slate-300 dark:border-slate-600 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
-                    <span class="inline-flex items-center px-3 bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm font-mono border-r border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                <div class="flex overflow-hidden border border-[#C9D5E2] dark:border-[#2A4463] focus-within:border-[#1D5B96] focus-within:ring-2 focus-within:ring-[#1D5B96]/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#525252] dark:text-[#8A9BAE] text-sm font-mono border-r border-[#C9D5E2] dark:border-[#2A4463] whitespace-nowrap">
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_name" required pattern="[A-Za-z0-9_]+" placeholder="myapp" maxlength="15"
-                        class="flex-1 font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        class="flex-1 font-mono w-full bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
                 </div>
             </div>
 
             @if ($databases->count() === 0)
             {{-- Username --}}
             <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
+                <label class="block text-sm font-semibold text-[#0F1A2A] dark:text-white/85 mb-1.5">
                     Username MySQL <span class="text-rose-500 dark:text-rose-400">*</span>
                 </label>
-                <div class="flex rounded-xl overflow-hidden border border-slate-300 dark:border-slate-600 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
-                    <span class="inline-flex items-center px-3 bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm font-mono border-r border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                <div class="flex overflow-hidden border border-[#C9D5E2] dark:border-[#2A4463] focus-within:border-[#1D5B96] focus-within:ring-2 focus-within:ring-[#1D5B96]/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#525252] dark:text-[#8A9BAE] text-sm font-mono border-r border-[#C9D5E2] dark:border-[#2A4463] whitespace-nowrap">
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_username" required pattern="[A-Za-z0-9_]+" placeholder="user" maxlength="15"
-                        class="flex-1 font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                        class="flex-1 font-mono w-full bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
                 </div>
             </div>
 
             {{-- Password --}}
             <div>
                 <div class="flex items-center justify-between mb-1.5">
-                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-200">Password <span class="text-rose-500 dark:text-rose-400">*</span></label>
-                    <button type="button" id="btn-generate-password" class="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1">
+                    <label class="text-sm font-semibold text-[#0F1A2A] dark:text-white/85">Password <span class="text-rose-500 dark:text-rose-400">*</span></label>
+                    <button type="button" id="btn-generate-password" class="text-xs text-[#1D5B96] dark:text-[#6BA8DC] hover:text-[#0F1A2A] dark:hover:text-[#6BA8DC] flex items-center gap-1">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
                     </button>
                 </div>
-                <div class="relative flex rounded-xl overflow-hidden border border-slate-300 dark:border-slate-600 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
-                    <span class="inline-flex items-center px-3 bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm font-mono border-r border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                <div class="relative flex overflow-hidden border border-[#C9D5E2] dark:border-[#2A4463] focus-within:border-[#1D5B96] focus-within:ring-2 focus-within:ring-[#1D5B96]/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#525252] dark:text-[#8A9BAE] text-sm font-mono border-r border-[#C9D5E2] dark:border-[#2A4463] whitespace-nowrap">
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_password" id="modalPassword" required maxlength="32"
                         placeholder="Masukkan password kuat"
-                        class="flex-1 pr-10 font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
-                    <button type="button" id="btn-copy-modal-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400" title="Copy">
+                        class="flex-1 pr-10 font-mono w-full bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
+                    <button type="button" id="btn-copy-modal-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#8A9BAE] dark:text-white/45 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC]" title="Copy">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
-                <p class="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                <p class="mt-1.5 text-[11px] text-[#8A9BAE] dark:text-white/45">
                     <i class="fa-solid fa-shield-halved"></i> Simpan password ini. Otomatis ditambah prefix.
                 </p>
             </div>
             @else
-            <div class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-3 rounded-xl text-xs text-indigo-700 dark:text-indigo-300 mt-2">
+            <div class="bg-[#E8F0F9] dark:bg-[#1D5B96]/10 border border-[#C9D5E2] dark:border-[#1D5B96]/30 p-3 text-xs text-[#1D5B96] dark:text-[#6BA8DC] mt-2">
                 <i class="fa-solid fa-circle-info mr-1"></i>
                 Database baru akan secara otomatis menggunakan <strong>Username</strong> dan <strong>Password</strong> dari database Anda sebelumnya.
             </div>
             @endif
 
             {{-- Footer --}}
-            <div class="pt-2 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-700">
-                <button type="button" class="btn-close-modal text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600 rounded-xl px-5 py-2.5 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+            <div class="pt-2 flex justify-end gap-3 border-t border-[#EDF2F7] dark:border-[#2A4463]">
+                <button type="button" class="btn-close-modal ui-btn-secondary">
                     Batal
                 </button>
-                <button type="submit"
-                    class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm transition-all flex items-center gap-2">
+                <button type="submit" class="ui-btn ui-btn-primary">
                     <i class="fa-solid fa-server"></i> Buat Database
                 </button>
             </div>
@@ -493,14 +493,13 @@
 
 {{-- Modal Create NoSQL (Redis) Database --}}
 <div id="createNosqlDbModal" class="hidden fixed inset-0 z-[55] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
-    <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="ui-panel w-full max-w-md overflow-hidden">
         {{-- Modal Header --}}
-        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-rose-50/50 dark:bg-rose-500/10">
-            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
-                <i class="fa-solid fa-server text-rose-500 dark:text-rose-400"></i> Buat Database Redis
+        <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A]">
+            <h3 class="ui-eyebrow text-[11px] flex items-center gap-2">
+                <i class="fa-solid fa-server text-[#1D5B96] dark:text-[#6BA8DC]"></i> Buat Database Redis
             </h3>
-            <button class="btn-close-nosql-modal"
-                class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
+            <button class="btn-close-nosql-modal text-[#8A9BAE] dark:text-white/45 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -510,15 +509,15 @@
 
             {{-- Username (Prefix) --}}
             <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
+                <label class="block text-sm font-semibold text-[#0F1A2A] dark:text-white/85 mb-1.5">
                     Username / Nama Database <span class="text-rose-500 dark:text-rose-400">*</span>
                 </label>
-                <div class="flex rounded-xl overflow-hidden border border-slate-300 dark:border-slate-600 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all">
-                    <span class="inline-flex items-center px-3 bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm font-mono border-r border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                <div class="flex overflow-hidden border border-[#C9D5E2] dark:border-[#2A4463] focus-within:border-[#1D5B96] focus-within:ring-2 focus-within:ring-[#1D5B96]/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#525252] dark:text-[#8A9BAE] text-sm font-mono border-r border-[#C9D5E2] dark:border-[#2A4463] whitespace-nowrap">
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_username" required pattern="[A-Za-z0-9_]+" placeholder="redisapp" maxlength="15"
-                        class="flex-1 font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition">
+                        class="flex-1 font-mono w-full bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
                 </div>
             </div>
 
@@ -526,39 +525,39 @@
             {{-- Password --}}
             <div>
                 <div class="flex items-center justify-between mb-1.5">
-                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-200">Password <span class="text-rose-500 dark:text-rose-400">*</span></label>
-                    <button type="button" id="btn-generate-nosql-password" class="text-xs text-rose-600 dark:text-rose-300 hover:text-rose-800 dark:hover:text-rose-300 flex items-center gap-1">
+                    <label class="text-sm font-semibold text-[#0F1A2A] dark:text-white/85">Password <span class="text-rose-500 dark:text-rose-400">*</span></label>
+                    <button type="button" id="btn-generate-nosql-password" class="font-mono text-[11px] uppercase tracking-[0.15em] text-[#1D5B96] dark:text-[#6BA8DC] hover:text-[#0F1A2A] dark:hover:text-white flex items-center gap-1">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
                     </button>
                 </div>
-                <div class="relative flex rounded-xl overflow-hidden border border-slate-300 dark:border-slate-600 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all">
-                    <span class="inline-flex items-center px-3 bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm font-mono border-r border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                <div class="relative flex overflow-hidden border border-[#C9D5E2] dark:border-[#2A4463] focus-within:border-[#1D5B96] focus-within:ring-2 focus-within:ring-[#1D5B96]/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#525252] dark:text-[#8A9BAE] text-sm font-mono border-r border-[#C9D5E2] dark:border-[#2A4463] whitespace-nowrap">
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_password" id="modalNosqlPassword" required minlength="8" maxlength="32"
                         placeholder="Masukkan password kuat"
-                        class="flex-1 pr-10 font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition">
-                    <button type="button" id="btn-copy-modal-nosql-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400" title="Copy">
+                        class="flex-1 pr-10 font-mono w-full bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
+                    <button type="button" id="btn-copy-modal-nosql-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#8A9BAE] dark:text-white/45 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC]" title="Copy">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
-                <p class="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                <p class="mt-1.5 text-[11px] text-[#8A9BAE] dark:text-white/45">
                     <i class="fa-solid fa-shield-halved"></i> Simpan password ini. Otomatis ditambah prefix.
                 </p>
             </div>
             @else
-            <div class="bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/30 p-3 rounded-xl text-xs text-rose-700 dark:text-rose-300 mt-2">
+            <div class="bg-[#F4F8FC] dark:bg-[#12233A] border border-[#E3EAF1] dark:border-[#2A4463] p-3 text-xs text-[#525252] dark:text-white/60 mt-2">
                 <i class="fa-solid fa-circle-info mr-1"></i>
                 Database baru akan secara otomatis menggunakan <strong>Password</strong> dari database Anda sebelumnya.
             </div>
             @endif
 
             {{-- Actions --}}
-            <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                <button type="button" class="btn-close-nosql-modal text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600 rounded-xl px-5 py-2.5 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+            <div class="pt-4 border-t border-[#EDF2F7] dark:border-[#2A4463] flex justify-end gap-3">
+                <button type="button" class="btn-close-nosql-modal ui-btn-secondary">
                     Batal
                 </button>
-                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-rose-600 rounded-xl hover:bg-rose-700 shadow-sm transition-all flex items-center gap-2">
+                <button type="submit" class="ui-btn-primary flex items-center gap-2">
                     <i class="fa-solid fa-server"></i> Buat Database Redis
                 </button>
             </div>
@@ -568,13 +567,13 @@
 
 {{-- Modal Create PostgreSQL --}}
 <div id="createPgsqlDbModal" class="hidden fixed inset-0 z-[55] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
-    <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="ui-panel w-full max-w-md overflow-hidden">
         {{-- Modal Header --}}
-        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-blue-50/50 dark:bg-blue-500/10">
-            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
-                <i class="fa-solid fa-database text-blue-500 dark:text-blue-400"></i> Buat Database PostgreSQL
+        <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A] bg-[#E8F0F9]/50 dark:bg-[#1D5B96]/10">
+            <h3 class="ui-eyebrow text-[11px] flex items-center gap-2">
+                <i class="fa-solid fa-database text-[#1D5B96] dark:text-[#6BA8DC]"></i> Buat Database PostgreSQL
             </h3>
-            <button class="btn-close-pgsql-modal text-slate-400 dark:text-slate-500 hover:text-blue-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10">
+            <button class="btn-close-pgsql-modal text-[#8A9BAE] dark:text-white/45 hover:text-[#1D5B96] transition-colors w-8 h-8 flex items-center justify-center hover:bg-[#E8F0F9] dark:hover:bg-[#1D5B96]/10">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -584,15 +583,15 @@
 
             {{-- Username (Prefix) --}}
             <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
-                    Nama Database & Username <span class="text-blue-500 dark:text-blue-400">*</span>
+                <label class="block text-sm font-semibold text-[#0F1A2A] dark:text-white/85 mb-1.5">
+                    Nama Database & Username <span class="text-[#1D5B96] dark:text-[#6BA8DC]">*</span>
                 </label>
-                <div class="flex rounded-xl overflow-hidden border border-slate-300 dark:border-slate-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-                    <span class="inline-flex items-center px-3 bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm font-mono border-r border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                <div class="flex overflow-hidden border border-[#C9D5E2] dark:border-[#2A4463] focus-within:border-[#1D5B96] focus-within:ring-2 focus-within:ring-[#1D5B96]/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#525252] dark:text-[#8A9BAE] text-sm font-mono border-r border-[#C9D5E2] dark:border-[#2A4463] whitespace-nowrap">
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_username" required pattern="[A-Za-z0-9_]+" placeholder="myapp" maxlength="15"
-                        class="flex-1 font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition">
+                        class="flex-1 font-mono w-full bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
                 </div>
             </div>
 
@@ -600,39 +599,39 @@
             {{-- Password --}}
             <div>
                 <div class="flex items-center justify-between mb-1.5">
-                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-200">Password <span class="text-blue-500 dark:text-blue-400">*</span></label>
-                    <button type="button" id="btn-generate-pgsql-password" class="text-xs text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1">
+                    <label class="text-sm font-semibold text-[#0F1A2A] dark:text-white/85">Password <span class="text-[#1D5B96] dark:text-[#6BA8DC]">*</span></label>
+                    <button type="button" id="btn-generate-pgsql-password" class="text-xs text-[#1D5B96] dark:text-[#6BA8DC] hover:text-[#6BA8DC] dark:hover:text-[#6BA8DC] flex items-center gap-1">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
                     </button>
                 </div>
-                <div class="relative flex rounded-xl overflow-hidden border border-slate-300 dark:border-slate-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-                    <span class="inline-flex items-center px-3 bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm font-mono border-r border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                <div class="relative flex overflow-hidden border border-[#C9D5E2] dark:border-[#2A4463] focus-within:border-[#1D5B96] focus-within:ring-2 focus-within:ring-[#1D5B96]/20 transition-all">
+                    <span class="inline-flex items-center px-3 bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#525252] dark:text-[#8A9BAE] text-sm font-mono border-r border-[#C9D5E2] dark:border-[#2A4463] whitespace-nowrap">
                         ryz_{{ Auth::id() }}_
                     </span>
                     <input type="text" name="db_password" id="modalPgsqlPassword" required minlength="8" maxlength="32"
                         placeholder="Masukkan password kuat"
-                        class="flex-1 pr-10 font-mono w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition">
-                    <button type="button" id="btn-copy-modal-pgsql-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400" title="Copy">
+                        class="flex-1 pr-10 font-mono w-full bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
+                    <button type="button" id="btn-copy-modal-pgsql-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#8A9BAE] dark:text-white/45 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC]" title="Copy">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
-                <p class="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                <p class="mt-1.5 text-[11px] text-[#8A9BAE] dark:text-white/45">
                     <i class="fa-solid fa-shield-halved"></i> Simpan password ini. Otomatis ditambah prefix.
                 </p>
             </div>
             @else
-            <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/30 p-3 rounded-xl text-xs text-blue-700 dark:text-blue-300 mt-2">
+            <div class="bg-[#E8F0F9] dark:bg-[#1D5B96]/10 border border-[#EDF2F7] dark:border-[#1D5B96]/30 p-3 text-xs text-[#1D5B96] dark:text-[#6BA8DC] mt-2">
                 <i class="fa-solid fa-circle-info mr-1"></i>
                 Database baru akan secara otomatis menggunakan <strong>Password</strong> dari database Anda sebelumnya.
             </div>
             @endif
 
             {{-- Actions --}}
-            <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                <button type="button" class="btn-close-pgsql-modal text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600 rounded-xl px-5 py-2.5 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+            <div class="pt-4 border-t border-[#EDF2F7] dark:border-[#2A4463] flex justify-end gap-3">
+                <button type="button" class="btn-close-pgsql-modal ui-btn-secondary">
                     Batal
                 </button>
-                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-sm transition-all flex items-center gap-2">
+                <button type="submit" class="ui-btn ui-btn-primary">
                     <i class="fa-solid fa-database"></i> Buat Database PostgreSQL
                 </button>
             </div>
@@ -642,13 +641,13 @@
 
 {{-- Modal Import Database --}}
 <div id="importDbModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(15,23,42,0.5)">
-    <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="ui-panel w-full max-w-md overflow-hidden">
         {{-- Modal Header --}}
-        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/60">
-            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
-                <i class="fa-solid fa-upload text-indigo-500 dark:text-indigo-400"></i> Import Database
+        <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A]">
+            <h3 class="ui-eyebrow text-[11px] flex items-center gap-2">
+                <i class="fa-solid fa-upload text-[#1D5B96] dark:text-[#6BA8DC]"></i> Import Database
             </h3>
-            <button onclick="closeImportModal()" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
+            <button onclick="closeImportModal()" class="text-[#8A9BAE] dark:text-white/45 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -656,32 +655,30 @@
         <form id="importForm" action="" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             
-            <div class="bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl text-sm text-indigo-900 dark:text-indigo-200 mb-4">
-                <p>Mengimpor file <strong>.sql</strong> ke database: <br><code id="importDbNameDisplay" class="font-mono bg-indigo-100 dark:bg-indigo-500/20 dark:text-indigo-100 px-1 rounded font-bold"></code></p>
+            <div class="bg-[#E8F0F9]/50 dark:bg-[#1D5B96]/10 border border-[#C9D5E2] dark:border-[#1D5B96]/30 p-4 text-sm text-[#0F1A2A] dark:text-[#6BA8DC] mb-4">
+                <p>Mengimpor file <strong>.sql</strong> ke database: <br><code id="importDbNameDisplay" class="font-mono bg-[#E8F0F9] dark:bg-[#1D5B96]/20 dark:text-[#C9D5E2] px-1 font-bold"></code></p>
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
+                <label class="block text-sm font-semibold text-[#0F1A2A] dark:text-white/85 mb-1.5">
                     File SQL <span class="text-rose-500 dark:text-rose-400">*</span>
                 </label>
                 <input type="file" name="sql_file" accept=".sql,.txt" required
-                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 mb-3">Maksimal ukuran file: 50MB.</p>
+                    class="w-full bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition file:mr-4 file:py-2 file:px-4 file:font-mono file:text-[11px] file:uppercase file:tracking-[0.15em] file:border-0 file:bg-[#E8F0F9] file:text-[#1D5B96] hover:file:bg-[#E8F0F9]">
+                <p class="text-[11px] text-[#525252] dark:text-[#8A9BAE] mt-1 mb-3">Maksimal ukuran file: 50MB.</p>
 
                 <label class="flex items-center gap-2 mt-4 cursor-pointer">
-                    <input type="checkbox" name="drop_tables" value="1" class="rounded border-slate-300 dark:border-slate-600 text-rose-500 dark:text-rose-400 focus:ring-rose-500">
-                    <span class="text-sm text-slate-700 dark:text-slate-200">Kosongkan database sebelum Import <br><span class="text-[11px] text-rose-500 dark:text-rose-400 font-semibold">(Bahaya: Menghapus seluruh tabel yang sudah ada)</span></span>
+                    <input type="checkbox" name="drop_tables" value="1" class="border-[#C9D5E2] dark:border-[#2A4463] text-rose-500 dark:text-rose-400 focus:ring-rose-500">
+                    <span class="text-sm text-[#0F1A2A] dark:text-white/85">Kosongkan database sebelum Import <br><span class="text-[11px] text-rose-500 dark:text-rose-400 font-semibold">(Bahaya: Menghapus seluruh tabel yang sudah ada)</span></span>
                 </label>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeImportModal()"
-                    class="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors">
+            <div class="pt-4 border-t border-[#EDF2F7] dark:border-[#2A4463] flex justify-end gap-3">
+                <button type="button" onclick="closeImportModal()" class="ui-btn ui-btn-secondary">
                     Batal
                 </button>
-                <button type="submit"
-                    class="px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors flex items-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Import
+                <button type="submit" class="ui-btn ui-btn-primary">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Import
                 </button>
             </div>
         </form>
@@ -690,33 +687,33 @@
 
 {{-- Modal API Docs --}}
 <div id="apiDocsModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.7)">
-    <div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div class="ui-panel w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
         {{-- Header --}}
-        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/60 shrink-0">
-            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
-                <i class="fa-solid fa-book-open text-indigo-500 dark:text-indigo-400"></i> Dokumentasi API
+        <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A] shrink-0">
+            <h3 class="ui-eyebrow text-[11px] flex items-center gap-2">
+                <i class="fa-solid fa-book-open text-[#1D5B96] dark:text-[#6BA8DC]"></i> Dokumentasi API
             </h3>
-            <button onclick="closeApiDocsModal()" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10">
+            <button onclick="closeApiDocsModal()" class="text-[#8A9BAE] dark:text-white/45 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
         {{-- Body --}}
         <div class="p-6 overflow-y-auto space-y-6">
-            <div class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 p-4 rounded-xl text-sm text-indigo-900 dark:text-indigo-200">
+            <div class="bg-[#E8F0F9] dark:bg-[#1D5B96]/10 border border-[#C9D5E2] dark:border-[#1D5B96]/30 p-4 text-sm text-[#0F1A2A] dark:text-[#6BA8DC]">
                 <strong>REST API Siap Pakai!</strong><br>
                 Anda bisa menggunakan Endpoint ini untuk melakukan operasi CRUD (Create, Read, Update, Delete) pada tabel apapun di database Anda secara langsung.
             </div>
 
             {{-- GET Request --}}
             <div>
-                <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2 flex items-center gap-2">
-                    <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-xs">GET</span> Membaca Data (Read)
+                <h4 class="ui-eyebrow-muted text-[11px] mb-2 flex items-center gap-2">
+                    <span class="font-mono font-bold text-emerald-700 dark:text-emerald-400 px-2 py-0.5 text-[11px] border border-emerald-200 dark:border-emerald-500/30">GET</span> Membaca Data (Read)
                 </h4>
-                <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Contoh membaca semua baris dari tabel <code>users</code>:</p>
-                <div class="bg-slate-800 rounded-xl p-4 relative group">
+                <p class="text-sm text-[#525252] dark:text-white/70 mb-2">Contoh membaca semua baris dari tabel <code>users</code>:</p>
+                <div class="bg-[#12233A] p-4 relative group">
                     <pre class="text-xs font-mono overflow-x-auto"><code id="code-get" class="text-emerald-400 dark:text-emerald-300"></code></pre>
-                    <button class="absolute top-2 right-2 text-slate-400 dark:text-slate-500 hover:text-white p-1 rounded btn-copy opacity-100 text-slate-400 dark:text-slate-500 transition-opacity bg-slate-700/50" data-copy-target="code-get">
+                    <button class="absolute top-2 right-2 text-[#8A9BAE] dark:text-white/45 hover:text-white p-1 btn-copy opacity-100 transition-opacity bg-[#12233A]" data-copy-target="code-get">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
@@ -724,12 +721,12 @@
 
             {{-- POST Request --}}
             <div>
-                <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2 flex items-center gap-2">
-                    <span class="bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded text-xs">POST</span> Menambah Data (Create)
+                <h4 class="ui-eyebrow-muted text-[11px] mb-2 flex items-center gap-2">
+                    <span class="font-mono font-bold text-[#1D5B96] dark:text-[#6BA8DC] px-2 py-0.5 text-[11px] border border-[#E3EAF1] dark:border-[#2A4463]">POST</span> Menambah Data (Create)
                 </h4>
-                <div class="bg-slate-800 rounded-xl p-4 relative group">
-                    <pre class="text-xs font-mono overflow-x-auto"><code id="code-post" class="text-blue-400 dark:text-blue-300"></code></pre>
-                    <button class="absolute top-2 right-2 text-slate-400 dark:text-slate-500 hover:text-white p-1 rounded btn-copy opacity-100 text-slate-400 dark:text-slate-500 transition-opacity bg-slate-700/50" data-copy-target="code-post">
+                <div class="bg-[#12233A] p-4 relative group">
+                    <pre class="text-xs font-mono overflow-x-auto"><code id="code-post" class="text-[#6BA8DC] dark:text-[#6BA8DC]"></code></pre>
+                    <button class="absolute top-2 right-2 text-[#8A9BAE] dark:text-white/45 hover:text-white p-1 btn-copy opacity-100 transition-opacity bg-[#12233A]" data-copy-target="code-post">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
@@ -737,12 +734,12 @@
 
             {{-- Javascript Fetch --}}
             <div>
-                <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2 flex items-center gap-2">
+                <h4 class="ui-eyebrow-muted text-[11px] mb-2 flex items-center gap-2">
                     <i class="fa-brands fa-js text-yellow-500 dark:text-yellow-400"></i> Contoh Javascript (Fetch)
                 </h4>
-                <div class="bg-slate-800 rounded-xl p-4 relative group">
+                <div class="bg-[#12233A] p-4 relative group">
                     <pre class="text-xs font-mono overflow-x-auto"><code id="code-js" class="text-yellow-400 dark:text-yellow-300"></code></pre>
-                    <button class="absolute top-2 right-2 text-slate-400 dark:text-slate-500 hover:text-white p-1 rounded btn-copy opacity-100 text-slate-400 dark:text-slate-500 transition-opacity bg-slate-700/50" data-copy-target="code-js">
+                    <button class="absolute top-2 right-2 text-[#8A9BAE] dark:text-white/45 hover:text-white p-1 btn-copy opacity-100 transition-opacity bg-[#12233A]" data-copy-target="code-js">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
@@ -750,20 +747,20 @@
 
             {{-- Postman --}}
             <div>
-                <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2 flex items-center gap-2">
+                <h4 class="ui-eyebrow-muted text-[11px] mb-2 flex items-center gap-2">
                     <i class="fa-solid fa-rocket text-orange-500 dark:text-orange-400"></i> Penggunaan di Postman
                 </h4>
-                <div class="bg-orange-50/50 border border-orange-100 dark:border-orange-500/30 rounded-xl p-4 text-sm text-slate-700 dark:text-slate-200">
+                <div class="bg-orange-50/50 border border-orange-100 dark:border-orange-500/30 p-4 text-sm text-[#0F1A2A] dark:text-white/85">
                     <ul class="list-disc pl-5 space-y-1">
                         <li>Buka aplikasi Postman dan buat Request baru.</li>
-                        <li>Masukkan URL: <code class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded font-mono text-xs text-orange-600 dark:text-orange-300" id="postman-url"></code></li>
-                        <li>Buka tab <strong>Headers</strong>, tambahkan Key <code class="font-bold bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-1 rounded">x-api-key</code> dengan Value API Key Anda.</li>
+                        <li>Masukkan URL: <code class="bg-white dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-1.5 py-0.5 font-mono text-xs text-orange-600 dark:text-orange-300" id="postman-url"></code></li>
+                        <li>Buka tab <strong>Headers</strong>, tambahkan Key <code class="font-bold bg-white dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-1">x-api-key</code> dengan Value API Key Anda.</li>
                         <li>(Opsional) Jika POST/PUT, buka tab <strong>Body</strong> &rarr; pilih <strong>raw</strong> &rarr; pilih <strong>JSON</strong> untuk mengirim data.</li>
                     </ul>
                 </div>
             </div>
 
-            <div class="text-sm text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-4">
+            <div class="text-sm text-[#525252] dark:text-[#8A9BAE] border-t border-[#EDF2F7] dark:border-[#2A4463] pt-4">
                 <i class="fa-solid fa-circle-info"></i> Ganti <code>users</code> pada URL dengan nama tabel Anda sendiri.
             </div>
         </div>
@@ -772,32 +769,32 @@
 
 {{-- Modal API Tester --}}
 <div id="apiTesterModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(15,23,42,0.8)">
-    <div class="bg-white dark:bg-slate-800/60 rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col h-[90vh]">
+    <div class="bg-white dark:bg-[#0F1D30] shadow-none w-full max-w-5xl overflow-hidden flex flex-col h-[90vh]">
         {{-- Header --}}
-        <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/60 shrink-0">
-            <h3 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+        <div class="px-4 py-3 border-b border-[#E3EAF1] dark:border-[#2A4463] flex justify-between items-center bg-[#F4F8FC] dark:bg-[#0F1D30] shrink-0">
+            <h3 class="ui-eyebrow text-[11px] flex items-center gap-2">
                 <i class="fa-solid fa-rocket text-orange-500 dark:text-orange-400"></i> API Tester
             </h3>
-            <button onclick="closeApiTesterModal()" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-slate-200 dark:hover:bg-slate-700">
+            <button onclick="closeApiTesterModal()" class="text-[#8A9BAE] dark:text-white/45 hover:text-rose-500 transition-colors w-7 h-7 flex items-center justify-center hover:bg-[#E3EAF1] dark:hover:bg-[#1A2F49]">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
-        <div class="flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-800/60">
+        <div class="flex-1 flex flex-col overflow-hidden bg-white dark:bg-[#0F1D30]">
             {{-- Top Bar (URL & Send) --}}
-            <div class="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 shrink-0">
+            <div class="p-4 border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30] shrink-0">
                 <div class="flex gap-2">
-                    <div class="flex-1 flex border border-slate-300 dark:border-slate-600 rounded overflow-hidden bg-white dark:bg-slate-800/60 shadow-sm focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500">
-                        <select id="tester-method" class="bg-slate-100 dark:bg-slate-700/50 border-r border-slate-300 dark:border-slate-600 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-200 outline-none w-[100px] cursor-pointer text-emerald-600 dark:text-emerald-300">
+                    <div class="flex-1 flex border border-[#C9D5E2] dark:border-[#2A4463] overflow-hidden bg-white dark:bg-[#0F1D30] shadow-none focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500">
+                        <select id="tester-method" class="bg-[#F0F6FC] dark:bg-[#0F1D30] border-r border-[#C9D5E2] dark:border-[#2A4463] px-3 py-2 text-sm font-bold text-[#0F1A2A] dark:text-white/85 outline-none w-[100px] cursor-pointer text-emerald-600 dark:text-emerald-300">
                             <option value="GET">GET</option>
                             <option value="POST">POST</option>
                             <option value="PUT">PUT</option>
                             <option value="DELETE">DELETE</option>
                         </select>
-                        <span id="tester-base-url" class="px-2 py-2 text-sm text-slate-400 dark:text-slate-500 font-mono border-r border-slate-200 dark:border-slate-700 whitespace-nowrap bg-slate-50 dark:bg-slate-800/60 flex items-center hidden md:flex"></span>
+                        <span id="tester-base-url" class="px-2 py-2 text-sm text-[#8A9BAE] dark:text-white/45 font-mono border-r border-[#E3EAF1] dark:border-[#2A4463] whitespace-nowrap bg-[#F4F8FC] dark:bg-[#0F1D30] flex items-center hidden md:flex"></span>
                         <input type="text" id="tester-path" value="users" class="flex-1 px-3 py-2 text-sm font-mono outline-none w-full" placeholder="Enter request URL">
                     </div>
-                    <button id="tester-send-btn" class="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-2 rounded text-sm transition-colors flex items-center justify-center gap-2">
+                    <button id="tester-send-btn" class="ui-btn bg-orange-600 text-white hover:bg-orange-700">
                         Send
                     </button>
                 </div>
@@ -806,34 +803,34 @@
             {{-- Main split area --}}
             <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
                 {{-- Request Area --}}
-                <div class="flex-1 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700">
+                <div class="flex-1 flex flex-col border-b lg:border-b-0 lg:border-r border-[#E3EAF1] dark:border-[#2A4463]">
                     {{-- Tabs --}}
-                    <div class="flex border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-2 shrink-0">
+                    <div class="flex border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30] px-2 shrink-0">
                         <button class="px-4 py-2 text-xs font-semibold text-orange-600 dark:text-orange-300 border-b-2 border-orange-500">Body</button>
-                        <button class="px-4 py-2 text-xs font-semibold text-slate-400 dark:text-slate-500 hover:text-slate-500 cursor-not-allowed" title="Otomatis disisipkan x-api-key">Headers</button>
+                        <button class="px-4 py-2 text-xs font-semibold text-[#8A9BAE] dark:text-white/45 hover:text-[#525252] cursor-not-allowed" title="Otomatis disisipkan x-api-key">Headers</button>
                     </div>
                     {{-- Body Content --}}
                     <div class="flex-1 p-0 relative">
-                        <textarea id="tester-body" class="absolute inset-0 w-full h-full resize-none p-4 text-sm font-mono outline-none bg-slate-50 dark:bg-slate-800 opacity-50" placeholder='{\n  "kolom": "nilai"\n}' disabled></textarea>
+                        <textarea id="tester-body" class="absolute inset-0 w-full h-full resize-none p-4 text-sm font-mono outline-none bg-[#F4F8FC] dark:bg-[#0F1D30] opacity-50" placeholder='{\n  "kolom": "nilai"\n}' disabled></textarea>
                     </div>
                 </div>
 
                 {{-- Response Area --}}
-                <div class="flex-1 flex flex-col bg-slate-50 dark:bg-slate-800/60">
+                <div class="flex-1 flex flex-col bg-[#F4F8FC] dark:bg-[#0F1D30]">
                     {{-- Tabs & Status --}}
-                    <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700/50 px-2 shrink-0 h-[37px]">
+                    <div class="flex justify-between items-center border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F0F6FC] dark:bg-[#0F1D30] px-2 shrink-0 h-[37px]">
                         <div class="flex h-full">
-                            <button class="px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 border-b-2 border-slate-400">Response</button>
+                            <button class="px-4 py-2 font-mono text-[11px] uppercase tracking-[0.15em] font-semibold text-[#1D5B96] dark:text-[#6BA8DC] border-b-2 border-[#1D5B96] dark:border-[#6BA8DC]">Response</button>
                         </div>
                         <div class="flex items-center gap-3 text-xs pr-2 hidden" id="tester-status-container">
-                            <span class="text-slate-500 dark:text-slate-400">Status: <span id="tester-status" class="font-bold"></span></span>
-                            <span class="text-slate-500 dark:text-slate-400">Time: <span id="tester-time" class="font-bold text-emerald-600 dark:text-emerald-300"></span></span>
-                            <span class="text-slate-500 dark:text-slate-400">Size: <span id="tester-size" class="font-bold text-emerald-600 dark:text-emerald-300"></span></span>
+                            <span class="font-mono text-[10px] uppercase tracking-[0.15em] text-[#525252] dark:text-white/45">Status: <span id="tester-status" class="font-bold"></span></span>
+                            <span class="font-mono text-[10px] uppercase tracking-[0.15em] text-[#525252] dark:text-white/45">Time: <span id="tester-time" class="font-bold text-emerald-600 dark:text-emerald-300"></span></span>
+                            <span class="font-mono text-[10px] uppercase tracking-[0.15em] text-[#525252] dark:text-white/45">Size: <span id="tester-size" class="font-bold text-emerald-600 dark:text-emerald-300"></span></span>
                         </div>
                     </div>
                     {{-- Response Content --}}
-                    <div class="flex-1 p-0 relative bg-[#1e1e1e]">
-                        <div id="tester-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                    <div class="flex-1 p-0 relative bg-[#0A1322]">
+                        <div id="tester-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-[#8A9BAE] dark:text-white/45">
                             <i class="fa-regular fa-paper-plane text-4xl mb-3 opacity-20"></i>
                             <span class="text-sm">Hit Send to get a response</span>
                         </div>
@@ -974,11 +971,11 @@
             title: 'Hapus Database?',
             text: 'Semua tabel dan data akan terhapus permanen dan tidak bisa dikembalikan.',
             showCancelButton: true,
-            confirmButtonColor: '#EF4444',
-            cancelButtonColor: '#6B7280',
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#8A9BAE',
             confirmButtonText: '<i class="fa-solid fa-trash-can mr-1"></i> Ya, Hapus',
             cancelButtonText: 'Batal',
-            customClass: { popup: 'rounded-xl text-sm' }
+            customClass: { popup: 'text-sm' }
         }).then(result => {
             if (result.isConfirmed) {
                 // Gunakan fetch() langsung agar tidak di-intercept oleh Pjax
@@ -998,13 +995,13 @@
                         window.location.reload();
                     } else {
                         response.json().then(function(data) {
-                            Swal.fire({ icon: 'error', title: 'Gagal!', text: data.message || 'Terjadi kesalahan.', customClass: { popup: 'rounded-xl text-sm' } });
+                            Swal.fire({ icon: 'error', title: 'Gagal!', text: data.message || 'Terjadi kesalahan.', customClass: { popup: 'text-sm' } });
                         }).catch(function() {
                             window.location.reload();
                         });
                     }
                 }).catch(function() {
-                    Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Tidak bisa menghubungi server.', customClass: { popup: 'rounded-xl text-sm' } });
+                    Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Tidak bisa menghubungi server.', customClass: { popup: 'text-sm' } });
                 });
             }
         });
@@ -1176,21 +1173,21 @@
         [tabMysql, tabNosql, tabPgsql].forEach(el => el?.classList.add('hidden'));
         [headerBtnMysql, headerBtnNosql, headerBtnPgsql].forEach(el => el?.classList.add('hidden'));
         [btnMysql, btnNosql, btnPgsql].forEach(el => {
-            if(el) el.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition";
+            if(el) el.className = "px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] border-b-2 -mb-px border-transparent text-[#525252] dark:text-white/45 hover:text-[#0F1A2A] dark:hover:text-white transition-colors";
         });
 
         if (tab === 'mysql') {
             tabMysql?.classList.remove('hidden');
             headerBtnMysql?.classList.remove('hidden');
-            if(btnMysql) btnMysql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white dark:bg-slate-800/60 shadow-sm text-slate-800 dark:text-slate-100";
+            if(btnMysql) btnMysql.className = "px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] border-b-2 -mb-px border-[#1D5B96] dark:border-[#6BA8DC] text-[#1D5B96] dark:text-[#6BA8DC] transition-colors";
         } else if (tab === 'nosql') {
             tabNosql?.classList.remove('hidden');
             headerBtnNosql?.classList.remove('hidden');
-            if(btnNosql) btnNosql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white dark:bg-slate-800/60 shadow-sm text-slate-800 dark:text-slate-100";
+            if(btnNosql) btnNosql.className = "px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] border-b-2 -mb-px border-[#1D5B96] dark:border-[#6BA8DC] text-[#1D5B96] dark:text-[#6BA8DC] transition-colors";
         } else if (tab === 'pgsql') {
             tabPgsql?.classList.remove('hidden');
             headerBtnPgsql?.classList.remove('hidden');
-            if(btnPgsql) btnPgsql.className = "px-4 py-2 text-sm font-medium rounded-lg bg-white dark:bg-slate-800/60 shadow-sm text-slate-800 dark:text-slate-100";
+            if(btnPgsql) btnPgsql.className = "px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] border-b-2 -mb-px border-[#1D5B96] dark:border-[#6BA8DC] text-[#1D5B96] dark:text-[#6BA8DC] transition-colors";
         }
     };
 
@@ -1222,20 +1219,20 @@
         var methodColor = document.getElementById('tester-method');
         
         // Postman colors for select
-        methodColor.classList.remove('text-emerald-600', 'dark:text-emerald-300', 'text-orange-500', 'dark:text-orange-400', 'text-blue-500', 'dark:text-blue-400', 'text-rose-600', 'dark:text-rose-300');
+        methodColor.classList.remove('text-emerald-600', 'dark:text-emerald-300', 'text-orange-500', 'dark:text-orange-400', 'text-[#1D5B96]', 'dark:text-[#6BA8DC]', 'text-rose-600', 'dark:text-rose-300');
         if (e.target.value === 'GET') methodColor.classList.add('text-emerald-600', 'dark:text-emerald-300');
         else if (e.target.value === 'POST') methodColor.classList.add('text-orange-500', 'dark:text-orange-400');
-        else if (e.target.value === 'PUT') methodColor.classList.add('text-blue-500', 'dark:text-blue-400');
+        else if (e.target.value === 'PUT') methodColor.classList.add('text-[#1D5B96]', 'dark:text-[#6BA8DC]');
         else if (e.target.value === 'DELETE') methodColor.classList.add('text-rose-600', 'dark:text-rose-300');
         
         if (e.target.value === 'GET' || e.target.value === 'DELETE') {
             bodyInput.disabled = true;
-            bodyInput.classList.add('opacity-50', 'bg-slate-50', 'dark:bg-slate-800');
-            bodyInput.classList.remove('bg-white', 'dark:bg-slate-800');
+            bodyInput.classList.add('opacity-50', 'bg-[#F4F8FC]', 'dark:bg-[#0F1D30]');
+            bodyInput.classList.remove('bg-white', 'dark:bg-[#0F1D30]');
         } else {
             bodyInput.disabled = false;
-            bodyInput.classList.remove('opacity-50', 'bg-slate-50', 'dark:bg-slate-800');
-            bodyInput.classList.add('bg-white', 'dark:bg-slate-800');
+            bodyInput.classList.remove('opacity-50', 'bg-[#F4F8FC]', 'dark:bg-[#0F1D30]');
+            bodyInput.classList.add('bg-white', 'dark:bg-[#0F1D30]');
         }
     });
     if (testerMethodEl) testerMethodEl.dispatchEvent(new Event('change'));
@@ -1264,7 +1261,7 @@
         statusContainer.classList.add('hidden');
         
         responseBox.classList.remove('text-rose-400', 'dark:text-rose-300', 'text-emerald-400', 'dark:text-emerald-300');
-        responseBox.classList.add('text-slate-400', 'dark:text-slate-500');
+        responseBox.classList.add('text-[#8A9BAE]', 'dark:text-white/45');
         responseBox.textContent = "Sending request...";
         
         var startTime = performance.now();
@@ -1304,7 +1301,7 @@
                 statusBadge.classList.add('text-orange-500', 'dark:text-orange-400');
             }
             
-            responseBox.classList.remove('text-slate-400', 'dark:text-slate-500', 'text-emerald-400', 'dark:text-emerald-300', 'text-rose-400', 'dark:text-rose-300');
+            responseBox.classList.remove('text-[#8A9BAE]', 'dark:text-white/45', 'text-emerald-400', 'dark:text-emerald-300', 'text-rose-400', 'dark:text-rose-300');
             if (res.ok) {
                 responseBox.classList.add('text-emerald-400', 'dark:text-emerald-300');
             } else {
@@ -1325,7 +1322,7 @@
             timeBadge.textContent = "-";
             sizeBadge.textContent = "-";
             
-            responseBox.classList.remove('text-slate-400', 'dark:text-slate-500', 'text-emerald-400', 'dark:text-emerald-300');
+            responseBox.classList.remove('text-[#8A9BAE]', 'dark:text-white/45', 'text-emerald-400', 'dark:text-emerald-300');
             responseBox.classList.add('text-rose-400', 'dark:text-rose-300');
             responseBox.textContent = "Failed to fetch: " + error.toString();
         }

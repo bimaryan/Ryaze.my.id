@@ -44,13 +44,13 @@
 
     @forelse ($updates as $update)
         <article @class([
-            'group relative flex gap-3 rounded-xl border border-slate-100 p-4 transition-colors',
+            'group relative flex gap-3 rounded-lg border border-slate-100 p-4 transition-colors',
             'hover:border-indigo-200 hover:bg-slate-50/60',
             'dark:border-slate-700/60 dark:hover:border-indigo-500/30 dark:hover:bg-slate-800/40',
             'not-last:mb-3',
         ])>
             <span @class([
-                'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
+                'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
                 'bg-slate-100 text-slate-500',
                 'dark:bg-slate-700/50 dark:text-slate-400',
             ])>

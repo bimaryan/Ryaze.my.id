@@ -34,6 +34,12 @@ class Article extends Model
         'published_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'reading_time',
+        'seo_title',
+        'seo_description',
+    ];
+
     // ─── Relations ────────────────────────────────────────────
 
     public function user()

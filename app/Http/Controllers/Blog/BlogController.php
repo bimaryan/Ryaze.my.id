@@ -22,6 +22,7 @@ class BlogController extends Controller
             });
         }
 
+        $category = null;
         if ($request->filled('category')) {
             $category = ArticleCategory::where('slug', $request->category)->first();
             if ($category) {
@@ -39,7 +40,7 @@ class BlogController extends Controller
             'articles' => $articles,
             'categories' => $categories,
             'featured' => $featured,
-            'currentCategory' => null,
+            'currentCategory' => $category,
         ]);
     }
 
@@ -77,6 +78,19 @@ class BlogController extends Controller
         return Inertia::render('Blog/Show', [
             'article' => $article,
             'related' => $related,
+            'popular' => Article::published()
+                ->with(['user', 'category'])
+                ->where('id', '!=', $article->id)
+                ->orderByDesc('views_count')
+                ->take(5)
+                ->get(),
+            'categories' => ArticleCategory::withCount(['articles' => function ($q) {
+                $q->published();
+            }])->get()->reject(fn ($c) => $c->articles_count < 1)->sortBy('name')->values(),
+            'latestUpdates' => \App\Models\InfoUpdate::published()
+                ->latest('published_at')
+                ->take(3)
+                ->get(),
         ]);
     }
 

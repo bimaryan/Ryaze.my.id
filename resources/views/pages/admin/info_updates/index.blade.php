@@ -17,7 +17,7 @@
         <div class="mt-6">
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-1 gap-4">
                 {{-- Filter Kategori --}}
-                <div class="flex flex-wrap gap-1 rounded-lg p-0.5">
+                <div class="flex flex-wrap gap-1  p-0.5">
                     <a href="{{ route('superadmin.info_updates.index', request()->except('category')) }}"
                         class="{{ !request()->filled('category') ? 'ui-pill ui-pill-active' : 'ui-pill' }}">
                         Semua
@@ -37,7 +37,7 @@
                     @endif
                     <div class="relative min-w-0 w-full sm:w-64">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <i class="fa-solid fa-search text-slate-400 dark:text-slate-500"></i>
+                            <i class="fa-solid fa-search text-[#94A3B4] dark:text-white/35"></i>
                         </div>
                         <input type="text" name="search" placeholder="Cari info update..." value="{{ request('search') }}"
                             class="ui-field ps-9">
@@ -46,7 +46,7 @@
                         Cari
                     </button>
                     @if (request()->filled('search'))
-                        <a href="{{ route('superadmin.info_updates.index') }}" class="p-2 ms-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                        <a href="{{ route('superadmin.info_updates.index') }}" class="p-2 ms-2 text-sm font-medium text-[#525252] dark:text-white/60 bg-[#F0F6FC] dark:bg-[#0D1828]  hover:bg-[#E8F0F9] dark:hover:bg-[#1D5B96] transition">
                             Reset
                         </a>
                     @endif
@@ -63,18 +63,18 @@
                 </x-slot:head>
 
                 @forelse($updates as $update)
-                    <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
+                    <tr class="hover:bg-[#F4F8FC] dark:bg-[#0D1828] dark:hover:bg-[#0D1828] transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-start gap-3">
-                                <div class="shrink-0 w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center border border-indigo-100 dark:border-indigo-500/30">
-                                    <i class="fa-solid {{ $update->categoryIcon() }} text-indigo-500 dark:text-indigo-400 text-xs"></i>
+                                <div class="shrink-0 w-9 h-9  bg-[#E8F0F9] dark:bg-[#1D5B96]/10 flex items-center justify-center border border-[#C9D5E2] dark:border-[#1D5B96]/40">
+                                    <i class="fa-solid {{ $update->categoryIcon() }} text-[#1D5B96] dark:text-[#6BA8DC] text-xs"></i>
                                 </div>
                                 <div class="flex flex-col min-w-0">
                                     <a href="{{ route('superadmin.info_updates.edit', $update->hashid) }}"
-                                       class="font-medium text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 truncate max-w-[280px]">
+                                       class="font-medium text-[#0F1A2A] dark:text-white hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] truncate max-w-[280px]">
                                         {{ $update->title }}
                                     </a>
-                                    <span class="text-xs text-slate-400 dark:text-slate-500">{{ Str::limit($update->description, 60) }}</span>
+                                    <span class="text-xs text-[#94A3B4] dark:text-white/35">{{ Str::limit($update->description, 60) }}</span>
                                     @if ($update->version)
                                         <span class="ui-badge ui-badge-neutral mt-0.5 inline-block text-[10px] font-mono px-1.5 w-fit">
                                             {{ $update->version }}
@@ -98,10 +98,10 @@
                                 <span class="ui-badge ui-badge-neutral text-[10px]">Nonaktif</span>
                             @elseif ($update->published_at && $update->published_at->isFuture())
                                 <span class="block text-xs font-semibold text-amber-600 dark:text-amber-400">Terjadwal</span>
-                                <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ $update->published_at->format('d M Y, H:i') }}</span>
+                                <span class="text-[11px] text-[#737373] dark:text-white/40">{{ $update->published_at->format('d M Y, H:i') }}</span>
                             @else
-                                <span class="block text-sm text-slate-900 dark:text-slate-100">{{ ($update->published_at ?? $update->created_at)->format('d M Y') }}</span>
-                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                <span class="block text-sm text-[#0F1A2A] dark:text-white">{{ ($update->published_at ?? $update->created_at)->format('d M Y') }}</span>
+                                <span class="text-xs text-[#737373] dark:text-white/40">
                                     {{ $update->author?->name ?? 'Superadmin' }}
                                 </span>
                             @endif
@@ -132,8 +132,8 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
-                            <i class="fa-solid fa-bullhorn text-3xl mb-3 text-slate-300 dark:text-slate-400"></i>
+                        <td colspan="5" class="px-6 py-12 text-center text-[#737373] dark:text-white/40">
+                            <i class="fa-solid fa-bullhorn text-3xl mb-3 text-[#C9D5E2] dark:text-white/25"></i>
                             <p>Belum ada info update.</p>
                         </td>
                     </tr>

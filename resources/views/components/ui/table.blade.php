@@ -1,21 +1,21 @@
-<div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm dark:bg-slate-900 dark:border-slate-800 {{ $attributes->get('class') }}">
+<div class="bg-white border border-[#E3EAF1] overflow-hidden shadow-none dark:bg-[#0F1D30] dark:border-[#2A4463] {{ $attributes->get('class') }}">
     @if (isset($header))
         {{ $header }}
     @endif
     <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left text-slate-600 dark:text-slate-300">
-            <thead class="bg-slate-50/75 text-xs uppercase font-semibold text-slate-500 border-b border-slate-100 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-800">
+        <table class="w-full text-sm text-left text-[#525252] dark:text-white/70">
+            <thead class="bg-[#DDE9F5] text-[11px] font-semibold text-[#0F1A2A] border-b border-[#C2D3E4] dark:bg-[#193050] dark:text-white/60 dark:border-[#2A4463]">
                 <tr>
                     {{ $head }}
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80">
+            <tbody class="divide-y divide-[#E3EAF1] dark:divide-[#2A4463]">
                 {{ $slot }}
             </tbody>
         </table>
     </div>
     @if (isset($pagination))
-        <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800">
+        <div class="px-6 py-4 border-t border-[#E3EAF1] dark:border-[#2A4463]">
             {{ $pagination }}
         </div>
     @endif

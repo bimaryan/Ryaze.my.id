@@ -11,12 +11,6 @@ Route::post('pakasir/webhook', [PaymentCallbackController::class, 'handleWebhook
 Route::any('/v1/db/{hashid}/{path?}', [\App\Http\Controllers\Api\DatabaseApiController::class, 'handle'])
     ->where('path', '.*');
 
-// Tunnel Relay & Response API
-Route::any('/tunnel/relay', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'relay']);
-Route::post('/tunnel/response', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'response']);
-Route::post('/tunnel/heartbeat', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'heartbeat']);
-Route::post('/tunnel/fetch', [\App\Http\Controllers\Hosting\User\TunnelManagerController::class, 'fetchRequest']);
-
 // AI Consultation API
 Route::post('/consultation/chat', [\App\Http\Controllers\Api\ConsultationController::class, 'chat'])->middleware('throttle:20,1');
 Route::get('/consultation/history', [\App\Http\Controllers\Api\ConsultationController::class, 'history']);

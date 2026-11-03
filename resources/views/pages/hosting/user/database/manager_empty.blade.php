@@ -1,7 +1,7 @@
-<div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 text-center flex flex-col items-center justify-center min-h-[50vh]">
-    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800/60 text-slate-300 dark:text-slate-400 rounded-full flex items-center justify-center mb-4">
-        <i class="fa-solid fa-table-cells text-3xl"></i>
+<div class="ui-panel px-6 py-20 text-center flex flex-col items-center justify-center">
+    <div class="ui-icon-box w-10 h-10 mb-4">
+        <i class="fa-solid fa-table-cells text-base"></i>
     </div>
-    <h3 class="text-lg font-bold text-slate-700 dark:text-slate-200 mb-1">Pilih Tabel</h3>
-    <p class="text-slate-500 dark:text-slate-400 text-sm max-w-sm">Pilih tabel di menu sebelah kiri untuk melihat struktur kolom dan isi datanya.</p>
+    <p class="font-mono text-[12px] uppercase tracking-[0.2em] text-[#94A3B4] dark:text-white/30 mb-2">Pilih Tabel</p>
+    <p class="text-xs text-[#525252] dark:text-white/40 max-w-sm leading-relaxed">Pilih tabel di menu sebelah kiri untuk melihat struktur kolom dan isi datanya.</p>
 </div>

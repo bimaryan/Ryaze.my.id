@@ -10,13 +10,13 @@
     });
 </script>
 
-<nav class="fixed top-0 z-50 w-full shadow bg-white dark:text-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800"
+<nav class="fixed top-0 z-50 w-full shadow-sm bg-white dark:text-white dark:bg-[#0F1D30] border-b border-[#E3EAF1] dark:border-[#2A4463]"
     x-data="{ userMenuOpen: false, notifOpen: false }">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start gap-2 rtl:justify-end">
                 <button @click="sidebarOpen = !sidebarOpen" aria-controls="logo-sidebar" type="button"
-                    class="inline-flex items-center p-2 text-sm text-slate-500 rounded-lg sm:hidden hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-slate-600">
+                    class="inline-flex items-center p-2 text-sm text-[#525252] dark:text-white/60 sm:hidden hover:bg-[#F4F8FC] dark:hover:bg-[#12233A] focus:outline-none">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -28,24 +28,24 @@
                 <a href="{{ url('/') }}" class="flex items-center gap-2.5 ms-2 md:ms-0">
                     @php
                         $siteLogo = \App\Models\Setting::where('key', 'site_logo')->value('value');
-                        $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal';
+                        $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'RYAZE';
                     @endphp
                     @if ($siteLogo)
                         <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 object-contain">
                     @else
-                        <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
-                            <i class="fa-solid fa-code text-sm"></i>
+                        <div class="bg-[#12233A] text-white border border-[#1D5B96] w-7 h-7 flex items-center justify-center">
+                            <span class="font-black font-mono text-xs">R</span>
                         </div>
                     @endif
                     <span
-                        class="text-xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400 whitespace-nowrap">{{ $siteName }}</span>
+                        class="text-base font-black tracking-[0.15em] text-[#0F1A2A] dark:text-white uppercase font-mono whitespace-nowrap">{{ $siteName }}</span>
                 </a>
             </div>
 
             <div class="flex items-center gap-3">
                 {{-- Dark mode toggle --}}
                 <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                    class="relative w-8 h-8 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-[#7c3aed] dark:hover:text-white transition-colors focus:outline-none">
+                    class="relative w-8 h-8 flex items-center justify-center text-[#8A9BAE] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors focus:outline-none">
                     {{-- Moon: visible in light mode --}}
                     <i
                         class="fa-solid fa-moon text-sm
@@ -65,17 +65,17 @@
                 {{-- Notifications --}}
                 <div class="relative">
                     <button @click="notifOpen = !notifOpen; userMenuOpen = false" @click.outside="notifOpen = false"
-                        class="relative inline-flex items-center text-sm font-medium text-center text-slate-500 hover:text-indigo-600 focus:outline-none dark:hover:text-white dark:text-slate-400 p-2"
+                        class="relative inline-flex items-center text-sm font-medium text-center text-[#8A9BAE] hover:text-[#1D5B96] focus:outline-none dark:hover:text-[#6BA8DC] dark:text-white/40 p-2"
                         type="button">
-                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 14 20">
                             <path
                                 d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z" />
                         </svg>
                         @if ($unreadNotifications->count() > 0)
                             <div
-                                class="absolute flex items-center justify-center w-5 h-5 bg-red-500 border-2 border-white rounded-full -top-0.5 start-4 dark:border-slate-900">
-                                <p class="text-white text-[10px] font-bold">
+                                class="absolute flex items-center justify-center w-4 h-4 bg-rose-500 border-2 border-white -top-0.5 start-4 dark:border-[#0F1D30]">
+                                <p class="text-white text-[9px] font-bold font-mono">
                                     {{ $unreadNotifications->count() }}
                                 </p>
                             </div>
@@ -83,30 +83,30 @@
                     </button>
 
                     <div x-show="notifOpen" style="display: none;"
-                        class="z-50 absolute right-0 mt-2 w-80 max-w-sm bg-white divide-y divide-slate-100 rounded-lg shadow-lg dark:bg-slate-800 dark:divide-slate-700">
+                        class="z-50 absolute right-0 mt-2 w-80 max-w-sm bg-white divide-y divide-[#E3EAF1] border border-[#E3EAF1] shadow-2xl dark:bg-[#0F1D30] dark:divide-[#2A4463] dark:border-[#2A4463]">
                         <div
-                            class="block px-4 py-2 font-medium text-center text-slate-700 rounded-t-lg bg-slate-50 dark:bg-slate-800 dark:text-white flex justify-between items-center">
+                            class="block px-4 py-2.5 font-mono text-[11px] uppercase tracking-wider font-semibold text-[#0F1A2A] bg-[#F4F8FC] dark:bg-[#12233A] dark:text-white flex justify-between items-center">
                             <span>Notifikasi</span>
                             @if ($unreadNotifications->count() > 0)
                                 <form action="{{ route('notifications.markAllRead') }}" method="POST">
                                     @csrf
                                     <button type="submit"
-                                        class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">
+                                        class="text-[10px] text-[#1D5B96] dark:text-[#6BA8DC] hover:underline font-mono">
                                         Tandai Terbaca
                                     </button>
                                 </form>
                             @endif
                         </div>
-                        <div class="divide-y divide-slate-100 dark:divide-slate-700 max-h-72 overflow-y-auto">
+                        <div class="divide-y divide-[#E3EAF1] dark:divide-[#2A4463] max-h-72 overflow-y-auto">
                             @forelse($unreadNotifications as $notification)
                                 <a href="#"
                                     onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();"
-                                    class="flex px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-700">
+                                    class="flex px-4 py-3 hover:bg-[#F4F8FC] dark:hover:bg-[#12233A]/60 transition-colors">
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-slate-900 dark:text-white truncate">
+                                        <p class="text-xs font-medium text-[#0F1A2A] dark:text-white truncate">
                                             {{ $notification->data['message'] ?? 'Notifikasi baru' }}
                                         </p>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        <p class="font-mono text-[10px] text-[#8A9BAE] dark:text-white/40 mt-1">
                                             <i class="fa-regular fa-clock"></i>
                                             {{ $notification->created_at->diffForHumans() }}
                                         </p>
@@ -116,7 +116,7 @@
                                     action="{{ route('notifications.markRead', $notification->id) }}" method="POST"
                                     class="hidden">@csrf</form>
                             @empty
-                                <p class="px-4 py-3 text-sm text-center text-slate-500 dark:text-slate-400">Belum ada
+                                <p class="px-4 py-4 text-xs font-mono text-center text-[#8A9BAE] dark:text-white/40">Belum ada
                                     notifikasi baru.</p>
                             @endforelse
                         </div>
@@ -126,38 +126,38 @@
                 {{-- User Profile --}}
                 <div class="flex items-center gap-3 ms-2 relative">
                     <div class="hidden md:block text-right">
-                        <p class="text-sm font-medium text-slate-900 dark:text-white">
+                        <p class="text-xs font-bold text-[#0F1A2A] dark:text-white">
                             {{ Auth::user()->name ?? 'Guest' }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                        <p class="font-mono text-[10px] text-[#8A9BAE] dark:text-white/40 uppercase tracking-wider">
                             {{ Auth::check() ? ucwords(str_replace('_', ' ', Auth::user()->role)) : '' }}
                         </p>
                     </div>
                     <div>
                         <button @click="userMenuOpen = !userMenuOpen; notifOpen = false"
                             @click.outside="userMenuOpen = false" type="button"
-                            class="flex text-sm bg-indigo-600 text-white rounded-full focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-600 items-center justify-center w-8 h-8 font-bold">
+                            class="flex text-xs bg-[#12233A] text-white border border-[#1D5B96] dark:bg-[#1D5B96] dark:border-[#2568A8] items-center justify-center w-8 h-8 font-mono font-bold">
                             {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                         </button>
                     </div>
 
                     <div x-show="userMenuOpen" style="display: none;"
-                        class="z-50 absolute right-0 top-10 mt-2 w-48 text-base list-none bg-white divide-y divide-slate-100 rounded-lg shadow-lg dark:bg-slate-700 dark:divide-slate-600">
+                        class="z-50 absolute right-0 top-10 mt-2 w-48 text-base list-none bg-white divide-y divide-[#E3EAF1] border border-[#E3EAF1] shadow-2xl dark:bg-[#0F1D30] dark:divide-[#2A4463] dark:border-[#2A4463]">
                         <div class="px-4 py-3 md:hidden">
-                            <p class="text-sm text-slate-900 dark:text-white">{{ Auth::user()->name ?? 'Guest' }}</p>
-                            <p class="text-sm font-medium text-slate-500 truncate dark:text-slate-400">
+                            <p class="text-xs font-bold text-[#0F1A2A] dark:text-white">{{ Auth::user()->name ?? 'Guest' }}</p>
+                            <p class="text-xs font-mono text-[#8A9BAE] truncate dark:text-white/40">
                                 {{ Auth::user()->email ?? '' }}</p>
                         </div>
                         <ul class="py-1" role="none">
                             <li>
                                 <a href="{{ route('profile.edit') }}"
-                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-white">Profil
+                                    class="block px-4 py-2 text-xs font-mono uppercase tracking-wider text-[#525252] hover:bg-[#F4F8FC] hover:text-[#1D5B96] dark:text-white/70 dark:hover:bg-[#12233A] dark:hover:text-[#6BA8DC]">Profil
                                     Saya</a>
                             </li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit"
-                                        class="w-full text-left block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-white text-red-600 dark:text-red-400">
+                                        class="w-full text-left block px-4 py-2 text-xs font-mono uppercase tracking-wider text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/20">
                                         Keluar <i class="fa-solid fa-right-from-bracket ms-1"></i>
                                     </button>
                                 </form>
@@ -173,7 +173,7 @@
 {{-- SIDEBAR --}}
 <aside id="logo-sidebar"
     :class="`${sidebarOpen && !desktop ? 'translate-x-0 shadow-2xl' : (desktop ? 'translate-x-0' : '-translate-x-full')} ${$store.sidebar.collapsed ? 'sm:w-20 w-64' : 'w-64'}`"
-    class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-all duration-200 ease-in-out bg-white border-r border-slate-200 dark:bg-slate-900 dark:border-slate-800 flex flex-col"
+    class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-all duration-200 ease-in-out bg-white border-r border-[#E3EAF1] dark:bg-[#0F1D30] dark:border-[#2A4463] flex flex-col"
     aria-label="Sidebar">
 
     @php
@@ -197,20 +197,32 @@
         $isUserJoki = in_array($role, ['superadmin', 'user_joki', 'admin_joki']);
         $isUser = in_array($role, ['superadmin', 'user_joki', 'user_hosting', 'admin_hosting', 'admin_joki']);
 
-        // Structured helper for clean, consistent rendering
+        // Jumlah konfirmasi QRIS yang menunggu verifikasi, dipakai sebagai badge sidebar.
+        $pendingQrisJoki = $pendingQrisHosting = 0;
+        if ($isAdmin) {
+            $pendingQris = \App\Models\PaymentConfirmation::pending()
+                ->selectRaw('order_type, count(*) c')
+                ->groupBy('order_type')
+                ->pluck('c', 'order_type');
+            $pendingQrisJoki = (int) $pendingQris->only(\App\Models\PaymentConfirmation::JOKI_TYPES)->sum();
+            $pendingQrisHosting = (int) $pendingQris->only(\App\Models\PaymentConfirmation::HOSTING_TYPES)->sum();
+        }
+        $pendingQrisAll = $pendingQrisJoki + $pendingQrisHosting;
+
+        // Structured helper for clean, consistent rendering matching Home.jsx
         $item = function ($url, $label, $icon, $active, $badge = null) {
             $activeClass = $active
-                ? 'bg-indigo-50/90 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-semibold'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white';
+                ? 'bg-[#12233A] text-white dark:bg-[#1D5B96] dark:text-white font-semibold'
+                : 'text-[#525252] dark:text-white/60 hover:bg-[#F4F8FC] dark:hover:bg-[#12233A]/60 hover:text-[#0F1A2A] dark:hover:text-white';
             $iconActive = $active
-                ? 'text-indigo-600 dark:text-indigo-400'
-                : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300';
+                ? 'text-white dark:text-white'
+                : 'text-[#8A9BAE] group-hover:text-[#0F1A2A] dark:text-white/40 dark:group-hover:text-white';
             $ariaCurrent = $active ? 'aria-current="page"' : '';
             $indicator = $active
-                ? '<span class="absolute left-0 top-1.5 bottom-1.5 w-1 bg-indigo-600 dark:bg-indigo-500 rounded-r" :class="$store.sidebar.collapsed ? \'hidden\' : \'\'"></span>'
+                ? '<span class="absolute left-0 top-1 bottom-1 w-1 bg-[#1D5B96] dark:bg-[#6BA8DC]" :class="$store.sidebar.collapsed ? \'hidden\' : \'\'"></span>'
                 : '';
             $badgeHtml = $badge
-                ? '<span class="ms-auto inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-800/60" x-show="!$store.sidebar.collapsed" x-cloak>' . e($badge) . '</span>'
+                ? '<span class="ms-auto inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-wider font-semibold bg-[#1D5B96]/10 text-[#1D5B96] border border-[#1D5B96]/30 dark:bg-[#6BA8DC]/20 dark:text-[#6BA8DC] dark:border-[#6BA8DC]/40" x-show="!$store.sidebar.collapsed" x-cloak>' . e($badge) . '</span>'
                 : '';
 
             return '
@@ -218,11 +230,11 @@
                 <a href="' . e($url) . '"
                    ' . $ariaCurrent . '
                    title="' . e($label) . '"
-                   class="group relative flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors duration-150 ' . $activeClass . '"
+                   class="group relative flex items-center gap-3 px-3 py-2 text-[12.5px] font-medium transition-colors duration-150 ' . $activeClass . '"
                    :class="$store.sidebar.collapsed ? \'justify-center px-2\' : \'\'">
                     ' . $indicator . '
                     <span class="w-5 h-5 flex items-center justify-center shrink-0 ' . $iconActive . '">
-                        <i class="' . e($icon) . ' text-sm"></i>
+                        <i class="' . e($icon) . ' text-xs"></i>
                     </span>
                     <span class="truncate leading-none" x-show="!$store.sidebar.collapsed" x-cloak>' . e($label) . '</span>
                     ' . $badgeHtml . '
@@ -233,13 +245,13 @@
         $section = function ($title) {
             return '
             <li class="pt-4 pb-1 px-3 select-none" x-show="!$store.sidebar.collapsed" x-cloak>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">' . e($title) . '</span>
+                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#8A9BAE] dark:text-white/35">' . e($title) . '</span>
             </li>
-            <li class="my-2 border-t border-slate-100 dark:border-slate-800/80 mx-2" x-show="$store.sidebar.collapsed" x-cloak></li>';
+            <li class="my-2 border-t border-[#E3EAF1] dark:border-[#2A4463] mx-2" x-show="$store.sidebar.collapsed" x-cloak></li>';
         };
     @endphp
 
-    <div id="sidebar-scroll" class="ui-sidebar-scroll min-h-0 bg-white dark:bg-slate-900">
+    <div id="sidebar-scroll" class="ui-sidebar-scroll min-h-0 bg-white dark:bg-[#0F1D30]">
         <ul class="space-y-0.5">
             {{-- Dashboard --}}
             {!! $item($dashboardUrl, 'Dashboard', 'fa-solid fa-table-columns', request()->routeIs('*.dashboard')) !!}
@@ -264,6 +276,7 @@
                 {!! $item(route('superadmin.backup.index'), 'Sistem Backup', 'fa-solid fa-box-archive', request()->routeIs('superadmin.backup*')) !!}
                 {!! $item(route('superadmin.withdrawals.index'), 'Kelola Penarikan', 'fa-solid fa-money-bill-transfer', request()->routeIs('superadmin.withdrawals*')) !!}
                 {!! $item(route('superadmin.finance'), 'Laporan Keuangan', 'fa-solid fa-chart-pie', request()->routeIs('superadmin.finance')) !!}
+                {!! $item(route('superadmin.confirmations'), 'Konfirmasi Pembayaran QRIS', 'fa-solid fa-qrcode', request()->routeIs('superadmin.confirmations'), $pendingQrisAll ?: null) !!}
             @endif
 
             {{-- ── MANAJEMEN JOKI ──────────────────────────────────────────────── --}}
@@ -272,6 +285,9 @@
                 {!! $item(route('admin_joki.orders'), 'Kelola Pesanan Joki', 'fa-solid fa-code-branch', request()->routeIs('admin_joki.orders*')) !!}
                 {!! $item(route('admin_joki.services.index'), 'Manajemen Layanan', 'fa-solid fa-list-check', request()->routeIs('admin_joki.services*')) !!}
                 {!! $item(route('admin_joki.finance'), 'Keuangan Joki', 'fa-solid fa-wallet', request()->routeIs('admin_joki.finance')) !!}
+                @if ($role === 'admin_joki')
+                    {!! $item(route('admin_joki.confirmations'), 'Konfirmasi QRIS Joki', 'fa-solid fa-qrcode', request()->routeIs('admin_joki.confirmations'), $pendingQrisJoki ?: null) !!}
+                @endif
             @endif
 
             {{-- ── MANAJEMEN HOSTING ───────────────────────────────────────────── --}}
@@ -283,6 +299,9 @@
                 {!! $item(route('admin_hosting.databases'), 'Semua Database', 'fa-solid fa-database', request()->routeIs('admin_hosting.databases')) !!}
                 {!! $item(route('admin_hosting.storage'), 'Limit Penyimpanan', 'fa-solid fa-hard-drive', request()->routeIs('admin_hosting.storage')) !!}
                 {!! $item(route('admin_hosting.billing'), 'Kelola Tagihan', 'fa-solid fa-file-invoice-dollar', request()->routeIs('admin_hosting.billing')) !!}
+                @if ($role === 'admin_hosting')
+                    {!! $item(route('admin_hosting.confirmations'), 'Konfirmasi QRIS Hosting', 'fa-solid fa-qrcode', request()->routeIs('admin_hosting.confirmations'), $pendingQrisHosting ?: null) !!}
+                @endif
                 {!! $item(route('admin_hosting.vouchers.index'), 'Kelola Voucher', 'fa-solid fa-ticket', request()->routeIs('admin_hosting.vouchers*')) !!}
                 {!! $item(route('admin_hosting.tickets.index'), 'Kelola Tiket', 'fa-solid fa-headset', request()->routeIs('admin_hosting.tickets*')) !!}
             @endif
@@ -300,9 +319,6 @@
             @if ($isUserHosting)
                 {!! $section('Hosting') !!}
                 {!! $item(route('user_hosting.create'), 'Deploy Aplikasi', 'fa-solid fa-rocket', request()->routeIs('user_hosting.create')) !!}
-                {!! $item(route('user_hosting.marketplace'), 'App Marketplace', 'fa-solid fa-store', request()->routeIs('user_hosting.marketplace')) !!}
-                {!! $item(route('user_hosting.tunnels.index'), 'Local Tunnels', 'fa-solid fa-network-wired', request()->routeIs('user_hosting.tunnels*'), 'Beta') !!}
-                {!! $item(route('user_hosting.templates'), 'Galeri Template', 'fa-solid fa-layer-group', request()->routeIs('user_hosting.templates')) !!}
                 {!! $item(route('user_hosting.domains.index'), 'Domains', 'fa-solid fa-globe', request()->routeIs('user_hosting.domains.*')) !!}
                 {!! $item(route('user_hosting.projects'), 'Proyek Aktif', 'fa-solid fa-terminal', request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) !!}
                 {!! $item(route('user_hosting.databases'), 'Database', 'fa-solid fa-database', request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) !!}
@@ -320,21 +336,21 @@
     </div>
 
     {{-- Pinned Footer: Status, Version & Collapse Toggle --}}
-    <div class="shrink-0 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 px-3 py-2.5 flex items-center transition-all duration-200"
+    <div class="shrink-0 border-t border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0A1322] px-3 py-2.5 flex items-center transition-all duration-200"
         :class="$store.sidebar.collapsed ? 'justify-center' : 'justify-between'">
 
         {{-- App Info & Version --}}
         <div class="flex items-center gap-2 min-w-0" x-show="!$store.sidebar.collapsed" x-cloak>
             <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" title="Online"></div>
             <div class="flex items-center gap-1.5 truncate">
-                <span class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 truncate">Ryaze Portal</span>
-                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60 shrink-0">{{ str_starts_with($appVersion, 'v') ? $appVersion : 'v' . $appVersion }}</span>
+                <span class="text-[11px] font-mono font-semibold text-[#0F1A2A] dark:text-white truncate">RYAZE</span>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 bg-white dark:bg-[#0F1D30] text-[#525252] dark:text-white/40 border border-[#E3EAF1] dark:border-[#2A4463] shrink-0">{{ str_starts_with($appVersion, 'v') ? $appVersion : 'v' . $appVersion }}</span>
             </div>
         </div>
 
         {{-- Desktop Collapse Toggle Button --}}
         <button @click="$store.sidebar.toggle()" type="button"
-            class="hidden sm:flex w-7 h-7 items-center justify-center rounded-md text-slate-400 hover:text-indigo-600 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+            class="hidden sm:flex w-7 h-7 items-center justify-center text-[#8A9BAE] hover:text-[#1D5B96] hover:bg-[#E8F0F9] dark:text-white/40 dark:hover:bg-[#12233A] dark:hover:text-white transition-colors focus:outline-none"
             :aria-label="$store.sidebar.collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'"
             :title="$store.sidebar.collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'">
             <i class="fa-solid fa-angles-left text-xs transition-transform duration-200"
@@ -355,12 +371,12 @@
         }
     }
 
-    /* Active link hover: tetap beraksen indigo */
+    /* Active link hover: tetap beraksen steel blue / navy */
     #logo-sidebar a[aria-current="page"]:hover {
-        background-color: rgb(79 70 229 / 0.12);
+        background-color: #12233A;
     }
     .dark #logo-sidebar a[aria-current="page"]:hover {
-        background-color: rgb(99 102 241 / 0.18);
+        background-color: #1D5B96;
     }
 
     /* Sleek, minimal custom scrollbar for sidebar */

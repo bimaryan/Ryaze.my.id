@@ -479,7 +479,7 @@
                     </div>
 
                     <a href="{{ route('user_hosting.create') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.marketplace')) }} ">
+                        class="{{ $navLink(request()->routeIs('user_hosting.create')) }} ">
                         <span
                             class="flex-shrink-0 w-7 h-7 flex items-center justify-center text-white text-sm group-hover:animate-bounce">
                             <i class="fa-solid fa-rocket"></i>
@@ -488,31 +488,11 @@
                         <i class="fa-solid fa-plus ms-auto text-white/70 text-xs"></i>
                     </a>
 
-                    <a href="{{ route('user_hosting.marketplace') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.marketplace')) }} mt-1">
-                        <span class="{{ $iconBox(request()->routeIs('user_hosting.marketplace')) }}"><i
-                                class="fa-solid fa-store"></i></span>
-                        <span>App Marketplace</span>
-                    </a>
                     <a href="{{ route('user_hosting.apk.index') }}"
                         class="{{ $navLink(request()->routeIs('user_hosting.apk*')) }}">
                         <span class="{{ $iconBox(request()->routeIs('user_hosting.apk*')) }}"><i
                                 class="fa-brands fa-android"></i></span>
                         <span>Web to APK</span>
-                    </a>
-                    <a href="{{ route('user_hosting.tunnels.index') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.tunnels*')) }}">
-                        <span class="{{ $iconBox(request()->routeIs('user_hosting.tunnels*')) }}"><i
-                                class="fa-solid fa-network-wired"></i></span>
-                        <span>Local Tunnels</span>
-                        <span
-                            class="ms-auto px-2 py-0.5 text-[9px] font-bold bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 rounded-md">Beta</span>
-                    </a>
-                    <a href="{{ route('user_hosting.templates') }}"
-                        class="{{ $navLink(request()->routeIs('user_hosting.templates')) }}">
-                        <span class="{{ $iconBox(request()->routeIs('user_hosting.templates')) }}"><i
-                                class="fa-solid fa-layer-group"></i></span>
-                        <span>Galeri Template</span>
                     </a>
                     <a href="{{ route('user_hosting.projects') }}"
                         class="{{ $navLink(request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) }}">

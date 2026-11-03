@@ -56,24 +56,24 @@
 @section('content')
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         <div class="mb-8">
-            <span class="text-[11px] font-bold text-[#7c3aed] dark:text-[#a78bfa] uppercase tracking-[0.2em] mb-3 block">Domain Tools</span>
-            <h1 class="text-3xl sm:text-4xl font-black text-[#7c3aed] dark:text-white tracking-tight">WHOIS Domain Lookup</h1>
-            <p class="text-[#666] dark:text-white/60 text-[15px] mt-2 max-w-2xl leading-relaxed">
+            <p class="ui-eyebrow mb-3">Domain Tools</p>
+            <h1 class="ui-display text-3xl sm:text-4xl leading-[0.98] tracking-[-0.04em]">WHOIS Domain Lookup</h1>
+            <p class="text-[#525252] dark:text-white/60 text-[15px] mt-3 max-w-2xl leading-relaxed">
                 Cek informasi registrasi &amp; DNS suatu domain (registrar, tanggal kedaluwarsa, nameserver, status, dan record DNS).
             </p>
         </div>
 
-        <div class="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] p-6 sm:p-8" x-data="whoisLookup()">
+        <div class="ui-panel p-6 sm:p-8" x-data="whoisLookup()">
             {{-- Form Pencarian --}}
             <form id="whois-form" class="max-w-3xl" @submit.prevent="search()">
                 @csrf
-                <label for="domain-input" class="block text-[13px] font-semibold text-[#444] dark:text-white/80 mb-3">
+                <label for="domain-input" class="ui-eyebrow-muted block mb-3">
                     Nama Domain <span class="text-rose-500 dark:text-rose-400">*</span>
                 </label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                            <i class="fa-solid fa-globe text-[#999] dark:text-white/40"></i>
+                            <i class="fa-solid fa-globe text-[#8A9BAE] dark:text-white/40"></i>
                         </div>
                         <input
                             type="text"
@@ -83,12 +83,12 @@
                             autocomplete="off"
                             spellcheck="false"
                             required
-                            class="w-full pl-11 pr-4 py-3 border border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14] text-[#444] dark:text-white/80 placeholder-[#bbb] dark:placeholder-white/30 focus:outline-none focus:border-[#7c3aed] transition font-mono text-sm">
+                            class="w-full pl-11 pr-4 py-3 border border-[#E3EAF1] dark:border-[#2A4463] bg-white dark:bg-[#0A1322] text-[#525252] dark:text-white/80 placeholder-[#94A3B4] dark:placeholder-white/30 focus:outline-none focus:border-[#1D5B96] transition font-mono text-sm">
                     </div>
                     <button
                         type="submit"
                         id="whois-submit"
-                        class="inline-flex justify-center items-center gap-2 bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-semibold px-6 py-3 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="ui-btn ui-btn-primary whitespace-nowrap">
                         <i class="fa-solid fa-magnifying-glass text-sm"></i>
                         <span id="whois-submit-text">Cek Domain</span>
                     </button>
@@ -100,16 +100,16 @@
                 {{-- Loading State --}}
                 <div x-show="loading" class="flex flex-col items-center justify-center py-16 gap-4">
                     <div class="relative">
-                        <div class="w-16 h-16 border-4 border-[#f5f0ff] dark:border-[#7c3aed]/30 rounded-full"></div>
-                        <div class="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-[#7c3aed] rounded-full animate-spin"></div>
+                        <div class="w-16 h-16 border-4 border-[#E8F0F9] dark:border-[#1D5B96]/30"></div>
+                        <div class="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-[#1D5B96] animate-spin"></div>
                     </div>
-                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Mengambil data domain...</p>
-                    <p class="text-xs text-slate-400 dark:text-slate-600" x-text="loadingDomain"></p>
+                    <p class="ui-eyebrow-muted">Mengambil data domain...</p>
+                    <p class="text-xs text-[#8A9BAE] dark:text-white/45" x-text="loadingDomain"></p>
                 </div>
 
                 {{-- Error State --}}
-                <div x-show="error" class="bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/40 rounded-xl p-5 flex items-start gap-4">
-                    <div class="w-10 h-10 bg-rose-100 dark:bg-rose-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div x-show="error" class="bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/40 p-5 flex items-start gap-4">
+                    <div class="w-10 h-10 bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center flex-shrink-0">
                         <i class="fa-solid fa-triangle-exclamation text-rose-600 dark:text-rose-400"></i>
                     </div>
                     <div>
@@ -119,8 +119,8 @@
                 </div>
 
                 {{-- Domain Available (belum terdaftar) --}}
-                <div x-show="!loading && !error && result && !result.registered" class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 rounded-xl p-6 flex items-start gap-4">
-                    <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div x-show="!loading && !error && result && !result.registered" class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 p-6 flex items-start gap-4">
+                    <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
                         <i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400 text-xl"></i>
                     </div>
                     <div>
@@ -133,60 +133,60 @@
                 {{-- Hasil Terdaftar --}}
                 <div x-show="!loading && !error && result && result.registered" class="space-y-6">
                     {{-- Header Domain --}}
-                    <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-700">
+                    <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-[#EDF2F7] dark:border-[#2A4463]">
                         <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 bg-[#f5f0ff] dark:bg-[#7c3aed]/20 flex items-center justify-center">
-                                <i class="fa-solid fa-globe text-[#7c3aed] dark:text-[#a78bfa] text-lg"></i>
+                            <div class="ui-icon-box w-11 h-11">
+                                <i class="fa-solid fa-globe text-[#1D5B96] dark:text-[#6BA8DC] text-lg"></i>
                             </div>
                             <div>
-                                <p class="font-mono font-bold text-lg text-slate-800 dark:text-slate-100" x-text="result?.domain"></p>
-                                <p class="text-xs text-slate-400 dark:text-slate-600">Domain terdaftar</p>
+                                <p class="font-mono font-bold text-lg text-[#0F1A2A] dark:text-white" x-text="result?.domain"></p>
+                                <p class="ui-eyebrow-muted">Domain terdaftar</p>
                             </div>
                         </div>
                         <button
                             type="button"
                             @click="copyRaw()"
-                            class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-[#7c3aed] dark:hover:text-[#a78bfa] bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#7c3aed]/50 dark:hover:border-[#7c3aed]/50 px-3 py-2 transition-colors">
+                            class="ui-btn ui-btn-secondary">
                             <i class="fa-regular fa-copy"></i> Salin Ringkasan
                         </button>
                     </div>
 
                     {{-- Grid Info Utama --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60">
-                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">Registrar</p>
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="result?.whois?.registrar || 'Tidak tersedia'"></p>
+                    <div class="ui-grid grid-cols-1 md:grid-cols-2">
+                        <div class="ui-cell px-5 py-4">
+                            <p class="ui-eyebrow-muted mb-1.5">Registrar</p>
+                            <p class="text-sm font-semibold text-[#0F1A2A] dark:text-white" x-text="result?.whois?.registrar || 'Tidak tersedia'"></p>
                         </div>
-                        <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60">
-                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">DNSSEC</p>
+                        <div class="ui-cell px-5 py-4">
+                            <p class="ui-eyebrow-muted mb-1.5">DNSSEC</p>
                             <p class="text-sm font-semibold flex items-center gap-1.5"
-                               :class="result?.whois?.dnssec?.enabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'">
+                               :class="result?.whois?.dnssec?.enabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#525252] dark:text-[#8A9BAE]'">
                                 <i class="fa-solid" :class="result?.whois?.dnssec?.enabled ? 'fa-shield-halved' : 'fa-shield'"></i>
                                 <span x-text="result?.whois?.dnssec?.enabled ? 'Aktif (signed)' : 'Tidak aktif'"></span>
                             </p>
                         </div>
-                        <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60">
-                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">Tanggal Registrasi</p>
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="formatDate(result?.whois?.registered_at)"></p>
+                        <div class="ui-cell px-5 py-4">
+                            <p class="ui-eyebrow-muted mb-1.5">Tanggal Registrasi</p>
+                            <p class="text-sm font-semibold text-[#0F1A2A] dark:text-white" x-text="formatDate(result?.whois?.registered_at)"></p>
                         </div>
-                        <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60">
-                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">Tanggal Kedaluwarsa</p>
+                        <div class="ui-cell px-5 py-4">
+                            <p class="ui-eyebrow-muted mb-1.5">Tanggal Kedaluwarsa</p>
                             <p class="text-sm font-semibold flex items-center gap-1.5" x-text="formatDate(result?.whois?.expires_at)"></p>
                         </div>
-                        <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-700/60 md:col-span-2">
-                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-1.5">Update Terakhir</p>
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="formatDate(result?.whois?.updated_at)"></p>
+                        <div class="ui-cell px-5 py-4 md:col-span-2">
+                            <p class="ui-eyebrow-muted mb-1.5">Update Terakhir</p>
+                            <p class="text-sm font-semibold text-[#0F1A2A] dark:text-white" x-text="formatDate(result?.whois?.updated_at)"></p>
                         </div>
                     </div>
 
                     {{-- Status --}}
                     <div x-show="result?.whois?.status && result.whois.status.length > 0">
-                        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-flag text-slate-400 dark:text-slate-600 text-xs"></i> Status Domain
+                        <h3 class="ui-eyebrow-muted mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-flag"></i> STATUS DOMAIN
                         </h3>
                         <div class="flex flex-wrap gap-2">
                             <template x-for="status in (result?.whois?.status || [])" :key="status">
-                                <span class="inline-flex items-center text-[11px] font-medium px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 font-mono">
+                                <span class="inline-flex items-center text-[11px] font-medium px-2.5 py-1 bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 font-mono">
                                     <span x-text="status"></span>
                                 </span>
                             </template>
@@ -195,14 +195,14 @@
 
                     {{-- Nameservers --}}
                     <div x-show="result?.whois?.nameservers && result.whois.nameservers.length > 0">
-                        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-server text-slate-400 dark:text-slate-600 text-xs"></i> Nameserver
+                        <h3 class="ui-eyebrow-muted mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-server"></i> NAMESERVER
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                             <template x-for="ns in (result?.whois?.nameservers || [])" :key="ns">
-                                <div class="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60 rounded-lg px-3.5 py-2.5">
-                                    <i class="fa-solid fa-dns text-slate-300 dark:text-slate-600 text-xs"></i>
-                                    <span class="font-mono text-xs text-slate-700 dark:text-slate-300" x-text="ns"></span>
+                                <div class="flex items-center gap-2.5 ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] px-3.5 py-2.5">
+                                    <i class="fa-solid fa-dns text-[#C9D5E2] dark:text-white/45 text-xs"></i>
+                                    <span class="font-mono text-xs text-[#0F1A2A] dark:text-white/70" x-text="ns"></span>
                                 </div>
                             </template>
                         </div>
@@ -210,14 +210,14 @@
 
                     {{-- Abuse Contact --}}
                     <div x-show="result?.whois?.abuse && (result.whois.abuse.email || result.whois.abuse.phone)">
-                        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-circle-exclamation text-slate-400 dark:text-slate-600 text-xs"></i> Kontak Abuse Registrar
+                        <h3 class="ui-eyebrow-muted mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-exclamation"></i> KONTAK ABUSE REGISTRAR
                         </h3>
                         <div class="flex flex-wrap gap-3">
                             <template x-for="(value, key) in { email: result?.whois?.abuse?.email, phone: result?.whois?.abuse?.phone }" :key="key">
-                                <div x-show="value" class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60 rounded-lg px-3.5 py-2.5">
-                                    <i class="fa-solid text-slate-300 dark:text-slate-600 text-xs" :class="key === 'email' ? 'fa-envelope' : 'fa-phone'"></i>
-                                    <span class="text-xs text-slate-700 dark:text-slate-300 font-mono" x-text="value"></span>
+                                <div x-show="value" class="inline-flex items-center gap-2 ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] px-3.5 py-2.5">
+                                    <i class="fa-solid text-[#C9D5E2] dark:text-white/45 text-xs" :class="key === 'email' ? 'fa-envelope' : 'fa-phone'"></i>
+                                    <span class="text-xs text-[#0F1A2A] dark:text-white/70 font-mono" x-text="value"></span>
                                 </div>
                             </template>
                         </div>
@@ -225,25 +225,25 @@
 
                     {{-- DNS Records --}}
                     <div>
-                        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-network-wired text-slate-400 dark:text-slate-600 text-xs"></i> Record DNS Publik
+                        <h3 class="ui-eyebrow-muted mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-network-wired"></i> RECORD DNS PUBLIK
                         </h3>
 
-                        <div x-show="!hasDnsRecords()" class="text-xs text-slate-400 dark:text-slate-600 italic bg-slate-50 dark:bg-slate-900/30 rounded-lg px-4 py-3 border border-dashed border-slate-200 dark:border-slate-700/60">
+                        <div x-show="!hasDnsRecords()" class="text-xs text-[#8A9BAE] dark:text-white/45 italic bg-[#F4F8FC] dark:bg-[#12233A] px-4 py-3 border border-dashed border-[#E3EAF1] dark:border-[#2A4463]/60">
                             Tidak ada record DNS yang ditemukan oleh resolver (mungkin domain belum di-delegasikan atau resolver gagal).
                         </div>
 
                         <div class="space-y-4" x-show="hasDnsRecords()">
                             <template x-for="(records, type) in (result?.dns || {})" :key="type">
                                 <div x-show="records && records.length > 0">
-                                    <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-600 mb-2">
+                                    <p class="text-[11px] font-bold uppercase tracking-wide text-[#8A9BAE] dark:text-white/45 mb-2">
                                         <span x-text="type"></span> <span x-text="`(${records?.length})`"></span>
                                     </p>
-                                    <div class="flex flex-col gap-1.5">
+                                    <div class="flex flex-col gap-1">
                                         <template x-for="(record, idx) in (records || [])" :key="type + '-' + idx">
-                                            <div class="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60 rounded-lg px-3.5 py-2">
-                                                <span class="font-mono text-xs text-slate-700 dark:text-slate-300 break-all" x-text="record.ip || record.host || record.value"></span>
-                                                <span x-show="record.priority !== undefined" class="ml-auto text-[10px] font-mono text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                                            <div class="flex items-center gap-2.5 ui-cell-alt border border-[#EDF2F7] dark:border-[#2A4463] px-3.5 py-2">
+                                                <span class="font-mono text-xs text-[#0F1A2A] dark:text-white/70 break-all" x-text="record.ip || record.host || record.value"></span>
+                                                <span x-show="record.priority !== undefined" class="ml-auto text-[10px] font-mono text-[#8A9BAE] dark:text-white/45 bg-[#F0F6FC] dark:bg-[#0F1D30] px-1.5 py-0.5">
                                                     prio <span x-text="record.priority"></span>
                                                 </span>
                                             </div>
@@ -257,11 +257,11 @@
 
                 {{-- Empty State (sebelum pencarian pertama) --}}
                 <div x-show="!loading && !error && !result" class="flex flex-col items-center justify-center py-16 text-center">
-                    <div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-5">
-                        <i class="fa-solid fa-magnifying-glass text-3xl text-slate-300 dark:text-slate-600"></i>
+                    <div class="w-20 h-20 bg-[#F0F6FC] dark:bg-[#0F1D30] flex items-center justify-center mb-5">
+                        <i class="fa-solid fa-magnifying-glass text-3xl text-[#C9D5E2] dark:text-white/45"></i>
                     </div>
-                    <p class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Belum ada domain yang dicek</p>
-                    <p class="text-xs text-slate-400 dark:text-slate-600 max-w-sm leading-relaxed">Masukkan nama domain pada kolom di atas, lalu klik <strong>Cek Domain</strong> untuk melihat detail registrasi & DNS-nya.</p>
+                    <p class="text-sm font-semibold text-[#525252] dark:text-white/70 mb-1.5">Belum ada domain yang dicek</p>
+                    <p class="text-xs text-[#8A9BAE] dark:text-white/45 max-w-sm leading-relaxed">Masukkan nama domain pada kolom di atas, lalu klik <strong>Cek Domain</strong> untuk melihat detail registrasi & DNS-nya.</p>
                 </div>
             </div>
         </div>

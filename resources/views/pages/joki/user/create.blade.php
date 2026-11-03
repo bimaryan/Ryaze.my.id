@@ -2,12 +2,13 @@
 
 @section('content')
     <x-ui.page-layout>
-        <x-ui.page-header 
-            title="Buat Pesanan Joki" 
-            subtitle="Isi detail proyek Anda, saya akan segera meninjau untuk menentukan estimasi biaya dan waktu pengerjaan." 
+        <x-ui.page-header
+            title="Buat Pesanan Joki"
+            eyebrow="Layanan Joki · Brief Proyek"
+            subtitle="Isi detail proyek Anda, saya akan segera meninjau untuk menentukan estimasi biaya dan waktu pengerjaan."
             icon="fa-solid fa-plus">
             <x-slot:actions>
-                <a href="{{ route('user_joki.dashboard') }}" class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+                <a href="{{ route('user_joki.dashboard') }}" class="ui-btn-secondary font-mono text-[11px] uppercase tracking-[0.15em]">
                     &larr; Kembali
                 </a>
             </x-slot:actions>
@@ -15,19 +16,22 @@
 
         <!-- Form Section -->
         <div class="mt-6">
-            <x-ui.card class="overflow-hidden">
-                <form action="{{ route('user_joki.store') }}" method="POST" class="p-8 space-y-6">
+            <div class="ui-panel">
+                <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#0F1A2A]">
+                    <h2 class="ui-eyebrow text-[11px]">Brief Pesanan</h2>
+                    <span class="ui-eyebrow-muted">Form</span>
+                </div>
+                <form action="{{ route('user_joki.store') }}" method="POST" class="p-6 sm:p-8 space-y-6">
                     @csrf
 
                     <!-- Baris 1: Layanan & Deadline -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Pilih Layanan</label>
+                            <label class="ui-eyebrow-muted block mb-2">Pilih Layanan</label>
                             <select name="service_id" id="service_select" required
-                                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] dark:focus:border-[#6BA8DC] outline-none transition">
                                 <option value="" disabled selected>-- Pilih Jenis Layanan --</option>
                                 @foreach (\App\Models\JokiService::where('is_active', true)->get() as $service)
-                                    <!-- Tambahkan atribut data-price di sini -->
                                     <option value="{{ $service->id }}"
                                         data-price="{{ number_format($service->base_price, 0, ',', '.') }}">
                                         {{ $service->name }}
@@ -35,50 +39,50 @@
                                 @endforeach
                             </select>
                             <!-- Tempat menampilkan harga estimasi -->
-                            <p id="price_estimate" class="mt-2 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hidden">
+                            <p id="price_estimate" class="mt-2 font-mono text-[12px] font-semibold text-[#1D5B96] dark:text-[#6BA8DC] hidden">
                                 <i class="fa-solid fa-tag me-1"></i> Estimasi Harga Mulai: Rp <span
                                     id="price_value">0</span>
                             </p>
-                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">*Harga final ditentukan setelah kesepakatan.</p>
+                            <p class="text-xs text-[#94A3B4] dark:text-white/35 mt-1">*Harga final ditentukan setelah kesepakatan.</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Deadline Pengerjaan</label>
+                            <label class="ui-eyebrow-muted block mb-2">Deadline Pengerjaan</label>
                             <input type="date" name="deadline" required
-                                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] dark:focus:border-[#6BA8DC] outline-none transition">
                         </div>
                     </div>
 
                     <!-- Baris 2: Nama Proyek & Tech Stack -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Nama Proyek</label>
+                            <label class="ui-eyebrow-muted block mb-2">Nama Proyek</label>
                             <input type="text" name="project_name" required placeholder="Contoh: Web Portofolio..."
-                                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] dark:focus:border-[#6BA8DC] outline-none transition">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Tech Stack (Opsional)</label>
+                            <label class="ui-eyebrow-muted block mb-2">Tech Stack (Opsional)</label>
                             <input type="text" name="tech_stack" placeholder="Contoh: Laravel, React, Vue..."
-                                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] dark:focus:border-[#6BA8DC] outline-none transition">
                         </div>
                     </div>
 
                     <!-- Baris 3: Deskripsi -->
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Deskripsi Kebutuhan Detail</label>
+                        <label class="ui-eyebrow-muted block mb-2">Deskripsi Kebutuhan Detail</label>
                         <textarea name="description" rows="5" required
                             placeholder="Jelaskan secara rinci fitur apa saja yang diinginkan, jumlah halaman, dsb..."
-                            class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"></textarea>
+                            class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] dark:focus:border-[#6BA8DC] outline-none transition"></textarea>
                     </div>
 
                     <!-- Footer Action -->
-                    <div class="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <div class="flex justify-end pt-4 border-t border-[#EDF2F7] dark:border-[#152238]">
                         <button type="submit"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
+                            class="ui-btn-primary font-mono text-[11px] uppercase tracking-[0.15em]">
                             Kirim Pesanan
                         </button>
                     </div>
                 </form>
-            </x-ui.card>
+            </div>
         </div>
     </x-ui.page-layout>
 

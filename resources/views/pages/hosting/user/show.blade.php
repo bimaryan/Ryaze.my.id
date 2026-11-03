@@ -11,7 +11,7 @@
                 @php
                     $fwIcon = get_framework_icon($project->framework);
                 @endphp
-                <div class="shrink-0 w-12 h-12 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center bg-white dark:bg-slate-800/60 shadow-sm">
+                <div class="shrink-0 w-12 h-12 border border-[#E3EAF1] dark:border-[#2A4463] flex items-center justify-center bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#1D5B96] dark:text-[#6BA8DC]">
                     <i class="{{ $fwIcon }} text-2xl"></i>
                 </div>
             </x-slot:iconSlot>
@@ -21,7 +21,7 @@
                     $displayUrl = $activeDomain ? $activeDomain->domain_name : $project->ryaze_domain;
                 @endphp
                 <a href="https://{{ $displayUrl }}" target="_blank"
-                    class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 mt-1">
+                    class="text-sm font-medium text-[#1D5B96] dark:text-[#6BA8DC] hover:underline flex items-center gap-1 mt-1">
                     {{ $displayUrl }}
                     <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                 </a>
@@ -44,12 +44,12 @@
                 <span
                     id="project-status-badge"
                     data-status="{{ $project->status }}"
-                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide {{ $statusClass }}">
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider {{ $statusClass }}">
                     <i class="fa-solid {{ $statusIcon }}"></i>
                     <span id="project-status-text">{{ $project->status }}</span>
                 </span>
                 @if ($project->dev_mode && in_array($project->framework, ['react', 'nextjs', 'vue']))
-                    <a href="https://dev{{ $project->dev_port }}.{{ ltrim(substr($project->ryaze_domain, strlen(explode('.', $project->ryaze_domain)[0])), '.') }}" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm gap-1.5">
+                    <a href="https://dev{{ $project->dev_port }}.{{ ltrim(substr($project->ryaze_domain, strlen(explode('.', $project->ryaze_domain)[0])), '.') }}" target="_blank" class="inline-flex justify-center items-center bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 text-xs font-medium transition gap-1.5">
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Preview
                     </a>
                 @endif
@@ -62,7 +62,7 @@
         {{-- Tab Navigation --}}
         {{-- overflow-x-auto supaya tab tidak saling dorok saat layar sempit;
              -mx-1.5 + px-1.5 supaya shadow tidak terpotong wrapper scroll. --}}
-        <div class="mb-6 mt-6 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm -mx-1.5 px-1.5">
+        <div class="mb-6 mt-6 bg-white dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] -mx-1.5 px-1.5">
         <div class="flex flex-nowrap gap-1 overflow-x-auto p-1.5 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button data-tab="overview" id="tab-overview" onclick="switchTab('overview')"
                 class="ui-tab ui-tab-active">
@@ -117,29 +117,29 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-6">
                     @if ($project->status == 'active')
-                        <div class="ui-card overflow-hidden">
-                            <div class="bg-slate-100 dark:bg-slate-700/50 px-4 py-2.5 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
+                        <div class="ui-panel overflow-hidden">
+                            <div class="bg-[#F4F8FC] dark:bg-[#12233A] px-4 py-2.5 border-b border-[#E3EAF1] dark:border-[#2A4463] flex items-center gap-3">
                                 <div class="flex gap-1.5">
-                                    <div class="w-3 h-3 rounded-full bg-rose-400"></div>
-                                    <div class="w-3 h-3 rounded-full bg-amber-400"></div>
-                                    <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                                    <div class="w-2 h-2 bg-rose-400"></div>
+                                    <div class="w-2 h-2 bg-amber-400"></div>
+                                    <div class="w-2 h-2 bg-emerald-400"></div>
                                 </div>
                                 <div
-                                    class="ml-2 bg-white dark:bg-slate-800/60 px-3 py-1 rounded-md text-xs text-slate-500 dark:text-slate-400 w-full max-w-md flex items-center gap-2 border border-slate-200 dark:border-slate-700 shadow-sm">
+                                    class="ml-2 bg-white dark:bg-[#0F1D30] px-3 py-1 text-xs font-mono text-[#525252] dark:text-white/50 w-full max-w-md flex items-center gap-2 border border-[#E3EAF1] dark:border-[#2A4463]">
                                     <i class="fa-solid fa-lock text-[10px] text-emerald-600 dark:text-emerald-300"></i>
                                     https://{{ $displayUrl }}
                                 </div>
                                 <a href="https://{{ $displayUrl }}" target="_blank"
-                                    class="ml-auto text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 transition-colors">
+                                    class="ml-auto text-[#8A9BAE] dark:text-white/40 hover:text-[#2A6FAD] dark:hover:text-[#6BA8DC] transition-colors">
                                     <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
                                 </a>
                             </div>
-                            <div class="w-full h-[450px] bg-slate-50 dark:bg-slate-800/60 flex items-center justify-center relative">
+                            <div class="w-full h-[450px] bg-[#F4F8FC] dark:bg-[#0F1D30] flex items-center justify-center relative">
                                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <i class="fa-solid fa-circle-notch fa-spin text-slate-300 dark:text-slate-400 text-3xl"></i>
+                                    <i class="fa-solid fa-circle-notch fa-spin text-[#C9D5E2] dark:text-white/50 text-3xl"></i>
                                 </div>
                                 <iframe src="https://{{ $displayUrl }}?v={{ time() }}"
-                                    class="w-full h-full border-0 relative z-10 bg-white dark:bg-slate-800/60"></iframe>
+                                    class="w-full h-full border-0 relative z-10 bg-white dark:bg-[#0F1D30]"></iframe>
                             </div>
                             <div class="bg-amber-50 dark:bg-amber-500/10 border-t border-amber-100 dark:border-amber-500/30 px-4 py-3 flex items-start gap-3">
                                 <i class="fa-solid fa-circle-info text-amber-500 dark:text-amber-400 mt-0.5"></i>
@@ -155,15 +155,15 @@
                                 ->where('status', 'unpaid')
                                 ->first();
                         @endphp
-                        <div class="bg-white dark:bg-slate-800/60 rounded-xl border border-rose-200 dark:border-rose-500/40 p-10 text-center shadow-sm">
-                            <div class="w-16 h-16 bg-rose-100 dark:bg-rose-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <div class="ui-panel p-10 text-center">
+                            <div class="w-16 h-16 bg-rose-100 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 flex items-center justify-center mx-auto mb-4">
                                 <i class="fa-solid fa-file-invoice-dollar text-rose-500 dark:text-rose-400 text-3xl"></i>
                             </div>
-                            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Menunggu Pembayaran</h3>
-                            <p class="text-slate-500 dark:text-slate-400 mb-6 text-sm max-w-md mx-auto">Tagihan langganan akun hosting Anda belum dibayar. Deployment akan otomatis dimulai setelah Anda menyelesaikan pembayaran langganan.</p>
+                            <h3 class="ui-display text-lg  mb-2">Menunggu Pembayaran</h3>
+                            <p class="text-[#525252] dark:text-white/50 mb-6 text-sm max-w-md mx-auto">Tagihan langganan akun hosting Anda belum dibayar. Deployment akan otomatis dimulai setelah Anda menyelesaikan pembayaran langganan.</p>
                             @if($unpaidPayment)
                                 <button type="button" onclick="openPaymentModal({{ $unpaidPayment->amount }}, '{{ number_format($unpaidPayment->amount, 0, ',', '.') }}', '{{ $unpaidPayment->invoice_number }}')"
-                                    class="inline-flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md shadow-rose-200">
+                                    class="inline-flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-6 transition-colors">
                                     <i class="fa-solid fa-credit-card"></i> Pilih Metode Pembayaran
                                 </button>
                             @else
@@ -171,60 +171,62 @@
                             @endif
                         </div>
                     @else
-                        <div class="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center">
-                            <i class="fa-solid fa-satellite-dish text-slate-300 dark:text-slate-400 text-5xl mb-4"></i>
-                            <p class="text-slate-500 dark:text-slate-400 font-medium">Preview tersedia setelah deployment selesai.</p>
+                        <div class="ui-panel p-12 text-center">
+                            <i class="fa-solid fa-satellite-dish text-[#C9D5E2] dark:text-white/50 text-5xl mb-4"></i>
+                            <p class="text-[#525252] dark:text-white/50 font-medium">Preview tersedia setelah deployment selesai.</p>
                         </div>
                     @endif
                 </div>
                 <div class="space-y-4">
-                    <div class="ui-card p-6 min-w-0">
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2 text-sm">Detail Deployment</h3>
-                        <div class="space-y-4 text-sm">
-                            <div>
-                                <span class="block text-slate-500 dark:text-slate-400 text-xs mb-1">Source Repository</span>
+                    <div class="ui-panel min-w-0">
+                        <div class="ui-panel-head">
+                            <span class="ui-eyebrow">Detail Deployment</span>
+                        </div>
+                        <div class="text-sm">
+                            <div class="ui-spec-row">
+                                <span class="ui-eyebrow-muted shrink-0">Source Repository</span>
                                 @php
                                     $isUploadSource   = ($project->source_type === 'upload') || (is_string($project->repo_source) && str_starts_with($project->repo_source, 'upload:'));
                                     $isTemplateSource = ($project->source_type === 'template') || (is_string($project->repo_source) && str_starts_with($project->repo_source, 'template:'));
                                 @endphp
                                 @if($isUploadSource)
-                                    <span class="font-semibold text-slate-800 dark:text-slate-100 flex items-center">
+                                    <span class="font-semibold text-[#0F1A2A] dark:text-white flex items-center min-w-0 truncate">
                                         <i class="fa-solid fa-file-zipper mr-2 text-lg text-emerald-600 dark:text-emerald-300"></i>
                                         ZIP Upload &mdash; {{ basename(str_replace('upload:', '', $project->repo_source)) }}
                                     </span>
                                 @elseif($isTemplateSource)
-                                    <span class="font-semibold text-slate-800 dark:text-slate-100 flex items-center">
-                                        <i class="fa-solid fa-wand-magic-sparkles mr-2 text-lg text-indigo-500 dark:text-indigo-400"></i>
+                                    <span class="font-semibold text-[#0F1A2A] dark:text-white flex items-center min-w-0 truncate">
+                                        <i class="fa-solid fa-wand-magic-sparkles mr-2 text-lg text-[#1D5B96] dark:text-[#6BA8DC]"></i>
                                         Template &mdash; {{ ucwords(str_replace(['template:', '_', '-'], ['', ' ', ' '], (string) $project->repo_source)) }}
                                     </span>
                                 @else
                                     <a href="{{ $project->repo_source }}" target="_blank"
-                                        class="font-semibold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 flex items-center">
+                                        class="font-semibold text-[#0F1A2A] dark:text-white hover:text-[#2A6FAD] dark:hover:text-[#6BA8DC] flex items-center min-w-0 truncate">
                                         <i class="fa-brands fa-github mr-2 text-lg"></i>
                                         {{ str_replace('https://github.com/', '', $project->repo_source) }}
                                     </a>
                                 @endif
                             </div>
-                            <div>
-                                <span class="block text-slate-500 dark:text-slate-400 text-xs mb-1">Branch</span>
+                            <div class="ui-spec-row">
+                                <span class="ui-eyebrow-muted shrink-0">Branch</span>
                                 <span
                                     class="ui-badge ui-badge-neutral border font-mono">
                                     <i class="fa-solid fa-code-branch mr-1.5"></i> {{ $project->branch }}
                                 </span>
                             </div>
-                            <div>
-                                <span class="block text-slate-500 dark:text-slate-400 text-xs mb-1">Framework</span>
-                                <span class="font-semibold text-slate-800 dark:text-slate-100 uppercase">{{ $project->framework }}</span>
+                            <div class="ui-spec-row">
+                                <span class="ui-eyebrow-muted shrink-0">Framework</span>
+                                <span class="font-semibold text-[#0F1A2A] dark:text-white uppercase font-mono">{{ $project->framework }}</span>
                             </div>
-                            <div>
-                                <span class="block text-slate-500 dark:text-slate-400 text-xs mb-1">Root Directory</span>
+                            <div class="ui-spec-row">
+                                <span class="ui-eyebrow-muted shrink-0">Root Directory</span>
                                 <span
                                     class="ui-badge ui-badge-neutral font-mono border block truncate">
                                     /{{ explode('.', $project->ryaze_domain)[0] }}
                                 </span>
                             </div>
                             <form action="{{ route('user_hosting.redeploy', $project->hashid) }}" method="POST"
-                                class="mt-2">
+                                class="px-6 py-4">
                                 @csrf
                                 <button type="submit"
                                     class="ui-btn ui-btn-md ui-btn-primary w-full">
@@ -356,23 +358,26 @@ NGINX_CONF
                         default   => ['neutral', 'fa-minus', 'Belum diatur'],
                     };
                     @endphp
-                    <div class="ui-card p-6 mt-4">
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-server text-indigo-500 dark:text-indigo-400"></i> Konfigurasi Nginx (OpenResty)
+                    <div class="ui-panel mt-4">
+                        <div class="ui-panel-head">
+                            <h3 class="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#1D5B96] dark:text-[#6BA8DC] flex items-center gap-2">
+                                <i class="fa-solid fa-server"></i> Konfigurasi Nginx (OpenResty)
+                            </h3>
                             <x-ui.badge :variant="$nginxBadge[0]" :icon="'fa-solid ' . $nginxBadge[1] . ($nginxStatus === 'pending' ? ' fa-spin' : '')"
                                 class="ml-auto text-[10px] uppercase tracking-wider">
                                 {{ $nginxBadge[2] }}
                             </x-ui.badge>
-                        </h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                        </div>
+                        <div class="p-6">
+                        <p class="text-xs text-[#525252] dark:text-white/50 mb-3">
                             Sesuaikan config server untuk
-                            <code class="font-mono bg-slate-100 dark:bg-slate-700/50 px-1 py-0.5 rounded text-slate-700 dark:text-slate-200 text-[10px]">{{ $d }}</code>.
-                            Config diverifikasi <code class="font-mono bg-slate-100 dark:bg-slate-700/50 px-1 py-0.5 rounded text-slate-700 dark:text-slate-200 text-[10px]">nginx -t</code> otomatis;
+                            <code class="ui-code text-[10px]">{{ $d }}</code>.
+                            Config diverifikasi <code class="ui-code text-[10px]">nginx -t</code> otomatis;
                             jika invalid, config lama langsung dipulihkan.
                         </p>
 
                         @if($project->nginx_status === 'failed' && $project->nginx_error)
-                            <div class="mb-3 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3">
+                            <div class="mb-3 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/40 p-3">
                                 <p class="text-[11px] font-bold text-rose-700 dark:text-rose-300 mb-1 flex items-center gap-1.5">
                                     <i class="fa-solid fa-triangle-exclamation"></i> nginx -t menolak config terakhir:
                                 </p>
@@ -383,7 +388,7 @@ NGINX_CONF
                         <form action="{{ route('user_hosting.nginx.update', $project->hashid) }}" method="POST">
                             @csrf
                             <textarea name="nginx_config" rows="12" spellcheck="false"
-                                class="ui-field font-mono text-[11px] leading-relaxed bg-slate-900 text-emerald-300 border-slate-800 focus:ring-indigo-500/30 resize-y"
+                                class="ui-field font-mono text-[11px] leading-relaxed bg-[#0A1322] text-emerald-300 border-[#2A4463] focus:ring-[#1D5B96]/30 resize-y"
                                 placeholder="# Contoh: server {&#10;    listen 80;&#10;    server_name {{ $d }};&#10;    ...&#10;}">{{ $project->nginx_custom }}</textarea>
                             <div class="flex flex-wrap items-center gap-2 mt-3">
                                 <button type="submit"
@@ -405,51 +410,52 @@ NGINX_CONF
                             onsubmit="event.preventDefault(); let f = this; swConfirm('Reset Nginx?', 'Konfigurasi Nginx akan dikembalikan ke default.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                             @csrf
                             <button type="submit"
-                                class="w-full inline-flex items-center justify-center gap-2 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 text-rose-600 dark:text-rose-300 text-xs font-bold py-2 rounded-lg transition-colors">
+                                class="ui-btn ui-btn-danger w-full">
                                 <i class="fa-solid fa-rotate-left"></i> Kembalikan ke Default
                             </button>
                         </form>
 
                         <div id="nginx_example" class="hidden mt-3">
-                            <pre id="nginx_example_content" class="text-[10px] font-mono text-slate-300 dark:text-slate-400 bg-slate-900 border border-slate-800 rounded-xl p-3 whitespace-pre-wrap break-all max-h-72 overflow-y-auto">{{ $defaultNginxConf }}</pre>
+                            <pre id="nginx_example_content" class="text-[10px] font-mono text-[#C9D5E2] dark:text-white/50 bg-[#0A1322] border border-[#2A4463] p-3 whitespace-pre-wrap break-all max-h-72 overflow-y-auto">{{ $defaultNginxConf }}</pre>
+                        </div>
                         </div>
                     </div>
 
                     {{-- QR Code Scan --}}
                     <div class="ui-card p-6 mt-4 text-center">
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2 text-sm flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-qrcode text-indigo-500 dark:text-indigo-400"></i> Scan QR Code
+                        <h3 class="ui-eyebrow text-[11px] mb-4 border-b pb-2 text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-qrcode text-[#1D5B96] dark:text-[#6BA8DC]"></i> Scan QR Code
                         </h3>
                         <div class="flex justify-center">
-                            <div class="p-2 bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 rounded-xl shadow-sm inline-block">
+                            <div class="p-2 bg-white dark:bg-[#0F1D30] border border-[#EDF2F7] dark:border-[#2A4463] shadow-none inline-block">
                                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode('https://' . $displayUrl) }}" alt="QR Code" class="w-32 h-32" />
                             </div>
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Scan untuk membuka di HP Anda</p>
+                        <p class="text-xs text-[#525252] dark:text-white/50 mt-3">Scan untuk membuka di HP Anda</p>
                     </div>
 
                     {{-- Resource Monitoring --}}
                     <div class="ui-card p-6 mt-4">
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 mb-4 border-b pb-2 text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-chart-pie text-indigo-500 dark:text-indigo-400"></i> Statistik Penggunaan
+                        <h3 class="ui-eyebrow text-[11px] mb-4 border-b pb-2 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-[#1D5B96] dark:text-[#6BA8DC]"></i> Statistik Penggunaan
                         </h3>
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 p-3 rounded-xl">
-                                <span class="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1">Disk Usage</span>
+                            <div class="bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#EDF2F7] dark:border-[#2A4463] p-3">
+                                <span class="block text-[#525252] dark:text-white/50 text-[10px] uppercase font-bold tracking-wider mb-1">Disk Usage</span>
                                 <div class="flex items-end gap-2">
-                                    <i class="fa-solid fa-hard-drive text-slate-400 dark:text-slate-500 text-lg mb-0.5"></i>
-                                    <span class="font-bold text-slate-800 dark:text-slate-100 text-lg">{{ $diskUsage ?? '0 MB' }}</span>
+                                    <i class="fa-solid fa-hard-drive text-[#8A9BAE] dark:text-white/40 text-lg mb-0.5"></i>
+                                    <span class="font-bold text-[#0F1A2A] dark:text-white text-lg">{{ $diskUsage ?? '0 MB' }}</span>
                                 </div>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 p-3 rounded-xl">
-                                <span class="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1">Total Visitor</span>
+                            <div class="bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#EDF2F7] dark:border-[#2A4463] p-3">
+                                <span class="block text-[#525252] dark:text-white/50 text-[10px] uppercase font-bold tracking-wider mb-1">Total Visitor</span>
                                 <div class="flex items-end gap-2">
                                     <i class="fa-solid fa-users text-emerald-400 dark:text-emerald-300 text-lg mb-0.5"></i>
-                                    <span class="font-bold text-slate-800 dark:text-slate-100 text-lg">{{ $visitorsCount ?? 0 }}</span>
+                                    <span class="font-bold text-[#0F1A2A] dark:text-white text-lg">{{ $visitorsCount ?? 0 }}</span>
                                 </div>
                             </div>
                         </div>
-                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-3 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Data visitor dan disk diupdate secara realtime.</p>
+                        <p class="text-[10px] text-[#8A9BAE] dark:text-white/40 mt-3 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Data visitor dan disk diupdate secara realtime.</p>
                     </div>
                 </div>
             </div>
@@ -457,11 +463,11 @@ NGINX_CONF
             {{-- CPU & RAM Usage Chart --}}
             <div class="ui-card mt-6 p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-microchip text-indigo-500 dark:text-indigo-400"></i> Server Resource Usage (Last 24h)
+                    <h3 class="ui-eyebrow text-[11px] text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-[#1D5B96] dark:text-[#6BA8DC]"></i> Server Resource Usage (Last 24h)
                     </h3>
-                    <div class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> CPU</span>
+                    <div class="text-xs text-[#525252] dark:text-white/50 flex items-center gap-2">
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#1D5B96]"></span> CPU</span>
                         <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> RAM</span>
                     </div>
                 </div>
@@ -471,21 +477,21 @@ NGINX_CONF
 
         {{-- TAB: BUILD LOGS --}}
         <div id="panel-logs" class="tab-panel hidden">
-            <div class="bg-slate-900 rounded-xl shadow-md border border-slate-800 overflow-hidden">
+            <div class="bg-[#0A1322] shadow-none border border-[#2A4463] overflow-hidden">
                 <div
-                    class="bg-slate-800 px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b border-slate-700">
-                    <div class="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-xs">
+                    class="bg-[#0F1D30] px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b border-[#2A4463]">
+                    <div class="flex items-center gap-2 text-[#8A9BAE] dark:text-white/40 text-xs">
                         <i class="fa-solid fa-globe"></i>
                         <a id="website-log-link" href="https://{{ $project->ryaze_domain }}" target="_blank"
-                            class="text-indigo-400 hover:text-indigo-300 truncate">
+                            class="text-[#6BA8DC] hover:text-[#7FB4E2] truncate">
                             {{ $project->ryaze_domain }}
                         </a>
                     </div>
-                    <div class="text-slate-400 dark:text-slate-500 text-xs">
+                    <div class="text-[#8A9BAE] dark:text-white/40 text-xs">
                         Status: <span id="build-log-status"
-                            class="font-semibold text-slate-200">{{ $project->status }}</span>
+                            class="font-semibold text-[#E3EAF1]">{{ $project->status }}</span>
                     </div>
-                    <div class="text-slate-400 dark:text-slate-500 text-xs ml-auto">
+                    <div class="text-[#8A9BAE] dark:text-white/40 text-xs ml-auto">
                         <span
                             id="build-log-updated">{{ $project->deployments->first()?->created_at?->diffForHumans() ?? 'Initial Build' }}</span>
                     </div>
@@ -494,13 +500,13 @@ NGINX_CONF
                     @if ($project->deployments->count() > 0)
                         <pre id="build-log-text" class="text-emerald-400 dark:text-emerald-300 whitespace-pre-wrap leading-relaxed">{{ $project->deployments->first()->build_logs }}</pre>
                         @if ($project->status == 'building')
-                            <div id="build-log-pulse" class="mt-2 flex items-center text-slate-400 dark:text-slate-500 animate-pulse">
+                            <div id="build-log-pulse" class="mt-2 flex items-center text-[#8A9BAE] dark:text-white/40 animate-pulse">
                                 <span class="mr-2">></span>
-                                <span class="w-2 h-4 bg-slate-400 inline-block animate-ping"></span>
+                                <span class="w-2 h-4 bg-[#C9D5E2] inline-block animate-ping"></span>
                             </div>
                         @endif
                     @else
-                        <p class="text-slate-500 dark:text-slate-400">Belum ada log deployment.</p>
+                        <p class="text-[#525252] dark:text-white/50">Belum ada log deployment.</p>
                     @endif
                 </div>
             </div>
@@ -508,25 +514,25 @@ NGINX_CONF
 
         {{-- TAB: TERMINAL --}}
         <div id="panel-terminal" class="tab-panel hidden">
-            <div class="bg-slate-900 border border-slate-800/60 rounded-xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.4)] relative group">
+            <div class="bg-[#0A1322] border border-[#2A4463] overflow-hidden shadow-none relative group">
                 {{-- Terminal header --}}
-                <div class="bg-slate-800/40 backdrop-blur-md border-b border-slate-700/50 px-4 py-3 flex items-center justify-between">
+                <div class="bg-[#0F1D30]/40 backdrop-blur-md border-b border-[#2A4463] px-4 py-3 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="flex gap-1.5 group/dots">
-                            <div class="w-3 h-3 rounded-full bg-rose-500/80 shadow-[0_0_10px_rgba(244,63,94,0.3)] group-hover/dots:bg-rose-500 transition-colors"></div>
-                            <div class="w-3 h-3 rounded-full bg-amber-500/80 shadow-[0_0_10px_rgba(245,158,11,0.3)] group-hover/dots:bg-amber-500 transition-colors"></div>
-                            <div class="w-3 h-3 rounded-full bg-emerald-500/80 shadow-[0_0_10px_rgba(16,185,129,0.3)] hover:bg-emerald-400 cursor-pointer transition-colors" data-action="clear-terminal" title="Clear"></div>
+                            <div class="w-3 h-3 rounded-full bg-rose-500/80 shadow-none group-hover/dots:bg-rose-500 transition-colors"></div>
+                            <div class="w-3 h-3 rounded-full bg-amber-500/80 shadow-none group-hover/dots:bg-amber-500 transition-colors"></div>
+                            <div class="w-3 h-3 rounded-full bg-emerald-500/80 shadow-none hover:bg-emerald-400 cursor-pointer transition-colors" data-action="clear-terminal" title="Clear"></div>
                         </div>
-                        <div class="h-4 w-px bg-slate-700/60"></div>
+                        <div class="h-4 w-px bg-[#2A4463]/60"></div>
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-terminal text-emerald-400/80 text-xs shrink-0"></i>
-                            <span class="text-slate-400/80 text-[11px] font-mono tracking-wide truncate" id="terminal-cwd-display">
+                            <span class="text-[#8A9BAE]/80 text-[11px] font-mono tracking-wide truncate" id="terminal-cwd-display">
                                 /{{ explode('.', $project->ryaze_domain)[0] }}
                             </span>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button data-action="clear-terminal" class="text-slate-500 dark:text-slate-400 hover:text-rose-400 transition-colors text-xs opacity-0 group-hover:opacity-100 duration-300" title="Clear Terminal (Ctrl+L)">
+                        <button data-action="clear-terminal" class="text-[#525252] dark:text-white/50 hover:text-rose-400 transition-colors text-xs opacity-0 group-hover:opacity-100 duration-300" title="Clear Terminal (Ctrl+L)">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -534,44 +540,44 @@ NGINX_CONF
 
                 {{-- Terminal output --}}
                 <div id="terminal-output"
-                    class="px-5 pt-5 pb-3 font-mono text-sm text-slate-300 dark:text-slate-400 overflow-y-auto leading-relaxed cursor-text selection:bg-emerald-500/30 transition-all duration-300 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent"
-                    style="height:420px;background:radial-gradient(circle at center, #131620 0%, #0b0d14 100%);" data-action="focus-terminal">
+                    class="px-5 pt-5 pb-3 font-mono text-sm text-[#C9D5E2] dark:text-white/50 overflow-y-auto leading-relaxed cursor-text selection:bg-emerald-500/30 transition-all duration-300 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent"
+                    style="height:420px;background:radial-gradient(circle at center, #12233A 0%, #0A1322 100%);" data-action="focus-terminal">
                     <div id="terminal-welcome" class="mb-5 select-none">
-                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-md mb-3 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 mb-3 shadow-none">
                             <i class="fa-solid fa-terminal text-emerald-400/80 text-xs"></i>
                             <span class="text-emerald-400 dark:text-emerald-300 font-bold tracking-widest text-[10px] uppercase">Ryaze Cloud Terminal</span>
                         </div>
-                        <div class="text-slate-500/80 text-xs flex items-center gap-2 font-sans tracking-wide">
-                            Connected to <span class="text-slate-300 dark:text-slate-400 font-medium bg-slate-800/50 px-2 py-0.5 rounded border border-slate-700/50">{{ $project->project_name }}</span>
+                        <div class="text-[#8A9BAE] text-xs flex items-center gap-2 font-sans tracking-wide">
+                            Connected to <span class="text-[#C9D5E2] dark:text-white/50 font-medium bg-[#0F1D30]/50 px-2 py-0.5 rounded border border-[#2A4463]">{{ $project->project_name }}</span>
                         </div>
-                        <div class="w-full h-px bg-gradient-to-r from-emerald-500/20 via-slate-700/20 to-transparent mt-4"></div>
+                        <div class="w-full h-px bg-gradient-to-r from-emerald-500/20 via-[#2A4463]/20 to-transparent mt-4"></div>
                     </div>
                 </div>
 
                 {{-- Terminal input --}}
-                <div class="flex items-center bg-[#090b10] border-t border-slate-800/80 px-5 py-3.5 gap-3 relative overflow-hidden focus-within:bg-[#0f121a] transition-colors duration-300 group/input">
-                    <div class="absolute left-0 top-0 w-[3px] h-full bg-emerald-500/80 transform scale-y-0 group-focus-within/input:scale-y-100 transition-transform duration-300 ease-out origin-bottom shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                <div class="flex items-center bg-[#0A1322] border-t border-[#2A4463] px-5 py-3.5 gap-3 relative overflow-hidden focus-within:bg-[#0F1D30] transition-colors duration-300 group/input">
+                    <div class="absolute left-0 top-0 w-[3px] h-full bg-emerald-500/80 transform scale-y-0 group-focus-within/input:scale-y-100 transition-transform duration-300 ease-out origin-bottom shadow-none"></div>
                     <span id="terminal-prompt" class="font-mono text-sm font-bold select-none shrink-0 flex items-center gap-2">
-                        <span class="text-indigo-400/90">{{ $project->ryaze_domain }}</span>
+                        <span class="text-[#6BA8DC]">{{ $project->ryaze_domain }}</span>
                         <i class="fa-solid fa-angle-right text-emerald-400/80 text-xs"></i>
                     </span>
                     <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off"
                         spellcheck="false" placeholder="Enter command..."
-                        class="flex-1 bg-transparent text-slate-100 font-mono text-sm outline-none placeholder-slate-600/50 caret-emerald-400 min-w-0">
+                        class="flex-1 bg-transparent text-[#E3EAF1] font-mono text-sm outline-none placeholder-[#8A9BAE]/50 caret-emerald-400 min-w-0">
                     <button data-action="run-command"
-                        class="ui-icon-btn ui-icon-btn-primary w-8 h-8 bg-emerald-500/10 hover:bg-emerald-500 hover:text-white duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] group/btn">
+                        class="ui-icon-btn ui-icon-btn-primary w-8 h-8 bg-[#12233A] hover:bg-[#1D5B96] text-white duration-300 shadow-none group/btn">
                         <i class="fa-solid fa-arrow-turn-down -rotate-90 text-xs group-hover/btn:translate-x-0.5 transition-transform"></i>
                     </button>
                 </div>
             </div>
             
             <div class="flex items-center justify-between mt-4 px-1">
-                <p class="text-[11px] text-slate-500/80 flex items-center gap-2 font-sans">
-                    <i class="fa-solid fa-circle-info text-slate-600 dark:text-slate-300"></i>
-                    <span>Pro tip: Use <kbd class="bg-slate-800/80 border border-slate-700/50 text-slate-300 dark:text-slate-400 px-1.5 py-0.5 rounded shadow-sm text-[10px] mx-0.5 font-mono">↑</kbd> <kbd class="bg-slate-800/80 border border-slate-700/50 text-slate-300 dark:text-slate-400 px-1.5 py-0.5 rounded shadow-sm text-[10px] mx-0.5 font-mono">↓</kbd> for history and <kbd class="bg-slate-800/80 border border-slate-700/50 text-slate-300 dark:text-slate-400 px-1.5 py-0.5 rounded shadow-sm text-[10px] mx-0.5 font-mono">Ctrl+L</kbd> to clear</span>
+                <p class="text-[11px] text-[#8A9BAE] flex items-center gap-2 font-sans">
+                    <i class="fa-solid fa-circle-info text-[#525252] dark:text-white/70"></i>
+                    <span>Pro tip: Use <kbd class="bg-[#0F1D30]/80 border border-[#2A4463] text-[#C9D5E2] dark:text-white/50 px-1.5 py-0.5 rounded shadow-none text-[10px] mx-0.5 font-mono">↑</kbd> <kbd class="bg-[#0F1D30]/80 border border-[#2A4463] text-[#C9D5E2] dark:text-white/50 px-1.5 py-0.5 rounded shadow-none text-[10px] mx-0.5 font-mono">↓</kbd> for history and <kbd class="bg-[#0F1D30]/80 border border-[#2A4463] text-[#C9D5E2] dark:text-white/50 px-1.5 py-0.5 rounded shadow-none text-[10px] mx-0.5 font-mono">Ctrl+L</kbd> to clear</span>
                 </p>
-                <div class="flex items-center gap-1.5 text-[9px] text-emerald-400/80 font-mono uppercase tracking-widest px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm shadow-[0_0_10px_rgba(16,185,129,0.1)]">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.8)]"></span> Session Active
+                <div class="flex items-center gap-1.5 text-[9px] font-mono text-[10px] uppercase tracking-[0.2em] px-2 py-1 text-emerald-400 bg-[#0A1322] border border-[#2A4463] shadow-none">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-none"></span> Session Active
                 </div>
             </div>
         </div>
@@ -580,18 +586,18 @@ NGINX_CONF
         <div id="panel-files" class="tab-panel hidden relative">
             <div class="ui-card overflow-hidden relative">
                 <div
-                    class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex flex-wrap items-center justify-between gap-3">
+                    class="px-4 py-3 border-b border-[#EDF2F7] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30] flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2 min-w-0">
                         {{-- Semua tombol pakai data-action --}}
                         <button data-action="navigate-up"
-                            class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 transition-colors bg-white dark:bg-slate-800/60 px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 shadow-sm shrink-0"
+                            class="text-[#525252] dark:text-white/50 hover:text-[#2A6FAD] dark:hover:text-[#6BA8DC] dark:hover:text-[#6BA8DC] transition-colors bg-white dark:bg-[#0F1D30] px-2 py-1.5 rounded border border-[#E3EAF1] dark:border-[#2A4463] shadow-none shrink-0"
                             title="Kembali">
                             <i class="fa-solid fa-level-up-alt fa-flip-horizontal"></i>
                         </button>
                         <div
-                            class="text-sm font-mono text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/60 px-3 py-1.5 rounded border border-slate-200 dark:border-slate-700 truncate max-w-xs">
-                            <i class="fa-solid fa-server text-slate-400 dark:text-slate-500 mr-1"></i>/<span id="current-path-display"
-                                class="text-indigo-600 dark:text-indigo-400 font-bold"></span>
+                            class="text-sm font-mono text-[#525252] dark:text-white/70 bg-white dark:bg-[#0F1D30] px-3 py-1.5 rounded border border-[#E3EAF1] dark:border-[#2A4463] truncate max-w-xs">
+                            <i class="fa-solid fa-server text-[#8A9BAE] dark:text-white/40 mr-1"></i>/<span id="current-path-display"
+                                class="text-[#1D5B96] dark:text-[#6BA8DC] font-bold"></span>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
@@ -601,7 +607,7 @@ NGINX_CONF
                                 class="hidden sm:inline">New File</span>
                         </button>
                         <button data-action="paste-file" id="fm-btn-paste"
-                            class="hidden text-xs bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors font-semibold">
+                            class="hidden text-xs bg-[#E8F0F9] dark:bg-[#12233A] border border-[#C9D5E2] dark:border-[#2A4463] text-[#1D5B96] dark:text-[#6BA8DC] px-3 py-1.5 rounded hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49] transition-colors font-semibold">
                             <i class="fa-solid fa-paste mr-1"></i><span class="hidden sm:inline">Paste</span>
                         </button>
                         <button data-action="new-dir"
@@ -624,9 +630,9 @@ NGINX_CONF
                     {{-- min-w: tanpa ini kolom "Aksi" (6 ikon) memaksa tabel melebar
                          melebihi container, lalu scroll horizontal ikut menggeser kolom
                          Nama sampai terpotong di sisi kiri. --}}
-                    <table class="w-full min-w-[720px] text-sm text-left text-slate-600 dark:text-slate-300 table-fixed">
+                    <table class="w-full min-w-[720px] text-sm text-left text-[#525252] dark:text-white/70 table-fixed">
                         <thead
-                            class="bg-white dark:bg-slate-800/60 text-xs uppercase font-semibold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-10 shadow-sm">
+                            class="bg-white dark:bg-[#0F1D30] text-xs uppercase font-semibold text-[#8A9BAE] dark:text-white/40 border-b border-[#EDF2F7] dark:border-[#2A4463] sticky top-0 z-10 shadow-none">
                             <tr>
                                 <th class="px-6 py-3">Nama</th>
                                 <th class="px-4 py-3 w-20 sm:w-24">Ukuran</th>
@@ -634,37 +640,37 @@ NGINX_CONF
                                 <th class="px-4 py-3 w-36 sm:w-44 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="file-manager-body" class="divide-y divide-slate-50 font-mono text-[13px]"></tbody>
+                        <tbody id="file-manager-body" class="divide-y divide-[#EDF2F7] font-mono text-[13px]"></tbody>
                     </table>
                     <div id="file-manager-loader"
-                        class="hidden absolute inset-0 bg-white/80 dark:bg-slate-900/80 flex items-center justify-center z-20">
-                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500 dark:text-indigo-400"></i>
+                        class="hidden absolute inset-0 bg-white/80 dark:bg-[#0F1D30]/80 flex items-center justify-center z-20">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-[#1D5B96] dark:text-[#6BA8DC]"></i>
                     </div>
                 </div>
 
                 {{-- File Editor Modal --}}
-                <div id="file-editor-modal" class="hidden absolute inset-0 bg-slate-900 z-30 flex flex-col">
+                <div id="file-editor-modal" class="hidden absolute inset-0 bg-[#0A1322] z-30 flex flex-col">
                     <div
-                        class="px-4 py-3 border-b border-slate-700 bg-slate-800 flex justify-between items-center text-white">
+                        class="px-4 py-3 border-b border-[#2A4463] bg-[#0F1D30] flex justify-between items-center text-white">
                         <div class="font-mono text-sm flex items-center gap-2 min-w-0">
-                            <i class="fa-solid fa-file-code text-indigo-400 shrink-0"></i>
+                            <i class="fa-solid fa-file-code text-[#6BA8DC] shrink-0"></i>
                             <span id="editor-filename" class="truncate">filename.php</span>
                         </div>
                         <div class="flex gap-2 shrink-0">
                             {{-- data-action menggantikan onclick --}}
                             <button data-action="close-editor"
-                                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-xs transition font-semibold">Batal</button>
+                                class="px-3 py-1.5 bg-[#2A4463] hover:bg-[#2A4463] rounded text-xs transition font-semibold">Batal</button>
                             <button data-action="save-editor"
                                 class="ui-btn ui-btn-sm ui-btn-primary">
                                 <i class="fa-solid fa-save"></i> Simpan
                             </button>
                         </div>
                     </div>
-                    <div id="monaco-editor-container" class="flex-1 min-w-0 w-full bg-[#1e1e1e] relative z-0"></div>
-                    <textarea id="file-editor-textarea" spellcheck="false" class="hidden flex-1 min-w-0 w-full bg-slate-900 text-emerald-400 dark:text-emerald-300 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
+                    <div id="monaco-editor-container" class="flex-1 min-w-0 w-full bg-[#0A1322] relative z-0"></div>
+                    <textarea id="file-editor-textarea" spellcheck="false" class="hidden flex-1 min-w-0 w-full bg-[#0A1322] text-emerald-400 dark:text-emerald-300 font-mono text-sm p-4 outline-none resize-none leading-relaxed"></textarea>
                     <div id="editor-loader"
-                        class="hidden absolute inset-0 bg-slate-900/80 flex items-center justify-center z-40">
-                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500 dark:text-indigo-400"></i>
+                        class="hidden absolute inset-0 bg-[#0A1322]/80 flex items-center justify-center z-40">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-[#1D5B96] dark:text-[#6BA8DC]"></i>
                     </div>
                 </div>
             </div>
@@ -672,10 +678,10 @@ NGINX_CONF
 
         {{-- TAB: IDE VS CODE --}}
         <div id="panel-ide" class="tab-panel hidden">
-            <div id="ide-shell" class="flex h-[650px] bg-[#1e1e1e] rounded-xl overflow-hidden shadow-xl border border-slate-700">
+            <div id="ide-shell" class="flex h-[650px] bg-[#0A1322] overflow-hidden shadow-none border border-[#2A4463]">
                 
                 <!-- Activity Bar -->
-                <div class="w-12 bg-[#333333] flex flex-col items-center py-2 shrink-0 border-r border-[#1e1e1e] z-10">
+                <div class="w-12 bg-[#12233A] flex flex-col items-center py-2 shrink-0 border-r border-[#0A1322] z-10">
                     <button class="ide-activity-btn ui-ide-activity ui-ide-activity-active" data-target="ide-sidebar-explorer" title="Explorer">
                         <i class="fa-regular fa-copy text-xl"></i>
                     </button>
@@ -696,59 +702,59 @@ NGINX_CONF
                 </div>
 
                 <!-- Left Sidebar (collapsible) -->
-                <div id="ide-left-sidebar" class="w-64 bg-[#252526] border-r border-[#333] flex flex-col shrink-0 relative overflow-hidden transition-all duration-150">
+                <div id="ide-left-sidebar" class="w-64 bg-[#12233A] border-r border-[#2A4463] flex flex-col shrink-0 relative overflow-hidden transition-all duration-150">
                     <button id="ide-collapse-left" title="Collapse Sidebar (Ctrl+B)"
-                        class="absolute top-2 right-2 z-30 w-6 h-6 flex items-center justify-center rounded hover:bg-[#333] text-slate-500 dark:text-slate-400 hover:text-white transition-colors">
+                        class="absolute top-2 right-2 z-30 w-6 h-6 flex items-center justify-center rounded hover:bg-[#0F1D30] text-[#525252] dark:text-white/50 hover:text-white transition-colors">
                         <i class="fa-solid fa-chevron-left text-[10px]"></i>
                     </button>
                     
                     <!-- Explorer View -->
                     <div id="ide-sidebar-explorer" class="ide-sidebar-view flex flex-col h-full">
-                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-[#333] flex justify-between items-center pr-10">
-                            <span class="flex items-center gap-2"><i class="fa-solid fa-folder-open text-indigo-400"></i> Explorer</span>
+                        <div class="px-4 py-3 text-[11px] font-bold text-[#8A9BAE] dark:text-white/40 uppercase tracking-wider border-b border-[#2A4463] flex justify-between items-center pr-10">
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-folder-open text-[#6BA8DC]"></i> Explorer</span>
                             <div class="flex gap-2">
                                 <button data-action="ide-new-file" class="hover:text-white transition-colors" title="New File"><i class="fa-solid fa-file-medical"></i></button>
                                 <button data-action="ide-new-dir" class="hover:text-white transition-colors" title="New Folder"><i class="fa-solid fa-folder-plus"></i></button>
-                                <button data-action="ide-paste" id="ide-btn-paste" class="hidden text-indigo-400 hover:text-indigo-300 transition-colors" title="Paste"><i class="fa-solid fa-paste"></i></button>
+                                <button data-action="ide-paste" id="ide-btn-paste" class="hidden text-[#6BA8DC] hover:text-[#7FB4E2] transition-colors" title="Paste"><i class="fa-solid fa-paste"></i></button>
                                 <button data-action="ide-refresh" class="hover:text-white transition-colors" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
                                 <button data-action="ide-collapse" class="hover:text-white transition-colors" title="Collapse All"><i class="fa-solid fa-compress"></i></button>
                             </div>
                         </div>
-                        <div class="px-3 py-2 bg-[#2d2d2d] text-[#cccccc] text-xs font-mono border-b border-[#333] flex items-center gap-2 truncate">
+                        <div class="px-3 py-2 bg-[#12233A] text-[#C9D5E2] text-xs font-mono border-b border-[#2A4463] flex items-center gap-2 truncate">
                             <i class="fa-solid fa-folder text-amber-500 dark:text-amber-400 shrink-0"></i>
                             <span class="truncate">{{ $project->ryaze_domain }}</span>
                         </div>
-                        <div id="ide-sidebar-tree" class="flex-1 min-w-0 overflow-y-auto text-sm text-[#cccccc] py-2 font-mono" style="font-size: 13px;">
+                        <div id="ide-sidebar-tree" class="flex-1 min-w-0 overflow-y-auto text-sm text-[#C9D5E2] py-2 font-mono" style="font-size: 13px;">
                             <!-- JS akan merender tree file -->
                         </div>
                     </div>
 
                     <!-- Search View -->
                     <div id="ide-sidebar-search" class="ide-sidebar-view hidden flex flex-col h-full">
-                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-[#333]">
+                        <div class="px-4 py-3 text-[11px] font-bold text-[#8A9BAE] dark:text-white/40 uppercase tracking-wider border-b border-[#2A4463]">
                             <span>Search</span>
                         </div>
                         <div class="p-3">
-                            <input type="text" id="ide-search-input" class="w-full bg-[#3c3c3c] text-slate-200 border border-[#3c3c3c] focus:border-indigo-500 rounded text-xs p-1.5 outline-none placeholder-slate-500 mb-2" placeholder="Search (Enter)">
-                            <div class="text-[10px] text-slate-500 dark:text-slate-400 flex gap-2">
-                                <label class="flex items-center gap-1 cursor-pointer hover:text-slate-300">
-                                    <input type="checkbox" id="ide-search-case" class="accent-indigo-500 rounded-sm bg-[#3c3c3c]"> Match Case
+                            <input type="text" id="ide-search-input" class="w-full bg-[#12233A] text-[#E3EAF1] border border-[#12233A] focus:border-[#1D5B96] rounded text-xs p-1.5 outline-none placeholder-[#8A9BAE] mb-2" placeholder="Search (Enter)">
+                            <div class="text-[10px] text-[#525252] dark:text-white/50 flex gap-2">
+                                <label class="flex items-center gap-1 cursor-pointer hover:text-[#E3EAF1]">
+                                    <input type="checkbox" id="ide-search-case" class="accent-[#1D5B96] bg-[#12233A]"> Match Case
                                 </label>
                             </div>
                         </div>
                         <div id="ide-search-results" class="flex-1 min-w-0 overflow-y-auto px-2 py-2 text-xs font-mono">
-                            <div class="text-slate-500 dark:text-slate-400 text-center mt-10">Ketik dan tekan Enter untuk mencari</div>
+                            <div class="text-[#525252] dark:text-white/50 text-center mt-10">Ketik dan tekan Enter untuk mencari</div>
                         </div>
                     </div>
 
                     <!-- Settings / Themes View -->
                     <div id="ide-sidebar-settings" class="ide-sidebar-view hidden flex flex-col h-full">
-                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-[#333]">
+                        <div class="px-4 py-3 text-[11px] font-bold text-[#8A9BAE] dark:text-white/40 uppercase tracking-wider border-b border-[#2A4463]">
                             <span>Settings</span>
                         </div>
                         <div class="p-4">
-                            <label class="block text-xs font-semibold text-slate-300 dark:text-slate-400 mb-2">Color Theme</label>
-                            <select id="ide-theme-selector" class="w-full bg-[#3c3c3c] text-slate-200 border border-[#3c3c3c] rounded text-xs p-2 outline-none focus:border-indigo-500">
+                            <label class="block text-xs font-semibold text-[#C9D5E2] dark:text-white/50 mb-2">Color Theme</label>
+                            <select id="ide-theme-selector" class="w-full bg-[#12233A] text-[#E3EAF1] border border-[#12233A] rounded text-xs p-2 outline-none focus:border-[#1D5B96]">
                                 <option value="vs-dark">Dark+ (default dark)</option>
                                 <option value="vs">Light+ (default light)</option>
                                 <option value="hc-black">High Contrast</option>
@@ -760,40 +766,40 @@ NGINX_CONF
 
                     <!-- Extensions View -->
                     <div id="ide-sidebar-extensions" class="ide-sidebar-view hidden flex flex-col h-full">
-                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-[#333]">
+                        <div class="px-4 py-3 text-[11px] font-bold text-[#8A9BAE] dark:text-white/40 uppercase tracking-wider border-b border-[#2A4463]">
                             <span>Extensions</span>
                         </div>
                         <div class="p-4 flex-1 min-w-0 overflow-y-auto">
-                            <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">Ekstensi tema — klik "Terapkan" untuk langsung mengubah tema editor.</p>
+                            <p class="text-[10px] text-[#525252] dark:text-white/50 mb-3 leading-relaxed">Ekstensi tema — klik "Terapkan" untuk langsung mengubah tema editor.</p>
                             <div class="mb-4 flex gap-3 items-start">
                                 <div class="w-10 h-10 rounded bg-[#282c34] border border-[#3e4451] shrink-0"></div>
                                 <div class="w-full">
-                                    <p class="text-sm text-slate-200 font-semibold leading-tight">One Dark Pro</p>
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Theme · Atom One Dark</p>
+                                    <p class="text-sm text-[#E3EAF1] font-semibold leading-tight">One Dark Pro</p>
+                                    <p class="text-[10px] text-[#8A9BAE] dark:text-white/40 mb-2">Theme · Atom One Dark</p>
                                     <button class="ui-btn ui-btn-sm ui-btn-primary w-full" onclick="applyIdeTheme('one-dark-pro', this)">Terapkan</button>
                                 </div>
                             </div>
                             <div class="mb-4 flex gap-3 items-start">
                                 <div class="w-10 h-10 rounded bg-[#282a36] border border-[#44475a] shrink-0"></div>
                                 <div class="w-full">
-                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Dracula</p>
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Theme · Dracula Official</p>
+                                    <p class="text-sm text-[#E3EAF1] font-semibold leading-tight">Dracula</p>
+                                    <p class="text-[10px] text-[#8A9BAE] dark:text-white/40 mb-2">Theme · Dracula Official</p>
                                     <button class="ui-btn ui-btn-sm ui-btn-primary w-full" onclick="applyIdeTheme('dracula', this)">Terapkan</button>
                                 </div>
                             </div>
                             <div class="mb-4 flex gap-3 items-start">
-                                <div class="w-10 h-10 rounded bg-[#1e1e1e] border border-[#333] shrink-0"></div>
+                                <div class="w-10 h-10 rounded bg-[#0A1322] border border-[#2A4463] shrink-0"></div>
                                 <div class="w-full">
-                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Dark+ (default)</p>
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Theme · Bawaan Monaco</p>
+                                    <p class="text-sm text-[#E3EAF1] font-semibold leading-tight">Dark+ (default)</p>
+                                    <p class="text-[10px] text-[#8A9BAE] dark:text-white/40 mb-2">Theme · Bawaan Monaco</p>
                                     <button class="ui-btn ui-btn-sm ui-btn-primary w-full" onclick="applyIdeTheme('vs-dark', this)">Terapkan</button>
                                 </div>
                             </div>
                             <div class="mb-4 flex gap-3 items-start">
-                                <div class="w-10 h-10 rounded bg-[#ffffff] border border-[#333] shrink-0"></div>
+                                <div class="w-10 h-10 rounded bg-[#ffffff] border border-[#2A4463] shrink-0"></div>
                                 <div class="w-full">
-                                    <p class="text-sm text-slate-200 font-semibold leading-tight">Light+ (default)</p>
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Theme · Bawaan Monaco</p>
+                                    <p class="text-sm text-[#E3EAF1] font-semibold leading-tight">Light+ (default)</p>
+                                    <p class="text-[10px] text-[#8A9BAE] dark:text-white/40 mb-2">Theme · Bawaan Monaco</p>
                                     <button class="ui-btn ui-btn-sm ui-btn-primary w-full" onclick="applyIdeTheme('vs', this)">Terapkan</button>
                                 </div>
                             </div>
@@ -802,34 +808,34 @@ NGINX_CONF
 
                     <!-- Ryaze AI Chat View -->
                     <div id="ide-sidebar-chat" class="ide-sidebar-view hidden flex flex-col h-full">
-                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-[#333]">
-                            <i class="fa-brands fa-galactic-senate text-indigo-400 mr-1"></i> <span>Ryaze AI v2.0</span>
+                        <div class="px-4 py-3 text-[11px] font-bold text-[#8A9BAE] dark:text-white/40 uppercase tracking-wider border-b border-[#2A4463]">
+                            <i class="fa-brands fa-galactic-senate text-[#6BA8DC] mr-1"></i> <span>Ryaze AI v2.0</span>
                         </div>
-                        <div class="flex-1 flex flex-col items-center justify-center gap-3 text-slate-500 dark:text-slate-400 p-6 text-center">
-                            <i class="fa-brands fa-galactic-senate text-4xl text-indigo-500/40"></i>
-                            <p class="text-xs leading-relaxed">Ryaze AI sudah dipindah ke panel kanan.<br>Klik ikon <i class="fa-brands fa-galactic-senate text-slate-300 dark:text-slate-400"></i> di bawah activity bar.</p>
+                        <div class="flex-1 flex flex-col items-center justify-center gap-3 text-[#525252] dark:text-white/50 p-6 text-center">
+                            <i class="fa-brands fa-galactic-senate text-4xl text-[#1D5B96]/40"></i>
+                            <p class="text-xs leading-relaxed">Ryaze AI sudah dipindah ke panel kanan.<br>Klik ikon <i class="fa-brands fa-galactic-senate text-[#C9D5E2] dark:text-white/50"></i> di bawah activity bar.</p>
                         </div>
                     </div>
 
                 </div>
                 <!-- Editor -->
-                <div class="flex-1 flex flex-col relative bg-[#1e1e1e] min-w-0">
-                    <div id="ide-tabs-bar" class="h-9 bg-[#252526] flex items-stretch overflow-x-auto scrollbar-hide border-b border-[#1e1e1e] shrink-0">
-                        <div class="flex items-center gap-2 px-4 text-xs text-slate-500 dark:text-slate-400 font-mono"><i class="fa-solid fa-folder-open text-amber-500/70"></i> Ryaze IDE</div>
+                <div class="flex-1 flex flex-col relative bg-[#0A1322] min-w-0">
+                    <div id="ide-tabs-bar" class="h-9 bg-[#12233A] flex items-stretch overflow-x-auto scrollbar-hide border-b border-[#0A1322] shrink-0">
+                        <div class="flex items-center gap-2 px-4 text-xs text-[#525252] dark:text-white/50 font-mono"><i class="fa-solid fa-folder-open text-amber-500/70"></i> Ryaze IDE</div>
                     </div>
-                    <div class="h-10 bg-[#2d2d2d] flex items-center px-4 border-b border-[#1e1e1e] shrink-0 justify-between">
-                        <div class="flex items-center gap-2 text-sm text-[#cccccc] font-mono min-w-0">
-                            <i class="fa-solid fa-file-code text-indigo-400 shrink-0"></i>
+                    <div class="h-10 bg-[#12233A] flex items-center px-4 border-b border-[#0A1322] shrink-0 justify-between">
+                        <div class="flex items-center gap-2 text-sm text-[#C9D5E2] font-mono min-w-0">
+                            <i class="fa-solid fa-file-code text-[#6BA8DC] shrink-0"></i>
                             <span id="ide-current-filename" class="truncate">Pilih file...</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <button id="ide-panel-toggle" title="Toggle Panel (Ctrl+J)" class="text-slate-500 dark:text-slate-400 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
+                            <button id="ide-panel-toggle" title="Toggle Panel (Ctrl+J)" class="text-[#525252] dark:text-white/50 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#12233A]">
                                 <i class="fa-solid fa-terminal text-sm"></i>
                             </button>
-                            <button id="ide-zen-btn" title="Fullscreen (F11)" class="text-slate-500 dark:text-slate-400 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
+                            <button id="ide-zen-btn" title="Fullscreen (F11)" class="text-[#525252] dark:text-white/50 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#12233A]">
                                 <i class="fa-solid fa-expand text-sm"></i>
                             </button>
-                            <button id="ide-popout-btn" title="Buka di jendela baru" class="text-slate-500 dark:text-slate-400 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c]">
+                            <button id="ide-popout-btn" title="Buka di jendela baru" class="text-[#525252] dark:text-white/50 hover:text-white transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-[#12233A]">
                                 <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
                             </button>
                             <button id="ide-save-btn" data-action="ide-save" class="ui-btn ui-btn-sm ui-btn-primary hidden">
@@ -837,22 +843,22 @@ NGINX_CONF
                             </button>
                         </div>
                     </div>
-                    <div id="ide-monaco-container" class="flex-1 min-w-0 relative w-full bg-[#1e1e1e]">
+                    <div id="ide-monaco-container" class="flex-1 min-w-0 relative w-full bg-[#0A1322]">
                         <div id="ide-empty-state" class="absolute inset-0 flex items-center justify-center flex-col gap-4 opacity-30">
-                            <i class="fa-solid fa-laptop-code text-7xl text-slate-500 dark:text-slate-400"></i>
-                            <p class="text-slate-400 dark:text-slate-500 font-mono">Pilih file dari explorer untuk mengedit</p>
+                            <i class="fa-solid fa-laptop-code text-7xl text-[#525252] dark:text-white/50"></i>
+                            <p class="text-[#8A9BAE] dark:text-white/40 font-mono">Pilih file dari explorer untuk mengedit</p>
                         </div>
                     </div>
-                    <div id="ide-loader" class="hidden absolute inset-0 bg-[#1e1e1e]/80 flex items-center justify-center z-10">
-                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500 dark:text-indigo-400"></i>
+                    <div id="ide-loader" class="hidden absolute inset-0 bg-[#0A1322]/80 flex items-center justify-center z-10">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-[#1D5B96] dark:text-[#6BA8DC]"></i>
                     </div>
 
                     <!-- Bottom Panel (VS Code-style) -->
-                    <div id="ide-bottom-panel" class="h-56 bg-[#181818] border-t border-[#333] flex flex-col shrink-0 hidden">
-                        <div class="h-9 bg-[#252526] border-b border-[#1e1e1e] flex items-stretch shrink-0 overflow-x-auto scrollbar-hide">
+                    <div id="ide-bottom-panel" class="h-56 bg-[#0A1322] border-t border-[#2A4463] flex flex-col shrink-0 hidden">
+                        <div class="h-9 bg-[#12233A] border-b border-[#0A1322] flex items-stretch shrink-0 overflow-x-auto scrollbar-hide">
                             <button data-panel-tab="problems" class="ui-ide-tab ide-panel-tab">
                                 <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Problems
-                                <span id="problems-count" class="text-[9px] bg-rose-600/40 text-rose-300 px-1.5 rounded-full hidden">0</span>
+                                <span id="problems-count" class="font-mono text-[10px] border border-rose-500/40 text-rose-300 px-1.5 hidden">0</span>
                             </button>
                             <button data-panel-tab="output" class="ui-ide-tab ide-panel-tab">
                                 <i class="fa-solid fa-rectangle-list text-[10px]"></i> Output
@@ -867,11 +873,11 @@ NGINX_CONF
                                 <i class="fa-solid fa-plug text-[10px]"></i> Ports
                             </button>
                             <div class="ml-auto flex items-center gap-0.5 px-1.5">
-                                <button id="ide-term-new" title="New Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 dark:text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-plus text-[11px]"></i></button>
-                                <button id="ide-term-split" title="Split Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 dark:text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-table-columns text-[11px]"></i></button>
-                                <button id="ide-term-kill" title="Kill Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 dark:text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-trash-can text-[11px]"></i></button>
-                                <button id="ide-term-send-chat" title="Send Terminal to Chat" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 dark:text-slate-400 hover:text-white transition-colors"><i class="fa-brands fa-galactic-senate text-[11px]"></i></button>
-                                <button id="ide-panel-hide" title="Hide Panel" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-500 dark:text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-down text-[11px]"></i></button>
+                                <button id="ide-term-new" title="New Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#12233A] text-[#525252] dark:text-white/50 hover:text-white transition-colors"><i class="fa-solid fa-plus text-[11px]"></i></button>
+                                <button id="ide-term-split" title="Split Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#12233A] text-[#525252] dark:text-white/50 hover:text-white transition-colors"><i class="fa-solid fa-table-columns text-[11px]"></i></button>
+                                <button id="ide-term-kill" title="Kill Terminal" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#12233A] text-[#525252] dark:text-white/50 hover:text-white transition-colors"><i class="fa-solid fa-trash-can text-[11px]"></i></button>
+                                <button id="ide-term-send-chat" title="Send Terminal to Chat" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#12233A] text-[#525252] dark:text-white/50 hover:text-white transition-colors"><i class="fa-brands fa-galactic-senate text-[11px]"></i></button>
+                                <button id="ide-panel-hide" title="Hide Panel" class="ide-panel-action w-7 h-7 flex items-center justify-center rounded hover:bg-[#12233A] text-[#525252] dark:text-white/50 hover:text-white transition-colors"><i class="fa-solid fa-chevron-down text-[11px]"></i></button>
                             </div>
                         </div>
                         <div class="flex-1 min-w-0 relative overflow-hidden">
@@ -879,7 +885,7 @@ NGINX_CONF
                             <div id="ide-panel-output" class="ide-panel-view absolute inset-0 overflow-y-auto hidden"></div>
                             <div id="ide-panel-debug" class="ide-panel-view absolute inset-0 hidden flex flex-col"></div>
                             <div id="ide-panel-terminal" class="ide-panel-view absolute inset-0 hidden flex flex-col">
-                                <div id="ide-term-tabs" class="h-8 bg-[#1e1e1e] border-b border-[#333] flex items-center gap-1 px-2 overflow-x-auto scrollbar-hide shrink-0"></div>
+                                <div id="ide-term-tabs" class="h-8 bg-[#0A1322] border-b border-[#2A4463] flex items-center gap-1 px-2 overflow-x-auto scrollbar-hide shrink-0"></div>
                                 <div id="ide-term-area" class="flex-1 flex flex-col min-h-0"></div>
                             </div>
                             <div id="ide-panel-ports" class="ide-panel-view absolute inset-0 overflow-y-auto hidden"></div>
@@ -888,35 +894,35 @@ NGINX_CONF
                 </div>
 
                 <!-- Right Panel: Ryaze AI (collapsible) -->
-                <div id="ide-right-panel" class="w-80 bg-[#252526] border-l border-[#333] flex flex-col shrink-0 relative overflow-hidden transition-all duration-150">
+                <div id="ide-right-panel" class="w-80 bg-[#12233A] border-l border-[#2A4463] flex flex-col shrink-0 relative overflow-hidden transition-all duration-150">
                     <div id="ide-right-chat" class="ide-sidebar-view flex flex-col h-full relative">
-                        <div class="px-4 py-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-[#333] flex justify-between items-center shrink-0">
+                        <div class="px-4 py-3 text-[11px] font-bold text-[#8A9BAE] dark:text-white/40 uppercase tracking-wider border-b border-[#2A4463] flex justify-between items-center shrink-0">
                             <span class="flex items-center gap-2">
-                                <i class="fa-brands fa-galactic-senate text-indigo-400"></i> Ryaze AI v2.0
-                                <span class="text-[8px] bg-indigo-600/20 text-indigo-300 px-1.5 py-0.5 rounded font-semibold">GPT-OSS 120B</span>
+                                <i class="fa-brands fa-galactic-senate text-[#6BA8DC]"></i> Ryaze AI v2.0
+                                <span class="text-[8px] bg-[#1D5B96]/20 text-[#6BA8DC] px-1.5 py-0.5 rounded font-semibold">GPT-OSS 120B</span>
                             </span>
                             <div class="flex items-center gap-1.5">
-                                <button id="ide-chat-new" title="New Chat" class="text-slate-400 dark:text-slate-500 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-plus text-[10px]"></i></button>
-                                <button id="ide-chat-history" title="Riwayat Percakapan" class="text-slate-500 dark:text-slate-400 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-clock-rotate-left text-[10px]"></i></button>
-                                <button id="ide-chat-clear" title="Hapus percakapan ini" class="ui-icon-btn ui-icon-btn-danger w-6 h-6 hover:bg-[#333]"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
-                                <button id="ide-collapse-right" title="Tutup Panel AI" class="text-slate-500 dark:text-slate-400 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#333]"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                                <button id="ide-chat-new" title="New Chat" class="text-[#8A9BAE] dark:text-white/40 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#0F1D30]"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                                <button id="ide-chat-history" title="Riwayat Percakapan" class="text-[#525252] dark:text-white/50 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#0F1D30]"><i class="fa-solid fa-clock-rotate-left text-[10px]"></i></button>
+                                <button id="ide-chat-clear" title="Hapus percakapan ini" class="ui-icon-btn ui-icon-btn-danger w-6 h-6 hover:bg-[#0F1D30]"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                <button id="ide-collapse-right" title="Tutup Panel AI" class="text-[#525252] dark:text-white/50 hover:text-white transition-colors w-6 h-6 flex items-center justify-center rounded hover:bg-[#0F1D30]"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
                             </div>
                         </div>
-                        <div id="ide-chat-list" class="hidden absolute top-11 right-2 left-2 z-40 bg-[#252526] border border-[#333] rounded-lg shadow-xl overflow-hidden max-h-64 overflow-y-auto"></div>
+                        <div id="ide-chat-list" class="hidden absolute top-11 right-2 left-2 z-40 bg-[#12233A] border border-[#2A4463] shadow-none overflow-hidden max-h-64 overflow-y-auto"></div>
                         <div id="grok-chat-messages" class="flex-1 overflow-y-auto p-3 text-sm flex flex-col gap-3 font-sans">
-                            <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
+                            <div class="bg-[#0F1D30] text-[#E3EAF1] p-2 self-start max-w-[90%] text-xs leading-relaxed">
                                 Halo! Saya <b>Ryaze AI v2.0</b>. Bisa analisis bug, generate kode, atau <i>edit file project langsung</i> (buat, ubah, rename, hapus, append). Konteks file yang sedang dibuka otomatis terbaca.
                             </div>
                         </div>
                         <div class="px-3 pt-2 flex gap-1.5 flex-wrap shrink-0">
-                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 hover:text-white border-[#444]">Perbaiki kode</button>
-                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 hover:text-white border-[#444]">Analisis bug</button>
-                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 hover:text-white border-[#444]">Buat file</button>
-                            <button class="ide-chat-chip text-[9px] bg-[#333] hover:bg-indigo-600/30 hover:text-white border-[#444]">Jelaskan</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#0F1D30] hover:bg-[#1D5B96]/30 hover:text-white border-[#24384F]">Perbaiki kode</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#0F1D30] hover:bg-[#1D5B96]/30 hover:text-white border-[#24384F]">Analisis bug</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#0F1D30] hover:bg-[#1D5B96]/30 hover:text-white border-[#24384F]">Buat file</button>
+                            <button class="ide-chat-chip text-[9px] bg-[#0F1D30] hover:bg-[#1D5B96]/30 hover:text-white border-[#24384F]">Jelaskan</button>
                         </div>
-                        <div class="p-3 border-t border-[#333] bg-[#252526] shrink-0">
+                        <div class="p-3 border-t border-[#2A4463] bg-[#12233A] shrink-0">
                             <div id="grok-chat-form" class="flex flex-col gap-2">
-                                <textarea id="grok-chat-input" rows="2" class="w-full bg-[#3c3c3c] text-white text-xs px-3 py-2 rounded outline-none border border-[#444] focus:border-indigo-500 resize-none" placeholder="Tanya Ryaze AI... (Enter untuk kirim, Shift+Enter untuk baris baru)"></textarea>
+                                <textarea id="grok-chat-input" rows="2" class="w-full bg-[#12233A] text-white text-xs px-3 py-2 rounded outline-none border border-[#24384F] focus:border-[#1D5B96] resize-none" placeholder="Tanya Ryaze AI... (Enter untuk kirim, Shift+Enter untuk baris baru)"></textarea>
                                 <button type="button" id="grok-chat-send-btn" class="ui-btn ui-btn-sm ui-btn-primary">
                                     <i class="fa-solid fa-paper-plane"></i> Kirim
                                 </button>
@@ -930,22 +936,22 @@ NGINX_CONF
         {{-- TAB: ENV --}}
         <div id="panel-env" class="tab-panel hidden">
             <div class="ui-card overflow-hidden max-w-3xl">
-                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <div class="px-6 py-4 border-b border-[#EDF2F7] dark:border-[#2A4463]">
+                    <h3 class="ui-eyebrow text-[11px] flex items-center gap-2">
                         <i class="fa-solid fa-key text-amber-500 dark:text-amber-400"></i> Environment Variables
                     </h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Format: <code
-                            class="bg-slate-100 dark:bg-slate-700/50 px-1 py-0.5 rounded text-rose-500 dark:text-rose-400">KUNCI=nilai</code>. Perubahan berlaku
+                    <p class="text-xs text-[#525252] dark:text-white/50 mt-1">Format: <code
+                            class="bg-[#F4F8FC] dark:bg-[#12233A] px-1 py-0.5 rounded text-rose-500 dark:text-rose-400">KUNCI=nilai</code>. Perubahan berlaku
                         setelah redeploy.</p>
                 </div>
                 <form action="{{ route('user_hosting.env.update', $project->hashid) }}" method="POST">
                     @csrf
-                    <div class="bg-slate-900 border-b border-slate-800 p-1">
+                    <div class="bg-[#0A1322] border-b border-[#2A4463] p-1">
                         <textarea name="env_content" rows="18"
                             class="w-full bg-transparent text-emerald-400 dark:text-emerald-300 font-mono text-sm p-4 focus:outline-none resize-y"
                             placeholder="API_KEY=rahasia&#10;DB_HOST=127.0.0.1" spellcheck="false">{{ old('env_content', $envContent) }}</textarea>
                     </div>
-                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/60 flex justify-end">
+                    <div class="px-6 py-4 bg-[#F4F8FC] dark:bg-[#0F1D30] flex justify-end">
                         <button type="submit"
                             class="ui-btn ui-btn-md ui-btn-primary">
                             <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan .env
@@ -958,19 +964,19 @@ NGINX_CONF
         {{-- TAB: SETTINGS --}}
         <div id="panel-settings" class="tab-panel hidden space-y-6">
             <div class="ui-card overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Konfigurasi Aplikasi</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Atur parameter dasar environment project.</p>
+                <div class="px-6 py-4 border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30]">
+                    <h3 class="ui-eyebrow text-[11px]">Konfigurasi Aplikasi</h3>
+                    <p class="text-xs text-[#525252] dark:text-white/50">Atur parameter dasar environment project.</p>
                 </div>
                 <form action="{{ route('user_hosting.settings.update', $project->hashid) }}" method="POST">
                     @csrf
                     @method('PATCH')
                     <div class="p-6 space-y-5">
                         <div
-                            class="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                            class="flex items-center justify-between p-4 border border-[#EDF2F7] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30]/50">
                             <div>
-                                <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Maintenance Mode</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tampilkan halaman "Under Maintenance" ke
+                                <h4 class="text-sm font-semibold text-[#0F1A2A] dark:text-white/80">Maintenance Mode</h4>
+                                <p class="text-xs text-[#525252] dark:text-white/50 mt-0.5">Tampilkan halaman "Under Maintenance" ke
                                     pengunjung.</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -982,10 +988,10 @@ NGINX_CONF
                             </label>
                         </div>
                         <div
-                            class="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                            class="flex items-center justify-between p-4 border border-[#EDF2F7] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30]/50">
                             <div>
-                                <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Force HTTPS</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Redirect semua traffic HTTP ke HTTPS secara
+                                <h4 class="text-sm font-semibold text-[#0F1A2A] dark:text-white/80">Force HTTPS</h4>
+                                <p class="text-xs text-[#525252] dark:text-white/50 mt-0.5">Redirect semua traffic HTTP ke HTTPS secara
                                     otomatis.</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -997,10 +1003,10 @@ NGINX_CONF
                             </label>
                         </div>
                         <div
-                            class="flex items-center justify-between p-4 rounded-xl border border-rose-100 dark:border-rose-500/30 bg-rose-50/50 dark:bg-rose-500/10">
+                            class="flex items-center justify-between p-4 border border-rose-100 dark:border-rose-500/30 bg-rose-50/50 dark:bg-rose-500/10">
                             <div>
                                 <h4 class="text-sm font-semibold text-rose-700 dark:text-rose-300">DDoS Protection (Rate Limit)</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aktifkan limitasi koneksi ketat jika website Anda sedang diserang.</p>
+                                <p class="text-xs text-[#525252] dark:text-white/50 mt-0.5">Aktifkan limitasi koneksi ketat jika website Anda sedang diserang.</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer shrink-0">
                                 <input type="checkbox" name="is_under_attack" value="1" class="sr-only peer"
@@ -1010,15 +1016,15 @@ NGINX_CONF
                                 </div>
                             </label>
                         </div>
-                        <div class="p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                        <div class="p-4 border border-[#EDF2F7] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30]/50">
                             <div class="mb-3">
-                                <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Blokir IP (WAF)</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Masukkan daftar alamat IP yang ingin diblokir (satu IP per baris). Pengunjung dengan IP ini akan mendapatkan pesan 403 Forbidden.</p>
+                                <h4 class="text-sm font-semibold text-[#0F1A2A] dark:text-white/80">Blokir IP (WAF)</h4>
+                                <p class="text-xs text-[#525252] dark:text-white/50 mt-0.5">Masukkan daftar alamat IP yang ingin diblokir (satu IP per baris). Pengunjung dengan IP ini akan mendapatkan pesan 403 Forbidden.</p>
                             </div>
-                            <textarea name="blocked_ips" rows="4" class="ui-field text-slate-700 dark:text-slate-200 font-mono focus:outline-none" placeholder="192.168.1.1&#10;10.0.0.5" spellcheck="false">{{ old('blocked_ips', $wafContent) }}</textarea>
+                            <textarea name="blocked_ips" rows="4" class="ui-field text-[#0F1A2A] dark:text-white/80 font-mono focus:outline-none" placeholder="192.168.1.1&#10;10.0.0.5" spellcheck="false">{{ old('blocked_ips', $wafContent) }}</textarea>
                         </div>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/60 px-6 py-3 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+                    <div class="bg-[#F4F8FC] dark:bg-[#0F1D30] px-6 py-3 border-t border-[#E3EAF1] dark:border-[#2A4463] flex justify-end">
                         <button type="submit"
                             class="ui-btn ui-btn-md ui-btn-primary">
                             Simpan Perubahan
@@ -1029,27 +1035,27 @@ NGINX_CONF
 
             {{-- Backup & Restore --}}
             <div class="ui-card overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        <i class="fa-solid fa-box-archive text-indigo-500 dark:text-indigo-400"></i> Backup & Restore
+                <div class="px-6 py-4 border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30]">
+                    <h3 class="ui-eyebrow text-[11px] flex items-center gap-2">
+                        <i class="fa-solid fa-box-archive text-[#1D5B96] dark:text-[#6BA8DC]"></i> Backup & Restore
                     </h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Buat salinan proyek Anda atau pulihkan dari file zip.</p>
+                    <p class="text-xs text-[#525252] dark:text-white/50 mt-1">Buat salinan proyek Anda atau pulihkan dari file zip.</p>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-5 bg-slate-50/50 dark:bg-slate-800/50">
-                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2">Buat Backup (Download)</h4>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Fitur ini akan mengompresi seluruh file source code aplikasi Anda ke dalam format .zip dan langsung diunduh ke komputer Anda.</p>
-                        <a href="{{ route('user_hosting.backup.download', $project->hashid) }}" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors w-full justify-center">
+                    <div class="border border-[#E3EAF1] dark:border-[#2A4463] p-5 bg-[#F4F8FC] dark:bg-[#0F1D30]/50">
+                        <h4 class="ui-eyebrow text-[11px] /80 mb-2">Buat Backup (Download)</h4>
+                        <p class="text-xs text-[#525252] dark:text-white/50 mb-4">Fitur ini akan mengompresi seluruh file source code aplikasi Anda ke dalam format .zip dan langsung diunduh ke komputer Anda.</p>
+                        <a href="{{ route('user_hosting.backup.download', $project->hashid) }}" class="inline-flex items-center gap-2 bg-[#0F1D30] hover:bg-[#0A1322] text-white font-semibold py-2 px-4 text-sm transition-colors w-full justify-center">
                             <i class="fa-solid fa-download"></i> Download Backup .ZIP
                         </a>
                     </div>
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-5 bg-slate-50/50 dark:bg-slate-800/50">
-                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2">Restore Backup (Upload)</h4>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Pilih file .zip untuk mengekstrak dan menimpa (overwrite) file yang ada saat ini di server Anda. Harap berhati-hati.</p>
+                    <div class="border border-[#E3EAF1] dark:border-[#2A4463] p-5 bg-[#F4F8FC] dark:bg-[#0F1D30]/50">
+                        <h4 class="ui-eyebrow text-[11px] /80 mb-2">Restore Backup (Upload)</h4>
+                        <p class="text-xs text-[#525252] dark:text-white/50 mb-4">Pilih file .zip untuk mengekstrak dan menimpa (overwrite) file yang ada saat ini di server Anda. Harap berhati-hati.</p>
                         <form action="{{ route('user_hosting.backup.upload', $project->hashid) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="flex gap-2">
-                                <input type="file" name="backup_file" accept=".zip" required class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800">
+                                <input type="file" name="backup_file" accept=".zip" required class="block w-full text-xs text-[#525252] dark:text-white/50 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-semibold file:bg-[#E8F0F9] file:text-[#2568A8] hover:file:bg-[#E8F0F9] border border-[#E3EAF1] dark:border-[#2A4463] cursor-pointer bg-white dark:bg-[#0F1D30]">
                                 <button type="submit" class="ui-btn ui-btn-md ui-btn-primary shrink-0">
                                     <i class="fa-solid fa-upload"></i> Restore
                                 </button>
@@ -1067,13 +1073,13 @@ NGINX_CONF
                     </h3>
                 </div>
                 <div class="p-6">
-                    <p class="text-sm text-slate-600 dark:text-slate-300 mb-5">Tindakan di bawah bersifat destruktif dan tidak dapat
+                    <p class="text-sm text-[#525252] dark:text-white/70 mb-5">Tindakan di bawah bersifat destruktif dan tidak dapat
                         dibatalkan.</p>
                     <div
-                        class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-rose-100 dark:border-rose-500/30 rounded-xl bg-rose-50/30 dark:bg-rose-500/10 gap-4">
+                        class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-rose-100 dark:border-rose-500/30 bg-rose-50/30 dark:bg-rose-500/10 gap-4">
                         <div>
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Hapus Proyek</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Menghapus folder root, DNS Cloudflare, dan semua
+                            <h4 class="ui-eyebrow text-[11px] text-sm">Hapus Proyek</h4>
+                            <p class="text-xs text-[#525252] dark:text-white/50 mt-0.5">Menghapus folder root, DNS Cloudflare, dan semua
                                 record secara permanen.</p>
                         </div>
                         <form id="delete-form" action="{{ route('user_hosting.destroy', $project->hashid) }}"
@@ -1096,22 +1102,22 @@ NGINX_CONF
         {{--
         <div id="panel-email" class="tab-panel hidden space-y-6">
             <div class="ui-card overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-between items-center">
+                <div class="px-6 py-4 border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30] flex justify-between items-center">
                     <div>
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100">Kelola Email</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Buat email profesional dengan domain project ini.</p>
+                        <h3 class="ui-eyebrow text-[11px]">Kelola Email</h3>
+                        <p class="text-xs text-[#525252] dark:text-white/50">Buat email profesional dengan domain project ini.</p>
                     </div>
                 </div>
                 <div class="p-6">
                     <form action="{{ route('user_hosting.emails.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         @csrf
                         <div class="md:col-span-1">
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Alamat Email</label>
+                            <label class="block text-xs font-bold text-[#0F1A2A] dark:text-white/80 mb-1.5">Alamat Email</label>
                             <div class="flex items-stretch">
                                 <input type="text" name="prefix" placeholder="admin" required
-                                    class="transition-all w-1/2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-none rounded-l-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                                <span class="px-3 flex items-center border-y border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm font-bold">@</span>
-                                <select name="domain" required class="transition-all w-1/2 bg-slate-50 dark:bg-slate-800 border border-l-0 border-slate-200 dark:border-slate-700 rounded-none rounded-r-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                                    class="transition-all w-1/2 bg-[#F4F8FC] dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463]-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none">
+                                <span class="px-3 flex items-center border-y border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#12233A] text-[#525252] dark:text-white/50 text-sm font-bold">@</span>
+                                <select name="domain" required class="transition-all w-1/2 bg-[#F4F8FC] dark:bg-[#0F1D30] border border-l-0 border-[#E3EAF1] dark:border-[#2A4463]-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none">
                                     <option value="{{ $project->ryaze_domain }}">{{ $project->ryaze_domain }}</option>
                                     @foreach($project->domains as $d)
                                         <option value="{{ $d->domain_name }}">{{ $d->domain_name }}</option>
@@ -1120,7 +1126,7 @@ NGINX_CONF
                             </div>
                         </div>
                         <div class="md:col-span-1">
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Password</label>
+                            <label class="block text-xs font-bold text-[#0F1A2A] dark:text-white/80 mb-1.5">Password</label>
                             <input type="password" name="password" placeholder="Min. 8 karakter" required minlength="8"
                                 class="ui-field">
                         </div>
@@ -1131,9 +1137,9 @@ NGINX_CONF
                         </div>
                     </form>
 
-                    <div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-xl overflow-x-auto">
-                        <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400 whitespace-nowrap min-w-[600px]">
-                            <thead class="text-xs text-slate-700 dark:text-slate-200 uppercase bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700">
+                    <div class="mt-6 border border-[#E3EAF1] dark:border-[#2A4463] overflow-x-auto">
+                        <table class="w-full text-sm text-left text-[#525252] dark:text-white/50 whitespace-nowrap min-w-[600px]">
+                            <thead class="text-xs text-[#0F1A2A] dark:text-white/80 uppercase bg-[#F4F8FC] dark:bg-[#0F1D30] border-b border-[#E3EAF1] dark:border-[#2A4463]">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Alamat Email</th>
                                     <th scope="col" class="px-6 py-3">Status</th>
@@ -1143,15 +1149,15 @@ NGINX_CONF
                             </thead>
                             <tbody>
                                 @forelse ($projectEmails ?? [] as $email)
-                                    <tr class="bg-white dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40">
-                                        <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-100">{{ $email->email_address }}</td>
+                                    <tr class="bg-white dark:bg-[#0F1D30] border-b border-[#EDF2F7] dark:border-[#2A4463] hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
+                                        <td class="px-6 py-4 font-semibold text-[#0F1A2A] dark:text-white">{{ $email->email_address }}</td>
                                         <td class="px-6 py-4">
                                             <span class="ui-badge ui-badge-success">Active</span>
                                         </td>
-                                        <td class="px-6 py-4 text-xs font-medium text-slate-700 dark:text-slate-200">{{ $email->quota_mb }} MB</td>
+                                        <td class="px-6 py-4 text-xs font-medium text-[#0F1A2A] dark:text-white/80">{{ $email->quota_mb }} MB</td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex justify-end items-center gap-3">
-                                                <a href="{{ rtrim(env('POSTE_IO_URL', 'https://mail.ryaze.my.id'), '/') }}/webmail" target="_blank" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400 dark:hover:text-indigo-300 text-xs font-bold">
+                                                <a href="{{ rtrim(env('POSTE_IO_URL', 'https://mail.ryaze.my.id'), '/') }}/webmail" target="_blank" class="text-[#1D5B96] dark:text-[#6BA8DC] hover:text-[#2A6FAD] dark:hover:text-[#6BA8DC] dark:hover:text-[#7FB4E2] text-xs font-bold">
                                                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Webmail
                                                 </a>
                                                 <form action="{{ route('user_hosting.emails.destroy', $email->hashid) }}" method="POST" class="inline" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Email?', 'Apakah Anda yakin ingin menghapus akun email ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
@@ -1163,7 +1169,7 @@ NGINX_CONF
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="px-6 py-4 text-center text-slate-500 dark:text-slate-400">Belum ada akun email untuk project ini.</td>
+                                        <td colspan="4" class="px-6 py-4 text-center text-[#525252] dark:text-white/50">Belum ada akun email untuk project ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -1177,22 +1183,22 @@ NGINX_CONF
 
         <div id="panel-crons" class="tab-panel hidden space-y-6">
             <div class="ui-card overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-between items-center">
+                <div class="px-6 py-4 border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30] flex justify-between items-center">
                     <div>
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100">Cron Jobs</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Jadwalkan eksekusi command background.</p>
+                        <h3 class="ui-eyebrow text-[11px]">Cron Jobs</h3>
+                        <p class="text-xs text-[#525252] dark:text-white/50">Jadwalkan eksekusi command background.</p>
                     </div>
                 </div>
                 <div class="p-6">
                     <form action="{{ route('user_hosting.crons.store', $project->hashid) }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         @csrf
                         <div class="md:col-span-1">
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Command</label>
+                            <label class="block text-xs font-bold text-[#0F1A2A] dark:text-white/80 mb-1.5">Command</label>
                             <input type="text" name="command" placeholder="php artisan schedule:run" required
                                 class="ui-field">
                         </div>
                         <div class="md:col-span-1">
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Schedule (Cron Expr)</label>
+                            <label class="block text-xs font-bold text-[#0F1A2A] dark:text-white/80 mb-1.5">Schedule (Cron Expr)</label>
                             <input type="text" name="schedule_expression" placeholder="* * * * *" required value="* * * * *"
                                 class="ui-field font-mono">
                         </div>
@@ -1203,9 +1209,9 @@ NGINX_CONF
                         </div>
                     </form>
 
-                    <div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-xl overflow-x-auto">
-                        <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400 whitespace-nowrap min-w-[600px]">
-                            <thead class="text-xs text-slate-700 dark:text-slate-200 uppercase bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700">
+                    <div class="mt-6 border border-[#E3EAF1] dark:border-[#2A4463] overflow-x-auto">
+                        <table class="w-full text-sm text-left text-[#525252] dark:text-white/50 whitespace-nowrap min-w-[600px]">
+                            <thead class="text-xs text-[#0F1A2A] dark:text-white/80 uppercase bg-[#F4F8FC] dark:bg-[#0F1D30] border-b border-[#E3EAF1] dark:border-[#2A4463]">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Command</th>
                                     <th scope="col" class="px-6 py-3">Schedule</th>
@@ -1214,8 +1220,8 @@ NGINX_CONF
                             </thead>
                             <tbody>
                                 @forelse ($project->crons as $cron)
-                                    <tr class="bg-white dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40">
-                                        <td class="px-6 py-4 font-mono text-xs text-slate-800 dark:text-slate-100">{{ $cron->command }}</td>
+                                    <tr class="bg-white dark:bg-[#0F1D30] border-b border-[#EDF2F7] dark:border-[#2A4463] hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
+                                        <td class="px-6 py-4 font-mono text-xs text-[#0F1A2A] dark:text-white">{{ $cron->command }}</td>
                                         <td class="px-6 py-4 font-mono text-xs">{{ $cron->schedule_expression }}</td>
                                         <td class="px-6 py-4 text-right">
                                             <form action="{{ route('user_hosting.crons.destroy', $cron->hashid) }}" method="POST" onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus Cron Job?', 'Apakah Anda yakin ingin menghapus cron job ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
@@ -1226,7 +1232,7 @@ NGINX_CONF
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-4 text-center text-slate-500 dark:text-slate-400">Belum ada cron job yang didaftarkan.</td>
+                                        <td colspan="3" class="px-6 py-4 text-center text-[#525252] dark:text-white/50">Belum ada cron job yang didaftarkan.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -1239,10 +1245,10 @@ NGINX_CONF
         {{-- TAB: DOMAINS --}}
         <div id="panel-domains" class="tab-panel hidden space-y-6">
             <div class="ui-card overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex flex-wrap justify-between items-center gap-3">
+                <div class="px-6 py-4 border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30] flex flex-wrap justify-between items-center gap-3">
                     <div>
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100">Domain &amp; Subdomain</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Semua hostname yang melayani project ini. Kelola daftarnya di halaman Domains.</p>
+                        <h3 class="ui-eyebrow text-[11px]">Domain &amp; Subdomain</h3>
+                        <p class="text-xs text-[#525252] dark:text-white/50">Semua hostname yang melayani project ini. Kelola daftarnya di halaman Domains.</p>
                     </div>
                     <a href="{{ route('user_hosting.domains.index') }}"
                         class="ui-btn ui-btn-md ui-btn-primary">
@@ -1253,14 +1259,14 @@ NGINX_CONF
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
+                            <tr class="bg-[#F4F8FC] dark:bg-[#0F1D30] border-b border-[#E3EAF1] dark:border-[#2A4463] text-[#525252] dark:text-white/50 text-xs uppercase tracking-wider font-semibold">
                                 <th class="px-6 py-4">Domain</th>
                                 <th class="px-6 py-4">Status</th>
                                 <th class="px-6 py-4">Redirect</th>
                                 <th class="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                        <tbody class="divide-y divide-[#E3EAF1] dark:divide-[#2A4463] text-sm">
                             @php
                                 // Semua jenis hostname bisa dilayani project ini:
                                 // custom domain maupun subdomain. Jangan saring
@@ -1272,14 +1278,14 @@ NGINX_CONF
                                 @php
                                     $isActiveDomain = $d->ssl_status === 'active';
                                 @endphp
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                                <tr class="hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49] transition-colors">
                                     <td class="px-6 py-4">
-                                        <span class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                            <i class="fa-solid {{ $d->isChild() ? 'fa-sitemap' : 'fa-globe' }} {{ $d->isChild() ? 'text-sky-500 dark:text-sky-400' : 'text-indigo-500 dark:text-indigo-400' }} text-xs"></i>
+                                        <span class="font-semibold text-[#0F1A2A] dark:text-white flex items-center gap-2">
+                                            <i class="fa-solid {{ $d->isChild() ? 'fa-sitemap' : 'fa-globe' }} {{ $d->isChild() ? 'text-[#2A6FAD] dark:text-[#6BA8DC]' : 'text-[#1D5B96] dark:text-[#6BA8DC]' }} text-xs"></i>
                                             {{ $d->domain_name }}
                                         </span>
                                         @if ($d->isChild())
-                                            <span class="block text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                                            <span class="block text-[11px] text-[#8A9BAE] dark:text-white/40 mt-0.5">
                                                 {{ \App\Models\HostingDomain::TYPE_PLATFORM === $d->type ? 'Subdomain platform' : 'Subdomain' }}
                                                 @if ($d->parent)
                                                     &middot; dari {{ $d->parent->domain_name }}
@@ -1301,7 +1307,7 @@ NGINX_CONF
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase{{ $d->redirect->isPermanent() ? 'ui-badge ui-badge-accent' : 'ui-badge ui-badge-info' }}">
                                                     {{ $d->redirect->kindLabel() }} ({{ $d->redirect->status_code }})
                                                 </span>
-                                                <span class="text-xs text-slate-600 dark:text-slate-300 font-mono break-all">{{ $d->redirect->target }}</span>
+                                                <span class="text-xs text-[#525252] dark:text-white/70 font-mono break-all">{{ $d->redirect->target }}</span>
                                             </div>
                                         @else
                                             <button type="button" x-on:click="open = true"
@@ -1310,28 +1316,28 @@ NGINX_CONF
                                             </button>
                                         @endif
 
-                                        <div x-show="open" x-cloak class="mt-3 p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800/40">
-                                            <p class="text-xs font-semibold text-slate-700 dark:text-slate-200 mb-2">Redirect to Another Domain</p>
+                                        <div x-show="open" x-cloak class="mt-3 p-3 border border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30]/40">
+                                            <p class="text-xs font-semibold text-[#0F1A2A] dark:text-white/80 mb-2">Redirect to Another Domain</p>
 
                                             <form action="{{ route('user_hosting.domains.redirect.store', $d->hashid) }}" method="POST" class="space-y-2">
                                                 @csrf
                                                 <div>
-                                                    <label class="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1" for="target_{{ $d->id }}">Destination URL</label>
+                                                    <label class="block text-[11px] font-medium text-[#525252] dark:text-white/50 mb-1" for="target_{{ $d->id }}">Destination URL</label>
                                                     <input type="url" name="target" id="target_{{ $d->id }}" required
                                                            placeholder="https://toko-baru.com"
                                                            value="{{ old('target', $d->redirect->target ?? '') }}"
-                                                           class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                                           class="w-full bg-white dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-3 py-2 text-xs text-[#0F1A2A] dark:text-white/80 focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
                                                 </div>
                                                 <div>
-                                                    <label class="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1" for="status_{{ $d->id }}">Type</label>
+                                                    <label class="block text-[11px] font-medium text-[#525252] dark:text-white/50 mb-1" for="status_{{ $d->id }}">Type</label>
                                                     <select name="status_code" id="status_{{ $d->id }}"
-                                                            class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                                                            class="w-full bg-white dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] px-3 py-2 text-xs text-[#0F1A2A] dark:text-white/80 focus:ring-2 focus:ring-[#1D5B96]/20 focus:border-[#1D5B96] outline-none transition">
                                                         @foreach ($redirectStatuses as $code => $label)
                                                             <option value="{{ $code }}" @selected((int) old('status_code', $d->redirect->status_code ?? 308) === $code)>{{ $label }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <p class="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                                                <p class="text-[10px] text-[#525252] dark:text-white/50 leading-relaxed">
                                                     <i class="fa-solid fa-circle-info mr-1"></i>
                                                     Permanent ikut ter-cache browser, jadi hanya pakai kalau domain lama benar-benar dipindah permanen.
                                                 </p>
@@ -1349,10 +1355,10 @@ NGINX_CONF
                                             </form>
 
                                             @if ($d->redirect)
-                                                <form action="{{ route('user_hosting.domains.redirect.destroy', $d->hashid) }}" method="POST" class="pt-2 mt-2 border-t border-slate-200 dark:border-slate-700"
+                                                <form action="{{ route('user_hosting.domains.redirect.destroy', $d->hashid) }}" method="POST" class="pt-2 mt-2 border-t border-[#E3EAF1] dark:border-[#2A4463]"
                                                       onsubmit="event.preventDefault(); let f = this; swConfirm('Hapus redirect?', 'Domain ini akan dilayani normal lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition">
+                                                    <button type="submit" class="ui-btn ui-btn-sm ui-btn-danger">
                                                         <i class="fa-solid fa-trash mr-1"></i> Hapus Redirect
                                                     </button>
                                                 </form>
@@ -1366,7 +1372,7 @@ NGINX_CONF
                                             <form action="{{ route('user_hosting.domains.detach', $d->hashid) }}" method="POST" class="inline"
                                                   onsubmit="event.preventDefault(); let f = this; swConfirm('Lepas dari project?', 'Domain tidak dilayani sampai disambungkan lagi.').then(r => { if(r.isConfirmed) f.submit(); }); return false;">
                                                 @csrf
-                                                <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition">Lepas</button>
+                                                <button type="submit" class="ui-btn ui-btn-sm ui-btn-danger">Lepas</button>
                                             </form>
                                         </div>
                                     </td>
@@ -1374,9 +1380,9 @@ NGINX_CONF
                             @empty
                                 <tr>
                                     <td colspan="4" class="px-6 py-12 text-center">
-                                        <i class="fa-solid fa-globe text-2xl text-slate-300 dark:text-slate-600 mb-2"></i>
-                                        <p class="text-sm text-slate-500 dark:text-slate-400">Project ini belum punya custom domain.</p>
-                                        <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Tambahkan domain dulu di halaman Domains, lalu sambungkan ke project ini.</p>
+                                        <i class="fa-solid fa-globe text-2xl text-[#C9D5E2] dark:text-white/30 mb-2"></i>
+                                        <p class="text-sm text-[#525252] dark:text-white/50">Project ini belum punya custom domain.</p>
+                                        <p class="text-xs text-[#8A9BAE] dark:text-white/40 mt-1">Tambahkan domain dulu di halaman Domains, lalu sambungkan ke project ini.</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -1393,18 +1399,18 @@ NGINX_CONF
             @endphp
             @if($freeDomains->isNotEmpty() && $project->user_id == Auth::id())
             <div class="ui-card overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Hostname Tersedia Milik Anda</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Domain atau subdomain aktif yang belum dipakai project mana pun. Satu klik untuk menyambungkannya ke project ini.</p>
+                <div class="px-6 py-4 border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30]">
+                    <h3 class="ui-eyebrow text-[11px]">Hostname Tersedia Milik Anda</h3>
+                    <p class="text-xs text-[#525252] dark:text-white/50">Domain atau subdomain aktif yang belum dipakai project mana pun. Satu klik untuk menyambungkannya ke project ini.</p>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-3">
                     @foreach($freeDomains as $fd)
                         <form action="{{ route('user_hosting.domains.assign', $fd->hashid) }}" method="POST"
-                              class="flex items-center gap-3 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition">
+                              class="flex items-center gap-3 border border-[#E3EAF1] dark:border-[#2A4463] px-4 py-3 hover:border-[#C9D5E2] dark:hover:border-[#1D5B96] transition">
                             @csrf
                             <input type="hidden" name="project_id" value="{{ $project->id }}">
-                            <i class="fa-solid {{ $fd->isChild() ? 'fa-sitemap text-sky-500 dark:text-sky-400' : 'fa-globe text-indigo-500 dark:text-indigo-400' }}"></i>
-                            <span class="flex-1 min-w-0 text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{ $fd->domain_name }}</span>
+                            <i class="fa-solid {{ $fd->isChild() ? 'fa-sitemap text-[#2A6FAD] dark:text-[#6BA8DC]' : 'fa-globe text-[#1D5B96] dark:text-[#6BA8DC]' }}"></i>
+                            <span class="flex-1 min-w-0 text-sm font-semibold text-[#0F1A2A] dark:text-white truncate">{{ $fd->domain_name }}</span>
                             <button type="submit" class="ui-btn ui-btn-sm ui-btn-primary">Sambungkan</button>
                         </form>
                     @endforeach
@@ -1416,10 +1422,10 @@ NGINX_CONF
         {{-- TAB: TEAM ACCESS --}}
         <div id="panel-team" class="tab-panel hidden space-y-6">
             <div class="ui-card overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex justify-between items-center">
+                <div class="px-6 py-4 border-b border-[#E3EAF1] dark:border-[#2A4463] bg-[#F4F8FC] dark:bg-[#0F1D30] flex justify-between items-center">
                     <div>
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100">Team Access & Collaborators</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Undang anggota tim lain untuk berkolaborasi dalam proyek ini.</p>
+                        <h3 class="ui-eyebrow text-[11px]">Team Access & Collaborators</h3>
+                        <p class="text-xs text-[#525252] dark:text-white/50">Undang anggota tim lain untuk berkolaborasi dalam proyek ini.</p>
                     </div>
                 </div>
                 <div class="p-6">
@@ -1439,14 +1445,14 @@ NGINX_CONF
                         </button>
                     </form>
                     @else
-                    <div class="bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 p-4 rounded-xl text-sm mb-4">
+                    <div class="bg-[#E8F0F9] dark:bg-[#12233A] text-[#1D5B96] dark:text-[#6BA8DC] p-4 text-sm mb-4">
                         <i class="fa-solid fa-info-circle mr-2"></i> Hanya pemilik project yang dapat mengundang anggota tim baru.
                     </div>
                     @endif
 
-                    <div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-xl overflow-x-auto">
-                        <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400 whitespace-nowrap min-w-[600px]">
-                            <thead class="text-xs text-slate-700 dark:text-slate-200 uppercase bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700">
+                    <div class="mt-6 border border-[#E3EAF1] dark:border-[#2A4463] overflow-x-auto">
+                        <table class="w-full text-sm text-left text-[#525252] dark:text-white/50 whitespace-nowrap min-w-[600px]">
+                            <thead class="text-xs text-[#0F1A2A] dark:text-white/80 uppercase bg-[#F4F8FC] dark:bg-[#0F1D30] border-b border-[#E3EAF1] dark:border-[#2A4463]">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">User</th>
                                     <th scope="col" class="px-6 py-3">Role</th>
@@ -1455,9 +1461,9 @@ NGINX_CONF
                             </thead>
                             <tbody>
                                 @forelse ($project->teamMembers as $member)
-                                    <tr class="bg-white dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40">
-                                        <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-100">
-                                            {{ $member->name }} <br><span class="text-xs font-normal text-slate-500 dark:text-slate-400">{{ $member->email }}</span>
+                                    <tr class="bg-white dark:bg-[#0F1D30] border-b border-[#EDF2F7] dark:border-[#2A4463] hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
+                                        <td class="px-6 py-4 font-semibold text-[#0F1A2A] dark:text-white">
+                                            {{ $member->name }} <br><span class="text-xs font-normal text-[#525252] dark:text-white/50">{{ $member->email }}</span>
                                         </td>
                                         <td class="px-6 py-4">
                                             @if($member->pivot->role == 'editor')
@@ -1470,14 +1476,14 @@ NGINX_CONF
                                             @if($project->user_id == Auth::id())
                                             <form action="{{ route('user_hosting.team.remove', [$project->hashid, $member->id]) }}" method="POST" onsubmit="event.preventDefault(); let f = this; swConfirm('Cabut Akses?', 'Apakah Anda yakin ingin mencabut akses pengguna ini?').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="text-rose-600 dark:text-rose-300 hover:text-rose-800 dark:hover:text-rose-300 text-xs font-bold bg-rose-50 dark:bg-rose-500/10 px-2 py-1 rounded"><i class="fa-solid fa-user-xmark"></i> Cabut Akses</button>
+                                                <button type="submit" class="ui-btn ui-btn-sm ui-btn-danger"><i class="fa-solid fa-user-xmark"></i> Cabut Akses</button>
                                             </form>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-4 text-center text-slate-500 dark:text-slate-400">Belum ada anggota tim yang diundang.</td>
+                                        <td colspan="3" class="px-6 py-4 text-center text-[#525252] dark:text-white/50">Belum ada anggota tim yang diundang.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -1500,9 +1506,9 @@ NGINX_CONF
                 icon,
                 title,
                 text,
-                confirmButtonColor: '#4F46E5',
+                confirmButtonColor: '#1D5B96',
                 customClass: {
-                    popup: 'rounded-xl text-sm'
+                    popup: 'text-sm'
                 }
             });
         }
@@ -1513,12 +1519,12 @@ NGINX_CONF
                 text,
                 icon,
                 showCancelButton: true,
-                confirmButtonColor: '#EF4444',
-                cancelButtonColor: '#6B7280',
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#8A9BAE',
                 confirmButtonText: 'Ya, lanjutkan',
                 cancelButtonText: 'Batal',
                 customClass: {
-                    popup: 'rounded-xl text-sm'
+                    popup: 'text-sm'
                 }
             });
         }
@@ -1529,10 +1535,10 @@ NGINX_CONF
                 input: 'text',
                 inputPlaceholder,
                 showCancelButton: true,
-                confirmButtonColor: '#4F46E5',
+                confirmButtonColor: '#1D5B96',
                 cancelButtonText: 'Batal',
                 customClass: {
-                    popup: 'rounded-xl text-sm'
+                    popup: 'text-sm'
                 },
                 inputValidator: (v) => {
                     if (!v) return 'Nama tidak boleh kosong!';
@@ -1547,11 +1553,11 @@ NGINX_CONF
                 icon: 'error',
                 showCancelButton: true,
                 confirmButtonColor: '#e11d48',
-                cancelButtonColor: '#64748b',
+                cancelButtonColor: '#8A9BAE',
                 confirmButtonText: 'Ya, Hapus Sekarang!',
                 cancelButtonText: 'Batal',
                 customClass: {
-                    popup: 'rounded-xl text-sm'
+                    popup: 'text-sm'
                 }
             }).then((result) => {
                 if (result.isConfirmed) document.getElementById('delete-form').submit();
@@ -1753,7 +1759,7 @@ NGINX_CONF
             const relPath = cwd.startsWith(projectRoot) ? cwd.slice(projectRoot.length) : '';
             cwdDisplay.textContent = projectSlug + relPath;
             termPrompt.innerHTML =
-                `<span class="text-indigo-400">${getPromptLabel()}</span><span class="text-slate-400 dark:text-slate-500"> $</span>`;
+                `<span class="text-[#6BA8DC]">${getPromptLabel()}</span><span class="text-[#8A9BAE] dark:text-white/40"> $</span>`;
         }
 
         function appendRaw(html) {
@@ -1772,14 +1778,14 @@ NGINX_CONF
 
             appendRaw(
                 `<div class="flex items-start gap-2 mb-0.5">` +
-                `<span class="text-indigo-400 select-none shrink-0">${escapeHtml(getPromptLabel(currentCwd))} $</span>` +
-                `<span class="text-slate-100 break-all">${escapeHtml(cmd)}</span></div>`
+                `<span class="text-[#6BA8DC] select-none shrink-0">${escapeHtml(getPromptLabel(currentCwd))} $</span>` +
+                `<span class="text-[#E3EAF1] break-all">${escapeHtml(cmd)}</span></div>`
             );
             termInput.value = '';
             running = true;
 
             const lid = 'ld-' + Date.now();
-            appendRaw(`<div id="${lid}" class="text-slate-600 dark:text-slate-300 animate-pulse">▌</div>`);
+            appendRaw(`<div id="${lid}" class="text-[#525252] dark:text-white/70 animate-pulse">▌</div>`);
 
             try {
                 const res = await fetch(termUrl, {
@@ -1809,7 +1815,7 @@ NGINX_CONF
                 const decoder = new TextDecoder('utf-8');
                 
                 const preId = 'out-' + Date.now();
-                appendRaw(`<pre id="${preId}" class="text-slate-200 whitespace-pre-wrap break-words mb-1 leading-relaxed"></pre>`);
+                appendRaw(`<pre id="${preId}" class="text-[#E3EAF1] whitespace-pre-wrap break-words mb-1 leading-relaxed"></pre>`);
                 const preEl = document.getElementById(preId);
                 
                 let buffer = '';
@@ -1836,7 +1842,7 @@ NGINX_CONF
                                 termOut.scrollTop = termOut.scrollHeight;
                             }
                             if (data.exit_code !== undefined && data.exit_code !== 0) {
-                                preEl.classList.remove('text-slate-200');
+                                preEl.classList.remove('text-[#E3EAF1]');
                                 preEl.classList.add('text-rose-300');
                             }
                         } catch (e) {
@@ -1936,7 +1942,7 @@ NGINX_CONF
                     tbody.innerHTML = '';
 
                     if (!data.items.length) {
-                        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 dark:text-slate-500">
+                        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-[#8A9BAE] dark:text-white/40">
                             <i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50 block"></i>Folder kosong
                         </td></tr>`;
                     } else {
@@ -1947,20 +1953,20 @@ NGINX_CONF
                             const icon = isDir ?
                                 '<i class="fa-solid fa-folder text-amber-400 dark:text-amber-300 text-lg"></i>' :
                                 locked ?
-                                '<i class="fa-solid fa-lock text-slate-300 dark:text-slate-400 text-lg" title="File sistem"></i>' :
-                                '<i class="fa-regular fa-file-lines text-slate-400 dark:text-slate-500 text-lg"></i>';
+                                '<i class="fa-solid fa-lock text-[#C9D5E2] dark:text-white/50 text-lg" title="File sistem"></i>' :
+                                '<i class="fa-regular fa-file-lines text-[#8A9BAE] dark:text-white/40 text-lg"></i>';
 
                             // Tombol aksi — TIDAK ada onclick, pakai class + data-op
                             let actions = '';
                             if (locked) {
                                 actions =
-                                    `<span class="text-xs text-slate-300 dark:text-slate-400 italic select-none px-1">sistem</span>`;
+                                    `<span class="text-xs text-[#C9D5E2] dark:text-white/50 italic select-none px-1">sistem</span>`;
                             } else if (isDir) {
                                 actions = `
                                     <button class="ui-btn ui-btn-md ui-btn-link file-action px-1" data-op="copy" title="Copy">
                                         <i class="fa-solid fa-copy"></i>
                                     </button>
-                                    <button class="file-action text-indigo-400 dark:text-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-1 transition-colors" data-op="cut" title="Cut">
+                                    <button class="file-action text-[#6BA8DC] dark:text-[#7FB4E2] hover:text-[#2A6FAD] dark:hover:text-[#6BA8DC] px-1 transition-colors" data-op="cut" title="Cut">
                                         <i class="fa-solid fa-scissors"></i>
                                     </button>
                                     <button class="file-action text-amber-400 dark:text-amber-300 hover:text-amber-600 dark:hover:text-amber-400 px-1 transition-colors" data-op="rename" title="Rename">
@@ -1971,13 +1977,13 @@ NGINX_CONF
                                     </button>`;
                             } else {
                                 actions = `
-                                    <button class="file-action text-sky-400 dark:text-sky-300 hover:text-sky-600 dark:hover:text-sky-400 px-1 transition-colors" data-op="edit" title="Edit">
+                                    <button class="file-action text-[#6BA8DC] dark:text-[#6BA8DC] hover:text-[#2A6FAD] dark:hover:text-[#6BA8DC] px-1 transition-colors" data-op="edit" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
                                     <button class="ui-btn ui-btn-md ui-btn-link file-action px-1" data-op="copy" title="Copy">
                                         <i class="fa-solid fa-copy"></i>
                                     </button>
-                                    <button class="file-action text-indigo-400 dark:text-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-1 transition-colors" data-op="cut" title="Cut">
+                                    <button class="file-action text-[#6BA8DC] dark:text-[#7FB4E2] hover:text-[#2A6FAD] dark:hover:text-[#6BA8DC] px-1 transition-colors" data-op="cut" title="Cut">
                                         <i class="fa-solid fa-scissors"></i>
                                     </button>
                                     <button class="file-action text-amber-400 dark:text-amber-300 hover:text-amber-600 dark:hover:text-amber-400 px-1 transition-colors" data-op="rename" title="Rename">
@@ -1994,7 +2000,7 @@ NGINX_CONF
 
                             const tr = document.createElement('tr');
                             tr.className =
-                                `hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors group ${locked ? 'opacity-60' : ''}`;
+                                `hover:bg-[#E8F0F9] dark:bg-[#0F1D30]/50 dark:hover:bg-[#1A2F49] transition-colors group ${locked ? 'opacity-60' : ''}`;
                             // Simpan data di dataset — dipakai event delegation
                             tr.dataset.path = item.path;
                             tr.dataset.name = item.name;
@@ -2007,15 +2013,15 @@ NGINX_CONF
                                         <span class="shrink-0">${icon}</span>
                                         <a href="#" class="file-name-link font-semibold
                                             ${locked
-                                                ? 'text-slate-400 dark:text-slate-500 cursor-not-allowed'
-                                                : 'text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 dark:hover:text-indigo-400 cursor-pointer'} truncate">
+                                                ? 'text-[#8A9BAE] dark:text-white/40 cursor-not-allowed'
+                                                : 'text-[#525252] dark:text-white/70 hover:text-[#2A6FAD] dark:hover:text-[#6BA8DC] dark:hover:text-[#6BA8DC] cursor-pointer'} truncate">
                                             ${item.name}
                                         </a>
                                         ${locked ? '<span class="ui-badge ui-badge-neutral text-[10px] px-1.5 font-mono shrink-0">protected</span>' : ''}
                                     </div>
                                 </td>
-                                <td class="px-4 py-2.5 text-slate-400 dark:text-slate-500 text-xs whitespace-nowrap">${item.size}</td>
-                                <td class="px-4 py-2.5 text-slate-400 dark:text-slate-500 text-xs hidden md:table-cell whitespace-nowrap">${item.modified}</td>
+                                <td class="px-4 py-2.5 text-[#8A9BAE] dark:text-white/40 text-xs whitespace-nowrap">${item.size}</td>
+                                <td class="px-4 py-2.5 text-[#8A9BAE] dark:text-white/40 text-xs hidden md:table-cell whitespace-nowrap">${item.modified}</td>
                                 <td class="px-4 py-2.5 text-right whitespace-nowrap">${actions}</td>`;
                             tbody.appendChild(tr);
                         });
@@ -2172,8 +2178,8 @@ NGINX_CONF
                 showCancelButton: true,
                 confirmButtonText: '<i class="fa-solid fa-check mr-1"></i> Rename',
                 cancelButtonText: 'Batal',
-                confirmButtonColor: '#4F46E5',
-                customClass: { popup: 'rounded-xl text-sm' },
+                confirmButtonColor: '#1D5B96',
+                customClass: { popup: 'text-sm' },
                 inputValidator: (v) => {
                     if (!v) return 'Nama tidak boleh kosong!';
                     if (v === name) return 'Nama sama dengan sebelumnya!';
@@ -2451,29 +2457,29 @@ NGINX_CONF
             const low = filename.toLowerCase();
             if (low === '.env') return 'fa-solid fa-key text-amber-400 dark:text-amber-300';
             const icons = {
-                php: 'fa-brands fa-php text-indigo-400',
-                js: 'fa-brands fa-js text-yellow-400 dark:text-yellow-300',
-                jsx: 'fa-brands fa-react text-sky-400 dark:text-sky-300',
-                ts: 'fa-brands fa-js text-blue-400 dark:text-blue-300',
-                tsx: 'fa-brands fa-react text-sky-400 dark:text-sky-300',
+                php: 'fa-brands fa-php text-[#6BA8DC]',
+                js: 'fa-brands fa-js text-amber-400 dark:text-amber-300',
+                jsx: 'fa-brands fa-react text-[#6BA8DC] dark:text-[#6BA8DC]',
+                ts: 'fa-brands fa-js text-[#2A6FAD] dark:text-[#6BA8DC]',
+                tsx: 'fa-brands fa-react text-[#6BA8DC] dark:text-[#6BA8DC]',
                 vue: 'fa-brands fa-vuejs text-emerald-400 dark:text-emerald-300',
-                html: 'fa-brands fa-html5 text-orange-400 dark:text-orange-300',
-                css: 'fa-brands fa-css3 text-sky-400 dark:text-sky-300',
-                scss: 'fa-brands fa-sass text-pink-400 dark:text-pink-300',
-                less: 'fa-brands fa-css3 text-sky-400 dark:text-sky-300',
+                html: 'fa-brands fa-html5 text-amber-400 dark:text-amber-300',
+                css: 'fa-brands fa-css3 text-[#6BA8DC] dark:text-[#6BA8DC]',
+                scss: 'fa-brands fa-sass text-rose-400 dark:text-rose-300',
+                less: 'fa-brands fa-css3 text-[#6BA8DC] dark:text-[#6BA8DC]',
                 json: 'fa-solid fa-code text-amber-400 dark:text-amber-300',
-                md: 'fa-solid fa-file-lines text-slate-400 dark:text-slate-500',
-                txt: 'fa-solid fa-file-lines text-slate-400 dark:text-slate-500',
-                py: 'fa-brands fa-python text-sky-400 dark:text-sky-300',
+                md: 'fa-solid fa-file-lines text-[#8A9BAE] dark:text-white/40',
+                txt: 'fa-solid fa-file-lines text-[#8A9BAE] dark:text-white/40',
+                py: 'fa-brands fa-python text-[#6BA8DC] dark:text-[#6BA8DC]',
                 sql: 'fa-solid fa-database text-emerald-400 dark:text-emerald-300',
-                yml: 'fa-solid fa-gear text-slate-400 dark:text-slate-500',
-                yaml: 'fa-solid fa-gear text-slate-400 dark:text-slate-500',
-                lock: 'fa-solid fa-lock text-slate-400 dark:text-slate-500',
-                gitignore: 'fa-solid fa-file-shield text-slate-400 dark:text-slate-500',
-                editorconfig: 'fa-solid fa-sliders text-slate-400 dark:text-slate-500',
+                yml: 'fa-solid fa-gear text-[#8A9BAE] dark:text-white/40',
+                yaml: 'fa-solid fa-gear text-[#8A9BAE] dark:text-white/40',
+                lock: 'fa-solid fa-lock text-[#8A9BAE] dark:text-white/40',
+                gitignore: 'fa-solid fa-file-shield text-[#8A9BAE] dark:text-white/40',
+                editorconfig: 'fa-solid fa-sliders text-[#8A9BAE] dark:text-white/40',
                 env: 'fa-solid fa-key text-amber-400 dark:text-amber-300'
             };
-            return icons[low.split('.').pop()] || 'fa-regular fa-file text-slate-400 dark:text-slate-500';
+            return icons[low.split('.').pop()] || 'fa-regular fa-file text-[#8A9BAE] dark:text-white/40';
         }
 
         var ideFolderCache = {};      // path -> items (cache hasil fetch)
@@ -2507,22 +2513,22 @@ NGINX_CONF
         async function appendIdeRow(treeEl, item, depth) {
             const isDir = item.type === 'dir';
             const row = document.createElement('div');
-            row.className = 'ide-row group flex items-center gap-1.5 py-[3px] pr-2 cursor-pointer hover:bg-[#2a2d2e] transition-colors whitespace-nowrap select-none w-full';
+            row.className = 'ide-row group flex items-center gap-1.5 py-[3px] pr-2 cursor-pointer hover:bg-[#12233A] transition-colors whitespace-nowrap select-none w-full';
             row.style.paddingLeft = (depth * 14 + 4) + 'px';
 
             const actionsHtml = !isProtected(item.name) ? `
-                <div class="hidden group-hover:flex items-center gap-2 ml-auto pl-2 bg-[#2a2d2e] text-[11px] text-slate-400">
-                    <button class="hover:text-indigo-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'copy')" title="Copy"><i class="fa-solid fa-copy"></i></button>
-                    <button class="hover:text-indigo-400 transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'cut')" title="Cut"><i class="fa-solid fa-scissors"></i></button>
+                <div class="hidden group-hover:flex items-center gap-2 ml-auto pl-2 bg-[#12233A] text-[11px] text-[#8A9BAE]">
+                    <button class="hover:text-[#2A6FAD] transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'copy')" title="Copy"><i class="fa-solid fa-copy"></i></button>
+                    <button class="hover:text-[#2A6FAD] transition-colors" onclick="event.stopPropagation(); copyOrCutItem('${escHtmlJs(item.path)}', '${escHtmlJs(item.name)}', 'cut')" title="Cut"><i class="fa-solid fa-scissors"></i></button>
                 </div>
             ` : '';
 
             if (isDir) {
                 const expanded = ideExpanded.has(item.path);
                 row.innerHTML =
-                    `<span class="ide-chev w-[14px] text-center text-[9px] text-slate-500 dark:text-slate-400 shrink-0">${expanded ? '&#9662;' : '&#9656;'}</span>` +
+                    `<span class="ide-chev w-[14px] text-center text-[9px] text-[#525252] dark:text-white/50 shrink-0">${expanded ? '&#9662;' : '&#9656;'}</span>` +
                     `<i class="fa-solid ${expanded ? 'fa-folder-open text-amber-400 dark:text-amber-300' : 'fa-folder text-amber-500 dark:text-amber-400'} text-[13px] shrink-0"></i>` +
-                    `<span class="truncate text-[#cccccc] flex-1 min-w-0">${item.name}</span>` + actionsHtml;
+                    `<span class="truncate text-[#C9D5E2] flex-1 min-w-0">${item.name}</span>` + actionsHtml;
                 row.onclick = (e) => {
                     e.stopPropagation();
                     ideSelectedPath = item.path;
@@ -2537,11 +2543,11 @@ NGINX_CONF
                 };
             } else {
                 const locked = isProtected(item.name);
-                const icon = locked ? 'fa-solid fa-lock text-slate-500 dark:text-slate-400' : ideFileIcon(item.name);
+                const icon = locked ? 'fa-solid fa-lock text-[#525252] dark:text-white/50' : ideFileIcon(item.name);
                 row.innerHTML =
                     `<span class="ide-chev w-[14px] shrink-0"></span>` +
                     `<i class="${icon} text-[13px] shrink-0"></i>` +
-                    `<span class="truncate ${locked ? 'opacity-50' : 'text-[#cccccc]'} flex-1 min-w-0">${item.name}</span>` + actionsHtml;
+                    `<span class="truncate ${locked ? 'opacity-50' : 'text-[#C9D5E2]'} flex-1 min-w-0">${item.name}</span>` + actionsHtml;
                 row.onclick = (e) => {
                     e.stopPropagation();
                     if (locked) {
@@ -2649,13 +2655,13 @@ NGINX_CONF
         function addIdeTab(path, filename) {
             const bar = document.getElementById('ide-tabs-bar');
             const tab = document.createElement('div');
-            tab.className = 'ide-tab flex items-center gap-2 px-3 py-2 text-xs text-slate-300 dark:text-slate-400 border-r border-[#1e1e1e] cursor-pointer whitespace-nowrap shrink-0 select-none bg-[#252526]';
+            tab.className = 'ide-tab flex items-center gap-2 px-3 py-2 text-xs text-[#C9D5E2] dark:text-white/50 border-r border-[#0A1322] cursor-pointer whitespace-nowrap shrink-0 select-none bg-[#12233A]';
             tab.dataset.path = path;
             tab.innerHTML = `
-                <i class="fa-regular fa-file-code text-indigo-400"></i>
+                <i class="fa-regular fa-file-code text-[#6BA8DC]"></i>
                 <span class="max-w-[160px] truncate">${filename}</span>
                 <span class="ide-tab-dirty hidden text-[8px] text-amber-400 dark:text-amber-300">●</span>
-                <span class="ide-tab-close text-slate-500 dark:text-slate-400 hover:text-white" title="Tutup"><i class="fa-solid fa-xmark text-[10px]"></i></span>
+                <span class="ide-tab-close text-[#525252] dark:text-white/50 hover:text-white" title="Tutup"><i class="fa-solid fa-xmark text-[10px]"></i></span>
             `;
             tab.addEventListener('click', (e) => {
                 if (e.target.closest('.ide-tab-close')) {
@@ -2676,7 +2682,7 @@ NGINX_CONF
             document.getElementById('ide-current-filename').textContent = ideTabs[path].filename;
             document.querySelectorAll('#ide-tabs-bar .ide-tab').forEach(t => {
                 const active = t.dataset.path === path;
-                t.style.backgroundColor = active ? '#1e1e1e' : '#252526';
+                t.style.backgroundColor = active ? '#0A1322' : '#12233A';
                 t.style.borderTop = active ? '1px solid #6366f1' : '1px solid transparent';
             });
             if (typeof monaco !== 'undefined' && ideTabs[path].model) {
@@ -2904,7 +2910,7 @@ NGINX_CONF
 
                 if (isLeft) {
                     // Klik nama view yang sedang aktif = tutup sidebar (VS Code behavior)
-                    if (ideLeftOpen && btn.classList.contains('border-indigo-500')) {
+                    if (ideLeftOpen && btn.classList.contains('border-[#1D5B96]')) {
                         ideSetLeftSidebar(false);
                         return;
                     }
@@ -2990,11 +2996,11 @@ NGINX_CONF
             if (e.key === 'Enter') {
                 var query = searchInput.value.trim();
                 if (!query) {
-                    searchResults.innerHTML = '<div class="text-slate-500 dark:text-slate-400 text-center mt-10">Ketik dan tekan Enter untuk mencari</div>';
+                    searchResults.innerHTML = '<div class="text-[#525252] dark:text-white/50 text-center mt-10">Ketik dan tekan Enter untuk mencari</div>';
                     return;
                 }
                 
-                searchResults.innerHTML = '<div class="text-center mt-10 text-indigo-400"><i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i><br>Mencari...</div>';
+                searchResults.innerHTML = '<div class="text-center mt-10 text-[#6BA8DC]"><i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i><br>Mencari...</div>';
                 
                 fetch(searchUrl, {
                     method: 'POST',
@@ -3009,23 +3015,23 @@ NGINX_CONF
                             if (res.type === 'name') {
                                 const isFolder = res.content === '(folder)';
                                 const icon = isFolder ? 'fa-solid fa-folder text-amber-500 dark:text-amber-400' : 'fa-regular fa-file-code';
-                                html += `<div class="mt-2 mb-1 text-[11px] font-bold text-slate-300 dark:text-slate-400 break-all cursor-pointer hover:text-indigo-400 transition" onclick="${isFolder ? 'loadIdeSidebar(\'' + res.path + '\')' : 'openIdeFile(\'' + res.path + '\', \'' + res.path.split('/').pop() + '\')'}"><i class="${icon} mr-1"></i>${res.path}${isFolder ? ' <span class="text-[9px] text-amber-500/80 font-medium">(folder)</span>' : ''}</div>`;
+                                html += `<div class="mt-2 mb-1 text-[11px] font-bold text-[#C9D5E2] dark:text-white/50 break-all cursor-pointer hover:text-[#2A6FAD] transition" onclick="${isFolder ? 'loadIdeSidebar(\'' + res.path + '\')' : 'openIdeFile(\'' + res.path + '\', \'' + res.path.split('/').pop() + '\')'}"><i class="${icon} mr-1"></i>${res.path}${isFolder ? ' <span class="text-[9px] text-amber-500/80 font-medium">(folder)</span>' : ''}</div>`;
                                 return;
                             }
                             if (currentFile !== res.path) {
                                 currentFile = res.path;
-                                html += `<div class="mt-3 mb-1 text-[11px] font-bold text-slate-300 dark:text-slate-400 break-all cursor-pointer hover:text-indigo-400 transition" onclick="openIdeFile('${res.path}', '${res.path.split('/').pop()}')"><i class="fa-regular fa-file-code mr-1"></i>${res.path}</div>`;
+                                html += `<div class="mt-3 mb-1 text-[11px] font-bold text-[#C9D5E2] dark:text-white/50 break-all cursor-pointer hover:text-[#2A6FAD] transition" onclick="openIdeFile('${res.path}', '${res.path.split('/').pop()}')"><i class="fa-regular fa-file-code mr-1"></i>${res.path}</div>`;
                             }
                             // Highlight the matching text basically
                             const safeContent = res.content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                            html += `<div class="pl-4 py-1 hover:bg-[#2a2d2e] cursor-pointer text-slate-400 dark:text-slate-500 transition-colors flex gap-2" onclick="openIdeFile('${res.path}', '${res.path.split('/').pop()}'); setTimeout(() => { if(ideEditorInstance) { ideEditorInstance.revealLineInCenter(${res.line}); ideEditorInstance.setPosition({lineNumber: ${res.line}, column: 1}); } }, 500);">
-                                <span class="text-slate-600 dark:text-slate-300 shrink-0 w-6 text-right">${res.line}</span>
+                            html += `<div class="pl-4 py-1 hover:bg-[#12233A] cursor-pointer text-[#8A9BAE] dark:text-white/40 transition-colors flex gap-2" onclick="openIdeFile('${res.path}', '${res.path.split('/').pop()}'); setTimeout(() => { if(ideEditorInstance) { ideEditorInstance.revealLineInCenter(${res.line}); ideEditorInstance.setPosition({lineNumber: ${res.line}, column: 1}); } }, 500);">
+                                <span class="text-[#525252] dark:text-white/70 shrink-0 w-6 text-right">${res.line}</span>
                                 <span class="truncate">${safeContent}</span>
                             </div>`;
                         });
                         searchResults.innerHTML = html;
                     } else {
-                        searchResults.innerHTML = '<div class="text-slate-500 dark:text-slate-400 text-center mt-10">Tidak ditemukan hasil.</div>';
+                        searchResults.innerHTML = '<div class="text-[#525252] dark:text-white/50 text-center mt-10">Tidak ditemukan hasil.</div>';
                     }
                 }).catch(() => {
                     searchResults.innerHTML = '<div class="text-rose-500 dark:text-rose-400 text-center mt-10">Error melakukan pencarian.</div>';
@@ -3051,14 +3057,14 @@ NGINX_CONF
                 .replace(/```([a-z]*)(?:<br>)?([\s\S]*?)```/g, (match, lang, code) => {
                     let rawCode = code.replace(/<br>/g, '\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
                     let base64Code = btoa(unescape(encodeURIComponent(rawCode.trim())));
-                    return `<div class="relative group my-2"><div class="absolute right-1 top-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"><button type="button" onclick="window.applyAiCode('${base64Code}')" class="ui-btn ui-btn-sm ui-btn-primary text-[9px]"><i class="fa-solid fa-wand-magic-sparkles"></i> Terapkan</button></div><pre class="bg-black/30 p-2 pt-6 rounded overflow-x-auto border border-[#444] text-[11px] relative"><code>${code}</code></pre></div>`;
+                    return `<div class="relative group my-2"><div class="absolute right-1 top-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"><button type="button" onclick="window.applyAiCode('${base64Code}')" class="ui-btn ui-btn-sm ui-btn-primary text-[9px]"><i class="fa-solid fa-wand-magic-sparkles"></i> Terapkan</button></div><pre class="bg-black/30 p-2 pt-6 rounded overflow-x-auto border border-[#24384F] text-[11px] relative"><code>${code}</code></pre></div>`;
                 })
                 .replace(/`([^`]+)`/g, '<code class="bg-black/30 px-1 py-0.5 rounded text-[11px] text-amber-300">$1</code>');
         }
 
         function ideChatWelcome() {
             document.getElementById('grok-chat-messages').innerHTML = `
-                <div class="bg-[#333] text-slate-200 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs leading-relaxed">
+                <div class="bg-[#0F1D30] text-[#E3EAF1] p-2 self-start max-w-[90%] text-xs leading-relaxed">
                     Halo! Saya <b>Ryaze AI v2.0</b> (GPT-OSS 120B). Bisa analisis bug, generate kode, atau <i>edit file project langsung</i>. Riwayat percakapan tersimpan otomatis.
                 </div>
             `;
@@ -3072,17 +3078,17 @@ NGINX_CONF
                     const chats = data.chats || [];
                     list.innerHTML = '';
                     if (!chats.length) {
-                        list.innerHTML = '<div class="p-4 text-slate-500 dark:text-slate-400 text-xs text-center">Belum ada percakapan.<br>Klik <i class="fa-solid fa-plus"></i> untuk memulai.</div>';
+                        list.innerHTML = '<div class="p-4 text-[#525252] dark:text-white/50 text-xs text-center">Belum ada percakapan.<br>Klik <i class="fa-solid fa-plus"></i> untuk memulai.</div>';
                         return;
                     }
                     chats.forEach(c => {
                         const row = document.createElement('div');
-                        row.className = 'flex items-center gap-2 px-3 py-2 hover:bg-[#333] cursor-pointer transition-colors border-b border-[#222]' + (ideChatId && c.id === ideChatId ? ' bg-[#2a2d2e]' : '');
+                        row.className = 'flex items-center gap-2 px-3 py-2 hover:bg-[#0F1D30] cursor-pointer transition-colors border-b border-[#0F1D30]' + (ideChatId && c.id === ideChatId ? ' bg-[#12233A]' : '');
                         row.innerHTML = `<div class="flex-1 min-w-0">
-                            <div class="text-xs text-slate-200 truncate font-medium">${escChat(c.title)}</div>
-                            <div class="text-[10px] text-slate-500 dark:text-slate-400">${escChat(c.updated_at)} · ${c.messages} pesan</div>
+                            <div class="text-xs text-[#E3EAF1] truncate font-medium">${escChat(c.title)}</div>
+                            <div class="text-[10px] text-[#525252] dark:text-white/50">${escChat(c.updated_at)} · ${c.messages} pesan</div>
                         </div>
-                        <button class="ide-chat-del text-slate-600 dark:text-slate-300 hover:text-rose-400 transition-colors shrink-0" title="Hapus"><i class="fa-solid fa-trash-can text-[10px]"></i></button>`;
+                        <button class="ide-chat-del text-[#525252] dark:text-white/70 hover:text-rose-400 transition-colors shrink-0" title="Hapus"><i class="fa-solid fa-trash-can text-[10px]"></i></button>`;
                         row.querySelector('.ide-chat-del').addEventListener('click', (e) => {
                             e.stopPropagation();
                             ideDeleteChat(c.id);
@@ -3099,7 +3105,7 @@ NGINX_CONF
         function ideLoadChat(id) {
             ideChatId = id;
             const mc = document.getElementById('grok-chat-messages');
-            mc.innerHTML = '<div class="p-3 text-slate-500 dark:text-slate-400 text-xs text-center"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat percakapan...</div>';
+            mc.innerHTML = '<div class="p-3 text-[#525252] dark:text-white/50 text-xs text-center"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat percakapan...</div>';
             fetch(ideChatMsgsUrl.replace('__CHAT__', id), { headers: { 'Accept': 'application/json' } })
                 .then(r => r.json())
                 .then(data => {
@@ -3108,9 +3114,9 @@ NGINX_CONF
                     if (!msgs.length) { ideChatWelcome(); return; }
                     msgs.forEach(m => {
                         if (m.role === 'user') {
-                            mc.insertAdjacentHTML('beforeend', `<div class="bg-indigo-600 text-white p-2 rounded-lg rounded-tr-none self-end max-w-[90%] text-xs leading-relaxed shadow-sm">${escChat(m.content)}</div>`);
+                            mc.insertAdjacentHTML('beforeend', `<div class="bg-[#1D5B96] text-white p-2 self-end max-w-[90%] text-xs leading-relaxed shadow-none">${escChat(m.content)}</div>`);
                         } else {
-                            mc.insertAdjacentHTML('beforeend', `<div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1"><b>Ryaze AI v2.0:</b><br>${formatAiText(m.content)}</div>`);
+                            mc.insertAdjacentHTML('beforeend', `<div class="bg-[#0F1D30] text-[#E3EAF1] p-2.5 self-start max-w-[95%] text-xs leading-relaxed border border-[#24384F] shadow-none mt-1"><b>Ryaze AI v2.0:</b><br>${formatAiText(m.content)}</div>`);
                         }
                     });
                     mc.scrollTop = mc.scrollHeight;
@@ -3178,7 +3184,7 @@ NGINX_CONF
             
             // Add User message
             messagesContainer.innerHTML += `
-                <div class="bg-indigo-600 text-white p-2 rounded-lg rounded-tr-none self-end max-w-[90%] text-xs leading-relaxed shadow-sm">
+                <div class="bg-[#1D5B96] text-white p-2 self-end max-w-[90%] text-xs leading-relaxed shadow-none">
                     ${escChat(val)}
                 </div>
             `;
@@ -3187,7 +3193,7 @@ NGINX_CONF
             // Show loading
             const loaderId = 'grok-loader-' + Date.now();
             messagesContainer.innerHTML += `
-                <div id="${loaderId}" class="bg-[#333] text-slate-400 dark:text-slate-500 p-2 rounded-lg rounded-tl-none self-start max-w-[90%] text-xs mt-1 border border-[#444]">
+                <div id="${loaderId}" class="bg-[#0F1D30] text-[#8A9BAE] dark:text-white/40 p-2 self-start max-w-[90%] text-xs mt-1 border border-[#24384F]">
                     <i class="fa-solid fa-ellipsis fa-fade"></i> Ryaze AI sedang berpikir...
                 </div>
             `;
@@ -3215,7 +3221,7 @@ NGINX_CONF
 
                 if (data.error) {
                     messagesContainer.innerHTML += `
-                        <div class="bg-rose-900/50 text-rose-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-rose-800 shadow-sm mt-1">
+                        <div class="bg-rose-900/50 text-rose-200 p-2.5 self-start max-w-[95%] text-xs leading-relaxed border border-rose-800 shadow-none mt-1">
                             <i class="fa-solid fa-triangle-exclamation mr-1"></i> ${escChat(data.error)}
                         </div>
                     `;
@@ -3249,17 +3255,17 @@ NGINX_CONF
                         data.file_ops.forEach(op => {
                             const icon = op.status === 'success' ? '<i class="fa-solid fa-circle-check text-emerald-400 dark:text-emerald-300"></i>'
                                 : op.status === 'error' ? '<i class="fa-solid fa-circle-xmark text-rose-400 dark:text-rose-300"></i>'
-                                : '<i class="fa-solid fa-circle-info text-sky-400 dark:text-sky-300"></i>';
+                                : '<i class="fa-solid fa-circle-info text-[#6BA8DC] dark:text-[#6BA8DC]"></i>';
                             const color = op.status === 'success' ? 'text-emerald-300'
                                 : op.status === 'error' ? 'text-rose-300'
-                                : 'text-sky-300';
+                                : 'text-[#7FB4E2]';
                             opsHtml += `<div class="flex items-start gap-2 ${color}"><span class="shrink-0 mt-0.5">${icon}</span><span class="break-all"><b>${op.path || '(parse)'}</b> — ${op.message}</span></div>`;
                         });
-                        opsHtml = `<div class="mt-2 p-2 bg-[#252526] rounded border border-[#444] text-[11px] space-y-1">${opsHtml}</div>`;
+                        opsHtml = `<div class="mt-2 p-2 bg-[#12233A] rounded border border-[#24384F] text-[11px] space-y-1">${opsHtml}</div>`;
                     }
                     
                     messagesContainer.innerHTML += `
-                        <div class="bg-[#333] text-slate-200 p-2.5 rounded-lg rounded-tl-sm self-start max-w-[95%] text-xs leading-relaxed border border-[#444] shadow-sm mt-1">
+                        <div class="bg-[#0F1D30] text-[#E3EAF1] p-2.5 self-start max-w-[95%] text-xs leading-relaxed border border-[#24384F] shadow-none mt-1">
                             <b>Ryaze AI v2.0:</b><br>
                             ${formattedReply}
                             ${opsHtml}
@@ -3281,7 +3287,7 @@ NGINX_CONF
                 const loader = document.getElementById(loaderId);
                 if(loader) loader.remove();
                 messagesContainer.innerHTML += `
-                    <div class="bg-rose-900/50 text-rose-200 p-2.5 rounded-lg rounded-tl-none self-start max-w-[95%] text-xs leading-relaxed border border-rose-800 shadow-sm mt-1">
+                    <div class="bg-rose-900/50 text-rose-200 p-2.5 self-start max-w-[95%] text-xs leading-relaxed border border-rose-800 shadow-none mt-1">
                         <i class="fa-solid fa-plug-circle-xmark mr-1"></i> Gagal menghubungi server.
                     </div>
                 `;
@@ -3360,17 +3366,17 @@ NGINX_CONF
         function ideNewTerminal(name, opts = {}) {
             const id = opts.id || ('ide-term-' + (ideTermSeq++));
             const pane = document.createElement('div');
-            pane.className = 'ide-term-pane flex-1 flex flex-col min-h-0 bg-[#181818] border-t border-[#1e1e1e]';
+            pane.className = 'ide-term-pane flex-1 flex flex-col min-h-0 bg-[#0A1322] border-t border-[#0A1322]';
             pane.dataset.termId = id;
             pane.innerHTML = `
-                <div class="h-7 bg-[#252526] flex items-center px-3 text-[11px] text-slate-400 dark:text-slate-500 shrink-0 border-b border-[#1e1e1e]">
+                <div class="h-7 bg-[#12233A] flex items-center px-3 text-[11px] text-[#8A9BAE] dark:text-white/40 shrink-0 border-b border-[#0A1322]">
                     <span class="text-emerald-400 dark:text-emerald-300 font-mono">${ideEsc(name)}</span>
-                    <button class="ide-term-pane-kill ml-auto w-5 h-5 flex items-center justify-center rounded hover:bg-[#3c3c3c] text-slate-600 dark:text-slate-300 hover:text-white transition-colors" title="Kill Terminal"><i class="fa-solid fa-xmark text-[9px]"></i></button>
+                    <button class="ide-term-pane-kill ml-auto w-5 h-5 flex items-center justify-center rounded hover:bg-[#12233A] text-[#525252] dark:text-white/70 hover:text-white transition-colors" title="Kill Terminal"><i class="fa-solid fa-xmark text-[9px]"></i></button>
                 </div>
-                <div class="ide-term-out flex-1 min-w-0 overflow-y-auto p-2 font-mono text-[12px] leading-relaxed text-slate-200"></div>
+                <div class="ide-term-out flex-1 min-w-0 overflow-y-auto p-2 font-mono text-[12px] leading-relaxed text-[#E3EAF1]"></div>
                 <div class="flex items-center gap-2 px-2 pb-2 shrink-0">
-                    <span class="ide-term-prompt text-indigo-400 font-mono text-xs select-none whitespace-nowrap">${ideEsc(projectSlug)} $</span>
-                    <input class="ide-term-input flex-1 min-w-0 bg-transparent text-slate-100 font-mono text-xs outline-none" placeholder="ketik perintah, lalu Enter..." autocomplete="off" spellcheck="false">
+                    <span class="ide-term-prompt text-[#6BA8DC] font-mono text-xs select-none whitespace-nowrap">${ideEsc(projectSlug)} $</span>
+                    <input class="ide-term-input flex-1 min-w-0 bg-transparent text-[#E3EAF1] font-mono text-xs outline-none" placeholder="ketik perintah, lalu Enter..." autocomplete="off" spellcheck="false">
                 </div>`;
             const t = {
                 id, name, paneEl: pane, split: !!opts.split,
@@ -3383,7 +3389,7 @@ NGINX_CONF
             t.updatePrompt = (cwd) => {
                 t.cwd = cwd;
                 const rel = cwd && cwd.startsWith(projectRoot) ? cwd.slice(projectRoot.length) : '';
-                t.promptEl.innerHTML = `<span class="text-indigo-400">${ideEsc(projectSlug + rel)}</span><span class="text-slate-400 dark:text-slate-500"> $</span>`;
+                t.promptEl.innerHTML = `<span class="text-[#6BA8DC]">${ideEsc(projectSlug + rel)}</span><span class="text-[#8A9BAE] dark:text-white/40"> $</span>`;
             };
             t.run = async () => {
                 if (t.running) return;
@@ -3392,11 +3398,11 @@ NGINX_CONF
                 t.history.unshift(cmd);
                 if (t.history.length > 100) t.history.pop();
                 t.histIdx = -1;
-                t.appendRaw(`<div class="flex items-start gap-2 mb-0.5"><span class="text-indigo-400 select-none shrink-0">${ideEsc(projectSlug)} $</span><span class="text-slate-100 break-all">${ideEsc(cmd)}</span></div>`);
+                t.appendRaw(`<div class="flex items-start gap-2 mb-0.5"><span class="text-[#6BA8DC] select-none shrink-0">${ideEsc(projectSlug)} $</span><span class="text-[#E3EAF1] break-all">${ideEsc(cmd)}</span></div>`);
                 t.inputEl.value = '';
                 t.running = true;
                 const lid = 'tld-' + t.id + '-' + Date.now();
-                t.appendRaw(`<div id="${lid}" class="text-slate-600 dark:text-slate-300 animate-pulse">▌</div>`);
+                t.appendRaw(`<div id="${lid}" class="text-[#525252] dark:text-white/70 animate-pulse">▌</div>`);
                 try {
                     const res = await fetch(termUrl, {
                         method: 'POST',
@@ -3409,7 +3415,7 @@ NGINX_CONF
                     if (data.error) {
                         t.appendRaw(`<div class="text-rose-400 dark:text-rose-300 mb-1">${ideEsc(data.error)}</div>`);
                     } else if (data.output && data.output.trim() !== '') {
-                        const cls = data.exit_code !== 0 ? 'text-rose-300' : 'text-slate-200';
+                        const cls = data.exit_code !== 0 ? 'text-rose-300' : 'text-[#E3EAF1]';
                         t.appendRaw(`<pre class="${cls} whitespace-pre-wrap break-words mb-1 leading-relaxed">${ideEsc(data.output)}</pre>`);
                         ideCaptureProblems(data.output, t.name);
                     }
@@ -3445,13 +3451,13 @@ NGINX_CONF
             const wrap = document.getElementById('ide-term-tabs');
             wrap.innerHTML = '';
             if (!ideTerminals.length) {
-                wrap.innerHTML = '<div class="text-slate-600 dark:text-slate-300 text-[11px] px-2">Tidak ada terminal — klik <i class="fa-solid fa-plus"></i> untuk membuat</div>';
+                wrap.innerHTML = '<div class="text-[#525252] dark:text-white/70 text-[11px] px-2">Tidak ada terminal — klik <i class="fa-solid fa-plus"></i> untuk membuat</div>';
                 return;
             }
             ideTerminals.forEach(t => {
                 const chip = document.createElement('button');
                 const active = ideActiveTerminal && ideActiveTerminal.id === t.id;
-                chip.className = 'flex items-center gap-1.5 px-2.5 h-6 rounded text-[11px] font-mono transition-colors shrink-0 ' + (active ? 'bg-[#3c3c3c] text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-200 hover:bg-[#2a2d2e]');
+                chip.className = 'flex items-center gap-1.5 px-2.5 h-6 rounded text-[11px] font-mono transition-colors shrink-0 ' + (active ? 'bg-[#12233A] text-white' : 'text-[#525252] dark:text-white/50 hover:text-white hover:bg-[#12233A]');
                 chip.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${t.running ? 'bg-amber-400' : 'bg-emerald-500'}"></span><span class="truncate max-w-[140px]">${ideEsc(t.name)}</span>`;
                 chip.onclick = () => { ideActiveTerminal = t; ideRenderTermTabs(); ideRenderTermArea(); setTimeout(() => t.inputEl.focus(), 30); };
                 wrap.appendChild(chip);
@@ -3534,18 +3540,18 @@ NGINX_CONF
             const count = document.getElementById('problems-count');
             const n = ideProblems.length;
             if (n) { count.textContent = n; count.classList.remove('hidden'); } else { count.classList.add('hidden'); }
-            host.innerHTML = `<div class="flex items-center gap-2 px-3 py-2 border-b border-[#333] bg-[#252526] sticky top-0 z-10">
+            host.innerHTML = `<div class="flex items-center gap-2 px-3 py-2 border-b border-[#2A4463] bg-[#12233A] sticky top-0 z-10">
                 <button id="ide-problems-scan" class="ui-btn ui-btn-sm ui-btn-primary"><i class="fa-solid fa-broom mr-1"></i>Scan PHP</button>
                 <button id="ide-problems-clear" class="ui-btn ui-btn-sm ui-btn-secondary"><i class="fa-solid fa-trash-can mr-1"></i>Clear</button>
             </div>`;
             if (!n) {
-                host.insertAdjacentHTML('beforeend', '<div class="p-6 text-center text-slate-600 dark:text-slate-300 text-xs"><i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-300 text-xl mb-2"></i><br>Tidak ada masalah yang terdeteksi.</div>');
+                host.insertAdjacentHTML('beforeend', '<div class="p-6 text-center text-[#525252] dark:text-white/70 text-xs"><i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-300 text-xl mb-2"></i><br>Tidak ada masalah yang terdeteksi.</div>');
             } else {
                 ideProblems.forEach((p, i) => {
-                    host.insertAdjacentHTML('beforeend', `<div class="flex items-start gap-2 px-3 py-1.5 border-b border-[#222] text-[11px]">
+                    host.insertAdjacentHTML('beforeend', `<div class="flex items-start gap-2 px-3 py-1.5 border-b border-[#0F1D30] text-[11px]">
                         <i class="fa-solid fa-circle-exclamation text-rose-500 dark:text-rose-400 mt-0.5"></i>
-                        <div class="flex-1 min-w-0"><div class="text-rose-300 break-all font-mono">${ideEsc(p.text)}</div><div class="text-slate-500 dark:text-slate-400 text-[10px]">${ideEsc(p.source)}</div></div>
-                        <button data-idx="${i}" class="ide-problem-dismiss text-slate-600 dark:text-slate-300 hover:text-white transition-colors shrink-0"><i class="fa-solid fa-xmark"></i></button>
+                        <div class="flex-1 min-w-0"><div class="text-rose-300 break-all font-mono">${ideEsc(p.text)}</div><div class="text-[#525252] dark:text-white/50 text-[10px]">${ideEsc(p.source)}</div></div>
+                        <button data-idx="${i}" class="ide-problem-dismiss text-[#525252] dark:text-white/70 hover:text-white transition-colors shrink-0"><i class="fa-solid fa-xmark"></i></button>
                     </div>`);
                 });
                 host.querySelectorAll('.ide-problem-dismiss').forEach(b => b.addEventListener('click', () => {
@@ -3581,15 +3587,15 @@ NGINX_CONF
         // ── Output (laravel.log) ────────────────────────────────────────────────
         function ideRefreshLogTail() {
             const host = document.getElementById('ide-panel-output');
-            host.innerHTML = '<div class="p-3 text-slate-500 dark:text-slate-400 text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Membaca log...</div>';
+            host.innerHTML = '<div class="p-3 text-[#525252] dark:text-white/50 text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Membaca log...</div>';
             fetch(ideLogUrl)
                 .then(r => r.json())
                 .then(data => {
-                    host.innerHTML = `<div class="sticky top-0 z-10 flex items-center gap-2 px-3 py-2 border-b border-[#333] bg-[#252526]">
-                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">laravel.log — 250 baris terakhir</span>
+                    host.innerHTML = `<div class="sticky top-0 z-10 flex items-center gap-2 px-3 py-2 border-b border-[#2A4463] bg-[#12233A]">
+                        <span class="text-[10px] text-[#525252] dark:text-white/50 font-mono">laravel.log — 250 baris terakhir</span>
                         <button id="ide-log-refresh" class="ui-btn ui-btn-sm ui-btn-secondary ml-auto"><i class="fa-solid fa-rotate-right mr-1"></i>Refresh</button>
                     </div>`;
-                    host.insertAdjacentHTML('beforeend', `<pre class="p-3 font-mono text-[11px] text-slate-300 dark:text-slate-400 whitespace-pre-wrap break-words">${ideEsc(data.content || '')}</pre>`);
+                    host.insertAdjacentHTML('beforeend', `<pre class="p-3 font-mono text-[11px] text-[#C9D5E2] dark:text-white/50 whitespace-pre-wrap break-words">${ideEsc(data.content || '')}</pre>`);
                     document.getElementById('ide-log-refresh')?.addEventListener('click', ideRefreshLogTail);
                 })
                 .catch(() => { host.innerHTML = '<div class="p-3 text-rose-400 dark:text-rose-300 text-xs">Gagal membaca log.</div>'; });
@@ -3604,7 +3610,7 @@ NGINX_CONF
             ideDebugTerminal = t;
             host.appendChild(t.paneEl);
             t.paneEl.style.borderTop = 'none';
-            t.appendRaw('<div class="text-slate-500 dark:text-slate-400">Debug Console — ketik perintah untuk melihat error/debug output.</div>');
+            t.appendRaw('<div class="text-[#525252] dark:text-white/50">Debug Console — ketik perintah untuk melihat error/debug output.</div>');
         }
 
         // ── Ports ───────────────────────────────────────────────────────────────
@@ -3612,19 +3618,19 @@ NGINX_CONF
             const host = document.getElementById('ide-panel-ports');
             const devPort = '{{ $project->dev_port ?? '' }}';
             const devActive = {{ $project->dev_mode ? 'true' : 'false' }};
-            host.innerHTML = `<div class="px-3 py-2 border-b border-[#333] bg-[#252526] text-[10px] text-slate-500 dark:text-slate-400 font-mono">Port aktif project — klik untuk membuka</div>
+            host.innerHTML = `<div class="px-3 py-2 border-b border-[#2A4463] bg-[#12233A] text-[10px] text-[#525252] dark:text-white/50 font-mono">Port aktif project — klik untuk membuka</div>
                 <div class="p-3 grid grid-cols-2 gap-2">
-                    <div class="border border-[#333] rounded p-3 bg-[#1e1e1e]">
-                        <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-globe text-indigo-400"></i><span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">HTTPS / HTTP</span></div>
+                    <div class="border border-[#2A4463] rounded p-3 bg-[#0A1322]">
+                        <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-globe text-[#6BA8DC]"></i><span class="text-[10px] text-[#525252] dark:text-white/50 font-mono">HTTPS / HTTP</span></div>
                         <div class="text-sm text-white font-mono">443 / 80</div>
-                        <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate mb-2">${ideEsc(projectSlug)}</div>
+                        <div class="text-[10px] text-[#525252] dark:text-white/50 truncate mb-2">${ideEsc(projectSlug)}</div>
                         <a href="https://${ideEsc(projectSlug)}" target="_blank" class="ui-btn ui-btn-sm ui-btn-primary inline-block"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>
                     </div>
-                    <div class="border border-[#333] rounded p-3 bg-[#1e1e1e]">
-                        <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-microchip text-emerald-400 dark:text-emerald-300"></i><span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Dev Server</span></div>
+                    <div class="border border-[#2A4463] rounded p-3 bg-[#0A1322]">
+                        <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-microchip text-emerald-400 dark:text-emerald-300"></i><span class="text-[10px] text-[#525252] dark:text-white/50 font-mono">Dev Server</span></div>
                         <div class="text-sm text-white font-mono">${devPort ? ideEsc(devPort) : '—'}</div>
-                        <div class="mb-2"><span class="text-[9px] px-1.5 py-0.5 rounded-full ${devActive ? 'bg-emerald-600/30 text-emerald-300' : 'bg-slate-700 text-slate-400 dark:text-slate-500'}">${devActive ? 'AKTIF' : 'NONAKTIF'}</span></div>
-                        ${devActive && devPort ? `<a href="https://dev${ideEsc(devPort)}.${ideEsc(projectDomainBase)}" target="_blank" class="ui-btn ui-btn-sm ui-btn-success inline-block"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>` : '<span class="text-[9px] text-slate-600 dark:text-slate-300">Aktifkan dari tab Overview</span>'}
+                        <div class="mb-2"><span class="text-[9px] px-1.5 py-0.5 rounded-full ${devActive ? 'bg-emerald-600/30 text-emerald-300' : 'bg-[#2A4463] text-[#8A9BAE] dark:text-white/40'}">${devActive ? 'AKTIF' : 'NONAKTIF'}</span></div>
+                        ${devActive && devPort ? `<a href="https://dev${ideEsc(devPort)}.${ideEsc(projectDomainBase)}" target="_blank" class="ui-btn ui-btn-sm ui-btn-success inline-block"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Buka</a>` : '<span class="text-[9px] text-[#525252] dark:text-white/70">Aktifkan dari tab Overview</span>'}
                     </div>
                 </div>`;
         }
@@ -3647,7 +3653,7 @@ NGINX_CONF
             inset: 0;
             z-index: 9999;
             padding: 0 !important;
-            background: #1e1e1e;
+            background: #0A1322;
         }
         #panel-ide.ide-zen-panel > .flex {
             height: 100vh !important;
@@ -3667,7 +3673,7 @@ NGINX_CONF
         #ide-left-sidebar::-webkit-scrollbar-thumb,
         #ide-right-panel::-webkit-scrollbar-thumb,
         #grok-chat-messages::-webkit-scrollbar-thumb {
-            background: #3c3c3c;
+            background: #12233A;
             border-radius: 3px;
         }
         #ide-left-sidebar::-webkit-scrollbar-thumb:hover,
@@ -3679,53 +3685,56 @@ NGINX_CONF
 
     <!-- Payment Modal -->
     <div id="paymentModal" tabindex="-1" class="ui-modal-overlay hidden z-[100]">
-        <div class="relative bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b">
+        <div class="relative bg-white dark:bg-[#0F1D30] shadow-none w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between p-4 border-b border-[#E3EAF1] dark:border-[#2A4463]">
                 <h3 class="ui-modal-title">
                     Pilih Metode Pembayaran
                 </h3>
-                <button type="button" onclick="closePaymentModal()" class="text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700/50 hover:text-slate-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center">
+                <button type="button" onclick="closePaymentModal()" class="text-[#8A9BAE] dark:text-white/40 hover:bg-[#E8F0F9] dark:hover:bg-[#2A4463] hover:text-[#0F1A2A] dark:hover:text-white text-sm w-8 h-8 flex justify-center items-center">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
             
             <div class="p-6 space-y-4">
                 <div class="text-center mb-6">
-                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Total Tagihan</p>
-                    <div class="text-3xl font-black text-slate-800 dark:text-slate-100">Rp <span id="modalPaymentAmount">0</span></div>
-                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Invoice: <span id="modalPaymentInvoice" class="font-mono"></span></p>
+                    <p class="text-sm text-[#525252] dark:text-white/50 font-medium mb-1">Total Tagihan</p>
+                    <div class="text-3xl font-black text-[#0F1A2A] dark:text-white">Rp <span id="modalPaymentAmount">0</span></div>
+                    <p class="text-xs text-[#8A9BAE] dark:text-white/40 mt-1">Invoice: <span id="modalPaymentInvoice" class="font-mono"></span></p>
                 </div>
 
-                <!-- Option 1: Pakasir -->
-                <a id="btnPakasir" href="#" target="_blank" onclick="closePaymentModal()" class="flex items-center justify-between p-4 border-2 border-slate-100 dark:border-slate-700 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10 transition-all group">
+                <!-- Option 1: QRIS Dinamis (Rekomendasi) -->
+                <a id="btnQris" href="#" onclick="closePaymentModal()" class="flex items-center justify-between p-4 border-2 border-emerald-500/40 bg-emerald-500/5 hover:border-emerald-500 hover:bg-emerald-500/10 transition-all group">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg flex items-center justify-center shrink-0 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                            <i class="fa-solid fa-bolt text-xl"></i>
+                        <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-qrcode text-xl"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Otomatis (Virtual Account/QRIS)</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Konfirmasi instan, diproses otomatis.</p>
+                            <div class="flex items-center gap-2">
+                                <h4 class="ui-eyebrow text-[11px] text-sm">QRIS Dinamis</h4>
+                                <span class="text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">INSTAN</span>
+                            </div>
+                            <p class="text-xs text-[#525252] dark:text-white/50">Scan via m-Banking & e-Wallet (BCA, Mandiri, GoPay, OVO, Dana).</p>
                         </div>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-slate-300 dark:text-slate-400 group-hover:text-indigo-500"></i>
+                    <i class="fa-solid fa-chevron-right text-emerald-500"></i>
                 </a>
 
                 <!-- Option 2: DANA -->
-                <div class="p-4 border-2 border-slate-100 dark:border-slate-700 rounded-xl space-y-3 mt-4">
+                <div class="p-4 border-2 border-[#EDF2F7] dark:border-[#2A4463] space-y-3 mt-4">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 rounded-lg flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-300">
+                        <div class="w-12 h-12 bg-[#E8F0F9] dark:bg-[#12233A] flex items-center justify-center shrink-0 text-[#1D5B96] dark:text-[#6BA8DC]">
                             <i class="fa-solid fa-wallet text-xl"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Transfer DANA</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono text-lg font-bold mt-1 text-slate-700 dark:text-slate-200">{{ \App\Models\Setting::val('payment_dana', '085157433395') }}</p>
+                            <h4 class="ui-eyebrow text-[11px] text-sm">Transfer DANA</h4>
+                            <p class="text-xs text-[#525252] dark:text-white/50 font-mono text-lg font-bold mt-1 text-[#0F1A2A] dark:text-white/80">{{ \App\Models\Setting::val('payment_dana', '085157433395') }}</p>
                         </div>
                     </div>
-                    <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
+                    <div class="pt-3 border-t border-[#EDF2F7] dark:border-[#2A4463]">
+                        <p class="text-[11px] text-[#525252] dark:text-white/50 leading-relaxed mb-3">
                             Setelah melakukan transfer, silakan kirim bukti pembayaran melalui WhatsApp untuk diverifikasi secara manual oleh Admin.
                         </p>
-                        <a id="btnWA" href="#" target="_blank" onclick="closePaymentModal()" class="block w-full text-center bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg text-sm transition-colors shadow-sm">
+                        <a id="btnWA" href="#" target="_blank" onclick="closePaymentModal()" class="ui-btn ui-btn-success w-full">
                             <i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi ke Admin
                         </a>
                     </div>
@@ -3739,8 +3748,9 @@ NGINX_CONF
             document.getElementById('modalPaymentAmount').innerText = formattedAmount;
             document.getElementById('modalPaymentInvoice').innerText = invoice;
             
-            let pakasirUrl = "{{ route('payment.pakasir') }}?order_id=" + encodeURIComponent(invoice);
-            document.getElementById('btnPakasir').href = pakasirUrl;
+            let qrisUrl = "{{ url('/payment/qris') }}/" + encodeURIComponent(invoice);
+            let btnQris = document.getElementById('btnQris');
+            if (btnQris) btnQris.href = qrisUrl;
 
             let adminWa = @json(\App\Models\Setting::val('contact_whatsapp', ''));
             let waMessage = `Halo Admin, saya ingin konfirmasi pembayaran untuk Invoice *${invoice}* sebesar *Rp ${formattedAmount}* via DANA. Berikut lampiran buktinya:`;
@@ -3805,17 +3815,17 @@ NGINX_CONF
                     },
                     xaxis: {
                         categories: categories,
-                        labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
+                        labels: { style: { colors: '#94A3B4', fontSize: '10px' } },
                         axisBorder: { show: false },
                         axisTicks: { show: false }
                     },
                     yaxis: {
                         min: 0,
                         max: 100,
-                        labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
+                        labels: { style: { colors: '#94A3B4', fontSize: '10px' } },
                     },
                     grid: {
-                        borderColor: '#f1f5f9',
+                        borderColor: '#EDF2F7',
                         strokeDashArray: 4,
                         yaxis: { lines: { show: true } }
                     },

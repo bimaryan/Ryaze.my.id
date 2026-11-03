@@ -5,6 +5,7 @@
         {{-- Header --}}
         <x-ui.page-header 
             title="Riwayat Tagihan" 
+            eyebrow="Transaksi & Pembayaran"
             subtitle="Daftar lengkap transaksi dan status pembayaran hosting Anda." 
             icon="fa-file-invoice-dollar" 
             iconColor="emerald">
@@ -15,62 +16,102 @@
                 </a>
             </x-slot:actions>
         </x-ui.page-header>
-        <x-ui.table>
+
+        {{-- Ringkasan Angka --}}
+        @php
+            $paidCount = $billings->where('status', 'paid')->count();
+            $unpaidCount = $billings->where('status', 'unpaid')->count();
+            $failedCount = $billings->where('status', 'failed')->count();
+        @endphp
+        <div class="ui-panel">
+            <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A]">
+                <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#525252] dark:text-white/40">Ringkasan Tagihan</span>
+                <span class="ui-status"><span class="ui-status-dot"></span> Halaman {{ $billings->currentPage() }}</span>
+            </div>
+            <div class="ui-stat-strip grid-cols-2 md:grid-cols-4">
+                <div class="px-6 py-6">
+                    <p class="ui-stat-value">{{ number_format($billings->total()) }}</p>
+                    <p class="ui-stat-label">Total Tagihan</p>
+                </div>
+                <div class="px-6 py-6">
+                    <p class="ui-stat-value text-emerald-600 dark:text-emerald-400">{{ $paidCount }}</p>
+                    <p class="ui-stat-label">Lunas</p>
+                </div>
+                <div class="px-6 py-6">
+                    <p class="ui-stat-value text-amber-600 dark:text-amber-400">{{ $unpaidCount }}</p>
+                    <p class="ui-stat-label">Belum Lunas</p>
+                </div>
+                <div class="px-6 py-6">
+                    <p class="ui-stat-value text-rose-600 dark:text-rose-400">{{ $failedCount }}</p>
+                    <p class="ui-stat-label">Gagal</p>
+                </div>
+            </div>
+        </div>
+
+        <x-ui.table class="mt-6">
+            <x-slot:header>
+                <div class="ui-panel-head px-6 py-5 bg-[#F4F8FC] dark:bg-[#12233A]">
+                    <h2 class="font-mono text-sm font-bold uppercase tracking-[0.2em] text-[#0F1A2A] dark:text-white">Riwayat Tagihan</h2>
+                    <a href="{{ route('user_hosting.dashboard') }}" class="ui-arrow-link">
+                        Dashboard <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </x-slot:header>
             <x-slot:head>
-                <th class="px-6 py-4">Invoice / Tanggal</th>
-                <th class="px-6 py-4">Keterangan</th>
-                <th class="px-6 py-4">Jumlah</th>
-                <th class="px-6 py-4">Metode</th>
-                <th class="px-6 py-4 text-center">Status</th>
-                <th class="px-6 py-4 text-center">Aksi</th>
+                <th class="px-6 py-3 font-mono text-[11px] uppercase tracking-wider">Invoice / Tanggal</th>
+                <th class="px-6 py-3 font-mono text-[11px] uppercase tracking-wider">Keterangan</th>
+                <th class="px-6 py-3 font-mono text-[11px] uppercase tracking-wider">Jumlah</th>
+                <th class="px-6 py-3 font-mono text-[11px] uppercase tracking-wider">Metode</th>
+                <th class="px-6 py-3 font-mono text-[11px] uppercase tracking-wider text-center">Status</th>
+                <th class="px-6 py-3 font-mono text-[11px] uppercase tracking-wider text-center">Aksi</th>
             </x-slot:head>
             @forelse ($billings as $bill)
-                <tr class="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
+                <tr class="hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49] transition-colors">
                     <td class="px-6 py-4">
-                        <div class="font-bold text-slate-800 dark:text-slate-100">{{ $bill->invoice_number }}</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ $bill->created_at->format('d M Y, H:i') }}</div>
+                        <div class="font-bold text-[#0F1A2A] dark:text-white">{{ $bill->invoice_number }}</div>
+                        <div class="text-xs text-[#8A9BAE] dark:text-white/40 font-mono">{{ $bill->created_at->format('d M Y, H:i') }}</div>
                     </td>
-                    <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-100">{{ $bill->project->project_name ?? 'Langganan Akun' }}</td>
-                    <td class="px-6 py-4 font-mono font-medium">Rp{{ number_format($bill->amount, 0, ',', '.') }}</td>
-                    <td class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">{{ $bill->payment_method ?? '-' }}</td>
+                    <td class="px-6 py-4 font-semibold text-[#0F1A2A] dark:text-white">{{ $bill->project->project_name ?? 'Langganan Akun' }}</td>
+                    <td class="px-6 py-4 font-mono font-semibold text-[#0F1A2A] dark:text-white">Rp{{ number_format($bill->amount, 0, ',', '.') }}</td>
+                    <td class="px-6 py-4 text-xs font-mono font-semibold uppercase text-[#525252] dark:text-white/50">{{ $bill->payment_method ?? '-' }}</td>
                     <td class="px-6 py-4 text-center">
                         @php
                             $statusClass = match ($bill->status) {
-                                'paid' => 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
-                                'unpaid' => 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300',
-                                'failed' => 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300',
-                                default => 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
+                                'paid' => 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50',
+                                'unpaid' => 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50',
+                                'failed' => 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/50',
+                                default => 'bg-[#F0F6FC] text-[#525252] border-[#E3EAF1] dark:bg-[#12233A] dark:text-white/60 dark:border-[#2A4463]',
                             };
                             $statusLabel = strtoupper($bill->status);
                         @endphp
-                        <span class="text-xs font-bold px-2 py-1 rounded-full {{ $statusClass }}">
+                        <span class="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider border {{ $statusClass }}">
                             {{ $statusLabel }}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if ($bill->status === 'unpaid')
                             <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('payment.pakasir', ['order_id' => $bill->invoice_number]) }}"
-                                   target="_blank"
-                                   class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded text-xs font-bold transition shadow-sm">
-                                    <i class="fa-solid fa-credit-card"></i> Pakasir
+                                <a href="{{ route('payment.qris', ['order_id' => $bill->invoice_number]) }}"
+                                   class="ui-btn ui-btn-sm ui-btn-success"
+                                   title="Bayar dengan QRIS Dinamis (Semua Bank & e-Wallet)">
+                                    <i class="fa-solid fa-qrcode"></i> QRIS
                                 </a>
                                 <form action="{{ route('user_hosting.billing.pay_wallet') }}" method="POST" class="m-0 p-0 inline-block" onsubmit="event.preventDefault(); let f = this; swConfirm('Bayar dengan Saldo?', 'Tagihan ini akan dibayar menggunakan saldo wallet Anda.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                     @csrf
                                     <input type="hidden" name="invoice_number" value="{{ $bill->invoice_number }}">
-                                    <button type="submit" class="ui-btn ui-btn-sm ui-btn-primary">
+                                    <button type="submit" class="ui-btn ui-btn-sm ui-btn-primary" title="Bayar dari Saldo Ryaze Wallet">
                                         <i class="fa-solid fa-wallet"></i> Saldo
                                     </button>
                                 </form>
                             </div>
                         @else
-                            -
+                            <span class="font-mono text-xs text-[#C9D5E2] dark:text-white/30">&mdash;</span>
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 dark:text-slate-500">Belum ada riwayat tagihan.</td>
+                    <td colspan="6" class="px-6 py-10 text-center font-mono text-xs text-[#8A9BAE] dark:text-white/45">Belum ada riwayat tagihan.</td>
                 </tr>
             @endforelse
             <x-slot:pagination>

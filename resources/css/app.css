@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import 'quill/dist/quill.snow.css'; 
 @import 'tailwindcss';
 @import './design-system.css';
@@ -12,6 +12,8 @@
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        'Liberation Mono', 'Courier New', monospace;
 }
 
 /* Sembunyikan elemen x-cloak sebelum Alpine siap (cegah flash konten mentah) */
@@ -21,37 +23,38 @@
 
 /* Quill editor — tema gelap bila halaman memakai .dark */
 .dark .ql-toolbar.ql-snow {
-    background-color: #1e293b;
-    border-color: #334155;
-    color: #e2e8f0;
+    background-color: #0F1D30;
+    border-color: #2A4463;
+    color: #E3EAF1;
 }
 .dark .ql-toolbar.ql-snow .ql-stroke {
-    stroke: #cbd5e1;
+    stroke: #C9D5E2;
 }
 .dark .ql-toolbar.ql-snow .ql-fill {
-    fill: #cbd5e1;
+    fill: #C9D5E2;
 }
 .dark .ql-toolbar.ql-snow .ql-picker {
-    color: #cbd5e1;
+    color: #C9D5E2;
 }
 .dark .ql-container.ql-snow {
-    border-color: #334155;
-    background-color: #0f172a;
+    border-color: #2A4463;
+    background-color: #0A1322;
 }
 .dark .ql-editor {
-    color: #e2e8f0;
+    color: #F0F6FC;
 }
 .dark .ql-editor.ql-blank::before {
-    color: #64748b;
+    color: #8A9BAE;
 }
 
 /* SweetAlert2 — tema gelap */
 .dark .swal2-popup {
-    background-color: #1e293b !important;
+    background-color: #0F1D30 !important;
+    border: 1px solid #2A4463;
 }
 .dark .swal2-title,
 .dark .swal2-html-container {
-    color: #f1f5f9 !important;
+    color: #F0F6FC !important;
 }
 
 /* =====================================================
@@ -62,13 +65,13 @@
 .dark input:focus,
 .dark textarea:focus,
 .dark select:focus {
-    background-color: #1e293b !important;
-    color: #f1f5f9;
+    background-color: #12233A !important;
+    color: #F0F6FC;
 }
 
 /* bg-mesh — dark variant */
 .dark .bg-mesh {
-    background-color: #0f172a;
+    background-color: #0A1322;
 }
 
 /* =====================================================
@@ -89,45 +92,45 @@ html.dark {
     height: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #F4F8FC;
 }
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #C9D5E2;
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #8A9BAE;
 }
 
 /* Dark mode override */
 .dark ::-webkit-scrollbar-track,
 html.dark::-webkit-scrollbar-track {
-    background: #0f172a;
+    background: #0A1322;
 }
 .dark ::-webkit-scrollbar-thumb,
 html.dark::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: #2A4463;
     border-radius: 4px;
 }
 .dark ::-webkit-scrollbar-thumb:hover,
 html.dark::-webkit-scrollbar-thumb:hover {
-    background: #475569;
+    background: #24384F;
 }
 
 /* =====================================================
    MODAL / POPUP — dark mode solid background
    Prevent transparency on modal containers that use
-   dark:bg-slate-800/60 (60% opacity = transparent)
+   dark:bg-[#12233A]/60 (60% opacity = transparent)
    ===================================================== */
 .dark [id$="Modal"] > div,
 .dark [id$="modal"] > div,
 .dark .modal-content-stop {
-    background-color: #1e293b !important;
+    background-color: #0F1D30 !important;
 }
 
 
 
 /* Flowbite modal content — scoped to actual Flowbite modals only */
 .dark [data-modal-target] + [id] .relative {
-    background-color: #1e293b;
+    background-color: #0F1D30;
 }

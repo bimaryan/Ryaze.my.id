@@ -16,7 +16,7 @@
 
                     <!-- Header -->
                     <tr>
-                        <td style="background-color: #4f46e5; border-radius: 12px 12px 0 0; padding: 28px 32px; text-align: center;">
+                        <td style="background-color: #4f46e5; border-radius: 8px 8px 0 0; padding: 28px 32px; text-align: center;">
                             <h1 style="color: #ffffff; font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.3px;">Ryaze Portal</h1>
                             <p style="color: #c7d2fe; font-size: 13px; margin: 6px 0 0 0; font-weight: 400;">ryaze.my.id</p>
                         </td>
@@ -56,7 +56,7 @@
 
                     <!-- Footer -->
                     <tr>
-                        <td style="background-color: #f8fafc; border-radius: 0 0 12px 12px; border-top: 1px solid #e2e8f0; padding: 20px 32px; text-align: center;">
+                        <td style="background-color: #f8fafc; border-radius: 0 0 8px 8px; border-top: 1px solid #e2e8f0; padding: 20px 32px; text-align: center;">
                             <p style="color: #94a3b8; font-size: 12px; margin: 0;">
                                 &copy; {{ date('Y') }} Ryaze.my.id &mdash; Platform Developer Indonesia<br>
                                 Email ini dikirim secara otomatis, mohon tidak membalas email ini.

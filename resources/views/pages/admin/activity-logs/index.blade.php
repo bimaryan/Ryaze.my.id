@@ -10,8 +10,8 @@
         
         <x-ui.card class="p-6 mt-6">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
-                    <thead class="text-xs text-slate-700 dark:text-slate-200 uppercase bg-slate-50 dark:bg-slate-800/60 border-b">
+                <table class="w-full text-sm text-left text-[#737373] dark:text-white/40">
+                    <thead class="text-xs text-[#0F1A2A] dark:text-white uppercase bg-[#F4F8FC] dark:bg-[#0D1828] border-b">
                         <tr>
                             <th scope="col" class="px-4 py-3 rounded-tl-lg">Waktu</th>
                             <th scope="col" class="px-4 py-3">User / Aktor</th>
@@ -22,36 +22,36 @@
                     </thead>
                     <tbody>
                         @forelse($logs as $log)
-                            <tr class="border-b hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
-                                <td class="px-4 py-3 font-medium text-slate-800 dark:text-slate-100 whitespace-nowrap">
+                            <tr class="border-b hover:bg-[#F4F8FC] dark:bg-[#0D1828] dark:hover:bg-[#0D1828] transition-colors">
+                                <td class="px-4 py-3 font-medium text-[#0F1A2A] dark:text-white whitespace-nowrap">
                                     {{ $log->created_at->format('d M Y H:i:s') }}
                                 </td>
                                 <td class="px-4 py-3">
                                     @if($log->user)
                                         <div class="flex items-center gap-2">
-                                            <span class="font-medium text-slate-700 dark:text-slate-200">{{ $log->user->name }}</span>
-                                            <span class="text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">{{ $log->user->role }}</span>
+                                            <span class="font-medium text-[#0F1A2A] dark:text-white">{{ $log->user->name }}</span>
+                                            <span class="text-[10px] bg-[#E3EAF1] dark:bg-[#1B2C44] text-[#525252] dark:text-white/60 px-1.5 py-0.5 rounded">{{ $log->user->role }}</span>
                                         </div>
                                     @else
-                                        <span class="text-slate-400 dark:text-slate-500 italic">Sistem (Otomatis)</span>
+                                        <span class="text-[#94A3B4] dark:text-white/35 italic">Sistem (Otomatis)</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
-                                    <span class="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded border border-indigo-100 dark:border-indigo-500/30 text-xs font-semibold">
+                                    <span class="bg-[#E8F0F9] dark:bg-[#1D5B96]/10 text-[#1D5B96] dark:text-[#6BA8DC] px-2 py-1 rounded border border-[#C9D5E2] dark:border-[#1D5B96]/40 text-xs font-semibold">
                                         {{ $log->action }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-slate-600 dark:text-slate-300">
+                                <td class="px-4 py-3 text-[#525252] dark:text-white/60">
                                     {{ $log->description ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 font-mono text-xs text-slate-400 dark:text-slate-500">
+                                <td class="px-4 py-3 font-mono text-xs text-[#94A3B4] dark:text-white/35">
                                     {{ $log->ip_address ?? '-' }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400">
-                                    <i class="fa-solid fa-inbox text-3xl mb-2 text-slate-300 dark:text-slate-400 block"></i>
+                                <td colspan="5" class="px-4 py-8 text-center text-[#737373] dark:text-white/40">
+                                    <i class="fa-solid fa-inbox text-3xl mb-2 text-[#C9D5E2] dark:text-white/25 block"></i>
                                     Belum ada log aktivitas.
                                 </td>
                             </tr>

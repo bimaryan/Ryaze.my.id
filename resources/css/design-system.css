@@ -8,163 +8,253 @@
 @layer components {
     /* ── BUTTON ─────────────────────────────────────── */
     .ui-btn {
-        @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg
-               cursor-pointer
-               focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40
+        @apply inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold
+               whitespace-nowrap cursor-pointer
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1D5B96]/50
                disabled:opacity-50 disabled:cursor-not-allowed;
     }
-    .ui-btn-sm   { @apply text-xs px-3 py-1.5 rounded-lg; }
-    .ui-btn-md   { @apply text-sm px-4 py-2.5 rounded-lg; }
+    .ui-btn-sm   { @apply text-sm px-5; }
+    .ui-btn-md   { @apply text-sm px-5; }
     .ui-btn-icon { @apply leading-none; }
 
     .ui-btn-primary {
-        @apply bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm
-               dark:bg-indigo-500 dark:hover:bg-indigo-400;
+        @apply inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold
+               whitespace-nowrap cursor-pointer focus:outline-none transition-colors
+               bg-[#1D5B96] text-white hover:bg-[#164A7B] shadow-none
+               dark:bg-[#1D5B96] dark:hover:bg-[#2E7BC2];
     }
     .ui-btn-secondary {
-        @apply bg-slate-200 text-slate-700 hover:bg-slate-300
-               dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600;
+        @apply inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold
+               whitespace-nowrap cursor-pointer focus:outline-none transition-colors
+               bg-[#F0F6FC] border border-[#C9D5E2] text-[#0F1A2A]
+               hover:bg-[#E8F0F9] hover:border-[#1D5B96] hover:text-[#1D5B96] shadow-none
+               dark:bg-[#2A4463] dark:border-[#456A93] dark:text-white
+               dark:hover:bg-[#345478] dark:hover:border-[#6BA8DC] dark:hover:text-[#BFD9F0];
     }
     .ui-btn-ghost {
-        @apply bg-transparent text-slate-600 hover:bg-slate-100
-               dark:text-slate-300 dark:hover:bg-slate-700/50;
+        @apply inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold
+               whitespace-nowrap cursor-pointer focus:outline-none transition-colors
+               bg-transparent text-[#525252] hover:bg-[#F0F6FC] hover:text-[#0F1A2A]
+               dark:text-white/60 dark:hover:bg-[#12233A] dark:hover:text-white;
     }
     .ui-btn-link {
-        @apply bg-transparent text-indigo-600 hover:underline
-               dark:text-indigo-400 dark:hover:text-indigo-300 px-0;
+        @apply inline-flex items-center justify-center gap-2 h-10 px-0 text-sm font-semibold
+               whitespace-nowrap cursor-pointer focus:outline-none transition-colors
+               bg-transparent text-[#1D5B96] hover:underline
+               dark:text-[#6BA8DC] dark:hover:text-[#90BFE0];
     }
     .ui-btn-danger {
-        @apply bg-rose-600 text-white hover:bg-rose-700 shadow-sm
-               dark:bg-rose-500 dark:hover:bg-rose-400;
+        @apply inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold
+               whitespace-nowrap cursor-pointer focus:outline-none transition-colors
+               bg-rose-600 text-white hover:bg-rose-700 shadow-none
+               dark:bg-rose-600 dark:hover:bg-rose-500;
     }
     .ui-btn-success {
-        @apply bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm
-               dark:bg-emerald-500 dark:hover:bg-emerald-400;
+        @apply inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold
+               whitespace-nowrap cursor-pointer focus:outline-none transition-colors
+               bg-emerald-600 text-white hover:bg-emerald-700 shadow-none
+               dark:bg-emerald-600 dark:hover:bg-emerald-500;
     }
 
     /* Tombol ikon kecil (header tabel, dismiss, dsb.) */
     .ui-icon-btn {
-        @apply inline-flex items-center justify-center w-8 h-8 rounded-lg
+        @apply inline-flex items-center justify-center w-8 h-8
                cursor-pointer focus:outline-none
                disabled:opacity-50 disabled:cursor-not-allowed;
     }
-    .ui-icon-btn-neutral  { @apply text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-700/60 dark:hover:text-slate-200; }
-    .ui-icon-btn-primary  { @apply text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-500/10; }
+    .ui-icon-btn-neutral  { @apply text-[#525252] hover:bg-[#F4F8FC] hover:text-[#0F1A2A] dark:text-white/50 dark:hover:bg-[#12233A] dark:hover:text-white; }
+    .ui-icon-btn-primary  { @apply text-[#1D5B96] hover:bg-[#E8F0F9] dark:text-[#6BA8DC] dark:hover:bg-[#1D5B96]/20; }
     .ui-icon-btn-success  { @apply text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-500/10; }
     .ui-icon-btn-warning  { @apply text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-500/10; }
     .ui-icon-btn-danger   { @apply text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10; }
 
     /* ── FORM FIELD ─────────────────────────────────── */
     .ui-field {
-        @apply block w-full rounded-lg text-sm
-               bg-slate-50 text-slate-700
-               border border-slate-200
-               placeholder:text-slate-400
-               focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500
-               dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-500
-               dark:border-slate-700 dark:focus:border-indigo-400;
+        @apply block w-full text-sm px-4 py-2.5
+               bg-[#F4F8FC] text-[#0F1A2A]
+               border border-[#C9D5E2]
+               placeholder:text-[#8A9BAE]
+               focus:outline-none focus:ring-1 focus:ring-[#1D5B96] focus:border-[#1D5B96]
+               dark:bg-[#0A1322] dark:text-white dark:placeholder:text-white/30
+               dark:border-[#1B2C44] dark:focus:border-[#6BA8DC] dark:focus:ring-[#6BA8DC];
     }
-    .ui-field-sm { @apply text-xs px-2.5 py-1.5 rounded-md; }
+    .ui-field-sm { @apply text-xs px-2.5 py-1.5; }
 
     .ui-label {
-        @apply block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5;
+        @apply block text-xs font-bold text-[#525252] dark:text-white/70 mb-1.5 font-mono uppercase tracking-wider text-[11px];
     }
 
     /* ── CARD ───────────────────────────────────────── */
     .ui-card {
-        @apply bg-white rounded-xl shadow-sm border border-slate-200
-               dark:bg-slate-800/60 dark:border-slate-700 dark:shadow-none;
+        @apply bg-white border border-[#C9D5E2]
+               dark:bg-[#0F1D30] dark:border-[#2A4463] shadow-none;
     }
 
     /* ── BADGE ──────────────────────────────────────── */
     .ui-badge {
-        @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold whitespace-nowrap;
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] font-mono uppercase tracking-wider font-semibold whitespace-nowrap border;
     }
-    .ui-badge-neutral  { @apply bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300; }
-    .ui-badge-primary  { @apply bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300; }
-    .ui-badge-success  { @apply bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300; }
-    .ui-badge-warning  { @apply bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300; }
-    .ui-badge-danger   { @apply bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300; }
-    .ui-badge-info     { @apply bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300; }
-    .ui-badge-accent   { @apply bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300; }
+    .ui-badge-neutral  { @apply bg-[#F0F6FC] text-[#525252] border-[#E3EAF1] dark:bg-[#12233A] dark:text-white/60 dark:border-[#2A4463]; }
+    .ui-badge-primary  { @apply bg-[#E8F0F9] text-[#1D5B96] border-[#C9D5E2] dark:bg-[#1D5B96]/20 dark:text-[#6BA8DC] dark:border-[#1D5B96]/40; }
+    .ui-badge-success  { @apply bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50; }
+    .ui-badge-warning  { @apply bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50; }
+    .ui-badge-danger   { @apply bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/50; }
+    .ui-badge-info     { @apply bg-[#E8F0F9] text-[#1D5B96] border-[#C9D5E2] dark:bg-[#1D5B96]/20 dark:text-[#6BA8DC] dark:border-[#1D5B96]/40; }
+    .ui-badge-accent   { @apply bg-[#12233A] text-white border-[#12233A] dark:bg-[#1D5B96] dark:text-white dark:border-[#1D5B96]; }
 
     /* ── TAB ────────────────────────────────────────── */
     .ui-tab {
-        @apply px-3 py-2 rounded-lg text-sm font-semibold text-slate-600
-               hover:bg-slate-100 hover:text-slate-800
-               cursor-pointer focus:outline-none
-               dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-slate-200;
+        @apply px-3.5 py-2 text-xs font-mono uppercase tracking-wider text-[#525252]
+               hover:bg-[#F4F8FC] hover:text-[#0F1A2A]
+               cursor-pointer focus:outline-none border border-transparent
+               dark:text-white/60 dark:hover:bg-[#12233A]/60 dark:hover:text-white;
     }
     .ui-tab-active {
-        @apply bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white
-               dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:hover:text-white
-               shadow-sm;
+        @apply bg-[#12233A] text-white hover:bg-[#12233A] hover:text-white border-[#12233A]
+               dark:bg-[#1D5B96] dark:text-white dark:hover:bg-[#1D5B96] dark:hover:text-white dark:border-[#1D5B96]
+               shadow-none;
     }
 
     /* ── PILL (filter chip) ─────────────────────────── */
     .ui-pill {
-        @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold
-               border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50
+        @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider font-semibold
+               border border-[#E3EAF1] text-[#525252] hover:border-[#1D5B96] hover:text-[#1D5B96] hover:bg-[#F4F8FC]
                cursor-pointer
-               dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700/40;
+               dark:border-[#2A4463] dark:text-white/60 dark:hover:bg-[#12233A] dark:hover:text-[#6BA8DC] dark:hover:border-[#6BA8DC];
     }
     .ui-pill-active {
-        @apply bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700
-               dark:bg-indigo-500 dark:border-indigo-500 dark:hover:bg-indigo-400;
+        @apply bg-[#12233A] border-[#12233A] text-white hover:bg-[#1D5B96]
+               dark:bg-[#1D5B96] dark:border-[#1D5B96] dark:text-white dark:hover:bg-[#2568A8];
     }
 
     /* ── CHIP (tindakan kecil inline) ───────────────── */
     .ui-chip {
-        @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold
-               bg-slate-100 text-slate-600 hover:bg-slate-200
-               dark:bg-slate-700/60 dark:text-slate-300 dark:hover:bg-slate-700;
+        @apply inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono
+               bg-[#F0F6FC] text-[#525252] hover:bg-[#E8F0F9] border border-[#E3EAF1]
+               dark:bg-[#12233A] dark:text-white/60 dark:border-[#2A4463]
+               dark:hover:bg-[#1D5B96]/25 dark:hover:text-[#6BA8DC] dark:hover:border-[#6BA8DC];
     }
 
     /* ── SWITCH (toggle) ────────────────────────────── */
     .ui-switch {
-        @apply relative w-11 h-6 rounded-full bg-slate-300 dark:bg-slate-600
+        @apply relative w-11 h-6 bg-slate-300 dark:bg-[#2A4463]
                cursor-pointer shrink-0;
     }
     .ui-switch::after {
-        @apply absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow;
+        @apply absolute top-0.5 left-0.5 w-5 h-5 bg-white shadow;
         content: '';
     }
     .ui-switch-primary.peer-checked,
-    .peer:checked ~ .ui-switch-primary { @apply bg-indigo-600 dark:bg-indigo-500; }
+    .peer:checked ~ .ui-switch-primary { @apply bg-[#1D5B96] dark:bg-[#1D5B96]; }
     .ui-switch-success.peer-checked,
     .peer:checked ~ .ui-switch-success { @apply bg-emerald-600 dark:bg-emerald-500; }
     .ui-switch-warning.peer-checked,
     .peer:checked ~ .ui-switch-warning { @apply bg-amber-500 dark:bg-amber-400; }
     .ui-switch-danger.peer-checked,
     .peer:checked ~ .ui-switch-danger { @apply bg-rose-600 dark:bg-rose-500; }
-    .peer:checked ~ .ui-switch { @apply bg-indigo-600 dark:bg-indigo-500; }
+    .peer:checked ~ .ui-switch { @apply bg-[#1D5B96] dark:bg-[#1D5B96]; }
     .peer:checked ~ .ui-switch::after { @apply translate-x-5; }
 
     /* ── MODAL ──────────────────────────────────────── */
     .ui-modal-overlay {
         @apply fixed inset-0 flex items-center justify-center p-4
-               bg-slate-900/50 backdrop-blur-sm z-50;
+               bg-black/60 z-50;
     }
     .ui-modal-title {
-        @apply text-lg font-bold text-slate-800 dark:text-slate-100;
+        @apply text-lg font-black text-[#0F1A2A] dark:text-white tracking-[-0.03em];
     }
 
     /* ── MISC ───────────────────────────────────────── */
     .ui-code {
-        @apply inline-flex items-center px-2 py-0.5 rounded-md font-mono text-xs
-               bg-slate-100 text-slate-700 border border-slate-200
-               dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700;
+        @apply inline-flex items-center px-2 py-0.5 font-mono text-xs
+               bg-[#F0F6FC] text-[#1D5B96] border border-[#E3EAF1]
+               dark:bg-[#0F1D30] dark:text-[#6BA8DC] dark:border-[#2A4463];
     }
     .ui-pagination-info {
-        @apply text-xs text-slate-500 dark:text-slate-400;
+        @apply text-xs font-mono text-[#525252] dark:text-white/40;
+    }
+
+    /* ── POLA HOME.JSX ──────────────────────────────────
+       Label eyebrow, judul display, panel dempet berpemisah
+       1px, strip statistik, dan baris spesifikasi.
+       ─────────────────────────────────────────────────── */
+    .ui-eyebrow {
+        @apply font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#1D5B96] dark:text-[#6BA8DC];
+    }
+    .ui-eyebrow-muted {
+        @apply font-mono text-[10px] uppercase tracking-[0.2em] text-[#737373] dark:text-white/35;
+    }
+    .ui-display {
+        @apply font-black text-[#0F1A2A] dark:text-white tracking-[-0.03em];
+    }
+
+    /* Panel datar dengan kepala berisi label mono + indikator status */
+    .ui-panel {
+        @apply bg-white dark:bg-[#0F1D30] border border-[#C9D5E2] dark:border-[#2A4463];
+    }
+    .ui-panel-head {
+        @apply flex items-center justify-between gap-4 px-6 py-3.5 border-b border-[#C9D5E2] dark:border-[#2A4463];
+    }
+    .ui-status {
+        @apply inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-emerald-600 dark:text-emerald-400;
+    }
+    .ui-status-dot {
+        @apply w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0;
+    }
+
+    /* Grid sel dempet: pemisahnya garis 1px, bukan jarak antar card */
+    .ui-grid {
+        @apply grid gap-px bg-[#C9D5E2] dark:bg-[#2A4463] border border-[#C9D5E2] dark:border-[#2A4463];
+    }
+    .ui-cell {
+        @apply bg-white dark:bg-[#0F1D30];
+    }
+    .ui-cell-alt {
+        @apply bg-[#FAFBFD] dark:bg-[#12233A];
+    }
+
+    /* Strip statistik berbatas atas + pembagi vertikal */
+    .ui-stat-strip {
+        @apply grid divide-x divide-[#E3EAF1] dark:divide-[#2A4463] border-t border-[#E3EAF1] dark:border-[#2A4463];
+    }
+    .ui-stat-value {
+        @apply text-2xl sm:text-3xl font-black text-[#0F1A2A] dark:text-white tracking-tight;
+    }
+    .ui-stat-label {
+        @apply font-mono text-[10px] uppercase tracking-[0.2em] text-[#737373] dark:text-white/40 mt-2;
+    }
+
+    /* Baris kunci → nilai ala lembar spesifikasi */
+    .ui-spec-row {
+        @apply flex items-baseline justify-between gap-6 px-6 py-4 border-b border-[#EDF2F7] dark:border-[#24384F] last:border-b-0;
+    }
+
+    /* Checklist fitur dengan centang mono */
+    .ui-check {
+        @apply flex items-center gap-3 text-sm text-[#525252] dark:text-white/70;
+    }
+    .ui-check-mark {
+        @apply font-mono text-[10px] font-bold text-[#1D5B96] dark:text-[#6BA8DC];
+    }
+
+    /* Tautan "lihat semua" berakhiran panah */
+    .ui-arrow-link {
+        @apply inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em]
+               text-[#525252] dark:text-white/45 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors;
+    }
+
+    /* Kotak ikon persegi kecil di kepala panel/layanan */
+    .ui-icon-box {
+        @apply w-8 h-8 shrink-0 flex items-center justify-center border
+               bg-[#F0F6FC] dark:bg-[#0F1D30] border-[#E3EAF1] dark:border-[#2A4463]
+               text-[#1D5B96] dark:text-[#6BA8DC];
     }
 }
 
 /* =====================================================
    DARK MODE GLOBAL — solid background modal/utility
-   modal dengan dark:bg-slate-800/60 agar tidak transparan.
    ===================================================== */
 .dark [id$="Modal"] > div,
 .dark [id$="modal"] > div {
-    @apply bg-slate-800;
+    @apply bg-[#0F1D30] border border-[#2A4463];
 }

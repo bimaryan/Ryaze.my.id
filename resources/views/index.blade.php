@@ -85,9 +85,9 @@
     <script nonce="{{ csp_nonce() }}">
         window.Swal = Swal.mixin({
             customClass: {
-                popup: 'rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700',
-                title: 'text-xl font-bold text-slate-800 dark:text-slate-100',
-                htmlContainer: 'text-sm text-slate-500 dark:text-slate-400'
+                popup: 'shadow-2xl border border-[#E3EAF1] dark:border-[#2A4463] bg-white dark:bg-[#0F1D30]',
+                title: 'text-lg font-bold text-[#0F1A2A] dark:text-white',
+                htmlContainer: 'text-sm text-[#525252] dark:text-white/60'
             }
         });
 
@@ -99,8 +99,8 @@
                 text: o.text || 'Data ini akan dihapus secara permanen.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#64748b',
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#1D5B96',
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal'
             }).then(result => {
@@ -116,12 +116,12 @@
                 text,
                 icon,
                 showCancelButton: true,
-                confirmButtonColor: '#EF4444',
-                cancelButtonColor: '#6B7280',
+                confirmButtonColor: '#1D5B96',
+                cancelButtonColor: '#525252',
                 confirmButtonText: 'Ya, lanjutkan',
                 cancelButtonText: 'Batal',
                 customClass: {
-                    popup: 'rounded-xl text-sm'
+                    popup: 'text-sm bg-white dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463]'
                 }
             });
         };
@@ -136,7 +136,7 @@
 
 </head>
 
-<body class="bg-slate-100 font-sans antialiased text-slate-900 dark:bg-[#020b16] dark:text-slate-100"
+<body class="bg-[#F4F8FC] font-sans antialiased text-[#0F1A2A] dark:bg-[#0A1322] dark:text-white"
     x-data="{ sidebarOpen: false, desktop: window.innerWidth >= 640 }"
     :class="{ 'overflow-hidden': sidebarOpen && !desktop, 'dashboard-menu-open': sidebarOpen && !desktop }"
     @resize.window="desktop = window.innerWidth >= 640; if (desktop) sidebarOpen = false"
@@ -187,11 +187,6 @@
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
                     });
 
-                    // Redirect (login/session expired), error (419/500), or maintenance
-                    // page must do a full navigation, otherwise the user gets stuck.
-                    // Same-origin redirects (trailing slash, https upgrade, canonical)
-                    // are already followed by fetch itself, so only bail out when the
-                    // final response ended up on another origin or failed.
                     if (!response.ok) {
                         window.location.href = url;
                         return;

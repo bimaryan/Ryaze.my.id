@@ -4,6 +4,7 @@ namespace Tests\Feature\Hosting;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class WhoisPageTest extends TestCase
@@ -15,14 +16,7 @@ class WhoisPageTest extends TestCase
         $resp = $this->get(route('whois.index'));
 
         $resp->assertOk();
-        $resp->assertSee('window.whoisLookup', false);
-        $resp->assertSee('WHOIS Domain Lookup', false);
-        $resp->assertDontSee('logo-sidebar', false);
-        $resp->assertDontSee('pjax-container', false);
-        $resp->assertSee('application/ld+json', false);
-        $resp->assertSee('WebPage', false);
-        $resp->assertSee('BreadcrumbList', false);
-        $resp->assertSee('rel="canonical"', false);
+        $resp->assertInertia(fn (Assert $page) => $page->component('Whois/Index'));
     }
 
     public function test_lookup_validates_invalid_domain_format(): void

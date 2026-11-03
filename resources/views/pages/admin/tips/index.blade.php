@@ -9,10 +9,10 @@
             <x-slot:actions>
                 <div class="flex gap-2">
                     <a href="{{ route('superadmin.digital_products.index') }}"
-                        class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-4 rounded-lg shadow-md transition-colors text-sm">
+                        class="bg-[#F0F6FC] dark:bg-[#0D1828] hover:bg-[#E8F0F9] dark:hover:bg-[#1D5B96] text-[#0F1A2A] dark:text-white font-bold py-2.5 px-4   transition-colors text-sm">
                         <i class="fa-solid fa-box-open mr-1.5"></i> Produk
                     </a>
-                    <span class="px-4 py-2.5 rounded-lg text-sm font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20">
+                    <span class="px-4 py-2.5  text-sm font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20">
                         Total: Rp {{ number_format($totalCompleted, 0, ',', '.') }}
                     </span>
                 </div>
@@ -22,28 +22,28 @@
         <x-ui.card class="mt-6">
             <div class="p-4 flex gap-2">
                 <a href="{{ route('superadmin.tips.index') }}"
-                    class="px-4 py-2 rounded-lg text-sm font-medium border transition {{ !request('status') ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300' }}">Semua</a>
+                    class="px-4 py-2  text-sm font-medium border transition {{ !request('status') ? 'bg-[#1D5B96] text-white border-[#1D5B96]' : 'bg-[#F4F8FC] dark:bg-[#0D1828] border-[#C9D5E2] dark:border-[#1B2C44] text-[#525252] dark:text-white/60' }}">Semua</a>
                 <a href="{{ route('superadmin.tips.index', ['status' => 'completed']) }}"
-                    class="px-4 py-2 rounded-lg text-sm font-medium border transition {{ request('status') === 'completed' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300' }}">Selesai</a>
+                    class="px-4 py-2  text-sm font-medium border transition {{ request('status') === 'completed' ? 'bg-[#1D5B96] text-white border-[#1D5B96]' : 'bg-[#F4F8FC] dark:bg-[#0D1828] border-[#C9D5E2] dark:border-[#1B2C44] text-[#525252] dark:text-white/60' }}">Selesai</a>
                 <a href="{{ route('superadmin.tips.index', ['status' => 'pending']) }}"
-                    class="px-4 py-2 rounded-lg text-sm font-medium border transition {{ request('status') === 'pending' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300' }}">Pending</a>
+                    class="px-4 py-2  text-sm font-medium border transition {{ request('status') === 'pending' ? 'bg-[#1D5B96] text-white border-[#1D5B96]' : 'bg-[#F4F8FC] dark:bg-[#0D1828] border-[#C9D5E2] dark:border-[#1B2C44] text-[#525252] dark:text-white/60' }}">Pending</a>
             </div>
 
             <x-ui.table>
                 <x-slot:head>
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Order ID</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Jumlah</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Tanggal</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Dibayar</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-[#737373] uppercase">Order ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-[#737373] uppercase">Jumlah</th>
+                        <th class="px-6 py-3 text-center text-xs font-semibold text-[#737373] uppercase">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-[#737373] uppercase">Tanggal</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-[#737373] uppercase">Dibayar</th>
                     </tr>
                 </x-slot:head>
 
                 @forelse($tips as $tip)
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
-                        <td class="px-6 py-4 text-xs font-mono text-slate-500 dark:text-slate-400">{{ $tip->order_id }}</td>
-                        <td class="px-6 py-4 text-sm font-bold text-slate-700 dark:text-slate-200">Rp {{ number_format($tip->amount, 0, ',', '.') }}</td>
+                    <tr class="hover:bg-[#F4F8FC] dark:hover:bg-[#0D1828] transition-colors">
+                        <td class="px-6 py-4 text-xs font-mono text-[#737373] dark:text-white/40">{{ $tip->order_id }}</td>
+                        <td class="px-6 py-4 text-sm font-bold text-[#0F1A2A] dark:text-white">Rp {{ number_format($tip->amount, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 text-center">
                             @php
                                 $statusClass = match($tip->status) {
@@ -54,13 +54,13 @@
                             @endphp
                             <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded {{ $statusClass }}">{{ $tip->status }}</span>
                         </td>
-                        <td class="px-6 py-4 text-sm text-slate-500">{{ $tip->created_at->format('d M Y H:i') }}</td>
-                        <td class="px-6 py-4 text-sm text-slate-500">{{ $tip->paid_at?->format('d M Y H:i') ?? '-' }}</td>
+                        <td class="px-6 py-4 text-sm text-[#737373]">{{ $tip->created_at->format('d M Y H:i') }}</td>
+                        <td class="px-6 py-4 text-sm text-[#737373]">{{ $tip->paid_at?->format('d M Y H:i') ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
-                            <i class="fa-solid fa-coins text-3xl mb-3 text-slate-300 dark:text-slate-500"></i>
+                        <td colspan="5" class="px-6 py-12 text-center text-[#737373] dark:text-white/40">
+                            <i class="fa-solid fa-coins text-3xl mb-3 text-[#C9D5E2] dark:text-white/25"></i>
                             <p>Belum ada tips masuk.</p>
                         </td>
                     </tr>

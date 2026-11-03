@@ -23,7 +23,7 @@
                 @if ($siteLogo)
                     <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 object-contain">
                 @else
-                    <div class="bg-indigo-600 text-white rounded-md w-8 h-8 flex items-center justify-center">
+                    <div class="bg-indigo-600 text-white rounded-lg w-8 h-8 flex items-center justify-center">
                         <i class="fa-solid fa-code text-sm"></i>
                     </div>
                 @endif
@@ -42,28 +42,28 @@
 
             <div class="flex items-center gap-4">
                 <button type="button" onclick="ryazeToggleTheme(event)" aria-label="Ganti tema"
-                    class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-300 dark:bg-indigo-600 transition-colors duration-300 ease-in-out focus:outline-none shadow-inner"
+                    class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer items-center rounded-lg bg-slate-300 dark:bg-indigo-600 transition-colors duration-300 ease-in-out focus:outline-none shadow-inner"
                     role="switch" aria-checked="false">
-                    <span class="pointer-events-none inline-flex h-5 w-5 transform translate-x-1 dark:translate-x-6 items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm transition-all duration-300 ease-in-out">
+                    <span class="pointer-events-none inline-flex h-5 w-5 transform translate-x-1 dark:translate-x-6 items-center justify-center rounded-lg bg-white dark:bg-slate-800 shadow-sm transition-all duration-300 ease-in-out">
                         <i class="fa-solid fa-sun text-[10px] text-amber-500 absolute transition-opacity duration-300 opacity-100 dark:opacity-0"></i>
                         <i class="fa-solid fa-moon text-[10px] text-indigo-600 absolute transition-opacity duration-300 opacity-0 dark:opacity-100"></i>
                     </span>
                 </button>
                 @auth
-                    <a href="{{ $dashboardUrl }}" class="hidden sm:inline-flex text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+                    <a href="{{ $dashboardUrl }}" class="hidden sm:inline-flex text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                         Dashboard
                     </a>
                 @else
                     <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hidden sm:block">
                         Masuk
                     </a>
-                    <a href="{{ route('register') }}" class="hidden sm:inline-flex text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+                    <a href="{{ route('register') }}" class="hidden sm:inline-flex text-sm font-semibold bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                         Daftar
                     </a>
                 @endauth
 
                 @if (count($links))
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-slate-800 focus:outline-none">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-slate-500 hover:bg-slate-100 dark:bg-slate-700/50 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-slate-800 focus:outline-none">
                         <i class="fa-solid fa-bars text-xl" x-show="!mobileMenuOpen"></i>
                         <i class="fa-solid fa-xmark text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
                     </button>
@@ -76,21 +76,21 @@
         <div x-show="mobileMenuOpen" style="display: none;" class="md:hidden bg-white border-t border-slate-200 dark:bg-slate-900 dark:border-slate-800" x-transition>
             <div class="px-4 pt-2 pb-6 space-y-1">
                 @foreach ($links as $link)
-                    <a href="{{ $link['href'] }}" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:bg-slate-800">
+                    <a href="{{ $link['href'] }}" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:bg-slate-800">
                         {{ $link['label'] }}
                     </a>
                 @endforeach
 
                 <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
                     @auth
-                        <a href="{{ $dashboardUrl }}" class="block w-full text-center text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+                        <a href="{{ $dashboardUrl }}" class="block w-full text-center text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                             Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="block w-full text-center text-sm font-semibold border border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-200 px-4 py-2 rounded-md hover:bg-slate-50 dark:hover:bg-slate-700/40 dark:bg-slate-800/50 transition-colors">
+                        <a href="{{ route('login') }}" class="block w-full text-center text-sm font-semibold border border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/40 dark:bg-slate-800/50 transition-colors">
                             Masuk
                         </a>
-                        <a href="{{ route('register') }}" class="block w-full text-center text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+                        <a href="{{ route('register') }}" class="block w-full text-center text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                             Daftar
                         </a>
                     @endauth

@@ -4,38 +4,39 @@
 <x-ui.page-layout>
     <x-ui.page-header 
         title="{{ $ticket->subject }}" 
+        eyebrow="Percakapan Tiket"
         subtitle="Tiket #{{ $ticket->hashid }} &bull; Departemen {{ $ticket->department }}">
         <x-slot:iconSlot>
-            <div class="shrink-0 w-12 h-12 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-comments text-indigo-600 dark:text-indigo-400 text-xl"></i>
+            <div class="shrink-0 w-12 h-12 bg-[#E8F0F9] dark:bg-[#1D5B96]/20 flex items-center justify-center">
+                <i class="fa-solid fa-comments text-[#1D5B96] dark:text-[#6BA8DC] text-xl"></i>
             </div>
         </x-slot:iconSlot>
         <x-slot:actions>
             <div id="ticket-status-badge">
                 @if($ticket->status == 'open')
-                    <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/40">
+                    <span class="px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider font-bold border bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50">
                         <i class="fa-solid fa-clock mr-1"></i> Menunggu Balasan
                     </span>
                 @elseif($ticket->status == 'answered')
-                    <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40">
+                    <span class="px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider font-bold border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50">
                         <i class="fa-solid fa-check mr-1"></i> Dijawab
                     </span>
                 @else
-                    <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span class="px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider font-bold border bg-[#F0F6FC] text-[#525252] border-[#E3EAF1] dark:bg-[#12233A] dark:text-white/60 dark:border-[#2A4463]">
                         <i class="fa-solid fa-lock mr-1"></i> Tiket Ditutup
                     </span>
                 @endif
             </div>
-            <a href="{{ route('user_hosting.tickets.index') }}" class="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 px-4 py-2 rounded-lg font-medium transition text-sm flex items-center gap-2 shadow-sm">
+            <a href="{{ route('user_hosting.tickets.index') }}" class="ui-btn ui-btn-md ui-btn-secondary">
                 Kembali
             </a>
         </x-slot:actions>
     </x-ui.page-header>
 
-    <div class="max-w-4xl mt-6 flex flex-col h-[700px] bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden">
+    <div class="max-w-4xl mt-6 flex flex-col h-[700px] ui-panel overflow-hidden">
         
         {{-- Chat Messages Area --}}
-        <div id="chat-messages-area" class="flex-1 overflow-y-auto p-6 bg-[#efeae2] dark:bg-[#0b141a] flex flex-col gap-6">
+        <div id="chat-messages-area" class="flex-1 overflow-y-auto p-6 bg-[#F4F8FC] dark:bg-[#0A1322] flex flex-col gap-6">
             @foreach($ticket->replies as $reply)
                 @php
                     $isSelf = $reply->user_id == Auth::id();
@@ -46,11 +47,11 @@
                         {{-- Avatar --}}
                         <div class="shrink-0">
                             @if($isSelf)
-                                <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 border-2 border-white dark:border-slate-700 shadow-sm flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold">
+                                <div class="w-10 h-10 rounded-full bg-[#E8F0F9] dark:bg-[#1D5B96]/20 border-2 border-white dark:border-[#2A4463] shadow-none flex items-center justify-center text-[#1D5B96] dark:text-[#6BA8DC] font-bold">
                                     {{ substr($reply->user->name, 0, 1) }}
                                 </div>
                             @else
-                                <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-white dark:border-slate-700 shadow-sm flex items-center justify-center text-white font-bold">
+                                <div class="w-10 h-10 rounded-full bg-[#12233A] border-2 border-white dark:border-[#2A4463] shadow-none flex items-center justify-center text-white font-bold">
                                     <i class="fa-solid fa-headset text-sm"></i>
                                 </div>
                             @endif
@@ -58,15 +59,15 @@
 
                         {{-- Bubble --}}
                         <div class="flex flex-col {{ $isSelf ? 'items-end' : 'items-start' }}">
-                            <div class="{{ $isSelf ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-slate-800 dark:text-[#e9edef] rounded-l-xl rounded-br-xl' : 'bg-white dark:bg-[#202c33] border border-slate-200 dark:border-[#202c33] text-slate-800 dark:text-[#e9edef] rounded-r-xl rounded-bl-xl shadow-sm' }} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
-                                <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 dark:border-white/10 pb-1 {{ $isSelf ? 'text-right' : 'text-left' }}">
+                            <div class="{{ $isSelf ? 'bg-[#E8F0F9] dark:bg-[#12233A] text-[#0F1A2A] dark:text-white' : 'bg-white dark:bg-[#0F1D30] text-[#0F1A2A] dark:text-white/85 border border-[#E3EAF1] dark:border-[#2A4463]' }} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
+                                <div class="font-mono text-[10px] uppercase tracking-[0.2em] mb-1.5 pb-1 border-b border-[#C9D5E2]/60 dark:border-[#2A4463] text-[#525252] dark:text-white/45 {{ $isSelf ? 'text-right' : 'text-left' }}">
                                     {{ $isSelf ? 'Anda' : $reply->user->name }} &bull; {{ $reply->created_at->format('H:i') }}
                                     @if($isSelf)
                                         <span class="ml-1 ticket-read-status" data-reply-id="{{ $reply->id }}">
                                             @if($reply->read_at)
-                                                <i class="fa-solid fa-check-double text-blue-500 dark:text-blue-400"></i>
+                                                <i class="fa-solid fa-check-double text-[#1D5B96] dark:text-[#6BA8DC]"></i>
                                             @else
-                                                <i class="fa-solid fa-check-double text-slate-400 dark:text-slate-500"></i>
+                                                <i class="fa-solid fa-check-double text-[#8A9BAE] dark:text-white/45"></i>
                                             @endif
                                         </span>
                                     @endif
@@ -74,7 +75,7 @@
                                 @if($reply->attachment_path)
                                     <div class="mb-2">
                                         <a href="{{ asset('storage/' . $reply->attachment_path) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $reply->attachment_path) }}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment">
+                                            <img src="{{ asset('storage/' . $reply->attachment_path) }}" class="max-w-full h-auto max-h-64 object-cover" alt="Attachment">
                                         </a>
                                     </div>
                                 @endif
@@ -88,19 +89,23 @@
         </div>
 
         {{-- Reply Form --}}
-        <div class="px-4 py-3 bg-[#f0f2f5] dark:bg-[#1f2c34] border-t border-slate-200 dark:border-slate-700 flex flex-col relative">
-            <div id="typing-indicator" class="hidden text-[13px] text-slate-500 dark:text-slate-400 italic mb-2 px-1 transition-all duration-300">
+        <div class="px-4 py-3 bg-[#F4F8FC] dark:bg-[#12233A] border-t border-[#E3EAF1] dark:border-[#2A4463] flex flex-col relative">
+            <div class="flex items-center justify-between gap-4 px-1 pb-2">
+                <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#525252] dark:text-white/40">Ketik Balasan</span>
+                <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1D5B96] dark:text-[#6BA8DC]">#{{ $ticket->hashid }}</span>
+            </div>
+            <div id="typing-indicator" class="hidden text-[13px] text-[#525252] dark:text-white/50 italic mb-2 px-1 transition-all duration-300">
                 <i class="fa-solid fa-pen-nib mr-1"></i> <span id="typing-name"></span> sedang mengetik...
             </div>
 
             <!-- Emoji Picker Container -->
-            <div id="emoji-picker-container" class="hidden absolute bottom-full left-4 mb-2 z-50 shadow-xl rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/60">
+            <div id="emoji-picker-container" class="hidden absolute bottom-full left-4 mb-2 z-50 shadow-none overflow-hidden border border-[#E3EAF1] dark:border-[#2A4463] bg-white dark:bg-[#0F1D30]">
                 <emoji-picker class="light"></emoji-picker>
             </div>
 
-            <div id="attachment-preview-container" class="hidden mb-3 bg-white dark:bg-slate-800/60 p-2 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 w-max relative">
-                <button type="button" onclick="removeAttachment()" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition shadow"><i class="fa-solid fa-xmark"></i></button>
-                <img id="attachment-preview-img" src="" class="h-20 object-cover rounded-lg">
+            <div id="attachment-preview-container" class="hidden mb-3 bg-white dark:bg-[#0F1D30] p-2 border border-[#E3EAF1] dark:border-[#2A4463] w-max relative">
+                <button type="button" onclick="removeAttachment()" class="absolute -top-2 -right-2 bg-rose-600 text-white w-6 h-6 flex items-center justify-center text-xs hover:bg-rose-700 transition"><i class="fa-solid fa-xmark"></i></button>
+                <img id="attachment-preview-img" src="" class="h-20 object-cover">
             </div>
 
             @if($ticket->status != 'closed')
@@ -109,25 +114,25 @@
                     
                     <input type="file" name="attachment" id="attachment-input" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="previewAttachment(this)">
 
-                    <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-3xl shadow-sm border border-slate-200 dark:border-[#2a3942] flex items-end px-2 py-1.5">
-                        <button type="button" id="emoji-btn" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
+                    <div class="flex-1 bg-white dark:bg-[#0F1D30] border border-[#E3EAF1] dark:border-[#2A4463] flex items-end px-2 py-1.5">
+                        <button type="button" id="emoji-btn" class="shrink-0 text-[#8A9BAE] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
                             <i class="fa-regular fa-face-smile"></i>
                         </button>
 
-                        <textarea name="message" id="message-input" rows="1" class="bg-transparent border-none px-2 py-1.5 text-[15px] focus:ring-0 focus:outline-none resize-none m-0 w-full text-slate-800 dark:text-[#e9edef] placeholder-slate-500 dark:placeholder-[#8696a0]" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
+                        <textarea name="message" id="message-input" rows="1" class="bg-transparent border-none px-2 py-1.5 text-[15px] focus:ring-0 focus:outline-none resize-none m-0 w-full text-[#0F1A2A] dark:text-white placeholder-[#8A9BAE] dark:placeholder-white/40" placeholder="Ketik pesan" style="min-height: 24px; max-height: 120px; overflow-y: auto;" oninput="this.style.height = '24px'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"></textarea>
 
-                        <button type="button" onclick="document.getElementById('attachment-input').click()" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
+                        <button type="button" onclick="document.getElementById('attachment-input').click()" class="shrink-0 text-[#8A9BAE] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] w-9 h-9 flex items-center justify-center text-xl transition mb-0.5">
                             <i class="fa-solid fa-paperclip"></i>
                         </button>
                     </div>
 
-                    <button type="submit" class="shrink-0 bg-[#00a884] hover:bg-[#029676] text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-sm mb-0.5">
+                    <button type="submit" class="shrink-0 bg-[#12233A] hover:bg-[#1D5B96] text-white w-12 h-12 flex items-center justify-center transition-colors mb-0.5">
                         <i class="fa-solid fa-paper-plane mr-1"></i>
                     </button>
                 </form>
             @else
-                <div class="text-center py-3 text-sm text-slate-500 dark:text-slate-400 font-medium">
-                    <i class="fa-solid fa-lock mr-2 text-slate-400 dark:text-slate-500"></i> Tiket ini telah ditutup dan tidak dapat menerima balasan lagi.
+                <div class="text-center py-3 text-sm text-[#525252] dark:text-white/50 font-medium">
+                    <i class="fa-solid fa-lock mr-2 text-[#8A9BAE] dark:text-white/45"></i> Tiket ini telah ditutup dan tidak dapat menerima balasan lagi.
                 </div>
             @endif
         </div>
@@ -208,11 +213,11 @@
                     const statusBadge = document.getElementById('ticket-status-badge');
                     if (statusBadge) {
                         if (e.ticket_status === 'open') {
-                            statusBadge.innerHTML = '<span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/40"><i class="fa-solid fa-clock mr-1"></i> Menunggu Balasan</span>';
+                            statusBadge.innerHTML = '<span class="px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider font-bold border bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50"><i class="fa-solid fa-clock mr-1"></i> Menunggu Balasan</span>';
                         } else if (e.ticket_status === 'answered') {
-                            statusBadge.innerHTML = '<span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40"><i class="fa-solid fa-check mr-1"></i> Dijawab</span>';
+                            statusBadge.innerHTML = '<span class="px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider font-bold border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50"><i class="fa-solid fa-check mr-1"></i> Dijawab</span>';
                         } else {
-                            statusBadge.innerHTML = '<span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"><i class="fa-solid fa-lock mr-1"></i> Tiket Ditutup</span>';
+                            statusBadge.innerHTML = '<span class="px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider font-bold border bg-[#F0F6FC] text-[#525252] border-[#E3EAF1] dark:bg-[#12233A] dark:text-white/60 dark:border-[#2A4463]"><i class="fa-solid fa-lock mr-1"></i> Tiket Ditutup</span>';
                         }
                     }
                 }
@@ -226,10 +231,10 @@
                             <!-- Avatar -->
                             <div class="shrink-0">
                                 ${isSelf 
-                                    ? `<div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 border-2 border-white dark:border-slate-700 shadow-sm flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold">
+                                    ? `<div class="w-10 h-10 rounded-full bg-[#E8F0F9] dark:bg-[#1D5B96]/20 border-2 border-white dark:border-[#2A4463] shadow-none flex items-center justify-center text-[#1D5B96] dark:text-[#6BA8DC] font-bold">
                                         ${e.user_name.substring(0, 1).toUpperCase()}
                                        </div>`
-                                    : `<div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-white dark:border-slate-700 shadow-sm flex items-center justify-center text-white font-bold">
+                                    : `<div class="w-10 h-10 rounded-full bg-[#12233A] border-2 border-white dark:border-[#2A4463] shadow-none flex items-center justify-center text-white font-bold">
                                         <i class="fa-solid fa-headset text-sm"></i>
                                        </div>`
                                 }
@@ -237,19 +242,19 @@
 
                             <!-- Bubble -->
                             <div class="flex flex-col ${isSelf ? 'items-end' : 'items-start'}">
-                                <div class="${isSelf ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-slate-800 dark:text-[#e9edef] rounded-l-xl rounded-br-xl' : 'bg-white dark:bg-[#202c33] border border-slate-200 dark:border-[#202c33] text-slate-800 dark:text-[#e9edef] rounded-r-xl rounded-bl-xl shadow-sm'} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
-                                    <div class="text-[11px] mb-1.5 opacity-75 font-semibold border-b border-black/5 dark:border-white/10 pb-1 ${isSelf ? 'text-right' : 'text-left'}">
+                                <div class="${isSelf ? 'bg-[#E8F0F9] dark:bg-[#12233A] text-[#0F1A2A] dark:text-white' : 'bg-white dark:bg-[#0F1D30] text-[#0F1A2A] dark:text-white/85 border border-[#E3EAF1] dark:border-[#2A4463]'} px-4 py-2 text-[15px] leading-relaxed break-words break-all min-w-[120px]">
+                                    <div class="font-mono text-[10px] uppercase tracking-[0.2em] mb-1.5 pb-1 border-b border-[#C9D5E2]/60 dark:border-[#2A4463] text-[#525252] dark:text-white/45 ${isSelf ? 'text-right' : 'text-left'}">
                                         ${isSelf ? 'Anda' : e.user_name} &bull; ${e.created_at.split(', ')[1] || e.created_at}
                                         ${isSelf ? `
                                             <span class="ml-1 ticket-read-status" data-reply-id="${e.id}">
-                                                <i class="fa-solid fa-check-double text-slate-400 dark:text-slate-500"></i>
+                                                <i class="fa-solid fa-check-double text-[#8A9BAE] dark:text-white/45"></i>
                                             </span>
                                         ` : ''}
                                     </div>
                                     ${e.attachment_url ? `
                                         <div class="mb-2">
                                             <a href="${e.attachment_url}" target="_blank">
-                                                <img src="${e.attachment_url}" class="rounded-lg max-w-full h-auto max-h-64 object-cover" alt="Attachment">
+                                                <img src="${e.attachment_url}" class="max-w-full h-auto max-h-64 object-cover" alt="Attachment">
                                             </a>
                                         </div>
                                     ` : ''}
@@ -280,9 +285,9 @@
                 }
             })
             .listen('TicketRepliesRead', (e) => {
-                document.querySelectorAll('.ticket-read-status i.text-slate-400 dark:text-slate-500').forEach(icon => {
-                    icon.classList.remove('text-slate-400', 'dark:text-slate-500');
-                    icon.classList.add('text-blue-500', 'dark:text-blue-400');
+                document.querySelectorAll('.ticket-read-status i').forEach(icon => {
+                    icon.classList.remove('text-[#8A9BAE]', 'dark:text-white/45');
+                    icon.classList.add('text-[#1D5B96]', 'dark:text-[#6BA8DC]');
                 });
             });
     }

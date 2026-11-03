@@ -29,69 +29,69 @@
                     {{-- Judul --}}
                     <div>
                         <label for="title" class="ui-label">
-                            Judul <span class="text-red-500 dark:text-red-400">*</span>
+                            Judul <span class="text-rose-500 dark:text-rose-400">*</span>
                         </label>
                         <input type="text" name="title" id="title" required
                                placeholder="Contoh: Ryaze Sekarang Otomatis Deploy dari GitHub"
-                               class="ui-field @error('title') border-red-500 @enderror"
+                               class="ui-field @error('title') border-rose-500 @enderror"
                                value="{{ old('title') }}">
                         @error('title')
-                            <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     {{-- Deskripsi + AI --}}
                     <div>
                         <label for="description" class="ui-label">
-                            Deskripsi <span class="text-red-500 dark:text-red-400">*</span>
+                            Deskripsi <span class="text-rose-500 dark:text-rose-400">*</span>
                         </label>
                         @include('pages.admin.info_updates.partials.ai-description')
                         <textarea name="description" id="description" rows="5" required
                                   placeholder="Jelaskan informasinya dengan bahasa yang mudah dipahami user."
-                                  class="ui-field @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
+                                  class="ui-field @error('description') border-rose-500 @enderror">{{ old('description') }}</textarea>
                         @error('description')
-                            <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     {{-- Kategori / Prioritas / Versi --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label for="category" class="ui-label">Kategori <span class="text-red-500 dark:text-red-400">*</span></label>
+                            <label for="category" class="ui-label">Kategori <span class="text-rose-500 dark:text-rose-400">*</span></label>
                             <select name="category" id="category" required
-                                    class="ui-field @error('category') border-red-500 @enderror">
+                                    class="ui-field @error('category') border-rose-500 @enderror">
                                 @foreach(\App\Models\InfoUpdate::CATEGORY_META as $key => $meta)
                                     <option value="{{ $key }}" @selected($selectedCategory === $key)>{{ $meta['label'] }}</option>
                                 @endforeach
                             </select>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Menentukan nada tulisan dan warna label.</p>
+                            <p class="text-xs text-[#737373] dark:text-white/40 mt-1">Menentukan nada tulisan dan warna label.</p>
                             @error('category')
-                                <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p>
+                                <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="priority" class="ui-label">Prioritas <span class="text-red-500 dark:text-red-400">*</span></label>
+                            <label for="priority" class="ui-label">Prioritas <span class="text-rose-500 dark:text-rose-400">*</span></label>
                             <select name="priority" id="priority" required
-                                    class="ui-field @error('priority') border-red-500 @enderror">
+                                    class="ui-field @error('priority') border-rose-500 @enderror">
                                 @foreach(\App\Models\InfoUpdate::PRIORITY_META as $key => $meta)
                                     <option value="{{ $key }}" @selected($selectedPriority === $key)>{{ $meta['label'] }}</option>
                                 @endforeach
                             </select>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Update "Darurat" ditandai paling menonjol di halaman user.</p>
+                            <p class="text-xs text-[#737373] dark:text-white/40 mt-1">Update "Darurat" ditandai paling menonjol di halaman user.</p>
                             @error('priority')
-                                <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p>
+                                <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
                             <label for="version" class="ui-label">Versi</label>
                             <input type="text" name="version" id="version" placeholder="v2.1.0"
-                                   class="ui-field @error('version') border-red-500 @enderror"
+                                   class="ui-field @error('version') border-rose-500 @enderror"
                                    value="{{ old('version') }}">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Opsional. Untuk update fitur.</p>
+                            <p class="text-xs text-[#737373] dark:text-white/40 mt-1">Opsional. Untuk update fitur.</p>
                             @error('version')
-                                <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p>
+                                <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -100,13 +100,13 @@
                     <div>
                         <label for="published_at" class="ui-label">Jadwal Tayang</label>
                         <input type="datetime-local" name="published_at" id="published_at"
-                               class="ui-field @error('published_at') border-red-500 @enderror"
+                               class="ui-field @error('published_at') border-rose-500 @enderror"
                                value="{{ $publishedAt }}">
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        <p class="text-xs text-[#737373] dark:text-white/40 mt-1">
                             Kosongkan untuk tayang langsung. Isi tanggal untuk menyiapkannya lebih dulu — baru muncul di halaman user setelah waktunya tiba.
                         </p>
                         @error('published_at')
-                            <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p>
+                            <p class="text-rose-500 dark:text-rose-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -115,11 +115,11 @@
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" name="is_active" value="1" class="sr-only peer" @checked(old('is_active', true))>
                             <div class="peer ui-switch ui-switch-primary"></div>
-                            <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-200">Tampilkan ke user</span>
+                            <span class="ml-3 text-sm font-medium text-[#0F1A2A] dark:text-white">Tampilkan ke user</span>
                         </label>
                     </div>
 
-                    <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                    <div class="pt-4 border-t border-[#E3EAF1] dark:border-[#1B2C44] flex justify-end gap-3">
                         <a href="{{ route('superadmin.info_updates.index') }}"
                            class="ui-btn ui-btn-md ui-btn-secondary">
                             Batal

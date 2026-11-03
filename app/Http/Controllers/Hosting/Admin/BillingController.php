@@ -29,10 +29,14 @@ class BillingController extends Controller
             'status' => 'required|in:unpaid,paid,failed',
         ]);
 
-        $payment->update([
-            'status' => $validated['status'],
-            'paid_at' => $validated['status'] === 'paid' ? now() : null,
-        ]);
+        if ($validated['status'] === 'paid') {
+            app(\App\Services\PaymentFulfillmentService::class)->fulfill($payment->invoice_number, 'Manual Admin');
+        } else {
+            $payment->update([
+                'status' => $validated['status'],
+                'paid_at' => null,
+            ]);
+        }
 
         return back()->with('success', 'Status tagihan hosting berhasil diperbarui!');
     }

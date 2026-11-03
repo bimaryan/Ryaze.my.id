@@ -9,21 +9,21 @@
 @endphp
 
 @if($activePromos->count() > 0)
-    <div class="{{ $class }} relative overflow-hidden rounded-2xl shadow-sm group hover:shadow-md transition-all duration-300" 
+    <div class="{{ $class }} relative overflow-hidden border border-[#E3EAF1] dark:border-[#2A4463] group" 
          x-data="{ activeSlide: 0, slides: {{ $activePromos->count() }}, timer: null }"
          x-init="if(slides > 1) { timer = setInterval(() => { activeSlide = activeSlide === slides - 1 ? 0 : activeSlide + 1 }, 5000) }">
         
         <div class="flex transition-transform duration-500 ease-in-out" :style="`transform: translateX(-${activeSlide * 100}%)`">
             @foreach($activePromos as $activePromo)
                 <div class="w-full shrink-0">
-                    <a href="{{ $activePromo->target_url ?? '#' }}" class="block relative w-full h-full hover:scale-[1.01] transition-transform">
+                    <a href="{{ $activePromo->target_url ?? '#' }}" class="block relative w-full h-full">
                         @if($activePromo->banner_image)
-                            <img src="{{ $activePromo->banner_url }}" class="w-full h-auto object-contain rounded-2xl" alt="{{ $activePromo->title }}">
+                            <img src="{{ $activePromo->banner_url }}" class="w-full h-auto object-contain" alt="{{ $activePromo->title }}">
                         @else
-                            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8 sm:py-10 text-center border border-indigo-400 dark:border-indigo-500/50 min-h-[192px] flex flex-col justify-center">
-                                <h3 class="text-xl md:text-2xl font-bold text-white tracking-tight">{{ $activePromo->title }}</h3>
+                            <div class="bg-gradient-to-r from-[#12233A] to-[#1D5B96] px-6 py-8 sm:py-10 text-center border border-[#2A4463] min-h-[160px] flex flex-col justify-center">
+                                <h3 class="text-xl md:text-2xl font-black text-white tracking-tight">{{ $activePromo->title }}</h3>
                                 @if($activePromo->description)
-                                    <p class="text-indigo-100 mt-2 text-sm max-w-2xl mx-auto">{{ $activePromo->description }}</p>
+                                    <p class="text-white/80 mt-2 text-sm max-w-2xl mx-auto">{{ $activePromo->description }}</p>
                                 @endif
                             </div>
                         @endif

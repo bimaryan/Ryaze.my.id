@@ -1,36 +1,38 @@
 @extends('pages.hosting.user.database.manager')
 
 @section('manager_content')
-<div class="bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-6">
-    <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
-        <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <i class="fa-solid fa-table text-indigo-500 dark:text-indigo-400"></i> Tabel: <code class="bg-slate-100 dark:bg-slate-700/50 px-1.5 py-0.5 rounded text-sm">{{ $tableName }}</code>
-        </h3>
-        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Total: {{ number_format($totalRows) }} baris</span>
+<div class="ui-panel overflow-hidden mb-6">
+    <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A]">
+        <span class="flex items-center gap-2.5 min-w-0">
+            <span class="ui-icon-box"><i class="fa-solid fa-table text-xs"></i></span>
+            <span class="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#525252] dark:text-white/40 shrink-0">Tabel</span>
+            <code class="ui-code text-xs truncate">{{ $tableName }}</code>
+        </span>
+        <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#737373] dark:text-white/40 whitespace-nowrap shrink-0">Total: {{ number_format($totalRows) }} baris</span>
     </div>
 
     <!-- Data Table -->
     <div class="overflow-x-auto w-full">
         <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
             <thead>
-                <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">
+                <tr class="bg-[#F4F8FC] dark:bg-[#12233A] border-b border-[#E3EAF1] dark:border-[#2A4463]">
                     @foreach($columns as $col)
-                        <th class="px-4 py-3 font-semibold">{{ $col['Field'] }}</th>
+                        <th class="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#737373] dark:text-white/40">{{ $col['Field'] }}</th>
                     @endforeach
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-[#EDF2F7] dark:divide-[#24384F]">
                 @forelse($rows as $row)
-                    <tr class="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-700/40 transition-colors">
+                    <tr class="hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49] transition-colors">
                         @foreach($columns as $col)
-                            <td class="px-4 py-2.5 text-slate-600 dark:text-slate-300 max-w-[200px] truncate" title="{{ htmlspecialchars((string) $row[$col['Field']]) }}">
+                            <td class="px-4 py-2.5 font-mono text-xs text-[#525252] dark:text-white/70 max-w-[200px] truncate" title="{{ htmlspecialchars((string) $row[$col['Field']]) }}">
                                 {{ \Illuminate\Support\Str::limit((string) $row[$col['Field']], 50) }}
                             </td>
                         @endforeach
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ count($columns) }}" class="px-4 py-8 text-center text-slate-400 dark:text-slate-500">
+                        <td colspan="{{ count($columns) }}" class="px-4 py-16 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-[#94A3B4] dark:text-white/30">
                             Tabel ini masih kosong.
                         </td>
                     </tr>
@@ -41,17 +43,17 @@
 
     <!-- Pagination -->
     @if($totalPages > 1)
-    <div class="px-5 py-3 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
-        <div class="text-xs text-slate-500 dark:text-slate-400">
+    <div class="px-5 py-3 border-t border-[#EDF2F7] dark:border-[#24384F] flex justify-between items-center bg-[#FAFBFD] dark:bg-[#0F1D30]">
+        <div class="ui-pagination-info">
             Halaman {{ $page }} dari {{ $totalPages }}
         </div>
         <div class="flex items-center gap-1">
             @if($page > 1)
-                <a href="?page={{ $page - 1 }}" class="px-3 py-1 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700/40 text-xs font-medium text-slate-700 dark:text-slate-200">Prev</a>
+                <a href="?page={{ $page - 1 }}" class="ui-btn ui-btn-secondary">Prev</a>
             @endif
-            
+
             @if($page < $totalPages)
-                <a href="?page={{ $page + 1 }}" class="px-3 py-1 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700/40 text-xs font-medium text-slate-700 dark:text-slate-200">Next</a>
+                <a href="?page={{ $page + 1 }}" class="ui-btn ui-btn-secondary">Next</a>
             @endif
         </div>
     </div>

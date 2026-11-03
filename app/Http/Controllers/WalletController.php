@@ -36,11 +36,12 @@ class WalletController extends Controller
             'reference_id' => $referenceId,
             'amount' => $amount,
             'type' => 'credit',
-            'description' => 'Top Up Saldo via Pakasir',
+            'description' => 'Top Up Saldo via QRIS Dinamis',
             'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Silakan selesaikan pembayaran Top Up Anda.');
+        return redirect()->route('payment.qris', ['order_id' => $referenceId])
+            ->with('success', 'Silakan scan QRIS untuk menyelesaikan Top Up Anda.');
     }
 
     public function withdrawForm()

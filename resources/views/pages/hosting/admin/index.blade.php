@@ -247,7 +247,7 @@
                 fontFamily: 'inherit'
             },
             labels: @json($chartProjectStatus['labels']),
-            colors: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#64748b'],
+            colors: ['#10b981', '#3b82f6', '#f59e0b', '#e11d48', '#8A9BAE'],
             dataLabels: { enabled: false },
             legend: {
                 position: 'bottom'

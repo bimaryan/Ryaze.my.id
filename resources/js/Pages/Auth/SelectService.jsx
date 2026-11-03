@@ -13,62 +13,74 @@ export default function SelectService({ siteName }) {
     };
 
     return (
-        <PublicLayout title={`Pilih Layanan - ${siteName}`} withNav={false} withFooter={false} bodyClass="bg-slate-50 dark:bg-slate-900 font-sans antialiased text-slate-900 dark:text-slate-50">
-            <Head title={`Pilih Layanan - ${siteName}`} />
+        <PublicLayout title={`Pilih Layanan - ${siteName ?? 'Ryaze'}`} withNav={false} withFooter={false} bodyClass="bg-slate-50 dark:bg-[#0A1322] font-sans antialiased">
+            <Head title={`Pilih Layanan - ${siteName ?? 'Ryaze'}`} />
 
-            <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-900 font-sans antialiased text-slate-900 dark:text-slate-50">
-                <div className="max-w-md w-full bg-white dark:bg-[#151521] rounded-2xl shadow-xl border border-slate-100 dark:border-white/5 overflow-hidden">
-                    <div className="bg-[#7c3aed] px-8 py-10 text-center relative overflow-hidden">
-                        <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
-                        <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-black/10 blur-xl"></div>
-                        <h1 className="text-3xl font-bold text-white tracking-tight relative z-10">Pilih Layanan</h1>
-                        <p className="text-white/80 mt-2 text-sm relative z-10">Pilih layanan utama yang ingin Anda gunakan</p>
-                    </div>
+            <div className="min-h-screen flex items-center justify-center p-4 py-12">
+                <div className="w-full max-w-[420px]">
 
-                    <div className="p-8">
-                        <form onSubmit={submit} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-[#7c3aed] dark:text-white mb-2">Pilih Layanan Utama</label>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <label
-                                        className={`relative flex items-center justify-center p-4 border rounded-xl cursor-pointer transition-colors has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#f5f0ff] dark:has-[:checked]:bg-[#7c3aed]/10 has-[:checked]:ring-1 has-[:checked]:ring-[#7c3aed] ${errors.role ? 'border-red-500 ring-1 ring-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14] hover:bg-[#fafafa] dark:hover:bg-[#1a1a2e]'}`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            value="user_joki"
-                                            checked={data.role === 'user_joki'}
-                                            onChange={(e) => setData('role', e.target.value)}
-                                            className="peer sr-only"
-                                        />
-                                        <span className="text-sm font-semibold text-[#666] dark:text-white/60 peer-checked:text-[#7c3aed]">Jasa Joki</span>
-                                    </label>
+                    {/* Card */}
+                    <div className="bg-white dark:bg-[#0D1828] border border-[#E3EAF1] dark:border-[#1B2C44] overflow-hidden">
+                        {/* Header */}
+                        <div className="bg-[#F0F6FC] dark:bg-[#0F1A2A] border-b border-[#E3EAF1] dark:border-[#1B2C44] px-8 py-6">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1D5B96] dark:text-[#6BA8DC] mb-1">ONBOARDING</p>
+                            <h1 className="text-xl font-black text-[#0F1A2A] dark:text-white tracking-tight">Pilih Layanan Utama</h1>
+                            <p className="text-[#525252] dark:text-[#8A9BAE] text-sm mt-1">Pilih layanan utama yang ingin Anda gunakan</p>
+                        </div>
 
-                                    <label
-                                        className={`relative flex items-center justify-center p-4 border rounded-xl cursor-pointer transition-colors has-[:checked]:border-[#7c3aed] has-[:checked]:bg-[#f5f0ff] dark:has-[:checked]:bg-[#7c3aed]/10 has-[:checked]:ring-1 has-[:checked]:ring-[#7c3aed] ${errors.role ? 'border-red-500 ring-1 ring-red-500' : 'border-[#e5e5e5] dark:border-[#2d1f42] bg-white dark:bg-[#0a0a14] hover:bg-[#fafafa] dark:hover:bg-[#1a1a2e]'}`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            value="user_hosting"
-                                            checked={data.role === 'user_hosting'}
-                                            onChange={(e) => setData('role', e.target.value)}
-                                            className="peer sr-only"
-                                        />
-                                        <span className="text-sm font-semibold text-[#666] dark:text-white/60 peer-checked:text-[#7c3aed]">Beli Hosting</span>
-                                    </label>
+                        {/* Content */}
+                        <div className="p-8">
+                            <form onSubmit={submit} className="space-y-6">
+                                <div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <label className={`relative flex flex-col items-center justify-center gap-3 p-5 border cursor-pointer transition-all has-[:checked]:border-[#1D5B96] has-[:checked]:bg-[#EDF4FB] dark:has-[:checked]:bg-[#0F2035] ${errors.role ? 'border-rose-500' : 'border-[#E3EAF1] dark:border-[#1B2C44] bg-white dark:bg-[#0A1322] hover:border-[#C9D5E2] dark:hover:border-[#24384F] hover:bg-slate-50 dark:hover:bg-[#0F1A2A]'}`}>
+                                            <input
+                                                type="radio"
+                                                name="role"
+                                                value="user_joki"
+                                                checked={data.role === 'user_joki'}
+                                                onChange={(e) => setData('role', e.target.value)}
+                                                className="peer sr-only"
+                                            />
+                                            <i className="fa-solid fa-gamepad text-2xl text-[#94A3B4] dark:text-[#3D556E] peer-checked:text-[#1D5B96] dark:peer-checked:text-[#6BA8DC]"></i>
+                                            <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-[#737373] dark:text-[#4A7A9B] peer-checked:text-[#1D5B96] dark:peer-checked:text-[#6BA8DC] text-center">Jasa Joki</span>
+                                        </label>
+
+                                        <label className={`relative flex flex-col items-center justify-center gap-3 p-5 border cursor-pointer transition-all has-[:checked]:border-[#1D5B96] has-[:checked]:bg-[#EDF4FB] dark:has-[:checked]:bg-[#0F2035] ${errors.role ? 'border-rose-500' : 'border-[#E3EAF1] dark:border-[#1B2C44] bg-white dark:bg-[#0A1322] hover:border-[#C9D5E2] dark:hover:border-[#24384F] hover:bg-slate-50 dark:hover:bg-[#0F1A2A]'}`}>
+                                            <input
+                                                type="radio"
+                                                name="role"
+                                                value="user_hosting"
+                                                checked={data.role === 'user_hosting'}
+                                                onChange={(e) => setData('role', e.target.value)}
+                                                className="peer sr-only"
+                                            />
+                                            <i className="fa-solid fa-server text-2xl text-[#94A3B4] dark:text-[#3D556E] peer-checked:text-[#1D5B96] dark:peer-checked:text-[#6BA8DC]"></i>
+                                            <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-[#737373] dark:text-[#4A7A9B] peer-checked:text-[#1D5B96] dark:peer-checked:text-[#6BA8DC] text-center">Beli Hosting</span>
+                                        </label>
+                                    </div>
+                                    {errors.role && <p className="mt-2 text-xs text-rose-600 dark:text-rose-400">{errors.role}</p>}
                                 </div>
-                                {errors.role && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.role}</p>}
-                            </div>
 
-                            <button
-                                type="submit"
-                                disabled={processing || !data.role}
-                                className="w-full bg-[#7c3aed] hover:bg-[#6d28d9] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2"
-                            >
-                                Lanjutkan
-                            </button>
-                        </form>
+                                <button
+                                    type="submit"
+                                    disabled={processing || !data.role}
+                                    className="w-full bg-[#1D5B96] text-white font-mono text-[11px] uppercase tracking-[0.2em] py-3.5 px-4 hover:bg-[#2568A8] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 transition-colors"
+                                >
+                                    {processing ? (
+                                        <>
+                                            <i className="fa-solid fa-spinner fa-spin text-sm"></i>
+                                            <span>Menyimpan...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>Lanjutkan</span>
+                                            <i className="fa-solid fa-arrow-right text-xs"></i>
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

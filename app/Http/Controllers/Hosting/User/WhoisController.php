@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class WhoisController extends Controller
 {
@@ -15,7 +16,7 @@ class WhoisController extends Controller
      */
     public function index()
     {
-        return view('pages.hosting.user.whois');
+        return Inertia::render('Whois/Index');
     }
 
     /**

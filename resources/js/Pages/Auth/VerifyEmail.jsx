@@ -31,7 +31,7 @@ export default function VerifyEmail({ siteName }) {
     };
 
     return (
-        <PublicLayout withNav={false} withFooter={false} bodyClass="bg-[#fafafa] dark:bg-[#0a0a14] font-sans antialiased">
+        <PublicLayout title={`Verifikasi Email - ${siteName ?? 'Ryaze'}`} withNav={false} withFooter={false} bodyClass="bg-slate-50 dark:bg-[#0A1322] font-sans antialiased">
             <Head title={`Verifikasi Email - ${siteName ?? 'Ryaze'}`} />
 
             <style>{`
@@ -39,48 +39,50 @@ export default function VerifyEmail({ siteName }) {
                 [data-reveal].revealed { opacity: 1; transform: none; }
             `}</style>
 
-            <div className="min-h-screen flex items-center justify-center p-6">
-                <div className="max-w-md w-full" data-reveal>
-                    <div className="bg-[#7c3aed] dark:bg-[#1a1025] px-8 py-10 text-center relative">
-                        <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
-                            <div className="w-7 h-7 bg-[#7c3aed] flex items-center justify-center">
-                                <span className="text-white font-black text-xs">R</span>
-                            </div>
-                            <span className="font-black text-white text-sm tracking-tight">RYAZE</span>
-                        </Link>
-                        <h1 className="text-3xl font-black text-white tracking-tight">Verifikasi Email</h1>
-                        <p className="text-white/80 mt-2 text-sm">Kami telah mengirimkan tautan verifikasi ke email Anda.</p>
-                    </div>
+            <div className="min-h-screen flex items-center justify-center p-4 py-12">
+                <div className="w-full max-w-[440px]" data-reveal>
 
-                    <div className="bg-white dark:bg-[#0d0d18] border border-[#e5e5e5] dark:border-[#1a1a2e] p-8">
-                        <div className="text-center space-y-6">
+                    {/* Card */}
+                    <div className="bg-white dark:bg-[#0D1828] border border-[#E3EAF1] dark:border-[#1B2C44] overflow-hidden">
+                        {/* Header */}
+                        <div className="bg-[#F0F6FC] dark:bg-[#0F1A2A] border-b border-[#E3EAF1] dark:border-[#1B2C44] px-8 py-6">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1D5B96] dark:text-[#6BA8DC] mb-1">VERIFIKASI KEAMANAN</p>
+                            <h1 className="text-xl font-black text-[#0F1A2A] dark:text-white tracking-tight">Verifikasi Email Anda</h1>
+                            <p className="text-[#525252] dark:text-[#8A9BAE] text-sm mt-1">Kami telah mengirim tautan verifikasi ke email Anda</p>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-8 space-y-6">
                             {auth?.user?.email && (
-                                <p className="text-sm text-[#666] dark:text-white/60">
-                                    Tautan verifikasi dikirim ke: <strong className="text-[#7c3aed]">{auth.user.email}</strong>
-                                </p>
+                                <div className="bg-slate-50 dark:bg-[#0A1322] border border-[#E3EAF1] dark:border-[#1B2C44] p-4 flex items-center gap-3">
+                                    <i className="fa-solid fa-envelope text-[#1D5B96] dark:text-[#6BA8DC] text-base"></i>
+                                    <div className="truncate">
+                                        <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#737373] dark:text-[#4A7A9B]">Terkirim ke</p>
+                                        <p className="text-sm font-bold text-[#0F1A2A] dark:text-white truncate">{auth.user.email}</p>
+                                    </div>
+                                </div>
                             )}
 
-                            <p className="text-sm text-[#666] dark:text-white/60">
-                                Silakan cek email Anda dan klik tautan verifikasi untuk mengaktifkan akun.
-                                Jika tidak ada email di inbox, cek folder spam.
+                            <p className="text-sm text-[#525252] dark:text-[#8A9BAE] leading-relaxed">
+                                Silakan cek kotak masuk email Anda dan klik tautan verifikasi untuk mengaktifkan akun. Jika tidak menemukan email tersebut, periksa folder spam atau junk.
                             </p>
 
-                            <div className="pt-4 border-t border-[#e5e5e5] dark:border-[#2d1f42] space-y-3">
+                            <div className="pt-4 border-t border-[#E3EAF1] dark:border-[#1B2C44] space-y-4">
                                 <button
                                     onClick={resend}
                                     disabled={timeLeft > 0 || processing}
-                                    className={`inline-flex items-center gap-2 text-sm font-medium transition-colors ${
+                                    className={`w-full font-mono text-[11px] uppercase tracking-[0.2em] py-3.5 px-4 flex items-center justify-center gap-2.5 transition-colors ${
                                         timeLeft > 0 || processing
-                                            ? 'text-[#999] dark:text-white/50 cursor-not-allowed'
-                                            : 'text-[#7c3aed] hover:text-[#6d28d9] cursor-pointer'
+                                            ? 'bg-white dark:bg-[#0A1322] border border-[#E3EAF1] dark:border-[#1B2C44] text-[#94A3B4] dark:text-[#3D556E] cursor-not-allowed'
+                                            : 'bg-[#1D5B96] hover:bg-[#2568A8] text-white cursor-pointer'
                                     }`}
                                 >
                                     <i className="fa-solid fa-paper-plane text-xs"></i>
-                                    {processing ? 'Mengirim...' : timeLeft > 0 ? `Kirim ulang dalam ${timeLeft}s` : 'Kirim ulang email verifikasi'}
+                                    {processing ? 'Mengirim...' : timeLeft > 0 ? `Kirim ulang (${timeLeft}s)` : 'Kirim Ulang Email Verifikasi'}
                                 </button>
 
-                                <div className="pt-4 border-t border-[#e5e5e5] dark:border-[#2d1f42]">
-                                    <Link href={route('login')} className="font-semibold text-[#7c3aed] hover:text-[#6d28d9] transition-colors flex items-center justify-center gap-2">
+                                <div className="text-center pt-2">
+                                    <Link href={route('login')} className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#1D5B96] hover:text-[#164A7C] dark:text-[#6BA8DC] dark:hover:text-[#90BFE0] transition-colors inline-flex items-center gap-2">
                                         <i className="fa-solid fa-arrow-left text-xs"></i>
                                         Kembali ke Login
                                     </Link>
@@ -93,4 +95,3 @@ export default function VerifyEmail({ siteName }) {
         </PublicLayout>
     );
 }
-

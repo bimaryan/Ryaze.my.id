@@ -5,7 +5,7 @@
             type="button"
             x-on:click="generate"
             x-bind:disabled="loading"
-            class="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 border border-indigo-200 dark:border-indigo-500/40 text-indigo-700 dark:text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            class="inline-flex items-center gap-2 bg-[#E8F0F9] dark:bg-[#1D5B96]/10 hover:bg-[#1D5B96] dark:hover:bg-[#1D5B96] border border-[#C9D5E2] dark:border-[#1D5B96]/40 text-[#1D5B96] dark:text-[#6BA8DC] text-xs font-semibold px-3 py-1.5  transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
             <i class="fa-solid fa-wand-magic-sparkles" x-bind:class="loading && 'fa-spin'"></i>
             <span x-text="loading ? 'Menyusun...' : 'Buat deskripsi dengan AI'"></span>
@@ -15,34 +15,34 @@
             x-show="filled"
             x-on:click="generate"
             x-bind:disabled="loading"
-            class="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+            class="text-xs font-semibold text-[#737373] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition"
         >
             Buat ulang
         </button>
     </div>
 
     <div class="mt-2" x-show="briefOpen" x-cloak>
-        <label for="ai_brief" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">
-            Catatan untuk AI <span class="font-normal text-slate-400">(opsional)</span>
+        <label for="ai_brief" class="block text-xs font-medium text-[#525252] dark:text-white/60 mb-1">
+            Catatan untuk AI <span class="font-normal text-[#94A3B4]">(opsional)</span>
         </label>
         <textarea
             id="ai_brief"
             rows="2"
             x-model="brief"
             placeholder="Contoh: tonongkapi, garansi migrasi gratis, tanpa kode voucher"
-            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition"
+            class="w-full bg-white dark:bg-[#0A1322] border border-[#C9D5E2] dark:border-[#1B2C44]  px-3 py-2 text-xs focus:ring-2 focus:border-[#1D5B96] outline-none transition"
         ></textarea>
     </div>
 
     <button
         type="button"
         x-on:click="briefOpen = !briefOpen"
-        class="mt-1.5 text-[11px] font-medium text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+        class="mt-1.5 text-[11px] font-medium text-[#94A3B4] hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition"
     >
         <span x-text="briefOpen ? 'Sembunyikan catatan' : 'Tambah catatan untuk AI'"></span>
     </button>
 
-    <p x-show="error" x-cloak class="mt-2 text-xs text-red-500 dark:text-red-400" x-text="error"></p>
+    <p x-show="error" x-cloak class="mt-2 text-xs text-rose-500 dark:text-rose-400" x-text="error"></p>
 </div>
 
 @once

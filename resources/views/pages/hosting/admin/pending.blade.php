@@ -75,7 +75,7 @@
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonColor: '#10b981',
-                        cancelButtonColor: '#94a3b8',
+                        cancelButtonColor: '#94A3B4',
                         confirmButtonText: 'Ya, Aktifkan',
                         cancelButtonText: 'Batal'
                     }).then((result) => {
