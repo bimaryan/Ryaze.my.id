@@ -281,18 +281,26 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
                                                 <img src={p.banner_url} alt={p.title} className="w-full h-auto max-h-[420px] object-cover" />
                                             </a>
                                         ) : (
-                                            <div className="relative overflow-hidden bg-[#0F2138] dark:bg-[#0D1828] px-6 py-14 sm:py-16 text-center">
-                                                <div className="absolute inset-0 grid-texture"></div>
-                                                <div className="relative">
-                                                    <span className="inline-flex items-center gap-2 font-mono text-[10px] font-semibold text-[#7FB4E2] tracking-[0.25em] uppercase mb-5">
-                                                        <span className="w-6 h-px bg-[#6BA8DC]"></span> Promo <span className="w-6 h-px bg-[#6BA8DC]"></span>
-                                                    </span>
-                                                    <h3 className="text-xl sm:text-3xl font-black text-white tracking-tight max-w-3xl mx-auto">{p.title}</h3>
-                                                    {p.description && (
-                                                        <p className="text-white/50 mt-3 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{p.description}</p>
-                                                    )}
+                                            <a href={p.target_url || '#pricing'} className="block">
+                                                <div className="relative overflow-hidden bg-[#F0F6FC] dark:bg-[#0D1828] px-6 py-14 sm:py-16 text-center">
+                                                    <div className="absolute inset-0 grid-texture hidden dark:block"></div>
+                                                    <div className="relative">
+                                                        <span className="inline-flex items-center gap-2 font-mono text-[10px] font-semibold text-[#1D5B96] dark:text-[#7FB4E2] tracking-[0.25em] uppercase mb-5">
+                                                            <span className="w-6 h-px bg-[#1D5B96] dark:bg-[#6BA8DC]"></span> Promo <span className="w-6 h-px bg-[#1D5B96] dark:bg-[#6BA8DC]"></span>
+                                                        </span>
+                                                        <h3 className="text-xl sm:text-3xl font-black text-[#0F1A2A] dark:text-white tracking-tight max-w-3xl mx-auto">{p.title}</h3>
+                                                        {p.description && (
+                                                            <p className="text-[#525252] dark:text-white/50 mt-3 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{p.description}</p>
+                                                        )}
+                                                        {p.target_url && (
+                                                            <span className="inline-flex items-center gap-2 mt-6 px-4 py-2.5 bg-[#1D5B96] hover:bg-[#2A6FB0] text-white font-semibold text-sm transition-colors duration-300">
+                                                                Klaim sekarang
+                                                                <i className="fa-solid fa-arrow-right text-[11px]"></i>
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </a>
                                         )}
                                     </div>
                                 ))}
@@ -314,15 +322,17 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
                                     >
                                         <i className="fa-solid fa-chevron-right text-[11px]"></i>
                                     </button>
-                                    <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
-                                        {activePromos.map((p, i) => (
-                                            <button
-                                                key={p.id ?? i}
-                                                onClick={() => goSlide(i)}
-                                                aria-label={`Promo ${i + 1}`}
-                                                className={`h-1.5 transition-all duration-300 ${slide === i ? 'bg-white w-6' : 'bg-white/40 w-1.5 hover:bg-white/70'}`}
-                                            />
-                                        ))}
+                                    <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                                        <div className="flex gap-1.5 px-2.5 py-2 bg-[#12233A]/85 dark:bg-black/45 backdrop-blur-sm">
+                                            {activePromos.map((p, i) => (
+                                                <button
+                                                    key={p.id ?? i}
+                                                    onClick={() => goSlide(i)}
+                                                    aria-label={`Promo ${i + 1}`}
+                                                    className={`h-1.5 transition-all duration-300 ${slide === i ? 'bg-white w-6' : 'bg-white/40 w-1.5 hover:bg-white/70'}`}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
                                 </>
                             )}

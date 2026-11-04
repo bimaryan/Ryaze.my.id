@@ -38,6 +38,18 @@ class HomeController extends Controller
             ])
             ->values();
 
+        // Promo mahasiswa ikut ditayangkan di carousel yang sama selama aktif.
+        if (Setting::val('student_promo_active', '0') == '1') {
+            $promos->push([
+                'id' => 'student-promo',
+                'title' => 'Hosting gratis '.max(1, (int) Setting::val('student_promo_days', 30)).' hari untuk mahasiswa aktif',
+                'description' => 'Verifikasi NIM dan nama Anda lewat PDDIKTI, langsung dapat paket '
+                    .ucfirst((string) Setting::val('student_promo_plan', 'pro')).' tanpa kartu kredit.',
+                'banner_url' => null,
+                'target_url' => route('user_hosting.student_promo'),
+            ]);
+        }
+
         return Inertia::render('Home', [
             'plans' => collect($homePlans)->map(fn ($p) => [
                 'label' => $p['label'],

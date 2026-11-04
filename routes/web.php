@@ -310,6 +310,10 @@ Route::middleware('auth')->group(function () {
         Route::put('admin/hosting/vouchers/{hashid}', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'update'])->name('admin_hosting.vouchers.update');
         Route::delete('admin/hosting/vouchers/{hashid}', [\App\Http\Controllers\Hosting\Admin\VoucherController::class, 'destroy'])->name('admin_hosting.vouchers.destroy');
         
+        // Verifikasi Mahasiswa Aktif (PDDIKTI)
+        Route::get('admin/hosting/student-verifications', [\App\Http\Controllers\Hosting\Admin\StudentVerificationController::class, 'index'])->name('admin_hosting.student_verifications');
+        Route::put('admin/hosting/student-verifications/settings', [\App\Http\Controllers\Hosting\Admin\StudentVerificationController::class, 'updateSettings'])->name('admin_hosting.student_verifications.settings');
+
         // Tiket Bantuan
         Route::get('admin/hosting/tickets', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'index'])->name('admin_hosting.tickets.index');
         Route::get('admin/hosting/tickets/{hashid}', [\App\Http\Controllers\Hosting\Admin\TicketController::class, 'show'])->name('admin_hosting.tickets.show');
@@ -329,6 +333,8 @@ Route::middleware('auth')->group(function () {
         Route::get('user/hosting/billing', [DashboardController::class, 'billingHistory'])->name('user_hosting.billing');
         Route::post('user/hosting/billing/subscribe', [DashboardController::class, 'subscribe'])->name('user_hosting.billing.subscribe');
         Route::post('user/hosting/billing/pay-wallet', [DashboardController::class, 'payWithWallet'])->name('user_hosting.billing.pay_wallet');
+        Route::get('user/hosting/student-promo', [\App\Http\Controllers\Hosting\User\StudentPromoController::class, 'index'])->name('user_hosting.student_promo');
+        Route::post('user/hosting/student-promo/verify', [\App\Http\Controllers\Hosting\User\StudentPromoController::class, 'verify'])->name('user_hosting.student_promo.verify');
         Route::get('user/hosting/docs', [DashboardController::class, 'docs'])->name('user_hosting.docs');
         // Tiket Bantuan (User)
         Route::get('user/hosting/tickets', [\App\Http\Controllers\User\TicketController::class, 'index'])->name('user_hosting.tickets.index');

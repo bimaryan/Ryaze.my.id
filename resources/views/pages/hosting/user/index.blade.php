@@ -20,6 +20,33 @@
         {{-- Promo Event Banner --}}
         <x-ui.promo-banner class="mt-6 max-w-4xl mx-auto shadow-none" />
 
+        {{-- Banner Promo Mahasiswa — tampil bila promo aktif, belum pernah klaim, dan belum punya paket paid --}}
+        @php
+            $studentPromoActive = \App\Models\Setting::val('student_promo_active', '0') == '1'
+                && ! in_array(Auth::user()->role ?? '', ['superadmin', 'admin_hosting'])
+                && ! Auth::user()->studentVerification()->exists()
+                && in_array(($activeBilling ?? null)?->plan, [null, 'free'], true);
+        @endphp
+        @if ($studentPromoActive)
+            <a href="{{ route('user_hosting.student_promo') }}"
+               class="mt-6 max-w-4xl mx-auto block group relative overflow-hidden border border-[#1D5B96]/40 dark:border-[#2E7BC2]/40 bg-gradient-to-r from-[#12233A] to-[#1D5B96] dark:from-[#0F1D30] dark:to-[#1D5B96]/60 p-5 sm:p-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <div class="w-12 h-12 flex-shrink-0 bg-white/10 border border-white/20 text-[#6BA8DC] flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-white text-sm">Hosting Gratis 1 Bulan untuk Mahasiswa Aktif</h3>
+                        <p class="text-xs text-white/70 mt-0.5">
+                            Masukkan NIM Anda, data dicek langsung ke PDDIKTI. Paket Pro gratis {{ (int) \App\Models\Setting::val('student_promo_days', 30) }} hari — hanya boleh diklaim 1x per NIM.
+                        </p>
+                    </div>
+                    <span class="ui-btn shrink-0 whitespace-nowrap bg-white text-[#12233A] hover:bg-white/90 group-hover:bg-white/90">
+                        <i class="fa-solid fa-arrow-right"></i> Klaim Sekarang
+                    </span>
+                </div>
+            </a>
+        @endif
+
         {{-- ⚠️ EXPIRED HOSTING BANNER --}}
         @if($expiredBilling)
         <div class="mt-6 border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">

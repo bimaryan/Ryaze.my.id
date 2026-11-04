@@ -303,6 +303,7 @@
                     {!! $item(route('admin_hosting.confirmations'), 'Konfirmasi QRIS Hosting', 'fa-solid fa-qrcode', request()->routeIs('admin_hosting.confirmations'), $pendingQrisHosting ?: null) !!}
                 @endif
                 {!! $item(route('admin_hosting.vouchers.index'), 'Kelola Voucher', 'fa-solid fa-ticket', request()->routeIs('admin_hosting.vouchers*')) !!}
+                {!! $item(route('admin_hosting.student_verifications'), 'Verifikasi Mahasiswa', 'fa-solid fa-graduation-cap', request()->routeIs('admin_hosting.student_verifications*')) !!}
                 {!! $item(route('admin_hosting.tickets.index'), 'Kelola Tiket', 'fa-solid fa-headset', request()->routeIs('admin_hosting.tickets*')) !!}
             @endif
 
@@ -328,6 +329,9 @@
                 {!! $item(route('whois.index'), 'Cek Domain', 'fa-solid fa-magnifying-glass', request()->routeIs('whois*')) !!}
 
                 {!! $section('Akun') !!}
+                @if ($role === 'user_hosting' && \App\Models\Setting::val('student_promo_active', '0') == '1')
+                    {!! $item(route('user_hosting.student_promo'), 'Promo Mahasiswa', 'fa-solid fa-graduation-cap', request()->routeIs('user_hosting.student_promo')) !!}
+                @endif
                 {!! $item(route('user_hosting.subscription'), 'Langganan Paket', 'fa-solid fa-crown', request()->routeIs('user_hosting.subscription')) !!}
                 {!! $item(route('user_hosting.billing'), 'Riwayat Tagihan', 'fa-solid fa-file-invoice-dollar', request()->routeIs('user_hosting.billing')) !!}
                 {!! $item(route('user_hosting.tickets.index'), 'Pusat Bantuan', 'fa-solid fa-headset', request()->routeIs('user_hosting.tickets*')) !!}

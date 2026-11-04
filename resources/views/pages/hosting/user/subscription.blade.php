@@ -50,6 +50,33 @@
             </div>
         @endif
 
+        {{-- Banner Promo Mahasiswa — tampil bila promo aktif, belum pernah klaim, dan belum punya paket paid --}}
+        @php
+            $studentPromoActive = \App\Models\Setting::val('student_promo_active', '0') == '1'
+                && ! in_array(Auth::user()->role ?? '', ['superadmin', 'admin_hosting'])
+                && ! Auth::user()->studentVerification()->exists()
+                && in_array($currentPlan, [null, 'free'], true);
+        @endphp
+        @if ($studentPromoActive)
+            <a href="{{ route('user_hosting.student_promo') }}"
+               class="mb-6 block group relative overflow-hidden border border-[#1D5B96]/40 dark:border-[#2E7BC2]/40 bg-gradient-to-r from-[#12233A] to-[#1D5B96] dark:from-[#0F1D30] dark:to-[#1D5B96]/60 p-5 sm:p-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <div class="w-12 h-12 flex-shrink-0 bg-white/10 border border-white/20 text-[#6BA8DC] flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-white text-sm">Mahasiswa aktif? Paket {{ ucfirst($plans['pro']['label'] ?? 'Pro') }} gratis 1 bulan</h3>
+                        <p class="text-xs text-white/70 mt-0.5">
+                            Data dicek langsung ke PDDIKTI lewat NIM. Hanya boleh diklaim 1x per NIM.
+                        </p>
+                    </div>
+                    <span class="ui-btn shrink-0 whitespace-nowrap bg-white text-[#12233A] hover:bg-white/90 group-hover:bg-white/90">
+                        <i class="fa-solid fa-arrow-right"></i> Klaim Sekarang
+                    </span>
+                </div>
+            </a>
+        @endif
+
         <div class="mb-6" x-data="{ billingCycle: '{{ request('cycle') === 'yearly' ? 'yearly' : 'monthly' }}' }">
             <div class="flex items-center justify-between mb-5">
                 <div>
