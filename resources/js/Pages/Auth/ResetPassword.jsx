@@ -76,7 +76,7 @@ export default function ResetPassword({ errors, siteName, token, email, turnstil
     return (
         <PublicLayout title="Reset Password" withNav={false} withFooter={false} bodyClass="bg-slate-50 dark:bg-[#0A1322] font-sans antialiased">
             <Head>
-                <meta name="robots" content="noindex, nofollow" />
+                <meta head-key="robots" name="robots" content="noindex, nofollow" />
                 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
             </Head>
 

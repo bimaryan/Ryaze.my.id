@@ -87,6 +87,14 @@ class HomeController extends Controller
             'canonical' => url('/'),
             'ogType' => 'website',
             'ogImage' => asset('og-image.png'),
+            'structuredData' => [[
+                '@context' => 'https://schema.org',
+                '@type' => 'WebPage',
+                'name' => 'Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze',
+                'url' => route('home'),
+                'inLanguage' => 'id-ID',
+                'publisher' => ['@type' => 'Organization', 'name' => 'Ryaze'],
+            ]],
             'favicon' => Setting::where('key', 'site_favicon')->value('value'),
             'version' => AppVersion::get(),
         ]);

@@ -24,14 +24,30 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/consultation', 'pages.consultation.index')->name('consultation');
+Route::get('/privacy', fn () => Inertia::render('Legal/Privacy', [
+    'seoTitle' => 'Kebijakan Privasi | Ryaze',
+    'seoDescription' => 'Kebijakan privasi Ryaze: data apa yang kami kumpulkan, bagaimana data digunakan, dan hak Anda sebagai pengguna layanan hosting dan jasa digital kami.',
+    'canonical' => route('privacy'),
+    'ogImage' => asset('og-image.png'),
+]))->name('privacy');
+Route::get('/terms', fn () => Inertia::render('Legal/Terms', [
+    'seoTitle' => 'Syarat & Ketentuan | Ryaze',
+    'seoDescription' => 'Syarat dan ketentuan penggunaan layanan Ryaze: aturan akun, pembayaran, penggunaan sumber daya hosting, dan batasan tanggung jawab.',
+    'canonical' => route('terms'),
+    'ogImage' => asset('og-image.png'),
+]))->name('terms');
 
 // Info Update — halaman publik, tanpa login.
 Route::get('/updates', [\App\Http\Controllers\Update\InfoUpdateController::class, 'index'])->name('updates.index');
 Route::get('/updates/{slug}', [\App\Http\Controllers\Update\InfoUpdateController::class, 'show'])->name('updates.show');
 Route::get('/sitemap.xml', function () {
-    $articles = \App\Models\Article::where('status', 'published')->orderBy('created_at', 'desc')->get();
-    $categories = \App\Models\ArticleCategory::has('articles')->orderBy('name')->get();
-    return response()->view('sitemap', compact('articles', 'categories'))->header('Content-Type', 'text/xml');
+    $articles = \App\Models\Article::published()->latest('updated_at')->get();
+    $categories = \App\Models\ArticleCategory::whereHas('articles', fn ($query) => $query->published())
+        ->orderBy('name')->get();
+    $updates = \App\Models\InfoUpdate::published()->latest('updated_at')->get();
+
+    return response()->view('sitemap', compact('articles', 'categories', 'updates'))
+        ->header('Content-Type', 'text/xml; charset=UTF-8');
 });
 
 // ── BLOG PUBLIK ─────────────────────────────────────────────

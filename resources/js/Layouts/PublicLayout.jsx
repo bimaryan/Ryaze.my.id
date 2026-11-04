@@ -1,4 +1,4 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
 const dashboardUrl = {
@@ -23,7 +23,7 @@ function applyDark(dark) {
 }
 
 export default function PublicLayout({ children, withNav = true, withFooter = true, bodyClass }) {
-    const { auth, navLinks, footerLinks } = usePage().props;
+    const { auth, navLinks, footerLinks, robots } = usePage().props;
     const { url } = usePage();
     const user = auth?.user;
     const currentPath = (url || '/').split('?')[0].replace(/\/+$/, '') || '/';
@@ -56,6 +56,9 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
 
     return (
         <div className={`${bodyClass || ''} min-h-screen flex flex-col`}>
+            <Head>
+                <meta head-key="robots" name="robots" content={robots ?? 'index, follow, max-image-preview:large'} />
+            </Head>
             {withNav && (
             <nav className={`fixed top-0 inset-x-0 z-50 bg-white/85 dark:bg-[#0A1322]/85 backdrop-blur-xl border-b border-[#E3EAF1] dark:border-[#1B2C44] transition-shadow duration-300 ${scrolled ? 'shadow-[0_1px_0_0_rgba(29,91,150,0.08),0_8px_24px_-12px_rgba(15,26,42,0.12)] dark:shadow-[0_1px_0_0_rgba(107,168,220,0.06),0_8px_24px_-12px_rgba(0,0,0,0.5)]' : ''}`}>
                 <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">

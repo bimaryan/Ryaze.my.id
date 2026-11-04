@@ -22,7 +22,7 @@ function formatDateShort(val) {
     return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-export default function Show({ article, related = [], popular = [], categories = [], latestUpdates = [], seoTitle, seoDescription, canonical }) {
+export default function Show({ article, related = [], popular = [], categories = [], latestUpdates = [], seoTitle, seoDescription, canonical, ogImage: seoOgImage }) {
     useReveal();
     const [copied, setCopied] = useState(false);
     const [fontSize, setFontSize] = useState('base'); // 'sm' | 'base' | 'lg'
@@ -52,7 +52,7 @@ export default function Show({ article, related = [], popular = [], categories =
         : `https://ryaze.my.id/blog/${article?.slug}`);
     const pageTitle = seoTitle || `${article?.seo_title || article?.title || 'Artikel'} | Ryaze News`;
     const description = seoDescription || article?.seo_description || article?.excerpt || '';
-    const ogImage = article?.cover_image || 'https://ryaze.my.id/og-image.png';
+    const ogImage = seoOgImage || 'https://ryaze.my.id/og-image.png';
 
     const copyUrl = async () => {
         try {

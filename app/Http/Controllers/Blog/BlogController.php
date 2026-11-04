@@ -109,6 +109,29 @@ class BlogController extends Controller
             'canonical' => route('blog.show', $article->slug),
             'ogType' => 'article',
             'ogImage' => $article->cover_image ? asset('storage/' . $article->cover_image) : asset('og-image.png'),
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'NewsArticle',
+                    'headline' => $article->title,
+                    'description' => $article->seo_description,
+                    'image' => [$article->cover_image ? asset('storage/' . $article->cover_image) : asset('og-image.png')],
+                    'datePublished' => $article->published_at->toAtomString(),
+                    'dateModified' => $article->updated_at->toAtomString(),
+                    'mainEntityOfPage' => route('blog.show', $article->slug),
+                    'author' => ['@type' => 'Person', 'name' => $article->user?->name ?? 'Redaksi Ryaze'],
+                    'publisher' => ['@type' => 'Organization', 'name' => 'Ryaze'],
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => [
+                        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Beranda', 'item' => route('home')],
+                        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Blog', 'item' => route('blog.index')],
+                        ['@type' => 'ListItem', 'position' => 3, 'name' => $article->title, 'item' => route('blog.show', $article->slug)],
+                    ],
+                ],
+            ],
         ]);
     }
 

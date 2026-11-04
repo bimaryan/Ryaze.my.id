@@ -15,7 +15,7 @@ export default function SelectService({ siteName }) {
     return (
         <PublicLayout title={`Pilih Layanan - ${siteName ?? 'Ryaze'}`} withNav={false} withFooter={false} bodyClass="bg-slate-50 dark:bg-[#0A1322] font-sans antialiased">
             <Head title={`Pilih Layanan - ${siteName ?? 'Ryaze'}`}>
-                <meta name="robots" content="noindex, nofollow" />
+                <meta head-key="robots" name="robots" content="noindex, nofollow" />
             </Head>
 
             <div className="min-h-screen flex items-center justify-center p-4 py-12">

@@ -21,6 +21,7 @@
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
+/ryaze-video/
 /storage/*.key
 /storage/pail
 /storage/framework/lsp-*.php

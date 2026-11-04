@@ -18,6 +18,12 @@ class HandleInertiaRequests extends Middleware
     {
         $navLinks = config('nav.links');
         $footerLinks = config('nav.footer_links');
+        $isPrivate = $request->routeIs(
+            'two-factor.*', 'portfolio.products.status', 'portfolio.tip.success'
+        ) || collect($request->route()?->gatherMiddleware() ?? [])->contains(
+            fn ($middleware) => is_string($middleware)
+                && ($middleware === 'auth' || str_starts_with($middleware, 'auth:'))
+        );
 
         return [
             ...parent::share($request),
@@ -33,6 +39,7 @@ class HandleInertiaRequests extends Middleware
                     'role' => $request->user()->role,
                 ] : null,
             ],
+            'robots' => $isPrivate ? 'noindex, nofollow' : 'index, follow, max-image-preview:large',
             'csrf' => fn () => csrf_token(),
             'turnstileSiteKey' => config('services.turnstile.site_key'),
             'navLinks' => $navLinks,

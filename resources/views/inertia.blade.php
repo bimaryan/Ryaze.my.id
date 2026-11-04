@@ -25,39 +25,41 @@
         // Prop `title`/`description` lama tetap didukung sebagai fallback.
         $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze';
         $siteDescription = \App\Models\Setting::where('key', 'site_description')->value('value') ?? 'Platform Layanan Joki dan Web Hosting Profesional Terpercaya.';
-        $seoTitle = $seoTitle ?? $title ?? $siteName;
-        $seoDescription = $seoDescription ?? $description ?? $siteDescription;
-        $seoCanonical = $canonical ?? url()->current();
-        $seoRobots = $robots ?? 'index, follow';
-        $seoOgType = $ogType ?? 'website';
-        $seoOgImage = $ogImage ?? asset('og-image.png');
-        $siteFavicon = $favicon ?? \App\Models\Setting::where('key', 'site_favicon')->value('value');
+        $pageProps = $page['props'] ?? [];
+        $seoTitle = $pageProps['seoTitle'] ?? $pageProps['title'] ?? $siteName;
+        $seoDescription = $pageProps['seoDescription'] ?? $pageProps['description'] ?? $siteDescription;
+        $seoCanonical = $pageProps['canonical'] ?? url()->current();
+        $seoRobots = $pageProps['robots'] ?? 'index, follow, max-image-preview:large';
+        $seoOgType = $pageProps['ogType'] ?? 'website';
+        $seoOgImage = $pageProps['ogImage'] ?? asset('og-image.png');
+        $siteFavicon = $pageProps['favicon'] ?? \App\Models\Setting::where('key', 'site_favicon')->value('value');
         $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
     @endphp
 
     <title>{{ $seoTitle }}</title>
-    <meta name="description" content="{{ $seoDescription }}">
-    <meta name="robots" content="{{ $seoRobots }}">
-    <link rel="canonical" href="{{ $seoCanonical }}">
+    <meta data-seo-server name="description" content="{{ $seoDescription }}">
+    <meta data-seo-server name="robots" content="{{ $seoRobots }}">
+    <link data-seo-server rel="canonical" href="{{ $seoCanonical }}">
 
-    {{-- Open Graph / Facebook / WhatsApp --}}
-    <meta property="og:type" content="{{ $seoOgType }}">
-    <meta property="og:site_name" content="{{ $siteName }}">
-    <meta property="og:locale" content="id_ID">
-    <meta property="og:url" content="{{ $seoCanonical }}">
-    <meta property="og:title" content="{{ $seoTitle }}">
-    <meta property="og:description" content="{{ $seoDescription }}">
-    <meta property="og:image" content="{{ $seoOgImage }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="{{ $seoTitle }}">
+    {{-- React Head mengambil alih metadata ini setelah aplikasi dimuat. --}}
+    <meta data-seo-server property="og:type" content="{{ $seoOgType }}">
+    <meta data-seo-server property="og:site_name" content="{{ $siteName }}">
+    <meta data-seo-server property="og:locale" content="id_ID">
+    <meta data-seo-server property="og:url" content="{{ $seoCanonical }}">
+    <meta data-seo-server property="og:title" content="{{ $seoTitle }}">
+    <meta data-seo-server property="og:description" content="{{ $seoDescription }}">
+    <meta data-seo-server property="og:image" content="{{ $seoOgImage }}">
+    <meta data-seo-server property="og:image:alt" content="{{ $seoTitle }}">
 
-    {{-- Twitter Card --}}
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{{ $seoCanonical }}">
-    <meta name="twitter:title" content="{{ $seoTitle }}">
-    <meta name="twitter:description" content="{{ $seoDescription }}">
-    <meta name="twitter:image" content="{{ $seoOgImage }}">
+    <meta data-seo-server name="twitter:card" content="summary_large_image">
+    <meta data-seo-server name="twitter:url" content="{{ $seoCanonical }}">
+    <meta data-seo-server name="twitter:title" content="{{ $seoTitle }}">
+    <meta data-seo-server name="twitter:description" content="{{ $seoDescription }}">
+    <meta data-seo-server name="twitter:image" content="{{ $seoOgImage }}">
+
+    @foreach ($pageProps['structuredData'] ?? [] as $schema)
+        <script data-seo-server type="application/ld+json" nonce="{{ csp_nonce() }}">{!! json_encode($schema, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) !!}</script>
+    @endforeach
 
     <link rel="icon" type="image/x-icon" href="{{ !empty($siteFavicon) ? asset('storage/' . $siteFavicon) : asset('icon/logo_ryaze.ico') }}">
 

@@ -11,9 +11,12 @@ import { Ziggy } from './ziggy';
 
 window.route = (name, params, absolute = false) => ziggyRoute(name, params, absolute, Ziggy);
 
+
 createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),
     setup({ el, App, props }) {
+        // Hindari canonical/meta lama berdampingan dengan Head milik halaman React.
+        document.querySelectorAll('[data-seo-server]').forEach((element) => element.remove());
         createRoot(el).render(<App {...props} />);
     },
     progress: {

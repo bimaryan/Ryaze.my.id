@@ -49,7 +49,7 @@ export default function Index({ articles, categories, featured, currentCategory,
         <>
             <Head title={title}>
                 <meta name="description" content={description} />
-                {robots && <meta name="robots" content={robots} />}
+                {robots && <meta head-key="robots" name="robots" content={robots} />}
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={pageUrl} />
                 <meta property="og:site_name" content="Ryaze" />

@@ -79,7 +79,7 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
         <>
             <Head title={`Pembayaran QRIS — ${order?.title} | Ryaze`}>
                 <meta name="description" content={`Halaman pembayaran QRIS Dinamis untuk ${order?.title} — Ryaze`} />
-                <meta name="robots" content="noindex,nofollow" />
+                <meta head-key="robots" name="robots" content="noindex, nofollow" />
             </Head>
 
             <PublicLayout>

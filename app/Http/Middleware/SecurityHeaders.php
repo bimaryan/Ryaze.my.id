@@ -28,6 +28,18 @@ class SecurityHeaders
 
         $response = $next($request);
 
+        $isPrivate = $request->routeIs(
+            'login', 'register', 'password.*', 'auth.*', 'two-factor.*', 'payment.*',
+            'portfolio.products.status', 'portfolio.products.download',
+            'portfolio.tip.success', 'portfolio.resume'
+        ) || collect($request->route()?->gatherMiddleware() ?? [])->contains(
+            fn ($middleware) => is_string($middleware)
+                && ($middleware === 'auth' || str_starts_with($middleware, 'auth:'))
+        );
+        if ($isPrivate) {
+            $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+        }
+
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-XSS-Protection', '1; mode=block');

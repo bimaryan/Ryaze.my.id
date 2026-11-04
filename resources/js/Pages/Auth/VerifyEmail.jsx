@@ -33,7 +33,7 @@ export default function VerifyEmail({ siteName }) {
     return (
         <PublicLayout title={`Verifikasi Email - ${siteName ?? 'Ryaze'}`} withNav={false} withFooter={false} bodyClass="bg-slate-50 dark:bg-[#0A1322] font-sans antialiased">
             <Head title={`Verifikasi Email - ${siteName ?? 'Ryaze'}`}>
-                <meta name="robots" content="noindex, nofollow" />
+                <meta head-key="robots" name="robots" content="noindex, nofollow" />
             </Head>
 
             <style>{`
