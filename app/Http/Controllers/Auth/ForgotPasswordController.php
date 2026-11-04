@@ -13,6 +13,9 @@ class ForgotPasswordController extends Controller
     {
         return Inertia::render('Auth/ForgotPassword', [
             'siteName' => \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal',
+            'seoTitle' => 'Lupa Password | Ryaze',
+            'seoDescription' => 'Reset password akun Ryaze Anda melalui link yang dikirim ke email terdaftar.',
+            'robots' => 'noindex, nofollow',
         ]);
     }
 

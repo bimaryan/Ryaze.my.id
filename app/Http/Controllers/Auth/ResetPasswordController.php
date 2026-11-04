@@ -18,6 +18,9 @@ class ResetPasswordController extends Controller
             'token' => $token,
             'email' => $request->email,
             'siteName' => \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal',
+            'seoTitle' => 'Reset Password | Ryaze',
+            'seoDescription' => 'Buat password baru untuk akun Ryaze Anda.',
+            'robots' => 'noindex, nofollow',
         ]);
     }
 

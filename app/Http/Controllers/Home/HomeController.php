@@ -82,8 +82,11 @@ class HomeController extends Controller
                 'linkedin' => Setting::val('social_linkedin'),
             ],
             'url' => url('/'),
-            'title' => 'Jasa Pembuatan Website & Shared Hosting Indonesia',
-            'description' => 'Jasa pembuatan website, aplikasi, dan shared hosting Indonesia. Hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan.',
+            'seoTitle' => 'Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze',
+            'seoDescription' => 'Jasa pembuatan website, aplikasi, dan shared hosting Indonesia. Hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan.',
+            'canonical' => url('/'),
+            'ogType' => 'website',
+            'ogImage' => asset('og-image.png'),
             'favicon' => Setting::where('key', 'site_favicon')->value('value'),
             'version' => AppVersion::get(),
         ]);

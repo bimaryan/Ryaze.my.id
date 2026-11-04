@@ -18,11 +18,59 @@
         })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $title ?? 'Ryaze' }}</title>
-    <meta name="description" content="{{ $description ?? '' }}">
-    <link rel="canonical" href="{{ url()->current() }}">
-    <link rel="icon" type="image/x-icon" href="{{ !empty($favicon) ? asset('storage/' . $favicon) : asset('icon/logo_ryaze.ico') }}">
+
+    @php
+        // Meta SEO server-side. Halaman Inertia mengirim prop:
+        // seoTitle/seoDescription/canonical/robots/ogType/ogImage dari controller.
+        // Prop `title`/`description` lama tetap didukung sebagai fallback.
+        $siteName = \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze';
+        $siteDescription = \App\Models\Setting::where('key', 'site_description')->value('value') ?? 'Platform Layanan Joki dan Web Hosting Profesional Terpercaya.';
+        $seoTitle = $seoTitle ?? $title ?? $siteName;
+        $seoDescription = $seoDescription ?? $description ?? $siteDescription;
+        $seoCanonical = $canonical ?? url()->current();
+        $seoRobots = $robots ?? 'index, follow';
+        $seoOgType = $ogType ?? 'website';
+        $seoOgImage = $ogImage ?? asset('og-image.png');
+        $siteFavicon = $favicon ?? \App\Models\Setting::where('key', 'site_favicon')->value('value');
+        $gaId = \App\Models\Setting::where('key', 'google_analytics_id')->value('value');
+    @endphp
+
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    <meta name="robots" content="{{ $seoRobots }}">
+    <link rel="canonical" href="{{ $seoCanonical }}">
+
+    {{-- Open Graph / Facebook / WhatsApp --}}
+    <meta property="og:type" content="{{ $seoOgType }}">
+    <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:url" content="{{ $seoCanonical }}">
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:image" content="{{ $seoOgImage }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ $seoTitle }}">
+
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ $seoCanonical }}">
+    <meta name="twitter:title" content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:image" content="{{ $seoOgImage }}">
+
+    <link rel="icon" type="image/x-icon" href="{{ !empty($siteFavicon) ? asset('storage/' . $siteFavicon) : asset('icon/logo_ryaze.ico') }}">
+
+    @if($gaId)
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}" nonce="{{ csp_nonce() }}"></script>
+        <script nonce="{{ csp_nonce() }}">
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', '{{ $gaId }}');
+        </script>
+    @endif
+
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     <link rel="preconnect" href="https://fonts.googleapis.com">

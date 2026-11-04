@@ -11,7 +11,18 @@ function formatDate(val) {
     return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-export default function Index({ articles, categories, featured, currentCategory }) {
+function breadcrumbJsonLd(currentCategory) {
+    const trail = [
+        { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://ryaze.my.id/' },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://ryaze.my.id/blog' },
+    ];
+    if (currentCategory) {
+        trail.push({ '@type': 'ListItem', position: 3, name: currentCategory.name, item: `https://ryaze.my.id/blog/kategori/${currentCategory.slug}` });
+    }
+    return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: trail };
+}
+
+export default function Index({ articles, categories, featured, currentCategory, seoTitle, seoDescription, canonical, robots }) {
     useReveal();
     const [search, setSearch] = useState('');
 
@@ -26,26 +37,32 @@ export default function Index({ articles, categories, featured, currentCategory 
     const items = articles?.data || [];
     const pagination = articles;
     const totalArticles = pagination?.total ?? items.length;
-    const pageUrl = 'https://ryaze.my.id/blog';
-    const description = currentCategory?.description || 'Tutorial, tips, dan berita seputar web development, hosting, dan teknologi terbaru.';
-    const title = currentCategory ? `${currentCategory.name} - Blog` : 'Artikel & Insights - Blog';
+
+    // Canonical per-URL: ikut kategori & nomor halaman, tanpa parameter search.
+    const page = pagination?.current_page ?? 1;
+    const basePath = currentCategory ? `https://ryaze.my.id/blog/kategori/${currentCategory.slug}` : 'https://ryaze.my.id/blog';
+    const pageUrl = canonical || (page > 1 ? `${basePath}?page=${page}` : basePath);
+    const description = seoDescription || currentCategory?.description || 'Tutorial, tips, dan berita seputar web development, hosting, dan teknologi terbaru.';
+    const title = seoTitle || (currentCategory ? `${currentCategory.name} - Blog | Ryaze` : 'Artikel & Insights - Blog | Ryaze');
 
     return (
         <>
-            <Head title={`${title} | Ryaze`}>
+            <Head title={title}>
                 <meta name="description" content={description} />
+                {robots && <meta name="robots" content={robots} />}
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={pageUrl} />
                 <meta property="og:site_name" content="Ryaze" />
                 <meta property="og:locale" content="id_ID" />
-                <meta property="og:title" content={`${title} | Ryaze`} />
+                <meta property="og:title" content={title} />
                 <meta property="og:description" content={description} />
                 <meta property="og:image" content="https://ryaze.my.id/og-image.png" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:url" content={pageUrl} />
-                <meta property="twitter:title" content={`${title} | Ryaze`} />
+                <meta property="twitter:title" content={title} />
                 <meta property="twitter:description" content={description} />
                 <link rel="canonical" href={pageUrl} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd(currentCategory)) }} />
             </Head>
             <PublicLayout>
                 <RevealStyle />
@@ -58,6 +75,7 @@ export default function Index({ articles, categories, featured, currentCategory 
                                 <SectionHead
                                     num="01"
                                     label="Blog"
+                                    as="h1"
                                     title={currentCategory ? currentCategory.name : 'Artikel & Insights'}
                                     sub={description}
                                 />

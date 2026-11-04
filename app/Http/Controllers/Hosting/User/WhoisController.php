@@ -16,7 +16,11 @@ class WhoisController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Whois/Index');
+        return Inertia::render('Whois/Index', [
+            'seoTitle' => 'WHOIS Domain Lookup | Ryaze',
+            'seoDescription' => 'Cek informasi registrasi domain WHOIS/RDAP gratis: registrar, tanggal registrasi & kedaluwarsa, nameserver, status, dan record DNS.',
+            'canonical' => route('whois.index'),
+        ]);
     }
 
     /**

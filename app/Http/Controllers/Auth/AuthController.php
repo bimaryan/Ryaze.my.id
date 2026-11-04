@@ -29,6 +29,9 @@ class AuthController extends Controller
     {
         return Inertia::render('Auth/Login', [
             'siteName' => \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal',
+            'seoTitle' => 'Masuk | Ryaze',
+            'seoDescription' => 'Masuk ke akun Ryaze Anda untuk mengelola hosting, joki, dan layanan digital Anda.',
+            'robots' => 'noindex, nofollow',
         ]);
     }
 
@@ -42,6 +45,9 @@ class AuthController extends Controller
 
         return Inertia::render('Auth/Register', [
             'siteName' => \App\Models\Setting::where('key', 'site_name')->value('value') ?? 'Ryaze Portal',
+            'seoTitle' => 'Daftar | Ryaze',
+            'seoDescription' => 'Buat akun Ryaze gratis untuk mulai menggunakan shared hosting dan layanan digital lainnya.',
+            'robots' => 'noindex, nofollow',
         ]);
     }
 

@@ -22,7 +22,7 @@ function formatDateShort(val) {
     return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-export default function Show({ article, related = [], popular = [], categories = [], latestUpdates = [] }) {
+export default function Show({ article, related = [], popular = [], categories = [], latestUpdates = [], seoTitle, seoDescription, canonical }) {
     useReveal();
     const [copied, setCopied] = useState(false);
     const [fontSize, setFontSize] = useState('base'); // 'sm' | 'base' | 'lg'
@@ -46,9 +46,12 @@ export default function Show({ article, related = [], popular = [], categories =
         return article.tags.split(',').map(t => t.trim()).filter(Boolean);
     })();
 
-    const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://ryaze.my.id/blog/${article?.slug}`;
-    const pageTitle = `${article?.seo_title || article?.title || 'Artikel'} | Ryaze News`;
-    const description = article?.seo_description || article?.excerpt || '';
+    // Canonical pakai path bersih tanpa query agar URL pelacak tidak duplikat.
+    const pageUrl = canonical || (typeof window !== 'undefined'
+        ? `${window.location.origin}${window.location.pathname}`
+        : `https://ryaze.my.id/blog/${article?.slug}`);
+    const pageTitle = seoTitle || `${article?.seo_title || article?.title || 'Artikel'} | Ryaze News`;
+    const description = seoDescription || article?.seo_description || article?.excerpt || '';
     const ogImage = article?.cover_image || 'https://ryaze.my.id/og-image.png';
 
     const copyUrl = async () => {
@@ -66,8 +69,10 @@ export default function Show({ article, related = [], popular = [], categories =
         '@type': 'NewsArticle',
         headline: article?.title,
         description: description,
-        image: ogImage,
+        image: [ogImage],
         datePublished: article?.published_at,
+        dateModified: article?.updated_at || article?.published_at,
+        mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
         url: pageUrl,
         author: {
             '@type': 'Person',
@@ -79,8 +84,20 @@ export default function Show({ article, related = [], popular = [], categories =
             logo: {
                 '@type': 'ImageObject',
                 url: 'https://ryaze.my.id/og-image.png',
+                width: 1200,
+                height: 630,
             },
         },
+    };
+
+    const breadcrumbJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://ryaze.my.id/' },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://ryaze.my.id/blog' },
+            { '@type': 'ListItem', position: 3, name: article?.title, item: pageUrl },
+        ],
     };
 
     const fontSizeClass = {
@@ -107,6 +124,7 @@ export default function Show({ article, related = [], popular = [], categories =
                 <meta property="twitter:image" content={ogImage} />
                 <link rel="canonical" href={pageUrl} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             </Head>
 
             <PublicLayout>

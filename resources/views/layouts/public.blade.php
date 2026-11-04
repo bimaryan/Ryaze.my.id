@@ -30,20 +30,26 @@
 
     <title>@hasSection('title')@yield('title') - {{ $siteName }}@else{{ $siteName }}@endif</title>
     <meta name="description" content="@hasSection('seo_description')@yield('seo_description')@else{{ $siteDescription }}@endif">
+    <meta name="robots" content="@hasSection('robots')@yield('robots')@else index, follow @endif">
 
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="@hasSection('og_type')@yield('og_type')@else website @endif">
+    <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:url" content="@hasSection('canonical')@yield('canonical')@else{{ url()->current() }}@endif">
     <meta property="og:title" content="@hasSection('title')@yield('title') - {{ $siteName }}@else{{ $siteName }}@endif">
     <meta property="og:description" content="@hasSection('seo_description')@yield('seo_description')@else{{ $siteDescription }}@endif">
-    @if($siteFavicon)<meta property="og:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
+    <meta property="og:image" content="@hasSection('og_image')@yield('og_image')@else{{ asset('og-image.png') }}@endif">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ $siteName }}">
 
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:url" content="@hasSection('canonical')@yield('canonical')@else{{ url()->current() }}@endif">
     <meta property="twitter:title" content="@hasSection('title')@yield('title') - {{ $siteName }}@else{{ $siteName }}@endif">
     <meta property="twitter:description" content="@hasSection('seo_description')@yield('seo_description')@else{{ $siteDescription }}@endif">
-    @if($siteFavicon)<meta property="twitter:image" content="{{ asset('storage/' . $siteFavicon) }}">@endif
+    <meta property="twitter:image" content="@hasSection('og_image')@yield('og_image')@else{{ asset('og-image.png') }}@endif">
 
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="@hasSection('canonical')@yield('canonical')@else{{ url()->current() }}@endif">
     @if($siteFavicon)
         <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
     @endif

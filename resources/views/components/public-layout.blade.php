@@ -45,6 +45,7 @@
 
     <title>{{ $pageTitle }}</title>
     <meta name="description" content="{{ $pageDescription }}">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url()->current() }}">
 
     @if ($siteFavicon)
@@ -58,13 +59,11 @@
     <meta property="og:title" content="{{ $pageTitle }}">
     <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:locale" content="id_ID">
-    @if ($ogImage)
-        <meta property="og:image" content="{{ $ogImage }}">
-        <meta property="twitter:image" content="{{ $ogImage }}">
-    @elseif ($siteFavicon)
-        <meta property="og:image" content="{{ asset('storage/' . $siteFavicon) }}">
-        <meta property="twitter:image" content="{{ asset('storage/' . $siteFavicon) }}">
-    @endif
+    @php $ogImageResolved = $ogImage ?: asset('og-image.png'); @endphp
+    <meta property="og:image" content="{{ $ogImageResolved }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="twitter:image" content="{{ $ogImageResolved }}">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url()->current() }}">

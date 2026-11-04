@@ -25,16 +25,33 @@ const PRIORITY_STYLE = {
     },
 };
 
-export default function Index({ updates, categories, currentCategory }) {
+export default function Index({ updates, categories, currentCategory, seoTitle, seoDescription, canonical }) {
     useReveal();
     const items = updates?.data || [];
     const pagination = updates;
     const totalUpdates = pagination?.total ?? items.length;
 
     const activeCat = categories?.find(c => c.key === currentCategory) || null;
-    const pageUrl = 'https://ryaze.my.id/updates';
-    const pageTitle = activeCat ? `${activeCat.label} - Info Update | Ryaze` : 'Info Update & Pengumuman | Ryaze';
-    const description = 'Kabar terbaru, rilis fitur, status sistem, dan pengumuman pemeliharaan server platform Ryaze.';
+
+    // Canonical mengikuti kategori & nomor halaman agar paginasi tidak
+    // duplikat dengan halaman pertama.
+    const page = pagination?.current_page ?? 1;
+    const params = new URLSearchParams();
+    if (currentCategory) params.set('kategori', currentCategory);
+    if (page > 1) params.set('page', page);
+    const qs = params.toString();
+    const pageUrl = canonical || `https://ryaze.my.id/updates${qs ? `?${qs}` : ''}`;
+    const pageTitle = seoTitle || (activeCat ? `${activeCat.label} - Info Update | Ryaze` : 'Info Update & Pengumuman | Ryaze');
+    const description = seoDescription || 'Kabar terbaru, rilis fitur, status sistem, dan pengumuman pemeliharaan server platform Ryaze.';
+
+    const breadcrumbJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://ryaze.my.id/' },
+            { '@type': 'ListItem', position: 2, name: 'Info Update', item: 'https://ryaze.my.id/updates' },
+        ],
+    };
 
     return (
         <>
@@ -52,6 +69,7 @@ export default function Index({ updates, categories, currentCategory }) {
                 <meta property="twitter:title" content={pageTitle} />
                 <meta property="twitter:description" content={description} />
                 <link rel="canonical" href={pageUrl} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             </Head>
             <PublicLayout>
                 <RevealStyle />
@@ -64,6 +82,7 @@ export default function Index({ updates, categories, currentCategory }) {
                                 <SectionHead
                                     num="01"
                                     label="Changelog & Status"
+                                    as="h1"
                                     title={activeCat ? `Update: ${activeCat.label}` : 'Kabar & Info Update'}
                                     sub={description}
                                 />

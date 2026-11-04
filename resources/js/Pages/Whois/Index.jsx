@@ -17,7 +17,7 @@ const specRows = [
     { k: 'RATE LIMIT', v: 'Standar' },
 ];
 
-export default function Index() {
+export default function Index({ seoTitle, seoDescription, canonical }) {
     useReveal();
     const { csrf } = usePage().props;
     const [domain, setDomain] = useState('');
@@ -85,9 +85,10 @@ export default function Index() {
     };
 
     const siteName = 'Ryaze';
-    const pageUrl = 'https://ryaze.my.id/whois';
+    const pageUrl = canonical || 'https://ryaze.my.id/whois';
     const ogImage = 'https://ryaze.my.id/og-image.png';
-    const description = 'Cek informasi registrasi domain WHOIS/RDAP gratis: registrar, tanggal registrasi & kedaluwarsa, nameserver, status, dan record DNS.';
+    const description = seoDescription || 'Cek informasi registrasi domain WHOIS/RDAP gratis: registrar, tanggal registrasi & kedaluwarsa, nameserver, status, dan record DNS.';
+    const pageTitle = seoTitle || 'WHOIS Domain Lookup | Ryaze';
 
     const webPageJsonLd = {
         '@context': 'https://schema.org',
@@ -119,18 +120,18 @@ export default function Index() {
 
     return (
         <>
-            <Head title="WHOIS Domain Lookup | Ryaze">
+            <Head title={pageTitle}>
                 <meta name="description" content={description} />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={pageUrl} />
                 <meta property="og:site_name" content={siteName} />
                 <meta property="og:locale" content="id_ID" />
-                <meta property="og:title" content="WHOIS Domain Lookup | Ryaze" />
+                <meta property="og:title" content={pageTitle} />
                 <meta property="og:description" content={description} />
                 <meta property="og:image" content={ogImage} />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:url" content={pageUrl} />
-                <meta property="twitter:title" content="WHOIS Domain Lookup | Ryaze" />
+                <meta property="twitter:title" content={pageTitle} />
                 <meta property="twitter:description" content={description} />
                 <meta property="twitter:image" content={ogImage} />
                 <link rel="canonical" href={pageUrl} />

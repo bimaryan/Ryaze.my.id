@@ -27,10 +27,25 @@ class InfoUpdateController extends Controller
             ->paginate(9)
             ->withQueryString();
 
+        $categories = $this->categories();
+        $activeCat = collect($categories)->firstWhere('key', $category);
+
+        $canonical = route('updates.index');
+        $query = array_filter([
+            'kategori' => $category,
+            'page' => $updates->currentPage() > 1 ? $updates->currentPage() : null,
+        ]);
+        if ($query) {
+            $canonical .= '?' . http_build_query($query);
+        }
+
         return Inertia::render('Updates/Index', [
             'updates' => $this->paginatePayload($updates),
-            'categories' => $this->categories(),
+            'categories' => $categories,
             'currentCategory' => $category,
+            'seoTitle' => ($activeCat ? $activeCat['label'] . ' - Info Update' : 'Info Update & Pengumuman') . ' | Ryaze',
+            'seoDescription' => 'Kabar terbaru, rilis fitur, status sistem, dan pengumuman pemeliharaan server platform Ryaze.',
+            'canonical' => $canonical,
         ]);
     }
 
@@ -49,10 +64,16 @@ class InfoUpdateController extends Controller
             ->take(3)
             ->get();
 
+        $payload = $this->transform($update);
+
         return Inertia::render('Updates/Show', [
-            'update' => $this->transform($update),
+            'update' => $payload,
             'related' => $related->map(fn (InfoUpdate $u) => $this->transform($u))->values(),
             'categories' => $this->categories(),
+            'seoTitle' => $payload['title'] . ' | Ryaze',
+            'seoDescription' => Str::limit($payload['excerpt'] ?? '', 160),
+            'canonical' => route('updates.show', $update->slug),
+            'ogType' => 'article',
         ]);
     }
 

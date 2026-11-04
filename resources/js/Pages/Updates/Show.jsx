@@ -26,16 +26,33 @@ const PRIORITY_STYLE = {
     },
 };
 
-export default function Show({ update, related, categories }) {
+export default function Show({ update, related, categories, seoTitle, seoDescription, canonical }) {
     useReveal();
     const [copied, setCopied] = useState(false);
 
     const priority = PRIORITY_STYLE[update?.priority] || PRIORITY_STYLE.normal;
     const cat = (categories || []).find(c => c.key === update?.category) || null;
 
-    const pageUrl = typeof window !== 'undefined' ? window.location.href : (update?.url || `https://ryaze.my.id/updates/${update?.slug}`);
-    const pageTitle = `${update?.title || 'Info Update'} | Ryaze`;
-    const description = update?.excerpt || 'Kabar terbaru dan pengumuman resmi platform Ryaze.';
+    // update.url sudah berupa URL bersih dari server; hindari query pelacak.
+    const pageUrl = canonical || update?.url || (typeof window !== 'undefined'
+        ? `${window.location.origin}${window.location.pathname}`
+        : `https://ryaze.my.id/updates/${update?.slug}`);
+    const pageTitle = seoTitle || `${update?.title || 'Info Update'} | Ryaze`;
+    const description = seoDescription || update?.excerpt || 'Kabar terbaru dan pengumuman resmi platform Ryaze.';
+
+    const articleJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: update?.title,
+        description: description,
+        url: pageUrl,
+        author: { '@type': 'Person', name: update?.author || 'Tim Ryaze' },
+        publisher: {
+            '@type': 'Organization',
+            name: 'Ryaze',
+            logo: { '@type': 'ImageObject', url: 'https://ryaze.my.id/og-image.png', width: 1200, height: 630 },
+        },
+    };
 
     const copyUrl = async () => {
         try {
@@ -63,6 +80,7 @@ export default function Show({ update, related, categories }) {
                 <meta property="twitter:title" content={pageTitle} />
                 <meta property="twitter:description" content={description} />
                 <link rel="canonical" href={pageUrl} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
             </Head>
             <PublicLayout>
                 <RevealStyle />

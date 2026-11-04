@@ -60,6 +60,9 @@ class QrisPaymentController extends Controller
             'dynamicPayload' => $dynamicPayload,
             'qrDataUri'      => $qrDataUri,
             'merchant'       => $merchant,
+            'seoTitle'       => 'Pembayaran QRIS | Ryaze',
+            'seoDescription' => 'Halaman pembayaran QRIS Dinamis untuk tagihan pesanan Anda di Ryaze.',
+            'robots'         => 'noindex, nofollow',
         ]);
     }
 

@@ -7,9 +7,13 @@ Disallow: /profile
 Disallow: /dashboard
 Disallow: /email
 Disallow: /chat
-Disallow: /login
-Disallow: /register
-Disallow: /forgot-password
-Disallow: /reset-password
+Disallow: /payment/
+Disallow: /pembelian/
+Disallow: /portfolio/download/
+Disallow: /tip/
+
+# Halaman auth (login/register/reset) di-noindex via meta robots agar
+# Googlebot boleh crawl tapi tidak mengindeks (panduan Google Search
+# Central: noindex hanya bisa dibaca kalau halaman tidak diblokir robots.txt).
 
 Sitemap: https://ryaze.my.id/sitemap.xml

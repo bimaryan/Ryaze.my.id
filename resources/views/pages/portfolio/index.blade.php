@@ -22,7 +22,7 @@
     <meta property="og:title" content="{{ $profile['name'] }} — {{ $profile['title'] }}">
     <meta property="og:description" content="{{ $profile['bio'] }}">
     <meta property="og:url" content="{{ url('/portfolio') }}">
-    {{-- <meta property="og:image" content="{{ $profile['avatar'] ? asset('storage/' . $profile['avatar']) : asset('profil/bima.jpeg') }}"> --}}
+    <meta property="og:image" content="{{ asset('og-image.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ $profile['name'] }}">
@@ -31,7 +31,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $profile['name'] }} — {{ $profile['title'] }}">
     <meta name="twitter:description" content="{{ $profile['bio'] }}">
-    {{-- <meta name="twitter:image" content="{{ $profile['avatar'] ? asset('storage/' . $profile['avatar']) : asset('profil/bima.jpeg') }}"> --}}
+    <meta name="twitter:image" content="{{ asset('og-image.png') }}">
     <meta name="twitter:image:alt" content="{{ $profile['name'] }}">
 
     {{-- Theme --}}

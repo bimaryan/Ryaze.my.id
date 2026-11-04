@@ -70,6 +70,7 @@ export default function Login({ errors, siteName, turnstileSiteKey }) {
     return (
         <PublicLayout title="Masuk" withNav={false} withFooter={false} bodyClass="bg-slate-50 dark:bg-[#0A1322] font-sans antialiased">
             <Head>
+                <meta name="robots" content="noindex, nofollow" />
                 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
             </Head>
 

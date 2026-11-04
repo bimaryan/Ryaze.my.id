@@ -53,7 +53,7 @@ function FaqItem({ index, q, a }) {
     );
 }
 
-export default function Home({ plans, planPricing, planPricingYearly, articles, starterPricing, starterPricingYearly, promos = [], version }) {
+export default function Home({ plans, planPricing, planPricingYearly, articles, starterPricing, starterPricingYearly, promos = [], version, seoTitle, seoDescription }) {
     const { csrf_token, auth } = usePage().props;
     useReveal();
     const [cycle, setCycle] = useState('monthly');
@@ -128,7 +128,7 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
     const pageUrl = 'https://ryaze.my.id';
 
     const faqJsonLd = {
-        '@@context': 'https://schema.org',
+        '@context': 'https://schema.org',
         '@type': 'FAQPage',
         mainEntity: faqData.map((f) => ({
             '@type': 'Question',
@@ -141,7 +141,7 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
     };
 
     const webPageJsonLd = {
-        '@@context': 'https://schema.org',
+        '@context': 'https://schema.org',
         '@type': 'WebPage',
         name: 'Jasa Pembuatan Website & Shared Hosting Indonesia',
         description: 'Platform hosting & development modern. Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap.',
@@ -160,7 +160,7 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
     };
 
     const breadcrumbJsonLd = {
-        '@@context': 'https://schema.org',
+        '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://ryaze.my.id/' }
@@ -169,21 +169,21 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
 
     return (
         <>
-            <Head title="Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze">
-                <meta name="description" content="Platform hosting & development modern. Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap." />
+            <Head title={seoTitle}>
+                <meta name="description" content={seoDescription} />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://ryaze.my.id/" />
-                <meta property="og:title" content="Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze" />
-                <meta property="og:description" content="Platform hosting & development modern. Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap." />
+                <meta property="og:title" content={seoTitle} />
+                <meta property="og:description" content={seoDescription} />
                 <meta property="og:image" content="https://ryaze.my.id/og-image.png" />
                 <meta property="og:site_name" content="Ryaze" />
                 <meta property="og:locale" content="id_ID" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:url" content="https://ryaze.my.id/" />
-                <meta property="twitter:title" content="Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze" />
-                <meta property="twitter:description" content="Platform hosting & development modern. Jasa pembuatan website & aplikasi. Shared hosting Indonesia dengan auto-deploy dari Git, SSL gratis, database MySQL, web terminal, panel kontrol lengkap." />
+                <meta property="twitter:title" content={seoTitle} />
+                <meta property="twitter:description" content={seoDescription} />
                 <meta property="twitter:image" content="https://ryaze.my.id/og-image.png" />
-                <link rel="canonical" content="https://ryaze.my.id/" />
+                <link rel="canonical" href="https://ryaze.my.id/" />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />

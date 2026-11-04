@@ -30,7 +30,7 @@ export function RevealStyle() {
     );
 }
 
-export function SectionHead({ num, label, title, sub, invert = false }) {
+export function SectionHead({ num, label, title, sub, invert = false, as: Heading = 'h2' }) {
     return (
         <div data-reveal>
             <div className={`flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] mb-5 ${invert ? 'text-white/45' : 'text-[#525252] dark:text-white/40'}`}>
@@ -38,9 +38,9 @@ export function SectionHead({ num, label, title, sub, invert = false }) {
                 <span className={`w-6 h-px ${invert ? 'bg-white/25' : 'bg-[#C9D5E2] dark:bg-[#24384F]'}`}></span>
                 <span>{label}</span>
             </div>
-            <h2 className={`text-[clamp(1.9rem,4vw,3rem)] font-black tracking-[-0.03em] leading-[1.05] ${invert ? 'text-white' : 'text-[#0F1A2A] dark:text-white'}`}>
+            <Heading className={`text-[clamp(1.9rem,4vw,3rem)] font-black tracking-[-0.03em] leading-[1.05] ${invert ? 'text-white' : 'text-[#0F1A2A] dark:text-white'}`}>
                 {title}
-            </h2>
+            </Heading>
             {sub && (
                 <p className={`mt-3 text-[15px] leading-relaxed ${invert ? 'text-white/55' : 'text-[#525252] dark:text-white/55'}`}>{sub}</p>
             )}
