@@ -229,16 +229,22 @@ class TwoFactorController extends Controller
         }
 
         $verified = false;
-        $code = trim($request->input('code'));
+        $rawCode = trim((string) $request->input('code'));
+
+        // Kode OTP sering ikut terkirim dengan spasi (mis. "123 456" dari copy-paste).
+        $digits = preg_replace('/\D/', '', $rawCode);
 
         // 6 digit → OTP; selain itu coba sebagai recovery code.
-        if (preg_match('/^\d{6}$/', $code)) {
-            $verified = $this->totp->verify($user->two_factor_secret, $code);
+        if (strlen($digits) === 6 && preg_match('/^[\d\s]+$/', $rawCode)) {
+            $verified = $this->totp->verify($user->two_factor_secret, $digits);
         } else {
             $codes = $user->two_factor_recovery_codes ?? [];
 
-            if (! empty($codes) && in_array(hash('sha256', $code), $codes, true)) {
-                $user->two_factor_recovery_codes = $this->totp->consumeRecoveryCode($codes, $code);
+            // Kode pemulihan tidak peka huruf besar/kecil & spasi di tepi.
+            $normalized = strtoupper(preg_replace('/\s+/', '', $rawCode));
+
+            if (! empty($codes) && in_array(hash('sha256', $normalized), $codes, true)) {
+                $user->two_factor_recovery_codes = $this->totp->consumeRecoveryCode($codes, $normalized);
                 $user->save();
                 $verified = true;
             }
@@ -261,7 +267,19 @@ class TwoFactorController extends Controller
         Auth::login($user, $remember);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('two-factor.challenge'));
+        // Setelah OTP valid, user sudah login penuh → arahkan ke dashboard
+        // sesuai role (dulu: intended(route('two-factor.challenge')) yang
+        // membuat user dipantulkan kembali ke halaman challenge).
+        $fallback = match ($user->role) {
+            'superadmin' => '/superadmin/dashboard',
+            'admin_joki' => '/admin/joki/dashboard',
+            'admin_hosting' => '/admin/hosting/dashboard',
+            'user_joki' => '/user/joki/dashboard',
+            'user_hosting' => '/user/hosting/dashboard',
+            default => '/dashboard',
+        };
+
+        return redirect()->intended($fallback);
     }
 
     /**

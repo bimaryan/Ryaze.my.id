@@ -40,7 +40,7 @@ class QrisPaymentController extends Controller
 
         // Generate dynamic payload & QR Code
         $dynamicPayload = $this->qrisService->generateDynamicPayload($amount, $cleanOrderId);
-        $qrDataUri = $this->qrisService->generateQrDataUri($dynamicPayload, 300);
+        $qrDataUri = $this->qrisService->generateQrImageDataUri($dynamicPayload, 640);
         $merchant = $this->qrisService->getMerchantInfo();
 
         // Ambil nomor WA dari settings untuk prop merchant

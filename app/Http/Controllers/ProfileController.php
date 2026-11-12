@@ -14,8 +14,24 @@ class ProfileController extends Controller
      */
     public function edit()
     {
+        $user = Auth::user();
+
         return view('pages.profile.edit', [
-            'user' => Auth::user(),
+            'name' => $user->name,
+            'email' => $user->email,
+            'role_label' => match ($user->role) {
+                'superadmin' => 'Superadmin',
+                'admin_hosting' => 'Admin hosting',
+                'admin_joki' => 'Admin jasa development',
+                'user_hosting' => 'Pelanggan hosting',
+                'user_joki' => 'Pelanggan jasa development',
+                default => 'Anggota Ryaze',
+            },
+            'joined_at' => $user->created_at?->translatedFormat('d F Y'),
+            'email_verified' => $user->email_verified_at !== null,
+            'two_factor' => $user->two_factor_confirmed_at
+                ? 'active'
+                : ($user->two_factor_secret ? 'pending' : 'inactive'),
         ]);
     }
 

@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "start": "node server.js",
+        "postinstall": "node -e \"try{require('child_process').execSync('php artisan package:discover --ansi',{stdio:'inherit'})}catch(e){}\""
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

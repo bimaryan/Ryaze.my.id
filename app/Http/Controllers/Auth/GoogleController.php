@@ -61,6 +61,18 @@ class GoogleController extends Controller
             return redirect('/login')->with('error', 'Akun Anda telah ditangguhkan. Silakan hubungi admin.');
         }
 
+        // ── 2FA CHALLENGE ────────────────────────────────────────────────
+        // Login Google juga wajib melewati OTP bila 2FA aktif.
+        if (app(\App\Services\TotpService::class)->hasTwoFactorEnabled($user)) {
+            $request->session()->put('2fa.user_id', $user->id);
+            $request->session()->put('2fa.remember', false);
+
+            Auth::logout();
+            $request->session()->regenerate();
+
+            return redirect()->route('two-factor.challenge');
+        }
+
         Auth::login($user);
 
         if (!$user->role) {

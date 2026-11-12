@@ -17,6 +17,7 @@ use App\Models\Voucher;
 use App\Models\WalletTransaction;
 use App\Notifications\SystemNotification;
 use App\Services\IdeChatService;
+use App\Services\NodeServerService;
 use App\Services\ServerMonitorService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -1914,6 +1915,19 @@ PHP;
             ]);
         }
 
+        // ════════ Helper server Node klien (ditangani PHP, bukan shell) ════════
+        // ryaze-start / ryaze-stop / ryaze-status / ryaze-log:
+        // deploy TIDAK auto-start server Node; klien menjalankannya di sini
+        // dengan port acak. Ditangani sebelum metachar check karena bukan
+        // shell command — argumen divalidasi ketat di handleNodeServerCommand.
+        $specialServerCmds = ['ryaze-start', 'ryaze-stop', 'ryaze-status', 'ryaze-log'];
+        if (in_array($firstWord, $specialServerCmds, true)) {
+            session()->save();
+            $serverTokens = array_values(array_filter(explode(' ', $command), fn ($t) => $t !== ''));
+
+            return $this->handleNodeServerCommand($firstWord, array_slice($serverTokens, 1), $project, $projectDir);
+        }
+
         // ════════ SECURITY: Deny Shell Metacharacters (anti-RCE) ════════
         // Tanpa metacharacter shell tidak ada pipe, redirection, command
         // substitution, glob expansion, quote-breaking, maupun escape.
@@ -2120,6 +2134,119 @@ PHP;
     }
 
     /**
+     * Menangani command helper server Node klien via web terminal:
+     *
+     *   ryaze-start [entry]   Jalankan server Node dengan port acak (3000-3400 / 8000-8100).
+     *                         Entry opsional: nama file atau relative path di root project
+     *                         (contoh: ryaze-start server.js / ryaze-start server/start.js).
+     *                         Tanpa argumen: otomatis via ecosystem.config.js > npm start >
+     *                         package.json main > server.js / index.js / app.js di root.
+     *                         Server berjalan detached (tetap hidup setelah terminal ditutup),
+     *                         log ditulis ke .app.log, dan .port + .proxy-host di-update agar
+     *                         nginx meneruskan traffic domain utama ke server.
+     *   ryaze-stop            Matikan server + hapus .port (traffic kembali ke static output).
+     *   ryaze-status          Cek apakah server masih hidup dan di port berapa.
+     *   ryaze-log             Tampilkan 40 baris terakhir .app.log.
+     */
+    private function handleNodeServerCommand(string $cmd, array $args, HostingProject $project, string $projectDir)
+    {
+        $subdomain = explode('.', $project->ryaze_domain)[0];
+        // Masker path absolut ke bentuk yang aman ditampilkan.
+        $mask = fn (string $text): string => str_replace($projectDir, '/'.$subdomain, str_replace('\\', '/', $text));
+
+        $fail = fn (string $msg) => response()->json(['output' => $msg, 'exit_code' => 1, 'cwd' => $projectDir]);
+        $ok = fn (string $msg) => response()->json(['output' => $msg, 'exit_code' => 0, 'cwd' => $projectDir]);
+
+        // Validasi argumen ketat: maksimal satu, nama file sederhana (tanpa path/`.
+        if (count($args) > 1) {
+            return $fail('⛔ Format: '.$cmd.' [entry]. Hanya satu argumen yang diizinkan.');
+        }
+        $entry = null;
+        if (! empty($args[0])) {
+            $entry = $args[0];
+            $segments = explode('/', $entry);
+            $allValid = array_reduce($segments, fn ($ok, $s) => $ok && preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]*$/', $s), true);
+            if (str_contains($entry, '\\') || in_array('..', $segments, true) || count($segments) > 8 || ! $allValid) {
+                return $fail("⛔ Argumen '{$entry}' tidak valid. Gunakan nama file / relative path di dalam project (contoh: ryaze-start server.js atau ryaze-start server/start.js).");
+            }
+        }
+
+        /** @var NodeServerService $srv */
+        $srv = app(NodeServerService::class);
+
+        switch ($cmd) {
+            case 'ryaze-start':
+                if (! in_array($project->framework, ['node', 'react', 'nextjs', 'vue'])) {
+                    return $fail('⛔ ryaze-start hanya untuk project framework Node.js/SSR. Framework project ini: '.$project->framework);
+                }
+
+                // Server sudah hidup? Jangan double-start (dua prosses di .port akan
+                // menimpa file port masing-masing → confusion proxy).
+                $portFile = $projectDir.'/'.NodeServerService::PORT_FILE;
+                $curPort = file_exists($portFile) ? (int) trim((string) @file_get_contents($portFile)) : null;
+                if ($curPort && $srv->isPortListening('127.0.0.1', $curPort)) {
+                    return $fail('⛔ Server masih berjalan di port '.$curPort.". Matikan dulu dengan: ryaze-stop\nKalau mau restart: ryaze-stop lalu ryaze-start.");
+                }
+
+                $port = $srv->pickFreePort();
+                if (! $port) {
+                    return $fail('⛔ Tidak ada port bebas di rentang '.NodeServerService::PORT_RANGES[0][0].'-'.NodeServerService::PORT_RANGES[0][1].' / '.NodeServerService::PORT_RANGES[1][0].'-'.NodeServerService::PORT_RANGES[1][1].'.');
+                }
+
+                $log = [];
+                $result = null;
+                if (! $srv->start($project, $projectDir, $entry, $port, $log, $result)) {
+                    $out = implode("\n", $log);
+
+                    return $fail($out === '' ? '⛔ Gagal menjalankan server. Cek: ryaze-log' : $out);
+                }
+
+                $host = $srv->detectProxyHost($projectDir);
+                $out = implode("\n", $log)
+                    ."\n✅ Server hidup di port {$port} (PID {$result['pid']})"
+                    ."\n   Proxy nginx → {$host}:{$port}"
+                    ."\n   URL: https://{$project->ryaze_domain}"
+                    ."\n\nMatikan: ryaze-stop | Status: ryaze-status | Log: ryaze-log";
+
+                Log::info('[NodeServer] Start project user '.$project->id.' oleh user '.Auth::id().": port {$port}");
+
+                return $ok($mask($out));
+
+            case 'ryaze-stop':
+                $log = [];
+                $result = null;
+                $srv->stop($project, $projectDir, $log, $result);
+                $out = implode("\n", $log);
+                if (! empty($result['killed'])) {
+                    $out .= "\n✅ Proses dihentikan: ".implode(', ', $result['killed'])."\nTraffic domain kembali ke static output (atau 502/404 kalau tidak ada static).";
+                    Log::info('[NodeServer] Stop project user '.$project->id.' oleh user '.Auth::id());
+                }
+
+                return $ok(trim($out) === '' ? 'Tidak ada server berjalan.' : $mask($out));
+
+            case 'ryaze-status':
+                $log = [];
+                $result = null;
+                $running = $srv->status($project, $projectDir, $log, $result);
+                $out = implode("\n", $log);
+                $header = $result['port'] ? "Port tercatat: {$result['port']}" : 'Port tercatat: - (belum pernah start)';
+                if ($running) {
+                    return $ok($header."\n✅ Server berjalan (port {$result['port']}).".(count($result['pids']) ? "\n".implode("\n", $result['pids']) : ''));
+                }
+
+                return $ok($header."\n⛔ Server TIDAK berjalan.".(count($result['pids']) ? "\nAda proses yang masih hidup tapi tidak listen:"."\n".implode("\n", $result['pids']) : '')."\nStart ulang: ryaze-start");
+
+            case 'ryaze-log':
+                $logPath = $projectDir.'/'.NodeServerService::LOG_FILE;
+                $lines = $srv->tailLines($logPath, 40);
+
+                return $ok($mask(implode("\n", $lines)));
+        }
+
+        return $fail('⛔ Command tidak diketahui.');
+    }
+
+    /**
      * Lingkungan sanitasi untuk web terminal — turunkan seluruh environment
      * PHP, lalu buang kredensial & konfigurasi sensitif agar perintah yang
      * dijalankan user tidak pernah membaca sekret dari getenv($_ENV).
@@ -2237,7 +2364,7 @@ PHP;
 
         $request->validate([
             'plan' => 'required|in:free,starter,pro,business',
-            'billing_cycle' => 'nullable|in:monthly,yearly'
+            'billing_cycle' => 'nullable|in:monthly,yearly',
         ]);
 
         $billingCycle = $request->billing_cycle ?? 'monthly';
@@ -2329,7 +2456,7 @@ PHP;
                 'paid_at' => now(), 'notes' => json_encode(['plan' => $selectedPlan, 'billing_cycle' => $billingCycle]),
             ]);
 
-            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket '.ucfirst($selectedPlan).' aktif secara gratis selama 1 ' . ($billingCycle === 'yearly' ? 'tahun' : 'bulan') . '.';
+            $msg = $planPrice == 0 ? 'Paket Free berhasil diaktifkan secara instan!' : 'Voucher berhasil! Langganan Paket '.ucfirst($selectedPlan).' aktif secara gratis selama 1 '.($billingCycle === 'yearly' ? 'tahun' : 'bulan').'.';
 
             return back()->with('success', $msg);
         }
@@ -2436,13 +2563,13 @@ PHP;
 
         $selectedPlan = $invoice->notes;
         $billingCycle = 'monthly';
-        
+
         $decodedNotes = json_decode($invoice->notes, true);
         if (is_array($decodedNotes)) {
             $selectedPlan = $decodedNotes['plan'] ?? 'starter';
             $billingCycle = $decodedNotes['billing_cycle'] ?? 'monthly';
         }
-        
+
         $planLimits = User::getPlanLimits($selectedPlan);
 
         if ($billing) {

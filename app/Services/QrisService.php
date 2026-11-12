@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use BaconQrCode\Common\ErrorCorrectionLevel;
+use BaconQrCode\Encoder\Encoder;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
-use Illuminate\Support\Facades\Storage;
 
 class QrisService
 {
@@ -118,25 +119,23 @@ class QrisService
         $amountStr = (string) $amountInt;
         $tags['54'] = $amountStr;
 
-        // 3. (Opsional) Tambahkan Tag 62 (Additional Data Field) jika orderId ada
-        // Subtag 01 = Bill Number / Invoice
-        if (!empty($orderId)) {
-            // Batasi panjang order ID agar tidak melebihi kapasitas EMVCo
-            $cleanOrderId = substr(preg_replace('/[^A-Za-z0-9\-_]/', '', $orderId), 0, 25);
-            $subtag = '01' . str_pad((string) strlen($cleanOrderId), 2, '0', STR_PAD_LEFT) . $cleanOrderId;
-            $tags['62'] = $subtag;
-        }
-
+        // Tag 62 (Additional Data Field) sengaja TIDAK diisi. Beberapa acquirer
+        // memperlakukan Bill Number sebagai transaksi biller dan menolak
+        // pembayaran merchant biasa setelah QR dipindai. Konversi statis ke
+        // dinamis yang aman hanya mengubah tag 01 dan menambah tag 54.
         return $this->buildTlv($tags);
     }
 
     /**
      * Render payload menjadi SVG string menggunakan BaconQrCode.
+     *
+     * Margin wajib 4 modul (quiet zone standar QR/EMVCo). Margin 1 modul
+     * membuat QR gagal dibaca banyak scanner, terutama saat diunggah dari galeri.
      */
-    public function generateQrSvg(string $payload, int $size = 280): string
+    public function generateQrSvg(string $payload, int $size = 320): string
     {
         $renderer = new ImageRenderer(
-            new RendererStyle($size, 1),
+            new RendererStyle($size, 4),
             new SvgImageBackEnd()
         );
 
@@ -148,11 +147,66 @@ class QrisService
     /**
      * Render payload menjadi Data URI (SVG base64) siap pakai di atribut src <img>.
      */
-    public function generateQrDataUri(string $payload, int $size = 280): string
+    public function generateQrDataUri(string $payload, int $size = 320): string
     {
         $svg = $this->generateQrSvg($payload, $size);
 
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
+    }
+
+    /**
+     * Render payload menjadi PNG (base64 data URI) dengan skala modul bilangan bulat.
+     *
+     * PNG jauh lebih aman untuk dipindai daripada SVG: aplikasi bank/e-wallet
+     * umumnya hanya menerima JPG/PNG dari galeri, dan skala bilangan bulat
+     * mencegah garis tipis/anti-aliasing di antara modul QR saat di-render.
+     */
+    public function generateQrPng(string $payload, int $size = 640, int $margin = 4): string
+    {
+        $matrix = Encoder::encode($payload, ErrorCorrectionLevel::L())->getMatrix();
+        $modules = $matrix->getWidth();
+
+        $totalModules = $modules + ($margin * 2);
+        $scale = max(1, (int) floor($size / $totalModules));
+        $dimension = $totalModules * $scale;
+
+        $image = imagecreatetruecolor($dimension, $dimension);
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $black = imagecolorallocate($image, 0, 0, 0);
+        imagefilledrectangle($image, 0, 0, $dimension, $dimension, $white);
+
+        for ($y = 0; $y < $modules; $y++) {
+            for ($x = 0; $x < $modules; $x++) {
+                if (!$matrix->get($x, $y)) {
+                    continue;
+                }
+
+                $left = ($x + $margin) * $scale;
+                $top = ($y + $margin) * $scale;
+
+                imagefilledrectangle($image, $left, $top, $left + $scale - 1, $top + $scale - 1, $black);
+            }
+        }
+
+        ob_start();
+        imagepng($image);
+        $png = (string) ob_get_clean();
+        imagedestroy($image);
+
+        return 'data:image/png;base64,' . base64_encode($png);
+    }
+
+    /**
+     * Data URI gambar QR siap tampil. Pakai PNG bila ekstensi GD tersedia,
+     * jika tidak fallback ke SVG.
+     */
+    public function generateQrImageDataUri(string $payload, int $size = 640): string
+    {
+        if (function_exists('imagecreatetruecolor')) {
+            return $this->generateQrPng($payload, $size);
+        }
+
+        return $this->generateQrDataUri($payload, $size);
     }
 
     /**

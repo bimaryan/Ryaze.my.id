@@ -50,6 +50,22 @@ class HomeController extends Controller
             ]);
         }
 
+        $seoTitle = 'Shared Hosting Indonesia, Auto Deploy Git & Jasa Pembuatan Website | Ryaze';
+        $seoDescription = 'Shared hosting Indonesia untuk Laravel, Node.js, React, dan PHP dengan auto-deploy Git, SSL gratis, database MySQL, web terminal, serta jasa pembuatan website & aplikasi mulai Rp 10.000/bulan.';
+        $faqItems = [
+            ['q' => 'Apa itu Ryaze?', 'a' => 'Ryaze adalah platform shared hosting Indonesia dan jasa pembuatan website/aplikasi dengan fitur auto-deploy dari Git, SSL gratis Let\'s Encrypt, database MySQL, web terminal, dan panel kontrol lengkap.'],
+            ['q' => 'Teknologi apa yang didukung di hosting Ryaze?', 'a' => 'Node.js, PHP, Laravel, React, Vue.js, Next.js, dan HTML statis dengan deploy otomatis dari repositori GitHub atau Git.'],
+            ['q' => 'Apakah tersedia SSL gratis dan custom domain?', 'a' => 'Ya. Setiap project otomatis mendapatkan sertifikat SSL gratis via Let\'s Encrypt serta mendukung subdomain bawaan maupun custom domain (.id, .my.id, .com).'],
+            ['q' => 'Apakah tersedia database MySQL?', 'a' => 'Ya. Tersedia database MySQL yang dapat dikelola melalui panel kontrol, mini phpMyAdmin, dan akses kredensial langsung.'],
+            ['q' => 'Apakah bisa pesan jasa pembuatan website atau aplikasi custom?', 'a' => 'Bisa. Tim Ryaze melayani pembuatan sistem informasi, aplikasi web Laravel & React, SaaS, website perusahaan, hingga prototipe bisnis fungsional.'],
+            ['q' => 'Bagaimana cara cek nama domain sebelum membeli?', 'a' => 'Gunakan alat Cek Nama Domain & WHOIS gratis di ryaze.my.id/whois untuk memeriksa ketersediaan domain, registrar, masa aktif, dan record DNS.'],
+        ];
+        $sameAs = array_values(array_filter([
+            Setting::val('social_github'),
+            Setting::val('social_instagram'),
+            Setting::val('social_linkedin'),
+        ]));
+
         return Inertia::render('Home', [
             'plans' => collect($homePlans)->map(fn ($p) => [
                 'label' => $p['label'],
@@ -82,19 +98,55 @@ class HomeController extends Controller
                 'linkedin' => Setting::val('social_linkedin'),
             ],
             'url' => url('/'),
-            'seoTitle' => 'Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze',
-            'seoDescription' => 'Jasa pembuatan website, aplikasi, dan shared hosting Indonesia. Hosting murah dengan auto-deploy, SSL gratis, database MySQL, web terminal, dan panel kontrol lengkap. Mulai dari Rp 10.000/bulan.',
+            'seoTitle' => $seoTitle,
+            'seoDescription' => $seoDescription,
             'canonical' => url('/'),
             'ogType' => 'website',
             'ogImage' => asset('og-image.png'),
-            'structuredData' => [[
-                '@context' => 'https://schema.org',
-                '@type' => 'WebPage',
-                'name' => 'Jasa Pembuatan Website & Shared Hosting Indonesia | Ryaze',
-                'url' => route('home'),
-                'inLanguage' => 'id-ID',
-                'publisher' => ['@type' => 'Organization', 'name' => 'Ryaze'],
-            ]],
+            'structuredData' => [
+                array_filter([
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Organization',
+                    'name' => 'Ryaze',
+                    'url' => route('home'),
+                    'logo' => asset('og-image.png'),
+                    'description' => $seoDescription,
+                    'sameAs' => $sameAs ?: null,
+                ]),
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'WebSite',
+                    'name' => 'Ryaze',
+                    'url' => route('home'),
+                    'inLanguage' => 'id-ID',
+                    'potentialAction' => [
+                        '@type' => 'SearchAction',
+                        'target' => route('blog.index').'?search={search_term_string}',
+                        'query-input' => 'required name=search_term_string',
+                    ],
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'WebPage',
+                    'name' => $seoTitle,
+                    'description' => $seoDescription,
+                    'url' => route('home'),
+                    'inLanguage' => 'id-ID',
+                    'publisher' => ['@type' => 'Organization', 'name' => 'Ryaze'],
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => array_map(fn (array $f) => [
+                        '@type' => 'Question',
+                        'name' => $f['q'],
+                        'acceptedAnswer' => [
+                            '@type' => 'Answer',
+                            'text' => $f['a'],
+                        ],
+                    ], $faqItems),
+                ],
+            ],
             'favicon' => Setting::where('key', 'site_favicon')->value('value'),
             'version' => AppVersion::get(),
         ]);

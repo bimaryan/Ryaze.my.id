@@ -146,7 +146,7 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
 
                             {/* QR Code */}
                             <div className="p-6 flex flex-col items-center justify-center bg-white dark:bg-[#0F1D30]">
-                                <div className="relative p-4 bg-white border-2 border-white shadow-xl flex items-center justify-center max-w-[280px] w-full aspect-square">
+                                <div className="relative p-4 bg-white border-2 border-white shadow-xl flex items-center justify-center max-w-[320px] w-full aspect-square">
                                     <img
                                         src={qrDataUri}
                                         alt="QRIS Dinamis Ryaze"
@@ -155,10 +155,10 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
                                 </div>
 
                                 {/* Download QR */}
-                                <div className="mt-4 w-full max-w-[280px]">
+                                <div className="mt-4 w-full max-w-[320px]">
                                     <a
                                         href={qrDataUri}
-                                        download={`QRIS-${order?.order_id}.svg`}
+                                        download={`QRIS-${order?.order_id}.png`}
                                         className="ui-btn ui-btn-secondary w-full"
                                     >
                                         <i className="fa-solid fa-download text-xs text-[#1D5B96] dark:text-[#6BA8DC]"></i>

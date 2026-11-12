@@ -26,16 +26,23 @@ class QrisPaymentTest extends TestCase
 
         $this->assertEquals('12', $tags['01'], 'Point of initiation must be 12 (Dynamic)');
         $this->assertEquals('75000', $tags['54'], 'Amount must match exactly');
-        $this->assertStringContainsString('HST-INV-TEST123', $tags['62'] ?? '');
+        // Tag 62 tidak boleh ada agar acquirer tidak merutekannya sebagai bill payment.
+        $this->assertArrayNotHasKey('62', $tags);
 
         // Check CRC is 4 hex chars
         $crc = substr($payload, -4);
         $this->assertEquals(4, strlen($crc));
         $this->assertEquals(strtoupper($crc), $crc);
 
-        // Verify SVG data uri
+        // Verify SVG data uri (fallback)
         $dataUri = $service->generateQrDataUri($payload, 250);
         $this->assertStringStartsWith('data:image/svg+xml;base64,', $dataUri);
+
+        // Default renderer harus PNG agar bisa diunggah ke aplikasi bank/e-wallet.
+        if (extension_loaded('gd')) {
+            $imageUri = $service->generateQrImageDataUri($payload, 400);
+            $this->assertStringStartsWith('data:image/png;base64,', $imageUri);
+        }
     }
 
     public function test_qris_payment_page_loads_for_wallet_topup(): void

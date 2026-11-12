@@ -1,235 +1,203 @@
 @extends('index')
 
+@section('title', 'Profil Saya')
+@section('seo_description', 'Kelola informasi pribadi, password, dan keamanan akun Ryaze Anda.')
+
 @section('content')
-    <x-ui.page-layout>
-        {{-- Alerts --}}
-        <x-ui.page-header 
-            title="Profil Saya" 
-            subtitle="Kelola informasi pribadi dan keamanan akun Anda." 
-            icon="fa-solid fa-user">
-            <x-slot:actions>
-                <a href="{{ url('/') }}"
-                    class="inline-flex justify-center items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-                    &larr; Kembali
-                </a>
-            </x-slot:actions>
-        </x-ui.page-header>
+<x-ui.page-layout>
+    <x-ui.page-header
+        title="Pengaturan Akun"
+        eyebrow="Akun · Profil Saya"
+        icon="fa-solid fa-user-gear">
+        <x-slot:subtitle>
+            Perbarui informasi pribadi, ganti password, dan atur keamanan akun Anda.
+        </x-slot:subtitle>
+    </x-ui.page-header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-            {{-- Form Data Diri --}}
-            <x-ui.card class="overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex items-center gap-3">
-                    <i class="fa-solid fa-id-card text-indigo-500 dark:text-indigo-400"></i>
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Informasi Pribadi</h3>
-                </div>
-                <form action="{{ route('profile.update') }}" method="POST" class="p-6">
-                    @csrf
-                    @method('PATCH')
-
-                    <div class="space-y-5">
-                        <div>
-                            <label for="name" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Nama
-                                Lengkap</label>
-                            <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
-                                required
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
-                            @error('name')
-                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Alamat
-                                Email</label>
-                            <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
-                                required
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-shadow">
-                            @error('email')
-                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex justify-end">
-                        <button type="submit"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
-                            Simpan Perubahan
-                        </button>
-                    </div>
-                </form>
-            </x-ui.card>
-
-            {{-- Form Keamanan --}}
-            <x-ui.card class="overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex items-center gap-3">
-                    <i class="fa-solid fa-shield-halved text-emerald-500 dark:text-emerald-400"></i>
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Keamanan Akun</h3>
-                </div>
-                <form action="{{ route('profile.update') }}" method="POST" class="p-6">
-                    @csrf
-                    @method('PATCH')
-
-                    {{-- We need name and email here as well because it's the same update method, 
-                     or we hide them. Actually, since the controller updates name and email from request,
-                     we MUST send name and email, or split the routes.
-                     Since controller requires name and email, let's put them as hidden fields --}}
-                    <input type="hidden" name="name" value="{{ $user->name }}">
-                    <input type="hidden" name="email" value="{{ $user->email }}">
-
-                    <div class="space-y-5">
-                        <div>
-                            <label for="current_password" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Password
-                                Saat Ini</label>
-                            <input type="password" id="current_password" name="current_password" placeholder="••••••••"
-                                class="focus:ring-emerald-500 w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
-                            @error('current_password')
-                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="password" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Password
-                                Baru</label>
-                            <input type="password" id="password" name="password" placeholder="Minimal 8 karakter"
-                                class="focus:ring-emerald-500 w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
-                            @error('password')
-                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="password_confirmation"
-                                class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Ulangi Password Baru</label>
-                            <input type="password" id="password_confirmation" name="password_confirmation"
-                                placeholder="••••••••"
-                                class="focus:ring-emerald-500 w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex justify-end">
-                        <button type="submit"
-                            class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
-                            Ganti Password
-                        </button>
-                    </div>
-                </form>
-            </x-ui.card>
-
-            <!-- 2FA Section -->
-            <x-ui.card>
-                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
-                    <h2 class="text-sm font-bold text-slate-800 dark:text-slate-100">Two-Factor Authentication (2FA)</h2>
-                    @if(auth()->user()->two_factor_confirmed_at)
-                        <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-shield-check"></i> Aktif
-                        </span>
-                    @elseif(auth()->user()->two_factor_secret)
-                        <span class="bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-clock"></i> Belum Selesai
-                        </span>
-                    @else
-                        <span class="bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-shield"></i> Belum Aktif
-                        </span>
-                    @endif
-                </div>
-
-                <div class="p-6">
-                    <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">
-                        Tambahkan lapisan keamanan ekstra ke akun Anda menggunakan aplikasi autentikator (seperti Google Authenticator).
-                    </p>
-
-                    @if(auth()->user()->two_factor_confirmed_at)
-                        <div class="flex flex-wrap gap-3">
-                            <a href="{{ route('two-factor.recovery-codes') }}"
-                                class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-sm font-bold py-2.5 px-6 rounded-lg transition-colors">
-                                <i class="fa-solid fa-key mr-1"></i> Kode Pemulihan
-                            </a>
-                            <form action="{{ route('two-factor.disable') }}" method="POST" id="twofa-disable-form"
-                                onsubmit="event.preventDefault(); twofaPromptDisable(); return false;">
-                                @csrf
-                                @method('DELETE')
-                                <input type="hidden" name="password" id="twofa-disable-password">
-                                <input type="hidden" name="code" id="twofa-disable-code">
-                                <button type="submit"
-                                    class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
-                                    Nonaktifkan 2FA
-                                </button>
-                            </form>
-                        </div>
-                    @elseif(auth()->user()->two_factor_secret)
-                        <form action="{{ route('two-factor.confirm') }}" method="POST" class="space-y-4 max-w-sm">
-                            @csrf
-                            <p class="text-sm text-amber-700 dark:text-amber-400 flex items-center gap-2">
-                                <i class="fa-solid fa-circle-info"></i> Setup belum selesai. Masukkan kode dari aplikasi
-                                autentikator untuk mengaktifkan 2FA.
-                            </p>
-                            <input type="text" name="code" required inputmode="numeric" pattern="\d{6}" maxlength="6"
-                                placeholder="000000" autofocus
-                                class="w-full text-center text-sm tracking-[0.4em] bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:border-indigo-500 outline-none transition">
-                            @error('code')
-                                <p class="text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
-                            @enderror
-                            <button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
-                                Selesaikan Setup
-                            </button>
-                        </form>
-                    @else
-                        <a href="{{ route('two-factor.setup') }}"
-                            class="inline-block bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm">
-                            Aktifkan 2FA
-                        </a>
-                    @endif
-                </div>
-            </x-ui.card>
-
+    {{-- Pemberitahuan sukses --}}
+    @if (session('success'))
+        <div class="mb-6 p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400"></i>
+            <p class="text-sm font-semibold text-emerald-800 dark:text-emerald-300">{{ session('success') }}</p>
         </div>
-    </x-ui.page-layout>
+    @endif
+
+    {{-- Ringkasan identitas --}}
+    <div class="ui-card p-6 flex flex-wrap items-center gap-5 mb-6">
+        <div class="grid place-items-center w-14 h-14 shrink-0 bg-[#12233A] dark:bg-[#1D5B96] text-white text-xl font-black"
+            aria-hidden="true">
+            {{ collect(explode(' ', trim($name)))->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->implode('') }}
+        </div>
+        <div class="min-w-0">
+            <p class="ui-display text-lg truncate">{{ $name }}</p>
+            <p class="text-xs text-[#525252] dark:text-white/50 truncate">{{ $email }}</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 ms-auto">
+            <span class="ui-badge ui-badge-primary">{{ $role_label }}</span>
+            @if ($email_verified)
+                <span class="ui-badge ui-badge-success"><i class="fa-solid fa-circle-check"></i> Email terverifikasi</span>
+            @else
+                <span class="ui-badge ui-badge-warning"><i class="fa-solid fa-triangle-exclamation"></i> Email belum terverifikasi</span>
+            @endif
+            <span class="ui-badge ui-badge-neutral"><i class="fa-regular fa-calendar"></i> Bergabung {{ $joined_at ?? '—' }}</span>
+        </div>
+    </div>
+
+    <div class="space-y-6">
+
+        {{-- ── INFORMASI PRIBADI ── --}}
+        <x-ui.section
+            title="Informasi Pribadi"
+            description="Nama dan email yang terhubung ke akun Anda."
+            icon="fa-solid fa-id-card">
+            <form action="{{ route('profile.update') }}" method="POST" class="max-w-xl space-y-5">
+                @csrf
+                @method('PATCH')
+
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="name" class="ui-label">Nama Lengkap</label>
+                        <input type="text" name="name" id="name" required maxlength="255" autocomplete="name"
+                            value="{{ old('name', $name) }}"
+                            class="ui-field @error('name') border-rose-500 focus:border-rose-500 focus:ring-rose-500 @enderror">
+                        @error('name')
+                            <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="email" class="ui-label">Alamat Email</label>
+                        <input type="email" name="email" id="email" required maxlength="255" autocomplete="email"
+                            value="{{ old('email', $email) }}"
+                            class="ui-field @error('email') border-rose-500 focus:border-rose-500 focus:ring-rose-500 @enderror">
+                        @error('email')
+                            <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                        @enderror
+                        <p class="mt-2 text-xs text-[#525252] dark:text-white/50">
+                            Mengganti email akan menghapus status verifikasi email sebelumnya.
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="ui-btn ui-btn-primary">
+                        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </x-ui.section>
+
+        {{-- ── PASSWORD ── --}}
+        <x-ui.section
+            title="Password"
+            description="Gunakan password unik yang tidak dipakai di akun lain, minimal 8 karakter."
+            icon="fa-solid fa-key">
+            <form action="{{ route('profile.update') }}" method="POST" class="max-w-xl space-y-5">
+                @csrf
+                @method('PATCH')
+
+                <div>
+                    <label for="current_password" class="ui-label">Password Saat Ini</label>
+                    <input type="password" name="current_password" id="current_password" autocomplete="current-password"
+                        class="ui-field @error('current_password') border-rose-500 focus:border-rose-500 focus:ring-rose-500 @enderror">
+                    @error('current_password')
+                        <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="password" class="ui-label">Password Baru</label>
+                        <input type="password" name="password" id="password" minlength="8" autocomplete="new-password"
+                            class="ui-field @error('password') border-rose-500 focus:border-rose-500 focus:ring-rose-500 @enderror">
+                        @error('password')
+                            <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="password_confirmation" class="ui-label">Ulangi Password Baru</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation" minlength="8"
+                            autocomplete="new-password"
+                            class="ui-field">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="ui-btn ui-btn-primary">
+                        <i class="fa-solid fa-rotate text-xs"></i> Ganti Password
+                    </button>
+                </div>
+            </form>
+        </x-ui.section>
+
+        {{-- ── AUTENTIKASI DUA FAKTOR ── --}}
+        <x-ui.section
+            title="Autentikasi Dua Faktor"
+            description="Lindungi proses masuk dengan kode dari aplikasi autentikator, seperti Google Authenticator."
+            icon="fa-solid fa-shield-halved">
+            @if ($two_factor === 'active')
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="ui-badge ui-badge-success"><i class="fa-solid fa-circle-check"></i> 2FA Aktif</span>
+                    <a href="{{ route('two-factor.recovery-codes') }}" class="ui-btn ui-btn-secondary">
+                        <i class="fa-solid fa-key text-xs"></i> Kode Pemulihan
+                    </a>
+                </div>
+
+                {{-- Nonaktifkan: perlu password + OTP --}}
+                <details class="mt-6 border-t border-[#E3EAF1] dark:border-[#2A4463] pt-5">
+                    <summary class="cursor-pointer text-sm font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 transition-colors">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i> Nonaktifkan 2FA
+                    </summary>
+
+                    <form action="{{ route('two-factor.disable') }}" method="POST" class="mt-4 max-w-sm space-y-4">
+                        @csrf
+                        @method('DELETE')
+
+                        <p class="text-xs text-[#525252] dark:text-white/50">
+                            Untuk keamanan, konfirmasi dengan password dan kode OTP Anda.
+                        </p>
+
+                        <div>
+                            <label for="disable_password" class="ui-label">Password</label>
+                            <input type="password" name="password" id="disable_password" required
+                                autocomplete="current-password"
+                                class="ui-field @error('password') border-rose-500 focus:border-rose-500 focus:ring-rose-500 @enderror">
+                            @error('password')
+                                <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="disable_code" class="ui-label">Kode OTP (6 digit)</label>
+                            <input type="text" name="code" id="disable_code" required inputmode="numeric"
+                                pattern="\d{6}" maxlength="6" placeholder="000000"
+                                class="ui-field tracking-[0.4em] @error('code') border-rose-500 focus:border-rose-500 focus:ring-rose-500 @enderror">
+                            @error('code')
+                                <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="ui-btn ui-btn-danger">
+                            <i class="fa-solid fa-shield-halved text-xs"></i> Nonaktifkan Permanen
+                        </button>
+                    </form>
+                </details>
+            @elseif ($two_factor === 'pending')
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="ui-badge ui-badge-warning"><i class="fa-solid fa-triangle-exclamation"></i> Setup belum selesai</span>
+                    <a href="{{ route('two-factor.setup') }}" class="ui-btn ui-btn-primary">
+                        <i class="fa-solid fa-qrcode text-xs"></i> Lanjutkan Setup
+                    </a>
+                </div>
+            @else
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="ui-badge ui-badge-neutral">2FA Belum Aktif</span>
+                    <a href="{{ route('two-factor.setup') }}" class="ui-btn ui-btn-primary">
+                        <i class="fa-solid fa-qrcode text-xs"></i> Aktifkan 2FA
+                    </a>
+                </div>
+            @endif
+        </x-ui.section>
+
+    </div>
+</x-ui.page-layout>
 @endsection
-
-@push('scripts')
-    <script nonce="{{ csp_nonce() }}">
-        // Dipanggil oleh form "Nonaktifkan 2FA": kumpulkan password + OTP
-        // sebelum form benar-benar disubmit.
-        function twofaPromptDisable() {
-            Swal.fire({
-                title: 'Konfirmasi Nonaktifkan 2FA',
-                html: `
-                    <input id="swal-password" type="password" placeholder="Password akun"
-                        class="swal2-input" autocomplete="current-password">
-                    <input id="swal-otp" type="text" inputmode="numeric" maxlength="6" placeholder="Kode OTP 6 digit"
-                        class="swal2-input" style="letter-spacing:.4em;text-align:center">
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Nonaktifkan',
-                cancelButtonText: 'Batal',
-                focusConfirm: false,
-                preConfirm: function () {
-                    const password = document.getElementById('swal-password').value;
-                    const code = document.getElementById('swal-otp').value;
-
-                    if (!password) {
-                        Swal.showValidationMessage('Password wajib diisi.');
-                        return false;
-                    }
-
-                    if (!/^\d{6}$/.test(code)) {
-                        Swal.showValidationMessage('Kode OTP harus 6 digit.');
-                        return false;
-                    }
-
-                    document.getElementById('twofa-disable-password').value = password;
-                    document.getElementById('twofa-disable-code').value = code;
-
-                    return true;
-                },
-            }).then(function (result) {
-                if (result.isConfirmed) {
-                    document.getElementById('twofa-disable-form').submit();
-                }
-            });
-        }
-    </script>
-@endpush

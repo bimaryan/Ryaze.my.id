@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\HostingProject;
+use App\Services\CloudflareTunnelService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -206,26 +207,13 @@ class AutoDeployProject implements ShouldQueue
 
     private function setupNodeFramework($deploy, string $projectDir, string $framework): void
     {
-        // Cleanup old PM2 processes and proxy files before rebuilding
-        $pm2Name = "prod_{$this->project->id}";
-        $this->exec("npx -y pm2 delete {$pm2Name} 2>/dev/null || true", $deploy);
-        if ($this->project->dev_pid) {
-            if ($this->isLinux()) {
-                $this->exec("kill -9 {$this->project->dev_pid} 2>/dev/null || true", $deploy);
-            }
-            $this->exec("npx -y pm2 delete \"{$this->project->dev_pid}\" 2>/dev/null || true", $deploy);
-        }
-        foreach (["{$projectDir}/.port", "{$projectDir}/.ryaze-pm2.js", "{$projectDir}/index.php"] as $f) {
-            if (file_exists($f)) {
-                @unlink($f);
-            }
-        }
-
-        $this->project->update([
-            'dev_mode' => false,
-            'dev_port' => null,
-            'dev_pid' => null,
-        ]);
+        // NOTE: Server TIDAK di-start otomatis.
+        // Klien menjalankan server Node-nya sendiri lewat terminal setelah deploy sukses,
+        // supaya tiap project bisa pakai start command custom masing-masing
+        // dan port tidak dip-proxy ke server yang belum hidup (anti 502).
+        $this->log($deploy, '> Build selesai. Server Node TIDAK di-start otomatis — klien menjalankannya sendiri.');
+        $this->log($deploy, '> Jalankan di Terminal project: ryaze-start [entry] (port acak otomatis, log di .app.log).');
+        $this->log($deploy, '> Contoh: ryaze-start | ryaze-start server.js | ryaze-stop | ryaze-status');
 
         $isLaravelInertia = file_exists("{$projectDir}/artisan")
             && file_exists("{$projectDir}/composer.json")
@@ -295,84 +283,13 @@ class AutoDeployProject implements ShouldQueue
                     }
                 }
 
-                // Jika tidak ada folder statis (atau frameworknya adalah 'node'), jalankan mode Server (SSR) dengan PM2
+                // Server TIDAK di-start otomatis (lihat catatan di awal method).
+                // Jika tidak ada static output / framework node → ini SSR/API,
+                // tapi run-nya manual lewat terminal klien.
                 if (! $hasStatic || $framework === 'node') {
-                    $this->log($deploy, '> Output statis tidak ditemukan. Mengasumsikan aplikasi berjalan di mode Server (SSR/API)...');
-
-                    // Assign port
-                    $port = null;
-                    for ($p = 8000; $p <= 9000; $p++) {
-                        $connection = @fsockopen('127.0.0.1', $p, $errCode, $errStr, 0.1);
-                        if (! is_resource($connection)) {
-                            $port = $p;
-                            break;
-                        }
-                        if (is_resource($connection)) {
-                            fclose($connection);
-                        }
-                    }
-
-                    if (! $port) {
-                        $this->log($deploy, '> [ERROR] Tidak ada port yang tersedia untuk Node Server.');
-
-                        return;
-                    }
-
-                    $pm2Name = "prod_{$this->project->id}";
-
-                    $startCommand = 'npm start';
-                    if ($framework === 'node') {
-                        // Jika ada ecosystem.config.js atau server.js, jalankan itu. Jika tidak, npm start
-                        if (file_exists("{$projectDir}/ecosystem.config.js")) {
-                            $startCommand = 'ecosystem.config.js';
-                        } elseif (file_exists("{$projectDir}/server.js")) {
-                            $startCommand = 'server.js';
-                        } elseif (file_exists("{$projectDir}/index.js")) {
-                            $startCommand = 'index.js';
-                        } elseif (file_exists("{$projectDir}/app.js")) {
-                            $startCommand = 'app.js';
-                        }
-                    }
-
-                    $this->log($deploy, "> Starting Node/SSR Server on port {$port} via PM2...");
-
-                    // Bind 0.0.0.0 agar bisa diakses cross-container (Docker network)
-                    if ($startCommand === 'npm start') {
-                        $ecoConfig = "module.exports = { apps: [{ name: '{$pm2Name}', script: 'npm', args: 'run start', env: { PORT: {$port}, HOSTNAME: '0.0.0.0' } }] };";
-                        file_put_contents("{$projectDir}/.ryaze-pm2.js", $ecoConfig);
-                        $pm2Cmd = 'npx -y pm2 start .ryaze-pm2.js';
-                    } else {
-                        $pm2Cmd = "npx -y pm2 start {$startCommand} --name \"{$pm2Name}\"";
-                    }
-
-                    $this->exec("cd {$projectDir} && PORT={$port} HOSTNAME=0.0.0.0 {$pm2Cmd}", $deploy);
-                    $this->exec('npx -y pm2 save', $deploy);
-                    $this->exec('npx -y pm2 startup 2>/dev/null || true', $deploy);
-
-                    // Tunggu sebentar agar SSR server (misal Next.js) sempat bootup dan mendengarkan port
-                    sleep(3);
-
-                    // Nginx proxy langsung ke daemon — hapus PHP reverse proxy
-                    $this->log($deploy, '> Menyiapkan Nginx Reverse Proxy langsung ke daemon...');
-                    $proxyHost = $this->writeProxyHostFile($projectDir, $deploy);
-                    $this->log($deploy, "> Proxy target: {$proxyHost}:{$port}");
-                    file_put_contents("{$projectDir}/.port", $port);
-                    foreach (["{$projectDir}/index.php", "{$projectDir}/public/index.php"] as $f) {
-                        if (file_exists($f)) {
-                            @unlink($f);
-                        }
-                    }
-                    $this->linuxExec("chown www-data:www-data {$projectDir}/.port", $deploy);
-
-                    // Kita gunakan dev_mode = true untuk mengindikasikan ada server yang berjalan di background
-                    // dan menyimpan ID PM2 di dev_pid
-                    $this->project->update([
-                        'dev_mode' => true,
-                        'dev_port' => $port,
-                        'dev_pid' => $pm2Name,
-                    ]);
-
-                    $this->log($deploy, "> Server SSR berjalan dengan PM2 (ID: {$pm2Name}) pada port {$port}.");
+                    $this->log($deploy, '> Project ini butuh server Node (SSR/API).');
+                    $this->log($deploy, '> Jalankan lewat Terminal project: ryaze-start (port acak 3000-3400 / 8000-8100, otomatis nyambung ke nginx via .port + .proxy-host).');
+                    $this->log($deploy, '> Server berjalan detached — tetap hidup walau terminal ditutup. Matikan: ryaze-stop. Log: ryaze-log.');
                 }
             }
         }
@@ -544,7 +461,7 @@ class AutoDeployProject implements ShouldQueue
         $hostname = $this->project->ryaze_domain;
 
         try {
-            $tunnel = app(\App\Services\CloudflareTunnelService::class);
+            $tunnel = app(CloudflareTunnelService::class);
 
             if (! $tunnel->isConfigured()) {
                 $this->log($deploy, '> [INFO] Cloudflare Tunnel belum dikonfigurasi (CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_TUNNEL_ID / CLOUDFLARE_TUNNEL_API_TOKEN kosong). Melewati registrasi route; pastikan wildcard ingress rule tersedia di dashboard Zero Trust.');
@@ -2648,8 +2565,9 @@ app.get('/', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log('{$name} listening on port ' + PORT);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log('{$name} listening on 0.0.0.0:' + PORT + ' (bind semua interface agar nginx bisa proxy)');
+    console.log('Hint: di web terminal hosting pakai command ryaze-start — port acak otomatis + proxy domain utama.');
 });
 PHP
         );
@@ -3094,123 +3012,5 @@ foreach (\$lines as \$line) {
 echo \$resBody;
 curl_close(\$ch);
 PHP;
-    }
-
-    /**
-     * Resolve alamat host untuk reverse proxy (nginx -> application daemon).
-     *
-     * Di arsitektur container terpisah (PHP/Node di container berbeda dari nginx),
-     * proxy ke 127.0.0.1 akan gagal (502 Bad Gateway). Method ini menulis file
-     * `.proxy-host` di direktori project berisi IP target yang benar, dengan urutan:
-     *   1. File override manual `.proxy-host` (jika diisi admin)
-     *   2. IP Docker container PHP (container tempat PM2 berjalan)
-     *   3. Fallback `127.0.0.1` (single host)
-     *
-     * Nilai ini juga dibaca oleh nginx (Lua) saat membangun proxy_pass.
-     */
-    private function writeProxyHostFile(string $projectDir, $deploy = null): string
-    {
-        $overrideFile = "{$projectDir}/.proxy-host";
-        if (file_exists($overrideFile)) {
-            $override = trim((string) @file_get_contents($overrideFile));
-            if ($override !== '' && $override !== '127.0.0.1') {
-                $this->log($deploy, "> [PROXY] Manual .proxy-host ditemukan: {$override}");
-
-                return $override;
-            }
-        }
-
-        $host = '127.0.0.1';
-        if ($this->isLinux()) {
-            $container = config('services.php_container', '1Panel-php8-aJQI');
-            $candidates = [];
-
-            // 1. getent hosts <container> — Docker menulis mapping nama->IP utama di /etc/hosts.
-            $out = trim((string) @shell_exec("getent hosts {$container} 2>/dev/null | awk '{print \$1}'"));
-            if ($out !== '') {
-                $candidates[] = $out;
-            }
-
-            // 2. hostname -i — semua IP container; eth0 (network utama 1panel) biasanya pertama.
-            $out = trim((string) @shell_exec('hostname -i 2>/dev/null'));
-            if ($out !== '') {
-                foreach (preg_split('/\s+/', $out) as $ip) {
-                    if ($ip !== '') {
-                        $candidates[] = $ip;
-                    }
-                }
-            }
-
-            // 3. Parsing /etc/hosts baris yang memuat nama container (backup kalau getent gagal).
-            if (file_exists('/etc/hosts')) {
-                foreach (file('/etc/hosts', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-                    if (str_contains($line, $container)) {
-                        $parts = preg_split('/\s+/', trim($line));
-                        if (! empty($parts[0])) {
-                            $candidates[] = $parts[0];
-                        }
-                        break;
-                    }
-                }
-            }
-
-            // 4. docker inspect (hanya berhasil kalau docker socket dimount ke container ini).
-            foreach (
-                [
-                    "docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' {$container} 2>/dev/null",
-                    "docker inspect --format '{{.NetworkSettings.IPAddress}}' {$container} 2>/dev/null",
-                ] as $cmd
-            ) {
-                $out = trim((string) @shell_exec($cmd));
-                if ($out !== '') {
-                    foreach (preg_split('/\s+/', $out) as $ip) {
-                        if ($ip !== '') {
-                            $candidates[] = $ip;
-                        }
-                    }
-                }
-            }
-
-            // Pilih IPv4 privat pertama (10.x / 172.16-31.x / 192.168.x) — itulah IP yang
-            // bisa diroute dari container OpenResty. Loopback & IP publik ditolak.
-            foreach ($candidates as $ip) {
-                $ip = trim($ip);
-                if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-                    continue;
-                }
-                if (str_starts_with($ip, '127.')) {
-                    continue;
-                }
-                $octets = explode('.', $ip);
-                $isPrivate = (str_starts_with($ip, '10.'))
-                    || (str_starts_with($ip, '172.') && (int) $octets[1] >= 16 && (int) $octets[1] <= 31)
-                    || (str_starts_with($ip, '192.168.'));
-                if ($isPrivate) {
-                    $host = $ip;
-                    break;
-                }
-            }
-
-            if ($host === '127.0.0.1') {
-                $this->log($deploy, '> [PROXY][WARNING] Gagal mendeteksi IP container, fallback ke 127.0.0.1.');
-                $this->log($deploy, '> [PROXY][WARNING] Nginx berjalan di container terpisah sehingga web akan 502 Bad Gateway.');
-                $this->log($deploy, '> [PROXY][WARNING] Solusi: set manual IP container PHP ke file .proxy-host, atau masukkan docker socket ke container ini.');
-            }
-        } elseif (defined('PHP_OS_FAMILY') && PHP_OS_FAMILY === 'Windows') {
-            foreach (['host.docker.internal', '172.17.0.1'] as $candidate) {
-                $out = trim((string) @shell_exec("ping -n 1 -w 200 {$candidate} >nul 2>&1 && echo ok"));
-                if ($out === 'ok') {
-                    $host = $candidate;
-                    break;
-                }
-            }
-        }
-
-        @file_put_contents("{$projectDir}/.proxy-host", $host);
-        if ($host !== '127.0.0.1') {
-            $this->log($deploy, "> [PROXY] Target host terdeteksi: {$host}");
-        }
-
-        return $host;
     }
 }

@@ -45,21 +45,43 @@ class SecurityHeaders
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=()');
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-        $response->headers->set('Content-Security-Policy',
-            "default-src 'self'; ".
-            "base-uri 'self'; ".
-            "object-src 'none'; ".
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com https://cdn.tailwindcss.com http://127.0.0.1:5173 http://localhost:5173; ".
-            "script-src-attr 'unsafe-inline'; ".
-            "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
-            "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
-            "img-src 'self' data: blob: https://api.qrserver.com https://ui-avatars.com https://placehold.co https://www.google-analytics.com https://www.googletagmanager.com https://ghchart.rshah.org; ".
-            "frame-src *; ".
-            "worker-src 'self' data: blob:; ".
-            "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:; ".
-            "upgrade-insecure-requests;"
-        );
+
+        // HSTS & upgrade-insecure-requests hanya boleh dikirim saat benar-benar HTTPS.
+        // Kalau dikirim lewat HTTP di lokal, Chrome akan meng-cache "localhost = HTTPS only"
+        // (HSTS) lalu meng-upgrade semua POST ke https://localhost:8000 → server HTTP
+        // menolaknya (ERR_CONNECTION_CLOSED / "Unsupported SSL request").
+        if ($request->isSecure()) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+            $response->headers->set('Content-Security-Policy',
+                "default-src 'self'; ".
+                "base-uri 'self'; ".
+                "object-src 'none'; ".
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com https://cdn.tailwindcss.com http://127.0.0.1:5173 http://localhost:5173; ".
+                "script-src-attr 'unsafe-inline'; ".
+                "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
+                "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
+                "img-src 'self' data: blob: https://api.qrserver.com https://ui-avatars.com https://placehold.co https://www.google-analytics.com https://www.googletagmanager.com https://ghchart.rshah.org; ".
+                "frame-src *; ".
+                "worker-src 'self' data: blob:; ".
+                "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:; ".
+                "upgrade-insecure-requests;"
+            );
+        } else {
+            // Versi lokal: tanpa HSTS dan tanpa upgrade-insecure-requests.
+            $response->headers->set('Content-Security-Policy',
+                "default-src 'self'; ".
+                "base-uri 'self'; ".
+                "object-src 'none'; ".
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com https://cdn.tailwindcss.com http://127.0.0.1:5173 http://localhost:5173; ".
+                "script-src-attr 'unsafe-inline'; ".
+                "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
+                "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
+                "img-src 'self' data: blob: https://api.qrserver.com https://ui-avatars.com https://placehold.co https://www.google-analytics.com https://www.googletagmanager.com https://ghchart.rshah.org; ".
+                "frame-src *; ".
+                "worker-src 'self' data: blob:; ".
+                "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:; "
+            );
+        }
 
         return $response;
     }

@@ -1,7 +1,7 @@
 import PublicLayout from '../../Layouts/PublicLayout';
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import { useReveal } from '../../Components/PublicSection';
+import { useReveal, SectionHead } from '../../Components/PublicSection';
 
 function formatDate(iso) {
     if (!iso) return 'Tidak tersedia';
@@ -17,7 +17,7 @@ const specRows = [
     { k: 'RATE LIMIT', v: 'Standar' },
 ];
 
-export default function Index({ seoTitle, seoDescription, canonical }) {
+export default function Index({ seoTitle, seoDescription, canonical, faqs = [] }) {
     useReveal();
     const { csrf } = usePage().props;
     const [domain, setDomain] = useState('');
@@ -87,16 +87,42 @@ export default function Index({ seoTitle, seoDescription, canonical }) {
     const siteName = 'Ryaze';
     const pageUrl = canonical || 'https://ryaze.my.id/whois';
     const ogImage = 'https://ryaze.my.id/og-image.png';
-    const description = seoDescription || 'Cek informasi registrasi domain WHOIS/RDAP gratis: registrar, tanggal registrasi & kedaluwarsa, nameserver, status, dan record DNS.';
-    const pageTitle = seoTitle || 'WHOIS Domain Lookup | Ryaze';
+    const description = seoDescription || 'Alat cek nama domain dan WHOIS/RDAP gratis Indonesia. Periksa ketersediaan domain .id, .my.id, .com, informasi registrar, tanggal kedaluwarsa, nameserver, DNSSEC, dan record DNS secara instan.';
+    const pageTitle = seoTitle || 'Cek Nama Domain, WHOIS & DNS Lookup Gratis (.id, .my.id, .com) | Ryaze';
+
+    const faqList = faqs.length > 0 ? faqs : [
+        {
+            q: 'Bagaimana cara cek nama domain sudah terdaftar atau belum?',
+            a: 'Masukkan nama domain seperti contoh.com atau namabrand.my.id pada kolom pencarian di atas lalu klik Cek Domain. Jika protokol RDAP mengembalikan status belum terdaftar, berarti nama domain tersebut masih tersedia untuk didaftarkan di registrar pilihan Anda.',
+        },
+        {
+            q: 'Apa perbedaan cek WHOIS/RDAP dan cek record DNS?',
+            a: 'WHOIS dan RDAP menampilkan data registrasi nama domain seperti registrar, tanggal pendaftaran, tanggal kedaluwarsa (expired), status domain, dan DNSSEC. Sedangkan record DNS menampilkan konfigurasi teknis aktif seperti alamat IP server (A/AAAA), server email (MX), nameserver (NS), dan verifikasi domain (TXT).',
+        },
+        {
+            q: 'Apakah bisa cek domain Indonesia seperti .id dan .my.id?',
+            a: 'Bisa. Alat ini terhubung ke bootstrap RDAP resmi ICANN termasuk registri PANDI untuk ekstensi domain Indonesia (.id, .my.id, .co.id, .web.id, .ac.id) maupun domain internasional (.com, .net, .org, .dev, .app).',
+        },
+        {
+            q: 'Mengapa nama pemilik domain tidak muncul di hasil WHOIS?',
+            a: 'Sebagian besar registrar dan registri modern menerapkan perlindungan privasi (GDPR/redaksi data pribadi) sehingga nama, alamat, dan nomor telepon pemilik disembunyikan dari publik. Namun informasi registrar, status domain, masa aktif, dan nameserver tetap dapat diperiksa.',
+        },
+    ];
 
     const webPageJsonLd = {
         '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        name: 'WHOIS Domain Lookup',
+        '@type': 'WebApplication',
+        name: 'Cek Nama Domain & WHOIS Lookup Ryaze',
         description,
         url: pageUrl,
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'All',
         inLanguage: 'id-ID',
+        offers: {
+            '@type': 'Offer',
+            price: '0',
+            priceCurrency: 'IDR',
+        },
         publisher: {
             '@type': 'Organization',
             name: siteName,
@@ -109,12 +135,25 @@ export default function Index({ seoTitle, seoDescription, canonical }) {
         },
     };
 
+    const faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqList.map((f) => ({
+            '@type': 'Question',
+            name: f.q,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: f.a,
+            },
+        })),
+    };
+
     const breadcrumbJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://ryaze.my.id/' },
-            { '@type': 'ListItem', position: 2, name: 'WHOIS Domain Lookup', item: pageUrl },
+            { '@type': 'ListItem', position: 2, name: 'Cek Nama Domain & WHOIS', item: pageUrl },
         ],
     };
 
@@ -136,6 +175,7 @@ export default function Index({ seoTitle, seoDescription, canonical }) {
                 <meta property="twitter:image" content={ogImage} />
                 <link rel="canonical" href={pageUrl} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             </Head>
             <PublicLayout>
@@ -151,14 +191,14 @@ export default function Index({ seoTitle, seoDescription, canonical }) {
                         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-end">
                             <div className="lg:col-span-8" data-reveal>
                                 <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#1D5B96] dark:text-[#6BA8DC] mb-6">
-                                    Domain Tools
+                                    Alat Cek Domain &amp; WHOIS Indonesia
                                 </p>
                                 <h1 className="text-[clamp(2.4rem,6vw,4.25rem)] font-black text-[#0F1A2A] dark:text-white leading-[0.98] tracking-[-0.04em] mb-6">
-                                    Cek domain.<br />
-                                    <span className="text-[#1D5B96] dark:text-[#6BA8DC]">Baca jejaknya.</span>
+                                    Cek nama domain.<br />
+                                    <span className="text-[#1D5B96] dark:text-[#6BA8DC]">WHOIS &amp; DNS instan.</span>
                                 </h1>
                                 <p className="text-[#525252] dark:text-white/60 text-lg max-w-lg leading-relaxed">
-                                    Cek informasi registrasi &amp; DNS suatu domain — registrar, tanggal kedaluwarsa, nameserver, status, dan record DNS.
+                                    Periksa ketersediaan nama domain (.id, .my.id, .co.id, .com, .net) sekaligus informasi registrar, tanggal kedaluwarsa, nameserver, DNSSEC, dan record DNS publik secara gratis.
                                 </p>
                             </div>
 
@@ -420,6 +460,82 @@ export default function Index({ seoTitle, seoDescription, canonical }) {
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* PANDUAN & INFORMASI WHOIS */}
+                <section className="bg-white dark:bg-[#0A1322] border-y border-[#E3EAF1] dark:border-[#1B2C44]">
+                    <div className="max-w-6xl mx-auto px-6 py-16 lg:py-24">
+                        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                            <div className="lg:col-span-5">
+                                <SectionHead
+                                    num="01"
+                                    label="Panduan Domain"
+                                    title="Cara membaca hasil cek WHOIS & DNS."
+                                    sub="Pahami arti setiap parameter registrasi domain sebelum membeli nama domain baru atau memindahkan server hosting."
+                                />
+                            </div>
+                            <div className="lg:col-span-7 grid sm:grid-cols-2 gap-px bg-[#E3EAF1] dark:bg-[#1B2C44] border border-[#E3EAF1] dark:border-[#1B2C44]" data-reveal>
+                                {[
+                                    {
+                                        title: 'Status Ketersediaan Domain',
+                                        desc: 'Menunjukkan apakah nama domain (.id, .my.id, .com) masih tersedia untuk didaftarkan atau sudah dimiliki pihak lain beserta status keamanannya seperti clientTransferProhibited.',
+                                    },
+                                    {
+                                        title: 'Registrar & Masa Aktif',
+                                        desc: 'Menampilkan perusahaan tempat domain didaftarkan, tanggal registrasi awal, pembaruan terakhir, serta tanggal kedaluwarsa (expiration date) domain.',
+                                    },
+                                    {
+                                        title: 'Nameserver & Delegasi',
+                                        desc: 'Daftar server otoritatif yang mengatur arah trafik domain. Penting dicek saat menghubungkan custom domain ke shared hosting atau Cloudflare.',
+                                    },
+                                    {
+                                        title: 'Record DNS (A, MX, TXT, CNAME)',
+                                        desc: 'Memeriksa alamat IP server website (A/AAAA), jalur email bisnis (MX), verifikasi kepemilikan (TXT/SPF), dan subdomain alias (CNAME).',
+                                    },
+                                ].map((item) => (
+                                    <div key={item.title} className="bg-white dark:bg-[#0A1322] p-6 sm:p-7">
+                                        <h2 className="text-base font-black text-[#0F1A2A] dark:text-white tracking-tight mb-2.5">{item.title}</h2>
+                                        <p className="text-sm text-[#525252] dark:text-white/60 leading-relaxed">{item.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* FAQ WHOIS */}
+                <section className="bg-[#F4F8FC] dark:bg-[#0B1526]">
+                    <div className="max-w-6xl mx-auto px-6 py-16 lg:py-24">
+                        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+                            <div className="lg:col-span-5">
+                                <SectionHead
+                                    num="02"
+                                    label="FAQ Domain"
+                                    title="Pertanyaan seputar cek nama domain."
+                                    sub="Jawaban singkat tentang pengecekan WHOIS, RDAP, dan konfigurasi DNS untuk website Anda."
+                                />
+                                <div className="mt-8 border border-[#E3EAF1] dark:border-[#1B2C44] bg-white dark:bg-[#0A1322] p-6" data-reveal>
+                                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1D5B96] dark:text-[#6BA8DC] mb-2">Siap Online?</p>
+                                    <p className="text-sm font-bold text-[#0F1A2A] dark:text-white mb-2">Sudah menemukan nama domain yang cocok?</p>
+                                    <p className="text-xs text-[#525252] dark:text-white/60 leading-relaxed mb-4">
+                                        Hubungkan domain Anda ke shared hosting Ryaze dengan auto-deploy Git, database MySQL, dan SSL Let&apos;s Encrypt gratis.
+                                    </p>
+                                    <a href="/#pricing" className="inline-flex items-center gap-2 text-xs font-semibold text-[#1D5B96] dark:text-[#6BA8DC] hover:underline">
+                                        Lihat Paket Hosting <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div className="lg:col-span-7 border border-[#E3EAF1] dark:border-[#1B2C44] bg-white dark:bg-[#0A1322] divide-y divide-[#E3EAF1] dark:divide-[#1B2C44]" data-reveal>
+                                {faqList.map((f, idx) => (
+                                    <div key={f.q} className="p-6 sm:p-7">
+                                        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1D5B96] dark:text-[#6BA8DC] mb-2">0{idx + 1}</p>
+                                        <h3 className="text-base font-bold text-[#0F1A2A] dark:text-white mb-2">{f.q}</h3>
+                                        <p className="text-sm text-[#525252] dark:text-white/60 leading-relaxed">{f.a}</p>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>

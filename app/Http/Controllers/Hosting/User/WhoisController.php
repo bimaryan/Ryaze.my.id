@@ -16,10 +16,76 @@ class WhoisController extends Controller
      */
     public function index()
     {
+        $seoTitle = 'Cek Nama Domain, WHOIS & DNS Lookup Gratis (.id, .my.id, .com) | Ryaze';
+        $seoDescription = 'Alat cek nama domain dan WHOIS/RDAP gratis Indonesia. Periksa ketersediaan domain .id, .my.id, .com, informasi registrar, tanggal kedaluwarsa, nameserver, DNSSEC, dan record DNS secara instan.';
+        $canonical = route('whois.index');
+
+        $faqs = [
+            [
+                'q' => 'Bagaimana cara cek nama domain sudah terdaftar atau belum?',
+                'a' => 'Masukkan nama domain seperti contoh.com atau namabrand.my.id pada kolom pencarian di atas lalu klik Cek Domain. Jika protokol RDAP mengembalikan status belum terdaftar, berarti nama domain tersebut masih tersedia untuk didaftarkan di registrar pilihan Anda.',
+            ],
+            [
+                'q' => 'Apa perbedaan cek WHOIS/RDAP dan cek record DNS?',
+                'a' => 'WHOIS dan RDAP menampilkan data registrasi nama domain seperti registrar, tanggal pendaftaran, tanggal kedaluwarsa (expired), status domain, dan DNSSEC. Sedangkan record DNS menampilkan konfigurasi teknis aktif seperti alamat IP server (A/AAAA), server email (MX), nameserver (NS), dan verifikasi domain (TXT).',
+            ],
+            [
+                'q' => 'Apakah bisa cek domain Indonesia seperti .id dan .my.id?',
+                'a' => 'Bisa. Alat ini terhubung ke bootstrap RDAP resmi ICANN termasuk registri PANDI untuk ekstensi domain Indonesia (.id, .my.id, .co.id, .web.id, .ac.id) maupun domain internasional (.com, .net, .org, .dev, .app).',
+            ],
+            [
+                'q' => 'Mengapa nama pemilik domain tidak muncul di hasil WHOIS?',
+                'a' => 'Sebagian besar registrar dan registri modern menerapkan perlindungan privasi (GDPR/redaksi data pribadi) sehingga nama, alamat, dan nomor telepon pemilik disembunyikan dari publik. Namun informasi registrar, status domain, masa aktif, dan nameserver tetap dapat diperiksa.',
+            ],
+        ];
+
         return Inertia::render('Whois/Index', [
-            'seoTitle' => 'WHOIS Domain Lookup | Ryaze',
-            'seoDescription' => 'Cek informasi registrasi domain WHOIS/RDAP gratis: registrar, tanggal registrasi & kedaluwarsa, nameserver, status, dan record DNS.',
-            'canonical' => route('whois.index'),
+            'seoTitle' => $seoTitle,
+            'seoDescription' => $seoDescription,
+            'canonical' => $canonical,
+            'faqs' => $faqs,
+            'structuredData' => [
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'WebApplication',
+                    'name' => 'Cek Nama Domain & WHOIS Lookup Ryaze',
+                    'url' => $canonical,
+                    'applicationCategory' => 'DeveloperApplication',
+                    'operatingSystem' => 'All',
+                    'inLanguage' => 'id-ID',
+                    'description' => $seoDescription,
+                    'offers' => [
+                        '@type' => 'Offer',
+                        'price' => '0',
+                        'priceCurrency' => 'IDR',
+                    ],
+                    'publisher' => [
+                        '@type' => 'Organization',
+                        'name' => 'Ryaze',
+                        'url' => url('/'),
+                    ],
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => array_map(fn (array $f) => [
+                        '@type' => 'Question',
+                        'name' => $f['q'],
+                        'acceptedAnswer' => [
+                            '@type' => 'Answer',
+                            'text' => $f['a'],
+                        ],
+                    ], $faqs),
+                ],
+                [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => [
+                        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Beranda', 'item' => url('/')],
+                        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Cek Nama Domain & WHOIS', 'item' => $canonical],
+                    ],
+                ],
+            ],
         ]);
     }
 

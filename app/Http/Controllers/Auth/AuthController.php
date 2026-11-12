@@ -118,7 +118,10 @@ class AuthController extends Controller
                 Auth::logout();
                 $request->session()->regenerate();
 
-                return redirect()->route('two-factor.challenge');
+                // Halaman challenge adalah Blade (bukan komponen Inertia), jadi harus
+                // full page visit. Inertia::location() mengirim 409 + X-Inertia-Location
+                // agar client melakukan hard navigation, bukan XHR yang ditolak.
+                return Inertia::location(route('two-factor.challenge'));
             }
             $request->session()->regenerate();
 

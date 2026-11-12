@@ -225,6 +225,35 @@
                                     /{{ explode('.', $project->ryaze_domain)[0] }}
                                 </span>
                             </div>
+
+                            @if ($project->framework === 'node')
+                                {{-- Info khusus framework Node: build = deploy, run = manual via terminal --}}
+                                <div class="mx-6 mt-3 rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10 p-4">
+                                    <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-semibold text-xs uppercase tracking-wider mb-2">
+                                        <i class="fa-brands fa-node-js"></i> Framework Node.js
+                                    </div>
+                                    <p class="text-[11px] leading-relaxed text-amber-700/90 dark:text-amber-200/80 mb-3">
+                                        Deploy hanya menjalankan <span class="font-mono font-semibold">npm install</span> +
+                                        <span class="font-mono font-semibold">npm run build</span>.
+                                        Server Node <span class="font-semibold">tidak dijalankan otomatis</span> — jalankan sendiri lewat Terminal
+                                        agar setup custom project-mu tetap berlaku dan tidak tersandung 502 Bad Gateway.
+                                    </p>
+                                    <div class="rounded-lg bg-[#0A1322] border border-[#2A4463] px-3 py-2.5 font-mono text-[11px] leading-relaxed text-[#C9D5E2] space-y-1">
+                                        <div><span class="text-emerald-400">ryaze-start</span> <span class="text-[#8A9BAE]">[entry]</span> <span class="text-[#525252] dark:text-white/40"># port acak otomatis → domain utama</span></div>
+                                        <div><span class="text-emerald-400">ryaze-stop</span> <span class="text-[#525252] dark:text-white/40"># matikan server</span></div>
+                                        <div><span class="text-emerald-400">ryaze-status</span> <span class="text-[#525252] dark:text-white/40"># cek hidup/mati</span></div>
+                                        <div><span class="text-emerald-400">ryaze-log</span> <span class="text-[#525252] dark:text-white/40"># tail log server (.app.log)</span></div>
+                                    </div>
+                                    <p class="text-[11px] leading-relaxed text-amber-700/90 dark:text-amber-200/80 mt-2.5">
+                                        <span class="font-mono">ryaze-start</span> tanpa argumen akan auto-detect
+                                        (<span class="font-mono">ecosystem.config.js</span> → <span class="font-mono">npm start</span> →
+                                        <span class="font-mono">package.json main</span> → <span class="font-mono">server.js</span>/<span class="font-mono">index.js</span>/<span class="font-mono">app.js</span>).
+                                        Bisa juga entry subfolder: <span class="font-mono">ryaze-start server/start.js</span>.
+                                        Server berjalan detached — tetap hidup walau Terminal ditutup.
+                                    </p>
+                                </div>
+                            @endif
+
                             <form action="{{ route('user_hosting.redeploy', $project->hashid) }}" method="POST"
                                 class="px-6 py-4">
                                 @csrf
@@ -549,6 +578,12 @@ NGINX_CONF
                         </div>
                         <div class="text-[#8A9BAE] text-xs flex items-center gap-2 font-sans tracking-wide">
                             Connected to <span class="text-[#C9D5E2] dark:text-white/50 font-medium bg-[#0F1D30]/50 px-2 py-0.5 rounded border border-[#2A4463]">{{ $project->project_name }}</span>
+                        </div>
+                        <div class="mt-2 text-[10px] leading-relaxed text-[#525252] dark:text-white/40 font-mono">
+                            <span class="text-emerald-400/80">ryaze-start</span> jalankan server Node (port acak) &nbsp;·&nbsp;
+                            <span class="text-emerald-400/80">ryaze-stop</span> matikan server &nbsp;·&nbsp;
+                            <span class="text-emerald-400/80">ryaze-status</span> cek status &nbsp;·&nbsp;
+                            <span class="text-emerald-400/80">ryaze-log</span> log server
                         </div>
                         <div class="w-full h-px bg-gradient-to-r from-emerald-500/20 via-[#2A4463]/20 to-transparent mt-4"></div>
                     </div>

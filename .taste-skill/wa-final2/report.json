@@ -1,0 +1,1222 @@
+{
+ "url": "http://127.0.0.1:8899/consultation",
+ "at": "2026-11-05T01:04:36.290Z",
+ "allow": [
+  "blank-gap",
+  "hero-void"
+ ],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    1
+   ],
+   "motion": {
+    "elements": 3,
+    "css": 3,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 900,
+     "screens": 1,
+     "words": 62,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 1,
+     "sections": 0,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 16,
+     "vw": 1.1,
+     "font": "Inter",
+     "weight": 500,
+     "tracking": 0,
+     "leading": 1.25,
+     "top": 12,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "lines": 1,
+     "size": 16,
+     "font": "Inter"
+    },
+    "headings": [],
+    "headingSummary": {
+     "count": 0,
+     "maxLines": 0,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      11,
+      12,
+      13,
+      15,
+      16
+     ],
+     "sizeCount": 5,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 14.5,
+      "leading": 1.45,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 12.1
+     },
+     "measureChars": 75,
+     "max": {
+      "size": 16,
+      "vw": 1.1,
+      "font": "Inter",
+      "text": "AI Konsultan Joki"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.44,
+     "smallText": 2
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#ffffff",
+     "bodyBgHsl": {
+      "h": 0,
+      "s": 0,
+      "l": 1
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#0b141a",
+       "top": 61,
+       "hsl": {
+        "h": 204,
+        "s": 0.41,
+        "l": 0.07
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#e9edef",
+       "share": 0.42
+      },
+      {
+       "color": "#06cf9c",
+       "share": 0.29
+      },
+      {
+       "color": "#ffd279",
+       "share": 0.23
+      },
+      {
+       "color": "#8696a0",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#2a3942",
+      "hsl": {
+       "h": 203,
+       "s": 0.22,
+       "l": 0.21
+      },
+      "fg": "#06cf9c"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 4,
+     "radius": "pill",
+     "height": 36,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Saya ingin membuat website",
+      "Butuh aplikasi mobile",
+      "Sistem otomatisasi",
+      "Aplikasi manajemen data"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 1,
+     "shadowOverlay": 0,
+     "shadowSamples": [
+      "div.chat-bubble-in.max-w-[92%] → rgba(0, 0, 0, 0.24) 0px 1px 0.5px 0px"
+     ],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 1,
+     "hairlineSamples": [
+      "header.shrink-0.z-10 1440px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 1,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "bg-image",
+      "ratio": 0.82
+     }
+    ],
+    "nav": {
+     "links": 1,
+     "fixed": false,
+     "height": 61,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "inter"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 900,
+    "margins": {
+     "left": 120,
+     "right": 16
+    },
+    "sections": [],
+    "gaps": [
+     {
+      "top": 260,
+      "height": 540
+     }
+    ],
+    "h1s": [
+     {
+      "text": "AI Konsultan Joki",
+      "size": 16,
+      "top": 12,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 120,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 1,
+    "bodySize": 15,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0.53,
+    "voidBox": {
+     "x": 0,
+     "y": 300,
+     "w": 1440,
+     "h": 480
+    }
+   },
+   "app": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "dark": false,
+    "ground": "#ffffff",
+    "sidebar": null,
+    "topbar": {
+     "h": 61
+    },
+    "canvas": {
+     "left": 120,
+     "right": 16
+    },
+    "hero": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 16,
+     "vw": 1.1,
+     "font": "Inter",
+     "weight": 500,
+     "tracking": 0,
+     "leading": 1.25,
+     "top": 12,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 1,
+     "firstScreen": 1,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 1,
+     "radii": [
+      [
+       0,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 1,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 2,
+     "hues": 1,
+     "samples": [
+      {
+       "hue": 167,
+       "size": 40,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 167,
+       "size": 44,
+       "radius": "3.35544e+07px"
+      }
+     ]
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 1,
+     "tabularShare": 0,
+     "kpiMax": 11
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.05,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+     ]
+    },
+    "title": {
+     "text": "AI Konsultan Joki",
+     "size": 16,
+     "top": 12
+    },
+    "colourShare": 0.009
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    1
+   ],
+   "motion": {
+    "elements": 3,
+    "css": 3,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 1024,
+     "screens": 1,
+     "words": 62,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 1,
+     "sections": 0,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 16,
+     "vw": 2.1,
+     "font": "Inter",
+     "weight": 500,
+     "tracking": 0,
+     "leading": 1.25,
+     "top": 12,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "lines": 1,
+     "size": 16,
+     "font": "Inter"
+    },
+    "headings": [],
+    "headingSummary": {
+     "count": 0,
+     "maxLines": 0,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      11,
+      12,
+      13,
+      15,
+      16
+     ],
+     "sizeCount": 5,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 14.5,
+      "leading": 1.45,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 12.1
+     },
+     "measureChars": 62,
+     "max": {
+      "size": 16,
+      "vw": 2.1,
+      "font": "Inter",
+      "text": "AI Konsultan Joki"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.44,
+     "smallText": 2
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#ffffff",
+     "bodyBgHsl": {
+      "h": 0,
+      "s": 0,
+      "l": 1
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#0b141a",
+       "top": 61,
+       "hsl": {
+        "h": 204,
+        "s": 0.41,
+        "l": 0.07
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#e9edef",
+       "share": 0.42
+      },
+      {
+       "color": "#06cf9c",
+       "share": 0.29
+      },
+      {
+       "color": "#ffd279",
+       "share": 0.23
+      },
+      {
+       "color": "#8696a0",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#2a3942",
+      "hsl": {
+       "h": 203,
+       "s": 0.22,
+       "l": 0.21
+      },
+      "fg": "#06cf9c"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 4,
+     "radius": "pill",
+     "height": 36,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Saya ingin membuat website",
+      "Butuh aplikasi mobile",
+      "Sistem otomatisasi",
+      "Aplikasi manajemen data"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 1,
+     "shadowOverlay": 0,
+     "shadowSamples": [
+      "div.chat-bubble-in.max-w-[92%] → rgba(0, 0, 0, 0.24) 0px 1px 0.5px 0px"
+     ],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 1,
+     "hairlineSamples": [
+      "header.shrink-0.z-10 768px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 1,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "bg-image",
+      "ratio": 0.84
+     }
+    ],
+    "nav": {
+     "links": 1,
+     "fixed": false,
+     "height": 61,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "inter"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 1024,
+    "margins": {
+     "left": 16,
+     "right": 16
+    },
+    "sections": [],
+    "gaps": [
+     {
+      "top": 280,
+      "height": 644
+     }
+    ],
+    "h1s": [
+     {
+      "text": "AI Konsultan Joki",
+      "size": 16,
+      "top": 12,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 120,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 1,
+    "bodySize": 15,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "dark": false,
+    "ground": "#ffffff",
+    "sidebar": null,
+    "topbar": {
+     "h": 61
+    },
+    "canvas": {
+     "left": 16,
+     "right": 16
+    },
+    "hero": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 16,
+     "vw": 2.1,
+     "font": "Inter",
+     "weight": 500,
+     "tracking": 0,
+     "leading": 1.25,
+     "top": 12,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 1,
+     "firstScreen": 1,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 1,
+     "radii": [
+      [
+       0,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 1,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 2,
+     "hues": 1,
+     "samples": [
+      {
+       "hue": 167,
+       "size": 40,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 167,
+       "size": 44,
+       "radius": "3.35544e+07px"
+      }
+     ]
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 1,
+     "tabularShare": 0,
+     "kpiMax": 11
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.05,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+     ]
+    },
+    "title": {
+     "text": "AI Konsultan Joki",
+     "size": 16,
+     "top": 12
+    },
+    "colourShare": 0.014
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    1
+   ],
+   "motion": {
+    "elements": 1,
+    "css": 1,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 844,
+     "screens": 1,
+     "words": 62,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 1,
+     "sections": 0,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 16,
+     "vw": 4.1,
+     "font": "Inter",
+     "weight": 500,
+     "tracking": 0,
+     "leading": 1.25,
+     "top": 12,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "lines": 1,
+     "size": 16,
+     "font": "Inter"
+    },
+    "headings": [],
+    "headingSummary": {
+     "count": 0,
+     "maxLines": 0,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      11,
+      12,
+      13,
+      15,
+      16
+     ],
+     "sizeCount": 5,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 14.5,
+      "leading": 1.45,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 12.1
+     },
+     "measureChars": 39,
+     "max": {
+      "size": 16,
+      "vw": 4.1,
+      "font": "Inter",
+      "text": "AI Konsultan Joki"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.44,
+     "smallText": 2
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#ffffff",
+     "bodyBgHsl": {
+      "h": 0,
+      "s": 0,
+      "l": 1
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#0b141a",
+       "top": 61,
+       "hsl": {
+        "h": 204,
+        "s": 0.41,
+        "l": 0.07
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#e9edef",
+       "share": 0.42
+      },
+      {
+       "color": "#06cf9c",
+       "share": 0.29
+      },
+      {
+       "color": "#ffd279",
+       "share": 0.23
+      },
+      {
+       "color": "#8696a0",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#2a3942",
+      "hsl": {
+       "h": 203,
+       "s": 0.22,
+       "l": 0.21
+      },
+      "fg": "#06cf9c"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 4,
+     "radius": "pill",
+     "height": 36,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Saya ingin membuat website",
+      "Butuh aplikasi mobile",
+      "Sistem otomatisasi",
+      "Aplikasi manajemen data"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 1,
+     "shadowOverlay": 0,
+     "shadowSamples": [
+      "div.chat-bubble-in.max-w-[92%] → rgba(0, 0, 0, 0.24) 0px 1px 0.5px 0px"
+     ],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 1,
+     "hairlineSamples": [
+      "header.shrink-0.z-10 390px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 1,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "bg-image",
+      "ratio": 0.75
+     }
+    ],
+    "nav": {
+     "links": 1,
+     "fixed": false,
+     "height": 61,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "inter"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 844,
+    "margins": {
+     "left": 10,
+     "right": 8
+    },
+    "sections": [
+     {
+      "sel": "main.flex-1.overflow-hidden",
+      "tag": "main",
+      "top": 61,
+      "height": 634,
+      "words": 48,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 26,
+      "right": 59,
+      "textLeft": 26,
+      "textRight": 59,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "footer.shrink-0.bg-[color:var(--wa-panel)]",
+      "tag": "footer",
+      "top": 695,
+      "height": 149,
+      "words": 12,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 10,
+      "right": 10,
+      "textLeft": 22,
+      "textRight": 24,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [
+     {
+      "top": 364,
+      "height": 336
+     }
+    ],
+    "h1s": [
+     {
+      "text": "AI Konsultan Joki",
+      "size": 16,
+      "top": 12,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 104,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 1,
+    "bodySize": 15,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "dark": false,
+    "ground": "#ffffff",
+    "sidebar": null,
+    "topbar": {
+     "h": 61
+    },
+    "canvas": {
+     "left": 10,
+     "right": 8
+    },
+    "hero": {
+     "text": "AI Konsultan Joki",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 16,
+     "vw": 4.1,
+     "font": "Inter",
+     "weight": 500,
+     "tracking": 0,
+     "leading": 1.25,
+     "top": 12,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 2,
+     "firstScreen": 2,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 2,
+     "radii": [
+      [
+       8,
+       1
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 1,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 2,
+     "hues": 1,
+     "samples": [
+      {
+       "hue": 167,
+       "size": 40,
+       "radius": "3.35544e+07px"
+      },
+      {
+       "hue": 167,
+       "size": 44,
+       "radius": "3.35544e+07px"
+      }
+     ]
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 1,
+     "tabularShare": 0,
+     "kpiMax": 11
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.05,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+     ]
+    },
+    "title": {
+     "text": "AI Konsultan Joki",
+     "size": 16,
+     "top": 12
+    },
+    "colourShare": 0.027
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "id": "dev-server",
+   "width": 1440,
+   "message": "This page is served by a development server (Vite, webpack or Next in dev mode).",
+   "fix": "Run the last gate on the production build too (vite build && vite preview, next build && next start, or the built index.html): minifiers and bundlers change the CSS a visitor receives.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "D:\\Ryaze.my.id\\.taste-skill\\wa-final2\\desktop-fold.jpg",
+   "pages": [
+    "D:\\Ryaze.my.id\\.taste-skill\\wa-final2\\desktop-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "D:\\Ryaze.my.id\\.taste-skill\\wa-final2\\tablet-fold.jpg",
+   "pages": [
+    "D:\\Ryaze.my.id\\.taste-skill\\wa-final2\\tablet-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "D:\\Ryaze.my.id\\.taste-skill\\wa-final2\\mobile-fold.jpg",
+   "pages": [
+    "D:\\Ryaze.my.id\\.taste-skill\\wa-final2\\mobile-page-01.jpg"
+   ],
+   "film": []
+  }
+ ]
+}
