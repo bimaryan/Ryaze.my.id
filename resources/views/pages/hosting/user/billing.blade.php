@@ -96,6 +96,11 @@
                                    title="Bayar dengan QRIS Dinamis (Semua Bank & e-Wallet)">
                                     <i class="fa-solid fa-qrcode"></i> QRIS
                                 </a>
+                                <a href="{{ route('payment.doku', ['order_id' => $bill->invoice_number]) }}"
+                                   class="ui-btn ui-btn-sm ui-btn-secondary"
+                                   title="Bayar via DOKU (VA, e-Wallet, QRIS, Kartu Kredit)">
+                                    <i class="fa-solid fa-credit-card"></i> DOKU
+                                </a>
                                 <form action="{{ route('user_hosting.billing.pay_wallet') }}" method="POST" class="m-0 p-0 inline-block" onsubmit="event.preventDefault(); let f = this; swConfirm('Bayar dengan Saldo?', 'Tagihan ini akan dibayar menggunakan saldo wallet Anda.').then(res => { if(res.isConfirmed) f.submit(); }); return false;">
                                     @csrf
                                     <input type="hidden" name="invoice_number" value="{{ $bill->invoice_number }}">

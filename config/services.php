@@ -50,6 +50,26 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | DOKU Payment Gateway (DOKU Checkout, non-SNAP API)
+    |--------------------------------------------------------------------------
+    | Kredensial diambil dari DOKU Back Office.
+    | Base URL sandbox: https://api-sandbox.doku.com
+    | Base URL produksi: https://api.doku.com
+    */
+    'doku' => [
+        'client_id' => env('DOKU_CLIENT_ID'),
+        'secret_key' => env('DOKU_SECRET_KEY'),
+        'base_url' => env('DOKU_BASE_URL', 'https://api-sandbox.doku.com'),
+        // Opsional: batasi metode pembayaran di halaman checkout (koma sebagai pemisah).
+        // Contoh: DOKU_PAYMENT_METHODS=QRIS,CREDIT_CARD,EMONEY_DANA
+        // Kosong/null = tampilkan semua kanal yang aktif di akun DOKU.
+        'payment_methods' => env('DOKU_PAYMENT_METHODS')
+            ? array_map('trim', explode(',', env('DOKU_PAYMENT_METHODS')))
+            : null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Cloudflare DNS Management
     |--------------------------------------------------------------------------
     */

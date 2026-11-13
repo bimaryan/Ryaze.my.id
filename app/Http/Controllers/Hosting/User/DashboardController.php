@@ -2482,7 +2482,9 @@ PHP;
             $msg = $voucherMessage.' '.$msg;
         }
 
-        return back()->with('success', $msg);
+        // Langsung arahkan ke halaman riwayat tagihan agar user
+        // bisa langsung menyelesaikan pembayaran invoice barunya.
+        return redirect()->route('user_hosting.billing')->with('success', $msg);
     }
 
     public function payWithWallet(Request $request)

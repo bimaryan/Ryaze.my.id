@@ -49,6 +49,10 @@
                         <p class="text-[#1D5B96] dark:text-[#6BA8DC] text-xs mt-0.5">Selesaikan tagihan Anda sebesar Rp {{ number_format($upgradeInvoice->amount, 0, ',', '.') }} untuk memperbesar total kapasitas akun Anda.</p>
                     </div>
                 </div>
+                <a href="{{ route('payment.doku', ['order_id' => $upgradeInvoice->invoice_number]) }}"
+                    class="ui-btn ui-btn-secondary shrink-0 w-full sm:w-auto">
+                    <i class="fa-solid fa-credit-card"></i> Bayar via DOKU
+                </a>
                 <a href="{{ route('payment.qris', ['order_id' => $upgradeInvoice->invoice_number]) }}"
                     class="ui-btn ui-btn-primary shrink-0 w-full sm:w-auto">
                     <i class="fa-solid fa-qrcode"></i> Bayar via QRIS

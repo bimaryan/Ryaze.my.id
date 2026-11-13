@@ -103,6 +103,11 @@
                                    title="Bayar dengan QRIS Dinamis">
                                     <i class="fa-solid fa-qrcode"></i> QRIS
                                 </a>
+                                <a href="{{ route('payment.doku', ['order_id' => $tx->reference_id]) }}"
+                                   class="ui-btn ui-btn-sm ui-btn-secondary"
+                                   title="Bayar via DOKU (VA, e-Wallet, QRIS, Kartu Kredit)">
+                                    <i class="fa-solid fa-credit-card"></i> DOKU
+                                </a>
                             </div>
                         @else
                             -

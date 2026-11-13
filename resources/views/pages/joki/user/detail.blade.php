@@ -329,6 +329,23 @@
                     <i class="fa-solid fa-chevron-right text-emerald-500 text-xs"></i>
                 </a>
 
+                <!-- Option 2: DOKU Checkout -->
+                <a id="btnDoku" href="#" onclick="closePaymentModal()" class="flex items-center justify-between p-4 border-2 border-[#E3EAF1] dark:border-white/10 hover:border-[#1D5B96] dark:hover:border-[#6BA8DC] transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white dark:bg-white/5 border border-[#C9D5E2] dark:border-white/10 flex items-center justify-center shrink-0 text-[#1D5B96] dark:text-[#6BA8DC] group-hover:bg-[#1D5B96] group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-credit-card text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-bold text-[#0F1A2A] dark:text-white text-sm">DOKU Checkout</h4>
+                                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.15em] border border-[#C9D5E2] dark:border-[#1D5B96]/40 text-[#1D5B96] dark:text-[#6BA8DC] px-1.5 py-0.5">Semua Metode</span>
+                            </div>
+                            <p class="text-xs text-[#737373] dark:text-white/45">VA, e-Wallet, QRIS &amp; Kartu Kredit via DOKU.</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[#1D5B96] dark:text-[#6BA8DC] text-xs"></i>
+                </a>
+
                 <!-- Option 2: DANA -->
                 <div class="p-4 border-2 border-[#E3EAF1] dark:border-[#1B2C44] space-y-3 mt-4">
                     <div class="flex items-center gap-4">
@@ -361,6 +378,10 @@
             let qrisUrl = "{{ url('/payment/qris') }}/" + encodeURIComponent(invoice);
             let btnQris = document.getElementById('btnQris');
             if (btnQris) btnQris.href = qrisUrl;
+
+            let dokuUrl = "{{ url('/payment/doku') }}?order_id=" + encodeURIComponent(invoice);
+            let btnDoku = document.getElementById('btnDoku');
+            if (btnDoku) btnDoku.href = dokuUrl;
 
             let adminWa = "{{ \App\Models\Setting::val('contact_whatsapp', '') }}";
             let waMessage = `Halo Admin, saya ingin konfirmasi pembayaran untuk Invoice *${invoice}* sebesar *Rp ${formattedAmount}* via DANA. Berikut lampiran buktinya:`;

@@ -510,6 +510,13 @@ Route::get('/payment/pakasir', [\App\Http\Controllers\PakasirPayController::clas
     ->middleware('throttle:20,1')
     ->name('payment.pakasir');
 
+// ── DOKU PAYMENT (redirect ke DOKU Checkout hosted page) ─────
+Route::get('/payment/doku', [\App\Http\Controllers\DokuPayController::class, 'pay'])
+    ->middleware('throttle:20,1')
+    ->name('payment.doku');
+Route::get('/payment/doku/{order_id}/done', [\App\Http\Controllers\DokuPayController::class, 'done'])
+    ->name('payment.doku.done');
+
 // ── QRIS DINAMIS PAYMENT ─────────────────────────────────────
 Route::get('/payment/qris/{order_id}', [\App\Http\Controllers\QrisPaymentController::class, 'show'])
     ->name('payment.qris');
