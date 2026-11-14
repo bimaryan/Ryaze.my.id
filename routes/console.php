@@ -12,6 +12,7 @@ Artisan::command('inspire', function () {
 Schedule::command('hosting:suspend-expired')->dailyAt('00:00');
 Schedule::command('blog:generate --scheduled')->everyMinute();
 Schedule::command('payments:expire-doku')->everyFiveMinutes();
+Schedule::command('apps:monitor')->everyMinute();
 
 // Load custom cron jobs from database
 try {

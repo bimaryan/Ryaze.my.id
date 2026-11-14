@@ -207,6 +207,14 @@ class AutoDeployProject implements ShouldQueue
 
     private function setupNodeFramework($deploy, string $projectDir, string $framework): void
     {
+        // Framework 'node' → aplikasi dikelola panel di container runtime terpisah
+        // (ryaze-node). Build & start lewat agent HTTP, BUKAN dari PHP.
+        if ($framework === 'node') {
+            $this->setupNodeApp($deploy, $projectDir);
+
+            return;
+        }
+
         // NOTE: Server TIDAK di-start otomatis.
         // Klien menjalankan server Node-nya sendiri lewat terminal setelah deploy sukses,
         // supaya tiap project bisa pakai start command custom masing-masing
@@ -293,6 +301,47 @@ class AutoDeployProject implements ShouldQueue
                 }
             }
         }
+    }
+
+    /**
+     * Aplikasi framework 'node': deploy HANYA menyiapkan file. Build (npm
+     * install) & start aplikasi dilakukan terpisah dari halaman "Aplikasi"
+     * via runtime container (ryaze-node) — deploy tidak otomatis membuat
+     * atau men-start aplikasi.
+     */
+    private function setupNodeApp($deploy, string $projectDir): void
+    {
+        // Laravel+Inertia tetap butuh composer di sisi PHP container
+        if (file_exists("{$projectDir}/artisan") && file_exists("{$projectDir}/composer.json") && file_exists("{$projectDir}/package.json")) {
+            $this->log($deploy, '> Laravel+Inertia detected. Running composer install first...');
+            $this->runComposerInstall($deploy, $projectDir);
+            $this->setupLaravelEnv($deploy, $projectDir);
+        }
+
+        $app = $this->project->nodeApp;
+
+        // Aplikasi belum dibuat → deploy hanya menyiapkan file.
+        // User bikin aplikasi manual dari halaman Aplikasi (deploy ≠ bikin aplikasi).
+        if (! $app) {
+            $this->log($deploy, '> Deploy selesai. File project sudah siap.');
+            $this->log($deploy, '> Server Node TIDAK otomatis dibuat/di-start oleh deploy.');
+            $this->log($deploy, '> Langkah selanjutnya: buka halaman Hosting → Aplikasi → "Buat Aplikasi Baru"');
+            $this->log($deploy, '  untuk build (npm install) & start aplikasi di runtime container Node.');
+
+            return;
+        }
+
+        // Aplikasi sudah terdaftar (dibuat dari halaman Aplikasi) → lanjut build + start
+        if (! \App\Services\NodeAppService::available()) {
+            $this->log($deploy, '> [WARNING] Node runtime tidak tersedia (NODE_RUNTIME_URL belum dikonfigurasi).');
+            $this->log($deploy, '> Build & start aplikasi bisa dijalankan dari halaman Aplikasi setelah runtime aktif.');
+            $app->update(['status' => 'stopped', 'last_error' => 'Node runtime belum dikonfigurasi saat deploy.']);
+
+            return;
+        }
+
+        $this->log($deploy, '> Aplikasi Node terdaftar — build (npm install) & start didelegasikan ke runtime container...');
+        \App\Jobs\DeployNodeApp::dispatch($app);
     }
 
     private function setupLaravel($deploy, string $projectDir): void

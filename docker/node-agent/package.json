@@ -1,0 +1,7 @@
+{
+  "name": "ryaze-node-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Agent HTTP untuk mengelola aplikasi Node klien di container ryaze-node"
+}

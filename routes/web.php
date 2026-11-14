@@ -364,6 +364,34 @@ Route::middleware('auth')->group(function () {
         Route::middleware(['active_hosting'])->group(function () {
             Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
             Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
+
+            // ── APLIKASI NODE (ala cPanel Setup Node.js App) ─────────────
+            Route::get('user/hosting/apps', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'index'])
+                ->name('user_hosting.apps.index');
+            Route::post('user/hosting/apps', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'store'])
+                ->name('user_hosting.apps.store');
+            // Bikin project + aplikasi Node sekaligus (alur terpisah dari Deploy Aplikasi)
+            Route::post('user/hosting/apps/create-project', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'storeProject'])
+                ->name('user_hosting.apps.store_project');
+            Route::post('user/hosting/apps/{hashid}/start', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'start'])
+                ->middleware('throttle:10,1')
+                ->name('user_hosting.apps.start');
+            Route::post('user/hosting/apps/{hashid}/stop', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'stop'])
+                ->middleware('throttle:10,1')
+                ->name('user_hosting.apps.stop');
+            Route::post('user/hosting/apps/{hashid}/restart', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'restart'])
+                ->middleware('throttle:10,1')
+                ->name('user_hosting.apps.restart');
+            Route::post('user/hosting/apps/{hashid}/redeploy', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'redeploy'])
+                ->middleware('throttle:5,1')
+                ->name('user_hosting.apps.redeploy');
+            Route::post('user/hosting/apps/{hashid}/update', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'update'])
+                ->name('user_hosting.apps.update');
+            Route::get('user/hosting/apps/{hashid}/logs', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'logs'])
+                ->name('user_hosting.apps.logs');
+            Route::delete('user/hosting/apps/{hashid}', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'destroy'])
+                ->name('user_hosting.apps.destroy');
+
             Route::get('user/hosting/projects/{hashid}', [DashboardController::class, 'show'])->name('user_hosting.show');
             Route::post('user/hosting/projects/{hashid}/env', [DashboardController::class, 'updateEnv'])->name('user_hosting.env.update');
             Route::get('user/hosting/projects', [DashboardController::class, 'projects'])->name('user_hosting.projects');

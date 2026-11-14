@@ -149,6 +149,8 @@
                             @php
                             $availableFrameworks = explode(',', \App\Models\Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,node,vue'));
                             $availableFrameworks = array_map('trim', $availableFrameworks);
+                            // Framework 'node' dibuat lewat halaman "Aplikasi Node", bukan Deploy Aplikasi
+                            $availableFrameworks = array_values(array_diff($availableFrameworks, ['node']));
                             $frameworkIcons = [
                                 'html' => ['icon' => 'fa-brands fa-html5', 'color' => 'text-orange-500', 'name' => 'HTML Statis'],
                                 'php' => ['icon' => 'fa-brands fa-php', 'color' => 'text-[#1D5B96] dark:text-[#6BA8DC]', 'name' => 'PHP Native'],
@@ -175,6 +177,10 @@
                                 </label>
                             @endforeach
                         </div>
+                        <p class="text-xs text-[#525252] dark:text-white/40 mt-2">
+                            <i class="fa-brands fa-node-js text-emerald-500"></i> Mau aplikasi Node.js (backend server)?
+                            Buat lewat menu <a href="{{ route('user_hosting.apps.index') }}" class="font-semibold text-[#1D5B96] dark:text-[#6BA8DC] underline">Aplikasi Node</a>.
+                        </p>
                     </div>
                 </div>
 

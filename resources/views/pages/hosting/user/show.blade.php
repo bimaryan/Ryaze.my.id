@@ -227,30 +227,26 @@
                             </div>
 
                             @if ($project->framework === 'node')
-                                {{-- Info khusus framework Node: build = deploy, run = manual via terminal --}}
-                                <div class="mx-6 mt-3 rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10 p-4">
-                                    <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-semibold text-xs uppercase tracking-wider mb-2">
-                                        <i class="fa-brands fa-node-js"></i> Framework Node.js
+                                {{-- Aplikasi Node dikelola panel (runtime container terpisah) --}}
+                                @php $nodeApp = $project->nodeApp; @endphp
+                                <div class="mx-6 mt-3 rounded-xl border {{ $nodeApp && $nodeApp->status === 'running' ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10' : 'border-[#1D5B96]/30 bg-[#E8F0F9] dark:border-[#1D5B96]/40 dark:bg-[#1D5B96]/10' }} p-4">
+                                    <div class="flex items-center gap-2 font-semibold text-xs uppercase tracking-wider mb-2 text-[#1D5B96] dark:text-[#6BA8DC]">
+                                        <i class="fa-brands fa-node-js"></i> Aplikasi Node.js
+                                        @if ($nodeApp)
+                                            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded {{ $nodeApp->status === 'running' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300' : ($nodeApp->status === 'error' ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300' : 'bg-[#E3EAF1] text-[#525252] dark:bg-white/10 dark:text-white/60') }}">
+                                                {{ strtoupper($nodeApp->status) }}
+                                            </span>
+                                        @endif
                                     </div>
-                                    <p class="text-[11px] leading-relaxed text-amber-700/90 dark:text-amber-200/80 mb-3">
-                                        Deploy hanya menjalankan <span class="font-mono font-semibold">npm install</span> +
-                                        <span class="font-mono font-semibold">npm run build</span>.
-                                        Server Node <span class="font-semibold">tidak dijalankan otomatis</span> — jalankan sendiri lewat Terminal
-                                        agar setup custom project-mu tetap berlaku dan tidak tersandung 502 Bad Gateway.
+                                    <p class="text-[11px] leading-relaxed text-[#1D5B96] dark:text-[#6BA8DC]/90 mb-3">
+                                        Project ini berjalan sebagai <span class="font-semibold">Aplikasi Node</span>: build &amp; server
+                                        dikelola dari halaman Aplikasi di container runtime terpisah.
+                                        Deploy hanya menyiapkan file — untuk build &amp; start server, buat aplikasi
+                                        dari halaman Aplikasi (Start/Stop/Restart/Log/Environment Variables juga di sana).
                                     </p>
-                                    <div class="rounded-lg bg-[#0A1322] border border-[#2A4463] px-3 py-2.5 font-mono text-[11px] leading-relaxed text-[#C9D5E2] space-y-1">
-                                        <div><span class="text-emerald-400">ryaze-start</span> <span class="text-[#8A9BAE]">[entry]</span> <span class="text-[#525252] dark:text-white/40"># port acak otomatis → domain utama</span></div>
-                                        <div><span class="text-emerald-400">ryaze-stop</span> <span class="text-[#525252] dark:text-white/40"># matikan server</span></div>
-                                        <div><span class="text-emerald-400">ryaze-status</span> <span class="text-[#525252] dark:text-white/40"># cek hidup/mati</span></div>
-                                        <div><span class="text-emerald-400">ryaze-log</span> <span class="text-[#525252] dark:text-white/40"># tail log server (.app.log)</span></div>
-                                    </div>
-                                    <p class="text-[11px] leading-relaxed text-amber-700/90 dark:text-amber-200/80 mt-2.5">
-                                        <span class="font-mono">ryaze-start</span> tanpa argumen akan auto-detect
-                                        (<span class="font-mono">ecosystem.config.js</span> → <span class="font-mono">npm start</span> →
-                                        <span class="font-mono">package.json main</span> → <span class="font-mono">server.js</span>/<span class="font-mono">index.js</span>/<span class="font-mono">app.js</span>).
-                                        Bisa juga entry subfolder: <span class="font-mono">ryaze-start server/start.js</span>.
-                                        Server berjalan detached — tetap hidup walau Terminal ditutup.
-                                    </p>
+                                    <a href="{{ route('user_hosting.apps.index') }}" class="ui-btn ui-btn-sm ui-btn-primary w-full">
+                                        <i class="fa-solid fa-server mr-1"></i> Kelola Aplikasi Node
+                                    </a>
                                 </div>
                             @endif
 

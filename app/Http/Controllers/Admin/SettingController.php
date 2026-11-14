@@ -108,15 +108,22 @@ class SettingController extends Controller
 
                     // Stop PM2 process untuk framework Node-based
                     if (in_array($project->framework, ['react', 'nextjs', 'vue', 'node'])) {
-                        $pm2Name = "prod_{$project->id}";
-                        // Depending on environment, might need docker exec, but keeping existing logic:
-                        exec("pm2 delete \"{$pm2Name}\" 2>/dev/null || true");
+                        // Framework 'node': proses di runtime container terpisah — stop via agent
+                        if ($project->framework === 'node') {
+                            if ($nodeApp = $project->nodeApp) {
+                                app(\App\Services\NodeAppService::class)->stop($nodeApp);
+                            }
+                        } else {
+                            $pm2Name = "prod_{$project->id}";
+                            // Depending on environment, might need docker exec, but keeping existing logic:
+                            exec("pm2 delete \"{$pm2Name}\" 2>/dev/null || true");
 
-                        if (! empty($project->dev_pid)) {
-                            exec("pm2 delete \"{$project->dev_pid}\" 2>/dev/null || true");
+                            if (! empty($project->dev_pid)) {
+                                exec("pm2 delete \"{$project->dev_pid}\" 2>/dev/null || true");
+                            }
+
+                            $project->update(['dev_pid' => null]);
                         }
-
-                        $project->update(['dev_pid' => null]);
                     }
 
                     $project->deployments()->create([

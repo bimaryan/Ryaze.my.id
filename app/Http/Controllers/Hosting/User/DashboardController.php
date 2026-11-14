@@ -144,6 +144,52 @@ class DashboardController extends Controller
         $availableFrameworks = Setting::val('available_frameworks', 'html,php,laravel,react,nextjs,node,vue');
         $allowedFrameworks = implode(',', array_map('trim', explode(',', $availableFrameworks)));
 
+        // Framework 'node' punya alur terpisah (halaman Aplikasi Node)
+        if ($request->input('framework') === 'node') {
+            return redirect()->route('user_hosting.apps.index')
+                ->with('error', 'Aplikasi Node.js dibuat lewat halaman Aplikasi Node, bukan Deploy Aplikasi.');
+
+        }
+
+        $request->validate(['framework' => 'required|in:'.$allowedFrameworks]);
+        $framework = $request->input('framework');
+
+        $result = $this->createProjectRecord($request, $framework);
+
+        if ($error = $result['error']) {
+            return redirect()->back()->withInput()->with('error', $error);
+        }
+
+        $project = $result['project'];
+
+        Log::info('Project created (Building)', [
+            'id' => $project->id,
+            'source_type' => $project->source_type,
+            'repo_source' => $project->repo_source,
+        ]);
+
+        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat dan sedang dalam proses deployment!');
+    }
+
+    /**
+     * Core pembuatan project + dispatch deploy (dipakai store() dan
+     * NodeAppController@storeProject). Framework dikontrol pemanggil.
+     *
+     * @return array{project: ?HostingProject, error: ?string}
+     */
+    public function createProjectRecord(Request $request, string $framework, bool $dispatchDeploy = true): array
+    {
+        $sourceType = $request->input('source_type', 'repo');
+        $user = Auth::user();
+
+        if (! $user->hasActiveHostingSubscription()) {
+            return ['project' => null, 'error' => 'Anda harus berlangganan hosting terlebih dahulu untuk mendeploy aplikasi.'];
+        }
+
+        if (! $user->canCreateMoreProjects()) {
+            return ['project' => null, 'error' => 'Batas maksimal pembuatan project untuk paket langganan Anda telah tercapai. Silakan upgrade paket.'];
+        }
+
         $subdomain = trim(strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', trim($request->project_name))), '-');
         $domainExtension = $request->input('domain_extension', '.ryaze.my.id');
 
@@ -153,11 +199,10 @@ class DashboardController extends Controller
                 'project_zip' => 'required|file|mimes:zip|max:51200',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
                 'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
-                'framework' => 'required|in:'.$allowedFrameworks,
             ]);
 
             if (! $request->hasFile('project_zip')) {
-                return redirect()->back()->with('error', 'File ZIP belum diunggah.');
+                return ['project' => null, 'error' => 'File ZIP belum diunggah.'];
             }
 
             // Simpan ZIP ke storage privat; path direkam di repo_source dengan prefix 'upload:'
@@ -165,31 +210,17 @@ class DashboardController extends Controller
             $zipPath = $request->file('project_zip')->storeAs('zip_uploads', $zipName, 'local');
             $repoSource = 'upload:'.$zipPath;
             $branch = 'main';
-            $framework = $request->input('framework');
         } else {
             // ── Mode Repository Git ────────────────────────────────────────
             $request->validate([
                 'repo_source' => 'required|url',
                 'project_name' => 'required|string|max:50|unique:hosting_projects,project_name',
                 'domain_extension' => 'required|in:.ryaze.my.id,.ryz.my.id,.safetalkai.my.id,.ryze.cloud',
-                'framework' => 'required|in:'.$allowedFrameworks,
                 'branch' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9_\/\-.]*$/'],
             ]);
 
             $repoSource = $request->input('repo_source');
             $branch = $request->input('branch');
-            $framework = $request->input('framework');
-        }
-
-        $user = Auth::user();
-        $hasSubscription = $user->hasActiveHostingSubscription();
-
-        if (! $hasSubscription) {
-            return redirect()->route('user_hosting.subscription')->with('error', 'Anda harus berlangganan hosting terlebih dahulu untuk mendeploy aplikasi.');
-        }
-
-        if (! $user->canCreateMoreProjects()) {
-            return redirect()->back()->with('error', 'Batas maksimal pembuatan project untuk paket langganan Anda telah tercapai. Silakan upgrade paket.');
         }
 
         // --- Mencegah Subdomain Collision (dalam transaksi anti race-condition) ---
@@ -218,7 +249,7 @@ class DashboardController extends Controller
         });
 
         if ($project === null) {
-            return redirect()->back()->withInput()->with('error', "Subdomain '{$ryazeDomain}' sudah terpakai oleh project lain (kemungkinan karena nama yang mirip). Silakan gunakan nama project yang lebih spesifik.");
+            return ['project' => null, 'error' => "Subdomain '{$ryazeDomain}' sudah terpakai oleh project lain (kemungkinan karena nama yang mirip). Silakan gunakan nama project yang lebih spesifik."];
         }
 
         Log::info('Project created (Building)', [
@@ -234,11 +265,14 @@ class DashboardController extends Controller
                 ? "> Memulai deploy dari ZIP upload...\n> Mengekstrak file ZIP..."
                 : "> Memulai proses Deploy awal...\n> Mengambil repository...",
         ]);
-        AutoDeployProject::dispatch($project);
+
+        if ($dispatchDeploy) {
+            AutoDeployProject::dispatch($project);
+        }
 
         $user->notify(new SystemNotification('Project Hosting Anda berhasil dibuat dan proses deployment telah dimulai.', 'info'));
 
-        return redirect()->route('user_hosting.show', $project->hashid)->with('success', 'Project berhasil dibuat dan sedang dalam proses deployment!');
+        return ['project' => $project, 'error' => null];
     }
 
     public function show($hashed_id)
@@ -2157,6 +2191,16 @@ PHP;
         $fail = fn (string $msg) => response()->json(['output' => $msg, 'exit_code' => 1, 'cwd' => $projectDir]);
         $ok = fn (string $msg) => response()->json(['output' => $msg, 'exit_code' => 0, 'cwd' => $projectDir]);
 
+        // Framework 'node' kini dikelola panel (Aplikasi Node, runtime container
+        // terpisah) — proses tidak lagi di-spawn dari PHP via terminal.
+        if ($project->framework === 'node') {
+            return $fail(
+                "ℹ️  Aplikasi Node project ini kini dikelola panel.\n" .
+                "   Gunakan halaman Hosting → Aplikasi untuk Start / Stop / Restart / Log / Re-deploy.\n" .
+                "   Proses Node berjalan di container runtime terpisah — bukan dari terminal ini."
+            );
+        }
+
         // Validasi argumen ketat: maksimal satu, nama file sederhana (tanpa path/`.
         if (count($args) > 1) {
             return $fail('⛔ Format: '.$cmd.' [entry]. Hanya satu argumen yang diizinkan.');
@@ -2669,6 +2713,11 @@ PHP;
                 }
             }
             exec("pm2 delete \"prod_{$project->id}\" 2>/dev/null || true");
+        }
+
+        // 1b. Aplikasi Node (runtime terpisah) — stop via agent
+        if ($nodeApp = $project->nodeApp) {
+            app(\App\Services\NodeAppService::class)->stop($nodeApp);
         }
 
         // 2. Hapus Folder Root

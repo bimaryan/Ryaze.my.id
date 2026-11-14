@@ -222,5 +222,23 @@ return [
     */
     'php_container' => env('PHP_CONTAINER_NAME', '1Panel-php8-aJQI'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Node Runtime Container (ryaze-node)
+    |--------------------------------------------------------------------------
+    | Runtime terpisah untuk aplikasi framework 'node' milik klien. Panel PHP
+    | tidak pernah men-spawn proses Node — semuanya lewat agent HTTP di
+    | container ini. Lihat docker/node-agent/README.md untuk setup.
+    */
+    'node_runtime' => [
+        // URL agent, mis. http://ryaze-node:4700 (docker network) atau
+        // http://127.0.0.1:4700 (bind localhost). Kosong = fitur aplikasi Node nonaktif.
+        'url' => env('NODE_RUNTIME_URL'),
+        // Token shared secret (header X-Agent-Token), sama dengan AGENT_TOKEN di container.
+        'token' => env('NODE_RUNTIME_TOKEN'),
+        // Timeout perintah build (detik) — npm install bisa lama.
+        'build_timeout' => env('NODE_RUNTIME_BUILD_TIMEOUT', 900),
+    ],
+
 ];
 

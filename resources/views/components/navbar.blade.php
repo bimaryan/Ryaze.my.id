@@ -324,6 +324,7 @@
                 {!! $item(route('user_hosting.projects'), 'Proyek Aktif', 'fa-solid fa-terminal', request()->routeIs('user_hosting.projects') || request()->routeIs('user_hosting.show')) !!}
                 {!! $item(route('user_hosting.databases'), 'Database', 'fa-solid fa-database', request()->routeIs('user_hosting.databases') && !request()->routeIs('user_hosting.databases.pma')) !!}
                 {!! $item(route('user_hosting.databases.pma'), 'DB Manager', 'fa-solid fa-table-columns', request()->routeIs('user_hosting.databases.pma')) !!}
+                {!! $item(route('user_hosting.apps.index'), 'Aplikasi Node', 'fa-brands fa-node-js', request()->routeIs('user_hosting.apps.*')) !!}
                 {!! $item(route('user_hosting.storage'), 'File & Storage', 'fa-solid fa-folder-open', request()->routeIs('user_hosting.storage*')) !!}
                 {!! $item(route('user_hosting.docs'), 'Dokumentasi', 'fa-solid fa-book-open', request()->routeIs('user_hosting.docs*')) !!}
                 {!! $item(route('whois.index'), 'Cek Domain', 'fa-solid fa-magnifying-glass', request()->routeIs('whois*')) !!}

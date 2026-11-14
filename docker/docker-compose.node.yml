@@ -1,0 +1,38 @@
+version: "3.8"
+
+# Container runtime Node untuk aplikasi framework 'node' milik klien.
+# Panel (PHP) tidak pernah men-spawn proses Node — semuanya lewat agent HTTP
+# di container ini. Nginx (di container PHP/OpenResty) membaca file .port dan
+# .proxy-host yang ditulis agent ke volume bersama untuk routing traffic.
+#
+# WAJIB diisi sebelum start:
+#   AGENT_TOKEN       — token rahasia, harus sama dengan NODE_RUNTIME_TOKEN di .env panel
+#
+# Catatan network: container ini HARUS berada di network yang sama dengan
+# container PHP agar nginx bisa menjangkau IP-nya (file .proxy-host).
+
+services:
+  ryaze-node:
+    build: ./node-agent
+    container_name: ryaze-node
+    restart: unless-stopped
+    environment:
+      AGENT_TOKEN: "${NODE_RUNTIME_TOKEN:?NODE_RUNTIME_TOKEN wajib diisi}"
+      CLIENTS_DIR: /www/sites/hosting_clients
+      AGENT_PORT: "4700"
+      # Opsional: paksa IP yang ditulis ke .proxy-host (default: auto-detect)
+      # NODE_AGENT_PROXY_HOST: "172.18.0.5"
+    volumes:
+      # Volume yang SAMA dengan yang dipakai nginx & panel untuk folder klien
+      - /www/sites/hosting_clients:/www/sites/hosting_clients
+    ports:
+      # Hanya internal — panel & nginx mengakses lewat docker network.
+      # Bind ke localhost agar tidak terekspos publik.
+      - "127.0.0.1:4700:4700"
+    # Ganti sesuai network yang dipakai container PHP di server Anda:
+    networks:
+      - ryaze-net
+
+networks:
+  ryaze-net:
+    external: true

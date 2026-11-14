@@ -37,6 +37,12 @@ class HostingProject extends Model
         return $this->hasMany(HostingDeployment::class)->orderBy('created_at', 'desc');
     }
 
+    // Aplikasi Node (framework 'node', dikelola panel via runtime container)
+    public function nodeApp()
+    {
+        return $this->hasOne(\App\Models\NodeApp::class);
+    }
+
     public function payments()
     {
         return $this->hasMany(HostingPayment::class)->orderBy('created_at', 'desc');
