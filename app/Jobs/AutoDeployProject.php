@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\HostingProject;
+use App\Models\NodeApp;
 use App\Services\CloudflareTunnelService;
 use App\Services\NodeServerService;
 use Illuminate\Bus\Queueable;
@@ -293,21 +294,30 @@ class AutoDeployProject implements ShouldQueue
                         $this->writeNodeFallbackHtml($fallbackFile);
                     }
 
-                    // Auto-start server Node.js
-                    $this->log($deploy, '> Menjalankan server Node.js secara otomatis...');
-                    /** @var NodeServerService $srv */
-                    $srv = app(NodeServerService::class);
-
-                    // Hentikan proses lama jika ada (redeploy)
+                    // Hentikan proses legacy lama jika ada (redeploy)
                     $portFile = "{$projectDir}/" . NodeServerService::PORT_FILE;
                     if (file_exists($portFile)) {
                         $curPort = (int) trim((string) @file_get_contents($portFile));
                         if ($curPort) {
                             $stopLog = [];
                             $stopResult = null;
-                            $srv->stop($this->project, $projectDir, $stopLog, $stopResult);
+                            app(NodeServerService::class)->stop($this->project, $projectDir, $stopLog, $stopResult);
                         }
                     }
+
+                    // Next.js + runtime container tersedia → server jalan OTOMATIS
+                    // di runtime Node (PM2, sticky port, auto-heal monitor) —
+                    // klien tidak perlu jalankan apa pun lewat terminal.
+                    if ($framework === 'nextjs' && \App\Services\NodeAppService::available()) {
+                        $this->delegateNextjsToRuntime($deploy, $projectDir);
+
+                        return;
+                    }
+
+                    // Fallback legacy (runtime Node tidak tersedia): spawn dari PHP container
+                    $this->log($deploy, '> Menjalankan server Node.js secara otomatis...');
+                    /** @var NodeServerService $srv */
+                    $srv = app(NodeServerService::class);
 
                     $port = $srv->pickFreePort();
                     if ($port) {
@@ -331,6 +341,37 @@ class AutoDeployProject implements ShouldQueue
                 }
             }
         }
+    }
+
+    /**
+     * Next.js SSR: serahkan ke runtime container (ryaze-node).
+     *
+     * NodeApp dibuat otomatis — 1:1 dengan project (ini adalah server websitenya
+     * sendiri, bukan aplikasi tambahan, jadi tidak dihitung kuota halaman Aplikasi).
+     * Build .next sudah selesai di tahap AutoDeploy → agent cukup start (skipBuild).
+     */
+    private function delegateNextjsToRuntime($deploy, string $projectDir): void
+    {
+        $app = $this->project->nodeApp;
+
+        if (! $app) {
+            $app = NodeApp::create([
+                'hosting_project_id' => $this->project->id,
+                'status' => 'stopped',
+                'node_env' => 'production',
+            ]);
+            $this->log($deploy, '> Aplikasi runtime Node dibuat otomatis untuk project Next.js ini.');
+        }
+
+        $skipBuild = is_dir("{$projectDir}/.next");
+        $this->log($deploy, $skipBuild
+            ? '> Hasil build (.next) sudah siap — start di runtime container Node...'
+            : '> Runtime container Node akan menjalankan build (npm install + next build) lalu start...');
+
+        DeployNodeApp::dispatch($app, $skipBuild);
+
+        $this->log($deploy, '> ✅ Server Next.js berjalan otomatis di runtime container (PM2 + auto-restart).');
+        $this->log($deploy, '> Pantau status & log di halaman Hosting → Aplikasi. Tidak perlu jalankan server manual.');
     }
 
     private function writeNodeFallbackHtml(string $path): void

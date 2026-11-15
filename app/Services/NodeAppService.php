@@ -75,6 +75,12 @@ class NodeAppService
 
         $project = $app->project;
 
+        // Framework nextjs butuh tahap build (next build) sebelum `next start`
+        // bisa jalan — tanpa ini .next tidak pernah ada dan start selalu gagal.
+        if ($commands === null && strtolower((string) $project->framework) === 'nextjs') {
+            $commands = ['npm install --legacy-peer-deps', 'npm run build'];
+        }
+
         try {
             $response = $this->client((int) config('services.node_runtime.build_timeout', 900))
                 ->post(rtrim(config('services.node_runtime.url'), '/') . '/build', array_filter([
@@ -295,14 +301,20 @@ class NodeAppService
 
     /**
      * Build lalu start (alur deploy penuh dari AutoDeployProject).
+     *
+     * @param  bool  $skipBuild  true jika hasil build (.next/node_modules) sudah
+     *                            tersedia di volume bersama (dibangun di tahap
+     *                            AutoDeploy) — langsung start saja.
      */
-    public function deploy(NodeApp $app): array
+    public function deploy(NodeApp $app, bool $skipBuild = false): array
     {
-        $build = $this->build($app);
-        if (!$build['ok']) {
-            $app->update(['status' => 'error', 'last_error' => $build['error'] ?? 'Build gagal']);
+        if (! $skipBuild) {
+            $build = $this->build($app);
+            if (!$build['ok']) {
+                $app->update(['status' => 'error', 'last_error' => $build['error'] ?? 'Build gagal']);
 
-            return ['ok' => false, 'error' => $build['error'] ?? 'Build gagal', 'output' => $build['output'] ?? null];
+                return ['ok' => false, 'error' => $build['error'] ?? 'Build gagal', 'output' => $build['output'] ?? null];
+            }
         }
 
         return $this->start($app);

@@ -2715,7 +2715,8 @@ PHP;
             exec("pm2 delete \"prod_{$project->id}\" 2>/dev/null || true");
         }
 
-        // 1b. Aplikasi Node (runtime terpisah) — stop via agent
+        // 1b. Aplikasi Node (runtime terpisah) — stop via agent.
+        // 'nextjs' SSR sekarang juga berjalan sebagai NodeApp runtime.
         if ($nodeApp = $project->nodeApp) {
             app(\App\Services\NodeAppService::class)->stop($nodeApp);
         }

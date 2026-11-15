@@ -409,6 +409,8 @@ async function startApp(projectDir, params) {
     ...process.env,
     PORT: String(port),
     HOST: '0.0.0.0',
+    // Next.js `next start` membaca HOSTNAME, bukan HOST (sama seperti NodeServerService)
+    HOSTNAME: '0.0.0.0',
     NODE_ENV: params.node_env || 'production',
     ...(params.env_vars || {}),
   };

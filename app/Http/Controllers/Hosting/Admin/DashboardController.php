@@ -288,11 +288,10 @@ class DashboardController extends Controller
 
         // Stop PM2 process untuk framework Node-based (React, Vue, Next.js, Node)
         if (in_array($project->framework, ['react', 'nextjs', 'vue', 'node'])) {
-            // Framework 'node': proses ada di runtime container terpisah — stop via agent
-            if ($project->framework === 'node') {
-                if ($nodeApp = $project->nodeApp) {
-                    app(\App\Services\NodeAppService::class)->stop($nodeApp);
-                }
+            // Framework 'node'/'nextjs' (runtime container terpisah): stop via agent.
+            // 'nextjs' SSR sekarang berjalan sebagai NodeApp runtime.
+            if (in_array($project->framework, ['node', 'nextjs'], true) && ($nodeApp = $project->nodeApp)) {
+                app(\App\Services\NodeAppService::class)->stop($nodeApp);
             } else {
                 $pm2Name = "prod_{$project->id}";
                 $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
@@ -335,11 +334,10 @@ class DashboardController extends Controller
 
         // Restart PM2 process untuk framework Node-based
         if (in_array($project->framework, ['react', 'nextjs', 'vue', 'node']) && is_dir($projectDir)) {
-            // Framework 'node': aplikasi hidup di runtime container terpisah — start via agent
-            if ($project->framework === 'node') {
-                if ($nodeApp = $project->nodeApp) {
-                    app(\App\Services\NodeAppService::class)->start($nodeApp);
-                }
+            // Framework 'node'/'nextjs' (runtime container terpisah): start via agent.
+            // 'nextjs' SSR sekarang berjalan sebagai NodeApp runtime.
+            if (in_array($project->framework, ['node', 'nextjs'], true) && ($nodeApp = $project->nodeApp)) {
+                app(\App\Services\NodeAppService::class)->start($nodeApp);
             } else {
                 $pm2Name = "prod_{$project->id}";
                 $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';

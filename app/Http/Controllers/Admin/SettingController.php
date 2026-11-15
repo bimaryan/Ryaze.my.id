@@ -108,11 +108,10 @@ class SettingController extends Controller
 
                     // Stop PM2 process untuk framework Node-based
                     if (in_array($project->framework, ['react', 'nextjs', 'vue', 'node'])) {
-                        // Framework 'node': proses di runtime container terpisah — stop via agent
-                        if ($project->framework === 'node') {
-                            if ($nodeApp = $project->nodeApp) {
-                                app(\App\Services\NodeAppService::class)->stop($nodeApp);
-                            }
+                        // Framework 'node'/'nextjs' (runtime container terpisah): stop via agent.
+                        // 'nextjs' SSR sekarang juga berjalan sebagai NodeApp runtime.
+                        if (in_array($project->framework, ['node', 'nextjs'], true) && ($nodeApp = $project->nodeApp)) {
+                            app(\App\Services\NodeAppService::class)->stop($nodeApp);
                         } else {
                             $pm2Name = "prod_{$project->id}";
                             // Depending on environment, might need docker exec, but keeping existing logic:

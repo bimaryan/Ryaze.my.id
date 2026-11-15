@@ -23,12 +23,12 @@ class DeployNodeApp implements ShouldQueue
 
     public int $tries = 1;
 
-    public function __construct(public NodeApp $app) {}
+    public function __construct(public NodeApp $app, public bool $skipBuild = false) {}
 
     public function handle(): void
     {
         $service = app(NodeAppService::class);
-        $result = $service->deploy($this->app);
+        $result = $service->deploy($this->app, $this->skipBuild);
 
         $this->app->update([
             'last_build_log' => $result['output'] ?? ($result['error'] ?? null),

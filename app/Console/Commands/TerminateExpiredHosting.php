@@ -94,8 +94,9 @@ class TerminateExpiredHosting extends Command
 
     private function stopBackgroundProcesses(HostingProject $project): void
     {
-        // Aplikasi Node (runtime terpisah) — stop via agent sebelum folder dihapus
-        if ($project->framework === 'node' && ($nodeApp = $project->nodeApp)) {
+        // Aplikasi Node (runtime terpisah) — stop via agent sebelum folder dihapus.
+        // 'nextjs' SSR juga berjalan sebagai NodeApp runtime sekarang.
+        if (in_array($project->framework, ['node', 'nextjs'], true) && ($nodeApp = $project->nodeApp)) {
             app(\App\Services\NodeAppService::class)->stop($nodeApp);
         }
 
