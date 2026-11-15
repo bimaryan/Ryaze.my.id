@@ -109,41 +109,7 @@ class DokuPayController extends Controller
      */
     private function reviveOrder(string $orderId): void
     {
-        if (str_starts_with($orderId, 'HST-INV-') || str_starts_with($orderId, 'HST-UPG-')) {
-            \App\Models\HostingPayment::where('invoice_number', $orderId)
-                ->where('status', 'failed')
-                ->update(['status' => 'unpaid']);
-
-            return;
-        }
-
-        if (str_starts_with($orderId, 'WLT-TOPUP-')) {
-            \App\Models\WalletTransaction::where('reference_id', $orderId)
-                ->where('status', 'failed')
-                ->update(['status' => 'pending']);
-
-            return;
-        }
-
-        if (str_starts_with($orderId, 'PRD-')) {
-            \App\Models\DigitalPurchase::where('order_id', $orderId)
-                ->where('status', 'failed')
-                ->update(['status' => 'pending']);
-
-            return;
-        }
-
-        if (str_starts_with($orderId, 'TIP-')) {
-            \App\Models\Tip::where('order_id', $orderId)
-                ->where('status', 'failed')
-                ->update(['status' => 'pending']);
-
-            return;
-        }
-
-        \App\Models\JokiPayment::where('invoice_number', $orderId)
-            ->where('status', 'failed')
-            ->update(['status' => 'unpaid']);
+        app(PaymentFulfillmentService::class)->reviveOrder($orderId);
     }
 
     /**

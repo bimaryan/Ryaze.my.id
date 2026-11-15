@@ -20,7 +20,10 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
     const [remaining, setRemaining] = useState(() =>
         expiresAt ? Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)) : 0
     );
-    const expired = Boolean(expiresAt) && remaining <= 0;
+    // Di-set true ketika polling melaporkan status invoice sudah 'failed'
+    // (ditandai kedaluwarsa oleh server) — UI langsung tampil expired.
+    const [forceExpired, setForceExpired] = useState(false);
+    const expired = Boolean(expiresAt) && (remaining <= 0 || forceExpired);
 
     useEffect(() => {
         if (!expiresAt) return undefined;
@@ -78,6 +81,10 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
                         setTimeout(() => {
                             window.location.href = data.redirect_url;
                         }, 1500);
+                    } else if (data && data.status === 'failed') {
+                        // Invoice ditandai kedaluwarsa oleh server — paksa
+                        // tampilan expired walau timer lokal belum habis.
+                        setForceExpired(true);
                     }
                 })
                 .catch(() => {});

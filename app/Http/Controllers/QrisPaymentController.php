@@ -61,6 +61,12 @@ class QrisPaymentController extends Controller
         $timerMinutes = max(1, (int) \App\Models\Setting::val('qris_timer_minutes', 15));
         $session = \App\Models\QrisPaymentSession::where('order_number', $cleanOrderId)->first();
         if (!$session || $session->expires_at->isPast()) {
+            // User membuka halaman QRIS lagi = niat membayar ulang: aktifkan
+            // kembali invoice yang sempat ditandai failed (kedaluwarsa).
+            if (!$this->fulfillmentService->isPaid($cleanOrderId)) {
+                $this->fulfillmentService->reviveOrder($cleanOrderId);
+            }
+
             $session = \App\Models\QrisPaymentSession::updateOrCreate(
                 ['order_number' => $cleanOrderId],
                 ['expires_at' => now()->addMinutes($timerMinutes)]

@@ -76,76 +76,11 @@ class ExpireDokuPayments extends Command
     }
 
     /**
-     * Tandai order yang belum dibayar sebagai failed sesuai tipe order-nya.
+     * Tandai order yang belum dibayar sebagai failed — logikanya ada di
+     * PaymentFulfillmentService agar bisa dipakai bersama jalur QRIS Dinamis.
      */
     private function markExpired(string $orderId): bool
     {
-        if (str_starts_with($orderId, 'HST-INV-') || str_starts_with($orderId, 'HST-UPG-')) {
-            $payment = \App\Models\HostingPayment::where('invoice_number', $orderId)
-                ->where('status', 'unpaid')
-                ->first();
-
-            if (!$payment) {
-                return false;
-            }
-
-            $payment->update(['status' => 'failed']);
-
-            return true;
-        }
-
-        if (str_starts_with($orderId, 'WLT-TOPUP-')) {
-            $tx = \App\Models\WalletTransaction::where('reference_id', $orderId)
-                ->where('status', 'pending')
-                ->first();
-
-            if (!$tx) {
-                return false;
-            }
-
-            $tx->update(['status' => 'failed']);
-
-            return true;
-        }
-
-        if (str_starts_with($orderId, 'PRD-')) {
-            $purchase = \App\Models\DigitalPurchase::where('order_id', $orderId)
-                ->where('status', 'pending')
-                ->first();
-
-            if (!$purchase) {
-                return false;
-            }
-
-            $purchase->update(['status' => 'failed']);
-
-            return true;
-        }
-
-        if (str_starts_with($orderId, 'TIP-')) {
-            $tip = \App\Models\Tip::where('order_id', $orderId)
-                ->where('status', 'pending')
-                ->first();
-
-            if (!$tip) {
-                return false;
-            }
-
-            $tip->update(['status' => 'failed']);
-
-            return true;
-        }
-
-        $joki = \App\Models\JokiPayment::where('invoice_number', $orderId)
-            ->where('status', 'unpaid')
-            ->first();
-
-        if (!$joki) {
-            return false;
-        }
-
-        $joki->update(['status' => 'failed']);
-
-        return true;
+        return app(PaymentFulfillmentService::class)->markExpired($orderId);
     }
 }

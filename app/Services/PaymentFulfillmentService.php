@@ -197,6 +197,124 @@ class PaymentFulfillmentService
         return null;
     }
 
+    /**
+     * Tandai order yang belum dibayar sebagai failed sesuai tipe order-nya.
+     * Dipakai command expire DOKU maupun QRIS Dinamis.
+     */
+    public function markExpired(string $orderId): bool
+    {
+        if (str_starts_with($orderId, 'HST-INV-') || str_starts_with($orderId, 'HST-UPG-')) {
+            $payment = HostingPayment::where('invoice_number', $orderId)
+                ->where('status', 'unpaid')
+                ->first();
+
+            if (!$payment) {
+                return false;
+            }
+
+            $payment->update(['status' => 'failed']);
+
+            return true;
+        }
+
+        if (str_starts_with($orderId, 'WLT-TOPUP-')) {
+            $tx = WalletTransaction::where('reference_id', $orderId)
+                ->where('status', 'pending')
+                ->first();
+
+            if (!$tx) {
+                return false;
+            }
+
+            $tx->update(['status' => 'failed']);
+
+            return true;
+        }
+
+        if (str_starts_with($orderId, 'PRD-')) {
+            $purchase = DigitalPurchase::where('order_id', $orderId)
+                ->where('status', 'pending')
+                ->first();
+
+            if (!$purchase) {
+                return false;
+            }
+
+            $purchase->update(['status' => 'failed']);
+
+            return true;
+        }
+
+        if (str_starts_with($orderId, 'TIP-')) {
+            $tip = Tip::where('order_id', $orderId)
+                ->where('status', 'pending')
+                ->first();
+
+            if (!$tip) {
+                return false;
+            }
+
+            $tip->update(['status' => 'failed']);
+
+            return true;
+        }
+
+        $joki = JokiPayment::where('invoice_number', $orderId)
+            ->where('status', 'unpaid')
+            ->first();
+
+        if (!$joki) {
+            return false;
+        }
+
+        $joki->update(['status' => 'failed']);
+
+        return true;
+    }
+
+    /**
+     * Kembalikan invoice yang ditandai failed (kedaluwarsa) ke status awal
+     * karena user mencoba memulai pembayaran ulang.
+     */
+    public function reviveOrder(string $orderId): void
+    {
+        if (str_starts_with($orderId, 'HST-INV-') || str_starts_with($orderId, 'HST-UPG-')) {
+            HostingPayment::where('invoice_number', $orderId)
+                ->where('status', 'failed')
+                ->update(['status' => 'unpaid']);
+
+            return;
+        }
+
+        if (str_starts_with($orderId, 'WLT-TOPUP-')) {
+            WalletTransaction::where('reference_id', $orderId)
+                ->where('status', 'failed')
+                ->update(['status' => 'pending']);
+
+            return;
+        }
+
+        if (str_starts_with($orderId, 'PRD-')) {
+            DigitalPurchase::where('order_id', $orderId)
+                ->where('status', 'failed')
+                ->update(['status' => 'pending']);
+
+            return;
+        }
+
+        if (str_starts_with($orderId, 'TIP-')) {
+            Tip::where('order_id', $orderId)
+                ->where('status', 'failed')
+                ->update(['status' => 'pending']);
+
+            return;
+        }
+
+        JokiPayment::where('invoice_number', $orderId)
+            ->where('status', 'failed')
+            ->update(['status' => 'unpaid']);
+    }
+
     private function fulfillHostingSubscription(string $invoiceNumber, string $method): bool
     {
         $payment = HostingPayment::where('invoice_number', $invoiceNumber)->first();
