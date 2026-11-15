@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
+import PublicParticles from '../Components/PublicParticles';
 
 const dashboardUrl = {
     superadmin: '/superadmin/dashboard',
@@ -57,6 +58,7 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
     return (
         <div className={`${bodyClass || ''} relative isolate min-h-screen flex flex-col`}>
             <div className="public-canvas pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+            <PublicParticles />
             <Head>
                 <meta head-key="robots" name="robots" content={robots ?? 'index, follow, max-image-preview:large'} />
             </Head>
