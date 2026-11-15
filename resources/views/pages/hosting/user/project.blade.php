@@ -61,10 +61,25 @@
                     <p class="ui-eyebrow-muted">Deploy &middot; Build &middot; Live</p>
                 </div>
             @else
+                @php
+                    // Kartu terakhir melebar mengisi sisa kolom agar tidak ada
+                    // slot kosong di baris terakhir grid (2 kolom md, 3 kolom lg)
+                    $projectCount = $projects->count();
+                    $lastCellSpan = '';
+                    if ($projectCount % 2 === 1) {
+                        $lastCellSpan .= ' md:col-span-2';
+                    }
+                    if ($projectCount % 3 === 1) {
+                        $lastCellSpan .= ' lg:col-span-3';
+                    } elseif ($projectCount % 3 === 2) {
+                        $lastCellSpan .= ' lg:col-span-2';
+                    }
+                    $lastCellSpan = trim($lastCellSpan);
+                @endphp
                 <div class="ui-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($projects as $project)
                         <div
-                            class="ui-cell flex flex-col transition-colors hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
+                            class="ui-cell flex flex-col transition-colors hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]{{ $loop->last && $lastCellSpan !== '' ? ' '.$lastCellSpan : '' }}">
                             <div class="p-5 border-b border-[#EDF2F7] dark:border-[#2A4463] flex justify-between items-start">
                                 <div class="flex items-center gap-3">
                                     <div
