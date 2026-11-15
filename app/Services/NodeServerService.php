@@ -98,7 +98,7 @@ class NodeServerService
      */
     public function start(HostingProject $project, string $projectDir, ?string $entryArg, int $port, array &$log, ?array &$result): bool
     {
-        $command = $this->resolveStartCommand($projectDir, $entryArg, $log);
+        $command = $this->resolveStartCommand($projectDir, $entryArg, $log, $port);
         if ($command === null) {
             return false;
         }
@@ -267,7 +267,7 @@ class NodeServerService
 
     // ── Internal ──────────────────────────────────────────────────────────
 
-    private function resolveStartCommand(string $projectDir, ?string $entryArg, array &$log): ?array
+    private function resolveStartCommand(string $projectDir, ?string $entryArg, array &$log, int $port = 3000): ?array
     {
         // 1. Ekosistem PM2 (config eksplisit milik user)
         if (file_exists("{$projectDir}/ecosystem.config.js")) {
@@ -291,12 +291,26 @@ class NodeServerService
             return ['node', $entryArg];
         }
 
-        // 3. package.json → scripts.start / main
+        // 3. Deteksi Next.js Standalone
+        if (file_exists("{$projectDir}/.next/standalone/server.js")) {
+            $log[] = '> Entry: node .next/standalone/server.js (Next.js standalone)';
+
+            return ['node', '.next/standalone/server.js'];
+        }
+
+        // 4. package.json → scripts.start / main
         $pkgPath = "{$projectDir}/package.json";
         if (is_readable($pkgPath)) {
             $pkg = json_decode((string) @file_get_contents($pkgPath), true);
             if (is_array($pkg)) {
                 if (! empty($pkg['scripts']['start'])) {
+                    // Jika script adalah next start, teruskan port eksplisit agar tidak lock di 3000
+                    if (str_contains($pkg['scripts']['start'], 'next')) {
+                        $log[] = "> Entry: npx next start -p {$port} -H 0.0.0.0 (Next.js scripts.start)";
+
+                        return ['npx', 'next', 'start', '-p', (string) $port, '-H', '0.0.0.0'];
+                    }
+
                     $log[] = "> Entry: npm start (package.json scripts.start = {$pkg['scripts']['start']})";
 
                     return ['npm', 'start'];
@@ -309,20 +323,14 @@ class NodeServerService
             }
         }
 
-        // 4. Deteksi Next.js
-        if (file_exists("{$projectDir}/.next/standalone/server.js")) {
-            $log[] = '> Entry: node .next/standalone/server.js (Next.js standalone)';
-
-            return ['node', '.next/standalone/server.js'];
-        }
-
+        // 5. Deteksi folder .next (Next.js default)
         if (is_dir("{$projectDir}/.next")) {
-            $log[] = '> Entry: npx next start (Next.js)';
+            $log[] = "> Entry: npx next start -p {$port} -H 0.0.0.0 (Next.js)";
 
-            return ['npx', 'next', 'start'];
+            return ['npx', 'next', 'start', '-p', (string) $port, '-H', '0.0.0.0'];
         }
 
-        // 5. Deteksi umum
+        // 6. Deteksi umum
         foreach (['server.js', 'index.js', 'app.js', 'server.mjs', 'index.mjs'] as $guess) {
             if (file_exists("{$projectDir}/{$guess}")) {
                 $log[] = "> Entry: node {$guess} (auto-detect)";

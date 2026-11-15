@@ -31,15 +31,15 @@ class NextjsDeployTest extends TestCase
         $method = $cmdReflect->getMethod('resolveStartCommand');
         $method->setAccessible(true);
 
-        $cmd = $method->invokeArgs($srv, [$tempDir, null, &$log]);
-        $this->assertEquals(['npm', 'start'], $cmd);
+        $cmd = $method->invokeArgs($srv, [$tempDir, null, &$log, 3000]);
+        $this->assertEquals(['npx', 'next', 'start', '-p', '3000', '-H', '0.0.0.0'], $cmd);
 
         // Case 2: .next directory exists but no scripts.start
         @unlink($tempDir . '/package.json');
         @mkdir($tempDir . '/.next', 0777, true);
         $log = [];
-        $cmd = $method->invokeArgs($srv, [$tempDir, null, &$log]);
-        $this->assertEquals(['npx', 'next', 'start'], $cmd);
+        $cmd = $method->invokeArgs($srv, [$tempDir, null, &$log, 3000]);
+        $this->assertEquals(['npx', 'next', 'start', '-p', '3000', '-H', '0.0.0.0'], $cmd);
 
         // Case 3: standalone nextjs
         @mkdir($tempDir . '/.next/standalone', 0777, true);
