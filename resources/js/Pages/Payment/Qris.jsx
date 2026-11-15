@@ -6,7 +6,7 @@ function formatRupiah(amount) {
     return new Intl.NumberFormat('id-ID').format(amount);
 }
 
-export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchant }) {
+export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchant, expiresAt }) {
     const [isPaid, setIsPaid] = useState(false);
     const [statusText, setStatusText] = useState('Menunggu Pembayaran...');
     const [copied, setCopied] = useState(false);
@@ -14,6 +14,24 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
     const [confirmed, setConfirmed] = useState(Boolean(order?.confirmed_at));
     const [sending, setSending] = useState(false);
     const intervalRef = useRef(null);
+
+    // Timer pembayaran (UI-level): hitung mundur dari expiresAt (ISO8601).
+    // Setelah habis, QR dianggap kedaluwarsa dan user diminta memperbaruinya.
+    const [remaining, setRemaining] = useState(() =>
+        expiresAt ? Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)) : 0
+    );
+    const expired = Boolean(expiresAt) && remaining <= 0;
+
+    useEffect(() => {
+        if (!expiresAt) return undefined;
+        const timer = setInterval(() => {
+            setRemaining(Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)));
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [expiresAt]);
+
+    const timerText = `${String(Math.floor(remaining / 60)).padStart(2, '0')}:${String(remaining % 60).padStart(2, '0')}`;
+    const timerUrgent = remaining > 0 && remaining <= 180; // merah pas 3 menit terakhir
 
     const checkUrl = `/payment/qris/${order?.order_id}/status`;
     const confirmUrl = `/payment/qris/${order?.order_id}/confirm`;
@@ -142,6 +160,18 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
                                     <span>INVOICE:</span>
                                     <span className="text-[#0F1A2A] dark:text-white font-semibold">{order?.order_id}</span>
                                 </div>
+
+                                {/* Timer Pembayaran */}
+                                {expiresAt && !expired && (
+                                    <div className={`mt-2.5 inline-flex items-center gap-2 font-mono text-[11px] px-3 py-1 border ${
+                                        timerUrgent
+                                            ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30'
+                                            : 'text-[#0F1A2A] dark:text-white bg-white dark:bg-[#0F1D30] border-[#E3EAF1] dark:border-[#2A4463]'
+                                    }`}>
+                                        <i className="fa-regular fa-clock text-xs"></i>
+                                        <span>Bayar dalam <strong className="font-black">{timerText}</strong></span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* QR Code */}
@@ -152,6 +182,27 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
                                         alt="QRIS Dinamis Ryaze"
                                         className="w-full h-full object-contain"
                                     />
+
+                                    {/* Overlay kedaluwarsa */}
+                                    {expired && (
+                                        <div className="absolute inset-0 bg-white/90 dark:bg-[#0F1D30]/95 backdrop-blur-sm flex flex-col items-center justify-center gap-2.5 text-center p-4">
+                                            <i className="fa-solid fa-hourglass-end text-2xl text-red-500"></i>
+                                            <p className="text-[11px] font-black uppercase tracking-wider text-[#0F1A2A] dark:text-white">
+                                                Waktu Pembayaran Habis
+                                            </p>
+                                            <p className="text-[10px] text-[#525252] dark:text-[#8A9BAE] leading-relaxed max-w-[220px]">
+                                                Perbarui kode QR untuk sesi pembayaran baru. Nominal dan invoice tetap sama.
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onClick={() => window.location.reload()}
+                                                className="ui-btn ui-btn-primary mt-1"
+                                            >
+                                                <i className="fa-solid fa-rotate-right text-xs"></i>
+                                                <span>Perbarui QR</span>
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Download QR */}
@@ -172,6 +223,13 @@ export default function Qris({ order, amount, dynamicPayload, qrDataUri, merchan
                                         <i className="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400 text-sm"></i>
                                         <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
                                             {statusText}
+                                        </span>
+                                    </div>
+                                ) : expired ? (
+                                    <div className="mt-5 w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-[11px] font-mono">
+                                        <i className="fa-solid fa-hourglass-end text-red-500 shrink-0"></i>
+                                        <span className="text-red-600 dark:text-red-400 font-bold uppercase tracking-wider">
+                                            Kedaluwarsa — Perbarui QR
                                         </span>
                                     </div>
                                 ) : (
