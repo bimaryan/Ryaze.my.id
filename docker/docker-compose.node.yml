@@ -1,5 +1,3 @@
-version: "3.8"
-
 # Container runtime Node untuk aplikasi framework 'node' milik klien.
 # Panel (PHP) tidak pernah men-spawn proses Node — semuanya lewat agent HTTP
 # di container ini. Nginx (di container PHP/OpenResty) membaca file .port dan
