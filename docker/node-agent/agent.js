@@ -367,12 +367,38 @@ async function waitPortListening(port) {
 }
 
 // ── Aksi: start / stop / status ──────────────────────────────────────────────
+/** Cek apakah sebuah port bisa di-bind di 0.0.0.0 (kosong di namespace container). */
+function canBind(port) {
+  const net = require('net');
+  return new Promise((resolve) => {
+    const server = net.createServer();
+    server.once('error', () => resolve(false));
+    server.listen(port, '0.0.0.0', () => server.close(() => resolve(true)));
+  });
+}
+
+/**
+ * Tentukan port untuk start aplikasi:
+ *   - Kalau panel mengirim port "nyemenel" (dari DB/start sebelumnya) dan port
+ *     itu masih kosong → pakai port itu (port tidak berubah antar re-deploy).
+ *   - Kalau tidak ada / sudah diambil pihak lain → alokasi acak yang kosong.
+ */
+async function choosePort(preferred) {
+  if (preferred !== undefined && preferred !== null && /^\d+$/.test(String(preferred))) {
+    const port = parseInt(preferred, 10);
+    if (port > 0 && !listUsedPorts().has(port) && (await canBind(port))) {
+      return { port, reused: true };
+    }
+  }
+  return { port: await pickFreePort(), reused: false };
+}
+
 async function startApp(projectDir, params) {
   // Stop dulu kalau masih ada instance jalan (idempoten)
   await stopApp(projectDir, true);
 
   const entry = resolveEntry(projectDir, params.entry);
-  const port = params.port || await pickFreePort();
+  const { port, reused } = await choosePort(params.port);
   const env = {
     ...process.env,
     PORT: String(port),
@@ -460,6 +486,7 @@ async function startApp(projectDir, params) {
     mode,
     entry: entry.script || entry.npmScript,
     port,
+    port_reused: reused,
     proxy_host: detectProxyHost(),
     listening,
     ...(listening ? {} : { warning: `Aplikasi ter-start tapi port ${port} belum merespons dalam ${START_WAIT_MS / 1000}s — cek log aplikasi.` }),

@@ -113,6 +113,8 @@ class NodeAppService
             $response = $this->client()->post(rtrim(config('services.node_runtime.url'), '/') . '/start', [
                 'project' => $this->projectDir($project),
                 'entry' => $app->entry ?: null,
+                // Sticky port: pakai port lama kalau masih kosong (tidak berubah antar re-deploy)
+                'port' => $app->port,
                 'env_vars' => $app->env_vars ?: null,
                 'node_env' => $app->node_env ?: 'production',
             ]);
@@ -166,7 +168,9 @@ class NodeAppService
             return ['ok' => false, 'error' => $response->json('error') ?? 'Stop gagal (HTTP ' . $response->status() . ')'];
         }
 
-        $app->update(['status' => 'stopped', 'port' => null, 'started_at' => null, 'last_error' => null]);
+        // Port TIDAK di-null-kan — disimpan di DB sebagai "sticky port" agar
+        // start berikutnya memakai port yang sama (selama masih kosong).
+        $app->update(['status' => 'stopped', 'started_at' => null, 'last_error' => null]);
 
         return ['ok' => true];
     }
@@ -242,6 +246,8 @@ class NodeAppService
             $response = $this->client()->post(rtrim(config('services.node_runtime.url'), '/') . '/restart', [
                 'project' => $this->projectDir($project),
                 'entry' => $app->entry ?: null,
+                // Sticky port: pakai port lama kalau masih kosong
+                'port' => $app->port,
                 'env_vars' => $app->env_vars ?: null,
                 'node_env' => $app->node_env ?: 'production',
             ]);
