@@ -96,7 +96,7 @@
                         Setiap aplikasi modern memerlukan variabel lingkungan untuk menyimpan kredensial rahasia (koneksi basis data, kunci API, mode <i>debug</i>). Ryaze menyediakan tab khusus <strong>Pengaturan .env</strong> di halaman detail proyek Anda.
                     </p>
                     <p class="text-[#525252] dark:text-white/70 text-sm">
-                        Ketika Anda memodifikasi dan menyimpan nilai di tab ini, Ryaze akan secara otomatis menulis ulang file <code>.env</code> di <i>root</i> direktori aplikasi Anda. Perhatikan bahwa beberapa kerangka kerja (seperti Node.js) mungkin memerlukan <i>restart</i> manual dari Terminal agar dapat membaca variabel baru.
+                        Ketika Anda memodifikasi dan menyimpan nilai di tab ini, Ryaze akan secara otomatis menulis ulang file <code>.env</code> di <i>root</i> direktori aplikasi Anda. Perhatikan bahwa aplikasi perlu dijalankan ulang agar membaca variabel baru — untuk aplikasi Node.js cukup tekan tombol <strong>Restart</strong> pada halaman Aplikasi Node.
                     </p>
                 </section>
 
@@ -214,6 +214,80 @@
                     </p>
                     <p class="text-[#525252] dark:text-white/70 text-sm">
                         Mekanismenya sangat mudah: Klik ikon <strong>Nyalakan Server</strong> pada dasbor proyek Anda. Sistem kami akan membangkitkan pekerja di latar belakang dan menerbitkan URL acak (contoh: <code class="font-mono text-xs text-[#0F1A2A] dark:text-white bg-[#F0F6FC] dark:bg-[#0F1D30] px-1 py-0.5">devX.ryaze.my.id</code>). Segala perubahan yang Anda simpan melalui File Manager atau Web Terminal akan dipantulkan langsung ke URL pratinjau tersebut tanpa perlu merakit ulang aplikasi secara utuh.
+                    </p>
+                </section>
+
+                <!-- Section 8: Aplikasi Node -->
+                <section>
+                    <h2 class="ui-display text-lg mb-3">8. Aplikasi Node.js (Managed Node App)</h2>
+                    <p class="mb-4 text-[#525252] dark:text-white/70 text-sm">
+                        Menu <strong>Aplikasi Node</strong> di sidebar Hosting adalah manajer aplikasi Node.js terkelola — mirip dengan <i>Setup Node.js App</i> di cPanel. Proses Node Anda berjalan di <i>runtime container</i> terpisah yang diawasi <strong>PM2</strong>, lengkap dengan manajemen <i>entry file</i>, <i>environment variables</i>, log <i>real-time</i>, dan kontrol Start/Stop/Restart dari panel.
+                    </p>
+
+                    <div class="ui-panel overflow-hidden mb-4">
+                        <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A]">
+                            <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#525252] dark:text-white/40">Dua Cara Membuat Aplikasi</span>
+                            <span class="ui-status"><span class="ui-status-dot"></span> Aplikasi Node</span>
+                        </div>
+                        <div class="ui-grid grid-cols-1 sm:grid-cols-2">
+                            <div class="ui-cell p-5">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-[#0F1A2A] dark:text-white text-sm">Bikin Project + Aplikasi Baru</h4>
+                                    <div class="ui-icon-box"><i class="fa-solid fa-plus text-xs"></i></div>
+                                </div>
+                                <p class="text-xs text-[#525252] dark:text-white/50 leading-relaxed">Isi subdomain dan sumber kode (Git/ZIP) — sistem membuat proyek hosting sekaligus aplikasi Node-nya dalam satu alur, termasuk <code>npm install</code> dan build otomatis.</p>
+                            </div>
+                            <div class="ui-cell-alt p-5">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-[#0F1A2A] dark:text-white text-sm">Pakai Project yang Sudah Ada</h4>
+                                    <div class="ui-icon-box"><i class="fa-solid fa-folder text-xs"></i></div>
+                                </div>
+                                <p class="text-xs text-[#525252] dark:text-white/50 leading-relaxed">Sudah punya proyek ter-deploy? Pilih proyeknya, tentukan <i>entry file</i> (mis. <code>server.js</code> atau <code>dist/index.js</code>), lalu simpan. Kode tidak diunduh ulang.</p>
+                            </div>
+                        </div>
+                        <p class="px-5 py-3 text-xs text-[#525252] dark:text-white/50 border-t border-[#E3EAF1] dark:border-[#2A4463]">
+                            <strong>Catatan:</strong> <i>Framework</i> Node tidak tersedia di halaman <strong>Deploy Aplikasi</strong>. Deployment di sana hanya menyiapkan berkas; untuk proyek Node, pembuatan aplikasi dilakukan dari halaman <strong>Aplikasi Node</strong>.
+                        </p>
+                    </div>
+
+                    <h3 class="text-sm font-semibold text-[#0F1A2A] dark:text-white mb-2">Konfigurasi Aplikasi (tab Config)</h3>
+                    <ul class="mb-4 px-1 space-y-2 text-sm text-[#525252] dark:text-white/70">
+                        <li class="flex gap-2"><span class="ui-check-mark mt-0.5">&#10003;</span><span><strong>Entry File</strong> — file yang dieksekusi (mis. <code>server.js</code>), atau nama <i>script</i> NPM (mis. <code>start</code>). Kosongkan untuk deteksi otomatis.</span></li>
+                        <li class="flex gap-2"><span class="ui-check-mark mt-0.5">&#10003;</span><span><strong>NODE_ENV</strong> — pilih <code>production</code> atau <code>development</code>.</span></li>
+                        <li class="flex gap-2"><span class="ui-check-mark mt-0.5">&#10003;</span><span><strong>Environment Variables</strong> — pasangan kunci=nilai (mis. <code>DB_HOST=...</code>) yang disuntikkan ke proses setiap kali aplikasi dijalankan.</span></li>
+                    </ul>
+
+                    <div class="ui-panel overflow-hidden mb-4">
+                        <div class="ui-panel-head bg-[#F4F8FC] dark:bg-[#12233A]">
+                            <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#525252] dark:text-white/40">Kontrol & Port Tetap (Sticky Port)</span>
+                            <span class="ui-status"><span class="ui-status-dot"></span> Auto-recovery</span>
+                        </div>
+                        <ul class="px-6 text-sm text-[#525252] dark:text-white/70">
+                            <li class="flex items-start gap-3 py-4 border-b border-[#EDF2F7] dark:border-[#24384F]">
+                                <span class="w-5 h-5 shrink-0 mt-0.5 flex items-center justify-center border border-[#E3EAF1] dark:border-[#2A4463] bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#1D5B96] dark:text-[#6BA8DC] font-mono text-[10px] font-bold">1</span>
+                                <div><strong>Start / Stop / Restart / Re-deploy</strong> — semua kontrol lifecycle tersedia sebagai tombol di kartu aplikasi. Log stdout/stderr aplikasi dapat dibuka lewat tombol <i>Log</i>.</div>
+                            </li>
+                            <li class="flex items-start gap-3 py-4 border-b border-[#EDF2F7] dark:border-[#24384F]">
+                                <span class="w-5 h-5 shrink-0 mt-0.5 flex items-center justify-center border border-[#E3EAF1] dark:border-[#2A4463] bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#1D5B96] dark:text-[#6BA8DC] font-mono text-[10px] font-bold">2</span>
+                                <div><strong>Port Tetap:</strong> port aplikasi dialokasi sekali lalu <strong>dipertahankan</strong> pada Stop/Start/Restart/Re-deploy berikutnya — selama port tersebut masih kosong. Domain Anda tidak berubah ketika aplikasi dihidupkan ulang.</div>
+                            </li>
+                            <li class="flex items-start gap-3 py-4">
+                                <span class="w-5 h-5 shrink-0 mt-0.5 flex items-center justify-center border border-[#E3EAF1] dark:border-[#2A4463] bg-[#F0F6FC] dark:bg-[#0F1D30] text-[#1D5B96] dark:text-[#6BA8DC] font-mono text-[10px] font-bold">3</span>
+                                <div><strong>Auto-recovery:</strong> monitor sistem memeriksa aplikasi setiap menit. Aplikasi yang <i>crash</i> dibangkitkan ulang otomatis dan pemiliknya menerima notifikasi bila gagal berjalan.</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="ui-panel flex items-start gap-4 p-5">
+                        <div class="ui-icon-box"><i class="fa-solid fa-circle-info text-xs"></i></div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-[#0F1A2A] dark:text-white mb-1">Saat Aplikasi Dihentikan</h4>
+                            <p class="text-xs text-[#525252] dark:text-white/70">Aplikasi Node yang di-<i>stop</i> tidak lagi dilayani sebagai aplikasi — pengunjung akan melihat halaman <i>&ldquo;Aplikasi sedang tidak berjalan&rdquo;</i> (503), bukan build statis lama. Jalankan kembali kapan saja melalui tombol <i>Start</i>.</p>
+                        </div>
+                    </div>
+
+                    <p class="mt-4 text-xs text-[#525252] dark:text-[#8A9BAE]">
+                        <strong>Batas Aplikasi per Paket:</strong> jumlah aplikasi Node yang aktif mengikuti paket hosting Anda — <strong>Free: 0</strong> (runtime Node tidak tersedia), <strong>Starter: 1</strong>, <strong>Pro: 3</strong>, <strong>Business: 10</strong> aplikasi. Kuota aktif Anda tampil pada halaman Aplikasi Node.
                     </p>
                 </section>
 
