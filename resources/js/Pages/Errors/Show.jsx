@@ -74,7 +74,7 @@ export default function Show({
 
             <RevealStyle />
 
-            <main className="flex min-h-[calc(100vh-4rem)] items-center bg-[#F4F8FC] dark:bg-[#0A1322]">
+            <main className="flex min-h-[calc(100vh-4rem)] items-center">
                 <div className="mx-auto w-full max-w-6xl px-6 pt-28 pb-20 lg:pt-32 lg:pb-24">
                     <div className="grid items-end gap-12 lg:grid-cols-12 lg:gap-20">
                         <div className="lg:col-span-7" data-reveal>

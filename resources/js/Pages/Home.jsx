@@ -196,7 +196,7 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
                 `}</style>
 
             {/* HERO */}
-            <section className="bg-white dark:bg-[#0A1322]">
+            <section>
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="min-h-[calc(100vh-4rem)] flex flex-col justify-center pt-28 pb-0 lg:pt-32">
                         <div className="grid lg:grid-cols-12 gap-12 lg:gap-14 items-center">
@@ -696,7 +696,7 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
             </section>
 
             {/* CTA */}
-            <section className="relative bg-[#1A4A78] dark:bg-[#143D66] overflow-hidden">
+            <section className="surface-solid relative bg-[#1A4A78] dark:bg-[#143D66] overflow-hidden">
                 <div className="absolute inset-0 grid-texture"></div>
                 <div className="relative max-w-6xl mx-auto px-6 py-24 lg:py-32 text-center flex flex-col items-center" data-reveal>
                     <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/55 mb-6">Mulai</p>

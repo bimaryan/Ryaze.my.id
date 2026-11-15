@@ -55,7 +55,8 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
     const closeMobileMenu = () => setMobileMenuOpen(false);
 
     return (
-        <div className={`${bodyClass || ''} min-h-screen flex flex-col`}>
+        <div className={`${bodyClass || ''} relative isolate min-h-screen flex flex-col`}>
+            <div className="public-canvas pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
             <Head>
                 <meta head-key="robots" name="robots" content={robots ?? 'index, follow, max-image-preview:large'} />
             </Head>
@@ -163,7 +164,7 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
 
             {/* flex-1 + bg dasar: halaman pendek tetap mengisi layar dan
                 celah di atas footer tidak terlihat seperti "lubang" */}
-            <div className="flex-1 bg-slate-50 dark:bg-[#0A1322]">
+            <div className="public-surface flex-1">
                 {children}
             </div>
 
@@ -192,6 +193,36 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
                     to { opacity: 1; transform: translateY(0); }
                 }
                 .animate-slide-down { animation: slide-down 0.2s ease-out; }
+
+                .public-canvas {
+                    background-color: #F4F8FC;
+                    background-image:
+                        radial-gradient(ellipse 60% 34% at 20% 0%, rgba(107, 168, 220, 0.3), transparent 70%),
+                        radial-gradient(ellipse 42% 28% at 96% 6%, rgba(29, 91, 150, 0.08), transparent 72%),
+                        linear-gradient(rgba(29, 91, 150, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(29, 91, 150, 0.05) 1px, transparent 1px);
+                    background-size: auto, auto, 40px 40px, 40px 40px;
+                }
+                .dark .public-canvas {
+                    background-color: #0A1322;
+                    background-image:
+                        radial-gradient(ellipse 60% 34% at 20% 0%, rgba(29, 91, 150, 0.42), transparent 70%),
+                        radial-gradient(ellipse 42% 28% at 96% 6%, rgba(107, 168, 220, 0.12), transparent 72%),
+                        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+                    background-size: auto, auto, 40px 40px, 40px 40px;
+                }
+
+                .public-surface > section:not(.surface-solid),
+                .public-surface > main,
+                .public-surface > header {
+                    background-color: transparent;
+                }
+                .dark .public-surface > section:not(.surface-solid),
+                .dark .public-surface > main,
+                .dark .public-surface > header {
+                    background-color: transparent;
+                }
             `}</style>
         </div>
     );
