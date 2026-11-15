@@ -437,7 +437,7 @@ export default function Home({ plans, planPricing, planPricingYearly, articles, 
                             </div>
                             <a
                                 href="/consultation"
-                                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-[#C9D5E2] dark:border-[#24384F] text-[#0F1A2A] dark:text-white font-semibold text-sm hover:border-[#1D5B96] hover:text-[#1D5B96] dark:hover:border-[#6BA8DC] dark:hover:text-[#6BA8DC] transition-colors"
+                                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#12233A] dark:bg-white text-white dark:text-[#0F1A2A] font-semibold text-sm hover:bg-[#1D5B96] dark:hover:bg-[#6BA8DC] transition-colors"
                             >
                                 Mulai Konsultasi
                                 <i className="fa-solid fa-arrow-right text-[10px]"></i>

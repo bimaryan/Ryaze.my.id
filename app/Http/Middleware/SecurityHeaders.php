@@ -56,14 +56,14 @@ class SecurityHeaders
                 "default-src 'self'; ".
                 "base-uri 'self'; ".
                 "object-src 'none'; ".
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com https://cdn.tailwindcss.com http://127.0.0.1:5173 http://localhost:5173; ".
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com https://cdn.tailwindcss.com http://127.0.0.1:5173 http://localhost:5173 http://127.0.0.1:5174 http://localhost:5174; ".
                 "script-src-attr 'unsafe-inline'; ".
-                "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
+                "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173 http://127.0.0.1:5174 http://localhost:5174; ".
                 "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
                 "img-src 'self' data: blob: https://api.qrserver.com https://ui-avatars.com https://placehold.co https://www.google-analytics.com https://www.googletagmanager.com https://ghchart.rshah.org; ".
                 "frame-src *; ".
                 "worker-src 'self' data: blob:; ".
-                "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:; ".
+                "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com http://127.0.0.1:5173 http://localhost:5173 http://127.0.0.1:5174 http://localhost:5174 ws: wss:; ".
                 "upgrade-insecure-requests;"
             );
         } else {
@@ -72,14 +72,14 @@ class SecurityHeaders
                 "default-src 'self'; ".
                 "base-uri 'self'; ".
                 "object-src 'none'; ".
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com https://cdn.tailwindcss.com http://127.0.0.1:5173 http://localhost:5173; ".
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' cdn.jsdelivr.net cdnjs.cloudflare.com kit.fontawesome.com unpkg.com static.cloudflareinsights.com challenges.cloudflare.com https://www.googletagmanager.com https://cdn.tailwindcss.com http://127.0.0.1:5173 http://localhost:5173 http://127.0.0.1:5174 http://localhost:5174; ".
                 "script-src-attr 'unsafe-inline'; ".
-                "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173; ".
+                "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com unpkg.com http://127.0.0.1:5173 http://localhost:5173 http://127.0.0.1:5174 http://localhost:5174; ".
                 "font-src 'self' ka-f.fontawesome.com fonts.gstatic.com data: cdnjs.cloudflare.com; ".
                 "img-src 'self' data: blob: https://api.qrserver.com https://ui-avatars.com https://placehold.co https://www.google-analytics.com https://www.googletagmanager.com https://ghchart.rshah.org; ".
                 "frame-src *; ".
                 "worker-src 'self' data: blob:; ".
-                "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com ws: wss:; "
+                "connect-src 'self' ka-f.fontawesome.com cloudflareinsights.com cdnjs.cloudflare.com cdn.jsdelivr.net unpkg.com https://www.google-analytics.com https://stats.g.doubleclick.net https://analytics.google.com http://127.0.0.1:5173 http://localhost:5173 http://127.0.0.1:5174 http://localhost:5174 ws: wss:; "
             );
         }
 

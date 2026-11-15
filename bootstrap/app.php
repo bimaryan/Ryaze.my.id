@@ -5,10 +5,15 @@ use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\EnsureActiveHostingSubscription;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
+use App\Support\ErrorPages;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -51,4 +56,58 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+
+        $exceptions->render(function (\Throwable $e, Request $request) {
+            if ($request->is('api/*') || ($request->expectsJson() && ! $request->header('X-Inertia'))) {
+                return null;
+            }
+
+            if ($e instanceof AuthenticationException || $e instanceof ValidationException) {
+                return null;
+            }
+
+            $status = $e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500;
+
+            if ($status === 500 && config('app.debug')) {
+                return null;
+            }
+
+            $page = ErrorPages::forStatus($status);
+            if (! $page) {
+                return null;
+            }
+
+            try {
+                $user = $request->user();
+                Inertia::setRootView('inertia');
+
+                return Inertia::render('Errors/Show', [
+                    ...$page,
+                    'seoTitle' => $page['code'].' — '.$page['title'].' · Ryaze',
+                    'seoDescription' => $page['description'],
+                    'canonical' => $request->url(),
+                    'ogImage' => asset('og-image.png'),
+                    'robots' => 'noindex, nofollow',
+                    'navLinks' => config('nav.links'),
+                    'footerLinks' => config('nav.footer_links'),
+                    'csrf' => csrf_token(),
+                    'auth' => [
+                        'user' => $user ? [
+                            'id' => $user->id,
+                            'name' => $user->name,
+                            'email' => $user->email,
+                            'role' => $user->role,
+                        ] : null,
+                    ],
+                    'flash' => ['success' => null, 'error' => null],
+                    'requestPath' => '/'.ltrim($request->path(), '/'),
+                    'requestMethod' => $request->method(),
+                    'requestTime' => now()->format('d M Y · H:i'),
+                ])->toResponse($request)->setStatusCode($status);
+            } catch (\Throwable $renderError) {
+                report($renderError);
+
+                return null;
+            }
+        });
     })->create();

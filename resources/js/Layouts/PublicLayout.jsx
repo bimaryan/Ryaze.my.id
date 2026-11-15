@@ -176,7 +176,7 @@ export default function PublicLayout({ children, withNav = true, withFooter = tr
                             <span className="font-black text-[#0F1A2A] dark:text-white text-sm tracking-tight">RYAZE</span>
                             <span className="font-mono text-[10px] text-[#94A3B4] dark:text-white/30 hidden sm:inline tracking-[0.1em]">&copy; {new Date().getFullYear()}</span>
                         </div>
-                        <div className="flex items-center gap-6">
+                        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-end">
                             {footerLinks.map(l => (
                                 <a key={l.href} href={l.href} className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#737373] dark:text-white/40 hover:text-[#1D5B96] dark:hover:text-[#6BA8DC] transition-colors">{l.label}</a>
                             ))}
