@@ -54,7 +54,12 @@
                     <div>
                         <p class="font-bold text-[#0F1A2A] dark:text-white text-sm">Buat Aplikasi Baru</p>
                         <p class="text-[#525252] dark:text-white/50 text-xs mt-0.5">
-                            Dari source baru (git/zip) atau project Node.js yang sudah ada. Kuota paket {{ ucfirst($plan) }}: {{ $apps->count() }} / {{ $limit }} aplikasi.
+                            Dari source baru (git/zip) atau project Node.js yang sudah ada.
+                            <span class="font-mono text-[11px]">
+                                Kuota {{ ucfirst($plan) }}:
+                                <strong>{{ $apps->count() }} / {{ $limit }}</strong> aplikasi Node
+                                &middot; <strong>{{ $projectCount }} / {{ $projectLimit === -1 ? '∞' : $projectLimit }}</strong> project
+                            </span>
                         </p>
                     </div>
                 </div>

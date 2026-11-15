@@ -37,11 +37,19 @@ class NodeAppController extends \App\Http\Controllers\Controller
         $plan = $user->getActivePlan() ?? 'free';
         $limit = NodeApp::planLimit($plan);
 
+        // Kuota proyek paket (max_projects) — project Node ikut dihitung di
+        // sini karena dibuat sebagai HostingProject biasa (satu sumber kuota
+        // dengan aplikasi Laravel/PHP yang di-deploy lewat Deploy Aplikasi).
+        $projectCount = $user->hostingProjects()->count();
+        $projectLimit = $user->getMaxProjects(); // -1 = unlimited
+
         return view('pages.hosting.user.apps', [
             'apps' => $apps,
             'availableProjects' => $availableProjects,
             'plan' => $plan,
             'limit' => $limit,
+            'projectCount' => $projectCount,
+            'projectLimit' => $projectLimit,
             'runtimeAvailable' => NodeAppService::available(),
         ]);
     }
