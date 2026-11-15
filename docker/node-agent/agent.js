@@ -21,6 +21,8 @@
  *   .app.log       — stdout/stderr aplikasi
  *   .app.json      — parameter start terakhir (untuk /restart)
  *   .node.pid      — PID (hanya mode spawn fallback)
+ *   .node-app      — penanda aplikasi Node terkelola (PERMANEN, tetap ada saat
+ *                    stop; dibaca nginx Lua untuk menonaktifkan fallback static)
  *   .ryaze-app.config.js — ecosystem PM2 (hanya mode pm2)
  */
 
@@ -53,6 +55,10 @@ const APP_META_FILE = '.app.json';
 const APP_PID_FILE = '.node.pid';
 const PM2_FILE = '.ryaze-app.config.js';
 const BUILD_LOG_FILE = '.build.log';
+// Marker permanen "folder ini adalah aplikasi Node terkelola" — TIDAK dihapus
+// saat stop. Dipakai nginx Lua untuk menonaktifkan fallback static dan
+// menampilkan halaman "aplikasi tidak berjalan" ketika app sedang stop.
+const NODE_APP_FILE = '.node-app';
 const PM2_NAME_PREFIX = 'app_';
 const BUILD_TIMEOUT_MS = 15 * 60 * 1000; // 15 menit
 const START_WAIT_MS = 30 * 1000;          // tunggu port listen maksimal 30 detik
@@ -420,6 +426,12 @@ async function startApp(projectDir, params) {
     started_at: new Date().toISOString(),
   };
   writeMarker(projectDir, APP_META_FILE, JSON.stringify(meta, null, 2));
+  // Marker permanen (tetap ada saat stop) — lihat NODE_APP_FILE di atas.
+  writeMarker(projectDir, NODE_APP_FILE, JSON.stringify({
+    entry: meta.entry,
+    npm_script: meta.npm_script,
+    updated_at: meta.started_at,
+  }, null, 2));
 
   let mode;
   if (HAS_PM2 && (entry.script || entry.npmScript)) {
@@ -603,6 +615,9 @@ const server = http.createServer(async (req, res) => {
         if (result.code !== 0) { failed = true; break; }
       }
       fs.writeFileSync(path.join(projectDir, BUILD_LOG_FILE), output.slice(-200000), { mode: 0o644 });
+      // Tandai folder sebagai aplikasi Node terkelola sejak build pertama,
+      // sehingga fallback static nginx tidak menyajikan build lama.
+      writeMarker(projectDir, NODE_APP_FILE, JSON.stringify({ updated_at: new Date().toISOString() }, null, 2));
       return send(res, failed ? 500 : 200, {
         ok: !failed,
         ...(failed ? { error: 'Build gagal' } : {}),

@@ -92,6 +92,22 @@ server {
         return "127.0.0.1"
     }
 
+    # Marker permanen aplikasi Node terkelola (.node-app, tetap ada saat stop).
+    # Dipakai untuk menonaktifkan fallback static ketika aplikasi tidak berjalan.
+    set_by_lua_block \$node_app {
+        local subdomain = "$SUBDOMAIN"
+        local base_path = "/www/sites/hosting_clients/" .. subdomain
+        local file = io.open(base_path .. "/.node-app", "r")
+        if file then
+            local marker = file:read("*l")
+            file:close()
+            if marker and marker ~= "" then
+                return "1"
+            end
+        end
+        return ""
+    }
+
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
@@ -101,6 +117,16 @@ server {
     proxy_set_header X-Forwarded-Proto \$scheme;
 
     error_page 418 = @app_proxy;
+
+    # Aplikasi Node terkelola yang sedang TIDAK berjalan: jangan sajikan
+    # fallback static (build lama bisa dianggap "masih hidup"), tapi tampilkan
+    # halaman "aplikasi tidak berjalan" (599 = kode internal Ryaze).
+    error_page 599 = @node_stopped;
+
+    location @node_stopped {
+        root /www/sites/default_error_pages;
+        rewrite ^(.*)$ /app_stopped.html break;
+    }
 
 
     # =========================================================================
@@ -171,6 +197,9 @@ server {
         if (\$app_port != "") {
             return 418;
         }
+        if (\$node_app != "") {
+            return 599;
+        }
         try_files \$uri \$uri/ @framework_fallback;
     }
 
@@ -188,6 +217,9 @@ server {
         if (\$app_port != "") {
             return 418;
         }
+        if (\$node_app != "") {
+            return 599;
+        }
         try_files \$uri =404;
         fastcgi_pass 127.0.0.1:9000;
         fastcgi_index index.php;
@@ -199,6 +231,9 @@ server {
     location ~ .*\.(js|css|png|jpg|jpeg|gif|ico|bmp|swf|eot|svg|ttf|woff|woff2)\$ {
         if (\$app_port != "") {
             return 418;
+        }
+        if (\$node_app != "") {
+            return 599;
         }
         try_files \$uri \$uri/ @framework_fallback;
         expires 30d;
@@ -278,6 +313,22 @@ server {
         return "127.0.0.1"
     }
 
+    # Marker permanen aplikasi Node terkelola (.node-app, tetap ada saat stop).
+    # Dipakai untuk menonaktifkan fallback static ketika aplikasi tidak berjalan.
+    set_by_lua_block \$node_app {
+        local subdomain = "$SUBDOMAIN"
+        local base_path = "/www/sites/hosting_clients/" .. subdomain
+        local file = io.open(base_path .. "/.node-app", "r")
+        if file then
+            local marker = file:read("*l")
+            file:close()
+            if marker and marker ~= "" then
+                return "1"
+            end
+        end
+        return ""
+    }
+
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
@@ -287,6 +338,16 @@ server {
     proxy_set_header X-Forwarded-Proto \$scheme;
 
     error_page 418 = @app_proxy;
+
+    # Aplikasi Node terkelola yang sedang TIDAK berjalan: jangan sajikan
+    # fallback static (build lama bisa dianggap "masih hidup"), tapi tampilkan
+    # halaman "aplikasi tidak berjalan" (599 = kode internal Ryaze).
+    error_page 599 = @node_stopped;
+
+    location @node_stopped {
+        root /www/sites/default_error_pages;
+        rewrite ^(.*)$ /app_stopped.html break;
+    }
 
 
     # =========================================================================
@@ -357,6 +418,9 @@ server {
         if (\$app_port != "") {
             return 418;
         }
+        if (\$node_app != "") {
+            return 599;
+        }
         try_files \$uri \$uri/ @framework_fallback;
     }
 
@@ -374,6 +438,9 @@ server {
         if (\$app_port != "") {
             return 418;
         }
+        if (\$node_app != "") {
+            return 599;
+        }
         try_files \$uri =404;
         fastcgi_pass 127.0.0.1:9000;
         fastcgi_index index.php;
@@ -385,6 +452,9 @@ server {
     location ~ .*\.(js|css|png|jpg|jpeg|gif|ico|bmp|swf|eot|svg|ttf|woff|woff2)\$ {
         if (\$app_port != "") {
             return 418;
+        }
+        if (\$node_app != "") {
+            return 599;
         }
         try_files \$uri \$uri/ @framework_fallback;
         expires 30d;
