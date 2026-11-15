@@ -46,6 +46,9 @@ server {
     if (-f $CLIENT_DIR/build/index.html) {
         set \$dynamic_root $CLIENT_DIR/build;
     }
+    if (-f $CLIENT_DIR/out/index.html) {
+        set \$dynamic_root $CLIENT_DIR/out;
+    }
 
     root \$dynamic_root;
     index index.php index.html index.htm;
@@ -269,6 +272,9 @@ server {
     }
     if (-f $CLIENT_DIR/build/index.html) {
         set \$dynamic_root $CLIENT_DIR/build;
+    }
+    if (-f $CLIENT_DIR/out/index.html) {
+        set \$dynamic_root $CLIENT_DIR/out;
     }
 
     root \$dynamic_root;

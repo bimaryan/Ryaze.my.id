@@ -290,6 +290,9 @@ server {
     if (-f /www/sites/hosting_clients/__SUBDOMAIN__/build/index.html) {
         set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__/build;
     }
+    if (-f /www/sites/hosting_clients/__SUBDOMAIN__/out/index.html) {
+        set $dynamic_root /www/sites/hosting_clients/__SUBDOMAIN__/out;
+    }
 
     root $dynamic_root;
     index index.php index.html index.htm;

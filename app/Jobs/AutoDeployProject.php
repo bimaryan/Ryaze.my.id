@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\HostingProject;
 use App\Services\CloudflareTunnelService;
+use App\Services\NodeServerService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -215,14 +216,6 @@ class AutoDeployProject implements ShouldQueue
             return;
         }
 
-        // NOTE: Server TIDAK di-start otomatis.
-        // Klien menjalankan server Node-nya sendiri lewat terminal setelah deploy sukses,
-        // supaya tiap project bisa pakai start command custom masing-masing
-        // dan port tidak dip-proxy ke server yang belum hidup (anti 502).
-        $this->log($deploy, '> Build selesai. Server Node TIDAK di-start otomatis — klien menjalankannya sendiri.');
-        $this->log($deploy, '> Jalankan di Terminal project: ryaze-start [entry] (port acak otomatis, log di .app.log).');
-        $this->log($deploy, '> Contoh: ryaze-start | ryaze-start server.js | ryaze-stop | ryaze-status');
-
         $isLaravelInertia = file_exists("{$projectDir}/artisan")
             && file_exists("{$projectDir}/composer.json")
             && file_exists("{$projectDir}/package.json");
@@ -291,16 +284,156 @@ class AutoDeployProject implements ShouldQueue
                     }
                 }
 
-                // Server TIDAK di-start otomatis (lihat catatan di awal method).
-                // Jika tidak ada static output / framework node → ini SSR/API,
-                // tapi run-nya manual lewat terminal klien.
                 if (! $hasStatic || $framework === 'node') {
-                    $this->log($deploy, '> Project ini butuh server Node (SSR/API).');
-                    $this->log($deploy, '> Jalankan lewat Terminal project: ryaze-start (port acak 3000-3400 / 8000-8100, otomatis nyambung ke nginx via .port + .proxy-host).');
-                    $this->log($deploy, '> Server berjalan detached — tetap hidup walau terminal ditutup. Matikan: ryaze-stop. Log: ryaze-log.');
+                    $this->log($deploy, "> Project {$framework} berjalan sebagai Server Node.js (SSR/API).");
+
+                    // Cegah 403 Forbidden di Nginx jika server belum aktif atau sedang restart
+                    $fallbackFile = "{$projectDir}/index.html";
+                    if (! file_exists($fallbackFile) && ! file_exists("{$projectDir}/index.php")) {
+                        $this->writeNodeFallbackHtml($fallbackFile);
+                    }
+
+                    // Auto-start server Node.js
+                    $this->log($deploy, '> Menjalankan server Node.js secara otomatis...');
+                    /** @var NodeServerService $srv */
+                    $srv = app(NodeServerService::class);
+
+                    // Hentikan proses lama jika ada (redeploy)
+                    $portFile = "{$projectDir}/" . NodeServerService::PORT_FILE;
+                    if (file_exists($portFile)) {
+                        $curPort = (int) trim((string) @file_get_contents($portFile));
+                        if ($curPort) {
+                            $stopLog = [];
+                            $stopResult = null;
+                            $srv->stop($this->project, $projectDir, $stopLog, $stopResult);
+                        }
+                    }
+
+                    $port = $srv->pickFreePort();
+                    if ($port) {
+                        $startLog = [];
+                        $startResult = null;
+                        if ($srv->start($this->project, $projectDir, null, $port, $startLog, $startResult)) {
+                            $this->log($deploy, "> ✅ Server Node.js ({$framework}) aktif di port {$port} (PID {$startResult['pid']}).");
+                            $this->log($deploy, "> Nginx reverse proxy terhubung ke http://127.0.0.1:{$port}");
+                            $this->log($deploy, '> Kontrol server tersedia via Terminal: ryaze-start | ryaze-stop | ryaze-status | ryaze-log');
+                        } else {
+                            $this->log($deploy, "> ⚠️ Server Node belum listen di port {$port} dalam 25 detik. Detail:");
+                            foreach ($startLog as $line) {
+                                $this->log($deploy, "   {$line}");
+                            }
+                            $this->log($deploy, '> Anda dapat menjalankannya manual via Terminal project: ryaze-start');
+                        }
+                    } else {
+                        $this->log($deploy, '> ⚠️ Tidak ada port bebas yang tersedia di rentang platform.');
+                        $this->log($deploy, '> Silakan cek proses lain atau start manual: ryaze-start');
+                    }
                 }
             }
         }
+    }
+
+    private function writeNodeFallbackHtml(string $path): void
+    {
+        $html = <<<'HTML'
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryaze Cloud - Menyiapkan Aplikasi</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #0A1322;
+            color: #E3EAF1;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #0D1828;
+            border: 1px solid #1B2C44;
+            padding: 2.5rem 2rem;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #1B2C44;
+            border-top-color: #6BA8DC;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 1.25rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .tag {
+            display: inline-block;
+            background: #12233A;
+            border: 1px solid #1D5B96;
+            color: #6BA8DC;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            margin-bottom: 1.25rem;
+        }
+        h1 {
+            font-size: 1.15rem;
+            margin: 0 0 0.5rem 0;
+            color: #FFFFFF;
+            letter-spacing: 0.05em;
+        }
+        p {
+            font-size: 13px;
+            color: #8CA0BA;
+            line-height: 1.6;
+            margin: 0 0 1.25rem 0;
+        }
+        .info {
+            font-size: 11px;
+            color: #556B82;
+            border-top: 1px solid #1B2C44;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            line-height: 1.5;
+        }
+        code {
+            background: #12233A;
+            color: #6BA8DC;
+            padding: 2px 6px;
+            border: 1px solid #1B2C44;
+        }
+    </style>
+    <script>
+        setTimeout(function() {
+            window.location.reload();
+        }, 3000);
+    </script>
+</head>
+<body>
+    <div class="card">
+        <div class="spinner"></div>
+        <div><span class="tag">Ryaze Cloud Hosting</span></div>
+        <h1>Aplikasi Sedang Memulai</h1>
+        <p>Server Node.js / SSR sedang diinisialisasi. Halaman ini akan memuat ulang secara otomatis ketika server siap melayani permintaan.</p>
+        <div class="info">
+            Jika proses memakan waktu lebih dari 1 menit, buka panel Ryaze dan jalankan <code>ryaze-start</code> di Web Terminal.
+        </div>
+    </div>
+</body>
+</html>
+HTML;
+        @file_put_contents($path, $html);
     }
 
     /**

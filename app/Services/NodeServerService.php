@@ -76,6 +76,15 @@ class NodeServerService
             return true;
         }
 
+        if ($host === '127.0.0.1') {
+            $connLocal = @fsockopen('localhost', $port, $errCode, $errStr, 0.2);
+            if (is_resource($connLocal)) {
+                fclose($connLocal);
+
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -102,7 +111,14 @@ class NodeServerService
             1 => ['file', $logPath, 'a'],
             2 => ['file', $logPath, 'a'],
         ];
-        $env = $this->buildEnv($port);
+        $env = $this->buildEnv($port, $projectDir);
+
+        if (! $this->isLinux && is_array($command)) {
+            $bin = $command[0];
+            if (in_array($bin, ['npm', 'npx'])) {
+                $command[0] = $bin . '.cmd';
+            }
+        }
 
         $proc = proc_open($command, $descriptors, $pipes, $projectDir, $env);
         if (! is_resource($proc)) {
@@ -293,7 +309,20 @@ class NodeServerService
             }
         }
 
-        // 4. Deteksi umum
+        // 4. Deteksi Next.js
+        if (file_exists("{$projectDir}/.next/standalone/server.js")) {
+            $log[] = '> Entry: node .next/standalone/server.js (Next.js standalone)';
+
+            return ['node', '.next/standalone/server.js'];
+        }
+
+        if (is_dir("{$projectDir}/.next")) {
+            $log[] = '> Entry: npx next start (Next.js)';
+
+            return ['npx', 'next', 'start'];
+        }
+
+        // 5. Deteksi umum
         foreach (['server.js', 'index.js', 'app.js', 'server.mjs', 'index.mjs'] as $guess) {
             if (file_exists("{$projectDir}/{$guess}")) {
                 $log[] = "> Entry: node {$guess} (auto-detect)";
@@ -314,7 +343,7 @@ class NodeServerService
      *
      * Semantik sama dengan terminalEnv() di DashboardController (daftar identik).
      */
-    private function buildEnv(int $port): array
+    private function buildEnv(int $port, ?string $projectDir = null): array
     {
         $env = getenv();
         if (! is_array($env)) {
@@ -338,10 +367,27 @@ class NodeServerService
         $env['PORT'] = (string) $port;
         $env['HOST'] = '0.0.0.0';
         $env['HOSTNAME'] = '0.0.0.0'; // Next.js membaca HOSTNAME
+        $env['NODE_ENV'] = 'production';
 
         // Buang variabel port/platform milik shell agar tidak menimpa
-        // PORT yangkami tentukan (beberapa framework membaca ini juga).
+        // PORT yang kami tentukan (beberapa framework membaca ini juga).
         unset($env['VITE_PORT']);
+
+        $pathEnv = $env['PATH'] ?? getenv('PATH') ?: '';
+        $extraPaths = [];
+        if ($projectDir) {
+            $extraPaths[] = "{$projectDir}/node_modules/.bin";
+        }
+        $extraPaths = array_merge($extraPaths, [
+            '/usr/local/bin',
+            '/usr/bin',
+            '/bin',
+            '/usr/local/sbin',
+            '/usr/sbin',
+            '/sbin',
+        ]);
+        $separator = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? ';' : ':';
+        $env['PATH'] = implode($separator, array_unique(array_filter(array_merge($extraPaths, explode($separator, $pathEnv)))));
 
         return $env;
     }
