@@ -23,8 +23,12 @@ services:
       # Opsional: paksa IP yang ditulis ke .proxy-host (default: auto-detect)
       # NODE_AGENT_PROXY_HOST: "172.18.0.5"
     volumes:
-      # Volume yang SAMA dengan yang dipakai nginx & panel untuk folder klien
-      - /www/sites/hosting_clients:/www/sites/hosting_clients
+      # Mount folder klien di HOST ke path yang sama dengan yang dilihat
+      # nginx/panel (/www/sites/hosting_clients). Sesuaikan HOST_CLIENTS_DIR
+      # dengan lokasi folder klien di server Anda:
+      #   1Panel openresty: /opt/1panel/apps/openresty/openresty/www/sites/hosting_clients
+      #   Atau cek: docker inspect <php-container> --format '{{json .Mounts}}' | grep hosting
+      - "${HOST_CLIENTS_DIR:-/opt/1panel/apps/openresty/openresty/www/sites/hosting_clients}:/www/sites/hosting_clients"
     ports:
       # Hanya internal — panel & nginx mengakses lewat docker network.
       # Bind ke localhost agar tidak terekspos publik.
@@ -35,4 +39,7 @@ services:
 
 networks:
   ryaze-net:
+    # Network shared 1Panel (tempat container PHP & openresty berada).
+    # Cek dengan: docker network ls / docker inspect <php-container>
+    name: ${DOCKER_NETWORK:-1panel-network}
     external: true
