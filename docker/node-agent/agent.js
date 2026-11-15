@@ -183,21 +183,77 @@ function probePort(port) {
   });
 }
 
+/**
+ * Kumpulkan semua port yang "terpakai":
+ *   1. Port yang diklaim file .port milik project lain — supaya dua aplikasi
+ *      yang di-start/restart hampir bersamaan tidak mendapat port sama.
+ *   2. Port yang sedang LISTEN di container ini (parse /proc/net/tcp + tcp6),
+ *      meliputi proses apa pun di dalam container (termasuk aplikasi user).
+ * Di Windows (dev), /proc tidak ada — fallback ke klaim marker + bind test.
+ */
+function listUsedPorts() {
+  const used = new Set();
+
+  try {
+    for (const name of fs.readdirSync(CLIENTS_DIR)) {
+      const dir = path.join(CLIENTS_DIR, name);
+      let st;
+      try { st = fs.statSync(dir); } catch (e) { continue; }
+      if (!st.isDirectory()) continue;
+      const raw = readMarker(dir, PORT_FILE);
+      if (/^\d+$/.test(raw)) used.add(parseInt(raw, 10));
+    }
+  } catch (e) { /* CLIENTS_DIR bermasalah — biarkan bind test yang menentukan */ }
+
+  try {
+    for (const file of ['/proc/net/tcp', '/proc/net/tcp6']) {
+      const content = fs.readFileSync(file, 'utf8');
+      for (const line of content.split('\n').slice(1)) {
+        const cols = line.trim().split(/\s+/);
+        // State 0A = LISTEN; kolom local_address = hex IP:PORT
+        if (cols[3] === '0A' && cols[1]) {
+          const port = parseInt(cols[1].split(':')[1], 16);
+          if (Number.isFinite(port)) used.add(port);
+        }
+      }
+    }
+  } catch (e) { /* bukan Linux (dev Windows) → abaikan */ }
+
+  return used;
+}
+
+/**
+ * Pilih port acak yang benar-benar kosong:
+ *   - hindari port terpakai (hasil listUsedPorts)
+ *   - verifikasi dengan bind 0.0.0.0 (level yang sama dengan aplikasi user)
+ *   - maksimal 200 percobaan lalu gagal dengan pesan jelas
+ */
 function pickFreePort() {
   const net = require('net');
-  const ranges = [...PORT_RANGES].sort(() => Math.random() - 0.5);
+  const used = listUsedPorts();
   return new Promise((resolve, reject) => {
-    const tryRange = (i) => {
-      if (i >= ranges.length) return reject(new Error('Tidak ada port kosong tersedia'));
-      const [min, max] = ranges[i];
+    let attempts = 0;
+    const attempt = () => {
+      attempts++;
+      if (attempts > 200) {
+        return reject(new Error('Tidak ada port kosong tersedia (200 percobaan gagal)'));
+      }
+      const [min, max] = PORT_RANGES[Math.floor(Math.random() * PORT_RANGES.length)];
       const port = Math.floor(Math.random() * (max - min + 1)) + min;
+      if (used.has(port)) return attempt();
+
       const server = net.createServer();
-      server.once('error', () => tryRange(i + 1));
-      server.listen(port, '127.0.0.1', () => {
+      server.once('error', () => {
+        used.add(port);
+        attempt();
+      });
+      // Bind ke 0.0.0.0 — sesuai cara aplikasi user listen, jadi cek ini
+      // mewakili kondisi nyata di namespace container.
+      server.listen(port, '0.0.0.0', () => {
         server.close(() => resolve(port));
       });
     };
-    tryRange(0);
+    attempt();
   });
 }
 
