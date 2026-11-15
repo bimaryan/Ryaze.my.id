@@ -54,10 +54,18 @@ class QrisPaymentController extends Controller
         $details['flash_info'] = session('info') ?? session('success');
         $details['confirmed_at'] = $pendingConfirmation?->created_at?->toIso8601String();
 
-        // Timer pembayaran (UI-level): dorong user bayar segera. Sifatnya
-        // tidak mengikat di sisi server — setelah habis, user cukup menekan
-        // "Perbarui QR" untuk membuat ulang kode (invoice tetap sama).
+        // Timer pembayaran (UI-level): expiry disimpan di DB per invoice agar
+        // countdown TIDAK mengulang saat user me-refresh atau membuka kembali
+        // halaman yang sama. Sesi baru hanya dibuat ketika sesi lama kedaluwarsa
+        // (sama dengan tombol "Perbarui QR"). Tidak mengikat di sisi server.
         $timerMinutes = max(1, (int) \App\Models\Setting::val('qris_timer_minutes', 15));
+        $session = \App\Models\QrisPaymentSession::where('order_number', $cleanOrderId)->first();
+        if (!$session || $session->expires_at->isPast()) {
+            $session = \App\Models\QrisPaymentSession::updateOrCreate(
+                ['order_number' => $cleanOrderId],
+                ['expires_at' => now()->addMinutes($timerMinutes)]
+            );
+        }
 
         return Inertia::render('Payment/Qris', [
             'order'          => $details,
@@ -65,7 +73,7 @@ class QrisPaymentController extends Controller
             'dynamicPayload' => $dynamicPayload,
             'qrDataUri'      => $qrDataUri,
             'merchant'       => $merchant,
-            'expiresAt'      => now()->addMinutes($timerMinutes)->toIso8601String(),
+            'expiresAt'      => $session->expires_at->toIso8601String(),
             'seoTitle'       => 'Pembayaran QRIS | Ryaze',
             'seoDescription' => 'Halaman pembayaran QRIS Dinamis untuk tagihan pesanan Anda di Ryaze.',
             'robots'         => 'noindex, nofollow',
