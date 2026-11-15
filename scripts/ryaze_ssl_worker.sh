@@ -121,7 +121,7 @@ server {
     # Aplikasi Node terkelola yang sedang TIDAK berjalan: jangan sajikan
     # fallback static (build lama bisa dianggap "masih hidup"), tapi tampilkan
     # halaman "aplikasi tidak berjalan" (599 = kode internal Ryaze).
-    error_page 599 = @node_stopped;
+    error_page 599 =503 @node_stopped;
 
     location @node_stopped {
         root /www/sites/default_error_pages;
@@ -342,7 +342,7 @@ server {
     # Aplikasi Node terkelola yang sedang TIDAK berjalan: jangan sajikan
     # fallback static (build lama bisa dianggap "masih hidup"), tapi tampilkan
     # halaman "aplikasi tidak berjalan" (599 = kode internal Ryaze).
-    error_page 599 = @node_stopped;
+    error_page 599 =503 @node_stopped;
 
     location @node_stopped {
         root /www/sites/default_error_pages;
