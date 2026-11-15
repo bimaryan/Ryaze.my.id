@@ -262,7 +262,7 @@
                                         </span>
                                     </div>
                                     <p class="text-xs text-[#525252] dark:text-white/50 mt-1">
-                                        {{ $app->entry ? 'Entry: <span class="font-mono">' . e($app->entry) . '</span>' : 'Entry: auto-detect' }}
+                                        @if ($app->entry) Entry: <span class="font-mono">{{ $app->entry }}</span> @else Entry: auto-detect @endif
                                         &middot; {{ strtoupper($app->node_env) }}
                                         @if ($app->port) &middot; Port {{ $app->port }} @endif
                                         @if ($app->status === 'running' && $app->started_at) &middot; Jalan {{ $app->started_at->diffForHumans() }} @endif
