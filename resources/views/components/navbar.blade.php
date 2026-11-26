@@ -294,6 +294,7 @@
             @if ($isAdminHosting)
                 {!! $section('Manajemen Hosting') !!}
                 {!! $item(route('admin_hosting.projects'), 'Kelola Project', 'fa-solid fa-server', request()->routeIs('admin_hosting.projects')) !!}
+                {!! $item(route('admin_hosting.ssh_access.index'), 'Akses SSH', 'fa-solid fa-key', request()->routeIs('admin_hosting.ssh_access*')) !!}
                 {!! $item(route('admin_hosting.deployments'), 'Riwayat Deploy', 'fa-solid fa-clock-rotate-left', request()->routeIs('admin_hosting.deployments')) !!}
                 {!! $item(route('admin_hosting.pending'), 'Butuh Tindakan', 'fa-solid fa-triangle-exclamation', request()->routeIs('admin_hosting.pending')) !!}
                 {!! $item(route('admin_hosting.databases'), 'Semua Database', 'fa-solid fa-database', request()->routeIs('admin_hosting.databases')) !!}
@@ -326,6 +327,7 @@
                 {!! $item(route('user_hosting.databases.pma'), 'DB Manager', 'fa-solid fa-table-columns', request()->routeIs('user_hosting.databases.pma')) !!}
                 {!! $item(route('user_hosting.apps.index'), 'Aplikasi Node', 'fa-brands fa-node-js', request()->routeIs('user_hosting.apps.*')) !!}
                 {!! $item(route('user_hosting.storage'), 'File & Storage', 'fa-solid fa-folder-open', request()->routeIs('user_hosting.storage*')) !!}
+                {!! $item(route('user_hosting.ssh_access.index'), 'Akses SSH', 'fa-solid fa-key', request()->routeIs('user_hosting.ssh_access*')) !!}
                 {!! $item(route('user_hosting.docs'), 'Dokumentasi', 'fa-solid fa-book-open', request()->routeIs('user_hosting.docs*')) !!}
                 {!! $item(route('whois.index'), 'Cek Domain', 'fa-solid fa-magnifying-glass', request()->routeIs('whois*')) !!}
 

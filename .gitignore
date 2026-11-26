@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 .env
+*.env
 .env.backup
 .env.production
 .env.prod
@@ -30,6 +31,7 @@
 /storage/framework/views/*
 /vendor
 _ide_helper.php
+github_tokens.txt
 Homestead.json
 Homestead.yaml
 Thumbs.db

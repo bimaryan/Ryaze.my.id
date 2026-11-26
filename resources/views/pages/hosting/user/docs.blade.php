@@ -291,6 +291,109 @@
                     </p>
                 </section>
 
+                <!-- Section 9: SSH & SFTP -->
+                <section>
+                    <h2 class="ui-display text-lg mb-3">9. Akses SSH &amp; SFTP</h2>
+                    <p class="mb-6 text-[#525252] dark:text-white/70 text-sm">
+                        Ingin mengedit file project langsung dari komputer sendiri? Gunakan akses SSH/SFTP. Anda bisa membuka terminal, atau mengupload file lewat aplikasi seperti WinSCP — tanpa perlu membuka port atau mengatur jaringan.
+                    </p>
+
+                    <h3 class="text-sm font-semibold text-[#0F1A2A] dark:text-white mb-2">Akses SSH atau SFTP?</h3>
+                    <div class="grid gap-4 md:grid-cols-2 mb-6">
+                        <div class="ui-panel p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-terminal text-[#1D5B96] dark:text-[#6BA8DC]"></i>
+                                <h4 class="font-semibold text-sm text-[#0F1A2A] dark:text-white">SSH (Terminal)</h4>
+                            </div>
+                            <p class="text-xs text-[#525252] dark:text-white/70">Untuk menjalankan perintah seperti git, npm, composer, atau php. Cocok untuk paket <strong>Pro/Business</strong>.</p>
+                        </div>
+                        <div class="ui-panel p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-folder-open text-[#1D5B96] dark:text-[#6BA8DC]"></i>
+                                <h4 class="font-semibold text-sm text-[#0F1A2A] dark:text-white">SFTP (File)</h4>
+                            </div>
+                            <p class="text-xs text-[#525252] dark:text-white/70">Untuk upload, download, dan edit file. Cocok untuk semua paket. Bisa memakai WinSCP.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-sm font-semibold text-[#0F1A2A] dark:text-white mb-2">Langkah 1 — Buat akses di panel</h3>
+                    <ol class="list-decimal pl-5 text-sm text-[#525252] dark:text-white/70 space-y-2 mb-4">
+                        <li>Buka menu <strong>Akses SSH</strong>.</li>
+                        <li>Klik <strong>Buat Akses SSH</strong>, pilih project dan jenis akses.</li>
+                        <li>Simpan <strong>username</strong>, <strong>password</strong>, <strong>hostname</strong>, dan <strong>port</strong> yang muncul. <strong>Password hanya ditampilkan sekali</strong> — jangan sampai terlewat.</li>
+                    </ol>
+                    <p class="text-xs text-[#525252] dark:text-white/70 mb-6">Username memakai username akun Ryaze Anda, password dibuat acak otomatis. Lupa password? Cabut akses lalu buat lagi.</p>
+
+                    <h3 class="text-sm font-semibold text-[#0F1A2A] dark:text-white mb-2">Langkah 2 — Siapkan komputer Anda</h3>
+                    <p class="text-xs text-[#525252] dark:text-white/70 mb-3">Unduh satu aplikasi kecil bernama <strong>Cloudflared</strong>. Aplikasi ini yang menghubungkan komputer Anda ke hosting.</p>
+                    <ul class="list-disc pl-5 text-xs text-[#525252] dark:text-white/70 space-y-2 mb-3">
+                        <li><strong>Windows:</strong> unduh <code>cloudflared.exe</code>, letakkan di satu folder bersama file dari panel.</li>
+                        <li><strong>Mac:</strong> jalankan <code>brew install cloudflare/cloudflare/cloudflared</code></li>
+                        <li><strong>Linux:</strong> unduh file <code>cloudflared</code>, lalu jalankan <code>chmod +x cloudflared</code></li>
+                    </ul>
+                    <p class="text-xs mb-6">
+                        <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/" target="_blank" rel="noopener" class="text-[#1D5B96] dark:text-[#6BA8DC] underline">Unduh Cloudflared di sini</a>
+                    </p>
+
+                    <h3 class="text-sm font-semibold text-[#0F1A2A] dark:text-white mb-2">Langkah 3 — Hubungkan</h3>
+                    <div class="ui-panel p-5 mb-6 space-y-5 text-xs text-[#525252] dark:text-white/70">
+                        <div>
+                            <p class="font-semibold text-[#0F1A2A] dark:text-white mb-2">Windows (paling mudah)</p>
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>Di folder paket dari panel, klik dua kali <code>putty.bat</code>.</li>
+                                <li>Jendela PuTTY akan terbuka. Masukkan <strong>username</strong> dan <strong>password</strong> dari panel.</li>
+                                <li>Selesai — Anda sudah masuk ke terminal project.</li>
+                                <li>Untuk upload file, buka <strong>WinSCP</strong>: protokol <em>SFTP</em>, host <code>127.0.0.1</code>, port sesuai panel, lalu masukkan username dan password yang sama.</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-[#0F1A2A] dark:text-white mb-2">Mac / Linux</p>
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>Buka terminal, masuk ke folder paket, lalu jalankan <code>./ssh.sh</code> untuk terminal atau <code>./sftp.sh</code> untuk file.</li>
+                                <li>Masukkan password saat diminta.</li>
+                                <li>Selesai. Ketik <code>exit</code> atau <code>quit</code> untuk keluar.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <p class="text-xs text-[#525252] dark:text-white/70 mb-6">Semua perintah di halaman <strong>Akses SSH</strong> sudah siap dipakai — tinggal salin. Tidak perlu kunci SSH atau pengaturan tambahan.</p>
+
+                    <h3 class="text-sm font-semibold text-[#0F1A2A] dark:text-white mb-2">Pertanyaan yang sering ditanya</h3>
+                    <div class="ui-panel p-5 mb-6 space-y-4 text-xs text-[#525252] dark:text-white/70">
+                        <div>
+                            <p class="font-semibold text-[#0F1A2A] dark:text-white mb-1">Kenapa perlu aplikasi Cloudflared?</p>
+                            <p>Karena koneksi hosting kami memakai jalur aman Cloudflare. Aplikasi kecil ini menjadi jembatan antara komputer Anda dan project.</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-[#0F1A2A] dark:text-white mb-1">Kenapa tidak bisa pakai SSH biasa?</p>
+                            <p>Akses SSH kami tidak menggunakan port publik, supaya lebih aman. Cukup pakai script atau tombol yang sudah disediakan di panel.</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-[#0F1A2A] dark:text-white mb-1">Saya lupa password / sudah tidak bisa masuk?</p>
+                            <p>Buka menu <strong>Akses SSH</strong>, klik <strong>Cabut</strong>, lalu <strong>Buat Akses SSH</strong> lagi. Kredensial baru akan dibuat. Project dan file Anda tidak berubah.</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-[#0F1A2A] dark:text-white mb-1">Muncul pesan "Connection refused"?</p>
+                            <p>Jalankan dulu <code>putty.bat</code> atau script <code>ssh.sh</code> — jembatannya belum aktif. Biarkan jendela itu terbuka selama Anda terhubung.</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-[#0F1A2A] dark:text-white mb-1">Muncul "This service allows sftp connections only"?</p>
+                            <p>Akses Anda bertipe SFTP. Gunakan WinSCP atau <code>./sftp.sh</code> untuk mengelola file.</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-[#0F1A2A] dark:text-white mb-1">Bisa keluar dari folder project?</p>
+                            <p>Tidak. Terminal langsung berada di folder project Anda, dan naik ke folder lain tidak diizinkan.</p>
+                        </div>
+                    </div>
+
+                    <div class="ui-panel flex items-start gap-4 p-5">
+                        <div class="ui-icon-box"><i class="fa-solid fa-lock text-xs"></i></div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-[#0F1A2A] dark:text-white mb-1">Jaga kredensial Anda</h4>
+                            <p class="text-xs text-[#525252] dark:text-white/70">Jangan bagikan username, password, atau file <code>cloudflared.conf</code> kepada orang lain. Setiap project punya akses terpisah.</p>
+                        </div>
+                    </div>
+                </section>
+
                 <hr class="border-[#EDF2F7] dark:border-[#2A4463] my-6">
                 
                 <div class="text-center">

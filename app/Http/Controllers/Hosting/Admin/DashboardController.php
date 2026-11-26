@@ -382,6 +382,9 @@ class DashboardController extends Controller
         // Hapus Record DNS Cloudflare
         $this->deleteCloudflareDNS($project->ryaze_domain);
 
+        // Cabut akses SSH klien (container + port-forward) sebelum folder dihapus.
+        app(\App\Services\SshClientService::class)->revokeByProject($project);
+
         // Hapus folder server (opsional, sesuaikan path)
         $subdomain = explode('.', $project->ryaze_domain)[0];
         $projectDir = hosting_clients_dir()."/{$subdomain}";

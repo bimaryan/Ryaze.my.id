@@ -2721,6 +2721,9 @@ PHP;
             app(\App\Services\NodeAppService::class)->stop($nodeApp);
         }
 
+        // 1c. Cabut akses SSH klien (container + port-forward) sebelum folder dihapus.
+        app(\App\Services\SshClientService::class)->revokeByProject($project);
+
         // 2. Hapus Folder Root
         if (is_dir($projectDir)) {
             File::deleteDirectory($projectDir);

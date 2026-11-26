@@ -76,6 +76,7 @@ return [
 
     'cloudflare' => [
         'zone_id' => env('CLOUDFLARE_ZONE_ID'),
+        'ryz_zone_id' => env('CLOUDFLARE_RYZ_ZONE_ID'),
         'api_token' => env('CLOUDFLARE_API_TOKEN'),
         'tunnel_url' => env('CLOUDFLARE_TUNNEL_URL'),
     ],

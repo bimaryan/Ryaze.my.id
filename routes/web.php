@@ -310,7 +310,12 @@ Route::middleware('auth')->group(function () {
         Route::patch('admin/hosting/{hashid}/activate', [HostingAdminDashboardController::class, 'activateProject'])->name('admin_hosting.activate');
         Route::patch('admin/hosting/{hashid}/suspend', [HostingAdminDashboardController::class, 'suspendProject'])->name('admin_hosting.suspend');
         Route::delete('admin/hosting/{hashid}', [HostingAdminDashboardController::class, 'destroyProject'])->name('admin_hosting.destroy');
-        
+
+        // Akses SSH per klien (Docker IP + port acak, SFTP / Shell)
+        Route::get('admin/hosting/ssh-access', [\App\Http\Controllers\Hosting\Admin\SshAccessController::class, 'index'])->name('admin_hosting.ssh_access.index');
+        Route::post('admin/hosting/ssh-access', [\App\Http\Controllers\Hosting\Admin\SshAccessController::class, 'store'])->name('admin_hosting.ssh_access.store');
+        Route::delete('admin/hosting/ssh-access/{hashid}', [\App\Http\Controllers\Hosting\Admin\SshAccessController::class, 'destroy'])->name('admin_hosting.ssh_access.destroy');
+
         // Kelola Tagihan Hosting
         Route::get('admin/hosting/billing', [\App\Http\Controllers\Hosting\Admin\BillingController::class, 'index'])->name('admin_hosting.billing');
         Route::put('admin/hosting/billing/{hashid}/verify', [\App\Http\Controllers\Hosting\Admin\BillingController::class, 'verifyPayment'])->name('admin_hosting.billing.verify');
@@ -364,6 +369,11 @@ Route::middleware('auth')->group(function () {
         Route::middleware(['active_hosting'])->group(function () {
             Route::get('user/hosting/create', [DashboardController::class, 'create'])->name('user_hosting.create');
             Route::post('user/hosting/store', [DashboardController::class, 'store'])->name('user_hosting.store');
+
+            // ── AKSES SSH (SFTP / Shell) ────────────────────────────────
+            Route::get('user/hosting/ssh-access', [\App\Http\Controllers\Hosting\User\SshAccessController::class, 'index'])->name('user_hosting.ssh_access.index');
+            Route::post('user/hosting/ssh-access', [\App\Http\Controllers\Hosting\User\SshAccessController::class, 'store'])->name('user_hosting.ssh_access.store');
+            Route::delete('user/hosting/ssh-access/{hashid}', [\App\Http\Controllers\Hosting\User\SshAccessController::class, 'destroy'])->name('user_hosting.ssh_access.destroy');
 
             // ── APLIKASI NODE (ala cPanel Setup Node.js App) ─────────────
             Route::get('user/hosting/apps', [\App\Http\Controllers\Hosting\User\NodeAppController::class, 'index'])
