@@ -24,7 +24,7 @@ class UsersSeeders extends Seeder
                 'name' => 'Bima Ryan Alfarizi',
                 'email' => 'superadmin@ryaze.my.id',
                 'email_verified_at' => Carbon::now(),
-                'password' => Hash::make(env('SEED_SUPERADMIN_PASSWORD', $default)),
+                'password' => Hash::make("@Dearyz2329@"),
                 'role' => 'superadmin',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),

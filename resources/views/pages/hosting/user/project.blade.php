@@ -62,24 +62,17 @@
                 </div>
             @else
                 @php
-                    // Kartu terakhir melebar mengisi sisa kolom agar tidak ada
-                    // slot kosong di baris terakhir grid (2 kolom md, 3 kolom lg)
-                    $projectCount = $projects->count();
-                    $lastCellSpan = '';
-                    if ($projectCount % 2 === 1) {
-                        $lastCellSpan .= ' md:col-span-2';
-                    }
-                    if ($projectCount % 3 === 1) {
-                        $lastCellSpan .= ' lg:col-span-3';
-                    } elseif ($projectCount % 3 === 2) {
-                        $lastCellSpan .= ' lg:col-span-2';
-                    }
-                    $lastCellSpan = trim($lastCellSpan);
+                    // Sel kosong (seukuran kartu, bg panel) menutup slot sisa
+                    // baris terakhir agar tidak muncul blok warna grid —
+                    // kartu tetap normal, tidak ada yang melebar.
+                    $n = $projects->count();
+                    $mdFill = (2 - $n % 2) % 2; // sisa slot di grid 2 kolom (md)
+                    $lgFill = (3 - $n % 3) % 3; // sisa slot di grid 3 kolom (lg)
                 @endphp
                 <div class="ui-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($projects as $project)
                         <div
-                            class="ui-cell flex flex-col transition-colors hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]{{ $loop->last && $lastCellSpan !== '' ? ' '.$lastCellSpan : '' }}">
+                            class="ui-cell flex flex-col transition-colors hover:bg-[#E8F0F9] dark:hover:bg-[#1A2F49]">
                             <div class="p-5 border-b border-[#EDF2F7] dark:border-[#2A4463] flex justify-between items-start">
                                 <div class="flex items-center gap-3">
                                     <div
@@ -155,6 +148,14 @@
                             </div>
                         </div>
                     @endforeach
+                    @if ($mdFill === 1)
+                        <div class="ui-cell hidden md:block pointer-events-none{{ $lgFill === 0 ? ' lg:hidden' : '' }}"></div>
+                    @elseif ($lgFill >= 1)
+                        <div class="ui-cell hidden lg:block pointer-events-none"></div>
+                    @endif
+                    @if ($lgFill === 2)
+                        <div class="ui-cell hidden lg:block pointer-events-none"></div>
+                    @endif
                 </div>
             @endif
         </div>
